@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		<h3>Transferência</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarTransferencia" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarTransferencia')}"/>
+		</h:form>		
+			
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+				
+				<sgp:formInputText 
+						id="pedId"
+						labelValue="Nº Pedido"
+						value="#{transferenciaBean.filtro.numPedido}"	
+						mask="?999999999"										
+						display="text"
+						toolTip="Nº do Pedido de Trânsito"						
+						/>
+						
+				<sgp:formInputText 
+						id="id"
+						labelValue="Nº Movimentação"
+						value="#{transferenciaBean.filtro.id}"	
+						mask="?999999999"										
+						display="text"
+						toolTip="Nº da Movimentação"	
+						/>
+					
+										
+				<sgp:formCalendar display="text" requiredMessage="*" labelValue="Data Prev. Inicial" toolTip="Data prevista inicial da transferência"
+						value="#{transferenciaBean.filtro.dataInicio}"   />
+						
+				<sgp:formCalendar display="text" requiredMessage="*" labelValue="Data Prev. Final" toolTip="Data prevista final da transferência"
+						value="#{transferenciaBean.filtro.dataFim}"  />	
+						
+				<sgp:formSelectOneMenu 
+						id="status" labelValue="Status"
+						value="#{transferenciaBean.filtro.status}"
+						temSelecione="true"
+						itemsValue="#{comboHelperBean.statusMovimentacao}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						disabled="#{transferenciaBean.isVisualizacao}"
+						display="text" />			
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{transferenciaBean.imprimir()}"/>
+			</p:panel>
+		</h:form>	
+
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="mov" value="#{transferenciaBean.transferencias}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{mov.id}" sortOrder="descending"
+				             emptyMessage="Nenhum registro encontrado.">
+					
+					<p:column headerText="Nº" width="60" sortBy="#{mov.id}">
+						<h:outputText value="#{mov.id}" />
+					</p:column>	
+					
+					<p:column headerText="Observação">
+						<h:outputText value="#{mov.observacao}" />
+					</p:column>					
+					
+					<p:column headerText="Data Prevista" sortBy="#{mov.dataPrevista}" width="150">
+						<h:outputText value="#{mov.dataPrevista}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Data da Saída" sortBy="#{mov.dataInicio}" width="170">
+						<h:outputText value="#{mov.dataInicio}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"  />
+						</h:outputText>
+					</p:column>						
+				
+					<p:column headerText="Status"  width="120" sortBy="#{mov.status}">
+						<h:outputText value="#{mov.status.descricao}" />
+					</p:column>
+														
+					<p:column headerText="Ações" width="210">
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarTransferencia" rendered="#{securityUtil.possuiPermissao('VisualizarTransferencia')}">
+								<f:param name="id" value="#{mov.id}"/>
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarTransferencia" rendered="#{securityUtil.possuiPermissao('AlterarTransferencia') and mov.status.descricao.equalsIgnoreCase('Pendente')}">
+								<f:param name="id" value="#{mov.id}"/>
+							</p:button>
+							<p:button title="Iniciar" icon="fa fa-play" outcome="pretty:IniciarTransferencia" rendered="#{securityUtil.possuiPermissao('IniciarTransferencia') and mov.status.descricao.equalsIgnoreCase('Pendente')}">
+								<f:param name="id" value="#{mov.id}"/>
+							</p:button>
+							<p:button title="Finalizar" icon="fa fa-flag" outcome="pretty:FinalizarTransferencia" rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia') and (mov.status.descricao.equalsIgnoreCase('Em andamento') or mov.status.descricao.equalsIgnoreCase('Finalizado Parcial') or mov.status.descricao.equalsIgnoreCase('Aguardando Finalizar'))}">
+								<f:param name="id" value="#{mov.id}"/>
+							</p:button>
+							<p:commandButton title="Cancelar" icon="ui-icon-cancel"  action="#{transferenciaBean.cancelarTransferencia(mov)}" rendered="#{securityUtil.possuiPermissao('CancelarTransferencia') and (mov.status.descricao.equalsIgnoreCase('Pendente') or mov.status.descricao.equalsIgnoreCase('Em Andamento'))}"
+								oncomplete="PF('cancelarTransferencia').show()"  update="cancelarForm" process="@this" />							
+							<p:commandButton action="#{transferenciaBean.excluir(mov)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirTransferencia') and mov.status.descricao.equalsIgnoreCase('Pendente')}">
+								 <p:confirm header="Confirmação" message="Deseja excluir a movimentação?" icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:commandButton title="Imprimir" icon="fa fa-print" actionListener="#{transferenciaBean.imprimirRegistro(mov)}"/>
+						</center>
+					</p:column>
+					
+					<f:facet name="footer">
+						Total de registros: #{transferenciaBean.transferencias.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+		
+		<p:dialog id="dialogCacel" header="Cancelar Transferência" showEffect="fade" widgetVar="cancelarTransferencia" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="cancelarForm">
+			<p:panel>
+			<sgp:formInputTextarea id="motivoCancel" 
+						labelValue="Motivo do Cancelamento"
+						value="#{transferenciaBean.transferencia.resultado}" 
+						validationRequired="true"
+						disabled="#{transferenciaBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{transferenciaBean.transferencia.resultado.length()+5}" 
+						display="text" />
+					<br/>
+					<br/>
+					<p:commandButton title="Salvar" value="Confirmar" icon="ui-icon-check" update="@form :registrosForm" action="#{transferenciaBean.confirmarCancelamentoTransferencia()}"
+						rendered="#{securityUtil.possuiPermissao('CancelarTransferencia')}" >
+								 <p:confirm header="Confirmação" message="Todos os pedidos vinculados serão cancelados! Confirma?" icon="ui-icon-alert" />
+							</p:commandButton>
+			 		
+				<p:commandButton value="Fechar" onclick="PF('cancelarTransferencia').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			
+			</h:form>
+    	</p:dialog>
+		
+
+	</ui:define>
+</ui:composition>

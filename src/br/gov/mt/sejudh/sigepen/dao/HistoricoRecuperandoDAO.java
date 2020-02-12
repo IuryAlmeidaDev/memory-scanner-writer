@@ -1,0 +1,47 @@
+package br.gov.mt.sejudh.sigepen.dao;
+
+import java.util.List;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import br.gov.mt.sejudh.sigepen.model.HistoricoRecuperando;
+
+
+@RequestScoped
+public class HistoricoRecuperandoDAO {
+
+	@Inject
+	private EntityManager entityManager;
+	
+	public HistoricoRecuperandoDAO(){
+		
+	}
+	
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+	
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+	
+	public void salvar(HistoricoRecuperando historicoRecuperando){
+		if (historicoRecuperando.getId()>0) {
+			historicoRecuperando = entityManager.merge(historicoRecuperando);
+		} else {
+			entityManager.persist(historicoRecuperando);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<HistoricoRecuperando> listarHistoricoRecuperando(Long recuperandoId) {
+		String jpql="select h from HistoricoRecuperando h where h.recuperando.id = :id ORDER BY h.dataRegistro ASC";
+		Query query = entityManager.createQuery(jpql, HistoricoRecuperando.class);
+		query.setParameter("id", recuperandoId);
+		return (List<HistoricoRecuperando>) query.getResultList();
+	}
+	
+}

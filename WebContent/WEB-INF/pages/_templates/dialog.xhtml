@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<h:outputStylesheet library="css" name="main.css" />
+	<ui:remove>
+	<h:outputStylesheet library="css" name="normalize.css" />
+	<h:outputStylesheet library="css" name="bootstrap.min.css" />
+	<h:outputStylesheet library="css" name="bootstrap-theme.min.css" />
+	
+	<h:outputStylesheet value="/resources/css/bootstrap.css.map" />
+	<h:outputStylesheet value="/resources/css/bootstrap-theme.css.map" />
+	</ui:remove>
+	<ui:insert name="head" />	
+</h:head>
+
+<h:body>
+	<ui:insert name="conteudo" />
+	<h:panelGroup id="iframe-holder" layout="block" >
+		<iframe id="iDownload" name="iDownload" width="1" height="1" frameborder="0" src="#{sigepen.getApplicationDownloadUrl()}"/>
+	</h:panelGroup>
+	<h:outputScript library="js" name="bootstrap.min.js" />
+	<ui:insert name="footer" />
+	<script>
+	function download() {
+		document.getElementById('iDownload').contentWindow.go();
+	}
+	</script>
+</h:body>
+</html>

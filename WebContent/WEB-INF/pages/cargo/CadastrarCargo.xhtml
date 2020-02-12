@@ -1,0 +1,68 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>#{cargoBean.tituloPagina} Cargo</h3>
+			<h:form>
+				<p:panel footer="Cadastrado por: #{cargoBean.cargo.autorRegistro.usuario} em #{cargoBean.cargo.autorRegistro.data} | Última alteração: #{cargoBean.cargo.autorUltimaAlteracao.usuario} em #{cargoBean.cargo.autorUltimaAlteracao.data}">
+					<sgp:formInputText 
+						id="nomeCargo" 
+						labelValue="Nome"
+						value="#{cargoBean.cargo.nome}" 
+						validationRequired="true"
+						disabled="#{cargoBean.isVisualizacao}" 
+						display="text"
+						maxlength="80"/>
+						
+					<sgp:formSelectOneMenu 
+						id="categoria" labelValue="Categoria"
+						value="#{cargoBean.cargo.categoria}"
+						itemsValue="#{cargoBean.categorias}" 
+						itemValue="#{item}"
+						itemLabel="#{item.nome}" 
+						temSelecione="true"
+						validationRequired="true"
+						converter="SimpleEntityConverter"		
+						display="text"				
+						disabled="#{cargoBean.isVisualizacao}" />
+						
+					<sgp:formSelectOneMenu 
+						id="escolta" labelValue="Escolta?"
+						value="#{cargoBean.cargo.escolta}"
+						validationRequired="true"
+						temSelecione="true"
+						disabled="#{cargoBean.isVisualizacao}"
+						display="text">
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+					</sgp:formSelectOneMenu>
+					
+					<sgp:formSelectOneMenu 
+						id="status" labelValue="Status"
+						value="#{cargoBean.cargo.status}"
+						itemsValue="#{comboHelperBean.status}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						disabled="#{cargoBean.isVisualizacao}"
+						display="text" />
+						
+											
+					<br />
+					<br />
+
+					<p:commandButton value="Salvar" action="#{cargoBean.salvar()}" update="@form" icon="ui-icon-disk" 
+					rendered="#{(securityUtil.possuiPermissao('CadastrarCargo') and !cargoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCargo') and !cargoBean.isVisualizacao)}" />
+					<p:button outcome="pretty:ListarCargo" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+				</p:panel>
+			</h:form>
+	</ui:define>
+</ui:composition>

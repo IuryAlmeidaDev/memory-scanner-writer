@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Função</h3>		
+	    
+	    <h:form>
+		     <p:button value="Cadastrar" outcome="pretty:CadastrarFuncao" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarFuncao')}"/>
+		</h:form>
+				
+		<h:form id="meuFormulario">		
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+				<sgp:formInputText id="pesquisar" labelValue="Nome" value="#{funcaoBean.filtro.descricao}" maxlength="80" styleFormLabelColumn="width:135px"/>
+
+					
+				<sgp:formSelectOneMenu id="lotacaoObrigatoria" labelValue="Lotação Obrigatória?" value="#{funcaoBean.filtro.lotacaoObrigatoria}" display="text" 
+					temSelecione="true" >
+					<f:selectItem itemLabel="Sim" itemValue="true" />
+					<f:selectItem itemLabel="Não" itemValue="false" />
+				</sgp:formSelectOneMenu>
+					
+				<sgp:formSelectOneMenu 
+					styleFormLabelColumn="width:135px"
+					id="status" labelValue="Status"
+					value="#{funcaoBean.filtro.status}"
+					itemsValue="#{comboHelperBean.status}" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					temSelecione="true"/>
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{funcaoBean.imprimir()}"/>
+			</p:panel>
+		</h:form>
+		
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="funcao" value="#{funcaoBean.funcoes}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{funcao.id}"
+				            emptyMessage="Nenhum registro encontrado.">		
+					<p:column headerText="Código" width="100" sortBy="#{funcao.id}">
+						<h:outputText value="#{funcao.id}" />
+					</p:column>
+					<p:column headerText="Cargo" sortBy="#{funcao.cargo.nome}">
+						<h:outputText value="#{funcao.cargo.nome}" />
+					</p:column>
+					<p:column headerText="Nome" sortBy="#{funcao.nome}">
+						<h:outputText value="#{funcao.nome}" />
+					</p:column>
+					<p:column headerText="Lotação Obrigatória" sortBy="#{funcao.lotacaoObrigatoria}" width="17%">
+						<h:outputText value="#{funcao.lotacaoObrigatoria ? 'Sim' : 'Não'}" />
+					</p:column>
+					<p:column headerText="Situação" sortBy="#{funcao.status}" width="120">
+					<h:outputText value="#{funcao.status.descricao}" />						
+					</p:column>
+					<p:column headerText="Ações" width="120">
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarFuncao" rendered="#{securityUtil.possuiPermissao('VisualizarFuncao')}">
+								<f:param name="id" value="#{funcao.id}" />
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarFuncao" rendered="#{securityUtil.possuiPermissao('AlterarFuncao')}">
+								<f:param name="id" value="#{funcao.id}" />
+							</p:button>
+							<p:commandButton action="#{funcaoBean.excluir(funcao)}"	icon="ui-icon-trash" title="Excluir" rendered="#{securityUtil.possuiPermissao('ExcluirFuncao')}" update="@form :registrosForm :mensagens">
+								 <p:confirm header="Confirmação" message="Deseja excluir a função?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					
+					<f:facet name="footer">
+						Total de registros: #{funcaoBean.funcoes.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

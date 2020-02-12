@@ -1,0 +1,1 @@
+insert into sigepen_owner.permissao (id, nome, descricao, funcionalidade_id) values (122, 'ExcluirDocumentoDoProcesso', 'Permite excluir documentos de um processo.', 3);

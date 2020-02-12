@@ -1,0 +1,363 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	
+	<ui:define name="head">
+		<title>Processo</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+	
+		<h:form id="formPassCrime">
+			<p:panel>
+				<h2>Informações do Processo</h2>
+
+				<h:panelGroup id="regCondAtual">
+					<sgp:formOutputLabel id="regAtual" labelValue="Regime Atual" value="#{cadastrarProcessoBean.processo.regimeAtual.descricao}" />
+
+					<sgp:formOutputLabel id="condAtual" labelValue="Condição Atual" value="#{cadastrarProcessoBean.processo.condicaoAtual.descricao}" />
+					
+					<sgp:formOutputLabel id="condenacao" rendered="#{cadastrarProcessoBean.processo.condicaoAtual.descricao.equals('Condenado')}" labelValue="Condenado a" value="#{cadastrarProcessoBean.processo.ano} ano(s), #{cadastrarProcessoBean.processo.mes} mês(es), #{cadastrarProcessoBean.processo.dia} dia(s)." />
+				</h:panelGroup>
+
+				<sgp:formInputText id="numeroProcesso" labelValue="Nº Processo" value="#{cadastrarProcessoBean.processo.numeroProcesso}" size="40" permiteCaracterEspecial="true" maxlength="80" disabled="#{cadastrarProcessoBean.isVisualizacao}"/>
+					
+				<sgp:formInputText id="numeroInquerito" labelValue="Nº Inquérito" permiteCaracterEspecial="true"
+					value="#{cadastrarProcessoBean.processo.numeroInquerito}" size="40" maxlength="80" disabled="#{cadastrarProcessoBean.isVisualizacao}"/>
+					
+				<sgp:formInputText id="numeroOficio" labelValue="Nº Ofício" permiteCaracterEspecial="true"
+					value="#{cadastrarProcessoBean.processo.numeroOficio}" size="40" maxlength="80" disabled="#{cadastrarProcessoBean.isVisualizacao}"/>
+				<br/><br/>
+				
+				<h2>Regime e Condição do Processo</h2>
+
+                <p:commandButton icon="ui-icon-plus" immediate="true" update=":formRegimeCondicaoProcesso" oncomplete="PF('dialogRegimeCondicaoProcesso').show()" title="Adicionar" value="Adicionar" action="#{cadastrarProcessoBean.adicionarRegimeCondicao(null)}" rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') and !cadastrarProcessoBean.isVisualizacao)}" />			
+				<br/><br/>
+			
+				<p:dataTable id="regCond" widgetVar="regCondDT" var="regimeCondicao" emptyMessage="Nenhum item adicionado." value="#{cadastrarProcessoBean.processo.processosRegimeCondicao}" rows="5" paginator="true" paginatorAlwaysVisible="false"  
+					paginatorPosition="bottom" sortBy="#{regimeCondicao.id}" sortOrder="descending">
+				
+					<p:column headerText="Núm. Doc">
+						<h:outputText value="#{regimeCondicao.numeroDocumento}" />
+					</p:column>
+					
+					<p:column headerText="Tipo">
+						<h:outputText value="#{regimeCondicao.tipoProcesso.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Data do Doc">
+						<h:outputText value="#{regimeCondicao.dataDocumento}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Observação">
+						<h:outputText value="#{regimeCondicao.observacao}" />
+					</p:column>
+
+					<p:column headerText="Regime">
+						<h:outputText value="#{regimeCondicao.regime.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Condição">
+						<h:outputText value="#{regimeCondicao.condicao.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Situação Temp.">
+						<h:outputText value="#{regimeCondicao.situacaoTemporaria}" />
+					</p:column>
+					
+					<p:column headerText="Data Soltura">
+						<h:outputText value="#{regimeCondicao.dataSoltura}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column width="60">
+						<center>
+							<p:commandButton icon="ui-icon-pencil" title="Alterar" oncomplete="PF('dialogRegimeCondicaoProcesso').show()" 
+								actionListener="#{cadastrarProcessoBean.adicionarRegimeCondicao(regimeCondicao)}"
+								update=":formRegimeCondicaoProcesso" 
+								rendered="#{cadastrarProcessoBean.exibeAlterarDocumento(regimeCondicao)}">
+								
+						    </p:commandButton>
+							<p:commandButton  icon="ui-icon-trash" title="Excluir" action="#{cadastrarProcessoBean.excluirRegimeCondicao(regimeCondicao)}" immediate="true" update=":formPassCrime:regCond :formPassCrime:regCondAtual" disabled="#{cadastrarProcessoBean.isVisualizacao}" rendered="#{securityUtil.possuiPermissao('ExcluirDocumentoDoProcesso')}" >
+								<p:confirm header="Confirmação" message="Deseja excluir?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+				<br/>
+			</p:panel>			
+			
+			<br/>
+		<!-- Tabela de Crimes -->
+			<p:panel>
+			<h2>Crimes</h2>
+			<p:commandButton icon="ui-icon-plus" value="Adicionar" oncomplete="PF('dialogCrimes').show()" rendered="#{!cadastrarProcessoBean.isVisualizacao and !cadastrarProcessoBean.processo.statusProcesso.descricao.equals('Finalizado')}"/>
+			<br/><br/>
+			<p:dataTable id="crimes" var="crime" emptyMessage="Nenhum crime adicionado." value="#{cadastrarProcessoBean.processo.crimes}" rows="5" paginator="true" paginatorAlwaysVisible="false"  paginatorPosition="bottom" sortBy="#{crime.id}">
+				
+					<p:column headerText="Legislação" >
+					<h:outputText value="#{crime.crime.nomeLegislacao}" />
+				</p:column>
+
+				<p:column headerText="Art." width="40" >
+					<h:outputText value="#{crime.crime.numArtigo}" />
+				</p:column>
+				
+				<p:column headerText="Parág." width="50">
+					<h:outputText value="#{crime.crime.numParagrafo}" />
+				</p:column>
+				
+				<p:column headerText="Inc." width="40" >
+					<h:outputText value="#{crime.crime.numInciso}" />
+				</p:column>
+				
+				<p:column headerText="Alí." width="40">
+					<h:outputText value="#{crime.crime.numAlinea}" />
+				</p:column>
+				
+				<p:column headerText="Detalhamento">
+					<h:outputText value="#{crime.crime.detalhamento}" />
+				</p:column>
+				
+				<p:column headerText="Inclusão" width="80">
+					<h:outputText value="#{crime.dataInclusao}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Mot. Inat.">
+					<h:outputText value="#{crime.motivo}" />
+				</p:column>
+					
+					<p:column width="90" headerText="Ação">
+						<center>
+							<p:commandButton  icon="fa fa-minus" title="Inativar" action="#{cadastrarProcessoBean.inativarCrime(crime)}" immediate="true" oncomplete="PF('inativarCrime').show()" update=":formPassCrime:crimes" disabled="#{cadastrarProcessoBean.isVisualizacao}" rendered="#{crime.status.descricao.equalsIgnoreCase('Ativo')}"/>
+							<p:commandButton  icon="ui-icon-trash" title="Excluir" action="#{cadastrarProcessoBean.excluirCrime(crime)}" immediate="true" update=":formPassCrime:crimes" disabled="#{cadastrarProcessoBean.isVisualizacao}" rendered="#{!(crime.id > 0)}">
+								<p:confirm header="Confirmação" message="Deseja excluir o crime?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+			
+			<br/>
+			<p:commandButton value="Salvar" action="#{cadastrarProcessoBean.salvar}" icon="ui-icon-disk" update="@form" disabled="#{cadastrarProcessoBean.isVisualizacao}"/>
+			<p:commandButton value="Fechar" icon="ui-icon-close" immediate="true" actionListener="#{cadastrarProcessoBean.fecharDialog}" />
+		</h:form>
+		
+		<!-- Inserir Documento de Encaminhamento ou alteração de Processo -->
+		<p:dialog id="dialogRegimeCondicaoProcesso" header="Regime e Condição do Processo" showEffect="fade" widgetVar="dialogRegimeCondicaoProcesso" modal="true"
+    			draggable="false" resizable="false" closeOnEscape="true">
+    		
+    		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.Condicao" var="condicao" allSuffix="ALL_ENUM_VALUES" />
+    		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.Modalidade" var="modalidade" allSuffix="ALL_ENUM_VALUES" />
+    		
+    		<h:form id="formRegimeCondicaoProcesso">
+    			<sgp:formInputText labelValue="Núm. Documento" value="#{cadastrarProcessoBean.processoRegimeCondicoes.numeroDocumento}" permiteCaracterEspecial="true"/>
+    			
+    			<sgp:formSelectOneMenu
+					id="tipoProcesso"
+					labelValue="Tipo Documento"
+					value="#{cadastrarProcessoBean.processoRegimeCondicoes.tipoProcesso}" 
+					itemsValue="#{comboHelperBean.tipoProcesso}" 
+					itemValue="#{item}" 
+					itemLabel="#{item.descricao}"
+					temSelecione="true"
+					validationRequired="true"
+					requiredMessage="*"
+					display="text"
+					disabled="#{cadastrarProcessoBean.isVisualizacao}"/>
+	
+				<sgp:formCalendar labelValue="Data Documento" requiredMessage="*"
+						value="#{cadastrarProcessoBean.processoRegimeCondicoes.dataDocumento}" display="text" dataMaxima="#{cadastrarProcessoBean.dataMaxima}"
+						validationRequired="true" disabled="#{cadastrarProcessoBean.isVisualizacao}"/>
+					
+				<sgp:formInputTextarea id="observacao" labelValue="Observação"
+						value="#{cadastrarProcessoBean.processoRegimeCondicoes.observacao}" 
+						rows="10"
+						columns="50" 
+						maxlength="250" 
+						autoResize="true"
+						size="#{cadastrarProcessoBean.processoRegimeCondicoes.observacao.length()}"
+						display="text"
+						requiredMessage="*"
+						disabled="#{cadastrarProcessoBean.isVisualizacao}" 
+						validationRequired="true"/>
+					
+				<sgp:formSelectOneMenu
+					id="regime"
+					labelValue="Regime"
+					value="#{cadastrarProcessoBean.processoRegimeCondicoes.regime}" 
+					itemsValue="#{comboHelperBean.regimes}" 
+					itemValue="#{item}" 
+					itemLabel="#{item.descricao}"
+					display="text"
+					converter="SimpleEntityConverter"
+					disabled="#{cadastrarProcessoBean.isVisualizacao}"
+					validationRequired="true"
+					requiredMessage="*"
+					temSelecione="true"/>
+					
+				<sgp:formSelectOneMenu
+					id="condicao"
+					labelValue="Condição"
+					value="#{cadastrarProcessoBean.processoRegimeCondicoes.condicao}"
+					itemsValue="#{comboHelperBean.condicao}" 
+					itemValue="#{item}" 
+					itemLabel="#{item.descricao}"
+					display="text"
+					disabled="#{cadastrarProcessoBean.isVisualizacao or cadastrarProcessoBean.processo.condicaoAtual.descricao.equalsIgnoreCase('Condenado')}"
+					validationRequired="true"
+					requiredMessage="*"
+					temSelecione="true">
+					<p:ajax event="change" global="false" update=":formRegimeCondicaoProcesso:anoMesDia :formRegimeCondicaoProcesso:groupModalidade" />
+				</sgp:formSelectOneMenu>
+					
+				<h:panelGroup id="anoMesDia" rendered="#{!cadastrarProcessoBean.isVisualizacao}">
+					<sgp:formInputText id="ano" value="#{cadastrarProcessoBean.processo.ano}" labelValue="Ano" size="10" maxlength="4" validationRequired="true" display="text"
+						disabled="#{cadastrarProcessoBean.isVisualizacao or cadastrarProcessoBean.processo.condicaoAtual.descricao.equalsIgnoreCase('Condenado')}" requiredMessage="*"
+						rendered="#{cadastrarProcessoBean.processoRegimeCondicoes.condicao != null and cadastrarProcessoBean.processoRegimeCondicoes.condicao.descricao.equalsIgnoreCase('Condenado')}"/>
+			
+					<sgp:formInputText id="mes" value="#{cadastrarProcessoBean.processo.mes}" labelValue="Mês" size="10" maxlength="2" validationRequired="true" display="text" 
+						disabled="#{cadastrarProcessoBean.isVisualizacao or cadastrarProcessoBean.processo.condicaoAtual.descricao.equalsIgnoreCase('Condenado')}" requiredMessage="*"
+						rendered="#{cadastrarProcessoBean.processoRegimeCondicoes.condicao != null and cadastrarProcessoBean.processoRegimeCondicoes.condicao.descricao.equalsIgnoreCase('Condenado')}"/>
+			
+					<sgp:formInputText id="dia" value="#{cadastrarProcessoBean.processo.dia}" labelValue="Dia" size="10" maxlength="2" validationRequired="true" display="text" 
+						disabled="#{cadastrarProcessoBean.isVisualizacao or cadastrarProcessoBean.processo.condicaoAtual.descricao.equalsIgnoreCase('Condenado')}" requiredMessage="*"
+						rendered="#{cadastrarProcessoBean.processoRegimeCondicoes.condicao != null and cadastrarProcessoBean.processoRegimeCondicoes.condicao.descricao.equalsIgnoreCase('Condenado')}"/>
+				</h:panelGroup>
+				
+				<h:panelGroup id="groupModalidade">
+					<sgp:formSelectOneMenu id="modalidade" labelValue="Modalidade" value="#{cadastrarProcessoBean.processoRegimeCondicoes.modalidade}"
+						itemsValue="#{comboHelperBean.modalidade}" itemValue="#{item}" itemLabel="#{item.descricao}" display="text"
+						disabled="#{cadastrarProcessoBean.isVisualizacao}" validationRequired="true" requiredMessage="*"
+						rendered="#{cadastrarProcessoBean.processoRegimeCondicoes.condicao != null and cadastrarProcessoBean.processoRegimeCondicoes.condicao.equals(condicao.PROVISORIO)}">
+							<p:ajax event="change" global="false" update=":formRegimeCondicaoProcesso:groupDataSoltura" />
+					</sgp:formSelectOneMenu>
+
+					<h:panelGroup id="groupDataSoltura">
+						<sgp:formCalendar labelValue="Data Soltura" display="text" validationRequired="true" requiredMessage="*"
+							value="#{cadastrarProcessoBean.processoRegimeCondicoes.dataSoltura}" rendered="#{cadastrarProcessoBean.processoRegimeCondicoes.modalidade.equals(modalidade.TEMPORARIA)}" />
+					</h:panelGroup>
+				</h:panelGroup>
+				
+    			<br/><br/><br/>
+    			<p:commandButton value="Adicionar" update="@form :formPassCrime:regCond :formPassCrime:regCondAtual" action="#{cadastrarProcessoBean.associarRegimeCondicao}" icon="ui-icon-disk" >
+    				<p:confirm header="Confirmação" message="Salve o processo para concluir a alteração?" icon="ui-icon-alert" />
+				</p:commandButton>
+    			 <p:commandButton value="Fechar" onclick="PF('dialogRegimeCondicaoProcesso').hide()"/>
+    		</h:form>
+    			
+		</p:dialog>
+	
+		<!-- Selecionar Crime -->
+		<p:dialog id="dialogCrimes" modal="true" widgetVar="dialogCrimes" resizable="false" draggable="false" header="Crimes" height="500">
+			<h:form id="meuFormulario">
+				<p:panel>
+					<sgp:formSelectOneMenu 
+								id="legislacao"
+								labelValue="Legislação" 
+								itemValue="#{item}" 
+								itemLabel="#{item}"
+								itemsValue="#{cadastrarProcessoBean.legislacoes}" 
+								value="#{cadastrarProcessoBean.filtro.legislacao}"
+								filter="true" filterMatchMode="contains"
+								temSelecione="true" >
+										<f:ajax event="change" listener="#{cadastrarProcessoBean.listarArtigos}" render="meuFormulario:artigo:input"/>
+					</sgp:formSelectOneMenu>
+					<sgp:formSelectOneMenu 
+								id="artigo"
+								labelValue="Artigo" 
+								itemValue="#{item}" 
+								itemLabel="#{item}"
+								itemsValue="#{cadastrarProcessoBean.artigos}" 
+								value="#{cadastrarProcessoBean.filtro.artigo}"
+								filter="true" filterMatchMode="contains"
+								temSelecione="true"/>	
+					<br/><br/>
+					<p:commandButton value="Pesquisar" process="@form" icon="ui-icon-search" update=":formCrimes"/>
+				</p:panel>
+				
+				</h:form>
+				<h:form id="formCrimes">
+					<p:dataTable id="dataTable" var="crime" value="#{cadastrarProcessoBean.crimes}" rows="5" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{crime.id}"
+					emptyMessage="Nenhum crime encontrado.">
+					
+					<p:column headerText="Legislação" sortBy="#{crime.nomeLegislacao}">
+					<h:outputText value="#{crime.nomeLegislacao}" />
+				</p:column>
+
+				<p:column headerText="Artigo" width="70" sortBy="#{crime.numArtigo}">
+					<h:outputText value="#{crime.numArtigo}" />
+				</p:column>
+				
+				<p:column headerText="Parágrafo" width="100" sortBy="#{crime.numParagrafo}">
+					<h:outputText value="#{crime.numParagrafo}" />
+				</p:column>
+				
+				<p:column headerText="Inciso" width="70" sortBy="#{crime.numInciso}">
+					<h:outputText value="#{crime.numInciso}" />
+				</p:column>
+				
+				<p:column headerText="Alínea" width="70" sortBy="#{crime.numAlinea}">
+					<h:outputText value="#{crime.numAlinea}" />
+				</p:column>
+				
+				<p:column headerText="Detalhamento" sortBy="#{crime.detalhamento}">
+					<h:outputText value="#{crime.detalhamento}" />
+				</p:column>
+					
+					<p:column width="30">
+						<center>
+							<p:commandButton title="Associar" icon="ui-icon-check" actionListener="#{cadastrarProcessoBean.selecionarCrime(crime)}" update=":formPassCrime:crimes" oncomplete="PF('dialogCrimes').hide()" />
+						</center>
+					</p:column>
+				</p:dataTable>
+					
+					<div style="text-align: center">
+						<br/>
+						<p:commandButton value="Fechar" icon="ui-icon-close" onclick="PF('dialogCrimes').hide()" />
+					</div>
+				</h:form>
+			</p:dialog>
+			
+			<p:dialog id="dialogInativar" header="Inativar Crime" showEffect="fade" widgetVar="inativarCrime" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="inativarForm">
+			<p:panel>
+			<sgp:formInputTextarea id="inatCrime" 
+						labelValue="Motivo"
+						value="#{cadastrarProcessoBean.processoCrime.motivo}" 
+						validationRequired="true"
+						disabled="#{cadastrarProcessoBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{cadastrarProcessoBean.processoCrime.motivo.length()+5}" 
+						display="text" />
+						
+					<br/>
+					<br/>
+					<p:commandButton title="Confirmar" value="Confirmar" icon="ui-icon-check" update="@form :formPassCrime:crimes" action="#{cadastrarProcessoBean.confirmainativacaoCrime()}" />
+			 		
+				<p:commandButton value="Fechar" onclick="PF('inativarCrime').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			</h:form>
+    	</p:dialog>
+
+	</ui:define>
+	</ui:composition>

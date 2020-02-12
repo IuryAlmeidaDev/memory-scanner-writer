@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Pedido de Transferência</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="meuFormulario">
+		<p:panel>
+		
+			<sgp:formInputText id="Pedido" labelValue="Nº Pedido Trans."  value="#{associarPedidoTransitoBean.filtro.id}" />
+			
+			<sgp:formCalendar display="text"  labelValue="Data Prev. Inicial"
+					value="#{associarPedidoTransitoBean.filtro.dataInicio}" />
+										
+			<sgp:formCalendar display="text"  labelValue="Data Prev. Final"
+					value="#{associarPedidoTransitoBean.filtro.dataFim}"  />				
+				
+				<br/>
+				<br/>
+				<p:commandButton value="Pesquisar"
+					update="formPedidos"
+					process="@form"
+					icon="ui-icon-search" />
+		</p:panel>
+				
+		</h:form>
+		<h:form id="formPedidos">
+						
+				<p:dataTable id="dataTable" var="pedido" value="#{associarPedidoTransitoBean.pedidos}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{pedido.dataPrevista}"
+				             emptyMessage="Nenhum registro encontrado.">
+				             
+				    <p:column headerText="Nº" width="40" sortBy="#{pedido.id}">
+						<h:outputText value="#{pedido.id}" />
+					</p:column>
+				             
+					<p:column headerText="Mat." width="55" sortBy="#{pedido.idRec}">
+						<h:outputText value="#{pedido.idRec}" />
+					</p:column>
+	
+					<p:column headerText="Nome" sortBy="#{pedido.recuperando}">
+						<h:outputText value="#{pedido.recuperando}" />
+					</p:column>
+					
+					<p:column headerText="Data Prev." sortBy="#{pedido.dataPrevista}" width="105">
+						<h:outputText value="#{pedido.dataPrevista}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Destino" sortBy="#{pedido.nomeUnidadeDestino}">
+						<h:outputText value="#{pedido.nomeUnidadeDestino}" />
+					</p:column>
+				
+					<p:column headerText="Status"  width="90" sortBy="#{pedido.status}">
+						<h:outputText value="#{pedido.status.descricao}" />
+					</p:column>
+				
+				<p:column  width="40">
+					<center>
+						<p:commandButton title="Associar" icon="ui-icon-check" actionListener="#{associarPedidoTransitoBean.selecionarPedido(pedido)}" />
+					</center>
+				</p:column>
+			</p:dataTable>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			
+			<div style="text-align: center">
+				<br/>
+				<p:commandButton value="Fechar" icon="ui-icon-close" actionListener="#{associarPedidoTransitoBean.fecharDialog}" />
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

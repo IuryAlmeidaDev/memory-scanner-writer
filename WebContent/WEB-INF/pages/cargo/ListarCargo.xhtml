@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Cargo</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarCargo" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarCargo')}" />
+		</h:form>		
+			
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+				<sgp:formInputText id="pesquisar" labelValue="Nome" maxlength="80" value="#{cargoBean.filtro.nome}" styleFormLabelColumn="min-width:50px !important"/>
+				
+				<sgp:formSelectOneMenu id="escolta" labelValue="Escolta" value="#{cargoBean.filtro.escolta}" display="text" styleFormLabelColumn="min-width:50px !important"
+					temSelecione="true" >
+					<f:selectItem itemLabel="Sim" itemValue="true" />
+					<f:selectItem itemLabel="Não" itemValue="false" />
+				</sgp:formSelectOneMenu>
+				
+				<sgp:formSelectOneMenu 
+					styleFormLabelColumn="min-width:50px !important"
+					id="status" labelValue="Status"
+					value="#{cargoBean.filtro.status}"
+					itemsValue="#{comboHelperBean.status}" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					temSelecione="true"/>
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{cargoBean.imprimir()}"/>
+			</p:panel>
+		</h:form>	
+
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="cargo" value="#{cargoBean.cargos}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{cargo.id}"
+				             emptyMessage="Nenhum registro encontrado.">
+					<p:column headerText="Código" width="100" sortBy="#{cargo.id}">
+						<h:outputText value="#{cargo.id}" />
+					</p:column>
+					<p:column headerText="Categoria" sortBy="#{cargo.categoria.nome}">
+						<h:outputText value="#{cargo.categoria.nome}" />
+					</p:column>
+					<p:column headerText="Nome" sortBy="#{cargo.nome}">
+						<h:outputText value="#{cargo.nome}" />
+					</p:column>
+					<p:column headerText="Escolta" sortBy="#{cargo.escolta}" width="120">
+						<h:outputText value="#{cargo.escolta ? 'Sim' : 'Não'}" />
+					</p:column>
+					<p:column headerText="Situação" width="120" sortBy="#{cargo.status}">
+						<h:outputText value="#{cargo.status.descricao}" />						
+					</p:column>
+					<p:column headerText="Ações" width="120">
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarCargo" rendered="#{securityUtil.possuiPermissao('VisualizarCargo')}">
+								<f:param name="id" value="#{cargo.id}" />
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarCargo" rendered="#{securityUtil.possuiPermissao('AlterarCargo')}">
+								<f:param name="id" value="#{cargo.id}" />
+							</p:button>
+							<p:commandButton action="#{cargoBean.excluir(cargo)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirCargo')}">
+								 <p:confirm header="Confirmação" message="Deseja excluir o cargo?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					<f:facet name="footer">
+						Total de registros: #{cargoBean.cargos.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

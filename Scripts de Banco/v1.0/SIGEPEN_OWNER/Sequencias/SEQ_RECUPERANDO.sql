@@ -1,0 +1,12 @@
+-----------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_RECUPERANDO
+-----------------------------------------------
+
+CREATE SEQUENCE SEQ_RECUPERANDO
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_RECUPERANDO TO SIGEPEN_USER;

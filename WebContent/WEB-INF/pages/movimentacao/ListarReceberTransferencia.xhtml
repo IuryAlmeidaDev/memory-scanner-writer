@@ -1,0 +1,127 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		<h3>Receber Transferência</h3>
+			
+		<h:form id="meuFormulario">
+			<p:panel>
+				<sgp:formInputText id="id" labelValue="Nº Pedido" value="#{receberTransferenciaBean.filtro.id}" mask="?999999999" />
+						
+				<sgp:formInputText id="matricula" labelValue="Matrícula Recup." value="#{receberTransferenciaBean.filtro.recuperandoId}" mask="?999999999" />
+						
+				<sgp:formInputText id="nome" labelValue="Nome Recup."  size="50" value="#{receberTransferenciaBean.filtro.nome}" />
+										
+				<sgp:formCalendar display="text" requiredMessage="*" labelValue="Data Prev. Inicial" value="#{receberTransferenciaBean.filtro.dataInicio}" />
+						
+				<sgp:formCalendar display="text" requiredMessage="*" labelValue="Data Prev. Final" value="#{receberTransferenciaBean.filtro.dataFim}"  />
+						
+				<sgp:formSelectOneMenu 
+						id="status" labelValue="Status do Pedido"
+						value="#{receberTransferenciaBean.filtro.status}"
+						temSelecione="true"
+						itemsValue="#{comboHelperBean.statusPedido}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						disabled="#{receberTransferenciaBean.isVisualizacao}"
+						display="text" />				
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+			</p:panel>
+		</h:form>	
+
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="pedido" value="#{receberTransferenciaBean.pedidos}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{pedido.idTransferencia}" sortOrder="descending"
+				             emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
+				      
+				     <p:column headerText="Nº Transf." width="130" sortBy="#{pedido.idTransferencia}">
+						<h:outputText value="#{pedido.idTransferencia}" />
+					</p:column>
+					  
+				     <p:column headerText="Nº Ped." width="110" sortBy="#{pedido.id}">
+						<h:outputText value="#{pedido.id}" />
+					</p:column>
+					
+					<p:column headerText="Mat." width="80" sortBy="#{pedido.idRec}">
+						<h:outputText value="#{pedido.idRec}" />
+					</p:column>
+	
+					<p:column headerText="Nome" sortBy="#{pedido.recuperando}">
+						<h:outputText value="#{pedido.recuperando}" />
+					</p:column>				
+					
+					<p:column headerText="Data Prev." sortBy="#{pedido.dataPrevista}" width="130">
+						<h:outputText value="#{pedido.dataPrevista}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					 <p:column headerText="Unidade Origem">
+						<h:outputText value="#{pedido.nomeUnidadeOrigem}" />
+						
+					</p:column>	
+				
+					<p:column headerText="Status"  width="120" sortBy="#{pedido.status}">
+						<h:outputText value="#{pedido.status.descricao}" />
+					</p:column>
+														
+					<p:column headerText="Ações" width="120">
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarReceberTransferencia" rendered="#{securityUtil.possuiPermissao('VisualizarReceberTransferencia')}">
+								<f:param name="id" value="#{pedido.id}" />
+							</p:button>
+							<p:button title="Receber" icon="fa fa-download"	outcome="pretty:ReceberTransferencia" rendered="#{securityUtil.possuiPermissao('ReceberTransferencia') and pedido.status.descricao.equalsIgnoreCase('Em Andamento')}">
+								<f:param name="id" value="#{pedido.id}" />
+							</p:button>
+							<p:commandButton title="Cancelar" icon="ui-icon-cancel"  action="#{receberTransferenciaBean.cancelarPedido(pedido)}" 
+								rendered="#{securityUtil.possuiPermissao('ReceberTransferencia') and pedido.status.descricao.equalsIgnoreCase('Em Andamento')}"
+								oncomplete="PF('cancelarPedido').show()"  update="cancelarForm" process="@this" />							
+						</center>
+					</p:column>
+					
+					<f:facet name="footer">
+						Total de registros: #{receberTransferenciaBean.pedidos.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>	
+		
+		<p:dialog id="dialogCacel" header="Cancelar Transferência" showEffect="fade" widgetVar="cancelarPedido" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="cancelarForm">
+			<p:panel>
+			<sgp:formInputTextarea id="motivoCancel" 
+						labelValue="Motivo do Cancelamento"
+						value="#{receberTransferenciaBean.pedido.resultado}" 
+						validationRequired="true"
+						disabled="#{receberTransferenciaBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{receberTransferenciaBean.pedido.resultado.length()+5}" 
+						display="text" />
+					<br/>
+					<br/>
+					<p:commandButton title="Salvar" value="Confirmar" icon="ui-icon-check" update="@form :registrosForm" action="#{receberTransferenciaBean.confirmarCancelamentoPedido()}" 
+						rendered="#{securityUtil.possuiPermissao('ReceberTransferencia')}"/>
+			 		
+				<p:commandButton value="Fechar" onclick="PF('cancelarPedido').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			
+			</h:form>
+    	</p:dialog>	
+
+	</ui:define>
+</ui:composition>

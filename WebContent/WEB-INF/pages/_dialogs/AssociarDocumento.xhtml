@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Documento</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="documentoForm">
+			<p:panel>
+				<sgp:formSelectOneMenu
+					id="tipo"
+					labelValue="Tipo"
+					value="#{associarDocumentoBean.documento.tipoDocumento}" 
+					itemsValue="#{comboHelperBean.tipoDocumento}"
+					itemValue="#{item}" 
+					itemLabel="#{item.descricao}"
+					validationRequired="true"
+					converter="SimpleEntityConverter"
+					temSelecione="true" 
+					disabled="#{associarDocumentoBean.documento.id>0}"/>
+				 	
+				<sgp:formInputText 
+					id="numero"
+					labelValue="Número"
+					validationRequired="true"
+					value="#{associarDocumentoBean.documento.numero}"
+					size="30"
+					display="text"					
+					maxlength="20"
+					disabled="#{associarDocumentoBean.documento.id>0}"/>			
+				
+				<sgp:formCalendar 
+					labelValue="Emissão" 
+					value="#{associarDocumentoBean.documento.dataEmissao}"
+					display="text"  />
+					
+				<sgp:formCalendar 
+					labelValue="Validade" 
+					value="#{associarDocumentoBean.documento.dataValidade}"
+					display="text"  />									
+			
+				<sgp:formInputTextarea 
+					id="descDoc"
+					labelValue="Observação"
+					value="#{associarDocumentoBean.documento.descricao}"
+					rows="5"
+					columns="50"
+					maxlength="250"
+					autoResize="false"	
+					size="#{associarDocumentoBean.documento.descricao.length()+5}"				
+					display="text"/>								
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<br/>				
+				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form" action="#{associarDocumentoBean.incluirDocumento()}" />
+			 		
+				<p:commandButton value="Fechar" icon="ui-icon-close" immediate="true" actionListener="#{associarDocumentoBean.fecharDialog}" />
+				
+				<br/>
+			</p:panel>
+			
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

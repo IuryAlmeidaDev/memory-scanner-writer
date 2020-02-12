@@ -1,0 +1,183 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>#{pessoaBean.tituloPagina} Pessoa</h3>
+		
+		<h:form id="pessoaForm">
+			<p:panel header="Dados Pessoais"  footer="Cadastrado por: #{pessoaBean.pessoa.autorRegistro.usuario} em #{pessoaBean.pessoa.autorRegistro.data} | Última alteração: #{pessoaBean.pessoa.autorUltimaAlteracao.usuario} em #{pessoaBean.pessoa.autorUltimaAlteracao.data}">
+			
+				<sgp:formInputText display="text" requiredMessage="*" id="nomePessoa" labelValue="Nome"
+						value="#{pessoaBean.pessoa.nome}" validationRequired="true"
+						size="40" disabled="#{pessoaBean.isVisualizacao}" maxlength="80" />
+	
+					<sgp:formInputText display="text" requiredMessage="*" id="nomeMae"
+						labelValue="Nome da Mãe" value="#{pessoaBean.pessoa.nomeMae}"
+						validationRequired="true" size="40" maxlength="80"
+						disabled="#{pessoaBean.isVisualizacao}" />
+						
+					<sgp:formInputText display="text" id="nomePai"
+						labelValue="Nome do Pai" value="#{pessoaBean.pessoa.nomePai}"
+						 size="40" maxlength="80" disabled="#{pessoaBean.isVisualizacao}" />
+	
+					<sgp:formCalendar display="text" requiredMessage="*" labelValue="Nascimento"
+						value="#{pessoaBean.pessoa.dataNascimento}" dataMaxima="#{comboHelperBean.maxDate}"
+						validationRequired="true" disabled="#{pessoaBean.isVisualizacao}" />
+						
+					<sgp:formSelectOneMenu display="text" requiredMessage="*" id="nacionalidade"
+						labelValue="Nacionalidade" itemValue="#{item}" temSelecione="true"
+						itemLabel="#{item.descricao}" itemsValue="#{comboHelperBean.nacionalidades}"
+						value="#{pessoaBean.pessoa.nacionalidade}" filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+						converter="SimpleEntityConverter" validationRequired="true" disabled="#{pessoaBean.isVisualizacao}">
+						<f:ajax event="change" listener="#{pessoaBean.alterarNacionalidade}" render=":pessoaForm:pais:input :pessoaForm:estado:input :pessoaForm:cidade:input"/>
+					</sgp:formSelectOneMenu>
+	
+					<sgp:formSelectOneMenu display="text" requiredMessage="*" id="pais"
+						labelValue="País de Origem" itemValue="#{item}" temSelecione="true"
+						itemLabel="#{item.nome}" itemsValue="#{comboHelperBean.paises}"
+						value="#{pessoaBean.pessoa.pais}" filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+						converter="SimpleEntityConverter" validationRequired="true" disabled="#{pessoaBean.isVisualizacao or !pessoaBean.pessoaEhEstrangeira()}">
+						<f:ajax event="change" render=":pessoaForm:estado:input :pessoaForm:cidade:input" />
+					</sgp:formSelectOneMenu>
+	
+					<sgp:formSelectOneMenu display="text" requiredMessage="*" id="estado"
+						labelValue="Estado" itemValue="#{item}" itemLabel="#{item.nome}"
+						temSelecione="true" disabled="#{pessoaBean.isVisualizacao or pessoaBean.pessoaEhEstrangeira()}"
+						itemsValue="#{comboHelperBean.estados}"
+						value="#{pessoaBean.estado}" filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+						converter="EstadoConverter" validationRequired="true">
+						<f:ajax event="change" listener="#{pessoaBean.listarCidades}" render=":pessoaForm:naturalidade:input" />
+					</sgp:formSelectOneMenu>
+	
+					<sgp:formSelectOneMenu display="text" requiredMessage="*" id="naturalidade"
+						labelValue="Naturalidade" itemValue="#{item}" itemLabel="#{item.nome}"
+						temSelecione="true" disabled="#{pessoaBean.isVisualizacao or pessoaBean.pessoaEhEstrangeira()}"
+						itemsValue="#{pessoaBean.cidades}"
+						value="#{pessoaBean.pessoa.naturalidade}" filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+						converter="SimpleEntityConverter" validationRequired="true" />
+						
+					<sgp:formSelectOneMenu display="text" requiredMessage="*" labelValue="Sexo" itemValue="#{item}" temSelecione="true"
+						value="#{pessoaBean.pessoa.sexo}" itemsValue="#{comboHelperBean.sexos}" validationRequired="true"
+						itemLabel="#{item.descricao}" disabled="#{pessoaBean.isVisualizacao}" />
+				<br />
+				<br />
+			</p:panel>
+			<br />
+
+			<p:panel header="Endereços">
+				<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{pessoaBean.abrirDialogEndereco}" 
+					rendered="#{(securityUtil.possuiPermissao('CadastrarPessoa') and !pessoaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarPessoa') and !pessoaBean.isVisualizacao)}">
+					<p:ajax event="dialogReturn" listener="#{pessoaBean.incluirEndereco}" update="enderecos"/>
+				</p:commandButton>
+					
+				<br/>
+				<br/>
+				
+				<p:dataTable id="enderecos" var="endereco" emptyMessage="Nenhum endereço adicionado." value="#{pessoaBean.pessoa.enderecos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{endereco.id}">
+					<p:column headerText="Logradouro">
+						<h:outputText value="#{endereco.logradouro}" />
+					</p:column>
+					<p:column headerText="Nº">
+						<h:outputText value="#{endereco.numero}"/>
+					</p:column>
+					<p:column headerText="Bairro">
+						<h:outputText value="#{endereco.bairro}" />
+					</p:column>
+					<p:column headerText="Cidade">
+						<h:outputText value="#{endereco.cidade.nome}" />
+					</p:column>
+					<p:column headerText="Estado">
+						<h:outputText value="#{endereco.cidade.estado.uf}" />
+					</p:column>
+					<p:column width="90">
+						<center>
+							<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{pessoaBean.abrirDialogAlterarEndereco(endereco)}" 
+								rendered="#{(securityUtil.possuiPermissao('CadastrarPessoa') and !pessoaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarPessoa') and !pessoaBean.isVisualizacao)}">
+								<p:ajax event="dialogReturn" listener="#{pessoaBean.incluirEndereco}" update="enderecos"/>
+							</p:commandButton>
+							<p:commandButton action="#{pessoaBean.excluirEndereco(endereco)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":pessoaForm:enderecos :mensagens"
+								rendered="#{(securityUtil.possuiPermissao('CadastrarPessoa') and !pessoaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarPessoa') and !pessoaBean.isVisualizacao)}">
+						 		<p:confirm header="Confirmação" message="Deseja excluir o endereço?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+
+			<br />
+			
+			<p:panel header="Documentos">
+			
+				<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{pessoaBean.abrirDialogDocumento}" 
+					rendered="#{(securityUtil.possuiPermissao('CadastrarPessoa') and !pessoaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarPessoa') and !pessoaBean.isVisualizacao)}">
+					<p:ajax event="dialogReturn" listener="#{pessoaBean.incluirDocumento}" update="documentos"/>
+				</p:commandButton>
+					
+				<br/>
+				<br/>
+				
+				<p:dataTable id="documentos" var="doc" emptyMessage="Nenhum documento adicionado." value="#{pessoaBean.pessoa.documentos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{doc.id}">
+					<p:column headerText="Tipo">
+						<h:outputText value="#{doc.tipoDocumento.descricao}" />
+					</p:column>
+					<p:column headerText="Número">
+						<h:outputText value="#{doc.numero}"/>
+					</p:column>
+					<p:column headerText="Descrição">
+						<h:outputText value="#{doc.descricao}" />
+					</p:column>
+					<p:column headerText="Emissão" width="120">
+						<h:outputText value="#{doc.dataEmissao}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Validade" width="120">
+						<h:outputText value="#{doc.dataValidade}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>									
+					<p:column width="90">
+						<center>
+							<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{pessoaBean.abrirDialogAlterarDocumento(doc)}" 
+								rendered="#{(securityUtil.possuiPermissao('CadastrarPessoa') and !pessoaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarPessoa') and !pessoaBean.isVisualizacao)}">
+								<p:ajax event="dialogReturn" listener="#{pessoaBean.incluirDocumento}" update="documentos"/>
+							</p:commandButton>
+							<p:commandButton action="#{pessoaBean.excluirDocumento(doc)}" immediate="true" icon="ui-icon-trash" title="Excluir" update="@form :pessoaForm:documentos :mensagens"
+								rendered="#{(securityUtil.possuiPermissao('CadastrarPessoa') and !pessoaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarPessoa') and !pessoaBean.isVisualizacao)}">
+						 		<p:confirm header="Confirmação" message="Deseja excluir o documento?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+			
+			<br />
+
+			<p:commandButton value="Salvar" action="#{pessoaBean.salvar()}"
+				update="@form" icon="ui-icon-disk"
+				rendered="#{(securityUtil.possuiPermissao('CadastrarPessoa') and !pessoaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarPessoa') and !pessoaBean.isVisualizacao)}"  />
+			<p:button outcome="pretty:ListarPessoa" value="Voltar" icon="ui-icon-arrowreturnthick-1-w" />
+		</h:form>
+	</ui:define>
+</ui:composition>

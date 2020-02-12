@@ -1,0 +1,373 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/WEB-INF/pages/_script/biometria.xhtml" />
+	</ui:define>
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="biometriav2.js?ver=#{utilBean.biometriaVersao}" />
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Recuperando</h3>
+
+		<h:form prependId="false">
+			<p:commandButton value="Cadastrar" id="btnCadastrar" onclick="cadastrar(#{recuperandoBean.verificarSeBiometriaEhObrigatoria()}); return false;" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarRecuperando')}" />
+			<p:commandButton value="Pesquisa Biométrica" id="btnBio" onclick="pesquisar();" icon="ui-icon-bio" rendered="#{recuperandoBean.verificarSeBiometriaEhObrigatoria()}" />
+			
+			<p:confirmDialog widgetVar="confirmaCadastro" header="Aviso" message="Nenhum registro encontrado, deseja cadastrar?">
+				<p:commandButton value="Sim" type="button" onclick="PF('confirmaCadastro').hide(); executarCadastro();" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" onclick="PF('confirmaCadastro').hide();" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+						
+			<p:remoteCommand name="executarCadastro" action="#{recuperandoBean.executarCadastro}" ajax="false" />
+			<p:remoteCommand name="executarBiometria" actionListener="#{recuperandoBean.pesquisarBiometria}" update=":registrosForm" />
+			<h:inputHidden value="#{recuperandoBean.biometria}" id="paramBiometria" />
+			<h:inputHidden value="#{recuperandoBean.isCadastro}" id="paramIsCadastro" />
+		</h:form>		
+			
+		<h:form id="meuFormulario" prependId="false">
+			<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.Condicao" var="condicao" allSuffix="ALL_ENUM_VALUES" />
+			
+			<p:panel>
+				<p:panelGrid>
+					<div class="row">
+						<div class="col-md-12">
+							<sgp:formInputText id="nome" labelValue="Nome"  size="40" value="#{recuperandoBean.filtro.nome}" />
+							<sgp:formInputText id="outroNome" labelValue="Outro Nome" size="40" value="#{recuperandoBean.filtro.outrosNomes}" />
+							<sgp:formInputText id="matricula" labelValue="Matrícula"  size="40" value="#{recuperandoBean.filtro.id}" />
+							<sgp:formInputText id="alcunha" labelValue="Alcunha"  size="40" value="#{recuperandoBean.filtro.alcunha}" />
+							<sgp:formInputText id="mae" labelValue="Nome da Mãe" size="40" value="#{recuperandoBean.filtro.nomeMae}"/>
+							<sgp:formInputText id="outrasMaes" labelValue="Outra mãe" size="40" value="#{recuperandoBean.filtro.outraMae}"/>
+							<sgp:formSelectOneMenu 
+								id="unidadePrisional" labelValue="Unidade Prisional"
+								value="#{recuperandoBean.filtro.unidade}"
+								itemsValue="#{recuperandoBean.unidadesPrisionais}" 
+								itemValue="#{item}"
+								itemLabel="#{item.nome}" 
+								temSelecione="true"
+								filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+								converter="SimpleEntityConverter"/>
+								
+							<sgp:formSelectOneMenu
+								id="regime"
+								labelValue="Regime"
+								value="#{recuperandoBean.filtro.regime}" 
+								itemsValue="#{comboHelperBean.regimes}" 
+								itemValue="#{item}" 
+								itemLabel="#{item.descricao}"
+								display="text"
+								converter="SimpleEntityConverter"
+								temSelecione="true"/>
+								
+							<sgp:formSelectOneMenu
+								id="condicao"
+								labelValue="Condição"
+								value="#{recuperandoBean.filtro.condicaoAtual}" 
+								itemsValue="#{comboHelperBean.condicao}" 
+								itemValue="#{item}" 
+								itemLabel="#{item.descricao}"
+								display="text"
+								temSelecione="true" />
+							
+							<sgp:formSelectOneMenu 
+								id="modalidade"
+								labelValue="Modalidade"
+								value="#{recuperandoBean.filtro.modalidade}" 
+								itemsValue="#{comboHelperBean.modalidade}" 
+								itemValue="#{item}" 
+								itemLabel="#{item.descricao}"
+								temSelecione="true" />
+
+							<sgp:formSelectOneMenu 
+								id="peric" labelValue="Perículosidade"
+								value="#{recuperandoBean.filtro.periculosidade}"
+								itemsValue="#{comboHelperBean.periculosidade}" 
+								itemValue="#{item}"
+								itemLabel="#{item.descricao}" 
+								display="text"
+								temSelecione="true" />
+							
+							<sgp:formSelectOneMenu id="status" labelValue="Situação" value="#{recuperandoBean.filtro.status}" itemsValue="#{comboHelperBean.statusRecuperando}" 
+								itemValue="#{item}" itemLabel="#{item.descricao}" temSelecione="true"/>
+
+							<sgp:formSelectOneMenu id="situacaoCadastro" labelValue="Situação cadastro" value="#{recuperandoBean.filtro.isCadastroCompleto}" temSelecione="true">
+								<f:selectItem itemLabel="Completo" itemValue="true" />
+								<f:selectItem itemLabel="Incompleto" itemValue="false" />
+							</sgp:formSelectOneMenu>
+							<br/><br/><br/>
+						<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" actionListener="#{recuperandoBean.limpaBiometria}"/>
+						<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{recuperandoBean.imprimir()}"/>
+						</div>
+					</div>
+					<div class="row">
+					</div>
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="rec" value="#{recuperandoBean.recuperandos}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" 
+				sortBy="#{rec.id}" sortOrder="descending" selectionMode="single" selection="#{recuperandoBean.recuperandoSelecionado}" emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false" >
+				
+				<p:ajax event="rowDblselect" update="formDialogDetalhes" oncomplete="PF('dialogDetalhes').show()" />/>
+				
+				<p:column width="38">
+					<p:graphicImage id="situacao" name="#{(rec.situacaoCadastro ? 'green.png' : 'red.png')}" library="icons"/>
+					<p:tooltip for="situacao">
+						<p:row rendered="#{rec.situacaoCadastro}">Cadastro Completo</p:row>
+						<p:row rendered="#{!rec.situacaoCadastro}">Cadastro Incompleto: <br/></p:row>
+						<p:row rendered="#{rec.temTatuagem and !rec.temFotoTatuagem}">- Falta foto da tatuagem;<br/></p:row>
+						<p:row rendered="#{!rec.temFotoFrente}">- Falta foto de frente;<br/></p:row>
+						<p:row rendered="#{!rec.temFotoPerfil}">- Falta foto de perfil;<br/></p:row>
+						<p:row rendered="#{!rec.temFotoCorpoInteiro}">- Falta foto do corpo inteiro;<br/></p:row>
+						<p:row rendered="#{!rec.vidaSocialCompleta}">- Falta aba vida social;<br/></p:row>
+						<p:row rendered="#{!rec.temParente}">- Falta aba parentes;<br/></p:row>
+					</p:tooltip>
+				</p:column>
+				
+				<p:column headerText="Matr." width="79" sortBy="#{rec.id}">
+					<h:outputText value="#{rec.id}" />
+				</p:column>
+				
+				<p:column headerText="Nome" sortBy="#{rec.nome}">
+					<span style="background-color:#{recuperandoBean.corPeric(rec.periculosidade)}; width: 20px; height:20px; border:1px; border-style:solid; float:left; margin-right:7px" title="#{rec.periculosidade}"/>
+					<h:outputText value="#{rec.nome}" style="line-height: 20px"/>
+				</p:column>
+				
+				<p:column headerText="Nome da Mãe" sortBy="#{rec.nomeMae}">
+					<h:outputText value="#{rec.nomeMae}" />
+				</p:column>
+				
+				<p:column headerText="Unidade" width="120" sortBy="#{rec.siglaUnidade}">
+					<h:outputText value="#{rec.siglaUnidade}" />
+				</p:column>
+				
+				<p:column headerText="Regime" width="120" sortBy="#{rec.regime}">
+					<h:outputText value="#{rec.regime}" />
+				</p:column>
+				
+				<p:column headerText="Condição" width="120" sortBy="#{rec.condicaoAtual}">
+					<h:outputText value="#{rec.condicaoAtual.descricao}" />
+				</p:column>				
+				
+				<p:column headerText="Situação" width="109" sortBy="#{rec.status}">
+					<h:outputText value="#{rec.status}" />
+				</p:column>
+				
+				<p:column headerText="Ações" width="201">
+					<center>
+						<p:button title="Nova Passagem" icon="fa fa-arrow-right" outcome="pretty:CadastrarNovaPassagem" rendered="#{securityUtil.possuiPermissao('CadastrarNovaPassagem') and rec.isRecuperando and rec.taVivo and (rec.isRecuperandoInativo or rec.isRecuperandoParcial)}">
+							<f:param name="id" value="#{rec.id}" />
+						</p:button>
+						<p:button title="Cadastrar Recuperando" icon="fa fa-tag" outcome="pretty:CadastrarRecuperando" rendered="#{securityUtil.possuiPermissao('CadastrarRecuperando') and !rec.isRecuperando}">
+							<f:param name="id" value="#{rec.pessoaId}" />
+						</p:button>
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarRecuperando" rendered="#{securityUtil.possuiPermissao('VisualizarRecuperando') and rec.isRecuperando}">
+							<f:param name="id" value="#{rec.id}"/>
+						</p:button>
+						<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarRecuperando" rendered="#{securityUtil.possuiPermissao('AlterarRecuperando') and rec.isRecuperando and rec.isMesmaUnidadeQueServidorLogado and rec.status.equalsIgnoreCase('ativo')}">
+							<f:param name="id" value="#{rec.id}"/>
+						</p:button>
+						<p:commandButton title="Histórico Recuperando" oncomplete="PF('dialogHistoricoRecuperando').show()" icon="ui-icon-clock" action="#{historicoRecuperandoBean.cadastrarHistoricoRecuperando(rec)}" 
+							rendered="#{securityUtil.possuiPermissao('VisualizarHistoricoRecuperando') and (rec.unidadeId == securityUtil.getUnidadeSelecionada().id)}" update="formHistoricoRecuperando"/>
+						<p:commandButton action="#{recuperandoBean.excluir(rec)}" icon="ui-icon-trash" title="Excluir" update=":registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirRecuperando') and rec.isRecuperandoParcial}">
+							<p:confirm header="Confirmação" message="Deseja excluir o recuperando?" icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:button title="Desligar" icon="fa fa-home" outcome="pretty:DesligarRecuperando" rendered="#{securityUtil.possuiPermissao('DesligarRecuperando') and rec.isRecuperandoAtivo and rec.isMesmaUnidadeQueServidorLogado}">
+							<f:param name="id" value="#{rec.id}" />
+						</p:button>
+						<p:commandButton title="Imprimir" icon="fa fa-print" actionListener="#{recuperandoBean.imprimirRegistro(rec)}"/>
+						<p:commandButton title="Atestado de Comparecimento Mensal" icon="fa fa-file-text-o" actionListener="#{recuperandoBean.imprimirAtestadoDeComparecimento(rec)}" rendered="#{(rec.regime.toLowerCase().equals('aberto') or rec.regime.toLowerCase().equals('semiaberto'))}" />
+					</center>
+				</p:column>
+				
+				<f:facet name="footer">
+					Total de registros: #{recuperandoBean.recuperandos.rowCount}
+					
+					<p:dialog id="dialogRecuperandosFotos" header="Atenção: Recuperando(s) similar(es) encontrado(s)" widgetVar="dlgRecupFotos" modal="true" resizable="false">
+						<h:form id="formDlgRecupFotos">							
+							<p:dataGrid id="dgFotosRecup" layout="grid" columns="1" rows="2" paginatorAlwaysVisible="false" paginator="true" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+								value="#{recuperandoBean.recuperandoSimilares}" var="r" paginatorPosition="bottom">
+									<p:dataGrid id="dgFoto" layout="grid" columns="1" rows="1" value="#{r.imagemFrente}" var="i">
+										<p:panelGrid>
+											<p:row style="border: 0px;">
+												<p:column style="border: 0px; width: 188px">
+													<p:graphicImage value="#{imageHandlerBean.getImagem(i)}" cache="false" width="180" height="240">
+														<f:param name="hashId" value="#{i.id}" />
+													</p:graphicImage>
+												</p:column>
+												
+												<p:column style="border: 0px; vertical-align: text-top;">
+													<sgp:formOutputLabel labelValue="Nome" value="#{r.nome}" id="nomeRecupFoto"/>
+													<sgp:formOutputLabel labelValue="Nome da Mãe" value="#{r.nomeMae}"/>
+													<sgp:formOutputLabel labelValue="Data Nascimento" value="#{r.dataNascimento}" converterData="true"/>
+													<sgp:formOutputLabel labelValue="Unidade" value="#{r.unidade}" />
+													<sgp:formOutputLabel labelValue="Estrutura" value="#{r.lotacaoAtualNomeEstrutura}" />
+										
+													<p:button id="btnVisualizarRecuperando" title="Visualizar" value="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarRecuperando" rendered="#{securityUtil.possuiPermissao('VisualizarRecuperando') and r.isRecuperando}">
+														<f:param name="id" value="#{r.id}"/>
+													</p:button>
+													<p:button id="btnAlterarRecuperando" title="Alterar" value="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarRecuperando" rendered="#{securityUtil.possuiPermissao('AlterarRecuperando') and r.isRecuperando and r.isMesmaUnidadeQueServidorLogado and r.status.equalsIgnoreCase('ativo')}">
+														<f:param name="id" value="#{r.id}"/>
+													</p:button>
+												</p:column>
+											</p:row>
+										</p:panelGrid>
+									</p:dataGrid>
+							</p:dataGrid>
+
+							<br/>
+							<p:row>
+								<p:outputLabel style="color: red;" value="Eu, #{securityUtil.getNomeUsuario()}, confirmo que o recuperando a ser cadastrado não se encontra na listagem." />
+								<br/>
+								<p:commandButton icon="ui-icon-check" title="Confirmar e prosseguir para o cadastro" value="Confirmar e prosseguir para o cadastro" action="#{recuperandoBean.executarCadastro}" />
+							</p:row>
+							<br/><br/>
+						</h:form>
+					</p:dialog>
+				</f:facet>
+			</p:dataTable>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+		
+		<p:dialog id="dialogRecuperandoDetalhes" header="Detalhes do Recuperando" widgetVar="dialogDetalhes" modal="true" closeOnEscape="true" showEffect="fade" hideEffect="fade" resizable="false">
+			<h:form id="formDialogDetalhes">
+				<h:panelGroup rendered="#{recuperandoBean.recuperandoSelecionado == null}">
+					<p:outputLabel>Nenhuma informação.</p:outputLabel>
+				</h:panelGroup>
+				
+				<h:panelGroup rendered="#{recuperandoBean.recuperandoSelecionado != null}">
+					<sgp:formOutputLabel
+						labelValue="Matrícula"
+						value="#{recuperandoBean.recuperandoSelecionado.id}"/>
+						
+					<sgp:formOutputLabel
+						labelValue="Nome"
+						value="#{recuperandoBean.recuperandoSelecionado.nome}"/>
+						
+					<sgp:formOutputLabel
+						labelValue="Nome da Mãe"
+						value="#{recuperandoBean.recuperandoSelecionado.nomeMae}"/>
+					<sgp:formOutputLabel
+						labelValue="Lotação Atual"
+						value="#{recuperandoBean.recuperandoSelecionado.lotacaoAtualNomeEstrutura}"/>
+				<p:panel>
+				<h4>Alcunhas</h4>
+					<p:dataTable var="alc" value="#{recuperandoBean.recuperandoSelecionado.alcunhas}" rows="5" paginatorAlwaysVisible="false" emptyMessage="Nada encontrado">
+						<p:column headerText="Nome Alcunha">
+							<h:outputText value="#{alc}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+					<br/>
+				<p:panel>
+					<h4>Outros Nomes</h4>
+					<p:dataTable var="out" value="#{recuperandoBean.recuperandoSelecionado.outrosNomes}" rows="5" paginatorAlwaysVisible="false" emptyMessage="Nada encontrado">
+						<h4>Outros Nomes</h4>
+						<p:column headerText="Nome">
+							<h:outputText value="#{out.nome}" />
+						</p:column>
+						<p:column headerText="Nome da Mãe">
+							<h:outputText value="#{out.nomeMae}" />
+						</p:column>
+						<p:column headerText="Data Nascimento">
+							<h:outputText value="#{out.dataNascimento}" >
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="dialogHistoricoRecuperando" header="Cadastrar Histórico do Recuperando" resizable="false" closeOnEscape="true" widgetVar="dialogHistoricoRecuperando" modal="true" focus="formHistoricoRecuperando:nomeRecuperando">
+			<h:form id="formHistoricoRecuperando">
+				<p:panel>
+				<h4>
+				<sgp:formOutputLabel
+					labelValue="Matrícula"
+					value="#{historicoRecuperandoBean.recuperando.id}"/>
+				</h4>
+				<sgp:formOutputLabel
+					id="nomeRecuperando"
+					labelValue="Recuperando"
+					value="#{historicoRecuperandoBean.recuperando.pessoa.nome}"/>
+					
+				<sgp:formCalendar
+					labelValue="Data/Hora"
+					value="#{historicoRecuperandoBean.historicoRecuperando.dataRegistro}"
+					display="text"
+					validationRequired="true"
+					pattern="dd/MM/yyyy HH:mm"
+					disabled="#{!securityUtil.possuiPermissao('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.rec.isRecuperandoInativo or !historicoRecuperandoBean.rec.isMesmaUnidadeQueServidorLogado}"/>
+				
+				<sgp:formInputTextarea 
+					id="observacao"
+					labelValue="Observação"
+					value="#{historicoRecuperandoBean.historicoRecuperando.observacao}"
+					rows="5"
+					columns="50"
+					maxlength="250"
+					display="text"
+					size="#{historicoRecuperandoBean.historicoRecuperando.observacao.length()}"
+					disabled="#{!securityUtil.possuiPermissao('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.rec.isRecuperandoInativo or !historicoRecuperandoBean.rec.isMesmaUnidadeQueServidorLogado}"/>
+				
+				<sgp:formSelectOneMenu
+					id="tipoHistorico"
+					itemValue="#{item}"
+					itemsValue="#{comboHelperBean.tipoHistorico}"
+					labelValue="Tipo Histórico"
+					itemLabel="#{item.descricao}"
+					value="#{historicoRecuperandoBean.historicoRecuperando.tipoHistorico}"
+					validationRequired="true"
+					converter="SimpleEntityConverter"
+					temSelecione="true"
+					display="text"
+					disabled="#{!securityUtil.possuiPermissao('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.rec.isRecuperandoInativo or !historicoRecuperandoBean.rec.isMesmaUnidadeQueServidorLogado}"/>
+				<br/>
+				<br/>
+				
+					<p:commandButton value="Adicionar" action="#{historicoRecuperandoBean.salvar()}" icon="ui-icon-plus" update="formHistoricoRecuperando" process="@form" 
+						rendered="#{securityUtil.possuiPermissao('CadastrarHistoricoRecuperando') and !historicoRecuperandoBean.rec.isRecuperandoInativo and historicoRecuperandoBean.rec.isMesmaUnidadeQueServidorLogado}"/>
+				
+				<br/>
+				<br/>
+				<br/>
+				<p:dataTable id="dataTableHistoricoRecuperando" widgetVar="dataTableHistoricoRecuperando" var="historicos" value="#{historicoRecuperandoBean.historicos}" rows="5" paginator="true" paginatorPosition="bottom" 
+					emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
+					<p:column headerText="Data/Hora" sortBy="#{historicos.dataRegistro}">
+						<h:outputText value="#{historicos.dataRegistro}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Tipo">
+						<h:outputText value="#{historicos.tipoHistorico.descricao}" />
+					</p:column>
+					<p:column headerText="Observação">
+						<h:outputText value="#{historicos.observacao}" />
+					</p:column>
+					
+				</p:dataTable>
+				<br/>
+					<p:commandButton value="Fechar" onclick="PF('dialogHistoricoRecuperando').hide()" process="@this" />
+				</p:panel>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

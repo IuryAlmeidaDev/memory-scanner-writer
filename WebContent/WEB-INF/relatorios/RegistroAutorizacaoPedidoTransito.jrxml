@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RegistroAutorizacaoPedidoTransito" pageWidth="595" pageHeight="800" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="432"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="TEM_PAGINACAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="recuperando.id" class="java.lang.Long"/>
+	<field name="recuperando.pessoa.nome" class="java.lang.String"/>
+	<field name="tipoTransito.descricao" class="java.lang.String"/>
+	<field name="dataPrevista" class="java.sql.Timestamp"/>
+	<field name="status.descricao" class="java.lang.String"/>
+	<field name="id" class="java.lang.Long"/>
+	<field name="autorRegistro.usuario" class="java.lang.String"/>
+	<field name="recuperando.pessoa.nomeMae" class="java.lang.String"/>
+	<field name="dataDocumento" class="java.util.Date"/>
+	<field name="motivo" class="java.lang.String"/>
+	<field name="estruturaDestino.nomeCompleto" class="java.lang.String"/>
+	<field name="unidadeDestino.nome" class="java.lang.String"/>
+	<field name="estabelecimento.nome" class="java.lang.String"/>
+	<field name="autorizador.servidor.nome" class="java.lang.String"/>
+	<field name="dataAutorizacao" class="java.sql.Timestamp"/>
+	<field name="observacao" class="java.lang.String"/>
+	<field name="dataConclusao" class="java.sql.Timestamp"/>
+	<field name="resultado" class="java.lang.String"/>
+	<field name="dataCancelamento" class="java.sql.Timestamp"/>
+	<field name="estruturaOrigem.nomeCompleto" class="java.lang.String"/>
+	<field name="unidadeOrigem.nome" class="java.lang.String"/>
+	<field name="numeroDocumento" class="java.lang.String"/>
+	<field name="pronomeTratamento.descricao" class="java.lang.String"/>
+	<field name="responsavelDestino" class="java.lang.String"/>
+	<field name="unidadeOrigem.endereco.cidade.nome" class="java.lang.String"/>
+	<field name="unidadeOrigem.responsavel.nome" class="java.lang.String"/>
+	<field name="unidadeOrigem.responsavel.funcao.nome" class="java.lang.String"/>
+	<field name="recuperando.fotos" class="java.util.Collection"/>
+	<pageHeader>
+		<band height="106" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="106" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
+				<subreportParameter name="UNIDADE_LOGADA">
+					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="111" splitType="Stretch">
+			<image scaleImage="FillFrame" isUsingCache="false" evaluationTime="Report">
+				<reportElement x="42" y="26" width="78" height="78" uuid="1f5b1b67-e1c3-4890-99ad-edafc9002e4b"/>
+				<imageExpression><![CDATA["imagens/sistema-penitenciario.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="235" y="5" width="314" height="20" uuid="5f462577-a698-4e44-b5f9-242be4b3ffdd"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{unidadeOrigem.endereco.cidade.nome} + ", " + new java.text.SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("pt", "BR")).format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement positionType="Float" x="435" y="26" width="104" height="85" isRemoveLineWhenBlank="true" uuid="ff1cf83b-31df-4413-a4ca-d09154a6eeb9"/>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="EMISSOR"/>
+				<subreportParameter name="NOME_DO_RELATORIO"/>
+				<subreportParameter name="CABECALHO"/>
+				<subreportParameter name="RODAPE"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{recuperando.fotos})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["FotoFrenteRecuperando.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="5" y="5" width="80" height="20" uuid="d8d94039-5a21-4a68-b0cc-694e5a339cda"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº Autorização:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="85" y="5" width="120" height="20" uuid="47f53451-09af-4093-b46a-6779732aa1d1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="60">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="42" y="0" width="470" height="20" uuid="b3dc7b67-01ac-40d5-8c14-c15649b14215"/>
+				<textElement textAlignment="Justified">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{resultado}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="60">
+			<textField>
+				<reportElement x="5" y="0" width="545" height="20" uuid="92ba29d1-d2bc-40ac-bf76-abf9b6c68b8e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidadeOrigem.responsavel.nome} != null ? $F{unidadeOrigem.responsavel.nome} : "__________________________________________"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="16" width="545" height="20" uuid="75e86aea-6f11-4e09-984d-488d0b047488"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidadeOrigem.responsavel.funcao.nome} != null ? $F{unidadeOrigem.responsavel.funcao.nome} : "DIRETOR"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$F{responsavelDestino} != null]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement x="25" y="0" width="524" height="20" uuid="b25ff031-51fa-46c5-946e-92d7fc81c7c0"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{responsavelDestino}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$F{unidadeDestino.nome} != null]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement x="25" y="0" width="524" height="20" uuid="0b3caa01-b4fe-4fb5-aade-ff14d1e4546f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{unidadeDestino.nome}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$F{estabelecimento.nome} != null]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement x="25" y="0" width="524" height="20" uuid="83ab2250-4da8-40c3-a3d8-884b587da0e7"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{estabelecimento.nome}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="20">
+			<staticText>
+				<reportElement x="25" y="0" width="130" height="20" uuid="8189e9fd-9b1a-4767-84c4-9d1632f97f5a"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Lotação Atual do Interno(a):]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="155" y="0" width="394" height="20" uuid="67f2b945-84b0-469e-be92-94f85bd0a69f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{estruturaOrigem.nomeCompleto}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="105">
+			<staticText>
+				<reportElement x="5" y="15" width="545" height="90" uuid="44a20639-9a63-4dac-8059-edbd36c5d12d"/>
+				<textElement textAlignment="Justified"/>
+				<text><![CDATA[Termo de Responsabilidade
+01. O Escoltante se responsabiliza integralmente, pela saída e retorno do interno acima citado, bem como pela conduta deste local indicado.
+02. O interno deverá ser conduzido somente ao local referido e para finalidade supracitada.
+03. O Escoltante deverá estar atento à sua missão e não se afastar do interno, INCLUSIVE NO AMBULATORIO MÉDICO, e dispensar maior atenção quanto estiver no meio do aglomerado de pessoas, uma vez que o interno se encontra sob sua responsabilidade.]]></text>
+			</staticText>
+		</band>
+		<band height="115">
+			<staticText>
+				<reportElement x="5" y="45" width="545" height="20" uuid="83552255-a8b5-4140-b69a-256a23f9e5f1"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<text><![CDATA[Escoltante: ____________________________________  Matrícula: ______________  Assinatura: __________________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="10" width="545" height="20" uuid="30df8dfe-2758-4593-99e3-4b81355ff004"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<text><![CDATA[Escoltante: ____________________________________  Matrícula: ______________  Assinatura: __________________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="80" width="545" height="20" uuid="e758238f-2944-4e28-854a-a7773d1114c2"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<text><![CDATA[Escoltante: ____________________________________  Matrícula: ______________  Assinatura: __________________]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="51" splitType="Stretch">
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
+				<subreportParameter name="PAGINA">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EMISSOR">
+					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_PAGINAS">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="435" y="13" width="80" height="20" uuid="21949555-196a-4d34-89dd-e4b9f2f2f2af">
+					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="13" width="40" height="20" uuid="18471924-0526-4b68-acd6-512add5df44e">
+					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="29"/>
+	</summary>
+</jasperReport>

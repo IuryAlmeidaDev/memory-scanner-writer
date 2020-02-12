@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+	<h:form>
+		<p:panelMenu>
+		 <p:submenu label="Tabelas Auxiliares" rendered="#{securityUtil.exibeCategoriaMenu('TabelasAuxiliares')}">
+				<p:menuitem value="Categoria" outcome="pretty:ListarCategoria" icon="fa fa-list" rendered="#{securityUtil.possuiPermissao('ListarCategoria')}"/>
+				<p:menuitem value="Cargo" outcome="pretty:ListarCargo" icon="fa fa-cog" rendered="#{securityUtil.possuiPermissao('ListarCargo')}" />
+				<p:menuitem value="Função" outcome="pretty:ListarFuncao" icon="fa fa-cogs" rendered="#{securityUtil.possuiPermissao('ListarFuncao')}" />
+				<p:menuitem value="Crime" outcome="pretty:ListarCrime" icon="fa fa-book" rendered="#{securityUtil.possuiPermissao('ListarCrime')}" />
+				<p:menuitem value="Órgão" outcome="pretty:ListarOrgao" icon="fa fa-institution" rendered="#{securityUtil.possuiPermissao('ListarOrgao')}" />		
+				<p:menuitem value="Servidor" outcome="pretty:ListarServidor" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarServidor')}"/>
+				<p:menuitem value="Pessoa" outcome="pretty:ListarPessoa" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarPessoa')}" />	
+				<p:menuitem value="Estabelecimento" outcome="pretty:ListarEstabelecimento" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarEstabelecimento')}"/>
+				<p:menuitem value="Unidade Prisional" outcome="pretty:ListarUnidade" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarUnidade')}"/>	
+			</p:submenu>
+			
+			<p:submenu label="Recuperando" rendered="#{securityUtil.exibeCategoriaMenu('Recuperando')}">
+				<p:menuitem value="Entrada" outcome="pretty:ListarRecuperando" icon="fa fa-male" rendered="#{securityUtil.possuiPermissao('ListarRecuperando')}" />				
+			</p:submenu>
+			
+			<p:submenu label="Movimentações" rendered="#{securityUtil.exibeCategoriaMenu('Movimentacoes')}">
+				<p:menuitem value="Pedido de Trânsito" outcome="pretty:ListarPedidoTransito" icon="fa fa-file" rendered="#{securityUtil.possuiPermissao('ListarPedidoTransito')}"/>
+				<p:menuitem value="Movimentação Interna" outcome="pretty:ListarMovimentacaoInterna" icon="fa fa-retweet" rendered="#{securityUtil.possuiPermissao('ListarMovimentacaoInterna')}"/>
+				<p:menuitem value="Movimentação Externa" outcome="pretty:ListarMovimentacaoExterna" icon="fa fa-compress" rendered="#{securityUtil.possuiPermissao('ListarMovimentacaoExterna')}"/>
+				<p:menuitem value="Remanejamento" outcome="pretty:ListarRemanejamento" icon="fa fa-pause" rendered="#{securityUtil.possuiPermissao('ListarRemanejamento')}"/>
+				<p:menuitem value="Transferência" outcome="pretty:ListarTransferencia" icon="fa fa-random" rendered="#{securityUtil.possuiPermissao('ListarTransferencia')}"/>
+				<p:menuitem value="Receber Transferência" outcome="pretty:ListarReceberTransferencia"  icon="fa fa-sign-in" rendered="#{securityUtil.possuiPermissao('ListarReceberTransferencia')}"/>
+			</p:submenu>
+			
+			<p:submenu label="Auditoria" rendered="#{securityUtil.exibeCategoriaMenu('Auditoria')}">
+				<p:menuitem value="Logs" outcome="pretty:ListarLog" icon="fa fa-file-text-o" rendered="#{securityUtil.possuiPermissao('ListarLog')}"/>
+			</p:submenu>
+			
+			<p:submenu label="Controle de Acesso" rendered="#{securityUtil.exibeCategoriaMenu('ControleDeAcesso')}">
+				<p:menuitem value="Perfil" outcome="pretty:ListarPerfil" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarPerfil')}"/>
+				<p:menuitem value="Permissão" outcome="pretty:ListarPermissao" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarPermissao')}"/>
+				<p:menuitem value="Usuário" outcome="pretty:ListarUsuario" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarUsuario')}" />
+			</p:submenu>
+			
+			<p:submenu label="Usuário">
+				<p:menuitem value="Alterar Senha" outcome="pretty:AlterarSenha" icon="ui-icon-gear"/>
+				<p:menuitem value="Alterar Unidade" outcome="pretty:SelecionarUnidade" icon="ui-icon-gear"/>
+				<p:menuitem value="Instaladores Bio" outcome="pretty:Instaladores" icon="ui-icon-disk"/>
+				<p:menuitem value="Sair" action="#{loginBean.logout()}" icon="ui-icon-power" />
+			</p:submenu>
+		</p:panelMenu>
+	</h:form>
+</h:body>
+</html>

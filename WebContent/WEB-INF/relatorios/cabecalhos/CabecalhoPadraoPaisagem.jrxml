@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CabecalhoPadraoPaisagem" pageWidth="802" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="3.3000000000000003"/>
+	<property name="ireport.x" value="1602"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<pageHeader>
+		<band height="106" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="63" width="802" height="1" forecolor="#666666" uuid="d90cd059-bf76-44cb-b072-d2eadcb83641"/>
+			</line>
+			<staticText>
+				<reportElement x="506" y="7" width="290" height="20" uuid="3b47395a-312f-4297-89c8-3f3294819538"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SIGEPEN - Sistema de Gestão Penitenciária de Mato Grosso]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" isUsingCache="false" evaluationTime="Report">
+				<reportElement x="-16" y="-20" width="245" height="97" uuid="6ca3f86c-9205-4d04-979e-ff74b082e364"/>
+				<imageExpression><![CDATA["imagens/sejudh.png"]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<reportElement x="491" y="26" width="305" height="46" uuid="027493f4-862f-40e5-aa62-b165905a1525"/>
+				<textElement textAlignment="Right" markup="html">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Unidade: </b>" + $P{UNIDADE_LOGADA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="73" width="842" height="20" uuid="0c7f9214-faeb-4ad4-b25b-90365d6aeefd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

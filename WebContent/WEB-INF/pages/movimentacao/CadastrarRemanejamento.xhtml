@@ -1,0 +1,99 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+	
+		<h3>#{remanejamentoBean.tituloPagina} Remanejamento</h3>
+			<h:form id="formRem">
+				<p:panel header="Nº Remanejamento:  #{remanejamentoBean.remanejamento.id}"
+				footer="Cadastrado por: #{remanejamentoBean.remanejamento.autorRegistro.usuario} em #{remanejamentoBean.remanejamento.autorRegistro.data} | Alterado por: #{remanejamentoBean.remanejamento.autorUltimaAlteracao.usuario} em #{remanejamentoBean.remanejamento.autorUltimaAlteracao.data}">
+				   
+				   <sgp:formOutputLabel labelValue="Situação do Remanejamento" value="#{remanejamentoBean.remanejamento.status.descricao}" />		
+				  
+				  <sgp:formCalendar 
+						labelValue="Data Entrada"
+						value="#{remanejamentoBean.remanejamento.dataInicio}"
+						display="text" 
+						dataMaxima="#{remanejamentoBean.dataMaxima}"
+						validationRequired="true"
+						pattern="dd/MM/yyyy HH:mm" 
+						disabled="#{remanejamentoBean.isVisualizacao}"/>						
+										  
+				  
+				   <sgp:formInputTextarea id="obs" 
+						labelValue="Observação"
+						value="#{remanejamentoBean.remanejamento.observacao}" 
+						validationRequired="true"
+						disabled="#{remanejamentoBean.isVisualizacao}"
+						rows="5" columns="100"
+						maxlength="250" autoResize="true"
+						size="#{remanejamentoBean.remanejamento.observacao.length()+5}" 
+						display="text" />		
+						
+						<br/><br/><br/><br/><br/><br/><br/><br/>
+						
+					<p:panel>
+				   	<h4>Recuperando</h4>
+				   
+						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{remanejamentoBean.abrirDialogPedido}" 
+							rendered="#{securityUtil.possuiPermissao('CadastrarRemanejamento') and !remanejamentoBean.isVisualizacao}">
+							<p:ajax event="dialogReturn" listener="#{remanejamentoBean.associarPedido}" update=":formRem:recuperando" />
+						</p:commandButton>		
+					<br />
+				    <br />	   
+						<h:panelGroup id="recuperando" >
+							<sgp:formOutputLabel labelValue="Matrícula" value="#{remanejamentoBean.remanejamento.pedido.recuperando.id}" />
+							<sgp:formOutputLabel labelValue="Nome" value="#{remanejamentoBean.remanejamento.pedido.recuperando.pessoa.nome}" />
+							<sgp:formOutputLabel labelValue="Unidade Origem" value="#{remanejamentoBean.remanejamento.pedido.unidadeOrigem.nome}" />
+						</h:panelGroup>	
+						</p:panel>
+						<br/>	
+						
+						<h:panelGroup id="destino" >
+					<p:commandButton style="margin-top: -5px" icon="ui-icon ui-icon-plus" immediate="true" actionListener="#{remanejamentoBean.abrirDialogEstrutura}"
+					rendered="#{!remanejamentoBean.isVisualizacao}">
+						<p:ajax event="dialogReturn" listener="#{remanejamentoBean.associarEstrutura}" update=":formRem:destino" />
+					</p:commandButton>
+					<sgp:formOutputLabel labelValue="Estrutura (Cela)" value="#{remanejamentoBean.remanejamento.estruturaDestino.nomeCompleto}" />
+					</h:panelGroup>
+				
+						
+						<br/>
+						<br/>
+						<p:commandButton icon="fa fa-camera" value="Adicionar Foto" immediate="true" actionListener="#{remanejamentoBean.abrirDialogFoto}" rendered="#{!remanejamentoBean.isVisualizacao}">
+								<p:ajax event="dialogReturn" listener="#{remanejamentoBean.associarFoto}" update=":formRem:foto" />
+							</p:commandButton>	
+							
+							<p:dataGrid id="foto" layout="tabular" style="width: 188px" columns="1" rows="1" value="#{remanejamentoBean.remanejamento.foto}" emptyMessage="Sem foto de frente." var="f">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{f.imagem.id}" />
+								</p:graphicImage>
+							</p:dataGrid>										
+					
+						<br />	
+
+				
+					<p:commandButton action="#{remanejamentoBean.salvar()}" value="Salvar" icon="fa fa-play" title="Iniciar" update="@form" 
+						rendered="#{securityUtil.possuiPermissao('CadastrarRemanejamento') and !remanejamentoBean.isVisualizacao}">
+						 		<p:confirm header="Confirmação" message="Confirma a entrada do Recuperando?" icon="ui-icon-alert" />
+					</p:commandButton>				
+					
+					<p:button outcome="pretty:ListarRemanejamento" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+			</h:form>			
+
+	</ui:define>
+</ui:composition>

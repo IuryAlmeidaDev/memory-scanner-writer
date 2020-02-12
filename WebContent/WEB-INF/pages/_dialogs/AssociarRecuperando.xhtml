@@ -1,0 +1,76 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Selecionar Recuperando</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Recuperando" />
+				<sgp:formInputText id="nome" labelValue="Nome"  size="40" value="#{associarRecuperandoBean.filtro.nome}" />
+				
+				<sgp:formInputText id="mae" labelValue="Nome da Mãe" size="40" value="#{associarRecuperandoBean.filtro.nomeMae}"/>				
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+			</p:panel>
+		</h:form>	
+
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="rec" value="#{associarRecuperandoBean.recuperandos}" rows="5" paginator="true" paginatorPosition="bottom" lazy="true" 
+				sortBy="#{rec.id}" emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
+				
+				<p:column width="30" sortBy="#{rec.situacaoCadastro}">
+					<p:graphicImage id="situacao" name="#{(rec.situacaoCadastro ? 'green.png' : 'red.png')}" library="icons"/>
+					<p:tooltip for="situacao">
+						<p:row rendered="#{rec.situacaoCadastro}">Cadastro Completo</p:row>
+						<p:row rendered="#{!rec.situacaoCadastro}">Cadastro Incompleto: <br/></p:row>
+						<p:row rendered="#{rec.temTatuagem and !rec.temFotoTatuagem}">- Falta foto da tatuagem;<br/></p:row>
+						<p:row rendered="#{!rec.temFotoFrente}">- Falta foto de frente;<br/></p:row>
+						<p:row rendered="#{!rec.temFotoPerfil}">- Falta foto de perfil;<br/></p:row>
+						<p:row rendered="#{!rec.temFotoCorpoInteiro}">- Falta foto do corpo inteiro;<br/></p:row>
+						<p:row rendered="#{!rec.vidaSocialCompleta}">- Falta aba vida social;<br/></p:row>
+						<p:row rendered="#{!rec.temParente}">- Falta aba parentes;<br/></p:row>
+					</p:tooltip>
+				</p:column>
+				
+				<p:column headerText="Matr." sortBy="#{rec.id}" width="80">
+					<h:outputText value="#{rec.id}" />
+				</p:column>
+
+				<p:column headerText="Nome" sortBy="#{rec.nome}">
+					<h:outputText value="#{rec.nome}" />
+				</p:column>
+				
+				<p:column headerText="Unidade" sortBy="#{rec.unidade}">
+					<h:outputText value="#{rec.unidade}" />
+				</p:column>				
+				
+				<p:column headerText="Perículosidade" width="150" sortBy="#{rec.periculosidade}" style="background:#{associarRecuperandoBean.corPeric(rec.periculosidade)}">
+					<h:outputText value="#{rec.periculosidade}" />
+				</p:column>			
+				
+				<p:column width="50">
+					<center>
+						<p:commandButton title="Selecionar" icon="ui-icon-check" actionListener="#{associarRecuperandoBean.selecionarRecuperando(rec)}"/>
+					</center>
+				</p:column>
+			</p:dataTable>
+				
+					
+			<div style="text-align: center">
+				<br/>
+				<p:commandButton value="Fechar" icon="ui-icon-close" actionListener="#{associarRecuperandoBean.fecharDialog}" />
+			</div>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

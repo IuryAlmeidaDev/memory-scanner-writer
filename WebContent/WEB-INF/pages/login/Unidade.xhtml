@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite"
+    template="/WEB-INF/pages/_templates/principal.xhtml">
+
+    <ui:define name="conteudo">
+        <center>
+            <h:form id="unidade">
+    
+                <p:panel id="basic" header="Selecione uma unidade para acessar" style="margin-top:20px; width:650px;" styleClass="ui-tds-panel-conteudo">
+                
+                	<sgp:formSelectOneMenu
+						id="unidade"
+						labelValue="Unidade"
+						value="#{loginBean.unidadeSelecionada}" 
+						itemsValue="#{loginBean.unidades}" 
+						itemValue="#{item}" 
+						itemLabel="#{item.nome}" 
+						temSelecione="true"
+						requiredMessage="*"
+						display="text"
+						validationRequired="true" 
+						converter="SimpleEntityConverter"/>
+                        
+                    <br/>
+                    <br/>
+                    <p:commandButton
+                    id="autenticador"
+                    action="#{loginBean.setarUnidade}"
+                    value="Acessar"
+                    update="@form"
+                    icon="ui-icon-key"/>
+                </p:panel>
+            </h:form>
+        </center>
+    </ui:define>
+</ui:composition>

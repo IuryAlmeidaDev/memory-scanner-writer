@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Contato</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="contatoForm">
+			<p:panel>		
+				<sgp:formInputText 
+					id="nomeContato"
+					labelValue="Nome"
+					validationRequired="true"
+					value="#{associarContatoBean.contato.nome}"
+					size="50"
+					display="text"
+					requiredMessage="*"
+					maxlength="80"/>
+					
+				<sgp:formSelectOneMenu
+					id="tipo"
+					labelValue="Tipo"
+					value="#{associarContatoBean.contato.tipoContato}" 
+					itemsValue="#{comboHelperBean.tipoContato}"
+					itemValue="#{item}" 
+					itemLabel="#{item.descricao}"
+					validationRequired="true"
+					temSelecione="true" >
+						<f:ajax event="change" render="contatoForm:grupo" />
+				</sgp:formSelectOneMenu>									
+				<h:panelGroup id="grupo">	
+					<sgp:formInputMask 
+						id="telefone"
+						labelValue="Número"
+						value="#{associarContatoBean.telefone}"
+						validationRequired="true"						
+						mask="(99) 9999-9999?9"										
+						display="text"
+						rendered="#{associarContatoBean.contato.tipoContato != null and !associarContatoBean.contato.tipoContato.descricao.equalsIgnoreCase('Email')}"/>
+						
+					<sgp:formInputText
+						id="email"
+						labelValue="Email"
+						value="#{associarContatoBean.email}"
+						validationRequired="true"						
+						maxlength="80"
+						display="text"					
+						validatorId="emailValidator"
+						size="50"
+						permiteCaracterEspecial="true"
+						rendered="#{associarContatoBean.contato.tipoContato != null and associarContatoBean.contato.tipoContato.descricao.equalsIgnoreCase('Email')}"/>
+				</h:panelGroup>							
+				<sgp:formInputText
+					id="observacao"					
+					labelValue="Observação"
+					value="#{associarContatoBean.contato.observacao}"
+					size="50"
+					maxlength="250"/>
+					<br/>
+					<br/>
+				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form" action="#{associarContatoBean.incluirContato()}" />
+				<p:commandButton value="Fechar" icon="ui-icon-close" immediate="true" actionListener="#{associarContatoBean.fecharDialog}" />
+				
+				<br/>
+			</p:panel>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

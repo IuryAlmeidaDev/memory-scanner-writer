@@ -1,0 +1,258 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://sejudh.mt.gov.br/components">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+	
+	<ui:define name="head">
+		<title>Informações Pessoais</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="formDados">
+			<p:wizard id="wizard" widgetVar="wizard" showNavBar="false" flowListener="#{preCadastroPessoaBean.onFlowProcess}">
+				<p:tab id="tabDados" title="Dados">
+					<p:panel>
+						<sgp:formInputText display="text" requiredMessage="*" id="nomePessoa" labelValue="Nome"
+							value="#{preCadastroPessoaBean.pessoa.nome}" validationRequired="true"
+							size="40" disabled="#{preCadastroPessoaBean.isVisualizacao}" maxlength="80" />
+		
+						<sgp:formInputText display="text" requiredMessage="*" id="nomeMae"
+							labelValue="Nome da Mãe" value="#{preCadastroPessoaBean.pessoa.nomeMae}"
+							validationRequired="true" size="40" maxlength="80"
+							disabled="#{preCadastroPessoaBean.isVisualizacao}" />
+							
+						<sgp:formInputText display="text" id="nomePai"
+							labelValue="Nome do Pai" value="#{preCadastroPessoaBean.pessoa.nomePai}"
+							 size="40" maxlength="80" disabled="#{preCadastroPessoaBean.isVisualizacao}" />
+		
+						<sgp:formCalendar display="text" requiredMessage="*" labelValue="Nascimento"
+							value="#{preCadastroPessoaBean.pessoa.dataNascimento}" dataMaxima="#{comboHelperBean.maxDate}"
+							validationRequired="true" disabled="#{preCadastroPessoaBean.isVisualizacao}" />
+							
+						<sgp:formSelectOneMenu display="text" requiredMessage="*" id="nacionalidade"
+							labelValue="Nacionalidade" itemValue="#{item}" temSelecione="true"
+							itemLabel="#{item.descricao}" itemsValue="#{comboHelperBean.nacionalidades}"
+							value="#{preCadastroPessoaBean.pessoa.nacionalidade}" filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+							converter="SimpleEntityConverter" validationRequired="true" disabled="#{preCadastroPessoaBean.isVisualizacao}">
+							<f:ajax event="change" listener="#{preCadastroPessoaBean.alterarNacionalidade}" render=":formDados:pais:input :formDados:estado:input :formDados:naturalidade:input"/>
+						</sgp:formSelectOneMenu>
+		
+						<sgp:formSelectOneMenu display="text" requiredMessage="*" id="pais"
+							labelValue="País de Origem" itemValue="#{item}" temSelecione="true"
+							itemLabel="#{item.nome}" itemsValue="#{comboHelperBean.paises}"
+							value="#{preCadastroPessoaBean.pessoa.pais}" filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+							converter="SimpleEntityConverter" validationRequired="true" disabled="#{preCadastroPessoaBean.isVisualizacao or !preCadastroPessoaBean.pessoaEhEstrangeira()}">
+							<f:ajax event="change" render=":formDados:estado:input :formDados:naturalidade:input" />
+						</sgp:formSelectOneMenu>
+		
+						<sgp:formSelectOneMenu display="text" requiredMessage="*" id="estado"
+							labelValue="Estado" itemValue="#{item}" itemLabel="#{item.nome}"
+							temSelecione="true" disabled="#{preCadastroPessoaBean.isVisualizacao or preCadastroPessoaBean.pessoaEhEstrangeira()}"
+							itemsValue="#{comboHelperBean.estados}"
+							value="#{preCadastroPessoaBean.estado}" filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+							converter="EstadoConverter" validationRequired="true">
+							<f:ajax event="change" listener="#{preCadastroPessoaBean.listarCidades}" render=":formDados:naturalidade:input" />
+						</sgp:formSelectOneMenu>
+		
+						<sgp:formSelectOneMenu display="text" requiredMessage="*" id="naturalidade"
+							labelValue="Naturalidade" itemValue="#{item}" itemLabel="#{item.nome}"
+							temSelecione="true" disabled="#{preCadastroPessoaBean.isVisualizacao or preCadastroPessoaBean.pessoaEhEstrangeira()}"
+							itemsValue="#{preCadastroPessoaBean.cidades}"
+							value="#{preCadastroPessoaBean.pessoa.naturalidade}" filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+							converter="SimpleEntityConverter" validationRequired="true" />
+							
+						<sgp:formSelectOneMenu display="text" requiredMessage="*" labelValue="Sexo" itemValue="#{item}" temSelecione="true"
+							value="#{preCadastroPessoaBean.pessoa.sexo}" itemsValue="#{comboHelperBean.sexos}" validationRequired="true"
+							itemLabel="#{item.descricao}" disabled="#{preCadastroPessoaBean.isVisualizacao}" />
+						<br />
+						<br />
+					</p:panel>
+				</p:tab>
+				
+				<p:tab id="tabDocumentos" title="Documentos">
+					<p:panel>
+						<p:commandButton title="Adicionar Documento" icon="ui-icon-plus" value="Adicionar" action="#{preCadastroPessoaBean.novoDocumento()}" 
+							oncomplete="PF('novoDocumento').show()"  update=":formDialog" process="@this" disabled="#{preCadastroPessoaBean.isVisualizacao}"/>
+						<br/>
+						<br/>
+						
+						<p:dataTable id="documentos" var="doc" emptyMessage="Nenhum documento adicionado." value="#{preCadastroPessoaBean.pessoa.documentos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{doc.id}">
+							<p:column headerText="Tipo" width="124">
+								<h:outputText id="tipoDocumento" value="#{facesUtil.subString(doc.tipoDocumento.descricao, 0, 15)}" />
+								<p:tooltip for="tipoDocumento" value="#{doc.tipoDocumento.descricao}" />
+							</p:column>
+							<p:column headerText="Número" width="135">
+								<h:outputText value="#{doc.numero}"/>
+							</p:column>
+							<p:column headerText="Descrição" width="136">
+								<h:outputText id="descricao" value="#{facesUtil.subString(doc.descricao, 0, 18)}" />
+								<p:tooltip for="descricao" value="#{doc.descricao}" />
+							</p:column>
+							<p:column headerText="Emissão" width="68">
+								<h:outputText value="#{doc.dataEmissao}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Validade" width="68">
+								<h:outputText value="#{doc.dataValidade}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column width="60">
+								<center>
+									<p:commandButton title="Alterar Documento" icon="ui-icon-pencil" action="#{preCadastroPessoaBean.alterarDocumento(doc)}" 
+										oncomplete="PF('novoDocumento').show()"  update=":formDialog" process="@this" disabled="#{preCadastroPessoaBean.isVisualizacao}"/>							
+									<p:commandButton action="#{preCadastroPessoaBean.excluirDocumento(doc)}" immediate="true" icon="ui-icon-trash" title="Excluir" rendered="#{!preCadastroPessoaBean.isVisualizacao}" update=":formDados:documentos">
+								 		<p:confirm header="Confirmação" message="Deseja excluir o documento?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+						
+						<p:confirmDialog global="true">
+							<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+						</p:confirmDialog>
+						
+						<br/>
+					</p:panel>
+				</p:tab>
+				
+				<p:tab id="tabEnderecos" title="Endereços">
+					<p:panel>
+						<p:commandButton title="Adicionar Endereço" icon="ui-icon-plus" value="Adicionar" action="#{preCadastroPessoaBean.novoEndereco()}" 
+							oncomplete="PF('novoEndereco').show()"  update=":enderecoForm" process="@this" disabled="#{preCadastroPessoaBean.isVisualizacao}"/>
+							
+						<br/>
+						<br/>
+						<p:dataTable id="enderecos" var="endereco" emptyMessage="Nenhum endereço adicionado." value="#{preCadastroPessoaBean.pessoa.enderecos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{endereco.id}">
+							<p:column headerText="Logradouro">
+								<h:outputText id="logradouro" value="#{facesUtil.subString(endereco.logradouro, 0, 24)}" />
+								<p:tooltip for="logradouro" value="#{endereco.logradouro}" />
+							</p:column>
+							<p:column headerText="Nº" width="30">
+								<h:outputText value="#{endereco.numero}"/>
+							</p:column>
+							<p:column headerText="Bairro" width="130">
+								<h:outputText id="bairro" value="#{facesUtil.subString(endereco.bairro, 0, 15)}" />
+								<p:tooltip for="bairro" value="#{endereco.bairro}" />
+							</p:column>
+							<p:column headerText="Complemento" width="120">
+								<h:outputText id="complemento" value="#{facesUtil.subString(endereco.complemento, 0, 15)}" />
+								<p:tooltip for="complemento" value="#{endereco.complemento}" />
+							</p:column>
+							<p:column headerText="Cidade" width="120">
+								<h:outputText id="cidade" value="#{facesUtil.subString(endereco.cidade.nome, 0, 16)}" />
+								<p:tooltip for="cidade" value="#{endereco.cidade.nome}" />
+							</p:column>
+							<p:column headerText="UF" width="20">
+								<h:outputText value="#{endereco.cidade.estado.uf}" />
+							</p:column>
+							<p:column width="60">
+								<center>
+									<p:commandButton title="Alterar Endereço" icon="ui-icon-pencil" action="#{preCadastroPessoaBean.alterarEndereco(endereco)}" 
+										oncomplete="PF('novoEndereco').show()"  update=":enderecoForm" process="@this" disabled="#{preCadastroPessoaBean.isVisualizacao}"/>
+									<p:commandButton action="#{preCadastroPessoaBean.excluirEndereco(endereco)}" immediate="true" icon="ui-icon-trash" title="Excluir" rendered="#{!preCadastroPessoaBean.isVisualizacao}" update=":formDados:enderecos">
+								 		<p:confirm header="Confirmação" message="Deseja excluir o endereço?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+
+						<p:confirmDialog global="true">
+							<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+						</p:confirmDialog>
+						
+						<br/>
+					</p:panel>
+				</p:tab>
+			</p:wizard>
+		</h:form>
+		
+		<h:form id="formBotoes">
+			<div style="width: 100%">
+				<div style="float: left">
+					<p:commandButton value="Fechar" icon="ui-icon-close" actionListener="#{preCadastroPessoaBean.fecharDialog}" />
+				</div>
+				
+				<div style="text-align: right">
+					<p:commandButton id="btnBack" icon="ui-icon-arrowthick-1-w" value="Voltar" onclick="PF('wizard').back();" rendered="false"/>
+					<p:commandButton id="btnNext" icon="ui-icon-arrowthick-1-e" value="Avançar" onclick="PF('wizard').next();"/>
+					<p:commandButton id="btnContinue" value="Continuar" action="#{preCadastroPessoaBean.cadastrarPessoa()}" icon="ui-icon-disk" rendered="false" />
+				</div>
+			</div>
+		</h:form>
+			
+		<p:dialog id="dialog" header="Novo Documento" showEffect="fade" widgetVar="novoDocumento" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+			<h:form id="formDialog">
+				<p:panel>
+					<sgp:formSelectOneMenu id="tipo" labelValue="Tipo" value="#{preCadastroPessoaBean.documento.tipoDocumento}" itemsValue="#{comboHelperBean.tipoDocumento}" itemValue="#{item}" 
+						itemLabel="#{item.descricao}" validationRequired="true"  requiredMessage="*" converter="SimpleEntityConverter" temSelecione="true" display="text" disabled="#{preCadastroPessoaBean.documento.id>0}"/>
+					 	
+					<sgp:formInputText id="numero" labelValue="Número" validationRequired="true" value="#{preCadastroPessoaBean.documento.numero}" size="30" display="text" maxlength="20" 
+						disabled="#{preCadastroPessoaBean.documento.id>0}" requiredMessage="*"/>
+					
+					<sgp:formCalendar labelValue="Emissão" value="#{preCadastroPessoaBean.documento.dataEmissao}" display="text" />
+						
+					<sgp:formCalendar labelValue="Validade" value="#{preCadastroPessoaBean.documento.dataValidade}" display="text"  />
+				
+					<sgp:formInputTextarea id="descDoc" labelValue="Observação" value="#{preCadastroPessoaBean.documento.descricao}" rows="5" columns="50" maxlength="250" autoResize="false"
+						size="#{preCadastroPessoaBean.documento.descricao.length()+5}" display="text"/>
+						
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form :formDados:documentos" action="#{preCadastroPessoaBean.incluirDocumento()}" />
+					<p:commandButton value="Fechar" onclick="PF('novoDocumento').hide()" process="@this"/>
+					<br/>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="dialogEnd" header="Novo Endereço" showEffect="fade" widgetVar="novoEndereco" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+			<h:form id="enderecoForm">
+				<p:panel>
+					<sgp:formSelectOneMenu id="estado" labelValue="Estado" itemsValue="#{comboHelperBean.estados}" itemValue="#{item}" itemLabel="#{item.nome}"
+						value="#{preCadastroPessoaBean.estadoEndereco}" filter="true" display="text" temSelecione="true"
+						converter="EstadoConverter" validationRequired="true" filterMatchMode="custom" filterFunction="removeAcento">
+							<f:ajax event="change" listener="#{preCadastroPessoaBean.listarCidadesEndereco}" render="enderecoForm:cidade:input" />
+					</sgp:formSelectOneMenu>
+		
+					<sgp:formSelectOneMenu id="cidade" labelValue="Cidade" itemsValue="#{preCadastroPessoaBean.cidadesEndereco}" itemValue="#{item}" itemLabel="#{item.nome}"
+						value="#{preCadastroPessoaBean.endereco.cidade}" validationRequired="true" temSelecione="true" filter="true"
+						converter="SimpleEntityConverter" display="text" filterMatchMode="custom" filterFunction="removeAcento" />
+								
+					<sgp:formInputText id="logradouro" labelValue="Logradouro" value="#{preCadastroPessoaBean.endereco.logradouro}" maxlength="100" validationRequired="true"
+						display="text" size="40" requiredMessage="*"/>
+						
+					<sgp:formInputText id="numero" labelValue="Número" value="#{preCadastroPessoaBean.endereco.numero}" maxlength="10" display="text" requiredMessage="*"/>
+				
+					<sgp:formInputText id="complemento" labelValue="Complemento" value="#{preCadastroPessoaBean.endereco.complemento}" maxlength="250" />
+				
+					<sgp:formInputText id="bairro" labelValue="Bairro" value="#{preCadastroPessoaBean.endereco.bairro}" maxlength="100" validationRequired="true"
+						display="text" size="40" requiredMessage="*"/>
+				
+					<sgp:formInputMask id="cep" labelValue="CEP" value="#{preCadastroPessoaBean.endereco.cep}" mask="99.999-999" converter="CepConverter" display="text" maxlength="8"/>
+						<br/>
+						<br/>
+						<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form :formDados:enderecos" action="#{preCadastroPessoaBean.incluirEndereco()}" />
+				 		
+					<p:commandButton value="Fechar" onclick="PF('novoEndereco').hide();" process="@this"/>
+					<br/>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

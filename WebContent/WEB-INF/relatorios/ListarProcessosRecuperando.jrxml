@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarProcessosRecuperando" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.996500000000001"/>
+	<property name="ireport.x" value="18"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="processos" class="java.util.Collection"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="numeroProcesso" class="java.lang.String"/>
+	<field name="regimeAtual.descricao" class="java.lang.String"/>
+	<field name="condicaoAtual.descricao" class="java.lang.String"/>
+	<field name="statusProcesso.descricao" class="java.lang.String"/>
+	<field name="numeroInquerito" class="java.lang.String"/>
+	<field name="numeroOficio" class="java.lang.String"/>
+	<field name="crimes" class="java.util.Collection"/>
+	<field name="ultimoAdicionado.dataSoltura" class="java.util.Date"/>
+	<field name="ultimoAdicionado.modalidade.descricao" class="java.lang.String"/>
+	<group name="Processo">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+		<groupHeader>
+			<band height="16" splitType="Prevent">
+				<rectangle>
+					<reportElement x="0" y="0" width="555" height="16" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="9eb0231c-5e27-438d-ae03-5fc3f690dc1a"/>
+					<graphicElement>
+						<pen lineWidth="1.0"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="210" y="0" width="80" height="16" uuid="0078ec7f-01d6-455f-9de9-df0b932471a4"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Regime Atual]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="290" y="0" width="80" height="16" uuid="1016054a-107c-4021-b00b-34d92ed2c08d"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Condição Atual]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="0" width="69" height="16" uuid="2f5cf0be-0020-4b95-a73c-56c456b137a9"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nº Processo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="69" y="0" width="67" height="16" uuid="01d91284-e794-4004-b1b1-aa243b5ccabe"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nº Inquérito]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="136" y="0" width="74" height="16" uuid="f691cbf1-04db-4d5c-946f-fc13a5024732"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nº Ofício]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="490" y="0" width="65" height="16" uuid="a16a1d1c-0629-404c-94a0-7da0a57be39a"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sit. Processo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="0" width="60" height="16" uuid="2d8c8d0e-86d9-4984-8427-46bb30a14a7e"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Modalidade]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="430" y="0" width="60" height="16" uuid="c6aee9fa-4270-4036-9da7-9674f71c9b92"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Data Soltura]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="32">
+				<subreport>
+					<reportElement x="75" y="0" width="480" height="32" uuid="6d025489-b4f6-43ce-b254-11fe3d6313bd"/>
+					<subreportParameter name="SUBREPORT_DIR"/>
+					<subreportParameter name="UNIDADE_LOGADA"/>
+					<subreportParameter name="EMISSOR"/>
+					<subreportParameter name="NOME_DO_RELATORIO"/>
+					<subreportParameter name="TEM_PAGINACAO"/>
+					<subreportParameter name="CABECALHO"/>
+					<subreportParameter name="RODAPE"/>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{crimes})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["ListarCrimesProcesso.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="25" splitType="Prevent">
+			<staticText>
+				<reportElement x="237" y="0" width="81" height="20" uuid="220ab512-3f44-4c01-82bb-82c62823d701"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Processo(s)]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="15" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="210" y="0" width="80" height="15" uuid="feae59c8-0fbd-41ef-ac08-9ad8a8516d1c"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{regimeAtual.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="290" y="0" width="80" height="15" uuid="a816a0b7-ea50-46ab-b5c0-d576a295cb45"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{condicaoAtual.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="69" height="15" uuid="d7a9a743-8684-43b7-bfed-3586a30b76e2"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroProcesso}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="69" y="0" width="67" height="15" uuid="bf9d5d07-8eeb-438c-b799-f41b00ac988a"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroInquerito}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="136" y="0" width="74" height="15" uuid="564b6964-8540-47b4-84dc-a6aeed309267"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroOficio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="490" y="0" width="65" height="15" uuid="14fb7ea5-8465-474b-85f8-5b189a9f84ea"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{statusProcesso.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="370" y="0" width="60" height="15" uuid="bac49bcd-d7d9-486c-b1c1-429eca0a63e9"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ultimoAdicionado.modalidade.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="430" y="0" width="60" height="15" uuid="319ef43c-6b4f-44f4-9145-1a68d1a74cbe"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ultimoAdicionado.dataSoltura}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+	
+		<h3>Permissão</h3>
+		
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+				<sgp:formInputText labelValue="Nome" value="#{permissaoBean.filtro.nome}" />
+				<sgp:formInputText labelValue="Descrição" value="#{permissaoBean.filtro.descricao}" />
+                <sgp:formSelectOneMenu
+                        labelValue="Funcionalidade"
+                        value="#{permissaoBean.filtro.funcionalidade}" 
+                        itemsValue="#{comboHelperBean.funcionalidades}"
+                        itemValue="#{item}" 
+                        itemLabel="#{item.nome}" 
+                        converter="SimpleEntityConverter"
+                        temSelecione="true" />
+
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+
+			</p:panel>
+		</h:form>
+
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="permissao" value="#{permissaoBean.permissoes}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{permissao.id}"
+				             emptyMessage="Nenhum registro encontrado.">
+					<p:column headerText="Código" style="width:100px;" sortBy="#{permissao.id}">
+						<h:outputText value="#{permissao.id}" />
+					</p:column>
+
+					<p:column headerText="Nome" sortBy="#{permissao.nome}">
+						<h:outputText value="#{permissao.nome}"/>
+					</p:column>					
+					
+					<p:column headerText="Descrição" sortBy="#{permissao.descricao}">
+						<h:outputText value="#{permissao.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Funcionalidade" sortBy="#{permissao.funcionalidade.nome}">
+						<h:outputText value="#{permissao.funcionalidade.nome}" />
+					</p:column>
+					
+					<f:facet name="footer">
+						Total de registros: #{permissaoBean.permissoes.rowCount}
+					</f:facet>
+				</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+	
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="head">
+		<title>Endereço</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="enderecoForm">
+			<p:panel>
+			<sgp:formSelectOneMenu id="estado" labelValue="Estado" itemsValue="#{comboHelperBean.estados}" itemValue="#{item}" itemLabel="#{item.nome}"
+					value="#{associarEnderecoBean.estado}" filter="true" display="text" temSelecione="true"
+					converter="EstadoConverter" validationRequired="true" filterMatchMode="custom" filterFunction="removeAcento">
+						<f:ajax event="change" listener="#{associarEnderecoBean.listaCidades}" render="enderecoForm:cidade:input" />
+				</sgp:formSelectOneMenu>
+
+				<sgp:formSelectOneMenu id="cidade" labelValue="Cidade" itemsValue="#{associarEnderecoBean.cidades}" itemValue="#{item}" itemLabel="#{item.nome}"						
+					value="#{associarEnderecoBean.endereco.cidade}" validationRequired="true" temSelecione="true" filter="true"
+					converter="SimpleEntityConverter" display="text" filterMatchMode="custom" filterFunction="removeAcento" />
+							
+				<sgp:formInputText id="logradouro" labelValue="Logradouro" value="#{associarEnderecoBean.endereco.logradouro}" maxlength="100" validationRequired="true"
+					display="text" size="40"/>
+					
+				<sgp:formInputText id="numero" labelValue="Numero" value="#{associarEnderecoBean.endereco.numero}" maxlength="10" display="text"/>
+				
+				<sgp:formInputText id="complemento" labelValue="Complemento" value="#{associarEnderecoBean.endereco.complemento}" size="40" maxlength="250"/>
+			
+				<sgp:formInputText id="bairro" labelValue="Bairro" value="#{associarEnderecoBean.endereco.bairro}" maxlength="100" validationRequired="true"
+					display="text" size="40"/>
+			
+				<sgp:formInputMask id="cep" labelValue="CEP" value="#{associarEnderecoBean.endereco.cep}" mask="99.999-999" converter="CepConverter" display="text" maxlength="8"/>
+					<br/>
+					<br/>
+				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form" action="#{associarEnderecoBean.incluirEndereco()}" />
+			 		
+				<p:commandButton value="Fechar" icon="ui-icon-close" immediate="true" actionListener="#{associarEnderecoBean.fecharDialog}" />
+				
+				<br/>
+			</p:panel>			
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

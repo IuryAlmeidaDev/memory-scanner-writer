@@ -1,0 +1,120 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		<h3>#{estabelecimentoBean.tituloPagina} Estabelecimento</h3>
+		
+			<h:form id="meuFormulario">
+				<p:panel footer="Cadastrado por: #{estabelecimentoBean.estabelecimento.autorRegistro.usuario} em #{estabelecimentoBean.estabelecimento.autorRegistro.data} | Última alteração: #{estabelecimentoBean.estabelecimento.autorUltimaAlteracao.usuario} em #{estabelecimentoBean.estabelecimento.autorUltimaAlteracao.data}">
+				<sgp:formInputText 
+					id="nomeProcedencia" labelValue="Nome"
+					value="#{estabelecimentoBean.estabelecimento.nome}" 
+					validationRequired="true"
+					disabled="#{estabelecimentoBean.isVisualizacao}" 
+					size="40"
+					display="text" 
+					maxlength="80"/>
+					
+					<sgp:formInputText 
+					id="logradouro"
+					labelValue="Logradouro"
+					value="#{estabelecimentoBean.estabelecimento.logradouro}"
+					size="40"
+					disabled="#{estabelecimentoBean.isVisualizacao}"
+					display="text"
+					validationRequired="true"
+					maxlength="100"
+					/>
+				<sgp:formInputText
+					id="numero"
+					labelValue="Número"
+					value="#{estabelecimentoBean.estabelecimento.numero}"
+					size="10"
+					disabled="#{estabelecimentoBean.isVisualizacao}"
+					maxlength="10"
+					/>
+				<sgp:formInputText 
+					id="bairro"
+					labelValue="Bairro"
+					value="#{estabelecimentoBean.estabelecimento.bairro}"
+					size="40"
+					disabled="#{estabelecimentoBean.isVisualizacao}"
+					display="text"
+					validationRequired="true"
+					maxlength="100"
+					/>	
+				<sgp:formInputMask
+					value="#{estabelecimentoBean.estabelecimento.cep}"
+					labelValue="CEP"
+					size="8"
+					mask="99.999-999"
+					maxlength="8"
+					converter="CepConverter"
+					disabled="#{estabelecimentoBean.isVisualizacao}"/>
+					
+						<sgp:formSelectOneMenu 
+								id="estado"
+								labelValue="Estado" 
+								itemValue="#{item}" 
+								itemLabel="#{item.nome}"
+								itemsValue="#{comboHelperBean.estados}" 
+								value="#{estabelecimentoBean.estado}"
+								filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+								converter="EstadoConverter"
+								validationRequired="true"
+								display="text" 
+								temSelecione="true"
+								disabled="#{estabelecimentoBean.isVisualizacao}" >
+										<f:ajax event="change" listener="#{estabelecimentoBean.listaCidades}" render="meuFormulario:cidade:input"/>
+						</sgp:formSelectOneMenu>						
+						<sgp:formSelectOneMenu 
+								id="cidade"
+								labelValue="Cidade" 
+								itemValue="#{item}" 
+								itemLabel="#{item.nome}"
+								itemsValue="#{estabelecimentoBean.cidades}" 
+								value="#{estabelecimentoBean.estabelecimento.cidade}"
+								filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+								converter="SimpleEntityConverter"
+								validationRequired="true"
+								temSelecione="true"
+								display="text" 
+								disabled="#{estabelecimentoBean.isVisualizacao}" />										
+								
+								<sgp:formSelectOneMenu id="procedencia" labelValue="É procedência?" value="#{estabelecimentoBean.estabelecimento.proced}" display="text" 
+								validationRequired="true" temSelecione="true" disabled="#{estabelecimentoBean.isVisualizacao}" >
+								<f:selectItem itemLabel="Sim" itemValue="true" />
+								<f:selectItem itemLabel="Não" itemValue="false" />
+							</sgp:formSelectOneMenu>
+								
+						<sgp:formSelectOneMenu 
+						id="status" labelValue="Status"
+						value="#{estabelecimentoBean.estabelecimento.status}"
+						itemsValue="#{comboHelperBean.status}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						disabled="#{estabelecimentoBean.isVisualizacao}" />
+					<br />
+					<br />				
+					<p:commandButton value="Salvar" 
+						action="#{estabelecimentoBean.salvar()}" 
+						update="@form" 
+						icon="ui-icon-disk" 
+						rendered="#{(securityUtil.possuiPermissao('CadastrarEstabelecimento') or securityUtil.possuiPermissao('AlterarEstabelecimento')) and !estabelecimentoBean.isVisualizacao}" />
+					<p:button outcome="pretty:ListarEstabelecimento" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1"/>
+					</p:button>
+				</p:panel>
+			</h:form>
+	</ui:define>
+</ui:composition>

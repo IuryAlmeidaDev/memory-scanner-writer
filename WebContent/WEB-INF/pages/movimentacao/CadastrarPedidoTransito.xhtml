@@ -1,0 +1,243 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+	
+		<h3>#{pedidoTransitoBean.tituloPagina} Pedido de Trânsito</h3>
+			<h:form id="formPed">
+				<p:panel header="Nº Pedido:  #{pedidoTransitoBean.pedido.id}" footer="Cadastrado por: #{pedidoTransitoBean.pedido.autorRegistro.usuario} em #{pedidoTransitoBean.pedido.autorRegistro.data} | Alterado por: #{pedidoTransitoBean.pedido.autorUltimaAlteracao.usuario} em #{pedidoTransitoBean.pedido.autorUltimaAlteracao.data}">
+
+				  	 <h4>
+						<sgp:formOutputLabel labelValue="Situação do Pedido" value="#{pedidoTransitoBean.pedido.status.descricao}" />	
+					</h4>
+					
+					<sgp:formSelectOneMenu 
+						id="tipo" labelValue="Tipo de Trânsito"
+						validationRequired="true"
+						temSelecione="true"
+						value="#{pedidoTransitoBean.pedido.tipoTransito}"
+						itemsValue="#{comboHelperBean.tipoTransito}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						disabled="#{pedidoTransitoBean.isVisualizacao}"
+						display="text" >
+							<f:ajax event="change" listener="#{pedidoTransitoBean.alterarTipoTransito}" render=":formPed:destino"/>
+						</sgp:formSelectOneMenu>
+						
+					<sgp:formSelectOneMenu 
+						id="tipoDocumentoPedidoTransito" 
+						display="text" 
+						labelValue="Tipo Documento"
+						itemValue="#{item}" 
+						temSelecione="true"
+						value="#{pedidoTransitoBean.pedido.tipoDocumentoPedidoTransito}" 
+						itemsValue="#{comboHelperBean.tipoDocumentoPedidoTransito}" 
+						itemLabel="#{item.descricao}" 
+						validationRequired="true" 
+						disabled="#{pedidoTransitoBean.isVisualizacao}">
+							<f:ajax event="change" render=":formPed:destino"/>
+						</sgp:formSelectOneMenu>
+													
+					<sgp:formInputText 
+						id="documento"
+						labelValue="Nº Documento"
+						value="#{pedidoTransitoBean.pedido.numeroDocumento}"
+						validationRequired="true"
+						disabled="#{pedidoTransitoBean.isVisualizacao}"
+						maxlength="50"
+						size="80"
+						display="text"/>
+						
+					<sgp:formCalendar display="text" labelValue="Data Documento"
+						value="#{pedidoTransitoBean.pedido.dataDocumento}" 
+						validationRequired="true" 
+						dataMaxima="#{pedidoTransitoBean.dataMinima}"
+						disabled="#{pedidoTransitoBean.isVisualizacao}" />
+
+					<sgp:formCalendar 
+						labelValue="Data Prev. Saída"
+						value="#{pedidoTransitoBean.pedido.dataPrevista}"
+						display="text" 
+						dataMinima="#{pedidoTransitoBean.dataMinima}"
+						validationRequired="true"
+						pattern="dd/MM/yyyy HH:mm" 
+						disabled="#{pedidoTransitoBean.isVisualizacao}"/>
+
+
+					<sgp:formInputTextarea id="motivo" 
+						labelValue="Motivo"
+						value="#{pedidoTransitoBean.pedido.motivo}" 
+						validationRequired="true"
+						disabled="#{pedidoTransitoBean.isVisualizacao}"
+						rows="5" columns="100"
+						maxlength="250" autoResize="true"
+						size="#{pedidoTransitoBean.pedido.motivo.length()+5}" 
+						display="text" />
+												
+						<p:panel style="margin-top:120px">
+						   	<h4>Recuperando</h4>
+						   
+								<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{pedidoTransitoBean.abrirDialogRecuperando}" 
+									rendered="#{(securityUtil.possuiPermissao('CadastrarPedidoTransito') or securityUtil.possuiPermissao('AlterarPedidoTransito')) and !pedidoTransitoBean.isVisualizacao}">
+									<p:ajax event="dialogReturn" listener="#{pedidoTransitoBean.associarRecuperando}" update=":formPed:recuperando" />
+								</p:commandButton>
+								
+								<h:panelGroup id="recuperando" >
+									<sgp:formOutputLabel labelValue="Matrícula" value="#{pedidoTransitoBean.pedido.recuperando.id}" />
+									<sgp:formOutputLabel labelValue="Nome" value="#{pedidoTransitoBean.pedido.recuperando.pessoa.nome}" />
+									<sgp:formOutputLabel labelValue="Lotação Atual" value="#{pedidoTransitoBean.pedido.estruturaOrigem.nomeCompleto}" />
+								</h:panelGroup>				
+						</p:panel>
+						
+						<br/>
+						
+					<h:panelGroup id="destino" >		
+
+						<sgp:formOutputLabel labelValue="Estrutura (Cela)" value="#{pedidoTransitoBean.pedido.estruturaDestino.nomeCompleto}" 
+							rendered="#{pedidoTransitoBean.pedido.tipoTransito != null and pedidoTransitoBean.pedido.tipoTransito.descricao.equalsIgnoreCase('Movimentação Interna')}" 
+							styleFormLabelColumn="min-width:155px"/>
+	
+						<p:commandButton 
+							style="margin-top: -5px" 
+							icon="ui-icon ui-icon-search" 
+							immediate="true" 
+							actionListener="#{pedidoTransitoBean.abrirDialogEstrutura}"
+							rendered="#{!pedidoTransitoBean.isVisualizacao and pedidoTransitoBean.pedido.tipoTransito != null and pedidoTransitoBean.pedido.tipoTransito.descricao.equalsIgnoreCase('Movimentação Interna')}">
+							<p:ajax event="dialogReturn" listener="#{pedidoTransitoBean.associarEstrutura}" update=":formPed:destino" />
+						</p:commandButton>									
+	
+	
+						
+						<sgp:formSelectOneMenu 
+							id="unidade" labelValue="Unidade de destino"
+							value="#{pedidoTransitoBean.pedido.unidadeDestino}"
+							itemsValue="#{pedidoTransitoBean.unidadesPrisionais}" 
+							itemValue="#{item}"
+							itemLabel="#{item.nome}" 
+							temSelecione="true"
+							validatorId="CnpjValidator"
+							validationRequired="true"	
+							filter="true" filterMatchMode="custom" filterFunction="removeAcento"					
+							converter="SimpleEntityConverter"		
+							display="text"				
+							disabled="#{pedidoTransitoBean.isVisualizacao}"
+							styleFormLabelColumn="min-width:155px"
+							rendered="#{pedidoTransitoBean.pedido.tipoTransito != null and pedidoTransitoBean.pedido.tipoTransito.descricao.equalsIgnoreCase('Transferência')}">
+								<f:ajax event="change" listener="#{pedidoTransitoBean.getResponsavelDestino}" render=":formPed:destino"/>
+							</sgp:formSelectOneMenu>
+														
+						<sgp:formInputText id="estabelecimento" style="vertical-align: top" 
+							labelValue="Estabelecimento" 
+							value="#{pedidoTransitoBean.pedido.estabelecimento.nome}" 
+							validationRequired="true" 
+							size="80" 
+							disabled="true" 
+							styleFormLabelColumn="min-width:155px"
+							rendered="#{pedidoTransitoBean.pedido.tipoTransito != null and pedidoTransitoBean.pedido.tipoTransito.descricao.equalsIgnoreCase('Movimentação Externa')}"/>
+							
+							<p:commandButton style="margin-top: -5px" icon="ui-icon-plus" immediate="true" actionListener="#{pedidoTransitoBean.abrirDialogEstabelecimento}"
+								rendered="#{!pedidoTransitoBean.isVisualizacao and pedidoTransitoBean.pedido.tipoTransito != null and pedidoTransitoBean.pedido.tipoTransito.descricao.equalsIgnoreCase('Movimentação Externa')}">
+								<p:ajax event="dialogReturn" listener="#{pedidoTransitoBean.associarEstabelecimento}" update=":formPed:destino" />
+							</p:commandButton>	
+						<sgp:formSelectOneMenu 
+							id="pronomeTratamento" 
+							display="text" 
+							labelValue="Pronome de Tratamento"
+							itemValue="#{item}" 
+							temSelecione="true"
+							value="#{pedidoTransitoBean.pedido.pronomeTratamento}" 
+							itemsValue="#{comboHelperBean.pronomeTratamento}" 
+							itemLabel="#{item.descricao}" 
+							validationRequired="true" 
+							styleFormLabelColumn="min-width:155px"
+							disabled="#{pedidoTransitoBean.isVisualizacao}" 
+							rendered="#{pedidoTransitoBean.pedido.tipoDocumentoPedidoTransito != null and pedidoTransitoBean.pedido.tipoDocumentoPedidoTransito.descricao.equalsIgnoreCase('Ofício')}"/>
+						
+						<sgp:formInputText 
+							id="responsavelDestino"
+							labelValue="Responsável Destino"
+							value="#{pedidoTransitoBean.pedido.responsavelDestino}"
+							validationRequired="true"
+							disabled="#{pedidoTransitoBean.isVisualizacao}"
+							maxlength="50"
+							size="80"
+							display="text"
+							styleFormLabelColumn="min-width:155px"
+							rendered="#{pedidoTransitoBean.pedido.tipoDocumentoPedidoTransito != null and pedidoTransitoBean.pedido.tipoDocumentoPedidoTransito.descricao.equalsIgnoreCase('Ofício')}"/>
+							
+						<sgp:formOutputLabel id="estado" style="vertical-align: top" 	labelValue="Estado" 
+							styleFormLabelColumn="min-width:155px"
+							value="#{pedidoTransitoBean.pedido.estabelecimento.cidade.estado.nome}" 
+							rendered="#{pedidoTransitoBean.pedido.tipoTransito != null and pedidoTransitoBean.pedido.tipoTransito.descricao.equalsIgnoreCase('Movimentação Externa')}"
+							/>
+							
+						<sgp:formOutputLabel id="cidade" 
+							styleFormLabelColumn="min-width:155px" style="vertical-align: top" 
+							labelValue="Cidade" 
+							value="#{pedidoTransitoBean.pedido.estabelecimento.cidade.nome}" 
+							rendered="#{pedidoTransitoBean.pedido.tipoTransito != null and pedidoTransitoBean.pedido.tipoTransito.descricao.equalsIgnoreCase('Movimentação Externa')}"
+							/>
+							
+						<sgp:formSelectOneMenu display="text" validationRequired="true"
+							id="tipoMovExt" labelValue="Tipo de Movimentação"
+							itemValue="#{item}" temSelecione="true"
+							value="#{pedidoTransitoBean.pedido.tipoMovimentacao}"
+							itemsValue="#{comboHelperBean.tipoHistorico}"
+							itemLabel="#{item.descricao}"
+							disabled="#{pedidoTransitoBean.isVisualizacao}"
+							converter="SimpleEntityConverter"
+							styleFormLabelColumn="min-width:155px"
+							rendered="#{pedidoTransitoBean.pedido.tipoTransito != null and pedidoTransitoBean.pedido.tipoTransito.descricao.equalsIgnoreCase('Movimentação Externa')}" />
+							
+					</h:panelGroup>
+					
+					<sgp:formOutputLabel labelValue="Autorizado por"
+						 value="#{pedidoTransitoBean.pedido.autorizador.servidor.nome}" 
+						 rendered="#{pedidoTransitoBean.pedido.dataAutorizacao != null}" />
+					
+					<sgp:formOutputLabel labelValue="Data da Autorização"
+						 value="#{pedidoTransitoBean.pedido.dataAutorizacao}" 
+						 converterData="true" rendered="#{pedidoTransitoBean.pedido.dataAutorizacao != null}" />	
+						 		
+					<sgp:formInputTextarea id="obsAutorizar" 
+						labelValue="Obs. Autorização"
+						value="#{pedidoTransitoBean.pedido.observacao}" 
+						disabled="#{pedidoTransitoBean.isVisualizacao}"
+						rows="5" columns="100"
+						maxlength="250" autoResize="true"
+						size="#{pedidoTransitoBean.pedido.observacao.length()+5}" 
+						display="text"
+						rendered="#{pedidoTransitoBean.pedido.dataAutorizacao != null}"
+						 />
+						 
+					<sgp:formOutputLabel 
+						labelValue="Data Cancelamento" 
+						value="#{pedidoTransitoBean.pedido.dataCancelamento}" 
+						converterData="true" 
+						rendered="#{pedidoTransitoBean.pedido.dataCancelamento != null}"/>
+						
+					<sgp:formOutputLabel 
+						labelValue="Resultado" 
+						value="#{pedidoTransitoBean.pedido.resultado}" 
+						rendered="#{pedidoTransitoBean.pedido.resultado != null}"/>
+					<br/><br/><br/>
+					<p:commandButton value="Salvar" action="#{pedidoTransitoBean.salvar()}" update="@form" icon="ui-icon-disk" 	rendered="#{(securityUtil.possuiPermissao('CadastrarPedidoTransito') or securityUtil.possuiPermissao('AlterarPedidoTransito')) and !pedidoTransitoBean.isVisualizacao}" />
+					<p:button outcome="pretty:ListarPedidoTransito" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+				</p:panel>
+				
+		
+			</h:form>
+	</ui:define>
+</ui:composition>

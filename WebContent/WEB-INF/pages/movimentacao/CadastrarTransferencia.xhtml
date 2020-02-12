@@ -1,0 +1,239 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>#{transferenciaBean.tituloPagina} Transferência</h3>
+			<h:form id="formTransf">
+				<p:panel header="Nº Transferência:  #{transferenciaBean.transferencia.id}"
+				footer="Cadastrado por: #{transferenciaBean.transferencia.autorRegistro.usuario} em #{transferenciaBean.transferencia.autorRegistro.data} | Alterado por: #{transferenciaBean.transferencia.autorUltimaAlteracao.usuario} em #{transferenciaBean.transferencia.autorUltimaAlteracao.data}">
+				
+					<h4>
+					<sgp:formOutputLabel labelValue="Situação da Transferência" value="#{transferenciaBean.transferencia.status.descricao}" />	
+					</h4>
+						
+					<sgp:formCalendar 
+						labelValue="Data Prevista Saída"
+						value="#{transferenciaBean.transferencia.dataPrevista}"
+						display="text" 
+						dataMinima="#{transferenciaBean.dataMinima}"
+						validationRequired="true"
+						pattern="dd/MM/yyyy HH:mm" 
+						disabled="#{transferenciaBean.isVisualizacao or transferenciaBean.isIniciar or transferenciaBean.isFinalizar}"/>	
+						
+					<sgp:formInputTextarea id="obs" 
+						labelValue="Observação"
+						value="#{transferenciaBean.transferencia.observacao}" 
+						validationRequired="true"
+						disabled="#{transferenciaBean.isVisualizacao or transferenciaBean.isIniciar or transferenciaBean.isFinalizar}"
+						rows="5" columns="100"
+						maxlength="250" autoResize="true"
+						size="#{transferenciaBean.transferencia.observacao.length()+5}" 
+						display="text" />					
+						
+				<br /> <br /> <br /> <br /> <br /> <br /> <br />	
+					
+				   	<h4>Pedidos</h4>
+				   
+						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{transferenciaBean.abrirDialogPedido}" 
+							rendered="#{(securityUtil.possuiPermissao('CadastrarTransferencia') or securityUtil.possuiPermissao('AlterarTransferencia')) and !transferenciaBean.isVisualizacao and !transferenciaBean.isIniciar and !transferenciaBean.isFinalizar}">
+							<p:ajax event="dialogReturn" listener="#{transferenciaBean.associarPedido}" update=":formTransf:pedidos" />
+						</p:commandButton>		
+				<br />
+			    <br />				
+						
+				<p:dataTable id="pedidos" var="pedido" value="#{transferenciaBean.transferencia.pedidos}" rows="10" paginator="true" paginatorPosition="bottom" paginatorAlwaysVisible="false" sortBy="#{pedido.dataPrevista}"
+				             emptyMessage="Nenhum registro encontrado.">
+				             
+				    <p:column headerText="Nº" width="60" sortBy="#{pedido.id}">
+						<h:outputText value="#{pedido.id}" />
+					</p:column>
+				             
+					<p:column headerText="Matrícula" width="120" sortBy="#{pedido.recuperando.id}">
+						<h:outputText value="#{pedido.recuperando.id}" />
+					</p:column>
+	
+					<p:column headerText="Nome" sortBy="#{pedido.recuperando.pessoa.nome}">
+						<h:outputText value="#{pedido.recuperando.pessoa.nome}" />
+					</p:column>					
+					
+					<p:column headerText="Data Prevista" sortBy="#{pedido.dataPrevista}" width="160">
+						<h:outputText value="#{pedido.dataPrevista}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Unidade Destino" sortBy="#{pedido.unidadeDestino.nome}">
+						<h:outputText value="#{pedido.unidadeDestino.nome}" />
+					</p:column>
+				
+					<p:column headerText="Status"  width="120" sortBy="#{pedido.status}">
+						<h:outputText value="#{pedido.status.descricao}" />
+					</p:column>
+				
+				<p:column headerText="Ações"  width="80">
+					<center>						
+						<p:commandButton action="#{transferenciaBean.excluirPedido(pedido)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":formTransf:pedidos"
+							rendered="#{(securityUtil.possuiPermissao('CadastrarTransferencia') or securityUtil.possuiPermissao('AlterarTransferencia')) and !transferenciaBean.isVisualizacao and !transferenciaBean.isIniciar and !transferenciaBean.isFinalizar}" >
+							<p:confirm header="Confirmação" message="Deseja excluir o pedido?" icon="ui-icon-alert" />
+						</p:commandButton>						
+						<p:commandButton title="Cancelar" icon="ui-icon-cancel"  action="#{transferenciaBean.cancelarPedido(pedido)}" oncomplete="PF('cancelarPedido').show()"  update="cancelarPedForm" process="@this" 
+							rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia') and pedido.status.descricao.equalsIgnoreCase('Em andamento') and transferenciaBean.isFinalizar}"/>
+					</center>
+				</p:column>
+			</p:dataTable>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>									
+						
+					<br/>
+					<br/>
+					
+					<h4><h:outputText value="Escolta" rendered="#{transferenciaBean.isIniciar or !transferenciaBean.transferencia.status.descricao.equals('Pendente')}" /></h4>
+				   
+						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{transferenciaBean.abrirDialogServidor}" 
+							rendered="#{securityUtil.possuiPermissao('IniciarTransferencia') and !transferenciaBean.isVisualizacao and transferenciaBean.isIniciar}">
+							<p:ajax event="dialogReturn" listener="#{transferenciaBean.associarServidor}" update=":formTransf:escolta" />
+						</p:commandButton>		
+				<br />
+			    <br />				
+						
+				<p:dataTable id="escolta" var="escolta" value="#{transferenciaBean.transferencia.escolta}" rows="10" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{servidor.id}" rendered="#{transferenciaBean.isIniciar or !transferenciaBean.transferencia.status.descricao.equals('Pendente')}"
+
+				             emptyMessage="Nenhum registro encontrado.">
+				             
+				    <p:column headerText="Matrícula" width="120">
+						<h:outputText value="#{escolta.servidor != null ? escolta.servidor.matricula : escolta.matricula}" />
+					</p:column>
+				             
+					<p:column headerText="Nome" >
+						<h:outputText value="#{escolta.servidor != null ? escolta.servidor.nome : escolta.nome}" />
+					</p:column>	
+					
+					<p:column headerText="CPF" width="120">
+						<h:outputText value="#{escolta.servidor != null ? escolta.servidor.cpf : escolta.cpf}" converter="CpfConverter" />
+					</p:column>	
+					
+					<p:column headerText="Tipo"  width="10%"  >
+						<center>
+							<h:outputText value="#{escolta.servidor != null ? 'Interna' : 'Externa'}" />
+						</center>
+					</p:column>								
+				
+				<p:column >
+					<center>						
+						<p:commandButton action="#{transferenciaBean.excluirServidor(escolta)}" immediate="true" icon="ui-icon-trash" title="Excluir" rendered="#{securityUtil.possuiPermissao('IniciarTransferencia') and !transferenciaBean.isVisualizacao and transferenciaBean.isIniciar}" update=":formTransf:escolta" width="10%" >
+						 		<p:confirm header="Confirmação" message="Deseja excluir o servidor da escolta?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+				</p:column>
+			</p:dataTable>
+
+				<br />
+				<br />
+
+					<p:commandButton value="Salvar" action="#{transferenciaBean.salvar()}" update="@form" icon="ui-icon-disk" 
+						rendered="#{(securityUtil.possuiPermissao('CadastrarTransferencia') or securityUtil.possuiPermissao('AlterarTransferencia')) and !transferenciaBean.isVisualizacao and transferenciaBean.transferencia.status.descricao.equalsIgnoreCase('Pendente') and !transferenciaBean.isIniciar}" />
+				
+					<p:commandButton action="#{transferenciaBean.confirmarInicioTransferencia()}" value="Iniciar" icon="fa fa-play" title="Iniciar" update="@form" 
+						rendered="#{securityUtil.possuiPermissao('IniciarTransferencia') and !transferenciaBean.isVisualizacao and transferenciaBean.transferencia.status.descricao.equalsIgnoreCase('Pendente') and transferenciaBean.isIniciar}">
+						 		<p:confirm header="Confirmação" message="Deseja Iniciar a movimentação?" icon="ui-icon-alert" />
+					</p:commandButton>
+					
+					<p:commandButton title="Finalizar" value="Finalizar" icon="fa fa-flag" rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia') and !transferenciaBean.isVisualizacao and transferenciaBean.isFinalizar}"
+								oncomplete="PF('finalizarMovimentacao').show()"  update="finalizarForm" process="@this" />
+					
+					<p:button outcome="pretty:ListarTransferencia" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1"/>
+					</p:button>
+				
+				</p:panel>
+			</h:form>			
+    	
+    	<p:dialog id="dialogCacel" header="Cancelar Pedido" showEffect="fade" widgetVar="cancelarPedido" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="cancelarPedForm">
+			<p:panel>
+			<sgp:formInputTextarea id="motivoCancel" 
+						labelValue="Motivo do Cancelamento"
+						value="#{transferenciaBean.pedido.resultado}" 
+						validationRequired="true"
+						disabled="#{transferenciaBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{transferenciaBean.pedido.resultado.length()+5}" 
+						display="text" />
+					<br/>
+					<br/>
+					<p:commandButton title="Salvar" value="Confirmar" icon="ui-icon-check" update="@form :formTransf" action="#{transferenciaBean.confirmarCancelamentoPedido()}" 
+						rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia')}"/>
+			 		
+				<p:commandButton value="Fechar" onclick="PF('cancelarPedido').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			
+			</h:form>
+    	</p:dialog>
+    	
+    	<p:dialog id="dialogFinalizar" header="Finalizar Movimentação" showEffect="fade" widgetVar="finalizarMovimentacao" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="finalizarForm">
+			<p:panel>
+			<sgp:formInputTextarea id="resultadoMov" 
+						labelValue="Resultado"
+						value="#{transferenciaBean.transferencia.resultado}" 
+						validationRequired="true"
+						disabled="#{transferenciaBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{transferenciaBean.transferencia.resultado.length()+5}" 
+						display="text" />
+					<br/>
+					<br/>
+					<p:commandButton title="Confirmar" value="Confirmar" icon="ui-icon-check" update="@form :formTransf" action="#{transferenciaBean.confirmarFinalizacaoTransferencia()}" 
+						rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia')}"/>
+			 		
+				<p:commandButton value="Fechar" onclick="PF('finalizarMovimentacao').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			</h:form>
+    	</p:dialog>
+    	
+   		<h:form id="formAtualizarBiometria" prependId="false">
+    		<p:remoteCommand autoRun="true" global="false" ignoreAutoUpdate="true" oncomplete="#{transferenciaBean.validarBiometriasDosRecuperandosDoPedido()}"/>
+    		<p:dialog id="dialogAtualizarBiometria" widgetVar="dialogAtualizarBiometria" header="Atualização cadastral necessária" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+    			<div style="text-align: center">
+					<p:outputLabel id="texto" style="color: red" value="Os recuperandos listados abaixo estão com a biometria DESATUALIZADA." />
+				</div>
+    			<p:dataTable id="recuperandosBiometria" var="recBio" value="#{transferenciaBean.recuperandosComBiometriaDesatualizada}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{recBio.id}">
+					<p:column headerText="Matrícula" width="100" >
+						<h:outputText value="#{recBio.id}" />
+					</p:column>
+					<p:column headerText="Nome">
+						<h:outputText value="#{recBio.pessoa.nome}"/>
+					</p:column>
+					<p:column width="110">
+						<center>
+							<p:button value="Alterar" icon="ui-icon-pencil" onclick="PF('dialogAtualizarBiometria').hide()" rendered="#{securityUtil.possuiPermissao('AlterarRecuperando')}" outcome="pretty:AlterarRecuperando" target="_blank">
+								<f:param name="id" value="#{recBio.id}"/>
+							</p:button>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+				<center>
+				<br/>
+					<p:commandButton value="Fechar" icon="ui-icon-close" onclick="PF('dialogAtualizarBiometria').hide()" process="@this"/>
+				</center>
+    		</p:dialog>
+    	</h:form>
+	</ui:define>
+</ui:composition>

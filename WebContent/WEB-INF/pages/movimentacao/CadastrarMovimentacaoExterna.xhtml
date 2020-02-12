@@ -1,0 +1,377 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+			
+		<h3>#{movimentacaoExternaBean.tituloPagina} Movimentação Externa</h3>
+			<h:form id="formMovInt">
+						   
+				   <p:panel header="Nº Movimentação: #{movimentacaoExternaBean.movimentacao.id}" footer="Cadastrado por: #{movimentacaoExternaBean.movimentacao.autorRegistro.usuario} em #{movimentacaoExternaBean.movimentacao.autorRegistro.data} | Alterado por: #{movimentacaoExternaBean.movimentacao.autorUltimaAlteracao.usuario} em #{movimentacaoExternaBean.movimentacao.autorUltimaAlteracao.data}" >
+			  		
+			  		<h4>			 
+				  		<sgp:formOutputLabel labelValue="Situação da Movimentação" value="#{movimentacaoExternaBean.movimentacao.status.descricao}" />	
+					</h4>
+					
+							
+					<sgp:formCalendar 
+						labelValue="Data Prev. Saída"
+						value="#{movimentacaoExternaBean.movimentacao.dataPrevista}"
+						display="text" 
+						dataMinima="#{movimentacaoExternaBean.dataMinima}"
+						validationRequired="true"
+						pattern="dd/MM/yyyy HH:mm" 
+						disabled="#{movimentacaoExternaBean.isVisualizacao or movimentacaoExternaBean.isIniciar or movimentacaoExternaBean.isFinalizar}"/>						
+						
+						<sgp:formInputTextarea id="obs" 
+						labelValue="Observação"
+						value="#{movimentacaoExternaBean.movimentacao.observacao}" 
+						validationRequired="true"
+						disabled="#{movimentacaoExternaBean.isVisualizacao or movimentacaoExternaBean.isIniciar or movimentacaoExternaBean.isFinalizar}"
+						rows="5" columns="100"
+						maxlength="250" autoResize="true"
+						size="#{movimentacaoExternaBean.movimentacao.observacao.length()+5}" 
+						display="text" />
+						
+					<br /> <br /> <br /> <br /> <br /> <br /> <br />	
+									   				   
+				   	<h4>Pedidos</h4>
+				   
+						<p:commandButton 
+							icon="ui-icon-plus" 
+							value="Adicionar" 
+							immediate="true" 
+							actionListener="#{movimentacaoExternaBean.abrirDialogPedido}" 
+							rendered="#{(securityUtil.possuiPermissao('CadastrarMovimentacaoExterna') or securityUtil.possuiPermissao('AlterarMovimentacaoExterna')) and !movimentacaoExternaBean.isVisualizacao and !movimentacaoExternaBean.isIniciar and !movimentacaoExternaBean.isFinalizar}">
+							<p:ajax event="dialogReturn" listener="#{movimentacaoExternaBean.associarPedido}" update=":formMovInt:pedidos" />
+						</p:commandButton>		
+				<br />
+			    <br />				
+						
+						<p:dataTable 
+							id="pedidos" 
+							var="pedido" 
+							value="#{movimentacaoExternaBean.movimentacao.pedidos}" 
+							rows="10" 
+							paginator="true" 
+							paginatorPosition="bottom" 
+							paginatorAlwaysVisible="false"
+							sortBy="#{pedido.dataPrevista}"
+				            emptyMessage="Nenhum registro encontrado.">
+				             
+						    <p:column headerText="Nº" width="60" sortBy="#{pedido.id}">
+								<h:outputText value="#{pedido.id}" />
+							</p:column>
+				             
+							<p:column headerText="Matrícula" sortBy="#{pedido.recuperando.id}">
+								<h:outputText value="#{pedido.recuperando.id}" />
+							</p:column>
+	
+							<p:column headerText="Nome" sortBy="#{pedido.recuperando.pessoa.nome}">
+								<h:outputText value="#{pedido.recuperando.pessoa.nome}" />
+							</p:column>					
+					
+							<p:column headerText="Data Prevista" sortBy="#{pedido.dataPrevista}">
+								<h:outputText value="#{pedido.dataPrevista}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							
+							<p:column headerText="Tipo" sortBy="#{pedido.tipoMovimentacao}">
+								<h:outputText value="#{pedido.tipoMovimentacao.descricao}" />
+							</p:column>
+					
+							<p:column headerText="Destino" sortBy="#{pedido.estabelecimento}">
+								<h:outputText value="#{pedido.estabelecimento.nome}" />
+							</p:column>
+										
+							<p:column headerText="Status"  width="120" sortBy="#{pedido.status}">
+								<h:outputText value="#{pedido.status.descricao}" />
+							</p:column>
+					
+							<p:column headerText="Ações">
+								<center>
+									<p:commandButton 
+										title="Visualizar" 
+										icon="ui-icon-document"  
+										action="#{movimentacaoExternaBean.visualizarPedido(pedido)}" 
+										oncomplete="PF('visualizarPedido').show()"  
+										update="visualizarPedForm" process="@this" />						
+									<p:commandButton 
+										action="#{movimentacaoExternaBean.excluirPedido(pedido)}" 
+										immediate="true" icon="ui-icon-trash" 
+										title="Excluir" 
+										rendered="#{(securityUtil.possuiPermissao('CadastrarMovimentacaoExterna') or securityUtil.possuiPermissao('AlterarMovimentacaoExterna')) and !movimentacaoExternaBean.isVisualizacao and !movimentacaoExternaBean.isIniciar and !movimentacaoExternaBean.isFinalizar}" 
+										update=":formMovInt:pedidos">
+											<p:confirm 
+												header="Confirmação" 
+												message="Deseja excluir o pedido?" 
+												icon="ui-icon-alert" />
+									</p:commandButton>
+									<p:commandButton 
+										title="Retornado" 
+										icon="fa fa-reply"  
+										action="#{movimentacaoExternaBean.finalizarPedido(pedido)}" 
+										rendered="#{securityUtil.possuiPermissao('FinalizarMovimentacaoExterna') and pedido.status.descricao.equalsIgnoreCase('Em andamento') and movimentacaoExternaBean.isFinalizar}"
+										oncomplete="PF('finalizarPedido').show()"  
+										update="finalizarPedForm" process="@this" />
+									<p:commandButton 
+										title="Cancelar" 
+										icon="ui-icon-cancel"  
+										action="#{movimentacaoExternaBean.cancelarPedido(pedido)}" 
+										rendered="#{securityUtil.possuiPermissao('FinalizarMovimentacaoExterna') and pedido.status.descricao.equalsIgnoreCase('Em andamento') and movimentacaoExternaBean.isFinalizar}"
+										oncomplete="PF('cancelarPedido').show()"  
+										update="cancelarPedForm" process="@this" />
+								</center>
+							</p:column>
+			</p:dataTable>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+									
+										
+					<h4><h:outputText value="Escolta" rendered="#{movimentacaoExternaBean.isIniciar or !movimentacaoExternaBean.movimentacao.status.descricao.equals('Pendente')}" /></h4>
+
+					
+						<p:commandButton title="Adicionar" value="Adicionar" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('IniciarMovimentacaoExterna') and !movimentacaoExternaBean.isVisualizacao and movimentacaoExternaBean.isIniciar}"
+								oncomplete="PF('adicionarEscolta').show()"  update="escoltaForm" process="@this" />				   
+								
+				<br />
+			    <br />				
+						
+				<p:dataTable id="escolta" var="escolta" value="#{movimentacaoExternaBean.movimentacao.escolta}" rows="10" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{escolta.id}" rendered="#{movimentacaoExternaBean.isIniciar or !movimentacaoExternaBean.movimentacao.status.descricao.equals('Pendente')}"
+				             emptyMessage="Nenhum registro encontrado.">
+				             
+				    <p:column headerText="Matrícula" width="120">
+						<h:outputText value="#{escolta.servidor != null ? escolta.servidor.matricula : escolta.matricula}" />
+					</p:column>
+				             
+					<p:column headerText="Nome" >
+						<h:outputText value="#{escolta.servidor != null ? escolta.servidor.nome : escolta.nome}" />
+					</p:column>	
+					
+					<p:column headerText="CPF" width="120">
+						<h:outputText value="#{escolta.servidor != null ? escolta.servidor.cpf : escolta.cpf}" converter="CpfConverter" />
+					</p:column>
+					
+					<p:column headerText="Tipo" width="10%" >
+						<center>
+							<h:outputText  value="#{escolta.servidor != null ? 'Interna' : 'Externa'}" />
+						</center>
+					</p:column>
+					
+					<p:column headerText="Inclusão" width="140">
+						<h:outputText value="#{escolta.dataInclusao}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"  />
+						</h:outputText>
+					</p:column>				
+				
+				<p:column headerText="Ações" width="100">
+					<center>						
+						<p:commandButton action="#{movimentacaoExternaBean.excluirEscolta(escolta)}" immediate="true" icon="ui-icon-trash" title="Excluir" rendered="#{securityUtil.possuiPermissao('IniciarMovimentacaoExterna') and !movimentacaoExternaBean.isVisualizacao and movimentacaoExternaBean.isIniciar}" update=":formMovInt:escolta">
+						 		<p:confirm header="Confirmação" message="Deseja excluir o servidor da escolta?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+				</p:column>
+			</p:dataTable>
+
+				<br />
+				<br />
+
+					<p:commandButton value="Salvar" action="#{movimentacaoExternaBean.salvar()}" update="@form" icon="ui-icon-disk" 
+						rendered="#{(securityUtil.possuiPermissao('CadastrarMovimentacaoExterna') or securityUtil.possuiPermissao('AlterarMovimentacaoExterna')) and !movimentacaoExternaBean.isVisualizacao and movimentacaoExternaBean.movimentacao.status.descricao.equalsIgnoreCase('Pendente') and !movimentacaoExternaBean.isIniciar}" />
+				
+					<p:commandButton action="#{movimentacaoExternaBean.confirmarInicioMovimentacao()}" value="Iniciar" icon="fa fa-play" title="Iniciar" update="@form" 
+						rendered="#{securityUtil.possuiPermissao('IniciarMovimentacaoExterna') and !movimentacaoExternaBean.isVisualizacao and movimentacaoExternaBean.movimentacao.status.descricao.equalsIgnoreCase('Pendente') and movimentacaoExternaBean.isIniciar}">
+						 		<p:confirm header="Confirmação" message="Deseja Iniciar a movimentação?" icon="ui-icon-alert" />
+					</p:commandButton>
+					
+					<p:commandButton title="Finalizar" value="Finalizar" icon="fa fa-flag" rendered="#{securityUtil.possuiPermissao('FinalizarMovimentacaoExterna') and !movimentacaoExternaBean.isVisualizacao and movimentacaoExternaBean.isFinalizar}"
+								oncomplete="PF('finalizarMovimentacao').show()"  update="finalizarForm" process="@this" />
+					
+					<p:button outcome="pretty:ListarMovimentacaoExterna" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+				
+				</p:panel>
+			</h:form>
+			
+			<p:dialog id="dialogVisualizarPed" header="Visualizar Pedido" showEffect="fade" widgetVar="visualizarPedido" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="visualizarPedForm">
+			<p:panel>
+				<h4>Pedido</h4>
+				
+				<sgp:formOutputLabel labelValue="Nº" value="#{movimentacaoExternaBean.pedido.id}"/>
+				<sgp:formOutputLabel labelValue="Matrícula" value="#{movimentacaoExternaBean.pedido.recuperando.id}"/>
+				<sgp:formOutputLabel labelValue="Nome" value="#{movimentacaoExternaBean.pedido.recuperando.pessoa.nome}"/>
+				<sgp:formOutputLabel labelValue="Data Prevista" value="#{movimentacaoExternaBean.pedido.dataPrevista}" converterData="true"/>
+				<sgp:formOutputLabel labelValue="Destino" value="#{movimentacaoExternaBean.pedido.estabelecimento.nome}"/>
+				<sgp:formOutputLabel labelValue="Resultado" value="#{movimentacaoExternaBean.pedido.resultado}"/>
+				<sgp:formOutputLabel labelValue="Status" value="#{movimentacaoExternaBean.pedido.status.descricao}"/>
+		
+					<br/>
+					<br/>
+								 		
+				<p:commandButton value="Fechar" onclick="PF('visualizarPedido').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			
+			</h:form>
+    	</p:dialog>
+			
+			<p:dialog id="dialogFinalizarPed" header="Finalizar Pedido" showEffect="fade" widgetVar="finalizarPedido" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="finalizarPedForm">
+			<p:panel>
+			<sgp:formInputTextarea id="resultadoPed" 
+						labelValue="Resultado"
+						value="#{movimentacaoExternaBean.pedido.resultado}" 
+						validationRequired="true"
+						disabled="#{movimentacaoExternaBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{movimentacaoExternaBean.pedido.resultado.length()+5}" 
+						display="text" />
+					<br/>
+					<br/>
+					<p:commandButton title="Confirmar" value="Confirmar" icon="ui-icon-check" update="@form :formMovInt" action="#{movimentacaoExternaBean.confirmarFinalizacaoPedido()}"
+						rendered="#{securityUtil.possuiPermissao('FinalizarMovimentacaoExterna')}">
+								 <p:confirm header="Confirmação" message="Finalizar o Pedido?" icon="ui-icon-alert" />
+							</p:commandButton>
+			 		
+				<p:commandButton value="Fechar" onclick="PF('finalizarPedido').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			
+			</h:form>
+    	</p:dialog>
+    	
+    	<p:dialog id="dialogCacel" header="Cancelar Pedido" showEffect="fade" widgetVar="cancelarPedido" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="cancelarPedForm">
+			<p:panel>
+			<sgp:formInputTextarea id="motivoCancel" 
+						labelValue="Motivo do Cancelamento"
+						value="#{movimentacaoExternaBean.pedido.resultado}" 
+						validationRequired="true"
+						disabled="#{movimentacaoExternaBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{movimentacaoExternaBean.pedido.resultado.length()+5}" 
+						display="text" />
+					<br/>
+					<br/>
+					<p:commandButton title="Salvar" value="Confirmar" icon="ui-icon-check" update="@form :formMovInt" action="#{movimentacaoExternaBean.confirmarCancelamentoPedido()}" 
+						rendered="#{securityUtil.possuiPermissao('FinalizarMovimentacaoExterna')}"/>
+			 		
+				<p:commandButton value="Fechar" onclick="PF('cancelarPedido').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			
+			</h:form>
+    	</p:dialog>
+    	
+    	<p:dialog id="dialogFinalizar" header="Finalizar Movimentação" showEffect="fade" widgetVar="finalizarMovimentacao" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="finalizarForm">
+			<p:panel>
+			<sgp:formInputTextarea id="resultadoMov" 
+						labelValue="Resultado"
+						value="#{movimentacaoExternaBean.movimentacao.resultado}" 
+						validationRequired="true"
+						disabled="#{movimentacaoExternaBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{movimentacaoExternaBean.movimentacao.resultado.length()+5}" 
+						display="text" />
+					<br/>
+					<br/>
+					<p:commandButton title="Confirmar" value="Confirmar" icon="ui-icon-check" update="@form :formMovInt" action="#{movimentacaoExternaBean.confirmarFinalizacaoMovimentacao()}" 
+						rendered="#{securityUtil.possuiPermissao('FinalizarMovimentacaoExterna')}"/>
+			 		
+				<p:commandButton value="Fechar" onclick="PF('finalizarMovimentacao').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			</h:form>
+    	</p:dialog>
+    	
+    	<p:dialog id="dialogEscolta" header="Adicionar Escolta" showEffect="fade" widgetVar="adicionarEscolta" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form>
+			<p:panel>
+			    <h:outputText value="Escolta Interna?" />
+			    <br/><br/>
+			    <p:commandButton  value="Sim" immediate="true" actionListener="#{movimentacaoExternaBean.abrirDialogServidor}" 
+			    	rendered="#{securityUtil.possuiPermissao('IniciarMovimentacaoExterna') and !movimentacaoExternaBean.isVisualizacao and movimentacaoExternaBean.isIniciar}">
+							<p:ajax event="dialogReturn" listener="#{movimentacaoExternaBean.associarServidor}" update=":formMovInt:escolta" />
+						</p:commandButton>
+			 		
+				<p:commandButton value="Não" onclick="PF('adicionarEscolta').hide()" oncomplete="PF('escoltaExterna').show()" actionListener="#{movimentacaoExternaBean.escoltaExterna}" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			</h:form>
+    	</p:dialog>
+    	
+    	<p:dialog id="dialogEscoltaExterna" header="Adicionar Escolta" showEffect="fade" widgetVar="escoltaExterna" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="escoltaForm">
+			<p:panel>
+			<sgp:formInputText id="nome" labelValue="Nome" value="#{movimentacaoExternaBean.escolta.nome}" validationRequired="true" maxlength="100"
+					display="text" size="40"/>
+					
+					 <sgp:formInputMask id="cpf" labelValue="CPF" value="#{movimentacaoExternaBean.escolta.cpf}" validationRequired="true" mask="999.999.999-99" converter="CpfConverter"
+                    validatorId="CpfValidator" display="text" maxlength="11"/>
+                    
+                    <sgp:formInputMask id="matricula" labelValue="Matrícula" mask="?9999999999" validatorRange="1" value="#{movimentacaoExternaBean.escolta.matricula}" validationRequired="true"						
+					display="text" maxlength="10"/>
+					
+					<br/>
+					<br/>
+					<p:commandButton value="Adicionar" action="#{movimentacaoExternaBean.adicionarEscoltaExterna()}" update=":formMovInt:escolta" onclick="PF('escoltaExterna').hide()" icon="ui-icon-disk" 
+						rendered="#{securityUtil.possuiPermissao('IniciarMovimentacaoExterna')}"/>
+					
+			 		
+				<p:commandButton value="Fechar" onclick="PF('escoltaExterna').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			</h:form>
+    	</p:dialog>
+    	
+		<h:form id="formAtualizarBiometria" prependId="false">
+    		<p:remoteCommand autoRun="true" global="false" ignoreAutoUpdate="true" oncomplete="#{movimentacaoExternaBean.validarBiometriasDosRecuperandosDoPedido()}"/>
+    		<p:dialog id="dialogAtualizarBiometria" widgetVar="dialogAtualizarBiometria" header="Atualização cadastral necessária" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+    			<div style="text-align: center">
+					<p:outputLabel id="texto" style="color: red" value="Os recuperandos listados abaixo estão com a biometria DESATUALIZADA." />
+				</div>
+    			<p:dataTable id="recuperandosBiometria" var="recBio" value="#{movimentacaoExternaBean.recuperandosComBiometriaDesatualizada}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{recBio.id}">
+					<p:column headerText="Matrícula" width="100" >
+						<h:outputText value="#{recBio.id}" />
+					</p:column>
+					<p:column headerText="Nome">
+						<h:outputText value="#{recBio.pessoa.nome}"/>
+					</p:column>
+					<p:column width="110">
+						<center>
+							<p:button value="Alterar" icon="ui-icon-pencil" onclick="PF('dialogAtualizarBiometria').hide()" outcome="pretty:AlterarRecuperando" target="_blank">
+								<f:param name="id" value="#{recBio.id}"/>
+							</p:button>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+				<center>
+				<br/>
+					<p:commandButton value="Fechar" icon="ui-icon-close" onclick="PF('dialogAtualizarBiometria').hide()" process="@this"/>
+				</center>
+    		</p:dialog>
+    	</h:form>    	
+	</ui:define>
+</ui:composition>

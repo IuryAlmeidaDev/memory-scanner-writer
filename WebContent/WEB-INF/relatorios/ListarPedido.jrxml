@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarPedido" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.5394743546921235"/>
+	<property name="ireport.x" value="300"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="TEM_PAGINACAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="idRec" class="java.lang.Long"/>
+	<field name="recuperando" class="java.lang.String"/>
+	<field name="tipoTransito.descricao" class="java.lang.String"/>
+	<field name="dataPrevista" class="java.sql.Timestamp"/>
+	<field name="status.descricao" class="java.lang.String"/>
+	<field name="id" class="java.lang.Long"/>
+	<field name="estruturaNomeCompleto" class="java.lang.String"/>
+	<field name="nomeUnidadeDestino" class="java.lang.String"/>
+	<field name="estabelecimentoNome" class="java.lang.String"/>
+	<field name="estruturaDestinoNomeCompleto" class="java.lang.String"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{id}]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="106" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="802" height="106" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
+				<subreportParameter name="UNIDADE_LOGADA">
+					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="20" backcolor="#CCCCCC" uuid="5556b943-7610-4e04-ac52-45805a76401c"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="22" height="20" uuid="c80566fb-9879-401c-8c6c-25d6b5377068"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="0" width="39" height="20" uuid="9fe98fe7-089b-40a6-8904-fe1f1aedb134"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matr.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="61" y="0" width="184" height="20" uuid="ff809d33-030c-41f5-9454-24b56522ba5b"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Recuperando]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="555" y="0" width="107" height="20" uuid="754db02d-a7a0-4bdf-b137-be7c11707c86"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo de Trânsito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="756" y="0" width="46" height="20" uuid="ec35917e-dbd2-4b58-9faf-16efd446b546"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situação]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="662" y="0" width="94" height="20" uuid="12d2ee4b-a133-41e7-a6f1-f6a3ab94407b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Prevista]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="245" y="0" width="150" height="20" uuid="df39ea20-66c0-40af-adb1-890bf7e4a447"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lotação Atual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="395" y="0" width="160" height="20" uuid="a0ad5bd7-25ed-4ebd-8cef-ffccf3314d97"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Destino]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Immediate">
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="15" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
+					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="22" height="15" uuid="06e96a91-cdb1-4c0c-bee7-5cc504051b17"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="22" y="0" width="39" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{idRec}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="662" y="0" width="94" height="15" uuid="bb0e6c45-7623-4a89-a408-e41438cade23"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dataPrevista}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="756" y="0" width="46" height="15" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{status.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="61" y="0" width="184" height="15" uuid="6da71a14-4692-45c9-8a5b-10cb9ead2689"/>
+				<box leftPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recuperando}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="245" y="0" width="150" height="15" uuid="286c47ff-071f-4972-88c5-d90a1cab3f82"/>
+				<box leftPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estruturaNomeCompleto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="555" y="0" width="107" height="15" uuid="37ea4b5b-4da6-4aa4-a87f-52a9ed30eec6"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoTransito.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="395" y="0" width="160" height="15" uuid="4b85ea50-0bd2-4c34-862c-873548e4eefe">
+					<printWhenExpression><![CDATA[$F{tipoTransito.descricao} == "Movimentação Interna"]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estruturaDestinoNomeCompleto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="395" y="0" width="160" height="15" uuid="6799e24d-31c4-4761-b872-a93003cdee77">
+					<printWhenExpression><![CDATA[$F{tipoTransito.descricao} == "Transferência"]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeUnidadeDestino}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="395" y="0" width="160" height="15" uuid="009aba09-92eb-4fe6-bd7d-c29cfb2936f6">
+					<printWhenExpression><![CDATA[$F{tipoTransito.descricao} == "Movimentação Externa"]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estabelecimentoNome}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="51" splitType="Stretch">
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement positionType="Float" x="0" y="0" width="802" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
+				<subreportParameter name="PAGINA">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EMISSOR">
+					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_PAGINAS">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="676" y="15" width="80" height="20" uuid="21949555-196a-4d34-89dd-e4b9f2f2f2af">
+					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="756" y="15" width="40" height="20" uuid="18471924-0526-4b68-acd6-512add5df44e">
+					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="29">
+			<textField>
+				<reportElement x="555" y="9" width="242" height="20" uuid="329dd6ad-3e24-40d8-b898-61a1f721896c"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total de registros: " + $V{id_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

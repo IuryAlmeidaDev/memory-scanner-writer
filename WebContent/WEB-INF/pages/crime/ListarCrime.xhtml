@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Crime</h3>	
+				
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+			
+				<sgp:formSelectOneMenu 
+								id="legislacao"
+								labelValue="Lei" 
+								itemValue="#{item}" 
+								itemLabel="#{item}"
+								itemsValue="#{crimeBean.legislacoes}" 
+								value="#{crimeBean.filtro.legislacao}"
+								filter="true" filterMatchMode="contains"
+								display="text" 
+								temSelecione="true" >
+										<f:ajax event="change" listener="#{crimeBean.listarArtigos}" render="meuFormulario:artigo:input"/>
+						</sgp:formSelectOneMenu>
+					<sgp:formSelectOneMenu 
+								id="artigo"
+								labelValue="Artigo" 
+								itemValue="#{item}" 
+								itemLabel="#{item}"
+								itemsValue="#{crimeBean.artigos}" 
+								value="#{crimeBean.filtro.artigo}"
+								filter="true" filterMatchMode="contains"
+								temSelecione="true"
+								display="text"  />				
+				
+					
+					
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm"	process="@form" icon="ui-icon-search" />	
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{crimeBean.imprimir()}"/>
+			</p:panel>
+		</h:form>
+		
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="crime" value="#{crimeBean.crimes}" paginator="true" paginatorPosition="bottom" rows="10" lazy="true"  sortBy="#{crime.id}"
+			             emptyMessage="Nenhum registro encontrado.">		
+						
+				<p:column headerText="Legislação" sortBy="#{crime.nomeLegislacao}">
+					<h:outputText value="#{crime.nomeLegislacao}" />
+				</p:column>
+
+				<p:column headerText="Artigo" width="90" sortBy="#{crime.numArtigo}">
+					<h:outputText value="#{crime.numArtigo}" />
+				</p:column>
+				
+				<p:column headerText="Parágrafo" width="130" sortBy="#{crime.numParagrafo}">
+					<h:outputText value="#{crime.numParagrafo}" />
+				</p:column>
+				
+				<p:column headerText="Inciso" width="90" sortBy="#{crime.numInciso}">
+					<h:outputText value="#{crime.numInciso}" />
+				</p:column>
+				
+				<p:column headerText="Alínea" width="90" sortBy="#{crime.numAlinea}">
+					<h:outputText value="#{crime.numAlinea}" />
+				</p:column>
+				
+				<p:column headerText="Detalhamento" sortBy="#{crime.detalhamento}">
+					<h:outputText value="#{crime.detalhamento}" />
+				</p:column>
+
+				<p:column headerText="Ações" width="80">
+					<center>
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarCrime" rendered="#{securityUtil.possuiPermissao('VisualizarCrime')}">
+							<f:param name="id" value="#{crime.id}" />
+						</p:button>
+					</center>
+				</p:column>
+				
+				<f:facet name="footer">
+						Total de registros: #{crimeBean.crimes.rowCount}
+					</f:facet>
+			</p:dataTable>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

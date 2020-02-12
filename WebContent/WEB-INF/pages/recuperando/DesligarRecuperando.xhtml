@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+	
+		<h3>Desligar Recuperando</h3>
+		
+		<h:form id="formDesligamento">
+			<p:panel header="Recuperando">
+				<sgp:formOutputLabel labelValue="Nome" value="#{passagemBean.recuperando.pessoa.nome}" />
+				<sgp:formOutputLabel labelValue="Nome da mãe" value="#{passagemBean.recuperando.pessoa.nomeMae}" />
+				<sgp:formOutputLabel labelValue="Data Nascimento" value="#{passagemBean.recuperando.pessoa.dataNascimento}" converterData="true"/>
+			</p:panel>
+			<br/>
+			<p:panel header="Desligamento">
+				<sgp:formCalendar labelValue="Data" value="#{passagemBean.passagem.dataSaida}" validationRequired="true" display="text" dataMaxima="#{passagemBean.dataMaximaDesligamento}" pattern="dd/MM/yyyy HH:mm" />
+				<sgp:formSelectOneMenu 
+						id="motivo" labelValue="Motivo"
+						value="#{passagemBean.passagem.tipoDesligamento}"
+						itemsValue="#{comboHelperBean.tipoDesligamento}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						validationRequired="true"
+						temSelecione="true"
+						display="text" >
+							<f:ajax event="change" listener="#{passagemBean.alterarTipoDesligamento}" render=":formDesligamento:destino"/>
+						</sgp:formSelectOneMenu>
+				<h:panelGroup id="destino" >
+					<sgp:formInputText id="estabelecimento" style="vertical-align: top" 
+						labelValue="Estabelecimento" 
+						value="#{passagemBean.passagem.estabelecimentoDestino.nome}" 
+						validationRequired="true" 
+						size="40" 
+						disabled="true" 
+						rendered="#{passagemBean.passagem.tipoDesligamento != null and passagemBean.passagem.tipoDesligamento.descricao.equalsIgnoreCase('Outro Sistema Penitenciário')}"/>
+						
+						<p:commandButton style="margin-top: -5px" icon="ui-icon-plus" immediate="true" actionListener="#{passagemBean.abrirDialogEstabelecimento}"
+							rendered="#{passagemBean.passagem.tipoDesligamento != null and passagemBean.passagem.tipoDesligamento.descricao.equalsIgnoreCase('Outro Sistema Penitenciário')}">
+							<p:ajax event="dialogReturn" listener="#{passagemBean.associarEstabelecimento}" update=":formDesligamento:estabelecimento:input" />
+						</p:commandButton>	
+				</h:panelGroup>
+				
+				<sgp:formInputText 
+						id="numeroDocumento"
+						labelValue="Núm. Documento"
+						value="#{passagemBean.passagem.numeroDocumento}"
+						maxlength="80"
+						size="40"
+						permiteCaracterEspecial="true"
+						/>
+				
+				<sgp:formInputText 
+						id="documento"
+						labelValue="Nome Documento"
+						value="#{passagemBean.passagem.documentoDesligamento}"
+						maxlength="50"
+						size="80"
+						display="text"
+						/>
+												
+					<sgp:formCalendar display="text" labelValue="Data Documento"
+						value="#{passagemBean.passagem.dataDocDesligamento}" 
+						dataMaxima="#{passagemBean.dataMinima}" />
+						
+				<sgp:formInputTextarea 
+					id="observacao"
+					labelValue="Observação"
+					value="#{passagemBean.passagem.obsDesligamento}"
+					rows="5"
+					columns="100"
+					maxlength="250"
+					autoResize="true"
+					size="#{passagemBean.passagem.obsDesligamento.length()}"
+					display="text"
+					validationRequired="true"/>
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+			
+			
+			
+				<p:commandButton value="Desligar" icon="ui-icon-disk" action="#{passagemBean.desligar}" update=":formDesligamento" />
+				<p:button outcome="pretty:ListarRecuperando" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1" />
+				</p:button>
+			</p:panel>
+		</h:form>
+		<h:form>
+			<p:remoteCommand autoRun="true" global="false" ignoreAutoUpdate="true" oncomplete="#{passagemBean.validarBiometriaAtualizadaDoRecuperando()}"/>
+			<p:confirmDialog id="atualizacaoBiometria" widgetVar="atualizacaoBiometria" header="Atualização biométrica recomendada" message="Biometria desatualizada, deseja atualizar?">
+				<p:button value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onclick="PF('atualizacaoBiometria').hide()" outcome="pretty:AlterarRecuperando" target="_blank">
+					<f:param name="id" value="#{passagemBean.recuperando.id}"/>
+				</p:button>
+				<p:commandButton value="Não" type="button" onclick="PF('atualizacaoBiometria').hide()" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>		
+		</h:form>
+	</ui:define>
+</ui:composition>

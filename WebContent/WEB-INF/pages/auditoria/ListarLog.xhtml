@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+	
+		<h3>Logs</h3>
+		
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+				<br/>
+
+				<p:commandButton icon="ui-icon-search" immediate="true" actionListener="#{logBean.abrirDialogServidor}" title="Pesquisar Usuário">
+					<p:ajax event="dialogReturn" listener="#{logBean.associarServidor}" update="meuFormulario" />
+				</p:commandButton>	
+					
+				<sgp:formOutputLabel labelValue="Servidor" value="#{logBean.servidor.nome}" />
+
+                <sgp:formSelectOneMenu
+                        labelValue="Ação"
+                        value="#{logBean.filtro.acao}" 
+                        itemsValue="#{comboHelperBean.acao}"
+                        itemValue="#{item}" 
+                        itemLabel="#{item}" 
+                        temSelecione="true" />
+                        
+                 <sgp:formCalendar 
+						labelValue="Data Inicial"
+						value="#{logBean.filtro.dataInicio}"
+						display="text" 
+						pattern="dd/MM/yyyy HH:mm:ss" />
+						
+				<sgp:formCalendar 
+						labelValue="Data Final"
+						value="#{logBean.filtro.dataFim}"
+						display="text" 
+						pattern="dd/MM/yyyy HH:mm:ss" />               
+
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{logBean.imprimir}"/>
+
+			</p:panel>
+		</h:form>
+
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="log" value="#{logBean.logs}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{log.id}" sortOrder="descending"
+			             emptyMessage="Nenhum registro encontrado.">
+			             
+				<p:column headerText="Id" sortBy="#{permissao.id}"  width="100">
+					<h:outputText value="#{log.id}" />
+				</p:column>
+				
+				<p:column headerText="Data" sortBy="#{log.dataLog}" width="150">
+					<h:outputText value="#{log.dataLog}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Mensagem" sortBy="#{log.mensagem}">
+					<h:outputText value="#{log.mensagem}"/>
+				</p:column>
+				
+				<p:column headerText="Cód. Usuário" sortBy="#{log.usuarioId}" width="150">
+					<h:outputText value="#{log.usuarioId}" />
+				</p:column>
+				
+				<p:column headerText="Ip de Origem" sortBy="#{log.ipOrigem}"  width="180">
+					<h:outputText value="#{log.ipOrigem}" />
+				</p:column>
+				
+				<p:column rendered="#{securityUtil.possuiPermissao('VisualizarLogErro')}" width="50">
+					<p:commandButton title="Visualizar" icon="fa fa-print" actionListener="#{logBean.imprimirLog(log)}" rendered="#{log.nivel eq 'ERROR'}"/>
+				</p:column>
+				
+				<f:facet name="footer">
+					Total de registros: #{logBean.logs.rowCount}
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

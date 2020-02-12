@@ -1,0 +1,134 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Unidade Prisional</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarUnidade" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarUnidade')}"/>
+		</h:form>
+
+		<h:form id="meuFormulario" >
+			<p:panel rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}">
+				<p:outputLabel value="Consulta"/>
+				
+				<sgp:formInputText 
+					labelValue="Unidade" 
+					size="50"
+					value="#{unidadePrisionalBean.filtro.nome}" />
+					
+				<sgp:formInputText labelValue="Sigla"
+					value="#{unidadePrisionalBean.filtro.sigla}" />
+					
+				<sgp:formSelectOneMenu
+					id="tipoUnidade"
+					itemValue="#{item}"
+					itemsValue="#{comboHelperBean.tipoUnidades}"
+					labelValue="Tipo Instituição"
+					itemLabel="#{item.descricao}"
+					value="#{unidadePrisionalBean.filtro.tipoUnidade}"
+					converter="SimpleEntityConverter"
+					temSelecione="true"/>
+					
+				<sgp:formSelectOneMenu 
+					id="situacaoUnidade"
+					labelValue="Situação" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					itemsValue="#{comboHelperBean.situacaoUnidadeTodas}" 
+					temSelecione="true" 
+					value="#{unidadePrisionalBean.filtro.situacaoUnidade}"/>
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{unidadePrisionalBean.imprimir()}"/>
+			</p:panel>
+		</h:form>
+
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="unidade" value="#{unidadePrisionalBean.unidades}" emptyMessage="Nenhum registro encontrado."
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{unidade.id}">
+				<p:column headerText="Código" style="width:100px;" sortBy="#{unidade.id}">
+					<h:outputText value="#{unidade.id}" />
+				</p:column>
+				<p:column headerText="Nome" sortBy="#{unidade.nome}">
+					<h:outputText value="#{unidade.nome}" />
+				</p:column>
+				<p:column headerText="Sigla" sortBy="#{unidade.sigla}" width="80">
+					<h:outputText value="#{unidade.sigla}" />
+				</p:column>
+				<p:column headerText="Tipo" sortBy="#{unidade.tipo}">
+					<h:outputText value="#{unidade.tipo}" />
+				</p:column>
+				<p:column headerText="Quantidade Atual" sortBy="#{unidade.quantidadeAtual}">
+					<h:outputText value="#{unidade.quantidadeAtual}" />
+				</p:column>
+				<p:column headerText="Município" sortBy="#{unidade.municipio}">
+					<h:outputText value="#{unidade.municipio}" />
+				</p:column>
+				<p:column headerText="Situação" sortBy="#{unidade.situacaoUnidade}" width="120">
+					<h:outputText value="#{unidade.situacaoUnidade}" />
+				</p:column>
+				<p:column headerText="Ações" style="width:150px;">
+					<center>
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarUnidade" rendered="#{securityUtil.possuiPermissao('VisualizarUnidade')}">
+							<f:param name="id" value="#{unidade.id}" />
+						</p:button>
+						<p:button title="Editar" icon="ui-icon-pencil" outcome="pretty:AlterarUnidade" rendered="#{securityUtil.possuiPermissao('AlterarUnidade')}">
+							<f:param name="id" value="#{unidade.id}" />
+						</p:button>
+						<p:commandButton title="Histórico de Situações" icon="ui-icon-clock" action="#{estruturaBean.listarPorUnidade(unidade)}"
+							 oncomplete="PF('listarSituacaoEstruturaUnidade').show()" update=":listarSituacoes" process="@this"/>
+						<p:commandButton title="Imprimir Lista de Chamada" icon="fa fa-print" actionListener="#{unidadePrisionalBean.selecionarListaDeChamada(unidade)}"/>
+					</center>
+				</p:column>
+				
+				<f:facet name="footer">
+					Total de registros: #{unidadePrisionalBean.unidades.rowCount}
+				</f:facet>
+			</p:dataTable>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+		<p:dialog id="dialogListarSituacaoEstruturaUnidade" header="Histórico de Situações Unidade Prisional"
+				width="700" showEffect="fade" widgetVar="listarSituacaoEstruturaUnidade" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+			<h:form id="listarSituacoes">
+				<p:dataTable var="situacoes" value="#{estruturaBean.situacoes}" paginator="true" paginatorPosition="bottom" rows="5" emptyMessage="Nenhum registro encontrado.">
+					<p:column headerText="Unidade">
+						<h:outputText value="#{situacoes.unidadePrisional.sigla}"/>
+					</p:column>
+					<p:column headerText="Estrutura">
+						<h:outputText value="#{situacoes.estrutura.nome}"/>
+					</p:column>
+					<p:column headerText="Situação">
+						<h:outputText value="#{situacoes.situacao.descricao}"/>
+					</p:column>
+					<p:column headerText="Interdição">
+						<h:outputText value="#{situacoes.tipoInterdicao.descricao}"/>
+					</p:column>
+					<p:column headerText="Data">
+						<h:outputText value="#{situacoes.dataRegistro}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Motivo">
+						<h:outputText value="#{situacoes.motivo}"/>
+					</p:column>
+				</p:dataTable>
+				<br/>
+				<p:commandButton value="Fechar" onclick="PF('listarSituacaoEstruturaUnidade').hide()"/>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

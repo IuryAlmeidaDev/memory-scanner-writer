@@ -1,0 +1,20 @@
+package br.gov.mt.sejudh.sigepen.enumerator;
+
+public enum Acao {
+
+	ACESSAR,
+	ADICIONAR,
+	ALTERAR,
+	ASSOCIAR,
+	AUTORIZAR,
+	CANCELAR,
+	ERRO,
+	EXCLUIR,
+	FINALIZAR,
+	INICIAR,
+	IMPRIMIR,
+	LOGAR,
+	REMOVER,
+	SALVAR,
+	VISUALIZAR;
+}

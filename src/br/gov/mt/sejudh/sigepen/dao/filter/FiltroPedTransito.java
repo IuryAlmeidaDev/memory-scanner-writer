@@ -1,0 +1,250 @@
+package br.gov.mt.sejudh.sigepen.dao.filter;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
+import br.gov.mt.sejudh.sigepen.model.Estabelecimento;
+import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
+import br.gov.mt.sejudh.sigepen.util.RestrictionsSigepen;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
+
+public class FiltroPedTransito extends FiltroConsulta {
+	
+	private static final long serialVersionUID = 1L;
+
+	private Long id; 
+	
+	private Date dataInicio;
+	
+	private Date dataFim;
+
+	public Long recuperandoId;	
+	
+	private String nome;
+	
+	private Estrutura estrutura;
+	
+	private Estabelecimento estabelecimento;
+	
+	public UnidadePrisional unidadeOrigem;
+	
+	public UnidadePrisional unidadeDestino;
+	
+	public Boolean foraDomicilio;
+	
+	private TipoTransito tipoTransito;
+	
+	private List<TipoTransito> listaTipoTransito;
+	
+	private StatusPedido status;
+	
+	public FiltroPedTransito() {
+		listaTipoTransito = new ArrayList<TipoTransito>();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
+	}
+	
+
+	public Long getRecuperandoId() {
+		return recuperandoId;
+	}
+
+	public void setRecuperandoId(Long recuperandoId) {
+		this.recuperandoId = recuperandoId;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = Sigepen.formatarEspacos(nome);
+	}
+
+	public UnidadePrisional getUnidadeOrigem() {
+		return unidadeOrigem;
+	}
+
+	public void setUnidadeOrigem(UnidadePrisional unidadeOrigem) {
+		this.unidadeOrigem = unidadeOrigem;
+	}
+
+	public UnidadePrisional getUnidadeDestino() {
+		return unidadeDestino;
+	}
+
+	public void setUnidadeDestino(UnidadePrisional unidadeDestino) {
+		this.unidadeDestino = unidadeDestino;
+	}
+
+	public Boolean getForaDomicilio() {
+		return foraDomicilio;
+	}
+
+	public void setForaDomicilio(Boolean foraDomicilio) {
+		this.foraDomicilio = foraDomicilio;
+	}
+
+	public TipoTransito getTipoTransito() {
+		return tipoTransito;
+	}
+
+	public void setTipoTransito(TipoTransito tipoTransito) {
+		this.tipoTransito = tipoTransito;
+	}
+
+	public StatusPedido getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusPedido status) {
+		this.status = status;
+	}
+
+	public Estrutura getEstrutura() {
+		return estrutura;
+	}
+
+	public void setEstrutura(Estrutura estrutura) {
+		this.estrutura = estrutura;
+	}
+
+	public Estabelecimento getEstabelecimento() {
+		return estabelecimento;
+	}
+
+	public void setEstabelecimento(Estabelecimento estabelecimento) {
+		this.estabelecimento = estabelecimento;
+	}
+
+	public List<TipoTransito> getListaTipoTransito() {
+		return listaTipoTransito;
+	}
+
+	@Override
+	public void configurarFiltros() {
+		
+		getCriteria()
+		.createAlias("recuperando", "recuperando", JoinType.LEFT_OUTER_JOIN)
+		.createAlias("recuperando.pessoa", "pessoa", JoinType.LEFT_OUTER_JOIN)
+		.createAlias("unidadeOrigem", "unidadeOrigem", JoinType.LEFT_OUTER_JOIN)
+		.createAlias("unidadeDestino", "unidadeDestino", JoinType.LEFT_OUTER_JOIN)
+		.createAlias("estabelecimento", "estabelecimento", JoinType.LEFT_OUTER_JOIN)
+		.createAlias("estruturaDestino", "estrutura", JoinType.LEFT_OUTER_JOIN)
+		.createAlias("estruturaOrigem", "estrutura2", JoinType.LEFT_OUTER_JOIN)
+		.createAlias("transferencia", "transferencia", JoinType.LEFT_OUTER_JOIN);
+		
+		getCriteria()
+			.createAlias("estrutura2.estruturaComplemento", "estruturacomplOrigem", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("estrutura.estruturaComplemento", "estruturacomplDestino", JoinType.LEFT_OUTER_JOIN);
+		
+		Projection proj = Projections.projectionList()
+				.add(Projections.property("id").as("id"))
+				.add(Projections.property("recuperando.id").as("idRec"))
+				.add(Projections.property("pessoa.nome").as("recuperando"))
+				.add(Projections.property("tipoTransito").as("tipoTransito"))
+				.add(Projections.property("dataPrevista").as("dataPrevista"))
+	            .add(Projections.property("status").as("status"))
+	            .add(Projections.property("estabelecimento.nome").as("estabelecimentoNome"))
+	            .add(Projections.property("estrutura.nome").as("estruturaNome"))
+	            .add(Projections.property("estrutura2.nome").as("estruturaOrigemNome"))
+	            .add(Projections.property("unidadeDestino.nome").as("nomeUnidadeDestino"))
+	            .add(Projections.property("unidadeOrigem.nome").as("nomeUnidadeOrigem"))
+	            .add(Projections.property("transferencia.id").as("idTransferencia"));
+		
+		ProjectionList projectionList = (ProjectionList) proj;
+		
+		projectionList.add(Projections.property("estruturacomplOrigem.nomeCompleto").as("estruturaNomeCompleto"));
+		projectionList.add(Projections.property("estruturacomplDestino.nomeCompleto").as("estruturaDestinoNomeCompleto"));
+		
+		getCriteria().setProjection(projectionList);		
+		
+		
+		if(this.getId()!= null){
+			getCriteria().add(Restrictions.eq("id", this.getId()));
+		}
+		
+		if(this.getRecuperandoId()!= null){
+			getCriteria().add(Restrictions.eq("recuperando.id", this.getRecuperandoId()));
+		}
+		
+		if (this.getNome()!= null && !this.getNome().equalsIgnoreCase("")) {
+			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("pessoa.nome", this.getNome(), MatchMode.ANYWHERE));
+		}
+		
+		if(this.getEstrutura()!= null){
+			getCriteria().add(Restrictions.eq("estruturaDestino", this.getEstrutura()));
+		}
+		
+		if(this.getEstabelecimento()!= null){
+			getCriteria().add(Restrictions.eq("estabelecimento", this.getEstabelecimento()));
+		}
+		
+		if(this.getUnidadeOrigem()!= null){
+			if(this.getForaDomicilio() == null || this.getForaDomicilio() == false){
+				getCriteria().add(Restrictions.eq("unidadeOrigem", this.getUnidadeOrigem()));
+			}else{
+				getCriteria().add(Restrictions.ne("unidadeOrigem", this.getUnidadeOrigem()));
+			}
+				
+		}
+		
+		if(this.getUnidadeDestino()!= null){
+			getCriteria().add(Restrictions.eq("unidadeDestino", this.getUnidadeDestino()));
+		}
+		
+		if(this.getDataInicio() != null){			
+			getCriteria().add(Restrictions.ge("dataPrevista", Sigepen.getDataConsultaMaiorIgual(this.getDataInicio())));
+		}
+		
+		if(this.getDataFim()!= null){
+			getCriteria().add(Restrictions.le("dataPrevista", Sigepen.getDataConsultaMenorIgual(this.getDataFim())));
+		}
+		
+		if (this.getListaTipoTransito().size() > 0) {
+			getCriteria().add(Restrictions.in("tipoTransito", this.getListaTipoTransito()));
+		} else {
+			if (this.getTipoTransito() != null) {
+				getCriteria().add(Restrictions.eq("tipoTransito", this.getTipoTransito()));
+			}
+		}
+		
+		if (this.getStatus() != null) {
+			getCriteria().add(Restrictions.eq("status", this.getStatus()));
+		}		
+		
+	}
+}

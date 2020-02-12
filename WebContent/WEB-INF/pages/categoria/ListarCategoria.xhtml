@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Categoria</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarCategoria" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarCategoria')}"/>
+		</h:form>		
+			
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+				<sgp:formInputText id="pesquisar" labelValue="Nome" maxlength="80" value="#{categoriaBean.filtro.nome}" />
+
+				<sgp:formSelectOneMenu 
+					id="status" labelValue="Status"
+					value="#{categoriaBean.filtro.status}"
+					itemsValue="#{comboHelperBean.status}" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					temSelecione="true"/>
+					
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{categoriaBean.imprimir()}"/>
+			</p:panel>
+		</h:form>	
+
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="categoria" value="#{categoriaBean.categorias}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{categoria.id}"
+				             emptyMessage="Nenhum registro encontrado.">
+					<p:column headerText="Código" width="100" sortBy="#{categoria.id}">
+						<h:outputText value="#{categoria.id}" />
+					</p:column>
+	
+					<p:column headerText="Nome" sortBy="#{categoria.nome}">
+						<h:outputText value="#{categoria.nome}" />
+					</p:column>
+
+					<p:column headerText="Situação" width="120" sortBy="#{categoria.status}">
+						<h:outputText value="#{categoria.status.descricao}" />						
+					</p:column>
+
+					<p:column headerText="Ações" width="120">
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarCategoria" rendered="#{securityUtil.possuiPermissao('VisualizarCategoria')}">
+								<f:param name="id" value="#{categoria.id}" />
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarCategoria" rendered="#{securityUtil.possuiPermissao('AlterarCategoria')}">
+								<f:param name="id" value="#{categoria.id}" />
+							</p:button>
+							<p:commandButton action="#{categoriaBean.excluir(categoria)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirCategoria')}" >
+								 <p:confirm header="Confirmação" message="Deseja excluir a categoria?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					
+					<f:facet name="footer">
+						Total de registros: #{categoriaBean.categorias.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

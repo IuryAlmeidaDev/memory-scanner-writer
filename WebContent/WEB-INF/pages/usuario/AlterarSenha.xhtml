@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<h3>Alterar Senha</h3>
+		
+		<h:form id="form">
+			<p:panel id="panel">
+				<p:row rendered="#{alterarSenhaBean.usuario.primeiroAcesso}">
+					<div style="text-align: left">
+						<p:outputLabel id="texto" style="color: red" value="** Por medidas de segurança é obrigatório alterar a senha neste primeiro acesso.**" />
+						<br/>
+						<br/>
+					</div>
+				</p:row>
+				<p:outputLabel id="alertaSenha" style="color: red" value="** Senha deve conter no mínimo 6 e no máximo 15 caracteres.**" />
+				<sgp:formInputPassword 
+					id="pwd1"
+					labelValue="Nova senha"
+					value="#{alterarSenhaBean.usuario.senha}" 
+					validationRequired="true"
+					maxlength="15"
+					match=":form:pwd2:input" 
+					validatorMessage="A senha e a confirmação devem ser iguais."
+					display="text"/>
+					
+				<sgp:formInputPassword
+					id="pwd2"
+					labelValue="Confirme a senha"
+					value="#{alterarSenhaBean.usuario.senha}"
+					validationRequired="true"
+					maxlength="15"
+					display="text" />
+			
+				<br/>
+				<br/>
+				<p:commandButton value="Alterar" action="#{alterarSenhaBean.alterar()}"	update="@form" icon="ui-icon-disk" />
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

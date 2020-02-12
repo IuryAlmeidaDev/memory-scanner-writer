@@ -1,0 +1,226 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Pedido de Trânsito</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarPedidoTransito" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarPedidoTransito')}"/>
+		</h:form>		
+			
+		<p:panel>	
+		<h:form id="meuFormulario">
+				<p:outputLabel value="Consulta"/>
+				
+				<sgp:formInputText 
+						id="id"
+						labelValue="Nº Pedido"
+						value="#{pedidoTransitoBean.filtro.id}"	
+						mask="?999999999"										
+						display="text"
+						/>
+						
+				<sgp:formInputText 
+						id="matricula"
+						labelValue="Matrícula Recup."
+						value="#{pedidoTransitoBean.filtro.recuperandoId}"	
+						mask="?999999999"										
+						display="text"
+						/>
+						
+				<sgp:formInputText id="nome" labelValue="Nome Recup."  size="50" value="#{pedidoTransitoBean.filtro.nome}" />
+										
+				<sgp:formSelectOneMenu 
+						id="tipo" labelValue="Tipo de Trânsito"
+						temSelecione="true"
+						value="#{pedidoTransitoBean.filtro.tipoTransito}"
+						itemsValue="#{comboHelperBean.tipoTransito}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 						
+						display="text"
+						>
+							<f:ajax event="change" listener="#{pedidoTransitoBean.alterarTipoTransitoFiltro}" render=":meuFormulario:destino"/>
+						</sgp:formSelectOneMenu>
+						<br/>
+						<br/>
+					<h:panelGroup id="destino">
+					
+					<p:commandButton style="margin-top: -5px" icon="ui-icon ui-icon-plus" immediate="true" actionListener="#{pedidoTransitoBean.abrirDialogEstrutura}"
+					rendered="#{pedidoTransitoBean.filtro.tipoTransito != null and pedidoTransitoBean.filtro.tipoTransito.descricao.equalsIgnoreCase('Movimentação Interna')}">
+						<p:ajax event="dialogReturn" listener="#{pedidoTransitoBean.associarEstruturaFiltro}" update=":meuFormulario:destino" />
+					</p:commandButton>	
+					<sgp:formOutputLabel labelValue="Estrutura (Cela)" value="#{pedidoTransitoBean.filtro.estrutura.nomeCompleto}" rendered="#{pedidoTransitoBean.filtro.tipoTransito != null and pedidoTransitoBean.filtro.tipoTransito.descricao.equalsIgnoreCase('Movimentação Interna')}" />
+					
+					<sgp:formSelectOneMenu 
+						id="unidade" labelValue="Unidade Destino"
+						value="#{pedidoTransitoBean.filtro.unidadeDestino}"
+						itemsValue="#{pedidoTransitoBean.unidadesPrisionais}" 
+						itemValue="#{item}"
+						itemLabel="#{item.nome}" 
+						temSelecione="true"
+						converter="SimpleEntityConverter"		
+						display="text"	
+						rendered="#{pedidoTransitoBean.filtro.tipoTransito != null and pedidoTransitoBean.filtro.tipoTransito.descricao.equalsIgnoreCase('Transferência')}"
+						/>								
+																		
+					<sgp:formInputText id="estabelecimento" style="vertical-align: top" labelValue="Estabelecimento" value="#{pedidoTransitoBean.filtro.estabelecimento.nome}" size="40" disabled="true" 
+						rendered="#{pedidoTransitoBean.filtro.tipoTransito != null and pedidoTransitoBean.filtro.tipoTransito.descricao.equalsIgnoreCase('Movimentação Externa')}"/>
+						<p:commandButton style="margin-top: -5px" icon="ui-icon-plus" immediate="true" actionListener="#{pedidoTransitoBean.abrirDialogEstabelecimento}"
+							rendered="#{pedidoTransitoBean.filtro.tipoTransito != null and pedidoTransitoBean.filtro.tipoTransito.descricao.equalsIgnoreCase('Movimentação Externa')}">
+							<p:ajax event="dialogReturn" listener="#{pedidoTransitoBean.associarEstabelecimentoFiltro}" update=":meuFormulario:estabelecimento:input" />
+						</p:commandButton>		
+					</h:panelGroup>
+						
+				<sgp:formCalendar display="text" requiredMessage="*" labelValue="Data Prev. Inicial"
+						value="#{pedidoTransitoBean.filtro.dataInicio}"   />
+						
+				<sgp:formCalendar display="text" requiredMessage="*" labelValue="Data Prev. Final"
+						value="#{pedidoTransitoBean.filtro.dataFim}"  />
+						
+				<sgp:formSelectOneMenu 
+						id="status" labelValue="Status do Pedido"
+						value="#{pedidoTransitoBean.filtro.status}"
+						temSelecione="true"
+						itemsValue="#{comboHelperBean.statusPedido}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						disabled="#{pedidoTransitoBean.isVisualizacao}"
+						display="text" />				
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{pedidoTransitoBean.imprimir()}"/>
+			</h:form>
+		</p:panel>	
+
+		<br/>
+	
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="pedido" value="#{pedidoTransitoBean.pedidos}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{pedido.id}" sortOrder="descending"
+				             emptyMessage="Nenhum registro encontrado.">
+				             
+				     <p:column headerText="Nº" width="60" sortBy="#{pedido.id}">
+						<h:outputText value="#{pedido.id}" />
+					</p:column>
+					
+					<p:column headerText="Mat." width="80" sortBy="#{pedido.idRec}">
+						<h:outputText value="#{pedido.idRec}" />
+					</p:column>
+	
+					<p:column headerText="Recuperando" sortBy="#{pedido.recuperando}">
+						<h:outputText value="#{pedido.recuperando}" />
+					</p:column>
+					
+					<p:column headerText="Estrutura" sortBy="#{pedido.estruturaNomeCompleto}">
+						<h:outputText value="#{pedido.estruturaNomeCompleto}" />
+					</p:column>
+					
+					<p:column headerText="Tipo de Trânsito" sortBy="#{pedido.tipoTransito}" width="200">
+						<h:outputText value="#{pedido.tipoTransito.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Data Prevista" sortBy="#{pedido.dataPrevista}" width="150">
+						<h:outputText value="#{pedido.dataPrevista}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+				
+					<p:column headerText="Status"  width="120" sortBy="#{pedido.status}">
+						<h:outputText value="#{pedido.status.descricao}" />
+					</p:column>
+														
+					<p:column headerText="Ações" width="210">
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarPedidoTransito" rendered="#{securityUtil.possuiPermissao('VisualizarPedidoTransito')}">
+								<f:param name="id" value="#{pedido.id}"/>
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarPedidoTransito" rendered="#{securityUtil.possuiPermissao('AlterarPedidoTransito') and pedido.status.descricao.equalsIgnoreCase('Solicitado')}">
+								<f:param name="id" value="#{pedido.id}"/>
+							</p:button>
+							<p:commandButton title="Autorizar" icon="ui-icon-check" action="#{pedidoTransitoBean.autorizarPedido(pedido)}" rendered="#{securityUtil.possuiPermissao('AutorizarPedidoTransito') and pedido.status.descricao.equalsIgnoreCase('Solicitado')}"
+								update="autorizarForm" process="@this"/>
+							<p:commandButton title="Cancelar" icon="ui-icon-cancel"  action="#{pedidoTransitoBean.cancelarPedido(pedido)}" oncomplete="PF('cancelarPedido').show()"  update="cancelarForm" process="@this"
+								rendered="#{securityUtil.possuiPermissao('CancelarPedidoTransito') and (pedido.status.descricao.equalsIgnoreCase('Solicitado') or pedido.status.descricao.equalsIgnoreCase('Autorizado'))}" />
+							<p:commandButton action="#{pedidoTransitoBean.excluir(pedido)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" 
+								rendered="#{securityUtil.possuiPermissao('ExcluirPedidoTransito') and pedido.status.descricao.equalsIgnoreCase('Solicitado')}">
+								 <p:confirm header="Confirmação" message="Deseja excluir o pedido?" icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:commandButton title="Imprimir" icon="fa fa-print" action="#{pedidoTransitoBean.imprimirRelatorio(pedido)}" process="@this" />
+						</center>
+					</p:column>
+					
+					<f:facet name="footer">
+						Total de registros: #{pedidoTransitoBean.pedidos.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+	
+		<p:dialog id="dialogAutorizar" header="Autorização Pedido" showEffect="fade" widgetVar="autorizarPedido" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="autorizarForm">
+			<p:panel>
+					<sgp:formOutputLabel labelValue="Autorizado por" value="#{securityUtil.getUsuario().servidor.nome}"/>
+					<sgp:formSelectOneMenu id="autorizar" labelValue="Autorizar ?"	value="#{pedidoTransitoBean.autorizado}" display="text" validationRequired="true" temSelecione="true"
+						disabled="#{pedidoTransitoBean.isVisualizacao}" >
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+					</sgp:formSelectOneMenu>
+					
+					<sgp:formInputTextarea id="obsAutorizar" 
+						labelValue="Observação"
+						value="#{pedidoTransitoBean.pedido.observacao}" 
+						disabled="#{pedidoTransitoBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{pedidoTransitoBean.pedido.observacao.length()+5}" 
+						display="text" />
+					<br/>
+					<br/>
+					<p:commandButton title="Salvar" value="Confirmar" icon="ui-icon-check" update="@form :registrosForm" action="#{pedidoTransitoBean.confirmarAutorizacaoPedido()}" rendered="#{securityUtil.possuiPermissao('AutorizarPedidoTransito')}" />
+			 		
+				<p:commandButton value="Fechar" onclick="PF('autorizarPedido').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			
+			</h:form>
+    	</p:dialog>
+		
+		<p:dialog id="dialogCacel" header="Cancelar Pedido" showEffect="fade" widgetVar="cancelarPedido" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="cancelarForm">
+			<p:panel>
+			<sgp:formInputTextarea id="motivoCancel" 
+						labelValue="Motivo do Cancelamento"
+						value="#{pedidoTransitoBean.pedido.resultado}" 
+						validationRequired="true"
+						disabled="#{pedidoTransitoBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{pedidoTransitoBean.pedido.resultado.length()+5}" 
+						display="text" />
+					<br/>
+					<br/>
+					<p:commandButton title="Salvar" value="Confirmar" icon="ui-icon-check" update="@form :registrosForm" action="#{pedidoTransitoBean.confirmarCancelamentoPedido()}" 
+						rendered="#{securityUtil.possuiPermissao('CancelarPedidoTransito')}"/>
+			 		
+				<p:commandButton value="Fechar" onclick="PF('cancelarPedido').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			
+			</h:form>
+    	</p:dialog>
+	</ui:define>
+</ui:composition>

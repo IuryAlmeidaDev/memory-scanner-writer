@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Associar Foto</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form>
+	 		<p:selectOneButton id="tipoFoto" value="#{associarFotoBean.tipoFoto}" valueChangeListener="#{associarFotoBean.configurarVariaveisParaReceberNovaFoto}">
+	 			<p:ajax event="change" update="panelBotoes panelImagens" />
+	            <f:selectItem itemLabel="Envio de Foto" itemValue="upload" />	 			
+	            <f:selectItem itemLabel="Usar Webcam" itemValue="webcam" />
+	        </p:selectOneButton>
+	    </h:form>
+
+	    <br/>
+	    
+	    <h:form prependId="false">
+	    	<h:panelGroup id="panelBotoes">
+		    	<h:panelGroup id="panelBotoesCaptura" rendered="#{!associarFotoBean.possuiFotoEmDisco and associarFotoBean.tipoFoto == 'webcam'}">
+		    		<p:commandButton type="button" icon="fa fa-camera" value="Capturar" onclick="PF('pc').capture();" />
+		    	</h:panelGroup>
+		    	
+		    	<h:panelGroup id="panelUpload" rendered="#{!associarFotoBean.possuiFotoEmDisco and associarFotoBean.tipoFoto == 'upload'}">
+		    		<h:form enctype="multipart/form-data">
+			    		<p:fileUpload mode="advanced" skinSimple="true" dragDropSupport="false" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" fileUploadListener="#{associarFotoBean.receberImagemPorUpload}"
+						 	uploadLabel="Enviar" cancelLabel="Cancelar" label="Escolher" auto="true" update="panelBotoes panelImagens" />
+						 <br/>
+					 </h:form>							
+		    	</h:panelGroup>
+		    	 
+		    	<h:panelGroup id="panelBotoesCropper" rendered="#{associarFotoBean.possuiFotoEmDisco}">
+				   	<p:commandButton title="Salvar" value="Recortar e Adicionar" icon="ui-icon-disk" action="#{associarFotoBean.recortarImagemEAssociar}">
+					 	<p:confirm header="Atenção" message="Salve o recorte da Foto!" icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:commandButton value="Nova foto" icon="fa fa-camera" actionListener="#{associarFotoBean.configurarVariaveisParaReceberNovaFoto}" update="panelImagens panelBotoes" />
+		    	</h:panelGroup>
+		    	
+		    	<p:commandButton value="Fechar" rendered="#{associarFotoBean.tipoFoto ne null}" icon="ui-icon-close" actionListener="#{associarFotoBean.fecharDialog}" />
+		    </h:panelGroup>
+
+		    <h:panelGroup id="panelImagens">
+		    	<br/><br/>
+		    	<p:photoCam widgetVar="pc" rendered="#{!associarFotoBean.possuiFotoEmDisco and associarFotoBean.tipoFoto == 'webcam'}"
+		    		listener="#{associarFotoBean.receberImagemPelaWebcam}" photoWidth="800" photoHeight="600" width="800" height="600"
+		    		update="panelBotoes panelImagens" format="jpg" jpegQuality="100" />
+			    <p:imageCropper id="imageCropper" rendered="#{associarFotoBean.possuiFotoEmDisco}" value="#{associarFotoBean.croppedImage}" 
+			    	image="#{associarFotoBean.caminhoDaImagem}?t=#{sigepen.getDataAtual().getTime()}" minSize="180,240" initialCoords="0,0,450,600" aspectRatio="0.75" />
+		    </h:panelGroup>
+	    </h:form>
+
+		<p:confirmDialog global="true">
+			<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog> 			
+		<style>
+			.ui-fileupload-choose {
+				width: auto !important;
+				height: auto !important;
+			}
+			
+			.ui-panelgrid-content {
+				border: none !important;
+			}
+		</style>
+	</ui:define>
+</ui:composition>

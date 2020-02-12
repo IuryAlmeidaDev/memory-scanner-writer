@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListaDeChamada" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="2.415765000000001"/>
+	<property name="ireport.x" value="373"/>
+	<property name="ireport.y" value="137"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="TEM_PAGINACAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID_ESTRUTURA" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ESTRUTURA_NOME" class="java.lang.String"/>
+	<parameter name="SCHEMA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select (select listagg(e.nome, ' > ') within group(order by e.id) cela
+          from $P!{SCHEMA}.estrutura e
+         where e.estruturapai_id is not null
+         start with e.id = recup.estrutura_id
+        connect by e.id = prior e.estruturapai_id) cela,
+        recup.id, recup.nome, recup.nome_social, recup.nome_mae, recup.data_nascimento, recup.em_movimento
+       from (select
+       r.id,
+       p.nome, p.nome_social,
+       p.nome_mae,
+       p.data_nascimento,
+       es.id estrutura_id,
+       (case
+         when pt.status in ('EM_ANDAMENTO', 'SUSPENSO') then
+          'SIM'
+         else
+          'NAO'
+       end) em_movimento
+  from $P!{SCHEMA}.estrutura        es,
+       $P!{SCHEMA}.recuperando      r,
+       $P!{SCHEMA}.pessoa           p,
+       $P!{SCHEMA}.passagem         pa,
+       $P!{SCHEMA}.passagem_lotacao pal,
+       $P!{SCHEMA}.pedido_transito  pt
+ where r.pessoa_id = p.id(+)
+   and pa.id(+) = pal.passagem_id
+   and pal.estrutura_id(+) = es.id
+   and pa.recuperando_id = r.id(+)
+   and pal.data_saida is null
+   and pt.recuperando_id(+) = r.id
+   and pt.data_conclusao(+) is null
+   and pt.status(+) in ('SUSPENSO', 'EM_ANDAMENTO')
+   and pa.recuperando_id is not null
+   start with es.id = $P{ID_ESTRUTURA}
+   connect by prior es.id = es.estruturapai_id
+ order by es.estruturapai_id, es.id, p.nome) recup]]>
+	</queryString>
+	<field name="CELA" class="java.lang.String"/>
+	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="NOME" class="java.lang.String"/>
+	<field name="NOME_SOCIAL" class="java.lang.String"/>
+	<field name="NOME_MAE" class="java.lang.String"/>
+	<field name="DATA_NASCIMENTO" class="java.sql.Timestamp"/>
+	<field name="EM_MOVIMENTO" class="java.lang.String"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{ID}]]></variableExpression>
+	</variable>
+	<variable name="ID_2" class="java.lang.Integer" resetType="Group" resetGroup="chamda" calculation="Count">
+		<variableExpression><![CDATA[$F{ID}]]></variableExpression>
+	</variable>
+	<group name="chamda">
+		<groupExpression><![CDATA[$F{CELA}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<rectangle>
+					<reportElement mode="Opaque" x="0" y="16" width="555" height="20" backcolor="#CCCCCC" uuid="984d511c-aee2-46b5-8f81-2f0362e4f47c"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="0" y="0" width="555" height="16" uuid="d901d06b-adcf-40db-b748-fddce4dd4787"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CELA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="16" width="35" height="20" uuid="de563a7a-55a6-4053-9e97-758e8335b82c"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Matr.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="16" width="140" height="20" uuid="c2e082b6-1035-4ae0-963a-32863c77670e"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nome]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="310" y="16" width="140" height="20" uuid="3a098fee-8fd8-4067-95bb-689a93e7157e"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nome Mãe]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="450" y="16" width="55" height="20" uuid="224e0b7e-e092-4937-93d9-33decfd3e462"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Data Nasc.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="505" y="16" width="50" height="20" uuid="c656e1e8-ae74-42fc-ad54-01a08f1ac70b"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Em mov.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="175" y="16" width="135" height="20" uuid="cbb4f8b1-80cb-4b05-aed0-e5ae9617d8c1"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nome Social]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="23">
+				<textField>
+					<reportElement x="0" y="0" width="555" height="15" uuid="a18cbf9a-7518-483a-8e58-f2d96ca230cf"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Recuperandos na estrutura: " + $V{ID_2} + "      "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="106" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="106" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
+				<subreportParameter name="UNIDADE_LOGADA">
+					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="22">
+			<textField>
+				<reportElement x="133" y="0" width="288" height="20" uuid="a7f76529-7fcf-4828-bf85-e5050ab8fe53"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ESTRUTURA_NOME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="35" height="15" uuid="74120c12-45df-45e1-8e25-92651b89ce07"/>
+				<box>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="35" y="0" width="140" height="15" uuid="8d77113f-7bec-40c3-9510-328040bfd05c"/>
+				<box>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOME}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="310" y="0" width="140" height="15" uuid="bcc859f3-d7fb-4081-9a60-d57b38a90e40"/>
+				<box>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOME_MAE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToBandHeight" x="450" y="0" width="55" height="15" uuid="03a6aac3-2f0f-4650-ac9d-36cfda070124"/>
+				<box>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DATA_NASCIMENTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="505" y="0" width="50" height="15" uuid="4aaac130-00e5-4457-9f45-14c5e25f0249"/>
+				<box>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EM_MOVIMENTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="175" y="0" width="135" height="15" uuid="a282629d-9ab7-43f3-94ad-7ed36cadd9b9"/>
+				<box>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOME_SOCIAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="51" splitType="Stretch">
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
+				<subreportParameter name="PAGINA">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EMISSOR">
+					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_PAGINAS">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="435" y="13" width="80" height="20" uuid="21949555-196a-4d34-89dd-e4b9f2f2f2af">
+					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="13" width="40" height="20" uuid="18471924-0526-4b68-acd6-512add5df44e">
+					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="83">
+			<textField>
+				<reportElement x="313" y="0" width="242" height="20" uuid="329dd6ad-3e24-40d8-b898-61a1f721896c"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Recuperandos na unidade: " + $V{id_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="141" y="63" width="100" height="20" uuid="949bb673-50c6-4eac-bfed-3dc1b998da90"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Data da Conferência]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="256" y="63" width="160" height="20" uuid="c0d6dcff-f09e-4707-a1d2-61fe3769606e"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Conferido por]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="141" y="43" width="100" height="20" uuid="a1e4d80a-ebe4-4903-a0d4-766b1e3a8bcd"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[        /        /            ]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

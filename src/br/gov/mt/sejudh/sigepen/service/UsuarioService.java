@@ -1,0 +1,107 @@
+package br.gov.mt.sejudh.sigepen.service;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import br.gov.mt.sejudh.sigepen.dao.UsuarioDAO;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUsuario;
+import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
+import br.gov.mt.sejudh.sigepen.model.Acesso;
+import br.gov.mt.sejudh.sigepen.model.Usuario;
+import br.gov.mt.sejudh.sigepen.model.dto.UsuarioDTO;
+import br.gov.mt.sejudh.sigepen.security.HashedPassSaltGenerator;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
+
+@Stateless
+public class UsuarioService {
+	
+	@Inject
+	private UsuarioDAO dao;
+	
+	private Usuario configurarUsuario(Usuario usuario, boolean senhaMudou) {
+		if (usuario.getId() <= 0) {
+			usuario.setLogin(usuario.getServidor().getCpf());
+			usuario.setDataCadastro(new Date());
+			usuario.setPrimeiroAcesso(true);
+			usuario = HashedPassSaltGenerator.gerarSenhaESalt(usuario, usuario.getServidor().getCpf());
+		}
+		
+		if (senhaMudou) {
+			usuario.setPrimeiroAcesso(false);
+			usuario = HashedPassSaltGenerator.gerarSenhaESalt(usuario, usuario.getSenha());
+		}
+		
+		if (usuario.getPrimeiroAcesso()) {
+			usuario = HashedPassSaltGenerator.gerarSenhaESalt(usuario, usuario.getServidor().getCpf());
+		}
+		
+		return usuario;
+	}
+	
+	public Usuario salvar(Usuario usuario, boolean senhaMudou) throws Exception {
+		if (usuario.getServidor() == null) {
+			throw new ValidacaoException("É necessário associar um servidor.");
+		}
+		
+		if (usuario.getDataExpiracao() == null) {
+			throw new ValidacaoException("É necessário preencher a data de expiração.");
+		}
+		
+		if (usuario.getDataExpiracao().before(Sigepen.getDataAtual())) {
+			throw new ValidacaoException("A data de expiração não pode ser menor ou igual que a data de hoje.");
+		}
+		
+		if (usuarioNaoPossuiUnidadeDeAcesso(usuario)) {
+			throw new ValidacaoException("É necessário adicionar pelo menos uma unidade de acesso.");
+		}
+		
+		if (usuario.getId() > 0 && usuario.getSenha().length() < 6) {
+			throw new ValidacaoException("A senha deve conter no mínimo 6 caracteres.");
+		}
+		
+		validarSeUsuarioPossuiAcessoSemPerfil(usuario);
+		
+		return dao.salvar(configurarUsuario(usuario, senhaMudou));
+	}
+	
+	private void validarSeUsuarioPossuiAcessoSemPerfil(Usuario usuario) throws ValidacaoException {
+		List<Acesso> acessos = usuario.getAcessos();
+		
+		for (Acesso acesso : acessos) {
+			if (acesso.getPerfis().isEmpty()) {
+				throw new ValidacaoException("É necessário adicionar pelo menos um perfil a unidade de acesso " + acesso.getUnidade().getNome());
+			}
+		}
+	}
+
+	private boolean usuarioNaoPossuiUnidadeDeAcesso(Usuario usuario) {
+		return usuario.getAcessos().isEmpty();
+	}
+
+	public Usuario buscarUsuarioPorId(long usuarioId) {
+		return dao.buscarUsuarioPorId(usuarioId);
+	}
+
+	public int buscarQuantidadeFiltrada(FiltroUsuario filtro) {
+		return dao.buscarQuantidadeFiltrada(filtro);
+	}
+
+	public List<UsuarioDTO> buscarUsuariosPorFiltro(FiltroUsuario filtro) {
+		return dao.buscarUsuariosPorFiltro(filtro);
+	}
+
+	public void excluir(long usuarioId) throws Exception {		
+		dao.excluir(usuarioId);
+	}
+
+	public boolean isServidorJaAssociadoAUmUsuario(long servidorId) {
+		return dao.isServidorJaAssociadoAUmUsuario(servidorId);
+	}
+
+	public Usuario buscarUsuarioPorLogin(String loginUsuarioAutorizador) {
+		return dao.buscarUsuarioPorLogin(loginUsuarioAutorizador);
+	}
+}

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListaPedidoTransferencia" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="78c4cf4f-be57-44aa-82c0-b3b1cbf7a8ab">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="id" class="java.lang.Long"/>
+	<field name="recuperando.id" class="java.lang.Long"/>
+	<field name="recuperando.pessoa.nome" class="java.lang.String"/>
+	<field name="tipoMovimentacao.descricao" class="java.lang.String"/>
+	<field name="status.descricao" class="java.lang.String"/>
+	<field name="unidadeDestino.nome" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="25" splitType="Prevent">
+			<staticText>
+				<reportElement x="189" y="0" width="177" height="20" uuid="f0bfd12f-50f1-45cd-8ee7-1c428087d40c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[PEDIDO(S) DE TRÂNSITO]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="16" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="16" backcolor="#CCCCCC" uuid="dec19a3d-7754-4934-a7d7-05be4e5e4c10"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="30" y="0" width="50" height="15" uuid="b80f1008-f813-40a7-8366-a12a25f6b477"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matrícula]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="30" height="15" uuid="f4be8e49-0197-461e-b270-c7076507b8ae"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="0" width="70" height="15" uuid="5c812074-056d-4391-99fc-04feaf7d3ec7"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situação]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="170" height="15" uuid="4a88b89f-1fc3-4fe7-a9cf-cced682e57b8"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Recuperando]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="0" width="155" height="15" uuid="1f0baca1-67d1-4e6c-9b6a-3a2b454f8b30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidade Destino]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="475" y="0" width="79" height="15" uuid="946dcf83-8832-4e88-86b2-a080fcefce2e"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Visto]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Prevent">
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="15" backcolor="#CCCCCC" uuid="d5b72126-f3a8-4d95-ad36-058f8ee79216">
+					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="15" uuid="de5aa2b0-117a-41eb-9711-825738084d56"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="30" y="0" width="50" height="15" uuid="9315b647-92ad-4a8a-828c-999c5432d06f"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recuperando.id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="80" y="0" width="170" height="15" uuid="0a364e15-ac83-496e-b828-9233b41ab0ae"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recuperando.pessoa.nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="250" y="0" width="155" height="15" uuid="e739b00f-d5af-4f73-9d83-da24648670f1"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidadeDestino.nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="405" y="0" width="70" height="15" uuid="bb72b2b0-3359-4cb2-9785-51f487a640e7"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{status.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="475" y="0" width="79" height="15" uuid="b78ffc05-5894-4279-a14a-544ce5628f3f"/>
+				<box>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

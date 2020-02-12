@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Servidor</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarServidor" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarServidor')}" />
+		</h:form>		
+			
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+				<sgp:formInputText id="pesquisarNome" labelValue="Nome" value="#{servidorBean.filtro.nome}" maxlength="100" size="40"/>
+				<sgp:formInputText id="pesquisarMatricula" labelValue="Matrícula" value="#{servidorBean.filtro.matricula}" maxlength="100" size="40"/>
+				
+				<sgp:formSelectOneMenu 
+					id="unidadeLot" labelValue="Lotação"
+					value="#{servidorBean.filtro.unidadeLotacao}"
+					itemsValue="#{servidorBean.unidadesPrisionais}" 
+					itemValue="#{item}"
+					itemLabel="#{item.nome}" 
+					temSelecione="true"
+					converter="SimpleEntityConverter"	
+					rendered="#{securityUtil.possuiPermissao('ListarTodosServidores')}"/>
+				
+				<sgp:formSelectOneMenu 
+					id="status" labelValue="Status"
+					value="#{servidorBean.filtro.status}"
+					itemsValue="#{comboHelperBean.status}" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					temSelecione="true"/>
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{servidorBean.imprimir()}"/>
+			</p:panel>
+		</h:form>	
+
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="servidor" value="#{servidorBean.servidores}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{servidor.id}"
+				             emptyMessage="Nenhum registro encontrado.">
+					<p:column headerText="Código" width="94" sortBy="#{servidor.id}">
+						<h:outputText value="#{servidor.id}" />
+					</p:column>
+					
+					<p:column headerText="Matrícula" width="113" sortBy="#{servidor.matricula}">
+						<h:outputText value="#{servidor.matricula}" />
+					</p:column>
+	
+					<p:column headerText="Nome" sortBy="#{servidor.nome}">
+						<h:outputText value="#{servidor.nome}" />
+					</p:column>
+					
+					<p:column headerText="Órgão" sortBy="#{servidor.orgao}">
+						<h:outputText value="#{servidor.orgao}" />
+					</p:column>					
+					
+					<p:column headerText="Cargo" sortBy="#{servidor.cargo}">
+						<h:outputText value="#{servidor.cargo}" />
+					</p:column>
+
+					<p:column headerText="Tipo" width="100" sortBy="#{servidor.tipo}">
+						<h:outputText value="#{servidor.tipo}" />
+					</p:column>
+					
+					<p:column headerText="Situação" width="109" sortBy="#{servidor.status}">
+						<h:outputText value="#{servidor.status}" />						
+					</p:column>
+
+					<p:column headerText="Ações" width="150">
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarServidor" rendered="#{securityUtil.possuiPermissao('VisualizarServidor')}">
+								<f:param name="id" value="#{servidor.id}" />
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarServidor" rendered="#{securityUtil.possuiPermissao('AlterarServidor')}">
+								<f:param name="id" value="#{servidor.id}" />
+							</p:button>
+							<p:commandButton action="#{servidorBean.excluir(servidor)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirServidor')}">
+								 <p:confirm header="Confirmação" message="Deseja excluir o servidor?" icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:commandButton title="Imprimir" icon="fa fa-print" actionListener="#{servidorBean.imprimirRegistro(servidor)}"/>
+						</center>
+					</p:column>
+					
+					<f:facet name="footer">
+						Total de registros: #{servidorBean.servidores.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

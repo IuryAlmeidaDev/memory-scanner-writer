@@ -1,0 +1,400 @@
+.botao {
+  cursor: pointer;
+  opacity: 0 !important;
+}
+
+.face {
+  width: 49px;
+  height: 45px;
+  background: url("#{resource['images/corpo/frente_0_1.jpg']}") 0 0 no-repeat;
+}
+.face:hover {
+  background: url("#{resource['images/corpo/frente_0_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.pescoco_frente {
+  width: 58px;
+  height: 12px;
+  background: url("#{resource['images/corpo/frente_1_1.jpg']}") 0 0 no-repeat;
+}
+.pescoco_frente:hover {
+  background: url("#{resource['images/corpo/frente_1_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.ombro_dir_frente {
+  width: 49px;
+  height: 31px;
+  background: url("#{resource['images/corpo/frente_2_0.jpg']}") 0 0 no-repeat;
+}
+.ombro_dir_frente:hover {
+  background: url("#{resource['images/corpo/frente_2_0_h.jpg']}") 0 0 no-repeat;
+}
+
+.ombro_esq_frente {
+  width: 52px;
+  height: 31px;
+  background: url("#{resource['images/corpo/frente_2_3.jpg']}") 0 0 no-repeat;
+}
+.ombro_esq_frente:hover {
+  background: url("#{resource['images/corpo/frente_2_3_h.jpg']}") 0 0 no-repeat;
+}
+
+.biceps_dir {
+  width: 49px;
+  height: 26px;
+  background: url("#{resource['images/corpo/frente_3_0.jpg']}") 0 0 no-repeat;
+}
+.biceps_dir:hover {
+  background: url("#{resource['images/corpo/frente_3_0_h.jpg']}") 0 0 no-repeat;
+}
+
+.biceps_esq {
+  width: 52px;
+  height: 26px;
+  background: url("#{resource['images/corpo/frente_3_3.jpg']}") 0 0 no-repeat;
+}
+.biceps_esq:hover {
+  background: url("#{resource['images/corpo/frente_3_3_h.jpg']}") 0 0 no-repeat;
+}
+
+.antebraco_dir_frente {
+  width: 49px;
+  height: 53px;
+  background: url("#{resource['images/corpo/frente_4_0.jpg']}") 0 0 no-repeat;
+}
+.antebraco_dir_frente:hover {
+  background: url("#{resource['images/corpo/frente_4_0_h.jpg']}") 0 0 no-repeat;
+}
+
+.antebraco_esq_frente {
+  width: 52px;
+  height: 53px;
+  background: url("#{resource['images/corpo/frente_4_3.jpg']}") 0 0 no-repeat;
+}
+.antebraco_esq_frente:hover {
+  background: url("#{resource['images/corpo/frente_4_3_h.jpg']}") 0 0 no-repeat;
+}
+
+.palma_dir {
+  width: 49px;
+  height: 34px;
+  background: url("#{resource['images/corpo/frente_5_0.jpg']}") 0 0 no-repeat;
+}
+.palma_dir:hover {
+  background: url("#{resource['images/corpo/frente_5_0_h.jpg']}") 0 0 no-repeat;
+}
+
+.palma_esq {
+  width: 52px;
+  height: 34px;
+  background: url("#{resource['images/corpo/frente_5_3.jpg']}") 0 0 no-repeat;
+}
+.palma_esq:hover {
+  background: url("#{resource['images/corpo/frente_5_3_h.jpg']}") 0 0 no-repeat;
+}
+
+.peitoral_dir {
+  width: 30px;
+  height: 39px;
+  background: url("#{resource['images/corpo/frente_2_1.jpg']}") 0 0 no-repeat;
+}
+.peitoral_dir:hover {
+  background: url("#{resource['images/corpo/frente_2_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.peitoral_esq {
+  width: 28px;
+  height: 39px;
+  background: url("#{resource['images/corpo/frente_2_2.jpg']}") 0 0 no-repeat;
+}
+.peitoral_esq:hover {
+   background: url("#{resource['images/corpo/frente_2_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.abdomem_dir {
+  width: 30px;
+  height: 55px;
+  background: url("#{resource['images/corpo/frente_3_1.jpg']}") 0 0 no-repeat;
+}
+.abdomem_dir:hover {
+  background: url("#{resource['images/corpo/frente_3_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.abdomem_esq {
+  width: 28px;
+  height: 55px;
+  background: url("#{resource['images/corpo/frente_3_2.jpg']}") 0 0 no-repeat;
+}
+.abdomem_esq:hover {
+  background: url("#{resource['images/corpo/frente_3_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.pelve_dir {
+  width: 30px;
+  height: 29px;
+  background: url("#{resource['images/corpo/frente_4_1.jpg']}") 0 0 no-repeat;
+}
+.pelve_dir:hover {
+  background: url("#{resource['images/corpo/frente_4_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.pelve_esq {
+  width: 28px;
+  height: 29px;
+  background: url("#{resource['images/corpo/frente_4_2.jpg']}") 0 0 no-repeat;
+}
+.pelve_esq:hover {
+  background: url("#{resource['images/corpo/frente_4_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.coxa_dir {
+  width: 30px;
+  height: 60px;
+  background: url("#{resource['images/corpo/frente_5_1.jpg']}") 0 0 no-repeat;
+}
+.coxa_dir:hover {
+  background: url("#{resource['images/corpo/frente_5_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.coxa_esq {
+  width: 28px;
+  height: 60px;
+  background: url("#{resource['images/corpo/frente_5_2.jpg']}") 0 0 no-repeat;
+}
+.coxa_esq:hover {
+  background: url("#{resource['images/corpo/frente_5_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.canela_dir {
+  width: 30px;
+  height: 68px;
+  background: url("#{resource['images/corpo/frente_9_1.jpg']}") 0 0 no-repeat;
+}
+.canela_dir:hover {
+  background: url("#{resource['images/corpo/frente_9_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.canela_esq {
+  width: 28px;
+  height: 68px;
+  background: url("#{resource['images/corpo/frente_9_2.jpg']}") 0 0 no-repeat;
+}
+.canela_esq:hover {
+  background: url("#{resource['images/corpo/frente_9_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.pe_dir {
+  width: 30px;
+  height: 19px;
+  background: url("#{resource['images/corpo/frente_10_1.jpg']}") 0 0 no-repeat;
+}
+.pe_dir:hover {
+  background: url("#{resource['images/corpo/frente_10_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.pe_esq {
+  width: 28px;
+  height: 19px;
+  background: url("#{resource['images/corpo/frente_10_2.jpg']}") 0 0 no-repeat;
+}
+.pe_esq:hover {
+  background: url("#{resource['images/corpo/frente_10_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.cabeca_posterior {
+  width: 56px;
+  height: 33px;
+  background: url("#{resource['images/corpo/tras_1_1.jpg']}") 0 0 no-repeat;
+}
+.cabeca_posterior:hover {
+  background: url("#{resource['images/corpo/tras_1_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.pescoco_tras {
+  width: 56px;
+  height: 16px;
+  background: url("#{resource['images/corpo/tras_2_1.jpg']}") 0 0 no-repeat;
+}
+.pescoco_tras:hover {
+  background: url("#{resource['images/corpo/tras_2_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.ombro_esq_tras {
+  width: 52px;
+  height: 33px;
+  background: url("#{resource['images/corpo/tras_3_0.jpg']}") 0 0 no-repeat;
+}
+.ombro_esq_tras:hover {
+  background: url("#{resource['images/corpo/tras_3_0_h.jpg']}") 0 0 no-repeat;
+}
+
+.dorso_esq {
+  width: 28px;
+  height: 33px;
+  background: url("#{resource['images/corpo/tras_3_1.jpg']}") 0 0 no-repeat;
+}
+.dorso_esq:hover {
+  background: url("#{resource['images/corpo/tras_3_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.dorso_dir {
+  width: 28px;
+  height: 33px;
+  background: url("#{resource['images/corpo/tras_3_2.jpg']}") 0 0 no-repeat;
+}
+.dorso_dir:hover {
+  background: url("#{resource['images/corpo/tras_3_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.ombro_dir_tras {
+  width: 51px;
+  height: 33px;
+  background: url("#{resource['images/corpo/tras_3_3.jpg']}") 0 0 no-repeat;
+}
+.ombro_dir_tras:hover {
+  background: url("#{resource['images/corpo/tras_3_3_h.jpg']}") 0 0 no-repeat;
+}
+
+.triceps_esq {
+  width: 52px;
+  height: 31px;
+  background: url("#{resource['images/corpo/tras_4_0.jpg']}") 0 0 no-repeat;
+}
+.triceps_esq:hover {
+  background: url("#{resource['images/corpo/tras_4_0_h.jpg']}") 0 0 no-repeat;
+}
+
+.lombar_esq {
+  width: 28px;
+  height: 61px;
+  background: url("#{resource['images/corpo/tras_4_1.jpg']}") 0 0 no-repeat;
+}
+.lombar_esq:hover {
+  background: url("#{resource['images/corpo/tras_4_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.lombar_dir {
+  width: 28px;
+  height: 61px;
+  background: url("#{resource['images/corpo/tras_4_2.jpg']}") 0 0 no-repeat;
+}
+.lombar_dir:hover {
+  background: url("#{resource['images/corpo/tras_4_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.triceps_dir {
+  width: 51px;
+  height: 31px;
+  background: url("#{resource['images/corpo/tras_4_3.jpg']}") 0 0 no-repeat;
+}
+.triceps_dir:hover {
+  background: url("#{resource['images/corpo/tras_4_3_h.jpg']}") 0 0 no-repeat;
+}
+
+.antebraco_esq_tras {
+  width: 52px;
+  height: 49px;
+  background: url("#{resource['images/corpo/tras_5_0.jpg']}") 0 0 no-repeat;
+}
+.antebraco_esq_tras:hover {
+  background: url("#{resource['images/corpo/tras_5_0_h.jpg']}") 0 0 no-repeat;
+}
+
+.antebraco_dir_tras {
+  width: 51px;
+  height: 49px;
+  background: url("#{resource['images/corpo/tras_5_3.jpg']}") 0 0 no-repeat;
+}
+.antebraco_dir_tras:hover {
+  background: url("#{resource['images/corpo/tras_5_3_h.jpg']}") 0 0 no-repeat;
+}
+
+.gluteo_esq {
+  width: 28px;
+  height: 32px;
+  background: url("#{resource['images/corpo/tras_5_1.jpg']}") 0 0 no-repeat;
+}
+.gluteo_esq:hover {
+  background: url("#{resource['images/corpo/tras_5_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.gluteo_dir {
+  width: 28px;
+  height: 32px;
+  background: url("#{resource['images/corpo/tras_5_2.jpg']}") 0 0 no-repeat;
+}
+.gluteo_dir:hover {
+  background: url("#{resource['images/corpo/tras_5_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.dorso_mao_esq {
+  width: 52px;
+  height: 36px;
+  background: url("#{resource['images/corpo/tras_6_0.jpg']}") 0 0 no-repeat;
+}
+.dorso_mao_esq:hover {
+  background: url("#{resource['images/corpo/tras_6_0_h.jpg']}") 0 0 no-repeat;
+}
+
+.dorso_mao_dir {
+  width: 51px;
+  height: 36px;
+  background: url("#{resource['images/corpo/tras_6_3.jpg']}") 0 0 no-repeat;
+}
+.dorso_mao_dir:hover {
+  background: url("#{resource['images/corpo/tras_6_3_h.jpg']}") 0 0 no-repeat;
+}
+
+.posterior_esq {
+  width: 28px;
+  height: 61px;
+  background: url("#{resource['images/corpo/tras_6_1.jpg']}") 0 0 no-repeat;
+}
+.posterior_esq:hover {
+  background: url("#{resource['images/corpo/tras_6_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.posterior_dir {
+  width: 28px;
+  height: 61px;
+  background: url("#{resource['images/corpo/tras_6_2.jpg']}") 0 0 no-repeat;
+}
+.posterior_dir:hover {
+  background: url("#{resource['images/corpo/tras_6_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.panturrilha_esq {
+  width: 28px;
+  height: 68px;
+  background: url("#{resource['images/corpo/tras_7_1.jpg']}") 0 0 no-repeat;
+}
+.panturrilha_esq:hover {
+  background: url("#{resource['images/corpo/tras_7_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.panturrilha_dir {
+  width: 28px;
+  height: 68px;
+  background: url("#{resource['images/corpo/tras_7_2.jpg']}") 0 0 no-repeat;
+}
+.panturrilha_dir:hover {
+  background: url("#{resource['images/corpo/tras_7_2_h.jpg']}") 0 0 no-repeat;
+}
+
+.calcanhar_esq {
+  width: 28px;
+  height: 19px;
+  background: url("#{resource['images/corpo/tras_8_1.jpg']}") 0 0 no-repeat;
+}
+.calcanhar_esq:hover {
+  background: url("#{resource['images/corpo/tras_8_1_h.jpg']}") 0 0 no-repeat;
+}
+
+.calcanhar_dir {
+  width: 28px;
+  height: 19px;
+  background: url("#{resource['images/corpo/tras_8_2.jpg']}") 0 0 no-repeat;
+}
+.calcanhar_dir:hover {
+  background: url("#{resource['images/corpo/tras_8_2_h.jpg']}") 0 0 no-repeat;
+}

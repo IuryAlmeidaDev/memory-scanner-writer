@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>#{crimeBean.tituloPagina} Crime</h3>
+		<h:form>
+			<p:panel >
+				<sgp:formInputText 
+					id="legislacao"
+					labelValue="Lei"
+					value="#{crimeBean.crime.nomeLegislacao}"
+					disabled="#{crimeBean.isVisualizacao}"
+					size="100"
+					display="text"/>
+					
+				<sgp:formInputText 
+					id="artigo"
+					labelValue="Artigo"
+					value="#{crimeBean.crime.numArtigo}"
+					disabled="#{crimeBean.isVisualizacao}"
+					maxlength="80"
+					display="text"/>				
+						
+				<sgp:formInputText 
+					id="paragrafo"
+					labelValue="Parágrafo"
+					value="#{crimeBean.crime.numParagrafo}"
+					disabled="#{crimeBean.isVisualizacao}"
+					maxlength="80"
+					display="text"/>
+					
+				<sgp:formInputText 
+					id="inciso"
+					labelValue="Inciso"
+					value="#{crimeBean.crime.numInciso}"
+					disabled="#{crimeBean.isVisualizacao}"
+					maxlength="80"
+					display="text"/>
+					
+				<sgp:formInputText 
+					id="alinea"
+					labelValue="Alínea"
+					value="#{crimeBean.crime.numAlinea}"
+					disabled="#{crimeBean.isVisualizacao}"
+					maxlength="80"
+					display="text"/>
+					
+                 <sgp:formInputTextarea 
+                      id="descCrime"
+                      labelValue="Descrição"
+                      value="#{crimeBean.crime.detalhamento}"
+                       disabled="#{crimeBean.isVisualizacao}"
+                      rows="5"
+                      columns="100"
+                      maxlength="250"
+                      autoResize="true"
+                      size="#{crimeBean.crime.detalhamento.length()+5}"
+                       display="text"/>                
+                      
+				
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<p:button outcome="pretty:ListarCrime" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1"/>
+				</p:button>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

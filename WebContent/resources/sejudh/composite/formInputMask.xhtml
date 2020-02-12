@@ -1,0 +1,100 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">	
+<cc:interface>
+	<cc:attribute name="mask" required="true" />
+	<cc:attribute name="converter" required="false" />
+	<cc:attribute name="labelValue" required="true" />
+	<cc:attribute name="minlength" default="1" />
+	<cc:attribute name="maxlength" default="999999999" />
+	<cc:attribute name="size" />
+	<cc:attribute name="validationRequired" required="false" default="false" type="java.lang.Boolean" />
+	<cc:attribute name="value" required="true" />
+	<cc:attribute name="disabled" required="false" />
+	<cc:attribute name="display" required="false" />
+	<cc:attribute name="validatorRange" required="false"/>
+	<cc:attribute name="validatorId" required="false"/>
+	<cc:attribute name="style" required="false" />
+	<cc:attribute name="immediate" required="false" />
+	<cc:attribute name="rendered" required="false" />
+	<cc:attribute name="styleFormLabelColumn" required="false"/>
+
+</cc:interface>
+
+<cc:implementation>  
+	<div class="form-block">
+		<div class="form-label-column" style="#{cc.attrs.styleFormLabelColumn}">
+			<h:outputLabel for="input" value="#{cc.attrs.labelValue}:" />
+		</div>
+
+		<div class="form-required-column">
+			<ui:fragment rendered="#{cc.attrs.validationRequired}">* </ui:fragment>
+			<p:spacer width="15px" rendered="#{!cc.attrs.validationRequired}" />
+		</div>
+
+		<div class="form-input-column">
+
+			<p:inputMask id="input" 
+				mask="#{cc.attrs.mask}"
+				size="#{cc.attrs.size}" 
+				maxlength="#{cc.attrs.maxlength}"
+				value="#{cc.attrs.value}"
+				required="#{cc.attrs.validationRequired}"
+				label="#{cc.attrs.labelValue}"
+				disabled="#{cc.attrs.disabled}"
+				rendered="#{cc.attrs.rendered}"
+				style="#{cc.attrs.style}"
+				immediate="#{cc.attrs.immediate}"
+				autocomplete="off">
+
+				<c:if test="#{cc.attrs.validatorRange ne null}">
+					<f:validateLongRange minimum="#{cc.attrs.validatorRange}" />				
+				</c:if>
+				
+				<c:if test="#{cc.attrs.converter ne null}">
+					<f:converter converterId="#{cc.attrs.converter}" />
+				</c:if>
+				
+				<c:choose>
+					<c:when test="#{cc.attrs.requiredMessage ne null}">
+						<f:attribute name="requiredMessage" value="#{cc.attrs.requiredMessage}" />
+					</c:when>
+				</c:choose>
+				
+				<c:if test="#{cc.attrs.validatorRange ne null}">
+					<f:validateLongRange minimum="#{cc.attrs.validatorRange}" />				
+				</c:if>
+
+				<c:if test="#{cc.attrs.converter ne null}">
+					<f:converter converterId="#{cc.attrs.converter}" for="input"/>
+				</c:if>
+
+				<c:if test="#{cc.attrs.validatorId ne null}">				
+					<f:validator validatorId="#{cc.attrs.validatorId}"/>
+				</c:if>
+
+			</p:inputMask>
+		</div>
+
+		<div class="form-error-column">
+			<p:message for="input">
+				<c:choose>
+					<c:when test="#{cc.attrs.display ne null}">
+						<f:attribute name="display" value="#{cc.attrs.display}" />
+					</c:when>
+					<c:otherwise>
+						<f:attribute name="display" value="tooltip"/>
+					</c:otherwise>
+				</c:choose>
+			</p:message>
+		</div>
+	</div>
+</cc:implementation>
+</html>

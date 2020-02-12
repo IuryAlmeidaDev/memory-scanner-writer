@@ -1,0 +1,5 @@
+alter table PROCESSO_REGIME_CONDICAO add modalidade VARCHAR2(80 CHAR);
+alter table PROCESSO_REGIME_CONDICAO add data_soltura date;
+
+update processo_regime_condicao prc set prc.modalidade = 'PREVENTIVA'
+where prc.condicao = 'PROVISORIO';

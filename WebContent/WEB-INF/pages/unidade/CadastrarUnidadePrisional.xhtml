@@ -1,0 +1,339 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+		
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>#{unidadePrisionalBean.tituloPagina} Unidade Prisional</h3>
+		
+		<p:panel id="cabecalho" rendered="#{unidadePrisionalBean.unidade.id>0}" footer="Cadastrado por: #{unidadePrisionalBean.unidade.autorRegistro.usuario} em #{unidadePrisionalBean.unidade.autorRegistro.data} | Alterado por: #{unidadePrisionalBean.unidade.autorUltimaAlteracao.usuario} em #{unidadePrisionalBean.unidade.autorUltimaAlteracao.data}" >
+			<h:form id="formCabecalho">
+					<p:column>
+						<sgp:formOutputLabel labelValue="Unidade" value="#{unidadePrisionalBean.unidade.nome}"/>
+						<sgp:formOutputLabel labelValue="Sigla" value="#{unidadePrisionalBean.unidade.sigla}"/>
+						<sgp:formOutputLabel labelValue="Instituição" value="#{unidadePrisionalBean.unidade.tipoUnidade.descricao}"/>
+					</p:column>
+				</h:form>
+		</p:panel>	
+			
+		<h:form id="unidadeForm">
+			<p:tabView id="tabView" effect="fade" effectDuration="fast" widgetVar="aba" dynamic="true">
+				<p:tab title="Unidade" id="tab">	
+					<p:panel>
+						<h:form id="formUnidade">
+														
+							<sgp:formInputText 
+								id="nomeUnidade"
+								labelValue="Nome"
+								value="#{unidadePrisionalBean.unidade.nome}"
+								validationRequired="true"
+								size="50"
+								style="float:right"
+								maxlength="80"
+								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								display="text"/>
+							
+							<sgp:formInputText 
+								id="siglaUnidade"
+								labelValue="Sigla"
+								value="#{unidadePrisionalBean.unidade.sigla}"
+								validationRequired="true"
+								maxlength="15"
+								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								display="text"/>
+								
+							<sgp:formInputMask
+								value="#{unidadePrisionalBean.unidade.cnpj}"
+								labelValue="CNPJ"
+								mask="99.999.999/9999-99"
+								validatorId="CnpjValidator"
+								validationRequired="false"
+								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								converter="convertCnpj"
+								maxlength="14"
+								display="text"/>
+								
+							<sgp:formSelectOneMenu
+								id="tipoUnidade"
+								itemValue="#{item}"
+								itemsValue="#{comboHelperBean.tipoUnidades}"
+								labelValue="Instituição"
+								itemLabel="#{item.descricao}"
+								value="#{unidadePrisionalBean.unidade.tipoUnidade}"
+								validationRequired="true"
+								converter="SimpleEntityConverter"
+								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								temSelecione="true"
+								display="text"/>
+								
+							<sgp:formOutputLabel
+								id="capacidadeTotal"
+								labelValue="Capacidade Total"
+								value="#{estruturaBean.unidade.capacidadeTotal}"/>
+								
+							<sgp:formOutputLabel 
+								id="quantidadeAtual"
+								labelValue="Quantidade Atual"
+								value="#{unidadePrisionalBean.unidade.quantidadeAtual}"/>
+							
+							<sgp:formOutputLabel
+								labelValue="Situação Unidade Prisional"
+								value="#{unidadePrisionalBean.unidade.estrutura.situacaoUnidade.descricao}"/>
+						</h:form>
+					</p:panel>
+					<br/><br/>
+					
+									
+					<p:panel header="Endereço" id="enderecos">
+						<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" actionListener="#{unidadePrisionalBean.abrirDialogEndereco}"
+							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}">
+							<p:ajax event="dialogReturn" listener="#{unidadePrisionalBean.incluirEndereco}" update="enderecos"/>
+						</p:commandButton>						
+						
+						<br/>
+						<sgp:formOutputLabel labelValue="Logradouro" value="#{unidadePrisionalBean.unidade.endereco.logradouro}" />
+						<sgp:formOutputLabel labelValue="Número" value="#{unidadePrisionalBean.unidade.endereco.numero}" />
+						<sgp:formOutputLabel labelValue="Complemento" value="#{unidadePrisionalBean.unidade.endereco.complemento}" />
+						<sgp:formOutputLabel labelValue="Bairro" value="#{unidadePrisionalBean.unidade.endereco.bairro}" />
+						<sgp:formOutputLabel labelValue="CEP" value="#{unidadePrisionalBean.unidade.endereco.cep}" />
+						<sgp:formOutputLabel labelValue="Cidade" value="#{unidadePrisionalBean.unidade.endereco.cidade.nome}" />
+						<sgp:formOutputLabel labelValue="Estado" value="#{unidadePrisionalBean.unidade.endereco.cidade.estado.nome}" />
+						
+					</p:panel>
+					
+					
+					
+					<br/><br/>
+					<p:panel header="Servidor Responsável" id="associarServidor">
+						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{unidadePrisionalBean.abrirDialogServidor}" disabled="#{!unidadePrisionalBean.possuiServidorLotado()}"
+							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}">
+							<p:ajax event="dialogReturn" listener="#{unidadePrisionalBean.associarServidor}" update=":unidadeForm:tabView:associarServidor" />
+						</p:commandButton>
+						<p:outputLabel value="Não há servidor lotado nesta unidade." rendered="#{!unidadePrisionalBean.possuiServidorLotado()}"/>
+						
+						<p:row id="rowServidor" rendered="#{unidadePrisionalBean.possuiServidor()}">
+							<sgp:formOutputLabel labelValue="Nome" value="#{unidadePrisionalBean.unidade.responsavel.nome}" />
+							<sgp:formOutputLabel labelValue="CPF" value="#{unidadePrisionalBean.unidade.responsavel.cpf}" />
+							<sgp:formOutputLabel labelValue="Matrícula" value="#{unidadePrisionalBean.unidade.responsavel.matricula}" />
+						</p:row>
+						<br/>
+					</p:panel>
+							
+					<br/>
+					<br/>					
+					<p:panel header="Contatos">
+						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{unidadePrisionalBean.abrirDialogContato}" 
+							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}">
+							<p:ajax event="dialogReturn" listener="#{unidadePrisionalBean.incluirContato}" update="contatos"/>
+						</p:commandButton>
+					
+				<br/>
+				<br/>
+				
+				<p:dataTable id="contatos" var="contato" emptyMessage="Nenhum contato adicionado." value="#{unidadePrisionalBean.unidade.contatos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{contato.id}">
+					<p:column headerText="Nome">
+						<h:outputText value="#{contato.nome}" />
+					</p:column>
+					<p:column headerText="Tipo" width="100">
+						<h:outputText value="#{contato.tipoContato.descricao}"/>
+					</p:column>
+					<p:column headerText="Valor" width="120">
+						<h:outputText value="#{contato.valor}" />
+					</p:column>
+					<p:column headerText="Observação">
+						<h:outputText value="#{contato.observacao}" />
+					</p:column>
+					<p:column width="90">
+						<center>
+							<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{unidadePrisionalBean.abrirDialogAlterarContato(contato)}" 
+								rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}">
+								<p:ajax event="dialogReturn" listener="#{unidadePrisionalBean.incluirContato}" update="contatos"/>
+							</p:commandButton>
+							<p:commandButton action="#{unidadePrisionalBean.excluirContato(contato)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":unidadeForm:tabView:contatos :mensagens"
+								rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}">
+						 		<p:confirm header="Confirmação" message="Deseja excluir o contato?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+						
+						<br/>
+						<br/>					
+											
+					<p:commandButton value="Salvar" action="#{unidadePrisionalBean.salvar()}"	update="@form" icon="ui-icon-disk" 
+						rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}" />
+					<p:button outcome="pretty:ListarUnidade" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+				</p:tab>
+				
+				<p:tab title="Estrutura" id="estruturaUnid" disabled="#{unidadePrisionalBean.disabledAbaEstrutura }">
+						<h:form id="arvoreEstrutura">
+							<p:panel header="Estrutura da Unidade" style="margin-bottom:20px">
+								 <p:treeTable id="treeTableEstrutura" value="#{estruturaBean.root}" var="est" selectionMode="single" >
+						            <p:column headerText="Nome">
+						            	<h:outputText value="#{est.nome}" />
+						           	</p:column>
+						           	<p:column headerText="Capacidade">
+						            	<h:outputText value="#{est.capacidadeTotal}"/>
+						          	</p:column>
+						          	<p:column headerText="É cela?">
+						            	<h:outputText value="Sim" rendered="#{est.cela}"/>
+						            	<h:outputText value="Não" rendered="#{!est.cela}" />
+						          	</p:column>
+						          	<p:column headerText="Situação">
+						            	<h:outputText value="#{est.situacaoUnidade.descricao}"/>
+						          	</p:column> 
+						          	<p:column headerText="Ações"  style="width:120px;">
+						          		<center>
+								            <p:commandButton title="Adicionar" action="#{estruturaBean.incluirEstruturaPai(est)}" oncomplete="PF('novaEstrutura').show()"  update=":formDialog" process="@this" icon="ui-icon ui-icon-plus" disabled="#{est.cela || unidadePrisionalBean.isVisualizacao}" rendered="#{securityUtil.possuiPermissao('CadastrarEstrutura')}"/>
+								            <p:commandButton title="Editar" action="#{estruturaBean.alterar(est)}" oncomplete="PF('novaEstrutura').show()"  update=":formDialog" process="@this" icon="ui-icon ui-icon-pencil" disabled="#{est.estruturaPai == null || unidadePrisionalBean.isVisualizacao}" rendered="#{securityUtil.possuiPermissao('AlterarEstrutura')}"/>
+								            <p:commandButton title="Gerenciar Situação" icon="ui-icon-gear" action="#{estruturaBean.estruturaRelacionada(est)}" oncomplete="PF('situacaoEstruturaUnidade').show()" update=":formDialogHistorico" process="@this" disabled="#{unidadePrisionalBean.isVisualizacao || est.situacaoUnidade.descricao.equals('Interditada Parcial') }" rendered="#{securityUtil.possuiPermissao('CadastrarSituacaoEstrutura')}"/>
+								            <p:commandButton title="Excluir" action="#{estruturaBean.excluir(est)}" disabled="#{est.temEstruturaFilho || unidadePrisionalBean.isVisualizacao || est.estruturaPai==null}" process="@this" update=":unidadeForm:tabView:arvoreEstrutura :mensagens" icon="ui-icon-trash" rendered="#{securityUtil.possuiPermissao('ExcluirEstrutura')}">
+												<p:confirm header="Confirmação"
+													message="Confirma a exclusão deste registro?"
+													icon="ui-icon-alert" />
+											</p:commandButton>
+											<p:commandButton title="Imprimir Lista de Chamada" icon="fa fa-print" process="@this" actionListener="#{estruturaBean.selecionarListaDeChamada(est)}"/>
+						          		</center>
+						        	</p:column> 
+							    </p:treeTable>
+								<p:confirmDialog global="true">
+									<p:commandButton value="Sim" type="button" 
+										styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+									<p:commandButton value="Não" type="button"
+										styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+								</p:confirmDialog>
+							</p:panel>
+						</h:form>
+						<p:button outcome="pretty:ListarUnidade" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+							<f:param name="list" value="1" />
+						</p:button>
+				</p:tab>
+				
+				<p:tab title="Parâmetros" rendered="#{securityUtil.possuiPermissao('VisualizarParametrosUnidade')}">
+					<p:panel>
+						<sgp:formCheckbox labelValue="Biometria obrigatória" value="#{unidadePrisionalBean.unidade.biometriaObrigatoria}" 
+							disabled="#{unidadePrisionalBean.isVisualizacao}" />
+							
+						<br/><br/>
+						
+						<p:commandButton value="Salvar" action="#{unidadePrisionalBean.salvar()}" update="@form" icon="ui-icon-disk" 
+							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}"/>
+						<p:button outcome="pretty:ListarUnidade" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+							<f:param name="list" value="1" />
+						</p:button>
+						<br/>
+					</p:panel>
+				</p:tab>
+			</p:tabView>
+		</h:form>
+	
+		<p:dialog id="dialog" header="Nova Estrutura" showEffect="fade" widgetVar="novaEstrutura" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="formDialog">
+				
+				<sgp:formOutputText 
+					labelValue="Estrutura Pai"
+					value="#{estruturaBean.estrutura.estruturaPai.nome}"/>
+				
+				<sgp:formInputText 
+					id="nomeEstrutura"
+					labelValue="Nome"
+					value="#{estruturaBean.estrutura.nome}"
+					validationRequired="true"
+					size="50"
+					disabled="#{estruturaBean.isVisualizacao}"
+					maxlength="80"
+					display="text"/>
+					
+				<sgp:formOutputText labelValue="Situação"
+					value="#{estruturaBean.estrutura.situacaoUnidade.descricao}"/>
+				
+				<sgp:formCheckbox
+					value="#{estruturaBean.estrutura.cela}"
+					labelValue="É cela" 
+					disabled="#{estruturaBean.estrutura.temEstruturaFilho}">
+						<p:ajax update=":formDialog:capacidadeEstrutura:input"/>
+        		</sgp:formCheckbox>
+					
+				<sgp:formInputText 
+					id="capacidadeEstrutura"
+					labelValue="Capacidade"
+					validationRequired="#{estruturaBean.estrutura.cela}"
+					value="#{estruturaBean.estrutura.capacidade}"
+					disabled="#{!estruturaBean.estrutura.cela}"
+					maxlength="3"
+					display="text"/>						
+					
+				<br/>
+				<br/>
+				<p:commandButton value="Salvar" action="#{estruturaBean.salvar()}" icon="ui-icon-disk" update="@form :unidadeForm"
+					rendered="#{(securityUtil.possuiPermissao('CadastrarEstrutura') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarEstrutura') and !unidadePrisionalBean.isVisualizacao)}" />
+				<p:commandButton value="Fechar" onclick="PF('novaEstrutura').hide()" process="@this"/>
+			</h:form>
+    	</p:dialog>
+    	<p:dialog id="dialogHistorico" header="Situação Estrutura Unidade Prisional" 
+    			showEffect="fade" widgetVar="situacaoEstruturaUnidade" modal="true"
+    			draggable="false" resizable="false" focus="formDialogHistorico:estruturaNome" closeOnEscape="true">
+			<h:form id="formDialogHistorico">
+				
+				<sgp:formOutputLabel id="estruturaNome"
+					labelValue="Estrutura"
+					value="#{estruturaBean.estrutura.nome}"/>
+				
+				<sgp:formCalendar
+					labelValue="Data Registro"
+					value="#{estruturaBean.situacaoEstruturaUnidade.dataRegistro}"
+					display="text"
+					validationRequired="true"
+					pattern="dd/MM/yyyy HH:mm"/>
+				
+				<sgp:formSelectOneMenu
+					id="tipoInterdicao"
+					labelValue="Tipo da Interdição"
+					value="#{estruturaBean.situacaoEstruturaUnidade.tipoInterdicao}" 
+					itemsValue="#{comboHelperBean.tipoInterdicao}"
+					itemValue="#{item}" 
+					temSelecione="true"
+					itemLabel="#{item.descricao}" />
+					
+				<sgp:formSelectOneMenu 
+					id="situacaoUnidade"
+					labelValue="Situação" 
+					itemValue="#{item}"
+					temSelecione="true" 
+					itemLabel="#{item.descricao}"
+					itemsValue="#{comboHelperBean.situacaoUnidade}" 
+					value="#{estruturaBean.situacaoEstruturaUnidade.situacao}"
+					validationRequired="true"
+					display="text"/>
+				
+				<sgp:formInputTextarea
+					labelValue="Motivo"
+					value="#{estruturaBean.situacaoEstruturaUnidade.motivo}"
+					rows="4"
+					columns="50"
+					maxlength="255"
+					autoResize="true"
+					size="#{estruturaBean.situacaoEstruturaUnidade.motivo.length()}"/>
+				<p:commandButton value="Salvar" action="#{estruturaBean.salvarSituacaoEstrutura()}" icon="ui-icon-disk" update="@form" rendered="#{securityUtil.possuiPermissao('CadastrarSituacaoEstrutura') and !unidadePrisionalBean.isVisualizacao}" />
+				<p:commandButton value="Fechar" onclick="PF('situacaoEstruturaUnidade').hide()" process="@this" />
+			</h:form>
+		</p:dialog>
+    </ui:define>
+</ui:composition>

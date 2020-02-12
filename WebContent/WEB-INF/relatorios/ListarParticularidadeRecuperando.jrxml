@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarParticularidadeRecuperando" columnCount="4" printOrder="Horizontal" pageWidth="555" pageHeight="850" columnWidth="138" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.9965000000000015"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="imagem.arquivo" class="java.lang.Object"/>
+	<field name="tipo.descricao" class="java.lang.String"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="25" splitType="Prevent">
+			<staticText>
+				<reportElement x="203" y="0" width="148" height="20" uuid="ce5a94ab-a758-4ce4-b13a-0356cff20116"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Particularidade(s)]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="180" splitType="Prevent">
+			<image scaleImage="RetainShape">
+				<reportElement x="14" y="0" width="125" height="150" uuid="b81505a7-c18c-4def-9927-2794c63abfa2"/>
+				<imageExpression><![CDATA[new ByteArrayInputStream((byte[])$F{imagem.arquivo})]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="0" y="150" width="138" height="20" uuid="a0409706-d133-41ef-b8ae-a6018b9ff1b3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tipo.descricao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

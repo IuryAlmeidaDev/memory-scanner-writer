@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarCrimesProcesso" pageWidth="480" pageHeight="842" columnWidth="480" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.693421790161336"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="TEM_PAGINACAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="crime.nomeLegislacao" class="java.lang.String"/>
+	<field name="crime.numArtigo" class="java.lang.String"/>
+	<field name="crime.numParagrafo" class="java.lang.String"/>
+	<field name="crime.numInciso" class="java.lang.String"/>
+	<field name="crime.numAlinea" class="java.lang.String"/>
+	<field name="crime.detalhamento" class="java.lang.String"/>
+	<columnHeader>
+		<band height="16" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="480" height="16" backcolor="#CCCCCC" uuid="5556b943-7610-4e04-ac52-45805a76401c"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="145" height="16" uuid="c80566fb-9879-401c-8c6c-25d6b5377068"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Legislação]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="145" y="0" width="35" height="16" uuid="9fe98fe7-089b-40a6-8904-fe1f1aedb134"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Artigo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="0" width="50" height="16" uuid="ff809d33-030c-41f5-9454-24b56522ba5b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Parágrafo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="0" width="40" height="16" uuid="754db02d-a7a0-4bdf-b137-be7c11707c86"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Inciso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="310" y="0" width="170" height="16" uuid="ec35917e-dbd2-4b58-9faf-16efd446b546"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Detalhamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="0" width="40" height="16" uuid="12d2ee4b-a133-41e7-a6f1-f6a3ab94407b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Alínea]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Prevent">
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="480" height="15" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
+					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="145" height="15" uuid="06e96a91-cdb1-4c0c-bee7-5cc504051b17"/>
+				<box leftPadding="2" rightPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{crime.nomeLegislacao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="145" y="0" width="35" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{crime.numArtigo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="270" y="0" width="40" height="15" uuid="bb0e6c45-7623-4a89-a408-e41438cade23"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{crime.numAlinea}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="310" y="0" width="170" height="15" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{crime.detalhamento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="180" y="0" width="50" height="15" uuid="6da71a14-4692-45c9-8a5b-10cb9ead2689"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{crime.numParagrafo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="230" y="0" width="40" height="15" uuid="37ea4b5b-4da6-4aa4-a87f-52a9ed30eec6"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{crime.numInciso}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

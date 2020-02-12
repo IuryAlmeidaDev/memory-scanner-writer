@@ -1,0 +1,120 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+<cc:interface>
+	<cc:clientBehavior event="dateSelect" name="dateSelect" default="true" targets="input" />
+	<cc:attribute name="labelValue" required="true" />
+	<cc:attribute name="id" required="false"/>
+	<cc:attribute name="minlength" default="10" />
+	<cc:attribute name="maxlength" default="10" />
+	<cc:attribute name="size" />
+	<cc:attribute name="validationRequired" required="false" default="false" type="java.lang.Boolean" />
+	<cc:attribute name="value" required="false" />
+	<cc:attribute name="disabled" required="false" />
+	<cc:attribute name="style" required="false" />
+	<cc:attribute name="pattern" required="false" default="dd/MM/yyyy" />
+	<cc:attribute name="dataMinima" required="false"/>
+	<cc:attribute name="readonlyInput" required="false"/>
+	<cc:attribute name="dataMaxima" required="false"/>
+	<cc:attribute name="display" required="false" />
+	<cc:attribute name="requiredMessage" required="false"/>
+	<cc:attribute name="toolTip" required="false"/>
+	<cc:attribute name="styleFormLabelColumn" required="false"/>
+</cc:interface>
+
+<cc:implementation>
+
+	<div class="form-block">
+		<div class="form-label-column" style="#{cc.attrs.styleFormLabelColumn}">
+			<h:outputLabel for="input" value="#{cc.attrs.labelValue}:" />
+		</div>
+
+		<div class="form-required-column">
+			<ui:fragment rendered="#{cc.attrs.validationRequired}">*</ui:fragment>
+			<p:spacer width="15px" rendered="#{!cc.attrs.validationRequired}" />
+		</div>
+
+		<div class="form-input-column">
+			<h:outputScript>
+				PrimeFaces.locales['pt'] = {
+				    closeText: 'Fechar',
+				    prevText: 'Anterior',
+				    nextText: 'Próximo',
+				    currentText: 'Começo',
+				    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+				    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun', 'Jul','Ago','Set','Out','Nov','Dez'],
+				    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+				    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],
+				    dayNamesMin: ['D','S','T','Q','Q','S','S'],
+				    weekHeader: 'Semana',
+				    firstDay: 0,
+				    isRTL: false,
+				    showMonthAfterYear: false,
+				    yearSuffix: '',
+				    timeOnlyTitle: 'Só Horas',
+				    timeText: 'Tempo',
+				    hourText: 'Hora',
+				    minuteText: 'Minuto',
+				    secondText: 'Segundo',
+				    ampm: false,
+				    month: 'Mês',
+				    week: 'Semana',
+				    day: 'Dia',
+				    allDayText : 'Todo o Dia'
+				};
+			</h:outputScript>
+			
+			<p:calendar id="input" 
+						value="#{cc.attrs.value}" 
+						label="#{cc.attrs.labelValue}"
+						pattern="#{cc.attrs.pattern}" 
+						mask="true" 
+						navigator="true"
+						required="#{cc.attrs.validationRequired}" 
+						style="#{cc.attrs.style}"
+						showOn="both"
+						locale="pt"
+						mindate="#{cc.attrs.dataMinima}"
+						maxdate="#{cc.attrs.dataMaxima}"
+						disabled="#{cc.attrs.disabled}"
+						readonlyInput="#{cc.attrs.readonlyInput}"
+						yearRange="c-100:c+10"
+						title="#{cc.attrs.toolTip}">
+		
+					<c:choose>
+						<c:when test="#{cc.attrs.requiredMessage ne null}">
+							<f:attribute name="requiredMessage" value="#{cc.attrs.requiredMessage}" />
+						</c:when>
+					</c:choose>				
+			</p:calendar>
+		</div>
+
+		<div class="form-error-column">
+			<p:message for="input">
+				<c:choose>
+					<c:when test="#{cc.attrs.display ne null}">
+						<f:attribute name="display" value="#{cc.attrs.display}" />
+					</c:when>
+					<c:otherwise>
+						<f:attribute name="display" value="tooltip"/>
+					</c:otherwise>
+				</c:choose>			
+			</p:message>
+		</div>
+	</div>
+
+	<style>
+		.ui-datepicker-month, .ui-datepicker-year {
+			color: #424548
+		}
+	</style>
+</cc:implementation>
+</html>

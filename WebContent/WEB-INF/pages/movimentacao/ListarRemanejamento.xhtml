@@ -1,0 +1,146 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Remanejamento</h3>
+		
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarRemanejamento" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarRemanejamento')}"/>
+		</h:form>
+			
+		<h:form id="meuFormulario">
+			<p:panel>
+				<sgp:formInputText id="id" labelValue="Nº Pedido" value="#{remanejamentoBean.filtro.id}" mask="?999999999" />
+						
+				<sgp:formInputText id="nome" labelValue="Nome Recup."  size="50" value="#{remanejamentoBean.filtro.recuperandoNome}" />
+				
+				<sgp:formSelectOneMenu 
+								id="unidadePrisional" labelValue="Unidade Prisional"
+								value="#{remanejamentoBean.filtro.unidadeOrigem}"
+								itemsValue="#{remanejamentoBean.unidadesPrisionais}" 
+								itemValue="#{item}"
+								itemLabel="#{item.nome}" 
+								temSelecione="true"
+								filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+								converter="SimpleEntityConverter"/>
+				
+				<sgp:formCalendar 
+					display="text"
+					requiredMessage="*" labelValue="Data Entrada"
+						value="#{remanejamentoBean.filtro.dataInicio}"   />
+						
+				<sgp:formCalendar display="text" requiredMessage="*" labelValue="Data Conclusão"
+						value="#{remanejamentoBean.filtro.dataFim}"  />
+						
+				<sgp:formSelectOneMenu 
+						id="status" labelValue="Status do Pedido"
+						value="#{remanejamentoBean.filtro.status}"
+						temSelecione="true"
+						itemsValue="#{comboHelperBean.statusPedido}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						disabled="#{receberTransferenciaBean.isVisualizacao}"
+						display="text" />	
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+			</p:panel>
+		</h:form>	
+
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="rem" value="#{remanejamentoBean.remanejamentos}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{rem.id}" sortOrder="descending"
+				         paginatorAlwaysVisible="false"    emptyMessage="Nenhum registro encontrado.">
+				             
+				     <p:column headerText="Nº" width="60" sortBy="#{rem.id}">
+						<h:outputText value="#{rem.id}" />
+					</p:column>	
+					
+					 <p:column headerText="Unid. Origem" sortBy="#{rem.pedidoId}">
+						<h:outputText value="#{rem.unidadeOrigem}" />
+						
+					</p:column>	
+					
+					<p:column headerText="Recuperando" sortBy="#{rem.recuperando}">
+						<h:outputText value="#{rem.recuperando}" />
+					</p:column>
+
+					<p:column headerText="Tipo Movimentação" width="180">
+						<h:outputText value="#{rem.tipoTransito.descricao}"/>
+					</p:column>
+					
+					<p:column headerText="Data Entrada" sortBy="#{rem.dataInicio}" width="150">
+						<h:outputText value="#{rem.dataInicio}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+				
+					<p:column headerText="Data Conclusão" sortBy="#{rem.dataConclusao}" width="170">
+						<h:outputText value="#{rem.dataConclusao}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					 <p:column headerText="Status" sortBy="#{rem.status}" width="110">
+						<h:outputText value="#{rem.status.descricao}" />
+					</p:column>
+
+					<p:column headerText="Ações" width="90">
+						<center>
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarRemanejamento" rendered="#{securityUtil.possuiPermissao('VisualizarRemanejamento')}">
+							<f:param name="id" value="#{rem.id}" />
+						</p:button>
+						<p:commandButton title="Finalizar" icon="fa fa-share"  action="#{remanejamentoBean.finalizarRemanejamento(rem)}" 
+							rendered="#{securityUtil.possuiPermissao('FinalizarRemanejamento') and rem.status.descricao.equalsIgnoreCase('Em Andamento')}"
+								oncomplete="PF('finalizarRemanejamento').show()"  update="finalizarForm" process="@this" />	
+						</center>
+					</p:column>
+					
+					<f:facet name="footer">
+						Total de registros: #{remanejamentoBean.remanejamentos.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>	
+		
+		<p:dialog id="dialogFinalizar" header="Finalizar Remanejamento" showEffect="fade" widgetVar="finalizarRemanejamento" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="finalizarForm">
+			<p:panel>
+			<sgp:formInputTextarea id="resultado" 
+						labelValue="Resultado"
+						value="#{remanejamentoBean.remanejamento.resultado}" 
+						validationRequired="true"
+						disabled="#{remanejamentoBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{remanejamentoBean.remanejamento.resultado.length()+5}" 
+						display="text" />
+					<br/>
+					<br/>
+					<p:commandButton title="Salvar" value="Confirmar" icon="ui-icon-check" update="@form :registrosForm :mensagens" action="#{remanejamentoBean.confirmarFinalizacaoRemanejamento()}" 
+						rendered="#{securityUtil.possuiPermissao('FinalizarRemanejamento')}"/>
+			 		
+				<p:commandButton value="Fechar" onclick="PF('finalizarRemanejamento').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>
+			
+			</h:form>
+    	</p:dialog>	
+
+	</ui:define>
+</ui:composition>

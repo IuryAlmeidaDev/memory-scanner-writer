@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Associar Estrutura</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="formEstruturas">
+			<p:treeTable id="treeTableEstrutura" value="#{associarEstruturaBean.root}" var="est" selectionMode="single" >
+				<p:column headerText="Nome">
+					<h:outputText value="#{est.nome}" />
+				</p:column>
+				
+				<p:column headerText="Capacidade">
+					<center>
+						<h:outputText value="#{est.capacidadeTotal}"/>
+					</center>
+				</p:column>
+				
+				<p:column headerText="É cela?">
+					<center>
+						<h:outputText value="Sim" rendered="#{est.cela}"/>
+						<h:outputText value="Não" rendered="#{!est.cela}" />
+					</center>
+				</p:column>
+	
+				<p:column width="50">
+					<center>
+						<p:commandButton title="Associar" icon="ui-icon-check" actionListener="#{associarEstruturaBean.selecionarEstrutura(est)}" rendered="#{est.cela}">
+							<p:confirm header="Atenção" message="Salve o cadastro para confirmar a alteração!" icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+				</p:column> 
+			</p:treeTable>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<div style="text-align: center">
+				<br/>
+				<p:commandButton value="Fechar" icon="ui-icon-close" actionListener="#{associarEstruturaBean.fecharDialog}" />
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

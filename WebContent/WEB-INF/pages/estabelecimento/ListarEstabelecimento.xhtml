@@ -1,0 +1,119 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Estabelecimento</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarEstabelecimento" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarEstabelecimento')}" />
+		</h:form>		
+			
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+				<sgp:formInputText 
+				id="nome" labelValue="Nome"  size="40"
+				value="#{estabelecimentoBean.filtro.nome}" 
+				/>
+				<sgp:formSelectOneMenu 
+								id="estado"
+								labelValue="Estado" 
+								itemValue="#{item}" 
+								itemLabel="#{item.nome}"
+								itemsValue="#{comboHelperBean.estados}" 
+								value="#{estabelecimentoBean.filtro.estado}"
+								filter="true"
+								converter="EstadoConverter"
+								temSelecione="true">
+							  		<f:ajax event="change" listener="#{estabelecimentoBean.listaCidades}" render="meuFormulario:cidade:input"/>
+						</sgp:formSelectOneMenu>						
+						<sgp:formSelectOneMenu 
+								id="cidade"
+								labelValue="Cidade" 
+								itemValue="#{item}" 
+								itemLabel="#{item.nome}"
+								itemsValue="#{estabelecimentoBean.cidades}" 
+								value="#{estabelecimentoBean.filtro.cidade}"
+								filter="true"
+								converter="SimpleEntityConverter"
+								temSelecione="true"
+								/>
+								
+						<sgp:formSelectOneMenu id="procedencia" labelValue="É procedência?" value="#{estabelecimentoBean.filtro.procedencia}" display="text" 
+								temSelecione="true" >
+								<f:selectItem itemLabel="Sim" itemValue="true" />
+								<f:selectItem itemLabel="Não" itemValue="false" />
+							</sgp:formSelectOneMenu>
+							
+						<sgp:formSelectOneMenu 
+								id="status" labelValue="Status"
+								value="#{estabelecimentoBean.filtro.status}"
+								itemsValue="#{comboHelperBean.status}" 
+								itemValue="#{item}"
+								itemLabel="#{item.descricao}" 
+								temSelecione="true" />
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{estabelecimentoBean.imprimir()}"/>
+			</p:panel>
+		</h:form>	
+
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="estabelecimento" value="#{estabelecimentoBean.estabelecimentos}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{estabelecimento.id}"
+				              emptyMessage="Nenhum registro encontrado.">
+					<p:column headerText="Código" width="100" sortBy="#{estabelecimento.id}">
+						<h:outputText value="#{estabelecimento.id}" />
+					</p:column>
+	
+					<p:column headerText="Nome" sortBy="#{estabelecimento.nome}" width="30%">
+						<h:outputText value="#{estabelecimento.nome}" />
+					</p:column>
+					
+					<p:column headerText="Cidade" sortBy="#{estabelecimento.cidade.nome}" width="20%">
+						<h:outputText value="#{estabelecimento.cidade.nome}" />
+					</p:column>
+					
+					<p:column headerText="Estado" sortBy="#{estabelecimento.cidade.estado.uf}" width="10%">
+						<h:outputText value="#{estabelecimento.cidade.estado.uf}" />
+					</p:column>
+					<p:column headerText="Procedência" sortBy="#{estabelecimento.proced}" width="20%">
+						<h:outputText value="#{estabelecimento.proced ? 'Sim' : 'Não'}" />
+					</p:column>
+					<p:column headerText="Situação" width="10%" sortBy="#{estabelecimento.status}">
+						<h:outputText value="#{estabelecimento.status.descricao}" />						
+					</p:column>
+					
+					<p:column headerText="Ações" width="120">
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarEstabelecimento" rendered="#{securityUtil.possuiPermissao('VisualizarEstabelecimento')}">
+								<f:param name="id" value="#{estabelecimento.id}" />
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarEstabelecimento" rendered="#{securityUtil.possuiPermissao('AlterarEstabelecimento')}">
+								<f:param name="id" value="#{estabelecimento.id}" />
+							</p:button>
+							<p:commandButton action="#{estabelecimentoBean.excluir(estabelecimento)}" icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirEstabelecimento')}">
+								 <p:confirm header="Confirmação" message="Deseja excluir o estabelecimento?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					
+					<f:facet name="footer">
+						Total de registros: #{estabelecimentoBean.estabelecimentos.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

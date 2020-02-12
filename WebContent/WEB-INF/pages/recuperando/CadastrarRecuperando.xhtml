@@ -1,0 +1,1610 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/pages/_templates/principal.xhtml">  
+
+	<ui:define name="head">
+		<ui:include src="/WEB-INF/pages/_script/biometria.xhtml" />
+	</ui:define>
+
+	<ui:define name="footer">
+		<h:outputStylesheet library="css" name="corpohumano.css" />
+		<h:outputScript library="js" name="biometriav2.js?ver=#{utilBean.biometriaVersao}" />
+	</ui:define>
+		
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+	
+		<h:form prependId="false">
+			<p:remoteCommand autoRun="true" oncomplete="#{recuperandoBean.executarPreCadastroPessoaRemoteCommand()}"/>
+			<p:commandButton id="cb" actionListener="#{recuperandoBean.abrirDialogPreCadastroPessoa}" style="display:none">
+				<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarPreCadastroPessoa}" update=":tabView:formConteudo :tabView:formConteudoRec :tabView:groupBotaoSalvarRec :tabView:formFoto :tabView:infoPeric"/>
+			</p:commandButton>
+		</h:form>
+		
+		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.RegiaoParticularidade" var="Regiao" allSuffix="ALL_ENUM_VALUES" />
+		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.OrientacaoParticularidade" var="Orientacao" allSuffix="ALL_ENUM_VALUES" />
+		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.BiometriaTipoDedo" var="TipoDedo" allSuffix="ALL_ENUM_VALUES" />
+		
+		<h3>#{recuperandoBean.tituloPagina} Recuperando</h3>
+		<p:panel id="cabecalho" rendered="#{recuperandoBean.recuperando.id>0}" style="border:#{recuperandoBean.corPericulosidade}; border-width:4px; border-style:solid;" 
+			footer="#{recuperandoBean.recuperandoAuditoriaRodape()}">
+			<h:form id="formCabecalho">
+				<div class="row">
+					<div class="col-md-3">
+						<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.fotoFrenteAtual}" emptyMessage="Sem foto de frente." var="f">
+							<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
+								<f:param name="hashId" value="#{f.imagem.id}" />
+							</p:graphicImage>
+						</p:dataGrid>
+					</div>
+					<div class="col-md-4">
+						<sgp:formOutputLabel labelValue="Matrícula" value="#{recuperandoBean.recuperando.id}"/>
+						<sgp:formOutputLabel labelValue="Nome" value="#{recuperandoBean.recuperando.pessoa.nome}"/>
+						<sgp:formOutputLabel labelValue="Nome da Mãe" value="#{recuperandoBean.recuperando.pessoa.nomeMae}"/>
+						<sgp:formOutputLabel labelValue="Dt. Nascimento" value="#{recuperandoBean.recuperando.pessoa.dataNascimento}" converterData="true"/>
+						<sgp:formOutputLabel labelValue="Perículosidade" value="#{recuperandoBean.recuperando.periculosidade}" />
+						<sgp:formOutputLabel labelValue="Regime Atual" value="#{recuperandoBean.recuperando.regimeAtual.descricao}" />
+						<sgp:formOutputLabel labelValue="Condição Atual" value="#{recuperandoBean.recuperando.condicaoAtual}" />
+					</div>
+					<div class="col-md-4">
+						<sgp:formOutputLabel labelValue="Movimentação Interna?" value="#{recuperandoBean.movimentacaoInterna}"/>
+						<sgp:formOutputLabel labelValue="Movimentação Externa?" value="#{recuperandoBean.movimentacaoExterna}"/>
+						<sgp:formOutputLabel labelValue="Em Transferência?" value="#{recuperandoBean.emTransferencia}"/>
+					</div>
+				</div>
+			</h:form>
+		</p:panel>
+		
+		
+		<p:tabView id="tabView" cache="true" dynamic="true" effect="fade" effectDuration="fast">
+			<p:tab id="tabRecuperando" title="Recuperando">
+				<div class="row">
+					<div class="col-md-6">
+						<h:form id="formConteudo">
+							<h:panelGroup id="infos1">
+								<h4>
+								 <sgp:formOutputLabel labelValue="Matrícula" value="#{recuperandoBean.recuperando.id > 0 ? recuperandoBean.recuperando.id : null}"/>
+								</h4>
+								<sgp:formOutputLabel labelValue="Nome" value="#{recuperandoBean.recuperando.pessoa.nome}" rowStyle="float:left"/>
+								<p:commandButton icon="#{(securityUtil.possuiPermissao('AlterarPessoaRecuperando') and !recuperandoBean.isVisualizacao) ? &quot;ui-icon-pencil&quot; : &quot;ui-icon-document&quot;}" immediate="true" actionListener="#{recuperandoBean.abrirDialogPreCadastroPessoa}" 
+									disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}" rendered="#{securityUtil.possuiPermissao('AlterarPessoaRecuperando') or !securityUtil.possuiPermissao('AlterarPessoaRecuperando')}">
+									<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarPreCadastroPessoa}" update=":tabView:groupBotaoSalvarRec :tabView:formConteudo :tabView:formSocial"/>
+								</p:commandButton>
+								<sgp:formOutputLabel labelValue="Nome da Mãe" value="#{recuperandoBean.recuperando.pessoa.nomeMae}" />
+								<sgp:formOutputLabel labelValue="Dt. Nascimento" value="#{recuperandoBean.recuperando.pessoa.dataNascimento}" converterData="true"/>
+								<sgp:formOutputLabel labelValue="Sexo" value="#{recuperandoBean.recuperando.pessoa.sexo.descricao}" />
+								<sgp:formOutputLabel labelValue="Nacionalidade" value="#{recuperandoBean.recuperando.pessoa.nacionalidade.descricao}" />
+								<sgp:formOutputLabel labelValue="Naturalidade" value="#{recuperandoBean.recuperando.naturalidade}" />
+							</h:panelGroup>
+						</h:form>
+						<h:form id="formConteudoRec" prependId="false">
+							<h:panelGroup id="groupConteudoRec">
+								<sgp:formSelectOneMenu id="sinais" labelValue="Sinal/Tatuagem" value="#{recuperandoBean.recuperando.temSinalOuTatuagem}" display="text" 
+									validationRequired="true" temSelecione="true" disabled="#{recuperandoBean.isVisualizacao}" >
+									<f:selectItem itemLabel="Sim" itemValue="true" />
+									<f:selectItem itemLabel="Não" itemValue="false" />
+								</sgp:formSelectOneMenu>
+								
+								<sgp:formInputMask id="altura" labelValue="Altura" value="#{recuperandoBean.recuperando.altura}" size="4" mask="9?.99" maxlength="5" display="text"
+									validationRequired="true" disabled="#{recuperandoBean.isVisualizacao}"/>
+								
+								<sgp:formInputNumber id="peso" labelValue="Peso" value="#{recuperandoBean.recuperando.peso}" size="6" maxlength="6" display="text"
+									 disabled="#{recuperandoBean.isVisualizacao}"/>
+		
+								<sgp:formSelectOneMenu display="text" requiredMessage="*" id="tipoSanguineo" labelValue="Tipo Sanguineo" itemValue="#{item}" temSelecione="true"
+									value="#{recuperandoBean.recuperando.tipoSanguineo}" itemsValue="#{comboHelperBean.tipoSanguineo}" itemLabel="#{item.descricao}"
+									disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" />				
+				
+								<sgp:formSelectOneMenu display="text" requiredMessage="*" id="Raca" labelValue="Raça" temSelecione="true" itemValue="#{item}"
+									value="#{recuperandoBean.recuperando.raca}" itemsValue="#{comboHelperBean.racas}" itemLabel="#{item.descricao}"
+									disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" />
+									
+								<sgp:formSelectOneMenu display="text" requiredMessage="*" id="corOlho" labelValue="Cor dos Olhos" itemValue="#{item}" temSelecione="true"
+									value="#{recuperandoBean.recuperando.corOlho}" itemsValue="#{comboHelperBean.corOlho}" itemLabel="#{item.descricao}"
+									disabled="#{recuperandoBean.isVisualizacao}" />
+									
+								<sgp:formSelectOneMenu display="text" requiredMessage="*" id="corCabelho" labelValue="Cor dos Cabelos" itemValue="#{item}" temSelecione="true"
+									value="#{recuperandoBean.recuperando.corCabelo}" itemsValue="#{comboHelperBean.corCabelo}" itemLabel="#{item.descricao}"
+									disabled="#{recuperandoBean.isVisualizacao}" />
+									
+								<sgp:formCheckbox labelValue="Monitorado Eletronicamente" value="#{recuperandoBean.recuperando.monitoramentoEletronico}" disabled="#{recuperandoBean.isVisualizacao}"/>
+							</h:panelGroup>
+							
+							<h:panelGroup id="groupBotaoSalvarRec">
+								<br/><br/><br/>
+								<p:commandButton value="Salvar" update=":formCabecalho :mensagens :tabView:formConteudo :tabView:formConteudoRec :tabView:formFoto :tabView:infoPeric :tabView:biometriaCapturada :tabView:formBio :tabView:formPassagem :tabView:formInfos :tabView:formAbaFotos :tabView:formAbaFotosImg :tabView:formAbaFotosHistorico :tabView:formInfoParticularidade :tabView:formCorpo :tabView:formParticularidades :tabView:formSocial :tabView:formParente" action="#{recuperandoBean.salvar()}" 
+									disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}"
+									icon="ui-icon-disk" rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando') ) and !recuperandoBean.isVisualizacao}" />
+		
+								<p:button outcome="pretty:ListarRecuperando" value="Voltar" disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}" icon="ui-icon-arrowreturnthick-1-w">
+									<f:param name="list" value="1"/>
+								</p:button>
+							</h:panelGroup>
+						</h:form>
+					</div>
+					
+					<div class="col-md-6">
+						<h:form id="formFoto">
+							<p:commandButton icon="fa fa-camera" value="Adicionar Foto" immediate="true" actionListener="#{recuperandoBean.abrirDialogFoto}" disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}"
+								rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando') ) and !recuperandoBean.isVisualizacao}">
+								<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarFoto}" update=":tabView:formFoto" />
+							</p:commandButton>
+							
+							<br/><br/>
+							<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.fotoFrenteAtual}" emptyMessage="Sem foto de frente." var="f">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{f.imagem.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</h:form>
+						
+						<h:panelGroup id="infoPeric" rendered="#{securityUtil.possuiPermissao('AlterarPericulosidade')}">
+							<sgp:formOutputLabel labelValue="Perículosidade" value="#{recuperandoBean.recuperando.periculosidade}" rowStyle="float:left"/>
+							<p:commandButton title="Alterar Perículosidade" icon="ui-icon-pencil" disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}" oncomplete="PF('altPericulosidade').show()"  update=":formPeric" process="@this" rendered="#{securityUtil.possuiPermissao('AlterarPericulosidade') and !recuperandoBean.isVisualizacao}"/>									
+							<sgp:formOutputLabel labelValue="Observação" value="#{recuperandoBean.recuperando.observacao}" />
+						</h:panelGroup>
+						
+						<h:panelGroup id="digital">
+							<p:commandButton value="Registrar Biometria" id="btnBio" onclick="enviaComandoWs('registrar');" icon="ui-icon-bio" rendered="#{(((securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and recuperandoBean.verificarSeBiometriaEhObrigatoria()))}" />
+							
+							<h:form prependId="false" id="formGamb">
+								<h:inputHidden value="#{recuperandoBean.temBiometria}" id="temBiometria" />
+								<h:inputHidden value="#{recuperandoBean.recuperando.id}" id="idRecuperando"/>
+							</h:form>
+						</h:panelGroup>
+						
+						<div id="divRegistroBiometrico" style="display: inline;">
+							<h:form prependId="false" id="formBio">
+								<p:remoteCommand name="executarBiometria" actionListener="#{recuperandoBean.registrarBiometria}" update=":tabView:biometriaCapturada" />
+								<h:inputHidden value="#{recuperandoBean.biometria}" id="paramBiometria" />
+							</h:form>
+						</div>
+						
+						<h:panelGroup id="biometriaCapturada">
+							<p:panelGrid rendered="#{recuperandoBean.recuperando.pessoa.biometria.dedos.size() gt 0 or recuperandoBean.recuperando.pessoa.biometria.id gt 0}" style="border-width:1px; border-style:solid; margin-bottom: 15px">
+							    <f:facet name="header">
+							        <p:row>
+							            <p:column colspan="3">Biometria capturada em <h:outputText value="#{recuperandoBean.recuperando.pessoa.biometria.dataCaptura}" >
+	    									<f:convertDateTime pattern="dd/MM/yyyy" />
+											</h:outputText>
+										</p:column>
+							        </p:row>
+							        <p:row>
+							       		<p:column colspan="1"></p:column>
+							            <p:column colspan="1">Esquerda</p:column>
+							      	 	<p:column colspan="1">Direita</p:column>
+							         </p:row>
+							    </f:facet>
+							    <p:row>
+							        <p:column style="font-weight: bold;">Polegar</p:column>
+							        <p:column style="text-align: center" rowspan="1">
+							        	<p:graphicImage id="bioPE" name="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_ESQUERDO) ? 'green.png' : 'red.png')}" library="icons"/>
+							        	<p:overlayPanel for="bioPE" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_ESQUERDO))}">
+								        	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.POLEGAR_ESQUERDO)}" var="f">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{f.id}" />
+												</p:graphicImage>
+											</p:dataGrid>
+							        	</p:overlayPanel>
+							        </p:column>
+							        <p:column style="text-align: center">
+							        	<p:graphicImage id="bioPD" name="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_DIREITO) ? 'green.png' : 'red.png')}" library="icons"/>
+							        	<p:overlayPanel for="bioPD" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_DIREITO))}">
+								        	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.POLEGAR_DIREITO)}" var="f">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{f.id}" />
+												</p:graphicImage>
+											</p:dataGrid>
+							        	</p:overlayPanel>
+							        </p:column>
+							     </p:row>
+							     
+							      <p:row>
+							        <p:column style="font-weight: bold;">Indicador</p:column>
+							        <p:column style="text-align: center" rowspan="1">
+							        	<p:graphicImage id="bioIE" name="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_ESQUERDO) ? 'green.png' : 'red.png')}" library="icons"/>
+							        	<p:overlayPanel for="bioIE" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_ESQUERDO))}">
+								        	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.INDICADOR_ESQUERDO)}" var="f">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{f.id}" />
+												</p:graphicImage>
+											</p:dataGrid>
+							        	</p:overlayPanel>
+							        </p:column>
+							        <p:column style="text-align: center">
+							        	<p:graphicImage id="bioID" name="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_DIREITO) ? 'green.png' : 'red.png')}" library="icons"/>
+    								     <p:overlayPanel for="bioID" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_DIREITO))}">
+								        	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.INDICADOR_DIREITO)}" var="f">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{f.id}" />
+												</p:graphicImage>
+											</p:dataGrid>
+							        	</p:overlayPanel>
+							        </p:column>
+							     </p:row>
+							        
+							      <p:row>
+							        <p:column style="font-weight: bold;">Médio</p:column>
+							        <p:column style="text-align: center" rowspan="1">
+							        	<p:graphicImage id="bioME" name="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_ESQUERDO) ? 'green.png' : 'red.png')}" library="icons"/>
+     						        	<p:overlayPanel for="bioME" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_ESQUERDO))}">
+								        	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MEDIO_ESQUERDO)}" var="f">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{f.id}" />
+												</p:graphicImage>
+											</p:dataGrid>
+							        	</p:overlayPanel>
+							        </p:column>
+							        <p:column style="text-align: center">
+							        	<p:graphicImage id="bioMD" name="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_DIREITO) ? 'green.png' : 'red.png')}" library="icons"/>
+							        	<p:overlayPanel for="bioMD" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_DIREITO))}">
+								        	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MEDIO_DIREITO)}" var="f">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{f.id}" />
+												</p:graphicImage>
+											</p:dataGrid>
+							        	</p:overlayPanel>
+							        </p:column>
+							     </p:row>
+							   
+							   	 <p:row>
+							        <p:column style="font-weight: bold;">Anelar</p:column>
+							        <p:column style="text-align: center" rowspan="1">
+							        	<p:graphicImage id="bioAE" name="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_ESQUERDO) ? 'green.png' : 'red.png')}" library="icons"/>
+							        	<p:overlayPanel for="bioAE" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_ESQUERDO))}">
+								        	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.ANELAR_ESQUERDO)}" var="f">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{f.id}" />
+												</p:graphicImage>
+											</p:dataGrid>
+							        	</p:overlayPanel>
+							        </p:column>
+							        <p:column style="text-align: center">
+							        	<p:graphicImage id="bioAD" name="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_DIREITO) ? 'green.png' : 'red.png')}" library="icons"/>
+							        	<p:overlayPanel for="bioAD" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_DIREITO))}">
+								        	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.ANELAR_DIREITO)}" var="f">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{f.id}" />
+												</p:graphicImage>
+											</p:dataGrid>
+							        	</p:overlayPanel>
+							        </p:column>
+							     </p:row>
+							    
+							    <p:row>
+							        <p:column style="font-weight: bold;">Mínimo</p:column>
+							        <p:column style="text-align: center" rowspan="1">
+							        	<p:graphicImage id="bioMIE" name="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_ESQUERDO) ? 'green.png' : 'red.png')}" library="icons"/>
+							        	<p:overlayPanel for="bioMIE" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_ESQUERDO))}">
+								        	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MINIMO_ESQUERDO)}" var="f">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{f.id}" />
+												</p:graphicImage>
+											</p:dataGrid>
+							        	</p:overlayPanel>
+							        </p:column>
+							        <p:column style="text-align: center">
+							        	<p:graphicImage id="bioMID" name="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_DIREITO) ? 'green.png' : 'red.png')}" library="icons"/>
+							        	<p:overlayPanel for="bioMID" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(recuperandoBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_DIREITO))}">
+								        	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MINIMO_DIREITO)}" var="f">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{f.id}" />
+												</p:graphicImage>
+											</p:dataGrid>
+							        	</p:overlayPanel>							        	
+							        </p:column>
+							     </p:row>
+							 </p:panelGrid>
+						 </h:panelGroup>
+						 
+						 <p:panel header="Autorização de cadastro sem biometria" id="autorizadorBiometria" rendered="#{recuperandoBean.recuperando.pessoa.autorizacaoCadastro != null}">
+						 		<sgp:formOutputLabel labelValue="Autorizador" value="#{recuperandoBean.recuperando.pessoa.autorizacaoCadastro.usuario.servidor.nome}" />
+								<sgp:formOutputLabel labelValue="Observação" value="#{recuperandoBean.recuperando.pessoa.autorizacaoCadastro.observacao}" />
+								<sgp:formOutputLabel labelValue="Data" value="#{recuperandoBean.recuperando.pessoa.autorizacaoCadastro.dataAutorizacao}" converterData="true" />
+						</p:panel>						 
+					</div>
+				</div>
+			
+				
+			</p:tab>
+			
+			<p:tab id="tabPassagens" title="Passagens" disabled="#{recuperandoBean.bloquearAbas()}">
+			
+				<h:form id="formPassagem">
+					<p:panel>
+					<h4>Passagens no sistema prisional</h4>
+					
+					<p:outputLabel value="Total de passagens: #{recuperandoBean.recuperando.passagens.size()}" />
+					
+					<p:dataTable id="dataTable" var="pass" value="#{recuperandoBean.recuperando.passagens}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" 
+						sortBy="#{pass.id}" emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
+						
+						<p:column headerText="Procedência">
+							<h:outputText value="#{pass.passagemProcedencia.procedencia.nome}" />
+						</p:column>
+						
+						<p:column headerText="Data de Entrada">
+							<h:outputText value="#{pass.dataEntrada}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+							</h:outputText>
+						</p:column>
+						
+						<p:column headerText="Data de Saída">
+							<h:outputText value="#{pass.dataSaida}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+							</h:outputText>
+						</p:column>
+						
+						<p:column headerText="Lotação">						
+						<p:commandButton title="Lotação" icon="ui-icon-document" action="#{recuperandoBean.visualizarLotacao(pass)}" 
+							oncomplete="PF('visualizarPassagem').show()" update="passagemForm" process="@this" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+					<br/>
+				<p:panel>
+			 		<h4>Processos</h4>
+			 	
+			 		<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{recuperandoBean.abrirDialogProcesso(null, false)}" rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+						<p:ajax event="dialogReturn" listener="#{recuperandoBean.atualizarProcessos}" update=":tabView:formPassagem :formCabecalho"/>
+					</p:commandButton>
+					<br/><br/>
+					<p:dataTable id="processos" var="processo" widgetVar="processos" value="#{recuperandoBean.recuperando.processos}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true"
+						sortBy="#{processo.id}" emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
+						<p:column headerText="Nº Processo">
+							<h:outputText value="#{processo.numeroProcesso}" />
+						</p:column>
+						<p:column headerText="Nº Inquérito">
+							<h:outputText value="#{processo.numeroInquerito}" />
+						</p:column>
+						<p:column headerText="Nº Ofício">
+							<h:outputText value="#{processo.numeroOficio}" />
+						</p:column>
+						<p:column headerText="Regime Atual">
+							<h:outputText value="#{processo.regimeAtual.descricao}" />
+						</p:column>
+						<p:column headerText="Condição Atual">
+							<h:outputText value="#{processo.condicaoAtual.descricao}" />
+						</p:column>						
+						<p:column headerText="Sit. Processo">
+							<h:outputText value="#{processo.statusProcesso.descricao}" />
+						</p:column>
+						<p:column headerText="Ações">
+							<center>
+								<p:commandButton icon="ui-icon-pencil" immediate="true" actionListener="#{recuperandoBean.abrirDialogProcesso(processo, false)}" title="Editar Processo"
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and processo.dataFinalizado == null}">
+									<p:ajax event="dialogReturn" listener="#{recuperandoBean.atualizarProcessos}" update=":tabView:formPassagem :formCabecalho"/>
+							    </p:commandButton>
+							
+								<p:commandButton title="Visualizar" icon="ui-icon-document" action="#{recuperandoBean.abrirDialogProcesso(processo, true)}" immediate="true"/>
+								<p:commandButton title="Finalizar Processo" icon="ui-icon-check" action="#{recuperandoBean.processoSelecionado(processo)}" oncomplete="PF('dialogFinalizarProcesso').show()" update=":formDialogFinalizarProcesso :tabView:formPassagem" process="@form" 
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and securityUtil.possuiPermissao('FinalizarProcessoRecuperando') and !recuperandoBean.isVisualizacao and processo.dataFinalizado == null}"/>
+							</center>
+						</p:column>
+					</p:dataTable>
+					
+					<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:panel>
+				<br/><br/>
+				<p:button outcome="pretty:ListarRecuperando" value="Voltar" disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}" icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1"/>
+				</p:button>	
+			</h:form>
+		</p:tab>
+			
+			<p:tab id="tabInfos" title="Informações Complementares" disabled="#{recuperandoBean.bloquearAbas()}">
+				<h:form id="formInfos">
+					<p:panel>
+						<h4>Alcunhas</h4>
+						<p:commandButton title="Adicionar" icon="ui-icon-plus" value="Adicionar" action="#{recuperandoBean.novaAlcunha()}" oncomplete="PF('novaAlcunha').show()"  update=":formDialog" process="@this" 
+							rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}"/>	
+						<br/><br/>
+						
+						<p:dataTable id="alcunhas" var="alcunha" emptyMessage="Nenhuma alcunha adicionada." value="#{recuperandoBean.recuperando.alcunhas}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{alcunha.principal}" sortOrder="descending">
+							<p:column headerText="Alcunha">
+								<h:outputText value="#{alcunha.nome}" />
+							</p:column>
+							<p:column headerText="Principal">
+								<h:outputText value="#{alcunha.principal? 'sim' : 'não'}"/>
+							</p:column>													
+							<p:column width="90">
+								<center>
+									<p:commandButton title="Alterar Alcunha" icon="ui-icon-pencil" action="#{recuperandoBean.alterarAlcunha(alcunha)}" oncomplete="PF('novaAlcunha').show()"  update=":formDialog" process="@this" 
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}"/>							
+									<p:commandButton action="#{recuperandoBean.excluirAlcunha(alcunha)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":tabView:formInfos:alcunhas :mensagens"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and  alcunha.principal}">
+								 		<p:confirm header="Confirmação" message="Deseja excluir a alcunha principal?" icon="ui-icon-alert" />
+									</p:commandButton>
+									<p:commandButton action="#{recuperandoBean.excluirAlcunha(alcunha)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":tabView:formInfos:alcunhas :mensagens"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and !alcunha.principal}" >
+								 		<p:confirm header="Confirmação" message="Deseja excluir a alcunha?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+						
+						<p:confirmDialog global="true">
+							<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+						</p:confirmDialog>		
+					</p:panel>
+					<br/>
+					<p:panel>
+						<h4>Outros Nomes</h4>
+						<p:commandButton title="Adicionar" icon="ui-icon-plus" value="Adicionar" action="#{recuperandoBean.novoNome()}" oncomplete="PF('outroNome').show()"  update=":formOutroNome" process="@this" 
+							rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}"/>	
+						<br/><br/>
+						<p:dataTable id="outrosNomes" var="outroNome" emptyMessage="Nenhuma nome adicionado." value="#{recuperandoBean.recuperando.outrosNomes}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{outroNome.nome}" >
+							<p:column headerText="Nome">
+								<h:outputText value="#{outroNome.nome}" />
+							</p:column>
+							<p:column headerText="Nome da Mãe">
+								<h:outputText value="#{outroNome.nomeMae}"/>
+							</p:column>
+							<p:column headerText="Dt. Nascimento" sortBy="#{outroNome.dataNascimento}" width="170">
+								<h:outputText value="#{outroNome.dataNascimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>													
+							<p:column width="120">
+								<center>
+									<p:commandButton action="#{recuperandoBean.tornarNomePrincipal(outroNome)}" immediate="true" icon="fa fa-exchange" title="Tornar Principal" update=":tabView:formInfos:outrosNomes :tabView:formConteudo :tabView:formConteudoRec :cabecalho :mensagens"
+										rendered="#{securityUtil.possuiPermissao('AlterarNomePrincipalRecuperando') and !recuperandoBean.isVisualizacao}">
+									 	<p:confirm header="Confirmação" message="Deseja tornar este Nome como principal?" icon="ui-icon-alert" />
+									</p:commandButton>
+									<p:commandButton title="Alterar Nome" icon="ui-icon-pencil" action="#{recuperandoBean.alterarNome(outroNome)}" oncomplete="PF('outroNome').show()"  update=":formOutroNome" process="@this" 
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}"/>							
+									<p:commandButton action="#{recuperandoBean.excluirNome(outroNome)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":tabView:formInfos:outrosNomes :mensagens"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+								 		<p:confirm header="Confirmação" message="Deseja excluir este nome?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+						
+						<p:confirmDialog global="true">
+							<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+						</p:confirmDialog>		
+					</p:panel>
+					<br/>
+					<p:panel>
+						<h4>Documentos</h4>			    
+						
+						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{recuperandoBean.abrirDialogDocumento}" 
+							rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+							<p:ajax event="dialogReturn" listener="#{recuperandoBean.incluirDocumento}" update="documentos"/>
+						</p:commandButton>
+							
+						<br/>
+						<br/>
+						
+						<p:dataTable id="documentos" var="doc" emptyMessage="Nenhum documento adicionado." value="#{recuperandoBean.documentos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{doc.id}">
+							<p:column headerText="Tipo">
+								<h:outputText value="#{doc.tipoDocumento.descricao}" />
+							</p:column>
+							<p:column headerText="Número">
+								<h:outputText value="#{doc.numero}"/>
+							</p:column>
+							<p:column headerText="Descrição">
+								<h:outputText value="#{doc.descricao}" />
+							</p:column>
+							<p:column headerText="Emissão" width="120">
+								<h:outputText value="#{doc.dataEmissao}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Validade" width="120">
+								<h:outputText value="#{doc.dataValidade}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>	
+							<p:column headerText="Principal">
+								<h:outputText value="#{doc.pessoa.id>0 ? 'sim' : 'não'}" />
+							</p:column>								
+							<p:column width="120">
+								<center>
+									<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{recuperandoBean.abrirDialogAlterarDocumento(doc)}" 
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+										<p:ajax event="dialogReturn" listener="#{recuperandoBean.incluirDocumento}" update="documentos"/>
+									</p:commandButton>
+									<p:commandButton action="#{recuperandoBean.tornarDocumentoPrincipal(doc)}" immediate="true" icon="fa fa-exchange" title="Tornar Principal" update=":tabView:formInfos:documentos :mensagens"
+										rendered="#{securityUtil.possuiPermissao('TornarDocumentoPrincipal') and !recuperandoBean.isVisualizacao and (doc.pessoa.id>0 ? false : true)}">
+								 		<p:confirm header="Confirmação" message="Deseja tornar este documento como principal?" icon="ui-icon-alert" />
+									</p:commandButton>
+									<p:commandButton action="#{recuperandoBean.excluirDocumento(doc)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":tabView:formInfos:documentos :mensagens"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and !(doc.pessoa.id>0 ? false : true)}" >
+								 		<p:confirm header="Confirmação" message="Deseja excluir o documento principal?" icon="ui-icon-alert" />
+									</p:commandButton>
+									<p:commandButton action="#{recuperandoBean.excluirDocumento(doc)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":tabView:formInfos:documentos :mensagens"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and (doc.pessoa.id>0 ? false : true)}">
+								 		<p:confirm header="Confirmação" message="Deseja excluir o documento?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>					
+					</p:panel>
+					<br/>
+					<p:panel>
+						<h4>Endereços</h4>
+					
+						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{recuperandoBean.abrirDialogEndereco}" 
+							rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+							<p:ajax event="dialogReturn" listener="#{recuperandoBean.incluirEndereco}" update="enderecos"/>
+						</p:commandButton>
+							
+						<br/>
+						<br/>
+						
+						<p:dataTable id="enderecos" var="endereco" emptyMessage="Nenhum endereço adicionado." value="#{recuperandoBean.recuperando.pessoa.enderecos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{endereco.id}">
+							<p:column headerText="Logradouro">
+								<h:outputText value="#{endereco.logradouro}" />
+							</p:column>
+							<p:column headerText="Nº">
+								<h:outputText value="#{endereco.numero}"/>
+							</p:column>
+							<p:column headerText="Complemento">
+								<h:outputText value="#{endereco.complemento}" />
+							</p:column>
+							<p:column headerText="Bairro">
+								<h:outputText value="#{endereco.bairro}" />
+							</p:column>
+							<p:column headerText="Cidade">
+								<h:outputText value="#{endereco.cidade.nome}" />
+							</p:column>
+							<p:column headerText="Estado">
+								<h:outputText value="#{endereco.cidade.estado.uf}" />
+							</p:column>
+							<p:column width="90">
+								<center>
+									<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{recuperandoBean.abrirDialogAlterarEndereco(endereco)}" 
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+										<p:ajax event="dialogReturn" listener="#{recuperandoBean.incluirEndereco}" update="enderecos"/>
+									</p:commandButton>
+									<p:commandButton action="#{recuperandoBean.excluirEndereco(endereco)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":tabView:formInfos:enderecos :mensagens"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+								 		<p:confirm header="Confirmação" message="Deseja excluir o endereço?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					<br/>
+					<p:panel>
+						<h4>Contatos</h4>
+						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{recuperandoBean.abrirDialogContato}" 
+							rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+							<p:ajax event="dialogReturn" listener="#{recuperandoBean.incluirContato}" update="contatos"/>
+						</p:commandButton>
+						<br/>
+						<br/>
+						<p:dataTable id="contatos" var="contato" emptyMessage="Nenhum contato adicionado." value="#{recuperandoBean.recuperando.pessoa.contatos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{contato.id}">
+							<p:column headerText="Nome">
+								<h:outputText value="#{contato.nome}" />
+								</p:column>
+							<p:column headerText="Tipo" width="100">
+								<h:outputText value="#{contato.tipoContato.descricao}"/>
+							</p:column>
+							<p:column headerText="Valor" width="120">
+								<h:outputText value="#{contato.valor}" />
+							</p:column>
+							<p:column headerText="Observação">
+								<h:outputText value="#{contato.observacao}" />
+							</p:column>
+							<p:column width="90">
+								<center>
+									<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{recuperandoBean.abrirDialogAlterarContato(contato)}" 
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+										<p:ajax event="dialogReturn" listener="#{recuperandoBean.incluirContato}" update="contatos"/>
+									</p:commandButton>
+									<p:commandButton action="#{recuperandoBean.excluirContato(contato)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":tabView:formInfos:contatos :mensagens"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+							 			<p:confirm header="Confirmação" message="Deseja excluir o contato?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+						<p:confirmDialog global="true">
+							<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+						</p:confirmDialog>
+					</p:panel>
+					
+					<br/><br/>
+					<p:commandButton value="Salvar" update=":tabView :tabView:formConteudo :tabView:formConteudoRec :mensagens" action="#{recuperandoBean.salvar()}" icon="ui-icon-disk" 
+						rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}" />
+					<p:button outcome="pretty:ListarRecuperando" value="Voltar" disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1"/>
+					</p:button>
+				</h:form>
+			</p:tab>
+			
+			<p:tab id="tabFotos" title="Fotos" disabled="#{recuperandoBean.bloquearAbas()}">
+				<p:panel header="Informações da Foto">
+					<div class="row">
+						<div class="col-md-6">
+							<h:form id="formAbaFotos">
+								<sgp:formSelectOneMenu display="text" id="tipoFoto" labelValue="Tipo"  itemValue="#{item}" temSelecione="true"
+									value="#{recuperandoBean.fotoDoFormulario.tipo}" itemsValue="#{comboHelperBean.tipoFoto}" itemLabel="#{item.descricao}" 
+									validationRequired="true" disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" />
+								<sgp:formSelectOneMenu id="atual" labelValue="Atual" value="#{recuperandoBean.fotoDoFormulario.isAtual}" display="text" 
+									validationRequired="true" temSelecione="true" disabled="#{recuperandoBean.isVisualizacao}" >
+									<f:selectItem itemLabel="Sim" itemValue="true" />
+									<f:selectItem itemLabel="Não" itemValue="false" />
+								</sgp:formSelectOneMenu>
+								
+								<br/><br/><br/>
+								<p:commandButton icon="fa fa-arrow-down" value="Adicionar" actionListener="#{recuperandoBean.adicionarNovaFoto}" update=":tabView:formAbaFotos :tabView:formAbaFotosImg :tabView:formAbaFotosHistorico :tabView:formFoto :formCabecalho"
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}" />
+							</h:form>
+						</div>
+						
+						<div class="col-md-6">
+							<h:form id="formAbaFotosImg">
+								<p:row rendered="#{!recuperandoBean.isVisualizacao}">
+									<p:commandButton icon="fa fa-camera" value="Incluir Foto" immediate="true" actionListener="#{recuperandoBean.abrirDialogFoto}" 
+										rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+										<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarNovaFoto}" update=":tabView:formAbaFotosImg" />
+									</p:commandButton>
+									<br/><br/>
+								</p:row>
+								
+								<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.fotoDoFormulario}" emptyMessage="Sem foto de frente." var="f">
+									<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
+										<f:param name="hashId" value="#{f.imagem.id}" />
+									</p:graphicImage>
+								</p:dataGrid>
+							</h:form>
+						</div>
+					</div>
+				</p:panel>
+				<br/>
+				
+				<h:form id="formAbaFotosHistorico">
+					<p:panel header="Histórico de Fotos">
+						<p:dataGrid id="dataGridFotos" layout="grid" columns="4" rows="8" lazy="true" paginatorAlwaysVisible="false" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+								value="#{recuperandoBean.recuperando.fotos}" var="foto" emptyMessage="Nenhuma foto adicionada.">
+							<p:panel header="#{foto.tipo.descricao}" style="text-align: center; width: 220px;">
+								<p:dataGrid id="dgFoto" layout="tabular" style="width: 188px;" columns="1" rows="1" value="#{foto}" var="f">
+									<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" onclick="PF('dlgExibeFoto#{f.imagem.id}').show();" cache="false" width="180" height="240">
+										<f:param name="hashId" value="#{f.imagem.id}" />
+									</p:graphicImage>
+
+									<div style="text-align: center; padding-top: 5px">
+										<p:commandButton actionListener="#{recuperandoBean.excluirFoto(f)}" icon="ui-icon-trash" title="Excluir" update=":tabView:formAbaFotosHistorico :tabView:formFoto :formCabecalho" rendered="#{securityUtil.possuiPermissao('ExcluirFoto') and !recuperandoBean.isVisualizacao}">
+											<p:confirm header="Confirmação" message="Deseja excluir a foto?" icon="ui-icon-alert" />
+										</p:commandButton>
+										
+										<p:selectBooleanButton value="#{f.isAtual}" onLabel="Foto Atual" offLabel="Marcar Atual" disabled="#{recuperandoBean.isVisualizacao or !securityUtil.possuiPermissao('AlterarFotoAtual')}">
+											<p:ajax listener="#{recuperandoBean.configurarFotoAtual(foto)}" update=":tabView:formAbaFotosHistorico :tabView:formFoto :formCabecalho" />
+										</p:selectBooleanButton>
+
+										<p:confirmDialog global="true">
+											<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+											<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+										</p:confirmDialog>
+									</div>
+								</p:dataGrid>
+								
+								<p:dialog header="#{foto.tipo.descricao}" widgetVar="dlgExibeFoto#{foto.imagem.id}" resizable="false" closeOnEscape="true" modal="true" draggable="false">
+									<p:graphicImage value="#{imageHandlerBean.getImagem(foto.imagem)}" cache="false">
+										<f:param name="hashId" value="#{foto.imagem.id}" />
+									</p:graphicImage>
+								</p:dialog>
+							</p:panel>
+						</p:dataGrid>
+					</p:panel>
+					<br/><br/>
+					<p:button outcome="pretty:ListarRecuperando" value="Voltar" disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1"/>
+					</p:button>
+				</h:form>
+			</p:tab>
+			
+			<p:tab id="tabParticularidades" title="Particularidades" disabled="#{recuperandoBean.bloquearAbas()}">
+				<p:panel header="Informações">
+					<div class="row">
+						<div class="col-md-6">
+							<h:form id="formInfoParticularidade">
+								<sgp:formSelectOneMenu display="text" labelValue="Tipo" itemValue="#{item}" temSelecione="true" value="#{recuperandoBean.particularidade.tipo}"
+									itemsValue="#{comboHelperBean.tipoParticularidade}" validationRequired="true" itemLabel="#{item.descricao}" disabled="#{recuperandoBean.isVisualizacao}" 
+									converter="SimpleEntityConverter" />
+							
+								<h:panelGroup id="partGroup">
+									<sgp:formOutputLabel labelValue="Orientação" value="#{recuperandoBean.particularidade.orientacao.descricao}"/>
+									
+									<sgp:formOutputLabel labelValue="Região" value="#{recuperandoBean.particularidade.regiao.descricao}"/>
+									
+									<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{recuperandoBean.particularidade}" emptyMessage="Nenhuma particularidade associada." var="p">
+										<p:graphicImage value="#{imageHandlerBean.getImagem(p.imagem)}" cache="false" width="180" height="240">
+											<f:param name="hashId" value="#{p.imagem.id}" />
+										</p:graphicImage>
+									</p:dataGrid>
+								</h:panelGroup>
+								
+								<br/>
+								<p:commandButton icon="fa fa-arrow-down" value="Adicionar" actionListener="#{recuperandoBean.adicionarParticularidade}" update=":tabView:formParticularidades :tabView:formInfoParticularidade" 
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}"/>
+							</h:form>
+						</div>
+						<div class="col-md-6">
+							<h:form id="formCorpo" rendered="#{!recuperandoBean.isVisualizacao}">
+								<h:panelGrid columns="2">
+									<p:panel>
+										<table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+											<tr>
+												<td>
+													<table cellpadding="0" cellspacing="0" border="0">
+														<tr><td style="width: 49px;  height: 45px; background-color: #fff"></td></tr>
+														<tr><td><img src="#{resource['images/corpo/frente_1_0.jpg']}" style="width: 49px; height: 12px;"/></td></tr>
+														<tr><td class="ombro_dir_frente">
+															<p:commandButton styleClass="ombro_dir_frente botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.OMBRO_DIREITO_FRENTE}" />
+																<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="biceps_dir">
+															<p:commandButton styleClass="biceps_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.BICEPS_DIREITO}" />
+																<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="antebraco_dir_frente">
+															<p:commandButton styleClass="antebraco_dir_frente botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.ANTEBRACO_DIREITO_FRENTE}" />
+																<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="palma_dir">
+															<p:commandButton styleClass="palma_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.PALMA_DIREITA}" />
+																<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td><img src="#{resource['images/corpo/frente_8_0.jpg']}" style="width: 49px; height: 39px;"/></td></tr>
+														<tr><td style="width: 49px;  height: 87px; background-color: #fff"></td></tr>
+													</table>
+												</td>
+												<td>
+													<table cellpadding="0" cellspacing="0" border="0">
+														<tr><td colspan="2" class="face">
+															<p:commandButton styleClass="face botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.FACE}" />
+																<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td colspan="2" class="pescoco_frente">
+															<p:commandButton styleClass="pescoco_frente botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.PESCOCO_FRENTE}" />
+																<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr>
+															<td class="peitoral_dir">
+																<p:commandButton styleClass="peitoral_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.PEITORAL_DIREITO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="peitoral_esq">
+																<p:commandButton styleClass="peitoral_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.PEITORAL_ESQUERDO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+														<tr>
+															<td class="abdomem_dir">
+																<p:commandButton styleClass="abdomem_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.ABDOMEM_DIREITO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="abdomem_esq">
+																<p:commandButton styleClass="abdomem_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.ABDOMEM_ESQUERDO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+														<tr>
+															<td class="pelve_dir">
+																<p:commandButton styleClass="pelve_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.PELVE_DIREITA}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="pelve_esq">
+																<p:commandButton styleClass="pelve_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.PELVE_ESQUERDA}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+														<tr>
+															<td class="coxa_dir">
+																<p:commandButton styleClass="coxa_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.COXA_DIREITA}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="coxa_esq">
+																<p:commandButton styleClass="coxa_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.COXA_ESQUERDA}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+														<tr>
+															<td class="canela_dir">
+																<p:commandButton styleClass="canela_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.CANELA_DIREITA}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="canela_esq">
+																<p:commandButton styleClass="canela_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.CANELA_ESQUERDA}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+														<tr>
+															<td class="pe_dir">
+																<p:commandButton styleClass="pe_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.PE_DIREITO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="pe_esq">
+																<p:commandButton styleClass="pe_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.PE_ESQUERDO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+													</table>
+												</td>
+												<td>
+													<table cellpadding="0" cellspacing="0" border="0">
+														<tr><td style="width: 52px; height: 45px; background-color: #fff"></td></tr>
+														<tr><td><img src="#{resource['images/corpo/frente_1_2.jpg']}" style="width: 52px; height: 12px;"/></td></tr>
+														<tr><td class="ombro_esq_frente">
+															<p:commandButton styleClass="ombro_esq_frente botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.OMBRO_ESQUERDO_FRENTE}" />
+																<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="biceps_esq">
+															<p:commandButton styleClass="biceps_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.BICEPS_ESQUERDO}" />
+																<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="antebraco_esq_frente">
+															<p:commandButton styleClass="antebraco_esq_frente botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.ANTEBRACO_ESQUERDO_FRENTE}" />
+																<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="palma_esq">
+															<p:commandButton styleClass="palma_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.PALMA_ESQUERDA}" />
+																<f:attribute name="orientacao" value="#{Orientacao.FRENTE}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td><img src="#{resource['images/corpo/frente_8_3.jpg']}" style="width: 52px; height: 39px;"/></td></tr>
+														<tr><td style="width: 52px; height: 87px; background-color: #fff"></td></tr>
+													</table>
+												</td>
+											</tr>
+										</table>
+									</p:panel>
+									<p:panel>
+										<table cellpadding="0" border="0" cellspacing="0" style="margin: 0 auto;">
+											<tr>
+												<td>
+													<table cellpadding="0" border="0" cellspacing="0">
+														<tr><td style="width: 52px; height: 54px; background: #fff"></td></tr>
+														<tr><td class="ombro_esq_tras">
+															<p:commandButton styleClass="ombro_esq_tras botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.OMBRO_ESQUERDO_TRAS}" />
+																<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="triceps_esq">
+															<p:commandButton styleClass="triceps_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.TRICEPS_ESQUERDO}" />
+																<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="antebraco_esq_tras">
+															<p:commandButton styleClass="antebraco_esq_tras botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.ANTEBRACO_ESQUERDO_TRAS}" />
+																<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="dorso_mao_esq">
+															<p:commandButton styleClass="dorso_mao_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.DORSO_MAO_ESQUERDA}" />
+																<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td><img src="#{resource['images/corpo/tras_7_0.jpg']}" style="width: 52px; height: 38px;"/></td></tr>
+														<tr><td style="width: 52px; height: 87px; background: #fff"></td></tr>
+													</table>
+												</td>
+												<td>
+													<table cellpadding="0" border="0" cellspacing="0">
+														<tr><td colspan="2"><img src="#{resource['images/corpo/tras_0_1.jpg']}" style="width: 56px; height: 5px;"/></td></tr>
+														<tr><td colspan="2" class="cabeca_posterior">
+															<p:commandButton styleClass="cabeca_posterior botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.CABECA_POSTERIOR}" />
+																<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td colspan="2" class="pescoco_tras">
+															<p:commandButton styleClass="pescoco_tras botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.PESCOCO_TRAS}" />
+																<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr>
+															<td class="dorso_esq">
+																<p:commandButton styleClass="dorso_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.DORSO_ESQUERDO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="dorso_dir">
+																<p:commandButton styleClass="dorso_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.DORSO_DIREITO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+														<tr>
+															<td class="lombar_esq">
+																<p:commandButton styleClass="lombar_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.LOMBAR_ESQUERDO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="lombar_dir">
+																<p:commandButton styleClass="lombar_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.LOMBAR_DIREITO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+														<tr>
+															<td class="gluteo_esq">
+																<p:commandButton styleClass="gluteo_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.GLUTEO_ESQUERDO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="gluteo_dir">
+																<p:commandButton styleClass="gluteo_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.GLUTEO_DIREITO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+														<tr>
+															<td class="posterior_esq">
+																<p:commandButton styleClass="posterior_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.POSTERIOR_ESQUERDA}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="posterior_dir">
+																<p:commandButton styleClass="posterior_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.POSTERIOR_DIREITA}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+														<tr>
+															<td class="panturrilha_esq">
+																<p:commandButton styleClass="panturrilha_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.PANTURRILHA_ESQUERDA}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="panturrilha_dir">
+																<p:commandButton styleClass="panturrilha_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.PANTURRILHA_DIREITA}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+														<tr>
+															<td class="calcanhar_esq">
+																<p:commandButton styleClass="calcanhar_esq botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.CALCANHAR_ESQUERDO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+															<td class="calcanhar_dir">
+																<p:commandButton styleClass="calcanhar_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																	<f:attribute name="regiao" value="#{Regiao.CALCANHAR_DIREITO}" />
+																	<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																	<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+																</p:commandButton>
+															</td>
+														</tr>
+													</table>
+												</td>
+												<td>
+													<table cellpadding="0" border="0" cellspacing="0">
+														<tr><td style="width: 51px; height: 54px; background: #fff"></td></tr>
+														<tr><td class="ombro_dir_tras">
+															<p:commandButton styleClass="ombro_dir_tras botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.OMBRO_DIREITO_TRAS}" />
+																<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="triceps_dir">
+															<p:commandButton styleClass="triceps_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.TRICEPS_DIREITO}" />
+																<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="antebraco_dir_tras">
+															<p:commandButton styleClass="antebraco_dir_tras botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.ANTEBRACO_DIREITO_TRAS}" />
+																<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td class="dorso_mao_dir">
+															<p:commandButton styleClass="dorso_mao_dir botao" immediate="true" actionListener="#{recuperandoBean.abrirDialogParticularidade}" disabled="#{recuperandoBean.isVisualizacao}">
+																<f:attribute name="regiao" value="#{Regiao.DORSO_MAO_DIREITA}" />
+																<f:attribute name="orientacao" value="#{Orientacao.TRAS}" />
+																<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarParticularidade}" update=":tabView:formInfoParticularidade:partGroup"/>
+															</p:commandButton>
+														</td></tr>
+														<tr><td><img src="#{resource['images/corpo/tras_7_3.jpg']}" style="width: 51px;  height: 38px;"/></td></tr>
+														<tr><td style="width: 51px; height: 87px; background: #fff"></td></tr>
+													</table>
+												</td>
+											</tr>
+										</table>
+									</p:panel>
+								</h:panelGrid>
+							</h:form>
+						</div>
+					</div>
+				</p:panel>
+				
+				<br/>
+				<h:form id="formParticularidades">
+					<p:panel header="Particularidades">
+						<p:dataGrid id="dataGridPart" layout="grid" columns="4" rows="8" lazy="true" paginatorAlwaysVisible="false" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+							value="#{recuperandoBean.recuperando.particularidades}" var="part" emptyMessage="Nenhuma particularidade adicionada.">
+							<p:panel header="#{part.id} - #{part.tipo.descricao}" style="text-align: center; width: 220px;">
+								<p:outputLabel value="#{part.orientacao.descricao} / #{part.regiao.descricao}" />
+								<p:dataGrid layout="tabular" style="width: 188px;" columns="1" rows="1" value="#{part}" emptyMessage="Nenhuma particularidade associada." var="p">
+									<p:graphicImage value="#{imageHandlerBean.getImagem(p.imagem)}" onclick="PF('dlgExibeFoto#{p.imagem.id}').show();" cache="false" width="180" height="240">
+										<f:param name="hashId" value="#{p.imagem.id}" />
+									</p:graphicImage>
+									
+									<p:row rendered="#{securityUtil.possuiPermissao('ExcluirParticularidade')}">
+										<div style="text-align: center; padding-top: 5px">
+											<p:commandButton actionListener="#{recuperandoBean.excluirParticularidade(p)}" immediate="true" icon="ui-icon-trash" title="Excluir" update="@form" rendered="#{securityUtil.possuiPermissao('ExcluirParticularidade') and !recuperandoBean.isVisualizacao}">
+												<p:confirm header="Confirmação" message="Deseja excluir a particularidade?" icon="ui-icon-alert" />
+											</p:commandButton>
+											
+											<p:confirmDialog global="true">
+												<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+												<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+											</p:confirmDialog>
+										</div>
+									</p:row>
+								</p:dataGrid>
+								
+								<p:dialog header="#{part.orientacao.descricao} / #{part.regiao.descricao}" widgetVar="dlgExibeFoto#{part.imagem.id}" resizable="false" closeOnEscape="true" modal="true" draggable="false">
+					                <p:graphicImage value="#{imageHandlerBean.getImagem(part.imagem)}" cache="false">
+					                    <f:param name="hashId" value="#{part.imagem.id}" />
+					                </p:graphicImage>
+					            </p:dialog>
+							</p:panel>
+						</p:dataGrid>
+					</p:panel>
+					<br/><br/>
+					<p:button outcome="pretty:ListarRecuperando" value="Voltar" disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1"/>
+					</p:button>
+				</h:form>
+			</p:tab>
+			
+			<p:tab id="tabVidaSocial" title="Vida Social" disabled="#{recuperandoBean.bloquearAbas()}">
+				<h:form id="formSocial">
+					<p:panel>
+					<sgp:formSelectOneMenu id="orientacaoSexual" labelValue="Orientação Sexual" itemValue="#{item}" temSelecione="true" styleFormLabelColumn="width: 140px"
+						value="#{recuperandoBean.recuperando.orientacaoSexual}" itemsValue="#{comboHelperBean.orientacaoSexual}" itemLabel="#{item.descricao}" 
+						disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" />
+						
+					<sgp:formSelectOneMenu id="identidadeGenero" labelValue="Identidade de Gênero" itemValue="#{item}" temSelecione="true"
+						value="#{recuperandoBean.recuperando.identidadeDeGenero}" itemsValue="#{comboHelperBean.identidadeDeGenero}" itemLabel="#{item.descricao}" 
+						disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter">
+							<p:ajax event="change" listener="#{recuperandoBean.configurarNomeSocial}" global="false" update="tabView:formSocial:grupoNomeSocial" />
+					</sgp:formSelectOneMenu>
+					<p:graphicImage id="helpIdentidade" name="help.png" library="icons" style="margin-left: 5px" />
+					<p:tooltip for="helpIdentidade" value="Campo não obrigatório para o Cadastro Completo do Recuperando."/>
+					
+					<h:panelGroup id="grupoNomeSocial">
+						<sgp:formInputText id="nomeSocial" labelValue="Nome Social" styleFormLabelColumn="width: 140px"
+								value="#{recuperandoBean.recuperando.pessoa.nomeSocial}"
+								size="40" disabled="#{preCadastroPessoaBean.isVisualizacao or (empty recuperandoBean.recuperando.identidadeDeGenero)}" maxlength="80">
+								
+								<p:ajax event="blur" global="false" listener="#{recuperandoBean.configurarNomeSocial}"/>
+						</sgp:formInputText>
+						<p:graphicImage id="helpNomeSocial" name="help.png" library="icons" style="margin-left: 5px"/>
+						<p:tooltip for="helpNomeSocial" value="Campo não obrigatório para o Cadastro Completo do Recuperando."/>
+					</h:panelGroup>
+					
+					<sgp:formSelectOneMenu id="estadoCivil" labelValue="Estado Civil" itemValue="#{item}" temSelecione="true" styleFormLabelColumn="width: 140px"
+						value="#{recuperandoBean.recuperando.estadoCivil}" itemsValue="#{comboHelperBean.estadoCivil}" itemLabel="#{item.descricao}"
+						disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" />
+									
+					<sgp:formSelectOneMenu id="Escolaridade" labelValue="Escolaridade" itemValue="#{item}" temSelecione="true" styleFormLabelColumn="width: 140px"
+						value="#{recuperandoBean.recuperando.escolaridade}" itemsValue="#{comboHelperBean.escolaridades}" itemLabel="#{item.descricao}"
+						disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" />
+						
+					<sgp:formInputText id="profissao" labelValue="Profissão" styleFormLabelColumn="width: 140px"
+						value="#{recuperandoBean.recuperando.profissao}" size="40" disabled="#{recuperandoBean.isVisualizacao}" maxlength="80" />
+				
+					<sgp:formSelectOneMenu id="Religiao" labelValue="Religião" itemValue="#{item}" temSelecione="true" styleFormLabelColumn="width: 140px"
+						value="#{recuperandoBean.recuperando.religiao}" itemsValue="#{comboHelperBean.religioes}" itemLabel="#{item.descricao}"
+						disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" />
+						
+					<sgp:formSelectOneMenu labelValue="PNE" itemValue="#{item}" temSelecione="true" styleFormLabelColumn="width: 140px"
+						value="#{recuperandoBean.recuperando.pne}" itemsValue="#{comboHelperBean.tipoDeficiencia}" 
+						itemLabel="#{item.descricao}" disabled="#{recuperandoBean.isVisualizacao}" />
+						
+					<sgp:formCheckbox labelValue="Gestante" styleFormLabelColumn="width: 140px" value="#{recuperandoBean.recuperando.gestante}" disabled="#{recuperandoBean.isVisualizacao or recuperandoBean.recuperando.pessoa.sexo == 'M'}"/>
+					<br/>
+					</p:panel>
+					<br/><br/>
+					<p:commandButton value="Salvar" update=":mensagens" action="#{recuperandoBean.salvar()}" icon="ui-icon-disk" 
+						rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}" />
+					<p:button outcome="pretty:ListarRecuperando" value="Voltar" disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1"/>
+					</p:button>
+				</h:form>
+			</p:tab>
+			
+			<p:tab id="tabParentes" title="Parentes" disabled="#{recuperandoBean.bloquearAbas()}">
+				
+				<h:form id="formParente">
+				<p:panel header="Parentes">
+							
+					<p:commandButton title="Adicionar" icon="ui-icon-plus" value="Adicionar" action="#{recuperandoBean.adicionarParente()}" oncomplete="PF('novoParente').show()"  update=":formParente" process="@this" 
+						rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}" />
+					
+					<sgp:formOutputLabel labelValue="Data da próxima alteração" value="#{recuperandoBean.recuperando.alteracaoParentes}" converterData="true"/>	
+					
+					
+					<p:dataTable id="parentes" var="parente" emptyMessage="Nenhum parente adicionado." value="#{recuperandoBean.recuperando.parentes}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{parente.status.descricao}">
+						<p:column headerText="Nome">
+							<h:outputText value="#{parente.nome}" />
+						</p:column>
+						<p:column headerText="Parentesco">
+							<h:outputText value="#{parente.parentesco.descricao}"/>
+						</p:column>	
+						<p:column headerText="Data de Nascimento">
+								<h:outputText value="#{parente.dataNascimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						<p:column headerText="Situação" width="120" sortBy="#{cargo.status}">
+							<h:outputText value="#{parente.status.descricao}" />						
+						</p:column>												
+						<p:column width="90">
+							<center>
+								<p:commandButton title="Alterar Parente" icon="ui-icon-pencil" action="#{recuperandoBean.alterarParente(parente)}" oncomplete="PF('novoParente').show()"  update=":formParente" process="@this" 
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}"/>							
+								<p:commandButton action="#{recuperandoBean.excluirParente(parente)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":tabView:formParente:parentes :mensagens"
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}">
+							 		<p:confirm header="Confirmação" message="Deseja excluir este Parente?" icon="ui-icon-alert" />
+								</p:commandButton>							
+							</center>
+						</p:column>
+					</p:dataTable>
+					
+					<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+					
+				</p:panel>
+				<br/><br/>
+				<p:commandButton value="Salvar" update=":mensagens" action="#{recuperandoBean.salvar()}" icon="ui-icon-disk" rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}" />
+				<p:button outcome="pretty:ListarRecuperando" value="Voltar" disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}" icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1"/>
+				</p:button>		
+			</h:form>
+			</p:tab>
+		</p:tabView>
+		
+		<p:dialog id="dialogAlcunha" header="Alcunha" showEffect="fade" widgetVar="novaAlcunha" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="formDialog">
+				<p:panel>
+					<sgp:formInputText 
+						id="alcunha"
+						labelValue="Alcunha"
+						validationRequired="true"
+						value="#{recuperandoBean.alcunha.nome}"
+						size="40"
+						display="text"					
+						maxlength="80"
+						disabled="#{recuperandoBean.isVisualizacao}"/>
+						
+						<sgp:formCheckbox labelValue="Principal" value="#{recuperandoBean.alcunha.principal}" disabled="#{recuperandoBean.isVisualizacao}"/>			
+					
+					<br/>				
+					<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form :tabView:formInfos:alcunhas" action="#{recuperandoBean.incluirAlcunha()}" 
+						rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}"/>
+					<p:commandButton value="Fechar" onclick="PF('novaAlcunha').hide()" process="@this"/>
+					<br/>
+				</p:panel>			
+			</h:form>
+    	</p:dialog>
+    	
+    	<p:dialog id="dialogOutroNome" header="Outro Nome" showEffect="fade" widgetVar="outroNome" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="formOutroNome">
+				<p:panel>
+					<sgp:formInputText display="text" requiredMessage="*" id="nomePessoa" labelValue="Nome"
+						value="#{recuperandoBean.outroNome.nome}" validationRequired="true"
+						size="40" disabled="#{recuperandoBean.isVisualizacao}" maxlength="80" />
+		
+					<sgp:formInputText display="text" requiredMessage="*" id="nomeMae"
+						labelValue="Nome da Mãe" value="#{recuperandoBean.outroNome.nomeMae}"
+						validationRequired="true" size="40" maxlength="80"
+						disabled="#{recuperandoBean.isVisualizacao}" />
+							
+					<sgp:formCalendar display="text" labelValue="Nascimento"
+						value="#{recuperandoBean.outroNome.dataNascimento}" dataMaxima="#{comboHelperBean.maxDate}"
+						validationRequired="true" disabled="#{recuperandoBean.isVisualizacao}" />			
+					
+					<br/><br/><br/>				
+					<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form :tabView:formInfos:outrosNomes" action="#{recuperandoBean.incluirNome()}" 
+						rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}"/>
+				 	<p:commandButton value="Fechar" onclick="PF('outroNome').hide()" process="@this"/>
+					<br/>
+				</p:panel>			
+			</h:form>
+    	</p:dialog>
+    	
+    	<p:dialog id="dialogPericulosidade" header="Perículosidade" showEffect="fade" widgetVar="altPericulosidade" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="formPeric">
+			<p:panel>
+				<sgp:formSelectOneMenu 
+					id="peric" labelValue="Perículosidade"
+					value="#{recuperandoBean.recuperando.periculosidade}"
+					itemsValue="#{comboHelperBean.periculosidade}" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					disabled="#{recuperandoBean.isVisualizacao}"
+					display="text"
+					temSelecione="true" />
+	
+				<sgp:formInputTextarea 
+					id="obsPeric"
+					labelValue="Observação"
+					value="#{recuperandoBean.recuperando.observacao}"
+					validationRequired="true"
+					disabled="#{recuperandoBean.isVisualizacao}"
+					rows="10"
+					columns="50"
+					maxlength="250"
+					autoResize="true"
+					size="#{recuperandoBean.recuperando.observacao.length()+5}"
+					display="text"/>			
+				
+					
+					<br/>
+					<br/>
+					<br/>				
+				<p:commandButton title="Alterar" value="Salvar" icon="ui-icon-pencil" update="@form :tabView:infoPeric :cabecalho" action="#{recuperandoBean.alterarPericulosidade()}" rendered="#{securityUtil.possuiPermissao('AlterarPericulosidade') and !recuperandoBean.isVisualizacao}"/>
+			 	<p:commandButton value="Fechar" onclick="PF('altPericulosidade').hide()" process="@this"/>
+
+				<br/>
+			</p:panel>			
+			
+		</h:form>
+    	</p:dialog>
+    	
+    	<p:dialog id="dialogParente" header="Parente" showEffect="fade" widgetVar="novoParente" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="formParente">
+			<p:panel>
+					 	
+				<sgp:formInputText 
+					id="nome"
+					labelValue="Nome"
+					validationRequired="true"
+					value="#{recuperandoBean.parente.nome}"
+					size="40"
+					display="text"					
+					maxlength="80"
+					disabled="#{recuperandoBean.isVisualizacao}"/>
+					
+					<sgp:formCalendar display="text" labelValue="Nascimento"
+						value="#{recuperandoBean.parente.dataNascimento}" dataMaxima="#{recuperandoBean.dataMinima}"
+						validationRequired="false" disabled="#{recuperandoBean.isVisualizacao}" />
+
+					<sgp:formSelectOneMenu display="text" requiredMessage="*"
+						id="parentesco" labelValue="Parentesco" itemValue="#{item}"
+						temSelecione="true" validationRequired="true"
+						value="#{recuperandoBean.parente.parentesco}"
+						itemsValue="#{comboHelperBean.parentescos}"
+						itemLabel="#{item.descricao}"
+						disabled="#{recuperandoBean.isVisualizacao}"
+						converter="SimpleEntityConverter">
+						<f:ajax event="change" render=":formParente:jud:input" />
+					</sgp:formSelectOneMenu>
+
+					<sgp:formCheckbox id="jud" labelValue="Possui decisão Judicial" value="#{recuperandoBean.parente.judicial}" display="text"
+								    validatorId="checkBoxValidator"	disabled="#{recuperandoBean.isVisualizacao or !(recuperandoBean.parente.parentesco.grau>1)}" />
+
+					<sgp:formSelectOneMenu id="status" labelValue="Status"
+						value="#{recuperandoBean.parente.status}"
+						itemsValue="#{comboHelperBean.status}" itemValue="#{item}"
+						itemLabel="#{item.descricao}"
+						disabled="#{recuperandoBean.isVisualizacao}" display="text" />
+
+					<br/>	
+					<br/>			
+				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form :tabView:formParente:parentes" action="#{recuperandoBean.incluirParente()}" 
+					rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}"/>
+			 		
+				<p:commandButton value="Fechar" onclick="PF('novoParente').hide()" process="@this"/>
+				
+				<br/>
+			</p:panel>			
+			
+		</h:form>
+    	</p:dialog>
+
+		<p:dialog id="dialogProcesso" header="Alterar Regime do Processo" showEffect="fade" widgetVar="dialogProcesso" modal="true"
+    			draggable="false" resizable="false" focus=":formDialogProcesso:nomeRecuperando" closeOnEscape="true">
+    		<h:form id="formDialogProcesso">
+    			<sgp:formOutputText id="nomeRecuperando" labelValue="Recuperando" value="#{processoRegimeCondicaoBean.processoRegimeCondicao.processo.recuperando.pessoa.nome}"/>
+    			
+    			<sgp:formOutputText labelValue="Matrícula" value="#{processoRegimeCondicaoBean.processoRegimeCondicao.processo.recuperando.id}"/>
+    			
+    			<sgp:formCalendar labelValue="Data Documento"
+						value="#{processoRegimeCondicaoBean.processoRegimeCondicao.dataDocumento}" display="text"
+						validationRequired="true" />
+    			
+    			<sgp:formInputTextarea id="observacaoProcesso" labelValue="Observação"
+						value="#{processoRegimeCondicaoBean.processoRegimeCondicao.observacao}" 
+						rows="10"
+						columns="50" 
+						maxlength="250" 
+						autoResize="true"
+						size="#{processoRegimeCondicaoBean.processoRegimeCondicao.observacao.length()}"
+						display="text" 
+						validationRequired="true"/>
+						
+				<sgp:formSelectOneMenu
+					id="regime"
+					labelValue="Regime"
+					value="#{processoRegimeCondicaoBean.processoRegimeCondicao.regime}" 
+					itemsValue="#{comboHelperBean.regimes}" 
+					itemValue="#{item}" 
+					itemLabel="#{item.descricao}"
+					display="text"
+					converter="SimpleEntityConverter"
+					validationRequired="true"
+					temSelecione="true"/>
+					
+				<sgp:formSelectOneMenu
+					id="condicao"
+					labelValue="Condição"
+					value="#{processoRegimeCondicaoBean.processoRegimeCondicao.condicao}"
+					itemsValue="#{comboHelperBean.condicao}" 
+					itemValue="#{item}" 
+					itemLabel="#{item.descricao}"
+					display="text"
+					validationRequired="true"
+					temSelecione="true">
+					<f:ajax event="change" render="formDialogProcesso:anoMesDia"/>
+				</sgp:formSelectOneMenu>
+					
+				<h:panelGroup id="anoMesDia">
+					<sgp:formInputText id="ano" value="#{processoRegimeCondicaoBean.processoRegimeCondicao.ano}" labelValue="Ano" size="10" maxlength="4" validationRequired="true" display="text" disabled="#{recuperandoBean.isVisualizacao}"
+						rendered="#{processoRegimeCondicaoBean.processoRegimeCondicao.condicao != null and processoRegimeCondicaoBean.processoRegimeCondicao.condicao.descricao.equalsIgnoreCase('Condenado')}"/>
+			
+					<sgp:formInputText id="mes" value="#{processoRegimeCondicaoBean.processoRegimeCondicao.mes}" labelValue="Mês" size="10" maxlength="2" validationRequired="true" display="text" disabled="#{recuperandoBean.isVisualizacao}"
+						rendered="#{processoRegimeCondicaoBean.processoRegimeCondicao.condicao != null and processoRegimeCondicaoBean.processoRegimeCondicao.condicao.descricao.equalsIgnoreCase('Condenado')}"/>
+			
+					<sgp:formInputText id="dia" value="#{processoRegimeCondicaoBean.processoRegimeCondicao.dia}" labelValue="Dia" size="10" maxlength="2" validationRequired="true" display="text" disabled="#{recuperandoBean.isVisualizacao}"
+						rendered="#{processoRegimeCondicaoBean.processoRegimeCondicao.condicao != null and processoRegimeCondicaoBean.processoRegimeCondicao.condicao.descricao.equalsIgnoreCase('Condenado')}"/>
+				</h:panelGroup>
+					
+    			<br/><br/><br/>
+    			<p:commandButton value="Salvar" update=":tabView:formPassagem" action="#{processoRegimeCondicaoBean.salvar()}" icon="ui-icon-disk" 
+    				rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}"/>
+    			<p:commandButton value="Fechar" onclick="PF('dialogProcesso').hide()"/>
+    		</h:form>
+    			
+		</p:dialog>
+		
+		<p:dialog id="dialogFinalizarProcesso" header="Finalizar Processo" showEffect="fade" widgetVar="dialogFinalizarProcesso" modal="true"
+    			draggable="false" resizable="false" closeOnEscape="true" focus=":formDialogFinalizarProcesso:numeroProcesso">
+    		<h:form id="formDialogFinalizarProcesso">
+    			<sgp:formOutputText id="numeroProcesso" labelValue="Nº Processo" value="#{recuperandoBean.processo.numeroProcesso}"/>
+    			
+    			<sgp:formCalendar
+    				labelValue="Data de Finalizado"
+					value="#{recuperandoBean.processo.dataFinalizado}"
+					display="text"
+					validationRequired="true" />
+    			
+    			<sgp:formInputTextarea id="observacao" labelValue="Observação"
+						value="#{recuperandoBean.processo.observacaoFinalizado}" 
+						rows="10"
+						columns="50" 
+						maxlength="250" 
+						autoResize="true"
+						size="#{recuperandoBean.processo.observacaoFinalizado.length()}"
+						display="text" 
+						validationRequired="true"/>
+				
+				<br/><br/><br/>
+				<p:commandButton value="Salvar" update=":mensagens" action="#{recuperandoBean.salvarProcesso()}" icon="ui-icon-disk" 
+					rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}"/>
+    			<p:commandButton value="Fechar" onclick="PF('dialogFinalizarProcesso').hide()"/>
+			</h:form>
+    			
+		</p:dialog>
+		
+		<p:dialog id="dialogPassagem" header="Passagem" showEffect="fade" widgetVar="visualizarPassagem" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+       		<h:form id="passagemForm">
+				<p:panel>
+				<div class="row">
+					<div class="col-md-8">
+						<sgp:formOutputLabel labelValue="Data da Prisão" value="#{recuperandoBean.passagemSelecionada.dataPrisao}" converterData="true"/>
+						<sgp:formOutputLabel labelValue="Data da Entrada" value="#{recuperandoBean.passagemSelecionada.dataEntrada}" converterDataHora="true" />
+						<sgp:formOutputLabel labelValue="Procedência" value="#{recuperandoBean.passagemSelecionada.passagemProcedencia.procedencia.nome}" />
+												
+						<p:panel header="Desligamento" rendered="#{recuperandoBean.passagemSelecionada.dataSaida != null}">
+							<sgp:formOutputLabel labelValue="Número do Documento" value="#{recuperandoBean.passagemSelecionada.numeroDocumento}"/>
+							<sgp:formOutputLabel labelValue="Data da Saída" value="#{recuperandoBean.passagemSelecionada.dataSaida}" converterDataHora="true"/>
+							<sgp:formOutputLabel labelValue="Motivo" value="#{recuperandoBean.passagemSelecionada.tipoDesligamento.descricao}"/>
+							<p:row rendered="#{recuperandoBean.passagemSelecionada.estabelecimentoDestino != null}">
+							<sgp:formOutputLabel labelValue="Estabelecimento" value="#{recuperandoBean.passagemSelecionada.estabelecimentoDestino.nome}" />
+							</p:row>
+							<sgp:formOutputLabel labelValue="Observação" value="#{recuperandoBean.passagemSelecionada.obsDesligamento}" />
+						</p:panel>
+					</div>
+					
+					<div class="col-md-4">
+						<p:dataGrid layout="tabular" style="margin-left: 8px; width: 188px" columns="1" rows="1" value="#{recuperandoBean.passagemSelecionada.foto}" emptyMessage="Sem foto de frente." var="f">
+							<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
+								<f:param name="hashId" value="#{f.imagem.id}" />
+							</p:graphicImage>
+						</p:dataGrid>
+					</div>
+				</div>
+				
+				<br/>
+				
+				<p:dataTable id="lotacoes" var="lotacao" value="#{recuperandoBean.passagemSelecionada.lotacao}" rows="10" paginator="true" paginatorPosition="bottom"  
+								sortBy="#{lotacao.id}" emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
+								
+					<p:column headerText="Origem">
+						<h:outputText value="#{lotacao.tipoTransito.descricao}" />
+					</p:column>
+					<p:column headerText="Estrutura">
+						<h:outputText value="#{lotacao.estrutura.nomeCompleto}" />
+					</p:column>
+					
+					<p:column headerText="Entrada">
+						<h:outputText value="#{lotacao.dataEntrada}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Saída">
+						<h:outputText value="#{lotacao.dataSaida}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+						</h:outputText>
+					</p:column>	
+					
+				</p:dataTable>
+					
+					<br/>
+    			<p:commandButton value="Fechar" onclick="PF('visualizarPassagem').hide()"/>
+				</p:panel>
+			
+			</h:form>
+    	</p:dialog>
+    	
+    	<h:form id="formAutCadBio" prependId="false">
+    		<p:dialog id="dialogAutorizacaoBiometria" dynamic="true" header="Autorização para cadastro SEM BIOMETRIA" showEffect="fade" widgetVar="dlgAutBio" modal="true" draggable="false" 
+    			resizable="false" closeOnEscape="true">
+    			<h:panelGroup id="divAut">
+	    			<sgp:formInputText id="login" labelValue="Login" maxlength="11" minlength="4" value="#{recuperandoBean.loginUsuarioAutorizador}" validationRequired="true"
+	    				display="text" requiredMessage="*"/>
+					<sgp:formInputPassword id="senha" labelValue="Senha" maxlength="15" minlength="4"
+						value="#{recuperandoBean.senhaUsuarioAutorizador}" validationRequired="true" display="text" requiredMessage="*"/>
+					<sgp:formInputTextarea id="observacao" labelValue="Observação" value="#{recuperandoBean.observacaoUsuarioAutorizador}"
+						rows="5" columns="40" maxlength="250" display="text" requiredMessage="*" validationRequired="true" />
+					
+					<br/><br/><br/>
+					<p:commandButton value="Autorizar" update=":divAut :mensagens" action="#{recuperandoBean.autorizarCadastroSemBiometria}" icon="ui-icon-disk" />
+	    			<p:commandButton value="Fechar" onclick="PF('dlgAutBio').hide()" immediate="true"/>
+	    		</h:panelGroup>
+    		</p:dialog>
+		</h:form>
+		
+		<p:confirmDialog widgetVar="confirmaCadBio" header="CADASTRAR RECUPERANDO SEM BIOMETRIA" message="Para realizar o cadastro SEM BIOMETRIA é necessária a autorização de um responsável, deseja continuar?">
+			<p:commandButton value="Sim" type="button" onclick="PF('confirmaCadBio').hide(); PF('dlgAutBio').show();" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="Não" type="button" onclick="PF('confirmaCadBio').hide();" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+	
+		<style>
+			#tabView\:formParticularidades\:dataGridPart_content {
+				padding: 10px;
+				border: 0px;
+			}
+			#tabView\:formAbaFotosHistorico\:dataGridFotos_content {
+				padding: 10px;
+				border: 0px;
+			}
+		</style>
+	</ui:define>
+</ui:composition>

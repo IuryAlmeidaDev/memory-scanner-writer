@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarLotacaoServidor" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="unidade.nome" class="java.lang.String"/>
+	<field name="dataInicio" class="java.util.Date"/>
+	<field name="dataFim" class="java.util.Date"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="25" splitType="Prevent">
+			<staticText>
+				<reportElement x="227" y="0" width="100" height="20" uuid="43022c15-c2cb-4069-bcb0-ba269f436653"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Lotação(ões)]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="16" splitType="Prevent">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="16" backcolor="#CCCCCC" uuid="3c240180-c306-4482-a50e-90ac2394af82">
+					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="355" height="16" uuid="a4ee366c-52b7-4ef9-8d5d-f42dce0f2d46"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="0" width="100" height="16" uuid="424fda45-6b0a-4b87-8446-628cbe209837"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Início]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="100" height="16" uuid="3f38b61c-3219-4b56-b740-518f85beeda2"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Fim]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="16" backcolor="#CCCCCC" uuid="fc64418e-6a0b-4a55-ab73-64aa45592280">
+					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="355" y="0" width="100" height="15" uuid="0779c36a-c766-4c5b-8f13-79c2dec87c01"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dataInicio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="455" y="0" width="100" height="15" uuid="17a493bd-b50f-45d7-8ef2-517a84e31680"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dataFim}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="355" height="15" uuid="628d40be-d73f-4e21-aa18-a80b66a9e6e2"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidade.nome}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

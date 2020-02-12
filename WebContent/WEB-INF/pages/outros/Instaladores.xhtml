@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="head">
+		<ui:include src="/WEB-INF/pages/_script/biometria.xhtml" />
+	</ui:define>
+	
+	<ui:define name="footer">
+		<h:outputScript library="js" name="instaladores.js" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h3>Status da Biometria</h3>
+		
+		<h:form id="form" prependId="false">
+			<p:panel header="Status da aplicativo">
+				<p:outputLabel id="msgStatus" />
+			</p:panel>
+			<br/>
+			<p:panel header="Instaladores">
+				<p:panelGrid columns="2">
+					<p:outputLabel value="Instalador do aplicativo biométrico do Sigepen" />
+					<h:outputLink value="#{sigepen.getUrlInstalador()}">
+						<h:graphicImage library="icons" name="download.png" />
+					</h:outputLink>
+					<p:outputLabel value="Driver do leitor biométrico SecuGen" />
+					<h:outputLink value="#{sigepen.getUrlDriver('secugen')}" title="Download">
+						<h:graphicImage library="icons" name="download.png" />
+					</h:outputLink>
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

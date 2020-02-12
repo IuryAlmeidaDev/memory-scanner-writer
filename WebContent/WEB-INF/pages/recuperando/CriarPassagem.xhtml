@@ -1,0 +1,145 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Nova Passagem</h3>
+		
+		<h:form id="formPassagem">
+			<p:panel header="Recuperando">
+			<div class="row">
+				<div class="col-md-3" align="center">
+							<p:dataGrid id="foto" layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.fotoFrenteAtual}" emptyMessage="Sem foto de frente." var="f">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{f.imagem.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+							<br/>
+							<p:commandButton icon="fa fa-camera" value="Adicionar Foto" immediate="true" actionListener="#{passagemBean.abrirDialogFoto}" rendered="#{!recuperandoBean.isVisualizacao}">
+								<p:ajax event="dialogReturn" listener="#{passagemBean.associarFoto}" update=":formPassagem:foto" />
+							</p:commandButton>
+				</div>
+				<div class="col-md-9">
+					<sgp:formOutputLabel labelValue="Matrícula" value="#{passagemBean.recuperando.id}" />
+					<sgp:formOutputLabel labelValue="Nome" value="#{passagemBean.recuperando.pessoa.nome}" />
+					<sgp:formOutputLabel labelValue="Nome da mãe" value="#{passagemBean.recuperando.pessoa.nomeMae}" />
+					<sgp:formOutputLabel labelValue="Data Nascimento" value="#{passagemBean.recuperando.pessoa.dataNascimento}" converterData="true"/>
+				</div>	
+				</div>
+			</p:panel>
+
+			<br/>
+			<p:panel header="Passagem">
+				<sgp:formCalendar labelValue="Data da Prisão" value="#{passagemBean.passagem.dataPrisao}" dataMaxima="#{passagemBean.dataMaximaDesligamento}" display="text" validationRequired="true" pattern="dd/MM/yyyy"/>
+				<sgp:formCalendar labelValue="Data da Entrada" value="#{passagemBean.passagem.dataEntrada}" dataMaxima="#{passagemBean.dataMaximaDesligamento}" display="text" validationRequired="true" pattern="dd/MM/yyyy HH:mm"/>
+				<br/><br/>
+				<h:panelGroup id="infoEst">
+					<div class="row">
+						<div class="col-md-10">
+							<sgp:formOutputLabel style="vertical-align: top" labelValue="Estrutura (Cela)" value="#{passagemBean.lotacao.estrutura.nomeCompleto}" />
+							<p:commandButton style="margin-top: -5px" icon="ui-icon ui-icon-search" immediate="true" actionListener="#{passagemBean.abrirDialogEstrutura}">
+								<p:ajax event="dialogReturn" listener="#{passagemBean.associarEstrutura}" update=":formPassagem:infoEst" />
+							</p:commandButton>
+						</div>
+					</div>
+				</h:panelGroup>
+			</p:panel>
+			
+			<br/>
+			<p:panel header="Procedência" id="painelProcedencia" style="height:400px">
+				<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{passagemBean.abrirDialogProcedencia}">
+					<p:ajax event="dialogReturn"
+						listener="#{passagemBean.associarProcedencia}"
+						update=":formPassagem:painelProcedencia" />
+				</p:commandButton>
+				
+				<sgp:formOutputLabel 
+					value="#{passagemBean.passagemProcedencia.procedencia.nome}"
+					labelValue="Procedência"/>
+				
+				<sgp:formOutputLabel 
+					value="#{passagemBean.passagemProcedencia.procedencia.cidade.estado.nome}"
+					labelValue="Estado"/>
+					
+				<sgp:formOutputLabel
+					value="#{passagemBean.passagemProcedencia.procedencia.cidade.nome}"
+					labelValue="Cidade"/>
+			
+				<sgp:formInputTextarea 
+					id="observacao"
+					labelValue="Observação"
+					value="#{passagemBean.passagemProcedencia.observacao}"
+					rows="10"
+					columns="50"
+					maxlength="250"
+					autoResize="true"
+					size="#{passagemBean.passagemProcedencia.observacao.length()}"
+					display="text"
+					validationRequired="true"/>
+			</p:panel>
+			
+			<br />
+			<p:panel header="Processos" id="painelProcesso">
+				<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{passagemBean.abrirDialogProcesso(null, false)}">
+					<p:ajax event="dialogReturn" listener="#{passagemBean.atualizarProcessos}" update=":formPassagem:painelProcesso"/>
+				</p:commandButton>
+				<br />
+				<br />
+				<p:dataTable id="processo" var="processo" value="#{passagemBean.recuperando.processos}" emptyMessage="Nenhum processo inserido." sortBy="#{processo.id}">
+					
+					<p:column headerText="Nº Processo" sortBy="#{processo.numeroProcesso}">
+						<h:outputText value="#{processo.numeroProcesso}" />
+					</p:column>
+					<p:column headerText="Nº Inquérito" sortBy="#{processo.numeroInquerito}">
+						<h:outputText value="#{processo.numeroInquerito}" />
+					</p:column>
+					<p:column headerText="Nº Ofício" sortBy="#{processo.numeroOficio}">
+						<h:outputText value="#{processo.numeroOficio}" />
+					</p:column>
+					<p:column headerText="Regime Atual">
+						<h:outputText value="#{processo.regimeAtual.descricao}" />
+					</p:column>
+					<p:column headerText="Condição Atual">
+						<h:outputText value="#{processo.condicaoAtual.descricao}" />
+					</p:column>
+					<ui:remove><p:column headerText="Quantidade de Crimes" sortBy="#{processo.crimes.size()}">
+						<h:outputText value="#{processo.crimes.size()}" />
+					</p:column></ui:remove>					
+					<p:column headerText="Status">
+						<h:outputText value="#{processo.statusProcesso.descricao}" />
+					</p:column>
+					<p:column width="150" headerText="Ações">
+						<center>
+							<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" actionListener="#{passagemBean.abrirDialogProcesso(processo, false)}">
+								<p:ajax event="dialogReturn" listener="#{passagemBean.atualizarProcessos}" update=":formPassagem:painelProcesso"/>
+							</p:commandButton>
+							
+							<p:commandButton title="Visualizar" icon="ui-icon-document" action="#{passagemBean.abrirDialogProcesso(processo, true)}" immediate="true"/>
+							<p:commandButton title="Excluir" icon="ui-icon-trash" action="#{passagemBean.excluirProcesso(processo)}" immediate="true" update=":formPassagem:painelProcesso" rendered="#{processo.id == 0}">
+								<p:confirm header="Confirmação" message="Deseja excluir o processo?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+				<br />
+				<br />
+				<br />
+			
+			</p:panel>
+			<br />
+			<p:commandButton value="Salvar" icon="ui-icon-disk" action="#{passagemBean.salvar}" update="@form"/>
+			<p:button outcome="pretty:ListarRecuperando" value="Voltar" icon="ui-icon-arrowreturnthick-1-w" />
+		</h:form>
+	</ui:define>
+</ui:composition>

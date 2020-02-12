@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>#{receberTransferenciaBean.tituloPagina} Receber Transferência</h3>
+			<h:form id="formPed">
+				<p:panel>
+				   
+				   <p:panel>
+				   	<h4>Recuperando</h4>
+				   
+						<h:panelGroup id="recuperando" >
+							<sgp:formOutputLabel labelValue="Matrícula" value="#{receberTransferenciaBean.pedido.recuperando.id}" />
+							<sgp:formOutputLabel labelValue="Nome" value="#{receberTransferenciaBean.pedido.recuperando.pessoa.nome}" />
+							<sgp:formOutputLabel labelValue="Unidade Origem" value="#{receberTransferenciaBean.pedido.unidadeOrigem.nome}" />
+						</h:panelGroup>				
+					</p:panel>
+					
+						<br/>	
+					<p:commandButton style="margin-top: -5px" icon="ui-icon ui-icon-plus" immediate="true" actionListener="#{receberTransferenciaBean.abrirDialogEstrutura}"
+					rendered="#{!receberTransferenciaBean.isVisualizacao}">
+						<p:ajax event="dialogReturn" listener="#{receberTransferenciaBean.associarEstrutura}" update=":formPed" />
+					</p:commandButton>
+					<sgp:formOutputLabel labelValue="Estrutura (Cela)" value="#{receberTransferenciaBean.pedido.estruturaDestino.nomeCompleto}" />
+					
+				
+						
+						<br/>
+						<br/>
+						<p:commandButton icon="fa fa-camera" value="Adicionar Foto" immediate="true" actionListener="#{receberTransferenciaBean.abrirDialogFoto}" rendered="#{!receberTransferenciaBean.isVisualizacao}">
+								<p:ajax event="dialogReturn" listener="#{receberTransferenciaBean.associarFoto}" update="formPed" />
+							</p:commandButton>	
+							
+							<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{receberTransferenciaBean.pedido.foto}" emptyMessage="Sem foto de frente." var="f">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{f.imagem.id}" />
+								</p:graphicImage>
+							</p:dataGrid>				
+					
+						<br />
+						
+						<sgp:formInputTextarea id="resultado" 
+						labelValue="Resultado"
+						value="#{receberTransferenciaBean.pedido.resultado}" 
+						validationRequired="true"
+						disabled="#{receberTransferenciaBean.isVisualizacao}"
+						rows="10" columns="50"
+						maxlength="250" autoResize="true"
+						size="#{receberTransferenciaBean.pedido.resultado.length()+5}" 
+						display="text" />
+
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<p:commandButton value="Salvar" action="#{receberTransferenciaBean.salvar()}" update="@form" icon="ui-icon-disk" rendered="#{securityUtil.possuiPermissao('ReceberTransferencia') and !receberTransferenciaBean.isVisualizacao}" />
+					<p:button outcome="pretty:ListarReceberTransferencia" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1"/>
+					</p:button>
+				</p:panel>
+			</h:form>
+	</ui:define>
+</ui:composition>

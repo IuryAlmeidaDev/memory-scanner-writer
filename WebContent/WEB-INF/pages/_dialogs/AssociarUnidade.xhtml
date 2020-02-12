@@ -1,0 +1,58 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Associar Unidade</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form>
+			<p:panel>
+				<sgp:formInputText id="pesquisar" labelValue="Nome" value="#{associarUnidadeBean.filtro.nome}" />
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar"
+					update=":formUnidades"
+					process="@form"
+					icon="ui-icon-search" />
+
+			</p:panel>
+		</h:form>
+		
+		<h:form id="formUnidades">
+			<p:dataTable id="dataTable" var="unidade" value="#{associarUnidadeBean.unidades}" rows="5" paginatorAlwaysVisible="false" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{unidade.id}">
+				<p:column headerText="Código" sortBy="#{unidade.id}" width="100">
+					<h:outputText value="#{unidade.id}" />
+				</p:column>
+				
+				<p:column headerText="Nome" sortBy="#{unidade.nome}">
+					<h:outputText value="#{unidade.nome}"/>
+				</p:column>					
+				
+				<p:column width="50">
+					<center>
+						<p:commandButton title="Associar" icon="ui-icon-check" actionListener="#{associarUnidadeBean.selecionarUnidade(unidade)}">
+							<p:confirm header="Atenção" message="Salve o cadastro para confirmar a alteração!" icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+				</p:column>
+			</p:dataTable>
+			
+			<div style="text-align: center">
+				<br/>
+				<p:commandButton value="Fechar" icon="ui-icon-close" actionListener="#{associarUnidadeBean.fecharDialog}" />
+			</div>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

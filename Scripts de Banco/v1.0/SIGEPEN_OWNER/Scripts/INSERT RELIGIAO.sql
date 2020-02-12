@@ -1,0 +1,17 @@
+﻿-----------------------------------------------------------
+--- SCRIPT DE INSERÇÃO DE DADOS NA TABELA RELIGIAO
+-----------------------------------------------------------
+
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (1, 'Não religioso');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (2, 'Catolicismo');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (3, 'Protestantismo');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (4, 'Adventismo');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (5, 'Testemunhas de Jeová');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (6, 'Espiritismo');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (7, 'Mormonismo');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (8, 'Budismo');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (9, 'Islamismo');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (10, 'Judaísmo');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (11, 'Neopaganismo');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (12, 'Religiões afro-brasileiras e indígenas');
+INSERT INTO RELIGIAO (ID, DESCRICAO) VALUES (13, 'Hinduísmo');

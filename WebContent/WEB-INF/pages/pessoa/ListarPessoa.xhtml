@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Pessoa</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarPessoa" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarPessoa')}"/>
+		</h:form>
+
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Pesquisar" />
+				<sgp:formInputText labelValue="Nome"
+					value="#{pessoaBean.filtro.nome}" size="40" maxlength="80" />
+				<sgp:formInputText labelValue="Nome da Mãe"
+					value="#{pessoaBean.filtro.nomeMae}" size="40" maxlength="80" />				
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+			</p:panel>
+		</h:form>
+
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="pessoa" value="#{pessoaBean.pessoas}"
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true"
+				sortBy="#{pessoa.id}" emptyMessage="Nenhum registro encontrado.">
+				<p:column headerText="Código" width="100" sortBy="#{pessoa.id}">
+					<h:outputText value="#{pessoa.id}" />
+				</p:column>
+				
+				<p:column headerText="Nome" sortBy="#{pessoa.nome}">
+					<h:outputText value="#{pessoa.nome}" />
+				</p:column>				
+				
+				<p:column headerText="Dt. Nascimento" sortBy="#{pessoa.dataNascimento}" width="170">
+					<h:outputText value="#{pessoa.dataNascimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Nome da Mãe" sortBy="#{pessoa.nomeMae}">
+					<h:outputText value="#{pessoa.nomeMae}" />
+				</p:column>
+				
+				<p:column headerText="Ações" width="120">
+					<center>
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarPessoa" rendered="#{securityUtil.possuiPermissao('VisualizarPessoa')}">
+							<f:param name="id" value="#{pessoa.id}"/>
+						</p:button>
+						<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarPessoa" rendered="#{securityUtil.possuiPermissao('AlterarPessoa')}">
+							<f:param name="id" value="#{pessoa.id}"/>
+						</p:button>
+						<p:commandButton action="#{pessoaBean.excluir(pessoa)}"	icon="ui-icon-trash" title="Excluir"
+							update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirPessoa')}">
+							<p:confirm header="Confirmação"
+								message="Deseja excluir a pessoa?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+				</p:column>
+				
+				<f:facet name="footer">
+						Total de registros: #{pessoaBean.pessoas.rowCount}
+					</f:facet>
+			</p:dataTable>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,119 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+	
+		<h3>#{orgaoBean.tituloPagina} Órgão</h3>
+		
+		<h:form id="orgaoForm">
+			<p:panel footer="Cadastrado por: #{orgaoBean.orgao.autorRegistro.usuario} em #{orgaoBean.orgao.autorRegistro.data} | Última alteração: #{orgaoBean.orgao.autorUltimaAlteracao.usuario} em #{orgaoBean.orgao.autorUltimaAlteracao.data}">
+				<sgp:formInputText 
+					id="nome"
+					labelValue="Nome"
+					value="#{orgaoBean.orgao.nome}"
+					validationRequired="true"
+					disabled="#{orgaoBean.isVisualizacao}"
+					display="text"
+					maxlength="100"
+					size="50"
+					/>
+				<sgp:formInputText 
+					id="LogradouroOrgao"
+					labelValue="Logradouro"
+					value="#{orgaoBean.orgao.logradouro}"
+					size="40"
+					disabled="#{orgaoBean.isVisualizacao}"
+					display="text"
+					validationRequired="true"
+					maxlength="100"
+					/>
+				<sgp:formInputText
+					id="numero"
+					labelValue="Número"
+					value="#{orgaoBean.orgao.numero}"
+					size="10"
+					disabled="#{orgaoBean.isVisualizacao}"
+					maxlength="10"
+					/>
+				<sgp:formInputText 
+					id="bairroOrgao"
+					labelValue="Bairro"
+					value="#{orgaoBean.orgao.bairro}"
+					size="40"
+					disabled="#{orgaoBean.isVisualizacao}"
+					display="text"
+					validationRequired="true"
+					maxlength="100"
+					/>	
+				<sgp:formInputMask
+					value="#{orgaoBean.orgao.cep}"
+					labelValue="CEP"
+					size="8"
+					mask="99.999-999"
+					maxlength="8"
+					converter="CepConverter"
+					disabled="#{orgaoBean.isVisualizacao}"
+					/>			
+				<sgp:formSelectOneMenu 
+					id="estado"					
+					labelValue="Estado" 
+					itemValue="#{item}" 
+					itemLabel="#{item.nome}"
+					itemsValue="#{comboHelperBean.estados}" 
+					value="#{orgaoBean.estado}"
+					filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+					converter="EstadoConverter"
+					validationRequired="true"
+					display="text" 
+					temSelecione="true" 
+					disabled="#{orgaoBean.isVisualizacao}" >
+						<f:ajax event="change" listener="#{orgaoBean.listaCidades}" render="orgaoForm:cidade:input"/>
+					</sgp:formSelectOneMenu>
+				<sgp:formSelectOneMenu 
+					id="cidade"
+					labelValue="Cidade" 
+					itemValue="#{item}" 
+					itemLabel="#{item.nome}"
+					itemsValue="#{orgaoBean.cidades}" 
+					value="#{orgaoBean.orgao.cidade}"
+					validationRequired="true"
+					filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+					converter="SimpleEntityConverter"
+					disabled="#{orgaoBean.isVisualizacao}"
+					display="text"
+					temSelecione="true"
+					/>
+				<sgp:formSelectOneMenu
+					id="status"
+					labelValue="Status"
+					value="#{orgaoBean.orgao.status}" 
+					itemsValue="#{comboHelperBean.status}" 
+					itemValue="#{item}" 
+					itemLabel="#{item.descricao}" 
+					disabled="#{orgaoBean.isVisualizacao}"
+					display="text"/>
+				
+				<br/>
+				<br/>
+				<p:commandButton value="Salvar" 
+					action="#{orgaoBean.salvar()}"	
+					update="@form" 
+					icon="ui-icon-disk" 
+					rendered="#{(securityUtil.possuiPermissao('CadastrarOrgao') and !orgaoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarOrgao') and !orgaoBean.isVisualizacao)}" />
+				<p:button outcome="pretty:ListarOrgao" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1"/>
+				</p:button>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarPassagemRecuperando" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.6500000000000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="passagemProcedencia.procedencia.nome" class="java.lang.String"/>
+	<field name="dataEntrada" class="java.util.Date"/>
+	<field name="dataSaida" class="java.util.Date"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="25" splitType="Prevent">
+			<staticText>
+				<reportElement x="227" y="0" width="100" height="20" uuid="e7d34fa7-6a0e-4ebf-b3c9-0c0edd43d252"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Passagens]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="16" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="16" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="3669ece3-e3c6-4ba1-98d7-5e61df02ad9c"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="293" height="16" uuid="3ec99eda-6627-4117-894e-91d6301ccae3"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Procedência]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="293" y="0" width="124" height="16" uuid="2e21d0d6-1fc4-4e89-9d4f-18c96e123923"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Entrada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="417" y="0" width="138" height="16" uuid="8c747a6e-4cc3-4e3a-bbb4-d6983d465543"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Saída]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="16" backcolor="#CCCCCC" uuid="02f27a16-a5e6-4dbb-9dd0-edb33160af2e">
+					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="293" height="15" uuid="fb55f45b-2558-49f9-9667-53602f71b991"/>
+				<box leftPadding="2" rightPadding="2">
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{passagemProcedencia.procedencia.nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm:ss">
+				<reportElement stretchType="RelativeToBandHeight" x="293" y="0" width="124" height="15" uuid="a45aed28-a1aa-412d-aa79-dc3cbf8e390a"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dataEntrada}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="417" y="0" width="138" height="15" uuid="e56430ca-b371-4fd8-a78e-921cdc140d61"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dataSaida}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

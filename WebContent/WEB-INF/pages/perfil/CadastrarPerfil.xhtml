@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>#{perfilBean.tituloPagina} Perfil</h3>
+			<h:form id="formPerfil">
+				<p:panel id="panelLogin" footer="Cadastrado por: #{perfilBean.perfil.autorRegistro.usuario} em #{perfilBean.perfil.autorRegistro.data} | Alterado por: #{perfilBean.perfil.autorUltimaAlteracao.usuario} em #{perfilBean.perfil.autorUltimaAlteracao.data}">
+					<sgp:formInputText 
+						id="nomePerfil"
+						labelValue="Nome"
+						value="#{perfilBean.perfil.nome}"
+						validationRequired="true"
+						disabled="#{perfilBean.isVisualizacao}"
+						maxlength="80"
+						display="text" />		
+					
+					<sgp:formInputText
+						id="descPerfil"
+						labelValue="Descrição"
+						value="#{perfilBean.perfil.descricao}"
+						validationRequired="true"
+						disabled="#{perfilBean.isVisualizacao}"
+						display="text" 
+						maxlength="120"
+						permiteCaracterEspecial="true"/>
+						
+					<sgp:formSelectOneMenu
+						id="status"
+						labelValue="Status"
+						value="#{perfilBean.perfil.status}" 
+						itemsValue="#{comboHelperBean.status}" 
+						itemValue="#{item}" 
+						itemLabel="#{item.descricao}" 
+						disabled="#{perfilBean.isVisualizacao}"/>		
+						
+					<div class="form-block">						
+
+					</div>
+
+					<p:dataGrid id="dataGrid" layout="grid" columns="3" rows="10" value="#{comboHelperBean.funcionalidades}" var="funcionalidade">
+						<f:facet name="header">Permissões concedidas por funcionalidade</f:facet>
+						
+						<p:panel header="#{funcionalidade.nome}">
+							<div style="text-align: right">
+								<p:commandButton icon="ui-icon ui-icon-plusthick" immediate="true" title="Adicionar permissões" actionListener="#{perfilBean.configurarFuncionalidade}" oncomplete="PF('dlg').show();"
+								update=":formDlg" rendered="#{!perfilBean.isVisualizacao}">
+									<f:attribute name="idFuncionalidade" value="#{funcionalidade.id}" />
+									<f:attribute name="nomeFuncionalidade" value="#{funcionalidade.nome}" />
+								</p:commandButton>
+							</div>							
+	
+							<p:dataList value="#{perfilBean.permissoesPorFuncionalidade(funcionalidade.id)}" var="permissao" emptyMessage="Nehuma permissão adicionada." styleClass="ui-datalist-content">
+								<h:outputText value="#{permissao.nome}" />
+							</p:dataList>
+						</p:panel>
+					</p:dataGrid>
+					
+					<br/>
+					<br/>
+					<p:commandButton value="Salvar" action="#{perfilBean.salvar()}"	update="@form" icon="ui-icon-disk" rendered="#{(securityUtil.possuiPermissao('CadastrarPerfil') and !perfilBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarPerfil') and !perfilBean.isVisualizacao)}" />
+					<p:button outcome="pretty:ListarPerfil" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+				</p:panel>
+			</h:form>
+			
+			<h:form id="formDlg">
+				<p:dialog dynamic="true" modal="true" id="dialog" closeOnEscape="true" closable="true" width="481" height="303" widgetVar="dlg" resizable="false" draggable="false" header="Conceder permissões para: #{perfilBean.funcionalidadeSelecionada.nome}">
+					<p:pickList id="pickList" value="#{perfilBean.permissoesModel}" label="Permissões:" var="permissoesModel" 
+					 converter="PermissoesModelConverter" 
+					 itemLabel="#{permissoesModel.nome}"
+ 					 itemValue="#{permissoesModel}" 
+ 					 disabled="#{perfilBean.isVisualizacao}" 
+ 					 addLabel="Adicionar" 
+ 					 addAllLabel="Adicionar Todos" 
+ 					 removeLabel="Remover" 
+ 					 removeAllLabel="Remover Todos"
+ 					 showSourceFilter="true" 
+ 					 showTargetFilter="true" 
+ 					 filterMatchMode="contains">
+ 						<f:facet name="sourceCaption">Permissões Negadas:</f:facet>
+ 						<f:facet name="targetCaption">Permissões Concedidas:</f:facet>
+ 					</p:pickList>
+ 					<br/>
+ 					<div style="text-align: center">
+ 						<p:commandButton value="Atualizar" actionListener="#{perfilBean.atualizarPermissoes}" oncomplete="PF('dlg').hide();" update=":formDlg :formPerfil:dataGrid">
+ 							<p:confirm header="Atenção" message="Salve o cadastro para confirmar a alteração!" icon="ui-icon-alert" />
+ 						</p:commandButton>
+ 						
+ 						
+ 						<p:commandButton value="Fechar" onclick="PF('dlg').hide()"/>
+ 					</div>
+ 					
+					<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:dialog>
+			</h:form>
+			<style>
+				.ui-datalist-content {
+					border: 0px !important;
+				}
+			</style>
+	</ui:define>
+</ui:composition>

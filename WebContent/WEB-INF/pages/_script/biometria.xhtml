@@ -1,0 +1,6 @@
+<script type="text/javascript">
+	var podeHabilitarEConectar = #{(recuperandoBean.isListagem || !recuperandoBean.isVisualizacao)};
+	var biometriaObrigatoria = #{(recuperandoBean.verificarSeBiometriaEhObrigatoria())};
+	var contexto = '#{sigepen.getApplicationName()}';
+	var contexto2 = '#{sigepen.getUrl()}';
+</script> 

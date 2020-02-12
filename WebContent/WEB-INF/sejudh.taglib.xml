@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<facelet-taglib version="2.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facelettaglibrary_2_0.xsd">
+	
+	<namespace>http://sejudh.mt.gov.br/components</namespace>
+	
+	<composite-library-name>sejudh/composite</composite-library-name>
+	
+	<tag>
+		<description>Permite visualização caso o usuário tenha a permissão.</description>
+		<tag-name>validarAcesso</tag-name>
+		<component>
+			<component-type>br.gov.mt.sejudh.sigepen.security.ValidarAcessoTag</component-type>
+			<handler-class>br.gov.mt.sejudh.sigepen.security.ValidarAcessoTag</handler-class>
+		</component>
+	</tag>
+
+</facelet-taglib>

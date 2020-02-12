@@ -1,0 +1,52 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<cc:interface>
+	<cc:attribute name="labelValue" required="true" />
+	<cc:attribute name="id" required="false"/>
+	<cc:attribute name="value" required="false" />
+	<cc:attribute name="style" required="false" />
+	<cc:attribute name="rowStyle" required="false" />
+	<cc:attribute name="converterData" required="false" type="java.lang.Boolean" default="false"/>
+	<cc:attribute name="converterDataHora" required="false" type="java.lang.Boolean" default="false"/>
+	<cc:attribute name="styleFormLabelColumn" required="false"/>
+</cc:interface>
+
+<cc:implementation>
+
+	<div style="margin-bottom: 23px">
+	<div class="form-block" style="#{cc.attrs.rowStyle}">
+		<div class="form-label-column" style="#{cc.attrs.styleFormLabelColumn}">
+			<h:outputLabel for="output" value="#{cc.attrs.labelValue}:"/>
+		</div>
+
+		<div class="form-required-column">
+			<p:spacer width="15px" />
+		</div>		
+
+		<div class="form-input-column">
+			<h:outputLabel id="output" 
+			    value="#{cc.attrs.value}"
+				label="#{cc.attrs.labelValue}"
+				style="#{cc.attrs.style}">
+				
+				<c:if test="#{cc.attrs.converterData}">
+					<f:convertDateTime  for="output" type="date" pattern="dd/MM/yyyy" />
+				</c:if>
+				
+				<c:if test="#{cc.attrs.converterDataHora}">
+					<f:convertDateTime  for="output" type="both" pattern="dd/MM/yyyy HH:mm:ss"/>
+				</c:if>
+			</h:outputLabel>
+		</div>
+	</div>
+</div>
+</cc:implementation>
+</html>

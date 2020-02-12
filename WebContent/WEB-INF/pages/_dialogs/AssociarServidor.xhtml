@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Selecionar Servidor</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form>
+			<p:panel>
+				<sgp:formInputText id="pesquisarNome" labelValue="Nome" value="#{associarServidorBean.filtro.nome}" />
+				<sgp:formInputText id="pesquisarMatricula" labelValue="Matrícula" value="#{associarServidorBean.filtro.matricula}" />
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar"
+					update=":formServidores"
+					process="@form"
+					icon="ui-icon-search" />
+
+			</p:panel>
+		</h:form>
+		
+		<h:form id="formServidores">
+			<p:dataTable id="dataTable" var="servidor" value="#{associarServidorBean.servidores}" rows="5" paginatorAlwaysVisible="false" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{servidor.id}" emptyMessage="Nenhum registro encontrado.">
+				<p:column headerText="Matrícula" sortBy="#{servidor.matricula}" width="100">
+					<h:outputText value="#{servidor.matricula}" />
+				</p:column>
+				
+				<p:column headerText="Nome" sortBy="#{servidor.nome}">
+					<h:outputText value="#{servidor.nome}"/>
+				</p:column>					
+				
+				<p:column width="50">
+					<center>
+						<p:commandButton title="Selecionar" icon="ui-icon-check" actionListener="#{associarServidorBean.selecionarServidor(servidor)}">
+							<p:confirm header="Atenção" message="Salve o cadastro para confirmar a alteração!" icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+				</p:column>
+			</p:dataTable>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			
+			<div style="text-align: center">
+				<br/>
+				<p:commandButton value="Fechar" icon="ui-icon-close" actionListener="#{associarServidorBean.fecharDialog}" />
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

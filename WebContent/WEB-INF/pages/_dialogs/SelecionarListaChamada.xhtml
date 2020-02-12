@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Selecionar Lista</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form>
+			<p:panel>
+				<p:commandButton value="Lista de Chamada" icon="ui-icon-plus" actionListener="#{selecionarListaChamadaBean.imprimirListaDeChamada(false)}"/>
+				<br/>
+				<br/>
+				<p:commandButton value="Lista de Chamada Com Foto" icon="ui-icon-plus" actionListener="#{selecionarListaChamadaBean.imprimirListaDeChamada(true)}"/>
+				<br/>
+				<br/>
+				<p:commandButton value="Lista Sintética" icon="ui-icon-plus" actionListener="#{selecionarListaChamadaBean.imprimirListaSintetica}"/>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

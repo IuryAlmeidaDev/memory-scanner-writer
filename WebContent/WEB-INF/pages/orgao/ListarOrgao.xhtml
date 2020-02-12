@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Órgão</h3>
+		
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarOrgao" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarOrgao')}"/>
+		</h:form>
+				
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+				<sgp:formInputText id="pesquisar" labelValue="Nome" size="40" value="#{orgaoBean.filtro.nome}" />
+				
+				<sgp:formSelectOneMenu 
+								id="estado"
+								labelValue="Estado" 
+								itemValue="#{item}" 
+								itemLabel="#{item.nome}"
+								itemsValue="#{comboHelperBean.estados}" 
+								value="#{orgaoBean.filtro.estado}"
+								filter="true"
+								converter="EstadoConverter"
+								temSelecione="true">
+							  		<f:ajax event="change" listener="#{orgaoBean.listaCidades}" render="meuFormulario:cidade:input"/>
+				</sgp:formSelectOneMenu>	
+									
+				<sgp:formSelectOneMenu 
+								id="cidade"
+								labelValue="Cidade" 
+								itemValue="#{item}" 
+								itemLabel="#{item.nome}"
+								itemsValue="#{orgaoBean.cidades}" 
+								value="#{orgaoBean.filtro.cidade}"
+								filter="true"
+								converter="SimpleEntityConverter"
+								temSelecione="true"
+								/>
+								
+				<sgp:formSelectOneMenu 
+					id="status" labelValue="Status"
+					value="#{orgaoBean.filtro.status}"
+					itemsValue="#{comboHelperBean.status}" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					temSelecione="true"/>
+				
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm"	process="@form" icon="ui-icon-search" />		
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{orgaoBean.imprimir()}"/>
+			</p:panel>
+		</h:form>
+		
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="orgao" value="#{orgaoBean.orgaos}" paginator="true" paginatorPosition="bottom" rows="10" lazy="true"  sortBy="#{orgao.id}"
+				 emptyMessage="Nenhum registro encontrado.">		
+					<p:column headerText="Código" width="100" sortBy="#{orgao.id}">
+						<h:outputText value="#{orgao.id}" />
+					</p:column>
+					
+					<p:column headerText="Nome" sortBy="#{orgao.nome}" >
+						<h:outputText value="#{orgao.nome}" />
+					</p:column>
+					
+					<p:column headerText="Cidade" sortBy="#{orgao.cidade.nome}" width="200">
+						<h:outputText value="#{orgao.cidade.nome}" />
+					</p:column>
+					
+					<p:column headerText="Estado" sortBy="#{orgao.cidade.estado.uf}" width="100">
+						<h:outputText value="#{orgao.cidade.estado.uf}" />
+					</p:column>
+
+					<p:column headerText="Situação" width="120" sortBy="#{orgao.status}">
+						<h:outputText value="#{orgao.status.descricao}" />						
+					</p:column>
+					
+				<p:column headerText="Ações" width="120">
+					<center>
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarOrgao" rendered="#{securityUtil.possuiPermissao('VisualizarOrgao')}">
+							<f:param name="id" value="#{orgao.id}" />
+						</p:button>
+						<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarOrgao" rendered="#{securityUtil.possuiPermissao('AlterarOrgao')}" disabled="#{orgao.id == sigepen.getIdSejudh()}">
+							<f:param name="id" value="#{orgao.id}" />
+						</p:button>
+						<p:commandButton action="#{orgaoBean.excluir(orgao)}" icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirOrgao')}" disabled="#{orgao.id == sigepen.getIdSejudh()}">
+							<p:confirm header="Confirmação" message="Deseja excluir o órgão?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+				</p:column>
+				
+				<f:facet name="footer">
+					Total de registros: #{orgaoBean.orgaos.rowCount}
+				</f:facet>
+			</p:dataTable>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

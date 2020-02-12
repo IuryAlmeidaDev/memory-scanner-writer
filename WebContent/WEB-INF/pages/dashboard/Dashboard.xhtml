@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.Dashboard" var="dash" allSuffix="ALL_ENUM_VALUES" />
+			
+		<h3>Dashboard</h3>
+
+		<h:form id="form">
+			<p:dashboard id="dash" model="#{dashboardBean.dashModel}">
+				<p:panel id="#{dash.RECUPERANDOS_ATIVOS_SISTEMA.descricao}" styleClass="ui-dash-panel" style="background-color: #6EAB2E;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_SISTEMA)}">
+						<h:outputText value="#{dashboardBean.totalRecuperandosAtivos}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Recuperandos ativos no Sistema" styleClass="ui-dash-text-panel-20"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.RECUPERANDOS_ATIVOS_UNIDADE.descricao}" styleClass="ui-dash-panel" style="background-color: #03a9f4;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_UNIDADE)}">
+						<h:outputText value="#{dashboardBean.totalRecuperandosAtivosNaUnidade}" styleClass="ui-dash-text-panel-40"/>
+						<br/> 
+						<h:outputText value="Recuperandos ativos na Unidade" styleClass="ui-dash-text-panel-20"/>
+					</h:commandLink> 
+				</p:panel>
+		
+				<p:panel id="#{dash.RECUPERANDOS_ATIVOS_CADASTRO_INCOMPLETO_UNIDADE.descricao}" styleClass="ui-dash-panel" style="background-color: #FFCC00;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_CADASTRO_INCOMPLETO_UNIDADE)}">
+						<h:outputText value="#{dashboardBean.totalRecuperandosComCadastroIncompleto}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Cadastros ativos incompletos" styleClass="ui-dash-text-panel-20"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_A_VENCER.descricao}" styleClass="ui-dash-panel" style="background-color: #3CB371;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_A_VENCER)}">
+						<h:outputText value="#{dashboardBean.temporariosNaUnidadeAVencer}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Temporários na unidade a vencer" styleClass="ui-dash-text-panel-20"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCEHOJE.descricao}" styleClass="ui-dash-panel" style="background-color: #F7D358;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE)}">
+						<h:outputText value="#{dashboardBean.temporariosNaUnidadeVenceHoje}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Temporários na unidade vence hoje" styleClass="ui-dash-text-panel-20"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCIDA.descricao}" styleClass="ui-dash-panel" style="background-color: #A52A2A;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCIDA)}">
+						<h:outputText value="#{dashboardBean.temporariosNaUnidadeVencido}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Temporários na unidade vencida" styleClass="ui-dash-text-panel-20"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER.descricao}" styleClass="ui-dash-panel" style="background-color: #32CD32;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER)}">
+						<h:outputText value="#{dashboardBean.temporariosNoSistemaAVencer}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Temporários no sistema a vencer" styleClass="ui-dash-text-panel-20"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE.descricao}" styleClass="ui-dash-panel" style="background-color: #FFD700;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE)}">
+						<h:outputText value="#{dashboardBean.temporariosNoSistemaVenceHoje}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Temporários no sistema vence hoje" styleClass="ui-dash-text-panel-20"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCIDA.descricao}" styleClass="ui-dash-panel" style="background-color: #8B0000;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCIDA)}">
+						<h:outputText value="#{dashboardBean.temporariosNoSistemaVencido}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Temporários no sistema vencido" styleClass="ui-dash-text-panel-20"/>
+					</h:commandLink>
+				</p:panel>
+			</p:dashboard>
+		</h:form>
+	</ui:define>
+</ui:composition>

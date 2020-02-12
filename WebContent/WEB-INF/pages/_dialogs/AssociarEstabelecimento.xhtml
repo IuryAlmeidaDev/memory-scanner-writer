@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Estabelecimento</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="meuFormulario">
+		<p:panel>
+			<sgp:formInputText 
+				id="nome" labelValue="Nome"  size="40"
+				value="#{associarEstabelecimentoBean.filtro.nome}"
+				/>
+				<sgp:formSelectOneMenu 
+					id="estado"
+					labelValue="Estado" 
+					itemValue="#{item}" 
+					itemLabel="#{item.nome}"
+					itemsValue="#{comboHelperBean.estados}" 
+					value="#{associarEstabelecimentoBean.filtro.estado}"
+					filter="true"
+					converter="EstadoConverter"
+					temSelecione="true">
+				  		<f:ajax event="change" listener="#{associarEstabelecimentoBean.listaCidades}" render="meuFormulario:cidade:input"/>
+				</sgp:formSelectOneMenu>						
+				<sgp:formSelectOneMenu 
+					id="cidade"
+					labelValue="Cidade" 
+					itemValue="#{item}" 
+					itemLabel="#{item.nome}"
+					itemsValue="#{associarEstabelecimentoBean.cidades}" 
+					value="#{associarEstabelecimentoBean.filtro.cidade}"
+					filter="true"
+					converter="SimpleEntityConverter"
+					temSelecione="true"
+					/>
+				
+				<br/>
+				<br/>
+				<p:commandButton value="Pesquisar"
+					update=":formProcedencias"
+					process="@form"
+					icon="ui-icon-search" />
+		</p:panel>
+				
+		</h:form>
+		<h:form id="formProcedencias">
+			<p:dataTable id="dataTable" var="estabelecimento" value="#{associarEstabelecimentoBean.estabelecimentos}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{estabelecimento.id}"
+			   emptyMessage="Nenhum registro encontrado.">
+			
+				<p:column headerText="Nome" sortBy="#{estabelecimento.nome}">
+					<h:outputText value="#{estabelecimento.nome}" />
+				</p:column>
+				
+				<p:column headerText="Cidade" sortBy="#{estabelecimento.cidade.nome}">
+					<h:outputText value="#{estabelecimento.cidade.nome}" />
+				</p:column>
+				
+				<p:column headerText="Estado" sortBy="#{estabelecimento.cidade.estado.uf}">
+					<h:outputText value="#{estabelecimento.cidade.estado.uf}" />
+				</p:column>
+				
+				<p:column width="50">
+					<center>
+						<p:commandButton title="Associar" icon="ui-icon-check" actionListener="#{associarEstabelecimentoBean.selecionarEstabelecimento(estabelecimento)}">
+							<p:confirm header="Atenção" message="Salve o cadastro para confirmar a alteração!" icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+				</p:column>
+			</p:dataTable>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			
+			<div style="text-align: center">
+				<br/>
+				<p:commandButton value="Fechar" icon="ui-icon-close" actionListener="#{associarEstabelecimentoBean.fecharDialog}" />
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

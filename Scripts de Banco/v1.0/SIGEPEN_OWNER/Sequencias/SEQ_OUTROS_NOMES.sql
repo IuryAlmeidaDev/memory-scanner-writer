@@ -1,0 +1,12 @@
+-----------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_OUTROS_NOMES
+-----------------------------------------------
+
+CREATE SEQUENCE SEQ_OUTROS_NOMES
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_OUTROS_NOMES TO SIGEPEN_USER;
