@@ -39,11 +39,33 @@ public class BiometriaWebService {
 	@Path("/verificar-amostras-identicas")
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.TEXT_PLAIN)
-	public String verificarSeAmostrasSaoIdenticas(String template) {
+	public String verificarSeAmostrasSaoIdenticasPorImagem(String template) {
 		Boolean resultado = null;
 		
 		try {
-			resultado = biometriaService.verificarSeAmostrasSaoIdenticas(template);
+			resultado = biometriaService.verificarSeAmostrasSaoIdenticasPorImagem(template);
+		} catch (Exception e) {
+			e.printStackTrace();
+			LoggerUtil.logWS(e, log);
+			
+			JsonObject js = new JsonObject();
+			js.addProperty("erro", "Não foi possível verificar amostras biométricas.");
+			
+			return js.toString();
+		}
+		
+		return resultado.toString();
+	}
+	
+	@POST
+	@Path("/verificar-amostras-identicas-v2")
+	@Produces(MediaType.TEXT_PLAIN)
+	@Consumes(MediaType.TEXT_PLAIN)
+	public String verificarSeAmostrasSaoIdenticasPorTemplate(String template) {
+		Boolean resultado = null;
+		
+		try {
+			resultado = biometriaService.verificarSeAmostrasSaoIdenticasPorTemplate(template);
 		} catch (Exception e) {
 			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
@@ -61,11 +83,33 @@ public class BiometriaWebService {
 	@Path("/verificar-dedos-repetidos")
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.TEXT_PLAIN)
-	public String verificarSeExistemDedosRepetidos(String template) {
+	public String verificarSeExistemDedosRepetidosPorImagem(String template) {
 		String dedosRepetidos = null;
 		
 		try {
-			dedosRepetidos = biometriaService.verificarSeExistemDedosRepetidos(template);
+			dedosRepetidos = biometriaService.verificarSeExistemDedosRepetidosPorImagem(template);
+		} catch (Exception e) {
+			e.printStackTrace();
+			LoggerUtil.logWS(e, log);
+			
+			JsonObject js = new JsonObject();
+			js.addProperty("erro", "Não foi possível verificar amostras biométricas.");
+			
+			return js.toString();
+		}
+		
+		return dedosRepetidos;
+	}
+	
+	@POST
+	@Path("/verificar-dedos-repetidos-v2")
+	@Produces(MediaType.TEXT_PLAIN)
+	@Consumes(MediaType.TEXT_PLAIN)
+	public String verificarSeExistemDedosRepetidosPorTemplate(String template) {
+		String dedosRepetidos = null;
+		
+		try {
+			dedosRepetidos = biometriaService.verificarSeExistemDedosRepetidosPorTemplate(template);
 		} catch (Exception e) {
 			e.printStackTrace();
 			LoggerUtil.logWS(e, log);

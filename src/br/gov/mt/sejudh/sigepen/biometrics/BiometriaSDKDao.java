@@ -167,13 +167,59 @@ public class BiometriaSDKDao {
 		}
 	}
 	
-	public Boolean verificar(byte[] amostraImagem1, byte[] amostraImagem2) throws Exception {
+	private NSubject criarSubjectDeTemplate(byte[] template) {
+		NBuffer buff = null;
+		NSubject sub = null;
+		
+		try {
+			buff = new NBuffer(template);
+			sub = new NSubject();
+			sub.setTemplateBuffer(buff);
+			
+			return sub;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (buff != null) {
+				buff.close();
+				buff.dispose();
+			}
+		}
+	}
+	
+	public Boolean verificarPorImagem(byte[] amostraImagem1, byte[] amostraImagem2) throws Exception {
 		NSubject subject1 = null;
 		NSubject subject2 = null;
 		
 		try {
 			subject1 = criarSubjectDeImagem(amostraImagem1);
 			subject2 = criarSubjectDeImagem(amostraImagem2);
+			
+			NBiometricStatus status = cliente.verify(subject1, subject2);
+			
+			return (status.equals(NBiometricStatus.OK));
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (subject1 != null) {
+				subject1.close();
+				subject1.dispose();
+			}
+			
+			if (subject2 != null) {
+				subject2.close();
+				subject2.dispose();
+			}
+		}
+	}
+	
+	public Boolean verificarPorTemplate(byte[] template1, byte[] template2) throws Exception {
+		NSubject subject1 = null;
+		NSubject subject2 = null;
+		
+		try {
+			subject1 = criarSubjectDeTemplate(template1);
+			subject2 = criarSubjectDeTemplate(template2);
 			
 			NBiometricStatus status = cliente.verify(subject1, subject2);
 			

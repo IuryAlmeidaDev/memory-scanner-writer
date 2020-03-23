@@ -36,8 +36,6 @@ public class BiometriaSDKCliente implements Serializable {
 	public static void validarLicencas() throws IOException, Exception {
 		if (!NLicense.obtainComponents("/local", 5000, components)) {
 			System.out.println("Não foi possível obter licença.");
-		} else {
-			System.out.println("Licença verificada.");
 		}
 	}
 
@@ -46,13 +44,25 @@ public class BiometriaSDKCliente implements Serializable {
 		biometricClient.setUseDeviceManager(false);
 		biometricClient.setFingersQualityThreshold((byte) 48);
 		biometricClient.setFingersFastExtraction(false);
-		biometricClient.setFingersMatchingSpeed(NMatchingSpeed.LOW);
+		biometricClient.setFingersMatchingSpeed(NMatchingSpeed.MEDIUM);
 		
-		NClusterBiometricConnection connection = new NClusterBiometricConnection();
-		connection.setHost(Sigepen.IP_NSERVER);
-		connection.setPort(Sigepen.PORT_NSERVER);
-		
-		biometricClient.getRemoteConnections().add(connection);		
+        NClusterBiometricConnection connection = new NClusterBiometricConnection();
+        connection.setHost(Sigepen.IP_NSERVER);
+        connection.setPort(Sigepen.PORT_NSERVER);
+        
+        biometricClient.getRemoteConnections().add(connection);
+        
+		/*NOdbcBiometricConnection connection = new NOdbcBiometricConnection();
+		connection.setConnectionString("DSN=DESENVOLVIMENTO;UID=sigepen_user_des;PWD=sigependes;");
+		connection.setTableName(Sigepen.SEJUDH_SCHEMA + ".USERTBL");
+		connection.setSubjectIdColumn("DBID");
+		connection.setTemplateColumn("TEMPLATE");
+		connection.setDeleteQuery("delete from " + Sigepen.SEJUDH_SCHEMA + ".USERTBL where DBID = ?");
+		connection.setEnrollQuery("insert into " + Sigepen.SEJUDH_SCHEMA + ".USERTBL (DBID, TEMPLATE) values (@DBID@, @TEMPLATE@)");
+		connection.setSelectSubjectQuery("select DBID, TEMPLATE from " + Sigepen.SEJUDH_SCHEMA + ".USERTBL where DBID = ?");
+		connection.setSelectAllQuery("select DBID, TEMPLATE from " + Sigepen.SEJUDH_SCHEMA + ".USERTBL");
+
+		biometricClient.setDatabaseConnection(connection);*/
 	}
 
 	public NBiometricStatus identify(NSubject subject) {

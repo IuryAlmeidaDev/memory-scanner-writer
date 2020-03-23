@@ -12,7 +12,7 @@
 	<h:outputStylesheet library="css" name="bootstrap-theme.min.css" />
 	<h:outputStylesheet value="/resources/css/bootstrap.css.map" />
 	<h:outputStylesheet value="/resources/css/bootstrap-theme.css.map" />
-	<meta http-equiv="refresh" content="1800" /> 
+
 	<title>SIGEPEN - Sistema de Gestão Penitenciária do Estado de Mato Grosso</title>
 	<link rel="icon" type="image/png" href="#{resource['images/favicon.png']}"/>
 	
@@ -34,6 +34,9 @@
 </h:head>
 
 <h:body>
+	<h:form>
+		<p:remoteCommand name="logout" action="#{loginBean.logout}" />
+	</h:form>
 	<div class="container">
 		<div class="row topo">
 			<div class="col-md-12">
@@ -91,9 +94,17 @@
 	<h:outputScript library="js" name="bootstrap.min.js" />
 	<ui:insert name="footer" />
 	<script type="text/javascript">
-	function download() {
-		document.getElementById('iDownload').contentWindow.go();
-	}
+		var timeout;
+		clearInterval(timeout);
+		timeout = setInterval(sessionTimeout, 1799000);
+	
+		function download() {
+			document.getElementById('iDownload').contentWindow.go();
+		}
+
+		function sessionTimeout() {
+			logout();
+		}
 	</script>
 </h:body>
 </html>

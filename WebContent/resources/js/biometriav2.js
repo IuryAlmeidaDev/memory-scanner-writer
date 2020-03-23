@@ -1,5 +1,6 @@
 var wsDesktop;
 var intervalo;
+var intervaloPing;
 var btnBio = document.getElementById("btnBio");
 var leitorHabilitado;
 var versaoAtualizada;
@@ -21,6 +22,8 @@ function wsDesktopConnect() {
 	{
 		//console.log("wsDesktop abriu");
 		clearInterval(intervalo);
+		clearInterval(intervaloPing);
+		intervaloPing = setInterval(pingWs, 60000);
 		validar_leitor();
 	};
 
@@ -59,12 +62,22 @@ function wsDesktopConnect() {
 				case "versao":
 					versaoVerificada(obj.valor);
 					break;
+				
+				case "ping":
+					console.log('ping rcv');
+					break;
 						
 				default:
 					break;
 			}
 		}
 	};
+}
+
+function pingWs() {
+	if (wsDesktop.readyState == wsDesktop.OPEN) {
+		enviaComandoWs('ping');
+	}
 }
 
 function checaStatusWs() {

@@ -33,13 +33,13 @@
 		  	padding: 0px !important;
 		  }
 		</style>
-	<meta http-equiv="refresh" content="595;"/>
 </h:head>
 
 <h:body>
 	<div class="container" align="center">
             <div class="row" style="margin-top: 10%;">
 	            <h:form id="formLogin">
+	            	<p:remoteCommand name="refresh" actionListener="#{utilBean.refresh}" />
 	                <p:panel id="panelLogin" style="width:650px; height:550px;">
 	                	<div class="row" style="background-color:#183664; height:240px; width:650px; border: none; padding:0; margin-top: -1px;">
 		                	<p:graphicImage name="#{(sigepen.getIsProducao() ? 'sigepen-login.png' : 'sigepen-login-h.png')}" library="images" style="padding-top:10px; height:240px;"/>
@@ -76,6 +76,10 @@
 	            </h:form>
             </div>
     </div>
-	<h:outputScript library="js" name="bootstrap.min.js" />
+	<script type="text/javascript">
+		var timeout;
+		clearInterval(timeout);
+		timeout = setInterval(refresh, 600000);
+	</script>
 </h:body>
 </html>

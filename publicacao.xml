@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="sigepen" basedir="." default="reverter">
+<project name="sigepen" basedir="." default="clean">
 	<property name="desktop.dir" value="${user.home}/Desktop" />
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="classes" />
@@ -14,11 +14,17 @@
 	</path>
 	
 	<target name="reverter" depends="empacotar">
+		<replace file="src/br/gov/mt/sejudh/sigepen/biometrics/BiometriaSDKCliente.java">
+			<replacefilter value="UID=sigepen_user_des;" token="${userDsn}" />
+			<replacefilter value="PWD=sigependes;" token="${passDsn}" />
+			<replacefilter value="DSN=DESENVOLVIMENTO;" token="${dsn}" />
+		</replace>
+				
 		<replace file="src/br/gov/mt/sejudh/sigepen/util/Sigepen.java">
 			<replacefilter value="SIGEPEN_OWNER_DES" token="${schema}" />
 			<replacefilter value="SIGEPEN_AUDIT_OWNER_DES" token="${schemaAudit}" />
 			<replacefilter value="SEJUDH_CONTEXT = &quot;sigepen&quot;" token="${context}" />
-			<replacefilter value="25452" token="${portanserver}" />
+			<replacefilter value="= 25452;" token="${portanserver}" />
 		</replace>
 		
 		<replace file="WebContent/WEB-INF/shiro.ini">
@@ -74,7 +80,7 @@
 			</copy>
 	</target>
 	
-	<target name="clean">
+	<target name="clean" depends="reverter">
 		<delete dir="build" />
 	</target>
 	
@@ -84,50 +90,48 @@
 	</target>
 	
 	<target name="replace" depends="-pergunta, -replace-desenvolvimento, -replace-teste, -replace-treinamento, -replace-homologacao, -replace-producao">
-			<replace file="src/br/gov/mt/sejudh/sigepen/util/Sigepen.java">
-				<replacefilter token="SIGEPEN_OWNER_DES" value="${schema}" />
-				<replacefilter token="SIGEPEN_AUDIT_OWNER_DES" value="${schemaAudit}" />
-				<replacefilter token="SEJUDH_CONTEXT = &quot;sigepen&quot;" value="${context}" />
-				<replacefilter token="25452" value="${portanserver}" />
-			</replace>
-			
-			<replace file="WebContent/WEB-INF/shiro.ini">
-				<replacefilter token="SIGEPEN_OWNER_DES" value="${schema}" />
-				<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
-			</replace>
+		<replace file="src/br/gov/mt/sejudh/sigepen/biometrics/BiometriaSDKCliente.java">
+			<replacefilter token="UID=sigepen_user_des;" value="${userDsn}" />
+			<replacefilter token="PWD=sigependes;" value="${passDsn}"/>
+			<replacefilter token="DSN=DESENVOLVIMENTO;" value="${dsn}" />
+		</replace>
 		
-			<replace file="src/br/gov/mt/sejudh/sigepen/relatorio/RelatorioUtil.java">
-				<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
-			</replace>
-			
-			<replace file="src/META-INF/persistence.xml">
-				<replacefilter token="SIGEPEN_AUDIT_OWNER_DES" value="${schemaAudit}" />
-				<replacefilter token="java:/sigepen-dev" value="${dataSource}"/>
-				<replacefilter token="name=&quot;sigepen&quot;" value="${persistenceUnit}" />
-			</replace>
+        <replace file="src/br/gov/mt/sejudh/sigepen/util/Sigepen.java">
+            <replacefilter token="SIGEPEN_OWNER_DES" value="${schema}" />
+            <replacefilter token="SIGEPEN_AUDIT_OWNER_DES" value="${schemaAudit}" />
+            <replacefilter token="SEJUDH_CONTEXT = &quot;sigepen&quot;" value="${context}" />
+            <replacefilter token="= 25452;" value="${portanserver}" />
+        </replace>
 
-			<replace file="src/br/gov/mt/sejudh/sigepen/util/JPAUtil.java">
-				<replacefilter token="unitName = &quot;sigepen&quot;" value="${jpaUtil}"/>
-			</replace>	
+		<replace file="WebContent/WEB-INF/shiro.ini">
+			<replacefilter token="SIGEPEN_OWNER_DES" value="${schema}" />
+			<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
+		</replace>
+	
+		<replace file="src/br/gov/mt/sejudh/sigepen/relatorio/RelatorioUtil.java">
+			<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
+		</replace>
+		
+		<replace file="src/META-INF/persistence.xml">
+			<replacefilter token="SIGEPEN_AUDIT_OWNER_DES" value="${schemaAudit}" />
+			<replacefilter token="java:/sigepen-dev" value="${dataSource}"/>
+			<replacefilter token="name=&quot;sigepen&quot;" value="${persistenceUnit}" />
+		</replace>
 
-			<replace file="src/log4j2.xml">
-				<replacefilter token="SIGEPEN_AUDIT_OWNER_DES" value="${schemaAudit}" />
-				<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
-			</replace>
-		</target>
+		<replace file="src/br/gov/mt/sejudh/sigepen/util/JPAUtil.java">
+			<replacefilter token="unitName = &quot;sigepen&quot;" value="${jpaUtil}"/>
+		</replace>	
+
+		<replace file="src/log4j2.xml">
+			<replacefilter token="SIGEPEN_AUDIT_OWNER_DES" value="${schemaAudit}" />
+			<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
+		</replace>
+	</target>
 	
 	<target name="-pergunta">
-		<input message="Selecione o servidor" validargs="Desenvolvimento,Teste,Treinamento,Homologacao,PRODUCAO" addproperty="ambiente.selecionado" />
-			<condition property="isDesenvolvimento">
-				<equals arg1="${ambiente.selecionado}" arg2="Desenvolvimento"/>
-			</condition> 
-
+		<input message="Selecione o servidor" validargs="Teste,Homologacao,PRODUCAO" addproperty="ambiente.selecionado" />
 			<condition property="isTeste"> 
 				<equals arg1="${ambiente.selecionado}" arg2="Teste"/> 
-			</condition> 
-		
-			<condition property="isTreinamento"> 
-				<equals arg1="${ambiente.selecionado}" arg2="Treinamento"/> 
 			</condition> 
 
 			<condition property="isHomologacao">
@@ -147,7 +151,7 @@
 		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
 		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
-		<property name="portanserver" value="25452" />
+		<property name="portanserver" value="= 25452;" />
 	</target>
 	
 	<target name="-replace-treinamento" if="isTreinamento">
@@ -158,18 +162,21 @@
 		<property name="persistenceUnit" value="name=&quot;sigepent&quot;" />
 		<property name="jpaUtil" value="unitName = &quot;sigepent&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepent&quot;" />
-		<property name="portanserver" value="25452" />
+		<property name="portanserver" value="= 25452;" />
 	</target>
 	
 	<target name="-replace-teste" if="isTeste">
-		<!--<property name="schema" value="SIGEPEN_OWNER_TES" />-->
-		<!--<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER_TES" />-->
-		<!--<property name="dataSource" value="java:/sigepen-teste" />-->
+		<property name="schema" value="SIGEPEN_OWNER_DES" />
+		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER_DES" />
+		<property name="dataSource" value="java:/sigepen-dev" />
 		<property name="nomeArquivo" value="sigepenteste" />
-		<!--<property name="persistenceUnit" value="name=&quot;sigepenteste&quot;" />-->
-		<!--<property name="jpaUtil" value="unitName = &quot;sigepenteste&quot;" />-->
+		<property name="persistenceUnit" value="name=&quot;sigepenteste&quot;" />
+		<property name="jpaUtil" value="unitName = &quot;sigepenteste&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepenteste&quot;" />
-		<property name="portanserver" value="25453" />
+		<property name="portanserver" value="= 25453;" />
+		<property name="userDsn" value="UID=sigepen_user_des;" />
+		<property name="passDsn" value="PWD=sigependes;" />
+		<property name="dsn" value="DSN=DESENVOLVIMENTO;" />
 	</target>
 	
 	<target name="-replace-homologacao" if="isHomologacao">
@@ -180,7 +187,10 @@
 		<property name="persistenceUnit" value="name=&quot;sigepenh&quot;" />
 		<property name="jpaUtil" value="unitName = &quot;sigepenh&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepenh&quot;" />
-		<property name="portanserver" value="25452" />
+		<property name="portanserver" value="= 25452;" />
+		<property name="userDsn" value="UID=sigepen_user;" />
+		<property name="passDsn" value="PWD=hgp3)18;" />
+		<property name="dsn" value="DSN=HOMOLOG;" />
 	</target>
 		
 	<target name="-replace-producao" if="isProducao">
@@ -191,6 +201,9 @@
 		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
 		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
-		<property name="portanserver" value="25452" />
+		<property name="portanserver" value="= 25452;" />
+		<property name="userDsn" value="UID=sigepen_user;" />
+		<property name="passDsn" value="PWD=;" />
+		<property name="dsn" value="DSN=;" />
 	</target>
 </project>

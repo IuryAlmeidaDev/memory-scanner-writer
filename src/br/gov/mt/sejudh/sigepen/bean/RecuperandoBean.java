@@ -552,14 +552,14 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			
 			Biometria bio = bioService.buscarBiometriaConvertida(Long.parseLong(this.biometria));
 			
-			if (bio != null) {
+			/*if (bio != null) {
 				List<Long> pessoas = bioService.pesquisarBiometriaPorTemplateByte(bio.getTemplate());
 
 				if (pessoas.size() > 0 && pessoas.get(0).longValue() != recuperando.getPessoa().getId() && pessoas.get(0).longValue() > 0) {
 					Recuperando rec = service.buscarRecuperandoSimplesPorIdPessoa(pessoas.get(0).longValue());
 					throw new ValidacaoException("A biometria informada já existe na matrícula " + rec.getId() + " com o nome de " + rec.getPessoa().getNome());
 				}
-			}
+			}*/
 			
 			bioService.vincularBiometriaAPessoa(bio, this.recuperando.getPessoa());
 

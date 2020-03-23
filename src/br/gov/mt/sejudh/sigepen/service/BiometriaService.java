@@ -113,7 +113,7 @@ public class BiometriaService {
 		pessoa.setBiometria(bio);
 	}
 
-	public Boolean verificarSeAmostrasSaoIdenticas(String listaAmostras) throws Exception {
+	public Boolean verificarSeAmostrasSaoIdenticasPorImagem(String listaAmostras) throws Exception {
 		BiometriaUtil bioUtil = new BiometriaUtil();
 		
 		bioUtil.setBioJsonString(listaAmostras, false);
@@ -124,7 +124,26 @@ public class BiometriaService {
 			return false;
 
 		for (int i=0; i<amostras.size()-1; i++) {
-			if (!bioDao.verificar(amostras.get(i), amostras.get(i+1))) {
+			if (!bioDao.verificarPorImagem(amostras.get(i), amostras.get(i+1))) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public Boolean verificarSeAmostrasSaoIdenticasPorTemplate(String listaAmostras) throws Exception {
+		BiometriaUtil bioUtil = new BiometriaUtil();
+		
+		bioUtil.setBioJsonString(listaAmostras, false);
+		
+		ArrayList<byte[]> amostras = bioUtil.getAmostrasFromJson();
+
+		if (amostras.size() <= 0)
+			return false;
+
+		for (int i=0; i<amostras.size()-1; i++) {
+			if (!bioDao.verificarPorTemplate(amostras.get(i), amostras.get(i+1))) {
 				return false;
 			}
 		}
@@ -132,7 +151,7 @@ public class BiometriaService {
 		return true;
 	}
 
-	public String verificarSeExistemDedosRepetidos(String listaImagensDedos) throws Exception {
+	public String verificarSeExistemDedosRepetidosPorImagem(String listaImagensDedos) throws Exception {
 		BiometriaUtil bioUtil = new BiometriaUtil();
 		
 		bioUtil.setBioJsonString(listaImagensDedos, false);
@@ -143,7 +162,26 @@ public class BiometriaService {
 		List<BiometriaDedoPosicaoImagem> listaBiometria = dedos.stream().filter(x -> x.isValidando() == false).collect(Collectors.toList());
 		
 		for (BiometriaDedoPosicaoImagem biometriaAux : listaBiometria) {
-			if (bioDao.verificar(biometria.getImagem(), biometriaAux.getImagem())) {
+			if (bioDao.verificarPorImagem(biometria.getImagem(), biometriaAux.getImagem())) {
+				return "[" + biometria.getPosicao() + ", " + biometriaAux.getPosicao() + "]";
+			}
+		}
+
+		return null;
+	}
+	
+	public String verificarSeExistemDedosRepetidosPorTemplate(String listaTemplatesDedos) throws Exception {
+		BiometriaUtil bioUtil = new BiometriaUtil();
+		
+		bioUtil.setBioJsonString(listaTemplatesDedos, false);
+		
+		ArrayList<BiometriaDedoPosicaoImagem> dedos = bioUtil.getDedosListFromJson();
+
+		BiometriaDedoPosicaoImagem biometria = dedos.stream().filter(x -> x.isValidando()).findFirst().get();
+		List<BiometriaDedoPosicaoImagem> listaBiometria = dedos.stream().filter(x -> x.isValidando() == false).collect(Collectors.toList());
+		
+		for (BiometriaDedoPosicaoImagem biometriaAux : listaBiometria) {
+			if (bioDao.verificarPorTemplate(biometria.getImagem(), biometriaAux.getImagem())) {
 				return "[" + biometria.getPosicao() + ", " + biometriaAux.getPosicao() + "]";
 			}
 		}

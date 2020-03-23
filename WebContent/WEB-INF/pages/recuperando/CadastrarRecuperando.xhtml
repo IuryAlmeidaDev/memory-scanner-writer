@@ -14,12 +14,18 @@
 	<ui:define name="footer">
 		<h:outputStylesheet library="css" name="corpohumano.css" />
 		<h:outputScript library="js" name="biometriav2.js?ver=#{utilBean.biometriaVersao}" />
+			<script type="text/javascript">
+				var timeout;
+				clearInterval(timeout);
+				timeout = setInterval(refresh, 600000);
+			</script>
 	</ui:define>
 		
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 	
 		<h:form prependId="false">
+			<p:remoteCommand name="refresh" actionListener="#{utilBean.refresh}" />
 			<p:remoteCommand autoRun="true" oncomplete="#{recuperandoBean.executarPreCadastroPessoaRemoteCommand()}"/>
 			<p:commandButton id="cb" actionListener="#{recuperandoBean.abrirDialogPreCadastroPessoa}" style="display:none">
 				<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarPreCadastroPessoa}" update=":tabView:formConteudo :tabView:formConteudoRec :tabView:groupBotaoSalvarRec :tabView:formFoto :tabView:infoPeric"/>
