@@ -23,6 +23,9 @@ public class EstruturaComplemento {
 	@Column(name="NOME_COMPLETO")
 	private String nomeCompleto;
 	
+	@Column(name="NOME_COMPLETO_UNIDADE")
+	private String nomeCompletoUnidade;
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ID")
 	private Estrutura estrutura;
@@ -41,6 +44,14 @@ public class EstruturaComplemento {
 
 	public void setNomeCompleto(String nomeCompleto) {
 		this.nomeCompleto = nomeCompleto;
+	}
+
+	public String getNomeCompletoUnidade() {
+		return nomeCompletoUnidade;
+	}
+
+	public void setNomeCompletoUnidade(String nomeCompletoUnidade) {
+		this.nomeCompletoUnidade = nomeCompletoUnidade;
 	}
 
 	public Estrutura getEstrutura() {

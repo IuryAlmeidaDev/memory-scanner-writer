@@ -3,6 +3,7 @@ package br.gov.mt.sejudh.sigepen.dao.filter;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
+import br.gov.mt.sejudh.sigepen.enumerator.Esfera;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Estado;
@@ -22,6 +23,8 @@ public class FiltroEstabelecimento extends FiltroConsulta {
 	private Boolean procedencia;
 		
 	private Status status;
+	
+	private Esfera esfera;
 
 	public String getNome() {
 		return nome;
@@ -63,6 +66,14 @@ public class FiltroEstabelecimento extends FiltroConsulta {
 		this.procedencia = procedencia;
 	}
 
+	public Esfera getEsfera() {
+		return esfera;
+	}
+
+	public void setEsfera(Esfera esfera) {
+		this.esfera = esfera;
+	}
+
 	@Override
 	public void configurarFiltros() {
 		getCriteria().createAlias("cidade", "cidade");
@@ -85,6 +96,10 @@ public class FiltroEstabelecimento extends FiltroConsulta {
 		
 		if (this.getProcedencia() != null) {
 			getCriteria().add(Restrictions.eq("proced", this.getProcedencia()));
+		}
+		
+		if (this.getEsfera() != null) {
+			getCriteria().add(Restrictions.eq("esfera", this.getEsfera()));
 		}
 	}
 }

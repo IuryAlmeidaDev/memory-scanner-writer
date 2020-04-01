@@ -26,7 +26,9 @@ public enum Relatorio {
 	RegistroOficioPedidoTransito("OFÍCIO PEDIDO DE TRÂNSITO"),
 	RegistroAutorizacaoPedidoTransito("AUTORIZAÇÃO PEDIDO DE TRÂNSITO"),
 	AtestadoDeComparecimentoMensal("ATESTADO DE COMPARECIMENTO MENSAL"), 
-	ListaDeChamadaComFoto("LISTA DE CHAMADA");
+	ListaDeChamadaComFoto("LISTA DE CHAMADA"),
+	ExtratoRecuperando("EXTRATO DO RECUPERANDO", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
+	EstatisticoInfopen("Relatório Estatístico Infopen");
 	
 	private Relatorio(String nome) {
 		this.setNome(nome);

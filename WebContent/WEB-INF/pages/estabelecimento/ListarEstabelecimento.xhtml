@@ -50,7 +50,10 @@
 								temSelecione="true" >
 								<f:selectItem itemLabel="Sim" itemValue="true" />
 								<f:selectItem itemLabel="Não" itemValue="false" />
-							</sgp:formSelectOneMenu>
+						</sgp:formSelectOneMenu>
+							
+						<sgp:formSelectOneMenu id="esfera" labelValue="Esfera" value="#{estabelecimentoBean.filtro.esfera}" display="text" 
+							temSelecione="true" itemsValue="#{comboHelperBean.esfera}" itemValue="#{item}" itemLabel="#{item.descricao}" />
 							
 						<sgp:formSelectOneMenu 
 								id="status" labelValue="Status"
@@ -84,11 +87,17 @@
 					<p:column headerText="Estado" sortBy="#{estabelecimento.cidade.estado.uf}" width="10%">
 						<h:outputText value="#{estabelecimento.cidade.estado.uf}" />
 					</p:column>
+					
 					<p:column headerText="Procedência" sortBy="#{estabelecimento.proced}" width="20%">
 						<h:outputText value="#{estabelecimento.proced ? 'Sim' : 'Não'}" />
 					</p:column>
+					
+					<p:column headerText="Esfera" width="10%" sortBy="#{estabelecimento.esfera}">
+						<h:outputText value="#{estabelecimento.esfera.descricao}" />
+					</p:column>
+					
 					<p:column headerText="Situação" width="10%" sortBy="#{estabelecimento.status}">
-						<h:outputText value="#{estabelecimento.status.descricao}" />						
+						<h:outputText value="#{estabelecimento.status.descricao}" />
 					</p:column>
 					
 					<p:column headerText="Ações" width="120">

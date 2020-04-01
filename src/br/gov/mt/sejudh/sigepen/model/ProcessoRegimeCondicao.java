@@ -77,6 +77,10 @@ public class ProcessoRegimeCondicao implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataSoltura;
 	
+	@ManyToOne
+	@JoinColumn(name="ESTABELECIMENTO_ID")
+	private Estabelecimento estabelecimento;
+	
 	public String getSituacaoTemporaria() {		
 		Integer resultado = validaVencimentoDocumento();
 		
@@ -182,6 +186,14 @@ public class ProcessoRegimeCondicao implements Serializable {
 
 	public void setDataSoltura(Date dataSoltura) {
 		this.dataSoltura = dataSoltura;
+	}
+
+	public Estabelecimento getEstabelecimento() {
+		return estabelecimento;
+	}
+
+	public void setEstabelecimento(Estabelecimento estabelecimento) {
+		this.estabelecimento = estabelecimento;
 	}
 
 	@Override

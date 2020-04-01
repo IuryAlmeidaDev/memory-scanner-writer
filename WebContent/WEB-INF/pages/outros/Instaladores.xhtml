@@ -10,7 +10,7 @@
 	</ui:define>
 	
 	<ui:define name="footer">
-		<h:outputScript library="js" name="instaladores.js" />
+		<h:outputScript library="js" name="instaladores.js?ver=#{utilBean.biometriaVersao}" />
 	</ui:define>
 	
 	<ui:define name="conteudo">
@@ -21,18 +21,33 @@
 				<p:outputLabel id="msgStatus" />
 			</p:panel>
 			<br/>
+			
+			<h:panelGroup id="panelVersao" style="display: none">
+				<p:panel header="Versão">
+					<p:panelGrid columns="2">
+						<p:outputLabel value="Versão Instalada:" />
+						<p:outputLabel id="lblVersaoInstalada" value="" />
+						<p:outputLabel value="Versão Atual:" />
+						<p:outputLabel id="lblVersaoAtual" value="" />
+					</p:panelGrid>
+				</p:panel>			
+				<br/>
+			</h:panelGroup>
+			
 			<p:panel header="Instaladores">
 				<p:panelGrid columns="2">
-					<p:outputLabel value="Instalador do aplicativo biométrico do Sigepen" />
+					<p:outputLabel value="Instalador da biometria Sigepen" />
 					<h:outputLink value="#{sigepen.getUrlInstalador()}">
 						<h:graphicImage library="icons" name="download.png" />
 					</h:outputLink>
-					<p:outputLabel value="Driver do leitor biométrico SecuGen" />
+					<p:outputLabel value="Driver do leitor SecuGen" />
 					<h:outputLink value="#{sigepen.getUrlDriver('secugen')}" title="Download">
 						<h:graphicImage library="icons" name="download.png" />
 					</h:outputLink>
 				</p:panelGrid>
 			</p:panel>
+			
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" />
 		</h:form>
 	</ui:define>
 </ui:composition>

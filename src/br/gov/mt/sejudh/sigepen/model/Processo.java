@@ -223,6 +223,19 @@ public class Processo implements Serializable{
 		return this.condicaoAtual;
 	}
 	
+	public Estabelecimento getEstabelecimentoAtual() {
+		this.processosRegimeCondicao.sort(Comparator.comparing(ProcessoRegimeCondicao::getId, Comparator.nullsFirst(Comparator.reverseOrder())));
+		Optional<ProcessoRegimeCondicao> optEsfera = this.processosRegimeCondicao.stream().findFirst();
+		
+		if (optEsfera.isPresent()) {
+			ProcessoRegimeCondicao processoRegimeCondicao = optEsfera.get();
+			
+			return processoRegimeCondicao.getEstabelecimento();
+		}
+		
+		return null;
+	}
+
 	private void configuraUltmimoRegimeCondicao() {
 		this.processosRegimeCondicao.sort(Comparator.comparing(ProcessoRegimeCondicao::getId, Comparator.nullsFirst(Comparator.reverseOrder())));
 		Optional<ProcessoRegimeCondicao> optCondicao = this.processosRegimeCondicao.stream().findFirst();

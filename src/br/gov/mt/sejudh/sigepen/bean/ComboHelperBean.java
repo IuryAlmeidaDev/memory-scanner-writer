@@ -13,6 +13,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.CorCabelo;
 import br.gov.mt.sejudh.sigepen.enumerator.CorOlho;
+import br.gov.mt.sejudh.sigepen.enumerator.Esfera;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
 import br.gov.mt.sejudh.sigepen.enumerator.Periculosidade;
 import br.gov.mt.sejudh.sigepen.enumerator.PronomeTratamento;
@@ -137,6 +138,8 @@ public class ComboHelperBean {
 	
 	private PronomeTratamento[] pronomeTratamento;
 	
+	private Esfera[] esfera;
+	
 	@Inject
 	private ComboService comboService;	
 	
@@ -183,6 +186,7 @@ public class ComboHelperBean {
 		acao				 		= comboService.getAcao();
 		pronomeTratamento	 		= comboService.getPronomeTratamento();
 		tipoDocumentoPedidoTransito = comboService.getTipoDocumentoPedidoTransito();
+		esfera						= comboService.getEsfera();
 		
 	}
 	
@@ -519,5 +523,13 @@ public class ComboHelperBean {
 
 	public void setPronomeTratamento(PronomeTratamento[] pronomeTratamento) {
 		this.pronomeTratamento = pronomeTratamento;
+	}
+
+	public Esfera[] getEsfera() {
+		return esfera;
+	}
+
+	public void setEsfera(Esfera[] esfera) {
+		this.esfera = esfera;
 	}
 }

@@ -43,7 +43,7 @@
 					paginatorPosition="bottom" sortBy="#{regimeCondicao.id}" sortOrder="descending">
 				
 					<p:column headerText="Núm. Doc">
-						<h:outputText value="#{regimeCondicao.numeroDocumento}" />
+						<h:outputText value="#{regimeCondicao.numeroDocumento}" style="word-break: break-word;" />
 					</p:column>
 					
 					<p:column headerText="Tipo">
@@ -54,6 +54,10 @@
 						<h:outputText value="#{regimeCondicao.dataDocumento}">
 							<f:convertDateTime pattern="dd/MM/yyyy" />
 						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Estabelecimento">
+						<h:outputText value="#{regimeCondicao.estabelecimento.nome}" />
 					</p:column>
 					
 					<p:column headerText="Observação">
@@ -80,12 +84,13 @@
 
 					<p:column width="60">
 						<center>
+							<p:commandButton title="Visualizar" oncomplete="PF('dialogVisualizarRegimeCondicao').show()" icon="ui-icon-document" 
+								actionListener="#{cadastrarProcessoBean.selecionarRegimeCondicao(regimeCondicao)}"	update=":formVisualizarRegimeCondicao"/>
 							<p:commandButton icon="ui-icon-pencil" title="Alterar" oncomplete="PF('dialogRegimeCondicaoProcesso').show()" 
 								actionListener="#{cadastrarProcessoBean.adicionarRegimeCondicao(regimeCondicao)}"
 								update=":formRegimeCondicaoProcesso" 
 								rendered="#{cadastrarProcessoBean.exibeAlterarDocumento(regimeCondicao)}">
-								
-						    </p:commandButton>
+							</p:commandButton>
 							<p:commandButton  icon="ui-icon-trash" title="Excluir" action="#{cadastrarProcessoBean.excluirRegimeCondicao(regimeCondicao)}" immediate="true" update=":formPassCrime:regCond :formPassCrime:regCondAtual" disabled="#{cadastrarProcessoBean.isVisualizacao}" rendered="#{securityUtil.possuiPermissao('ExcluirDocumentoDoProcesso')}" >
 								<p:confirm header="Confirmação" message="Deseja excluir?" icon="ui-icon-alert" />
 							</p:commandButton>
@@ -185,7 +190,27 @@
 				<sgp:formCalendar labelValue="Data Documento" requiredMessage="*"
 						value="#{cadastrarProcessoBean.processoRegimeCondicoes.dataDocumento}" display="text" dataMaxima="#{cadastrarProcessoBean.dataMaxima}"
 						validationRequired="true" disabled="#{cadastrarProcessoBean.isVisualizacao}"/>
+
+				<h:panelGroup id="grupoEstabelecimento">
+					<sgp:formInputText id="estabelecimento" style="vertical-align: top" labelValue="Estabelecimento" validationRequired="true" requiredMessage="*"
+						value="#{cadastrarProcessoBean.processoRegimeCondicoes.estabelecimento.nome}" size="43" disabled="true" />
+				</h:panelGroup>
+			
+				<h:panelGroup id="grupoBotoesEstab" style="float: right; margin-top: -5px">
+					<p:commandButton icon="ui-icon-plus" immediate="true" actionListener="#{cadastrarProcessoBean.abrirDialogEstabelecimento}"
+						rendered="#{!cadastrarProcessoBean.isVisualizacao}">
+						<p:ajax event="dialogReturn" listener="#{cadastrarProcessoBean.associarEstabelecimento}" update=":formRegimeCondicaoProcesso:grupoEstabelecimento :formRegimeCondicaoProcesso:grupoEsferaEstado" />
+					</p:commandButton>
+					<p:graphicImage id="helpEstabelecimento" name="help.png" library="icons" style="margin-left: 2px; margin-bottom: -3px"/>
+					<p:tooltip for="helpEstabelecimento" value="Informar a Seção jurisdicional do Documento."/>
+				</h:panelGroup>
+				
+				<h:panelGroup id="grupoEsferaEstado">
+					<sgp:formOutputLabel id="estabelecimentoEsfera" labelValue="Esfera" value="#{cadastrarProcessoBean.processoRegimeCondicoes.estabelecimento.esfera.descricao}" />
 					
+					<sgp:formOutputLabel id="estabelecimentoEstado" labelValue="Estado" value="#{cadastrarProcessoBean.processoRegimeCondicoes.estabelecimento.cidade.estado.nome}" />
+				</h:panelGroup>
+			
 				<sgp:formInputTextarea id="observacao" labelValue="Observação"
 						value="#{cadastrarProcessoBean.processoRegimeCondicoes.observacao}" 
 						rows="10"
@@ -359,5 +384,20 @@
 			</h:form>
     	</p:dialog>
 
+		<p:dialog id="dialogVisualizarRegimeCondicao" header="Visualizar Regime e Condição do Processo" resizable="false" closeOnEscape="true"
+			widgetVar="dialogVisualizarRegimeCondicao" modal="true">
+			<h:form id="formVisualizarRegimeCondicao">
+				<p:panel>
+					<sgp:formOutputLabel labelValue="Núm. Doc" value="#{cadastrarProcessoBean.processoRegimeCondicaoSelecionado.numeroDocumento}"/>
+					<sgp:formOutputLabel labelValue="Tipo" value="#{cadastrarProcessoBean.processoRegimeCondicaoSelecionado.tipoProcesso.descricao}"/>
+					<sgp:formOutputLabel labelValue="Estabelecimento" value="#{cadastrarProcessoBean.processoRegimeCondicaoSelecionado.estabelecimento.nome}"/>
+					<sgp:formOutputLabel labelValue="Regime" value="#{cadastrarProcessoBean.processoRegimeCondicaoSelecionado.regime.descricao}"/>
+					<sgp:formOutputLabel labelValue="Condição" value="#{cadastrarProcessoBean.processoRegimeCondicaoSelecionado.condicao.descricao}"/>
+			
+					<br/>
+					<p:commandButton value="Fechar" onclick="PF('dialogVisualizarRegimeCondicao').hide()" />
+				</p:panel>
+			</h:form>
+		</p:dialog>
 	</ui:define>
 	</ui:composition>

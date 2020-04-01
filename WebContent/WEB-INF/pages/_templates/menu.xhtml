@@ -22,7 +22,8 @@
 			</p:submenu>
 			
 			<p:submenu label="Recuperando" rendered="#{securityUtil.exibeCategoriaMenu('Recuperando')}">
-				<p:menuitem value="Entrada" outcome="pretty:ListarRecuperando" icon="fa fa-male" rendered="#{securityUtil.possuiPermissao('ListarRecuperando')}" />				
+				<p:menuitem value="Entrada" outcome="pretty:ListarRecuperando" icon="fa fa-male" rendered="#{securityUtil.possuiPermissao('ListarRecuperando')}" />
+				<p:menuitem value="Relatório Infopen" outcome="pretty:RelatorioInfopen" icon="fa fa-file-pdf-o" rendered="#{securityUtil.possuiPermissao('ImprimirRelatorioInfopen')}"/>
 			</p:submenu>
 			
 			<p:submenu label="Movimentações" rendered="#{securityUtil.exibeCategoriaMenu('Movimentacoes')}">

@@ -351,6 +351,9 @@
 							oncomplete="PF('visualizarPassagem').show()" update="passagemForm" process="@this" />
 						</p:column>
 					</p:dataTable>
+					
+					<br/>
+					<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{recuperandoBean.imprimirExtratoRecuperando()}"/>
 				</p:panel>
 					<br/>
 				<p:panel>
@@ -1520,62 +1523,62 @@
 		<p:dialog id="dialogPassagem" header="Passagem" showEffect="fade" widgetVar="visualizarPassagem" modal="true" draggable="false" resizable="false" closeOnEscape="true">
        		<h:form id="passagemForm">
 				<p:panel>
-				<div class="row">
-					<div class="col-md-8">
-						<sgp:formOutputLabel labelValue="Data da Prisão" value="#{recuperandoBean.passagemSelecionada.dataPrisao}" converterData="true"/>
-						<sgp:formOutputLabel labelValue="Data da Entrada" value="#{recuperandoBean.passagemSelecionada.dataEntrada}" converterDataHora="true" />
-						<sgp:formOutputLabel labelValue="Procedência" value="#{recuperandoBean.passagemSelecionada.passagemProcedencia.procedencia.nome}" />
-												
-						<p:panel header="Desligamento" rendered="#{recuperandoBean.passagemSelecionada.dataSaida != null}">
-							<sgp:formOutputLabel labelValue="Número do Documento" value="#{recuperandoBean.passagemSelecionada.numeroDocumento}"/>
-							<sgp:formOutputLabel labelValue="Data da Saída" value="#{recuperandoBean.passagemSelecionada.dataSaida}" converterDataHora="true"/>
-							<sgp:formOutputLabel labelValue="Motivo" value="#{recuperandoBean.passagemSelecionada.tipoDesligamento.descricao}"/>
-							<p:row rendered="#{recuperandoBean.passagemSelecionada.estabelecimentoDestino != null}">
-							<sgp:formOutputLabel labelValue="Estabelecimento" value="#{recuperandoBean.passagemSelecionada.estabelecimentoDestino.nome}" />
-							</p:row>
-							<sgp:formOutputLabel labelValue="Observação" value="#{recuperandoBean.passagemSelecionada.obsDesligamento}" />
-						</p:panel>
+					<div class="row">
+						<div class="col-md-8">
+							<sgp:formOutputLabel labelValue="Data da Prisão" value="#{recuperandoBean.passagemSelecionada.dataPrisao}" converterData="true"/>
+							<sgp:formOutputLabel labelValue="Data da Entrada" value="#{recuperandoBean.passagemSelecionada.dataEntrada}" converterDataHora="true" />
+							<sgp:formOutputLabel labelValue="Procedência" value="#{recuperandoBean.passagemSelecionada.passagemProcedencia.procedencia.nome}" />
+													
+							<p:panel header="Desligamento" rendered="#{recuperandoBean.passagemSelecionada.dataSaida != null}">
+								<sgp:formOutputLabel labelValue="Número do Documento" value="#{recuperandoBean.passagemSelecionada.numeroDocumento}"/>
+								<sgp:formOutputLabel labelValue="Data da Saída" value="#{recuperandoBean.passagemSelecionada.dataSaida}" converterDataHora="true"/>
+								<sgp:formOutputLabel labelValue="Motivo" value="#{recuperandoBean.passagemSelecionada.tipoDesligamento.descricao}"/>
+								<p:row rendered="#{recuperandoBean.passagemSelecionada.estabelecimentoDestino != null}">
+								<sgp:formOutputLabel labelValue="Estabelecimento" value="#{recuperandoBean.passagemSelecionada.estabelecimentoDestino.nome}" />
+								</p:row>
+								<sgp:formOutputLabel labelValue="Observação" value="#{recuperandoBean.passagemSelecionada.obsDesligamento}" />
+							</p:panel>
+						</div>
+					
+						<div class="col-md-4">
+							<p:dataGrid layout="tabular" style="margin-left: 8px; width: 188px" columns="1" rows="1" value="#{recuperandoBean.passagemSelecionada.foto}" emptyMessage="Sem foto de frente." var="f">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{f.imagem.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</div>
 					</div>
-					
-					<div class="col-md-4">
-						<p:dataGrid layout="tabular" style="margin-left: 8px; width: 188px" columns="1" rows="1" value="#{recuperandoBean.passagemSelecionada.foto}" emptyMessage="Sem foto de frente." var="f">
-							<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
-								<f:param name="hashId" value="#{f.imagem.id}" />
-							</p:graphicImage>
-						</p:dataGrid>
-					</div>
-				</div>
 				
-				<br/>
+					<br/>
 				
-				<p:dataTable id="lotacoes" var="lotacao" value="#{recuperandoBean.passagemSelecionada.lotacao}" rows="10" paginator="true" paginatorPosition="bottom"  
-								sortBy="#{lotacao.id}" emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
-								
-					<p:column headerText="Origem">
-						<h:outputText value="#{lotacao.tipoTransito.descricao}" />
-					</p:column>
-					<p:column headerText="Estrutura">
-						<h:outputText value="#{lotacao.estrutura.nomeCompleto}" />
-					</p:column>
-					
-					<p:column headerText="Entrada">
-						<h:outputText value="#{lotacao.dataEntrada}">
-							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-						</h:outputText>
-					</p:column>
-					
-					<p:column headerText="Saída">
-						<h:outputText value="#{lotacao.dataSaida}">
-							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-						</h:outputText>
-					</p:column>	
-					
-				</p:dataTable>
+					<p:dataTable id="lotacoes" var="lotacao" value="#{recuperandoBean.passagemSelecionada.lotacao}" rows="10" paginator="true" paginatorPosition="bottom"  
+									sortBy="#{lotacao.id}" emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
+									
+						<p:column headerText="Origem">
+							<h:outputText value="#{lotacao.tipoTransito.descricao}" />
+						</p:column>
+						<p:column headerText="Estrutura">
+							<h:outputText value="#{lotacao.estrutura.nomeCompleto}" />
+						</p:column>
+						
+						<p:column headerText="Entrada">
+							<h:outputText value="#{lotacao.dataEntrada}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+							</h:outputText>
+						</p:column>
+						
+						<p:column headerText="Saída">
+							<h:outputText value="#{lotacao.dataSaida}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+							</h:outputText>
+						</p:column>	
+						
+					</p:dataTable>
 					
 					<br/>
-    			<p:commandButton value="Fechar" onclick="PF('visualizarPassagem').hide()"/>
-				</p:panel>
-			
+	    			<p:commandButton value="Fechar" onclick="PF('visualizarPassagem').hide()"/>
+	    			<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{recuperandoBean.imprimirExtratoRecuperandoPorPassagem(recuperandoBean.passagemSelecionada.id)}"/>
+    			</p:panel>
 			</h:form>
     	</p:dialog>
     	

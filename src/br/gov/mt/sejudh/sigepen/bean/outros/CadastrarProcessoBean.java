@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -33,6 +34,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Crime;
+import br.gov.mt.sejudh.sigepen.model.Estabelecimento;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.ProcessoCrime;
 import br.gov.mt.sejudh.sigepen.model.ProcessoRegimeCondicao;
@@ -80,6 +82,8 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 	private Recuperando recuperando;
 	
 	private Boolean isPassagem;
+	
+	private ProcessoRegimeCondicao processoRegimeCondicaoSelecionado;
 	
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configuraGridDocumentos() {
@@ -248,6 +252,10 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 		facesUtil.fecharPaginaDialog(null);
 	}
 	
+	public void selecionarRegimeCondicao(ProcessoRegimeCondicao prc) {
+		this.processoRegimeCondicaoSelecionado = prc;
+	}
+	
 	public void adicionarRegimeCondicao(ProcessoRegimeCondicao regimeCondicao) {
 		if (regimeCondicao == null) {
 			this.processoRegimeCondicoes = new ProcessoRegimeCondicao();
@@ -279,6 +287,10 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 				this.processoRegimeCondicoes.setProcesso(this.processo);
 			}
 			
+			if (this.processoRegimeCondicoes.getEstabelecimento() == null) {
+				throw new ValidacaoException("É obrigatório associar um estabelecimento.");
+			}
+			
 			this.processo.getProcessosRegimeCondicao().add(this.processoRegimeCondicoes);
 			RequestContext.getCurrentInstance().execute("PF('dialogRegimeCondicaoProcesso').hide()");
 			
@@ -308,6 +320,18 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 		return (!isVisualizacao && isTemporario && isVenceHojeOuVencido);  
 	}
 	
+	public void abrirDialogEstabelecimento(ActionEvent event) {
+		facesUtil.exibirPaginaDialog("pretty:AssociarEstabelecimento", null, 1000);
+	}
+	
+	public void associarEstabelecimento(SelectEvent event) {
+		Estabelecimento estabelecimento = (Estabelecimento) event.getObject();
+		
+		if (estabelecimento != null) {
+			this.processoRegimeCondicoes.setEstabelecimento(estabelecimento);
+		}
+	}
+
 	public FiltroCrime getFiltro() {
 		return filtro;
 	}
@@ -366,5 +390,13 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 
 	public void setProcessoCrime(ProcessoCrime processoCrime) {
 		this.processoCrime = processoCrime;
+	}
+
+	public ProcessoRegimeCondicao getProcessoRegimeCondicaoSelecionado() {
+		return processoRegimeCondicaoSelecionado;
+	}
+
+	public void setProcessoRegimeCondicaoSelecionado(ProcessoRegimeCondicao processoRegimeCondicaoSelecionado) {
+		this.processoRegimeCondicaoSelecionado = processoRegimeCondicaoSelecionado;
 	}
 }

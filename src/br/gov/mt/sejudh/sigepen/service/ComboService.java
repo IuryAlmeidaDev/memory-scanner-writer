@@ -11,6 +11,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.CorCabelo;
 import br.gov.mt.sejudh.sigepen.enumerator.CorOlho;
+import br.gov.mt.sejudh.sigepen.enumerator.Esfera;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
 import br.gov.mt.sejudh.sigepen.enumerator.Periculosidade;
 import br.gov.mt.sejudh.sigepen.enumerator.PronomeTratamento;
@@ -251,5 +252,9 @@ public class ComboService {
 
 	public List<UnidadePrisional> getUnidadesPrisionais() {
 		return dao.listarUnidadesPrisionais();
+	}
+
+	public Esfera[] getEsfera() {
+		return Esfera.values();
 	}
 }

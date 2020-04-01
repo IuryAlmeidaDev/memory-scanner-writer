@@ -1,10 +1,14 @@
 package br.gov.mt.sejudh.sigepen.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,11 +17,14 @@ import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PessoaDAO;
 import br.gov.mt.sejudh.sigepen.dao.ProcessoDAO;
 import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Alcunha;
 import br.gov.mt.sejudh.sigepen.model.Biometria;
@@ -26,9 +33,14 @@ import br.gov.mt.sejudh.sigepen.model.Foto;
 import br.gov.mt.sejudh.sigepen.model.OutroNome;
 import br.gov.mt.sejudh.sigepen.model.Parente;
 import br.gov.mt.sejudh.sigepen.model.Particularidade;
+import br.gov.mt.sejudh.sigepen.model.Passagem;
+import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO.PassagemExtratoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 
 @Stateless
@@ -48,6 +60,15 @@ public class RecuperandoService {
 	
 	@Inject
 	private BiometriaService biometriaService;
+	
+	@Inject
+	private PassagemService passagemService;
+	
+	@Inject
+	private PedidoService pedidoService;
+	
+	@Inject
+	private HistoricoRecuperandoService historicoService;
 		
 	public int buscarQuantidadeFiltrada(FiltroRecuperando filtro) {
 		return dao.buscarQuantidadeFiltrada(filtro);
@@ -354,6 +375,64 @@ public class RecuperandoService {
 
 	public boolean recuperandoPossuiBiometriaAtualizada(long id) {
 		return dao.recuperandoPossuiBiometriaAtualizada(id);
+	}
+
+	public List<ExtratoRecuperandoDTO> gerarEntidadeExtratoRecuperando(Recuperando recuperando, Long passagemId) {
+		ExtratoRecuperandoDTO extrato = new ExtratoRecuperandoDTO(recuperando);
+		extrato.setHistoricos(historicoService.listarHistoricoRecuperando(recuperando.getId()));
+		
+		if (passagemId != null) {
+			Passagem passagem = recuperando.getPassagens().stream().filter(y->y.getId() == passagemId).findFirst().get();
+			gerarMovimentacoesExtrato(passagem, extrato);
+		} else {
+			for (Passagem passagem : recuperando.getPassagens().stream().sorted(Comparator.comparing(Passagem::getId)).collect(Collectors.toList())) {
+				gerarMovimentacoesExtrato(passagem, extrato);
+			}
+		}
+		
+		return Arrays.asList(extrato);
+	}
+	
+	private void gerarMovimentacoesExtrato(Passagem passagem, ExtratoRecuperandoDTO extrato) {
+		Passagem p = passagemService.buscaPassagemPorId(passagem);
+		PassagemExtratoDTO passagemDto = extrato.new PassagemExtratoDTO(p);
+		List<PedidoTransitoDTO> pedidos = buscarMovimentacoes(p);
+		
+		passagemDto.criarMovimentacoes(pedidos);
+		
+		extrato.getPassagens().add(passagemDto);
+		
+		if (p.getDataSaida() == null) {
+			Optional<PassagemLotacao> optLotacaoAtual = p.getLotacao().stream().filter(y->y.getDataSaida() == null).findFirst();
+			
+			if (optLotacaoAtual.isPresent()) {
+				extrato.setLotacao(optLotacaoAtual.get().getEstrutura().getNomeCompleto());
+			}
+		}
+		
+		Optional<PassagemLotacao> optPrimeiraLotacao = p.getLotacao().stream().min(Comparator.comparing(PassagemLotacao::getId));
+		Optional<PassagemLotacao> optUltimaLotacao = p.getLotacao().stream().max(Comparator.comparing(PassagemLotacao::getId));
+		
+		if (optPrimeiraLotacao.isPresent()) {
+			passagemDto.setEstruturaEntrada(optPrimeiraLotacao.get().getEstrutura().getNomeCompleto());
+		}
+
+		if (optUltimaLotacao.isPresent()) {
+			passagemDto.setEstruturaSaida(optUltimaLotacao.get().getEstrutura().getNomeCompleto());
+		}
+	}
+	
+	private List<PedidoTransitoDTO> buscarMovimentacoes(Passagem passagem) {
+		FiltroPedTransito filtro = new FiltroPedTransito();
+		
+		filtro.setDataInicio(passagem.getDataEntrada());
+		filtro.setDataFim(passagem.getDataSaida());
+		filtro.setRecuperandoId(passagem.getRecuperando().getId());
+		filtro.setListaTipoTransito(Arrays.asList(TipoTransito.INTERNA, TipoTransito.EXTERNA, TipoTransito.TRANSFERENCIA, TipoTransito.REMANEJAMENTO));
+		filtro.setStatus(StatusPedido.FINALIZADO);
+		filtro.setIsExtratoRecuperando(true);
+		
+		return pedidoService.buscaPorFiltro(filtro, false);
 	}
 }
 

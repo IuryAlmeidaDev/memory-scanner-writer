@@ -80,12 +80,4 @@ public class BiometriaSDKCliente implements Serializable {
 	public NBiometricStatus delete(String subjectId) {
 		return this.biometricClient.delete(subjectId);
 	}
-	
-	/*public NBiometricClient getClient() {
-		if (biometricClient == null) {
-			init();
-		}
-		
-		return biometricClient;
-	}*/
 }

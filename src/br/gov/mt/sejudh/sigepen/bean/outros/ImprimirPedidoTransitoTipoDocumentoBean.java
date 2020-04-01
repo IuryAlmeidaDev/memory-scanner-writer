@@ -157,7 +157,7 @@ public class ImprimirPedidoTransitoTipoDocumentoBean extends MetodosDialogBean {
 			resultado = resultado.replace("[nomeMae]", this.pedido.getRecuperando().getPessoa().getNomeMae().toUpperCase());
 			
 			resultado = resultado.replace("[dataNascimento]", MaskUtil.getFormatoData().format(this.pedido.getRecuperando().getPessoa().getDataNascimento()));
-			resultado = resultado.replace("[dataPrevista]", MaskUtil.getFormatoData().format(this.pedido.getDataPrevista()));
+			resultado = resultado.replace("[dataPrevista]", MaskUtil.getFormatoDataHora().format(this.pedido.getDataPrevista()));
 			resultado = resultado.replace("[motivo]", this.pedido.getMotivo());
 			
 			if (temPai)

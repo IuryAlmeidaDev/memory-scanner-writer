@@ -36,6 +36,9 @@ public class Sigepen {
 	//Porta Desenv 25453
 	public static final int PORT_NSERVER = 25452;
 	
+	private static final String INSTALADOR = "InstaladorSigepenBiometriaV2.exe";
+	private static final String DRIVER_SECUGEN = "SecuGen.zip";
+
 	@PostConstruct
 	public void init() {
 		File f = new File(ARQUIVOS_PATH);		
@@ -123,28 +126,50 @@ public class Sigepen {
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String reqUrl = req.getRequestURL().toString();
 		
-		reqUrl = reqUrl.replace("http:", "https:");
+		if (reqUrl.contains("mt.gov.br")) {
+			reqUrl = reqUrl.replace("http:", "https:");
+		}
+		
 		return reqUrl.substring(0, reqUrl.indexOf("/sigepen")) + getApplicationName();
 	}
 	
-	public static String getUrlInstalador() {
-		String url = getUrl() + "/arquivos/InstaladorSigepenBiometriaV2.exe";
-		return url;
+	private static String getUrlArquivos() {
+		return getUrl() + "/arquivos/";
 	}
 	
+	public static String getUrlInstalador() {
+		return getUrlArquivos() + INSTALADOR;
+	}
+
 	public static String getUrlDriver(String driver) {
-		String url = "";
-		
 		switch (driver) {
 			case "secugen":
-				url = getUrl() + "/arquivos/SecuGen.zip";
-			break;
+				return getUrlArquivos() + DRIVER_SECUGEN;
 		}
 		 
-		return url;
+		return "";
 	}
 
 	public static Boolean getIsProducao() {
 		return System.getProperty("ambiente").equals("producao");
+	}
+	
+	public static String getWsUrl() {
+		String url = getUrl();
+		
+		if (url.contains("mt.gov.br")) {
+			url = url.substring(0, url.indexOf("/sigepen"))
+					.replace("https:", "wss:")
+					.replace("http:", "ws:")
+					.replace("portal.", "wso.")
+					.replace("sispen.", "wso.")
+					.concat(":8443/sigepen/biometria");
+			
+			if (url.contains("sesp")) {
+				url = url.replace("sejudh.", "sesp.");
+			}
+		}	
+		
+		return url;
 	}
 }

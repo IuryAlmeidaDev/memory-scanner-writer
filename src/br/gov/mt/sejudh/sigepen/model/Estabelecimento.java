@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,6 +16,7 @@ import javax.persistence.Transient;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
+import br.gov.mt.sejudh.sigepen.enumerator.Esfera;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
@@ -55,6 +57,10 @@ public class Estabelecimento {
 	@Enumerated
 	@Column(name = "STATUS")
 	private Status status;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ESFERA")
+	private Esfera esfera;
 	
 	@Transient
 	private AutoriaRegistro autorRegistro;
@@ -156,6 +162,14 @@ public class Estabelecimento {
 
 	public void setAutorUltimaAlteracao(AutoriaRegistro autorUltimaAlteracao) {
 		this.autorUltimaAlteracao = autorUltimaAlteracao;
+	}
+
+	public Esfera getEsfera() {
+		return esfera;
+	}
+
+	public void setEsfera(Esfera esfera) {
+		this.esfera = esfera;
 	}
 
 	@Override

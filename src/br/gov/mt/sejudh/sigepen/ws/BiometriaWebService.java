@@ -205,11 +205,11 @@ public class BiometriaWebService {
 	@Path("/versao-atual")
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.TEXT_PLAIN)
-	public String buscarVersaoAtualAplicativo(String versaoApp) {
+	public String buscarVersaoAtualAplicativo() {
 		String versao = "";
 		
 		try {
-			versao = biometriaService.buscarVersaoAtualAplicativo(versaoApp);
+			versao = biometriaService.buscarVersaoAtualAplicativo();
 		} catch(Exception e) {
 			e.printStackTrace();
 			LoggerUtil.logWS(e, log);

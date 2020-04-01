@@ -189,15 +189,6 @@ public class BiometriaService {
 		return null;
 	}
 
-	public String buscarVersaoAtualAplicativo(String versaoApp) {
-		String versaoAppDesktop = versaoApp;
-		String versaoAtual = dao.buscarVersaoAtualAplicativo();
-
-		return String.valueOf(versaoAppDesktop.equals(versaoAtual));
-		
-		//return dao.buscarVersaoAtualAplicativo();
-	}
-	
 	public String buscarVersaoAtualAplicativo() {
 		return dao.buscarVersaoAtualAplicativo();
 	}

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListaDeChamadaSubRecuperandos" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.650000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUB_ESTRUTURA_ID" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="SUB_SCHEMA" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select (select listagg(e.nome, ' > ') within group(order by e.id) cela
+          from $P!{SUB_SCHEMA}.estrutura e
+         where e.estruturapai_id is not null
+         start with e.id = recup.estrutura_id
+        connect by e.id = prior e.estruturapai_id) cela,
+        recup.id, recup.nome, recup.nome_social, recup.nome_mae, recup.data_nascimento, recup.em_movimento, recup.foto
+       from (select
+       r.id,
+       p.nome,
+p.nome_social,
+       p.nome_mae,
+       p.data_nascimento,
+       es.id estrutura_id,
+       (case
+         when pt.status in ('EM_ANDAMENTO', 'SUSPENSO') then
+          'SIM'
+         else
+          'NAO'
+       end) em_movimento,
+i.arquivo foto
+  from $P!{SUB_SCHEMA}.estrutura        es,
+       $P!{SUB_SCHEMA}.recuperando      r,
+       $P!{SUB_SCHEMA}.pessoa           p,
+       $P!{SUB_SCHEMA}.passagem         pa,
+       $P!{SUB_SCHEMA}.passagem_lotacao pal,
+       $P!{SUB_SCHEMA}.pedido_transito  pt,
+       $P!{SUB_SCHEMA}.foto             f,
+       $P!{SUB_SCHEMA}.imagem           i
+ where r.pessoa_id = p.id(+)
+   and pa.id(+) = pal.passagem_id
+   and pal.estrutura_id(+) = es.id
+   and pa.recuperando_id = r.id(+)
+   and pal.data_saida is null
+   and pt.recuperando_id(+) = r.id
+   and pt.data_conclusao(+) is null
+   and pt.status(+) in ('SUSPENSO', 'EM_ANDAMENTO')
+   and f.recuperando_id(+) = r.id
+   and f.imagem_id = i.id(+)
+   and pa.recuperando_id is not null
+   and f.is_atual = 1
+   and f.tipo = 1
+   start with es.id = $P!{SUB_ESTRUTURA_ID}
+   connect by prior es.id = es.estruturapai_id
+ order by es.estruturapai_id, es.id, p.nome) recup]]>
+	</queryString>
+	<field name="CELA" class="java.lang.String"/>
+	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="NOME" class="java.lang.String"/>
+	<field name="NOME_SOCIAL" class="java.lang.String"/>
+	<field name="NOME_MAE" class="java.lang.String"/>
+	<field name="DATA_NASCIMENTO" class="java.sql.Timestamp"/>
+	<field name="EM_MOVIMENTO" class="java.lang.String"/>
+	<field name="FOTO" class="java.sql.Blob"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="16" splitType="Prevent">
+			<textField>
+				<reportElement x="0" y="0" width="175" height="16" uuid="5f58a33b-8266-4b65-82d3-d918334cbb40"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CELA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Prevent">
+			<rectangle>
+				<reportElement mode="Opaque" x="1" y="0" width="555" height="20" backcolor="#CCCCCC" uuid="194b3c33-36ea-457a-86a7-f9a0fd8d9570"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="270" y="0" width="130" height="20" uuid="9e2f1255-87b3-4bbe-8f1f-e2af2fc3c835"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Mãe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="50" height="20" uuid="a720b7dc-ab2a-41af-8ded-5019955e67f5"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="0" width="130" height="20" uuid="8eed9d29-03d5-4f9b-862d-e0f93de3298b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="30" height="20" uuid="d6582bea-8de4-4475-bb5d-89f4ebe6d893"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matr.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="505" y="0" width="50" height="20" uuid="8d57a867-18fd-466f-92ee-cc653f4c2a24"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Em Mov.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="0" width="55" height="20" uuid="3b99d9c4-7f2c-4db9-a21c-3259b150fd5b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Nasc.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="0" width="110" height="20" uuid="45284dd7-78e2-48c6-a081-6fe4a24c12e2"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Social]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="65" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="65" uuid="dc45740d-8b5b-40dd-8881-8f85de79891f"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="30" y="0" width="130" height="65" uuid="dfe56d82-830e-4900-a7c4-5c8e02e0d16a"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOME}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="270" y="0" width="130" height="65" uuid="39e4bfbe-1c59-4303-a56a-2317e43bf3b2"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOME_MAE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToBandHeight" x="400" y="0" width="55" height="65" uuid="2e117112-e7e0-4c87-ab3b-78ff0360ea74"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DATA_NASCIMENTO}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RealSize" isUsingCache="false" isLazy="true">
+				<reportElement x="455" y="2" width="50" height="60" isRemoveLineWhenBlank="true" uuid="26c081cd-ff25-4895-9b2d-3f94225457b9"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[$F{FOTO}.getBinaryStream()]]></imageExpression>
+			</image>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="455" y="0" width="50" height="65" uuid="91bfef5f-ee5b-4d6c-b4c9-ec282ad95fd2"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToBandHeight" x="505" y="0" width="50" height="65" uuid="fd2d0a00-41e4-4c57-a254-02cd5d8db80e"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EM_MOVIMENTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="160" y="0" width="110" height="65" uuid="53861bf7-93fd-4daa-b48f-1c493f9c24bc"/>
+				<box topPadding="5">
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOME_SOCIAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

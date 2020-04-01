@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarPassagemExtrato" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.996500000000001"/>
+	<property name="ireport.x" value="104"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="passagemId" class="java.lang.Long"/>
+	<field name="dataInicio" class="java.util.Date"/>
+	<field name="dataTermino" class="java.util.Date"/>
+	<field name="observacaoEntrada" class="java.lang.String"/>
+	<field name="observacaoSaida" class="java.lang.String"/>
+	<field name="movimentacoes" class="java.util.Collection"/>
+	<field name="estruturaEntrada" class="java.lang.String"/>
+	<field name="estruturaSaida" class="java.lang.String"/>
+	<field name="procedencia" class="java.lang.String"/>
+	<group name="Passagens">
+		<groupExpression><![CDATA[$F{passagemId}]]></groupExpression>
+		<groupHeader>
+			<band height="32" splitType="Prevent">
+				<rectangle>
+					<reportElement x="0" y="0" width="802" height="32" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="9eb0231c-5e27-438d-ae03-5fc3f690dc1a"/>
+					<graphicElement>
+						<pen lineWidth="1.0"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="0" y="0" width="401" height="16" uuid="3fb7e9db-56a8-48b9-91cf-47718a674c4a"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Passagens no sistema prisional " + ($V{REPORT_COUNT}+1)]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="16" width="75" height="16" uuid="8389f2d4-b52b-46b8-a8d4-1f51a8c07663"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ORIGEM]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="75" y="16" width="240" height="16" uuid="d9225fa1-9069-457e-9236-3b507d8deed4"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ESTRUTURA / DESTINO / TIPO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="315" y="16" width="100" height="16" uuid="80330ba9-f986-4edc-8205-5b1916a85341"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DATA DO EVENTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="415" y="16" width="100" height="16" uuid="da6e26f3-32a9-487e-928a-8c476a1504ba"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DATA SAÍDA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="515" y="16" width="287" height="16" uuid="46abddd4-53f1-40e2-8b2b-a4e2ead400b0"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SITUAÇÃO / OBSERVAÇÃO]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="401" y="0" width="401" height="16" uuid="83360b48-b40b-44fc-a328-a2b179ddb9d5"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{procedencia}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20"/>
+		</groupFooter>
+	</group>
+	<group name="Passagens2">
+		<groupExpression><![CDATA[$F{passagemId}]]></groupExpression>
+		<groupHeader>
+			<band height="15" splitType="Prevent">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="75" height="15" uuid="d7a9a743-8684-43b7-bfed-3586a30b76e2"/>
+					<box leftPadding="2">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Entrada"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="75" y="0" width="240" height="15" uuid="2af9d35b-372f-4e96-8331-164b00a2b25a"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{estruturaEntrada}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="315" y="0" width="100" height="15" uuid="1b1a8e4c-acce-489e-94cf-eaf962d09753"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{dataInicio}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="415" y="0" width="100" height="15" uuid="c8c6e2a4-67d2-446e-a1a9-28d9b7bdfa56"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="515" y="0" width="286" height="15" uuid="893d0daf-53ae-4622-a08d-215b37f04282"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{observacaoEntrada}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15" splitType="Stretch">
+				<printWhenExpression><![CDATA[$F{dataTermino} != null]]></printWhenExpression>
+				<rectangle>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="15" backcolor="#CCCCCC" uuid="3f90556b-d0b5-4a16-8469-f19239f9bae9">
+						<printWhenExpression><![CDATA[new Boolean($F{movimentacoes}.size()%2 == 0)]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="75" height="15" uuid="39c581ed-7461-4045-a842-7bb058d5c347"/>
+					<box leftPadding="2">
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Desligamento"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="75" y="0" width="240" height="15" uuid="f1d01378-ac80-47a2-a15a-7698e388fff5"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{estruturaSaida}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="315" y="0" width="100" height="15" uuid="4f9a3ac6-8026-47c8-9c4e-a29615b98538"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="415" y="0" width="100" height="15" uuid="29250a13-0f93-412b-88a9-d7bfdbfa88ea"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{dataTermino}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="515" y="0" width="286" height="15" uuid="4164f80a-2914-4e9b-84f0-f16ff42289e2"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{observacaoSaida}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{movimentacoes}.size() > 0]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="0" width="802" height="15" uuid="c88c06c9-aefd-495a-82b3-8e9c5dff93bf"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{movimentacoes})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ListarPassagemExtratoMovimentacoes.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

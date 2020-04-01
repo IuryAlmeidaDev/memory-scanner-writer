@@ -3,20 +3,22 @@ var intervalo;
 var intervaloPing;
 var btnBio = document.getElementById("btnBio");
 var leitorHabilitado;
-var versaoAtualizada;
+var versaoInstalada;
+var versaoAtual;
 
 if (btnBio == null) {
 	btnBio = document.getElementById("tabView:btnBio");
 }
 
+desabilitaBotao();
+
 if (podeHabilitarEConectar) {
+	getVersaoWebService();
 	wsDesktopConnect();
-} else {
-	desabilitaBotao();
 }
 
 function wsDesktopConnect() {
-	wsDesktop = new WebSocket("wss://wso.sejudh.mt.gov.br:8443/sigepen/biometria");
+	wsDesktop = new WebSocket(wsUrl);
 	
 	wsDesktop.onopen = function()
 	{
@@ -45,7 +47,7 @@ function wsDesktopConnect() {
 		//console.log("wsDesktop mensagem");
 		var obj = JSON.parse(e.data);
 
-		if (obj.valor != null) {
+		if (obj != null) {
 			switch (obj.acao) {
 				case "pesquisar":
 					enviarParametroParaServidor(obj.valor);
@@ -60,7 +62,7 @@ function wsDesktopConnect() {
 					break;
 					
 				case "versao":
-					versaoVerificada(obj.valor);
+					versaoVerificada(obj);
 					break;
 				
 				case "ping":
@@ -149,10 +151,14 @@ function leitorVerificado(param) {
 	}
 }
 
-function versaoVerificada(param) {
-	versaoAtualizada = (param === 'true');
+function versaoVerificada(obj) {
+	if (obj.valor != null) {
+		versaoInstalada = obj.valor;
+	} else {
+		versaoInstalada = obj.versaoInstalada;
+	}
 	
-	if (versaoAtualizada) {
+	if ((versaoInstalada === versaoAtual)) {
 		habilitaBotao();
 	} else {
 		desabilitaBotao();

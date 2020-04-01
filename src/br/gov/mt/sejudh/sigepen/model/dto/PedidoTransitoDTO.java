@@ -8,7 +8,6 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 
 public class PedidoTransitoDTO {
 
-
 	private long id;
 	
 	private TipoTransito tipoTransito;
@@ -36,6 +35,20 @@ public class PedidoTransitoDTO {
 	private String estruturaNomeCompleto;
 	
 	private String estruturaDestinoNomeCompleto;
+	
+	private String estruturaDestinoNomeCompletoComUnidade;
+	
+	private Date dataInicio;
+	
+	private Date dataConclusao;
+	
+	private String observacao;
+	
+	private Date dataTerminoMovInt;
+	
+	private Date dataTerminoMovExt;
+	
+	private Date dataTerminoTransf;
 	
 	@SuppressWarnings("unused")
 	private String destinoParaExibicaoDataTable;
@@ -153,6 +166,22 @@ public class PedidoTransitoDTO {
 		this.estruturaDestinoNomeCompleto = estruturaDestinoNomeCompleto;
 	}
 
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDataConclusao() {
+		return dataConclusao;
+	}
+
+	public void setDataConclusao(Date dataConclusao) {
+		this.dataConclusao = dataConclusao;
+	}
+
 	public String getDestinoParaExibicaoDataTable() {
 		switch (tipoTransito) {
 			case EXTERNA:
@@ -164,9 +193,48 @@ public class PedidoTransitoDTO {
 		}
 	}
 
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+
+	public Date getDataTerminoMovInt() {
+		return dataTerminoMovInt;
+	}
+
+	public void setDataTerminoMovInt(Date dataTerminoMovInt) {
+		this.dataTerminoMovInt = dataTerminoMovInt;
+	}
+
+	public Date getDataTerminoMovExt() {
+		return dataTerminoMovExt;
+	}
+
+	public void setDataTerminoMovExt(Date dataTerminoMovExt) {
+		this.dataTerminoMovExt = dataTerminoMovExt;
+	}
+
+	public Date getDataTerminoTransf() {
+		return dataTerminoTransf;
+	}
+
+	public void setDataTerminoTransf(Date dataTerminoTransf) {
+		this.dataTerminoTransf = dataTerminoTransf;
+	}
+
+	public String getEstruturaDestinoNomeCompletoComUnidade() {
+		return estruturaDestinoNomeCompletoComUnidade;
+	}
+
+	public void setEstruturaDestinoNomeCompletoComUnidade(String estruturaDestinoNomeCompletoComUnidade) {
+		this.estruturaDestinoNomeCompletoComUnidade = estruturaDestinoNomeCompletoComUnidade;
+	}
+
 	@Override
 	public String toString() {
 		return "Pedido Transito [id=" + id + "]";
-	}		
-		
+	}
 }

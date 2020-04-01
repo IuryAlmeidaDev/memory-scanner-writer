@@ -69,6 +69,7 @@ import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
+import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
@@ -96,7 +97,8 @@ import br.gov.mt.sejudh.sigepen.util.TextoRelatorioPadrao;
 		@URLMapping(id = "ListarRecuperando", pattern = "/recuperando", viewId = "/WEB-INF/pages/recuperando/ListarRecuperando.xhtml"),
 		@URLMapping(id = "CadastrarRecuperando", pattern = "/recuperando/cadastrar", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "AlterarRecuperando", pattern = "/recuperando/alterar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
-		@URLMapping(id = "VisualizarRecuperando", pattern = "/recuperando/visualizar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml")
+		@URLMapping(id = "VisualizarRecuperando", pattern = "/recuperando/visualizar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
+		@URLMapping(id = "RelatorioInfopen", pattern = "/recuperando/infopen", viewId = "/WEB-INF/pages/recuperando/RelatorioInfopen.xhtml")
 })
 public class RecuperandoBean extends MetodosDePaginaBean {
 
@@ -208,6 +210,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	
 	@Inject
 	private ComboService comboService;
+	
+	private UnidadePrisional unidadeInfopenSelecionada;
 	
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
@@ -427,6 +431,27 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Recuperandos", e, log);
 		}
 	}
+	
+	public void imprimirExtratoRecuperandoPorPassagem(long passagemId) {
+		gerarExtratoRecuperando(service.gerarEntidadeExtratoRecuperando(this.recuperando, passagemId));
+	}
+	
+	public void imprimirExtratoRecuperando() {
+		gerarExtratoRecuperando(service.gerarEntidadeExtratoRecuperando(this.recuperando, null));
+	}
+	
+	private void gerarExtratoRecuperando(List<ExtratoRecuperandoDTO> lista) {
+		try {
+			List<ExtratoRecuperandoDTO> listaRec = lista;
+			
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(listaRec, Relatorio.ExtratoRecuperando));
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Recuperandos", log);
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir extrato do recuperando: " + e.getMessage());
+			LoggerUtil.logErro(Acao.IMPRIMIR, "Extrato do Recuperando", e, log);
+		}
+	}
 
 	/*
 	 * Métodos de Bean
@@ -630,7 +655,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			facesUtil.setObjetoSessao("processo", processo);
 		}
 		
-		facesUtil.exibirPaginaDialog(acaoDialogProcesso(processo, isVisualizar), null, 1000);
+		facesUtil.exibirPaginaDialog(acaoDialogProcesso(processo, isVisualizar), null, 1300);
 	}
 
 	public void atualizarProcessos(SelectEvent event) {
@@ -1316,6 +1341,25 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		}
 	}
 	
+	public void imprimirRelatorioInfopen() {
+		try {
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			
+			parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
+			parameters.put("UNIDADE_ID", this.unidadeInfopenSelecionada.getId());
+			
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.EstatisticoInfopen, parameters));
+			
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório Estatístico Infopen", log);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir Relatório Estatístico Infopen: " + e.getMessage());
+			LoggerUtil.logErro(Acao.IMPRIMIR, "Relatório Estatístico Infopen", e, log);
+		}
+	}
+	
 	public void imprimirRegistro(RecuperandoDTO recuperando) {
 		try {
 			
@@ -1640,5 +1684,13 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public void setIsCadastro(Boolean isCadastro) {
 		this.isCadastro = isCadastro;
+	}
+
+	public UnidadePrisional getUnidadeInfopenSelecionada() {
+		return unidadeInfopenSelecionada;
+	}
+
+	public void setUnidadeInfopenSelecionada(UnidadePrisional unidadeInfopenSelecionada) {
+		this.unidadeInfopenSelecionada = unidadeInfopenSelecionada;
 	}
 }

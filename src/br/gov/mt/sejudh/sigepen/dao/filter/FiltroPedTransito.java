@@ -49,8 +49,11 @@ public class FiltroPedTransito extends FiltroConsulta {
 	
 	private StatusPedido status;
 	
+	private Boolean isExtratoRecuperando;
+	
 	public FiltroPedTransito() {
 		listaTipoTransito = new ArrayList<TipoTransito>();
+		this.isExtratoRecuperando = false;
 	}
 
 	public Long getId() {
@@ -154,6 +157,18 @@ public class FiltroPedTransito extends FiltroConsulta {
 		return listaTipoTransito;
 	}
 
+	public void setListaTipoTransito(List<TipoTransito> listaTipoTransito) {
+		this.listaTipoTransito = listaTipoTransito;
+	}
+
+	public Boolean getIsExtratoRecuperando() {
+		return isExtratoRecuperando;
+	}
+
+	public void setIsExtratoRecuperando(Boolean isExtratoRecuperando) {
+		this.isExtratoRecuperando = isExtratoRecuperando;
+	}
+
 	@Override
 	public void configurarFiltros() {
 		
@@ -183,15 +198,28 @@ public class FiltroPedTransito extends FiltroConsulta {
 	            .add(Projections.property("estrutura2.nome").as("estruturaOrigemNome"))
 	            .add(Projections.property("unidadeDestino.nome").as("nomeUnidadeDestino"))
 	            .add(Projections.property("unidadeOrigem.nome").as("nomeUnidadeOrigem"))
-	            .add(Projections.property("transferencia.id").as("idTransferencia"));
+	            .add(Projections.property("transferencia.id").as("idTransferencia"))
+	            .add(Projections.property("dataInicio").as("dataInicio"))
+	            .add(Projections.property("dataConclusao").as("dataConclusao"))
+	            .add(Projections.property("observacao").as("observacao"));
 		
 		ProjectionList projectionList = (ProjectionList) proj;
 		
 		projectionList.add(Projections.property("estruturacomplOrigem.nomeCompleto").as("estruturaNomeCompleto"));
 		projectionList.add(Projections.property("estruturacomplDestino.nomeCompleto").as("estruturaDestinoNomeCompleto"));
+		projectionList.add(Projections.property("estruturacomplDestino.nomeCompletoUnidade").as("estruturaDestinoNomeCompletoComUnidade"));
 		
-		getCriteria().setProjection(projectionList);		
+		getCriteria().setProjection(projectionList);
 		
+		if (this.isExtratoRecuperando) {
+			getCriteria()
+				.createAlias("movimentacaoInterna", "movInt", JoinType.LEFT_OUTER_JOIN)
+				.createAlias("movimentacaoExterna", "movExt", JoinType.LEFT_OUTER_JOIN);
+			
+			projectionList.add(Projections.property("movInt.dataConclusao").as("dataTerminoMovInt"));
+			projectionList.add(Projections.property("movExt.dataInicio").as("dataTerminoMovExt"));
+			projectionList.add(Projections.property("transferencia.dataConclusao").as("dataTerminoTransf"));
+		}
 		
 		if(this.getId()!= null){
 			getCriteria().add(Restrictions.eq("id", this.getId()));
