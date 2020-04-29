@@ -38,7 +38,7 @@
    and p.recuperando_id = r.id(+)
  start with e.id = e1.id
 connect by prior e.id = e.estruturapai_id) quantidade
-from sigepen_owner_des.estrutura e1
+from $P!{SCHEMA}.estrutura e1
 start with e1.id = $P{ID_ESTRUTURA}
 connect by prior e1.id = e1.estruturapai_id]]>
 	</queryString>
