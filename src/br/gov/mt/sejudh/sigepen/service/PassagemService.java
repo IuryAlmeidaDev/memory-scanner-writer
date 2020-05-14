@@ -18,6 +18,7 @@ import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Stateless
 public class PassagemService {
@@ -50,6 +51,10 @@ public class PassagemService {
 	}
 	
 	public void desligar(Recuperando recuperando, Passagem passagem, PassagemLotacao lotacao) throws Exception {
+		if (passagem.getDataSaida().after(Sigepen.getDataAtual())) {
+			throw new ValidacaoException("Data de saída não pode ser maior que data atual.");
+		}
+		
 		if (passagem.getDataSaida().before(lotacao.getDataEntrada()) || passagem.getDataSaida().equals(lotacao.getDataEntrada())) {
 			throw new ValidacaoException("Data de saída menor ou igual que a data de entrada!");			
 		}		
