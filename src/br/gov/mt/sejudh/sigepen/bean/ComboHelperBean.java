@@ -10,12 +10,14 @@ import javax.faces.bean.ManagedBean;
 import javax.inject.Inject;
 
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.CorCabelo;
 import br.gov.mt.sejudh.sigepen.enumerator.CorOlho;
 import br.gov.mt.sejudh.sigepen.enumerator.Esfera;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
 import br.gov.mt.sejudh.sigepen.enumerator.Periculosidade;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
 import br.gov.mt.sejudh.sigepen.enumerator.PronomeTratamento;
 import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
@@ -140,6 +142,10 @@ public class ComboHelperBean {
 	
 	private Esfera[] esfera;
 	
+	private TipoPlantao[] plantoes;
+	
+	private TipoAtestado[] atestados;
+	
 	@Inject
 	private ComboService comboService;	
 	
@@ -187,6 +193,8 @@ public class ComboHelperBean {
 		pronomeTratamento	 		= comboService.getPronomeTratamento();
 		tipoDocumentoPedidoTransito = comboService.getTipoDocumentoPedidoTransito();
 		esfera						= comboService.getEsfera();
+		plantoes					= comboService.getPlantoes();
+		atestados					= comboService.getAtestados();
 		
 	}
 	
@@ -531,5 +539,21 @@ public class ComboHelperBean {
 
 	public void setEsfera(Esfera[] esfera) {
 		this.esfera = esfera;
+	}
+
+	public TipoPlantao[] getPlantoes() {
+		return plantoes;
+	}
+
+	public void setPlantoes(TipoPlantao[] plantoes) {
+		this.plantoes = plantoes;
+	}
+
+	public TipoAtestado[] getAtestados() {
+		return atestados;
+	}
+
+	public void setAtestados(TipoAtestado[] atestados) {
+		this.atestados = atestados;
 	}
 }

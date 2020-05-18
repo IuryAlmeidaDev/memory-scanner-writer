@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RegistroRecuperando" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.6934217901613435"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="78"/>
+	<property name="ireport.y" value="763"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -392,14 +392,9 @@
 		<band height="55" splitType="Prevent">
 			<printWhenExpression><![CDATA[(new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{pessoa.enderecos}).getRecordCount() > 0)]]></printWhenExpression>
 			<subreport isUsingCache="false">
-				<reportElement x="0" y="0" width="555" height="37" uuid="a2875ccf-9009-4304-89db-937d408d7043"/>
-				<subreportParameter name="SUBREPORT_DIR"/>
-				<subreportParameter name="RODAPE"/>
-				<subreportParameter name="CABECALHO"/>
-				<subreportParameter name="EMISSOR"/>
-				<subreportParameter name="NOME_DO_RELATORIO"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{pessoa.enderecos})]]></dataSourceExpression>
-				<subreportExpression><![CDATA["ListarEndereco.jasper"]]></subreportExpression>
+				<reportElement x="0" y="0" width="555" height="37" uuid="b21b6146-ca13-4612-b6a0-41d9e76929b6"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{pessoa.documentos})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ListarDocumentos.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="55" splitType="Prevent">
@@ -434,9 +429,14 @@
 		<band height="55" splitType="Immediate">
 			<printWhenExpression><![CDATA[(new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{pessoa.documentos}).getRecordCount() > 0)]]></printWhenExpression>
 			<subreport isUsingCache="false">
-				<reportElement x="0" y="0" width="555" height="37" uuid="b21b6146-ca13-4612-b6a0-41d9e76929b6"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{pessoa.documentos})]]></dataSourceExpression>
-				<subreportExpression><![CDATA["ListarDocumentos.jasper"]]></subreportExpression>
+				<reportElement x="0" y="0" width="555" height="37" uuid="a2875ccf-9009-4304-89db-937d408d7043"/>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="RODAPE"/>
+				<subreportParameter name="CABECALHO"/>
+				<subreportParameter name="EMISSOR"/>
+				<subreportParameter name="NOME_DO_RELATORIO"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{pessoa.enderecos})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ListarEndereco.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="55" splitType="Immediate">

@@ -46,7 +46,6 @@ public class FiltroRecuperando extends FiltroConsulta {
 	private String outraMae;
 	private String siglaUnidade;
 	private Boolean isCadastroCompleto;
-	private Boolean isBuscaFotoParaCadastroRecuperando = false;
 	
 	private Boolean isTemporarioAVencer;
 	private Boolean isTemporarioVenceHoje;
@@ -179,18 +178,6 @@ public class FiltroRecuperando extends FiltroConsulta {
 		this.isCadastroCompleto = isCadastroCompleto;
 	}
 
-	public Boolean getIsBuscaFotoParaCadastroRecuperando() {
-		return isBuscaFotoParaCadastroRecuperando;
-	}
-
-	public void setIsBuscaFotoParaCadastroRecuperando(Boolean isBuscaFotoParaCadastroRecuperando) {
-		if (isBuscaFotoParaCadastroRecuperando == null) {
-			this.isBuscaFotoParaCadastroRecuperando = false;
-		}
-		
-		this.isBuscaFotoParaCadastroRecuperando = isBuscaFotoParaCadastroRecuperando;
-	}
-
 	public Boolean getIsTemporarioAVencer() {
 		return isTemporarioAVencer;
 	}
@@ -238,6 +225,7 @@ public class FiltroRecuperando extends FiltroConsulta {
 				.add(Projections.property("id").as("pessoaId"))
 				.add(Projections.property("recuperando_.id").as("id"))
 				.add(Projections.property("nome").as("nome"))
+				.add(Projections.property("nomeSocial").as("nomeSocial"))
 				.add(Projections.property("nomeMae").as("nomeMae"))
 				.add(Projections.property("dataNascimento").as("dataNascimento"))
 				.add(Projections.property("unidade.nome").as("unidade"))
@@ -263,16 +251,14 @@ public class FiltroRecuperando extends FiltroConsulta {
 		
 		getCriteria().setProjection(proj);
 
-		if (this.isBuscaFotoParaCadastroRecuperando) {
-			getCriteria()
-				.createAlias("recuperando_.fotos", "foto_", JoinType.LEFT_OUTER_JOIN)
-				.createAlias("foto_.imagem", "imagem_", JoinType.LEFT_OUTER_JOIN);
-			
-			proj.add(Projections.property("foto_.imagem").as("imagemFrente"));
-			
-			getCriteria().add(Restrictions.and(Restrictions.eq("foto_.isAtual", true)));
-			getCriteria().add(Restrictions.and(Restrictions.eq("foto_.tipo", TipoFoto.FRENTE)));
-		}
+		getCriteria()
+			.createAlias("recuperando_.fotos", "foto_", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("foto_.imagem", "imagem_", JoinType.LEFT_OUTER_JOIN);
+		
+		proj.add(Projections.property("foto_.imagem").as("imagemFrente"));
+		
+		getCriteria().add(Restrictions.and(Restrictions.eq("foto_.isAtual", true)));
+		getCriteria().add(Restrictions.and(Restrictions.eq("foto_.tipo", TipoFoto.FRENTE)));
 
 		//Subselect para trazer apenas a ultima passagem e ultima lotação
 		DetachedCriteria critPassagem = DetachedCriteria.forClass(Passagem.class, "pass")

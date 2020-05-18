@@ -42,7 +42,10 @@ public class RelatorioUtil {
 			parameters.put("RODAPE", getRodapePath(ctx, relatorio.getRodape()));
 			parameters.put("UNIDADE_LOGADA", SecurityUtil.getUnidadeSelecionada().getNome());
 			parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
-			parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
+			
+			if (!parameters.containsKey("NOME_DO_RELATORIO")) {
+				parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
+			}
 			
 			JasperPrint jasperPrint = JasperFillManager.fillReport(getRelatorioPath(ctx, relatorio), parameters, conn);
 			
@@ -75,7 +78,10 @@ public class RelatorioUtil {
 			parameters.put("RODAPE", getRodapePath(ctx, relatorio.getRodape()));
 			parameters.put("UNIDADE_LOGADA", SecurityUtil.getUnidadeSelecionada().getNome());
 			parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
-			parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
+			
+			if (!parameters.containsKey("NOME_DO_RELATORIO")) {
+				parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
+			}
 			
 			JRDataSource datasource = new JRBeanCollectionDataSource(valores);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(getRelatorioPath(ctx, relatorio), parameters, datasource);
@@ -95,11 +101,15 @@ public class RelatorioUtil {
 		return arquivo;
 	}
 
-	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo) throws JRException, NamingException, SQLException {		
+	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo) throws JRException, NamingException, SQLException {
+		return gerarRelatorio(relatorio, conteudo, new HashMap<String, Object>());
+	}
+	
+	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo, Map<String, Object> parameters) throws JRException, NamingException, SQLException {		
 		List<TextoDoRelatorio> lista = new ArrayList<TextoDoRelatorio>();
 		lista.add(conteudo);
 	
-		return gerarRelatorio(lista, relatorio);
+		return gerarRelatorio(lista, relatorio, parameters);
 	}
 	
 	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio) throws JRException {
@@ -112,6 +122,11 @@ public class RelatorioUtil {
 	
 	private static String getRelatorioPath(ServletContext ctx, Relatorio rel) {
 		return ctx.getRealPath("WEB-INF" + File.separator + "relatorios" + File.separator + rel.name() + ".jasper");
+	}
+	
+	public static String getSubReportPath(Relatorio relatorio) {
+		ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+		return ctx.getRealPath("WEB-INF" + File.separator + "relatorios" + File.separator + "subrelatorios" + File.separator + relatorio.name()) + File.separator; 
 	}
 	
 	private static String getCabecalhoPath(ServletContext ctx, ModeloCabecalho cabecalho) {

@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.auditoria;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,9 +28,9 @@ public class CustomRevEntity {
     @RevisionNumber
     private long id;
     
-	@Column(name = "DATAHORA")
+	@Column(name = "DATA")
 	@RevisionTimestamp   
-    private long revtstmp;
+    private Date revtstmp;
 	
 	private long usuario_id;	
 	
@@ -47,11 +49,11 @@ public class CustomRevEntity {
 		this.id = id;
 	}	
 
-	public long getRevtstmp() {
+	public Date getRevtstmp() {
 		return revtstmp;
 	}
 
-	public void setRevtstmp(long revtstmp) {
+	public void setRevtstmp(Date revtstmp) {
 		this.revtstmp = revtstmp;
 	}
 

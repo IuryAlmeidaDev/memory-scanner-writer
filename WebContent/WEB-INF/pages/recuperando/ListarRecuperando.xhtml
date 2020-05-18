@@ -170,9 +170,6 @@
 						<p:button title="Nova Passagem" icon="fa fa-arrow-right" outcome="pretty:CadastrarNovaPassagem" rendered="#{securityUtil.possuiPermissao('CadastrarNovaPassagem') and rec.isRecuperando and rec.taVivo and (rec.isRecuperandoInativo or rec.isRecuperandoParcial)}">
 							<f:param name="id" value="#{rec.id}" />
 						</p:button>
-						<p:button title="Cadastrar Recuperando" icon="fa fa-tag" outcome="pretty:CadastrarRecuperando" rendered="#{securityUtil.possuiPermissao('CadastrarRecuperando') and !rec.isRecuperando}">
-							<f:param name="id" value="#{rec.pessoaId}" />
-						</p:button>
 						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarRecuperando" rendered="#{securityUtil.possuiPermissao('VisualizarRecuperando') and rec.isRecuperando}">
 							<f:param name="id" value="#{rec.id}"/>
 						</p:button>
@@ -188,7 +185,7 @@
 							<f:param name="id" value="#{rec.id}" />
 						</p:button>
 						<p:commandButton title="Imprimir" icon="fa fa-print" actionListener="#{recuperandoBean.imprimirRegistro(rec)}"/>
-						<p:commandButton title="Atestado de Comparecimento Mensal" icon="fa fa-file-text-o" actionListener="#{recuperandoBean.imprimirAtestadoDeComparecimento(rec)}" rendered="#{(rec.regime.toLowerCase().equals('aberto') or rec.regime.toLowerCase().equals('semiaberto'))}" />
+						<p:commandButton title="Atestados" icon="fa fa-file-text-o" disabled="#{!atestadosBean.exibeBotaoAtestado(rec)}" actionListener="#{recuperandoBean.abrirDialogAtestados(rec)}"/>
 					</center>
 				</p:column>
 				
@@ -252,46 +249,66 @@
 				</h:panelGroup>
 				
 				<h:panelGroup rendered="#{recuperandoBean.recuperandoSelecionado != null}">
-					<sgp:formOutputLabel
-						labelValue="Matrícula"
-						value="#{recuperandoBean.recuperandoSelecionado.id}"/>
+					<div class="row">
+						<div class="col-md-8">
+							<sgp:formOutputLabel
+								labelValue="Matrícula"
+								value="#{recuperandoBean.recuperandoSelecionado.id}"/>
 						
-					<sgp:formOutputLabel
-						labelValue="Nome"
-						value="#{recuperandoBean.recuperandoSelecionado.nome}"/>
+							<sgp:formOutputLabel
+								labelValue="Nome"
+								value="#{recuperandoBean.recuperandoSelecionado.nome}"/>
+								
+							<sgp:formOutputLabel
+								labelValue="Nome Social"
+								value="#{recuperandoBean.recuperandoSelecionado.nomeSocial}" />
+								
+							<sgp:formOutputLabel
+								labelValue="Nome da Mãe"
+								value="#{recuperandoBean.recuperandoSelecionado.nomeMae}"/>
+								
+							<sgp:formOutputLabel
+								labelValue="Lotação Atual"
+								value="#{recuperandoBean.recuperandoSelecionado.lotacaoAtualNomeEstrutura}"/>
+						</div>
 						
-					<sgp:formOutputLabel
-						labelValue="Nome da Mãe"
-						value="#{recuperandoBean.recuperandoSelecionado.nomeMae}"/>
-					<sgp:formOutputLabel
-						labelValue="Lotação Atual"
-						value="#{recuperandoBean.recuperandoSelecionado.lotacaoAtualNomeEstrutura}"/>
-				<p:panel>
-				<h4>Alcunhas</h4>
-					<p:dataTable var="alc" value="#{recuperandoBean.recuperandoSelecionado.alcunhas}" rows="5" paginatorAlwaysVisible="false" emptyMessage="Nada encontrado">
-						<p:column headerText="Nome Alcunha">
-							<h:outputText value="#{alc}" />
-						</p:column>
-					</p:dataTable>
-				</p:panel>
+						<div class="col-md-4" align="right">
+							<p:dataGrid id="dgFoto" layout="tabular" style="width: 188px;" columns="1" rows="1" value="#{recuperandoBean.recuperandoSelecionado.imagemFrente}" var="img">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img)}" cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</div>
+					</div>
+
 					<br/>
-				<p:panel>
-					<h4>Outros Nomes</h4>
-					<p:dataTable var="out" value="#{recuperandoBean.recuperandoSelecionado.outrosNomes}" rows="5" paginatorAlwaysVisible="false" emptyMessage="Nada encontrado">
+					<p:panel>
+						<h4>Alcunhas</h4>
+						<p:dataTable var="alc" value="#{recuperandoBean.recuperandoSelecionado.alcunhas}" rows="5" paginatorAlwaysVisible="false" emptyMessage="Nada encontrado">
+							<p:column headerText="Nome Alcunha">
+								<h:outputText value="#{alc}" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+				
+					<br/>
+					<p:panel>
 						<h4>Outros Nomes</h4>
-						<p:column headerText="Nome">
-							<h:outputText value="#{out.nome}" />
-						</p:column>
-						<p:column headerText="Nome da Mãe">
-							<h:outputText value="#{out.nomeMae}" />
-						</p:column>
-						<p:column headerText="Data Nascimento">
-							<h:outputText value="#{out.dataNascimento}" >
-								<f:convertDateTime pattern="dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>
-					</p:dataTable>
-				</p:panel>
+						<p:dataTable var="out" value="#{recuperandoBean.recuperandoSelecionado.outrosNomes}" rows="5" paginatorAlwaysVisible="false" emptyMessage="Nada encontrado">
+							<h4>Outros Nomes</h4>
+							<p:column headerText="Nome">
+								<h:outputText value="#{out.nome}" />
+							</p:column>
+							<p:column headerText="Nome da Mãe">
+								<h:outputText value="#{out.nomeMae}" />
+							</p:column>
+							<p:column headerText="Data Nascimento">
+								<h:outputText value="#{out.dataNascimento}" >
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
 				</h:panelGroup>
 			</h:form>
 		</p:dialog>

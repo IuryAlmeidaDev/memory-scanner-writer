@@ -89,7 +89,6 @@ import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
-import br.gov.mt.sejudh.sigepen.util.TextoRelatorioPadrao;
 
 @ManagedBean
 @ViewScoped
@@ -398,7 +397,6 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 				if (isCadastro) {
 					if (recuperandos.size() > 0) {
-						getFiltro().setIsBuscaFotoParaCadastroRecuperando(isCadastro);
 						recuperandoSimilares = service.buscarRecuperandosPorFiltro(getFiltro(), true);
 						
 						RequestContext.getCurrentInstance().execute("PF('dlgRecupFotos').show()");
@@ -858,7 +856,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	}
 	
 	private String acaoDialogPreCadastroPessoa() {	
-		if (this.getIsVisualizacao() || !securityUtil.possuiPermissao("AlterarPessoaRecuperando")) {
+		if (this.getIsVisualizacao()) {
 			return "pretty:PreCadastroPessoaVisualizar";
 		} 
 		
@@ -1324,21 +1322,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		}
 	}
 	
-	public void imprimirAtestadoDeComparecimento(RecuperandoDTO recuperando) {
-		try {
-			this.recuperando = service.buscarRecuperandoPorId(recuperando.getId(), false);
-
-			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.AtestadoDeComparecimentoMensal, 
-					TextoRelatorioPadrao.getTextoTermoDeComparecimentoMensal(this.recuperando)));
-			
-			RequestContext.getCurrentInstance().execute("download()");
-			LoggerUtil.logInfo(Acao.IMPRIMIR, "Atestado de Comparecimento Mensal", log);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir atestado de comparecimento mensal: " + e.getMessage());
-			LoggerUtil.logErro(Acao.IMPRIMIR, "Atestado de Comparecimento Mensal", e, log);
-		}
+	public void abrirDialogAtestados(RecuperandoDTO recuperando) {
+		facesUtil.setObjetoSessao("recuperandoAtestado", recuperando);
+		facesUtil.exibirPaginaDialog("AtestadosRecuperando", 170, 370);
 	}
 	
 	public void imprimirRelatorioInfopen() {

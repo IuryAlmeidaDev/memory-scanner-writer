@@ -303,4 +303,44 @@ public class RecuperandoDAO {
 			return false;
 		}
 	}
+
+	public Recuperando buscarRecuperandoComPassagens(Long recuperandoId) {
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append("select r ");
+		jpql.append("from Recuperando r ");
+		jpql.append("join fetch r.pessoa pe ");
+		jpql.append("join fetch pe.naturalidade c ");
+		jpql.append("join fetch r.passagens p ");
+		jpql.append("join fetch p.lotacao l ");
+		jpql.append("join fetch l.estrutura e ");
+		jpql.append("join fetch e.unidadePrisional u ");
+		jpql.append("join fetch u.responsavel s ");
+		jpql.append("where r.id = :idRecuperando ");
+
+		TypedQuery<Recuperando> query = em.createQuery(jpql.toString(), Recuperando.class);
+		query.setParameter("idRecuperando", recuperandoId);
+
+		return query.getSingleResult();
+	}
+
+	public Boolean verificaRecuperandoPossuiPassagemNaUnidadeLogada(Long recuperandoId, long unidadeId) {
+		try {
+			Query query = em.createQuery("select count(l) from Recuperando r, Passagem p, PassagemLotacao l, Estrutura e, UnidadePrisional u "
+					+ "where r.id = p.recuperando.id "
+					+ "and p.id = l.passagem.id "
+					+ "and e.id = l.estrutura.id "
+					+ "and e.unidadePrisional.id = u.id "
+					+ "and r.id = :recuperandoId "
+					+ "and u.id = :unidadeId");
+			
+			query.setParameter("recuperandoId", recuperandoId);
+			query.setParameter("unidadeId", unidadeId);
+			
+			long resultado = (Long) query.getSingleResult();
+			return (resultado > 0);
+		} catch (NoResultException e) {
+			return false;
+		}
+	}
 }

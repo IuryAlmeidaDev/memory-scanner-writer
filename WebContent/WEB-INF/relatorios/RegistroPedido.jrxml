@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RegistroPedido" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.862763969177474"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="144"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
 	</parameter>
@@ -275,7 +275,7 @@
 				<textFieldExpression><![CDATA[$F{motivo}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="90">
+		<band height="90" splitType="Immediate">
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="20" backcolor="#CCCCCC" uuid="1e864bcc-b267-49a8-8dc4-074327757df4"/>
 				<box>
@@ -328,7 +328,7 @@
 				<textFieldExpression><![CDATA[$F{observacao}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="90">
+		<band height="90" splitType="Immediate">
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="20" backcolor="#CCCCCC" uuid="02d1430e-845c-4589-b53e-6b6d46a966b8"/>
 				<box>

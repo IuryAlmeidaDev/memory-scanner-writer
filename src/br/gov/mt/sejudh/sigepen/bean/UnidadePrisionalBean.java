@@ -356,11 +356,10 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 	public Boolean verificarSeBiometriaEhObrigatoria() {
 		return unidadeService.verificarSeBiometriaEhObrigatoria(this.unidade.getId());
 	}
-
-	public void selecionarListaDeChamada(UnidadePrisionalDTO unidade) {
+	
+	public void selecionarEstruturaChamada(UnidadePrisionalDTO unidade) {
 		facesUtil.setObjetoSessao("unidade", unidade);
 		facesUtil.setObjetoSessao("tipo_relatorio", "unidade");
-		facesUtil.exibirPaginaDialog("pretty:SelecionarListaChamada", 190, 180);
 	}
 	
 	public FiltroUnidadePrisional getFiltro() {

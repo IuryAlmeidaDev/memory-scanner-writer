@@ -172,6 +172,18 @@
 				<textFieldExpression><![CDATA[$F{estabelecimento.nome}]]></textFieldExpression>
 			</textField>
 		</band>
+		<band height="20">
+			<staticText>
+				<reportElement x="25" y="0" width="130" height="20" uuid="542501cf-5433-471a-8a9a-d8961de186d0"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Lotação Atual do Interno(a):]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="155" y="0" width="394" height="20" uuid="6765b385-2902-48af-87ef-809572fa768d"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{estruturaOrigem.nomeCompleto}]]></textFieldExpression>
+			</textField>
+		</band>
 		<band height="105">
 			<staticText>
 				<reportElement x="5" y="15" width="545" height="90" uuid="cdf44d94-91c7-4282-9cb8-dab500feafc6"/>

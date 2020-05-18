@@ -19,6 +19,8 @@
 	</queryString>
 	<field name="imagem.arquivo" class="java.lang.Object"/>
 	<field name="tipo.descricao" class="java.lang.String"/>
+	<field name="regiao.descricao" class="java.lang.String"/>
+	<field name="orientacao.descricao" class="java.lang.String"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
@@ -34,15 +36,20 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="180" splitType="Prevent">
+		<band height="200" splitType="Immediate">
 			<image scaleImage="RetainShape">
-				<reportElement x="14" y="0" width="125" height="150" uuid="b81505a7-c18c-4def-9927-2794c63abfa2"/>
+				<reportElement x="14" y="20" width="125" height="150" uuid="b81505a7-c18c-4def-9927-2794c63abfa2"/>
 				<imageExpression><![CDATA[new ByteArrayInputStream((byte[])$F{imagem.arquivo})]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="0" y="150" width="138" height="20" uuid="a0409706-d133-41ef-b8ae-a6018b9ff1b3"/>
+				<reportElement x="0" y="170" width="138" height="20" uuid="a0409706-d133-41ef-b8ae-a6018b9ff1b3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{tipo.descricao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="138" height="20" uuid="117a67ed-048f-465a-b378-c5b570a53ed9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{orientacao.descricao} + " / " + $F{regiao.descricao}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -8,12 +8,14 @@ import javax.inject.Inject;
 
 import br.gov.mt.sejudh.sigepen.dao.ComboDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.CorCabelo;
 import br.gov.mt.sejudh.sigepen.enumerator.CorOlho;
 import br.gov.mt.sejudh.sigepen.enumerator.Esfera;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
 import br.gov.mt.sejudh.sigepen.enumerator.Periculosidade;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
 import br.gov.mt.sejudh.sigepen.enumerator.PronomeTratamento;
 import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
@@ -256,5 +258,13 @@ public class ComboService {
 
 	public Esfera[] getEsfera() {
 		return Esfera.values();
+	}
+
+	public TipoPlantao[] getPlantoes() {
+		return TipoPlantao.values();
+	}
+
+	public TipoAtestado[] getAtestados() {
+		return TipoAtestado.values();
 	}
 }

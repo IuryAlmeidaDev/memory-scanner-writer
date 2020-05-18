@@ -77,8 +77,13 @@
 								 <sgp:formOutputLabel labelValue="Matrícula" value="#{recuperandoBean.recuperando.id > 0 ? recuperandoBean.recuperando.id : null}"/>
 								</h4>
 								<sgp:formOutputLabel labelValue="Nome" value="#{recuperandoBean.recuperando.pessoa.nome}" rowStyle="float:left"/>
-								<p:commandButton icon="#{(securityUtil.possuiPermissao('AlterarPessoaRecuperando') and !recuperandoBean.isVisualizacao) ? &quot;ui-icon-pencil&quot; : &quot;ui-icon-document&quot;}" immediate="true" actionListener="#{recuperandoBean.abrirDialogPreCadastroPessoa}" 
-									disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}" rendered="#{securityUtil.possuiPermissao('AlterarPessoaRecuperando') or !securityUtil.possuiPermissao('AlterarPessoaRecuperando')}">
+								<p:commandButton icon="ui-icon-pencil" immediate="true" actionListener="#{recuperandoBean.abrirDialogPreCadastroPessoa}" 
+									rendered="#{securityUtil.possuiPermissao('AlterarPessoaRecuperando') and !recuperandoBean.isVisualizacao}">
+									<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarPreCadastroPessoa}" update=":tabView:groupBotaoSalvarRec :tabView:formConteudo :tabView:formSocial"/>
+								</p:commandButton>
+								
+								<p:commandButton icon="ui-icon-document" immediate="true" actionListener="#{recuperandoBean.abrirDialogPreCadastroPessoa}" 
+									rendered="#{securityUtil.possuiPermissao('VisualizarPessoaRecuperando') and recuperandoBean.isVisualizacao}">
 									<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarPreCadastroPessoa}" update=":tabView:groupBotaoSalvarRec :tabView:formConteudo :tabView:formSocial"/>
 								</p:commandButton>
 								<sgp:formOutputLabel labelValue="Nome da Mãe" value="#{recuperandoBean.recuperando.pessoa.nomeMae}" />

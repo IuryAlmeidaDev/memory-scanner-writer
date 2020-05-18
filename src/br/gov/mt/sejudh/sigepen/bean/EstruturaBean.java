@@ -157,12 +157,6 @@ public class EstruturaBean extends MetodosDePaginaBean{
 		this.noSelecionado = estruturaService.buscarNo(root, null, estrutura);
 		LoggerUtil.logInfo(Acao.ALTERAR, this.estrutura, log);
 	}
-	
-	public void selecionarListaDeChamada(Estrutura est) {
-		facesUtil.setObjetoSessao("estrutura", est);
-		facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
-		facesUtil.exibirPaginaDialog("pretty:SelecionarListaChamada", 160, 180);
-	}
 
 	public UnidadePrisional getUnidade() {
 		return unidade;

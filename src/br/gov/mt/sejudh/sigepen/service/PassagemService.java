@@ -116,4 +116,8 @@ public class PassagemService {
 		
 		return true;
 	}
+
+	public List<Passagem> buscarPassagensDoRecuperando(Long id) {
+		return dao.buscarPassagensDoRecuperando(id);
+	}
 }

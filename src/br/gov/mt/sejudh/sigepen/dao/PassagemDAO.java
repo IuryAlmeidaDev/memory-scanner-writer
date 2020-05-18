@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -105,5 +106,19 @@ public class PassagemDAO {
 		query.setParameter("idRec", rec.getId());
 		Date dataSaida = (Date)query.getSingleResult();
 		return dataSaida;		
+	}
+
+	public List<Passagem> buscarPassagensDoRecuperando(Long id) {
+		try{
+			String jpql="select p from Passagem p, PassagemLotacao l where p.recuperando.id = :id"
+					+ " and l.passagem.id = p.id";
+			TypedQuery<Passagem> query = em.createQuery(jpql, Passagem.class);
+			query.setParameter("id", id);
+			List<Passagem> p = query.getResultList();
+
+			return p;
+		} catch(NoResultException e){
+			return null;
+		}
 	}
 }

@@ -25,10 +25,11 @@ public enum Relatorio {
 	ListarLogs("RELATÓRIO DE LOGS"),
 	RegistroOficioPedidoTransito("OFÍCIO PEDIDO DE TRÂNSITO"),
 	RegistroAutorizacaoPedidoTransito("AUTORIZAÇÃO PEDIDO DE TRÂNSITO"),
-	AtestadoDeComparecimentoMensal("ATESTADO DE COMPARECIMENTO MENSAL"), 
 	ListaDeChamadaComFoto("LISTA DE CHAMADA"),
 	ExtratoRecuperando("EXTRATO DO RECUPERANDO", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
-	EstatisticoInfopen("Relatório Estatístico Infopen");
+	EstatisticoInfopen("Relatório Estatístico Infopen"),
+	ListaDeConfere("LISTA DE CHAMADA"),
+	Atestado("Atestado");
 	
 	private Relatorio(String nome) {
 		this.setNome(nome);

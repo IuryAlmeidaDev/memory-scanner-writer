@@ -40,6 +40,7 @@ import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Regime;
 import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO.PassagemExtratoDTO;
+import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 
@@ -433,6 +434,14 @@ public class RecuperandoService {
 		filtro.setIsExtratoRecuperando(true);
 		
 		return pedidoService.buscaPorFiltro(filtro, false);
+	}
+
+	public Recuperando buscarRecuperandoComPassagens(Long recuperandoId) {
+		return dao.buscarRecuperandoComPassagens(recuperandoId);
+	}
+
+	public Boolean verificaRecuperandoPossuiPassagemNaUnidadeLogada(Long recuperandoId) {
+		return dao.verificaRecuperandoPossuiPassagemNaUnidadeLogada(recuperandoId, SecurityUtil.getUnidadeSelecionada().getId());
 	}
 }
 

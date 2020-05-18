@@ -20,6 +20,11 @@
 
 <h:body>
 	<ui:insert name="conteudo" />
+	<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()" oncomplete="PF('statusDialog').hide()"/>
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+	    <p:graphicImage name="images/ajax-loader.gif" />
+	</p:dialog>
 	<h:panelGroup id="iframe-holder" layout="block" >
 		<iframe id="iDownload" name="iDownload" width="1" height="1" frameborder="0" src="#{sigepen.getApplicationDownloadUrl()}"/>
 	</h:panelGroup>

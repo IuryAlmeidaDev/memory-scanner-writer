@@ -144,7 +144,7 @@ public class ImprimirPedidoTransitoTipoDocumentoBean extends MetodosDialogBean {
 			if (temPai)
 				buildResultado.append(" e de [nomePai]");
 			
-			buildResultado.append(", nascido(a) em [dataNascimento], a se ausentar desta Unidade devidamente escoltado(a) em [dataPrevista] fim de [motivo]");
+			buildResultado.append(", nascido(a) em [dataNascimento], a mudança de Estrutura (Cela) desta Unidade devidamente escoltado(a) em [dataPrevista] fim de [motivo]");
 			
 			if (temEstabelecimento)
 				buildResultado.append(" no seguinte local, [estabelecimento]");

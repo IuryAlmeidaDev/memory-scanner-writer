@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="plantoes" pageWidth="275" pageHeight="802" columnWidth="275" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="962e8cb9-b024-4279-9e0b-ff4dc5209a14">
+	<property name="ireport.zoom" value="1.948717100000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\subrelatorios\\ListaDeConfere\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isCabecalho" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="LISTAPLANTOES" class="java.util.Collection" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<detail>
+		<band height="20">
+			<printWhenExpression><![CDATA[$P{LISTAPLANTOES}.size() == 1]]></printWhenExpression>
+			<rectangle>
+				<reportElement x="0" y="0" width="255" height="20" uuid="9144c0c1-375a-43e8-8438-48a365c4c419">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="255" height="20" uuid="3e12e1ee-0934-47cf-9ee9-a5a8ae320c11">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == true]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plantões:]]></text>
+			</staticText>
+			<subreport isUsingCache="false">
+				<reportElement x="255" y="0" width="20" height="20" uuid="8c9a5569-46ba-44c3-89cd-ac4e7bec2739"/>
+				<subreportParameter name="isCabecalho">
+					<subreportParameterExpression><![CDATA[$P{isCabecalho}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTAPLANTOES})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "confere1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$P{LISTAPLANTOES}.size() == 2]]></printWhenExpression>
+			<rectangle>
+				<reportElement x="0" y="0" width="235" height="20" uuid="6652635f-8b52-442a-b76a-3074ade8e7a6">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="235" height="20" uuid="21c7c74c-b01c-4d3a-937d-48fbe63f5c67">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == true]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plantões:]]></text>
+			</staticText>
+			<subreport isUsingCache="false">
+				<reportElement x="235" y="0" width="40" height="20" uuid="04844508-82cc-48e3-bb2f-d5f75c102bbe"/>
+				<subreportParameter name="isCabecalho">
+					<subreportParameterExpression><![CDATA[$P{isCabecalho}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTAPLANTOES})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "confere2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$P{LISTAPLANTOES}.size() == 3]]></printWhenExpression>
+			<rectangle>
+				<reportElement x="0" y="0" width="215" height="20" uuid="e7d8b674-c51f-45a3-a3f2-48fe1481594a">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="215" height="20" uuid="93429290-d9ae-48a1-8c65-d1da1942568f">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == true]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plantões:]]></text>
+			</staticText>
+			<subreport isUsingCache="false">
+				<reportElement x="215" y="0" width="60" height="20" uuid="e4b45ac2-affa-4335-b5fb-121196dd6135"/>
+				<subreportParameter name="isCabecalho">
+					<subreportParameterExpression><![CDATA[$P{isCabecalho}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTAPLANTOES})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "confere3.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$P{LISTAPLANTOES}.size() == 4]]></printWhenExpression>
+			<rectangle>
+				<reportElement x="0" y="0" width="195" height="20" uuid="0050437d-ba9a-467a-8ea1-9d5729ba2067">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="195" height="20" uuid="601d9036-f225-4c5d-a823-b12f31c7350a">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == true]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plantões:]]></text>
+			</staticText>
+			<subreport isUsingCache="false">
+				<reportElement x="195" y="0" width="80" height="20" uuid="d17f16d3-aed2-4b74-9e5c-8dd6e2f4867b"/>
+				<subreportParameter name="isCabecalho">
+					<subreportParameterExpression><![CDATA[$P{isCabecalho}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTAPLANTOES})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "confere4.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$P{LISTAPLANTOES}.size() == 5]]></printWhenExpression>
+			<rectangle>
+				<reportElement x="0" y="0" width="175" height="20" uuid="3b0f6336-10d3-44cc-b63a-40f77f3e264e">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="175" height="20" uuid="c8e049d7-b7db-4d51-bd6c-40b4da7bd794">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == true]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plantões:]]></text>
+			</staticText>
+			<subreport isUsingCache="false">
+				<reportElement x="175" y="0" width="100" height="20" uuid="f1bd6a69-76fd-4c32-a7aa-657816984960"/>
+				<subreportParameter name="isCabecalho">
+					<subreportParameterExpression><![CDATA[$P{isCabecalho}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTAPLANTOES})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "confere5.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$P{LISTAPLANTOES}.size() == 6]]></printWhenExpression>
+			<rectangle>
+				<reportElement x="0" y="0" width="155" height="20" uuid="6d4bf505-7362-4526-b36f-3f53a6475804">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="155" height="20" uuid="af0b2c0f-d53c-40ce-acbb-2e3a59fc696d">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == true]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plantões:]]></text>
+			</staticText>
+			<subreport isUsingCache="false">
+				<reportElement x="155" y="0" width="120" height="20" uuid="0dff811d-8810-4082-be0b-60948af83056"/>
+				<subreportParameter name="isCabecalho">
+					<subreportParameterExpression><![CDATA[$P{isCabecalho}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTAPLANTOES})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "confere6.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$P{LISTAPLANTOES}.size() == 7]]></printWhenExpression>
+			<rectangle>
+				<reportElement x="0" y="0" width="135" height="20" uuid="1e631904-cb3c-4882-815c-f5f03e8102cd">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == false]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="135" height="20" uuid="e7f433fc-30c3-416c-8c07-bfcacece3283">
+					<printWhenExpression><![CDATA[$P{isCabecalho} == true]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plantões:]]></text>
+			</staticText>
+			<subreport isUsingCache="false">
+				<reportElement x="135" y="0" width="140" height="20" uuid="aca18ea2-7e09-4acc-a23e-c8ca6c2b4f0b"/>
+				<subreportParameter name="isCabecalho">
+					<subreportParameterExpression><![CDATA[$P{isCabecalho}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTAPLANTOES})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "confere7.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

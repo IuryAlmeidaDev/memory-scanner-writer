@@ -87,7 +87,8 @@
 						</p:button>
 						<p:commandButton title="Histórico de Situações" icon="ui-icon-clock" action="#{estruturaBean.listarPorUnidade(unidade)}"
 							 oncomplete="PF('listarSituacaoEstruturaUnidade').show()" update=":listarSituacoes" process="@this"/>
-						<p:commandButton title="Imprimir Lista de Chamada" icon="fa fa-print" actionListener="#{unidadePrisionalBean.selecionarListaDeChamada(unidade)}"/>
+						<p:commandButton title="Imprimir Lista de Chamada" icon="fa fa-print" oncomplete="PF('dlgListaDeChamada').show()"
+							 update=":formListaChamadas" actionListener="#{unidadePrisionalBean.selecionarEstruturaChamada(unidade)}"/>
 					</center>
 				</p:column>
 				
@@ -128,6 +129,23 @@
 				</p:dataTable>
 				<br/>
 				<p:commandButton value="Fechar" onclick="PF('listarSituacaoEstruturaUnidade').hide()"/>
+			</h:form>
+		</p:dialog>
+		<p:dialog id="dialogListaDeChamada" header="Listas de Chamadas"
+				showEffect="fade" widgetVar="dlgListaDeChamada" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+			<h:form prependId="false" id="formListaChamadas">
+				<p:panel>
+					<p:commandButton value="Lista de Chamada" icon="ui-icon-plus" oncomplete="PF('dlgListaDeChamada').hide()" actionListener="#{listaDeChamadaBean.imprimirListaDeChamada(false)}"/>
+					<br/>
+					<br/>
+					<p:commandButton value="Lista de Chamada Com Foto" icon="ui-icon-plus" oncomplete="PF('dlgListaDeChamada').hide()" actionListener="#{listaDeChamadaBean.imprimirListaDeChamada(true)}"/>
+					<br/>
+					<br/>
+					<p:commandButton value="Lista Sintética" icon="ui-icon-plus" oncomplete="PF('dlgListaDeChamada').hide()" actionListener="#{listaDeChamadaBean.imprimirListaSintetica}"/>
+					<br/>
+					<br/>
+					<p:commandButton value="Lista de Confere" icon="ui-icon-plus" oncomplete="PF('dlgListaDeChamada').hide()" actionListener="#{listaDeChamadaBean.abrirDialogConfere}"/>
+				</p:panel>
 			</h:form>
 		</p:dialog>
 	</ui:define>

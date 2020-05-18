@@ -17,6 +17,7 @@ import org.hibernate.criterion.Projections;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPerfil;
 import br.gov.mt.sejudh.sigepen.model.Perfil;
 import br.gov.mt.sejudh.sigepen.model.Permissao;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
 public class PerfilDAO {
@@ -68,7 +69,7 @@ public class PerfilDAO {
 	}
 
 	public boolean isPerfilAssociadoAUmUsuario(long id) {
-		Query query = em.createNativeQuery("select count(a.perfil_id) count from acesso_perfil a where a.perfil_id = :idPerfil");
+		Query query = em.createNativeQuery("select count(a.perfil_id) count from " + Sigepen.SEJUDH_SCHEMA + ".acesso_perfil a where a.perfil_id = :idPerfil");
 		query.setParameter("idPerfil", id);		
 		return Integer.parseInt(query.getSingleResult().toString()) > 0;
 	}

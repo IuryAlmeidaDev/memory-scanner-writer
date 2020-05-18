@@ -18,6 +18,7 @@ public class RecuperandoDTO {
 	private Long pessoaId;
 	private String nome;
 	private String nomeMae;
+	private String nomeSocial;
 	private Date dataNascimento;
 	private StatusRecuperando status;
 	private Periculosidade periculosidade;
@@ -268,6 +269,14 @@ public class RecuperandoDTO {
 
 	public void setImagemFrente(Imagem imagemFrente) {
 		this.imagemFrente = imagemFrente;
+	}
+
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
 	}
 
 	@Override

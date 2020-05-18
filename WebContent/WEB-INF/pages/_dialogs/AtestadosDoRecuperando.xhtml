@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="head">
+		<title>Selecione um tipo de Atestado</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form prependId="false">
+			<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado" var="Atestado" allSuffix="ALL_ENUM_VALUES" />
+			
+			<p:panel>
+				<sgp:formSelectOneMenu itemsValue="#{comboHelperBean.atestados}" itemValue="#{item}" itemLabel="#{item.name}" 
+					labelValue="Tipo de Atestado" value="#{atestadosBean.atestadoSelecionado}" temSelecione="true" requiredMessage="*"
+					validationRequired="true" display="text">
+					<f:ajax event="change" render="compPanel" />
+				</sgp:formSelectOneMenu>
+				
+				<h:panelGroup id="compPanel">	
+					<sgp:formSelectOneMenu rendered="#{atestadosBean.atestadoSelecionado eq Atestado.Comportamento}" labelValue="Comportamento" value="#{atestadosBean.comportamento}" temSelecione="false">
+						<f:selectItem itemLabel="Ótimo" itemValue="ÓTIMO" />
+						<f:selectItem itemLabel="Bom" itemValue="BOM" />
+						<f:selectItem itemLabel="Regular" itemValue="REGULAR" />
+						<f:selectItem itemLabel="Mau" itemValue="MAU" />
+					</sgp:formSelectOneMenu>
+				</h:panelGroup>
+				
+				<br/>
+				<br/>
+				<br/>
+				<br/>
+				<div style="text-align: center">
+					<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" update="@form" actionListener="#{atestadosBean.imprimirAtestado}"/>
+				</div>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
