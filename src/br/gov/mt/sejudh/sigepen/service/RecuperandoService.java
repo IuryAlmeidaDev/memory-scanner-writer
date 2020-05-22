@@ -35,14 +35,15 @@ import br.gov.mt.sejudh.sigepen.model.Parente;
 import br.gov.mt.sejudh.sigepen.model.Particularidade;
 import br.gov.mt.sejudh.sigepen.model.Passagem;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
+import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Regime;
 import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO.PassagemExtratoDTO;
-import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
 @Stateless
 public class RecuperandoService {
@@ -124,6 +125,11 @@ public class RecuperandoService {
 		if (!isMaioridade(recuperando.getPessoa().getDataNascimento())) {
 			throw new ValidacaoException("Recuperando não possui maioridade!");
 		}
+		
+		Long idRecup = recuperandoJaExisteNoSistema(recuperando);
+		if (idRecup != null) {
+			throw new ValidacaoException("O Recuperando " + recuperando.getPessoa().getNome() + ", matrícula " + idRecup + " já existe no sistema.");
+		}
 
 		if (possuiBio) {
 			bio = recuperando.getPessoa().getBiometria();
@@ -150,6 +156,14 @@ public class RecuperandoService {
 		}
 		
 		return recuperando;
+	}
+
+	public Long recuperandoJaExisteNoSistema(Pessoa p) {
+		return dao.recuperandoJaExisteNoSistema(p.getNome(), p.getNomeMae(), p.getDataNascimento(), 0L);
+	}
+	
+	public Long recuperandoJaExisteNoSistema(Recuperando r) {
+		return dao.recuperandoJaExisteNoSistema(r.getPessoa().getNome(), r.getPessoa().getNomeMae(), r.getPessoa().getDataNascimento(), r.getId());
 	}
 
 	public void excluir(RecuperandoDTO recuperando) {

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RegistroAutorizacaoPedidoTransito" pageWidth="595" pageHeight="800" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="405"/>
+	<property name="ireport.y" value="827"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
 	</parameter>
@@ -123,7 +123,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unidadeOrigem.responsavel.funcao.nome} != null ? $F{unidadeOrigem.responsavel.funcao.nome} : "DIRETOR"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unidadeOrigem.responsavel.funcao.nome} != null ? $F{unidadeOrigem.responsavel.funcao.nome} : "DIRETOR(A)"]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="20">

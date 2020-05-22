@@ -19,6 +19,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Alcunha;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
@@ -315,11 +316,13 @@ public class RecuperandoDAO {
 		jpql.append("join fetch p.lotacao l ");
 		jpql.append("join fetch l.estrutura e ");
 		jpql.append("join fetch e.unidadePrisional u ");
-		jpql.append("join fetch u.responsavel s ");
+		jpql.append("left join fetch u.responsavel s ");
 		jpql.append("where r.id = :idRecuperando ");
+		jpql.append("and l.tipoTransito != :tipoTransito ");
 
 		TypedQuery<Recuperando> query = em.createQuery(jpql.toString(), Recuperando.class);
 		query.setParameter("idRecuperando", recuperandoId);
+		query.setParameter("tipoTransito", TipoTransito.REMANEJAMENTO);
 
 		return query.getSingleResult();
 	}
@@ -332,15 +335,38 @@ public class RecuperandoDAO {
 					+ "and e.id = l.estrutura.id "
 					+ "and e.unidadePrisional.id = u.id "
 					+ "and r.id = :recuperandoId "
-					+ "and u.id = :unidadeId");
+					+ "and u.id = :unidadeId "
+					+ "and l.tipoTransito != :tipoTransito");
 			
 			query.setParameter("recuperandoId", recuperandoId);
 			query.setParameter("unidadeId", unidadeId);
+			query.setParameter("tipoTransito", TipoTransito.REMANEJAMENTO);
 			
 			long resultado = (Long) query.getSingleResult();
 			return (resultado > 0);
 		} catch (NoResultException e) {
 			return false;
+		}
+	}
+
+	public Long recuperandoJaExisteNoSistema(String nome, String nomeMae, Date dataNascimento, Long idRecuperando) {
+		try {
+			Query query = em.createQuery("select r.id from Recuperando r, Pessoa p "
+					+ "where r.id = p.recuperando.id "
+					+ "and p.nome = :nome "
+					+ "and p.nomeMae = :nomeMae "
+					+ "and p.dataNascimento = :dataNascimento "
+					+ "and r.id != :id ");
+			
+			query.setParameter("nome", nome.toUpperCase());
+			query.setParameter("nomeMae",nomeMae.toUpperCase());
+			query.setParameter("dataNascimento", dataNascimento);
+			query.setParameter("id", idRecuperando);
+			
+			long resultado = (Long) query.getSingleResult();
+			return resultado;
+		} catch (NoResultException e) {
+			return null;
 		}
 	}
 }

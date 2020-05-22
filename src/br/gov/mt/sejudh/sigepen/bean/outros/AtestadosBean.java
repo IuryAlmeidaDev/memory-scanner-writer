@@ -88,7 +88,11 @@ public class AtestadosBean {
 			UnidadePrisional unidadeAtual = lotacao.getEstrutura().getUnidadePrisional();
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("NOME_DO_RELATORIO", Atestados.getNomeRelatorio(atestadoSelecionado));
-			parameters.put("RESPONSAVEL", unidadeAtual.getResponsavel().getNome());
+			
+			if (unidadeAtual.getResponsavel() != null) { 
+				parameters.put("RESPONSAVEL", unidadeAtual.getResponsavel().getNome());
+			}
+			
 			parameters.put("UNIDADE_CIDADE_UF", unidadeAtual.getEndereco().getCidade().getNome() + "-" + unidadeAtual.getEndereco().getCidade().getEstado().getUf());
 			
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.Atestado, getTextoAtestado(), parameters));

@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.relatorio.textos;
 
 import org.apache.commons.lang3.StringUtils;
 
+import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
@@ -42,7 +43,7 @@ public class Atestados {
 		boolean isRecuperandoAtivoNaMesmaUnidadeLogada = isRecuperandoAtivoNaMesmaUnidadeLogada(rec);
 		StringBuilder buildResultado = new StringBuilder();
 		
-		buildResultado.append("\tATESTAMOS para os devidos fins, que o recuperando [nome], matrícula n° [matricula], "
+		buildResultado.append("\tATESTAMOS para os devidos fins, que o(a) recuperando(a) [nome], matrícula n° [matricula], "
 				+ "filho(a) de ");
 		
 		if (temPai)
@@ -93,7 +94,7 @@ public class Atestados {
 		boolean isRecuperandoAtivoNaMesmaUnidadeLogada = isRecuperandoAtivoNaMesmaUnidadeLogada(rec);
 		StringBuilder buildResultado = new StringBuilder();
 		
-		buildResultado.append("\tATESTO para os devidos fins, que o recuperando [nome], matrícula n° [matricula], "
+		buildResultado.append("\tATESTO para os devidos fins, que o(a) recuperando(a) [nome], matrícula n° [matricula], "
 				+ "filho(a) de ");
 		
 		if (temPai)
@@ -131,6 +132,10 @@ public class Atestados {
 	}
 	
 	private static boolean isRecuperandoAtivoNaMesmaUnidadeLogada(Recuperando rec) {
-		return (rec.getPassagemAtual().getLotacaoAtual().getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId());
+		if (rec.getStatus() == StatusRecuperando.ATIVO) {
+			return (rec.getPassagemAtual().getLotacaoAtual().getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId());
+		} else {
+			return false;
+		}
 	}
 }

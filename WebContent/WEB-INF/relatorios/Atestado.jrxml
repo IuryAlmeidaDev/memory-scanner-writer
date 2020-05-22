@@ -59,7 +59,7 @@
 			</textField>
 		</band>
 		<band height="200">
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="37" y="140" width="480" height="20" uuid="8bc6cb7a-d907-49da-84ab-53450d6a10d5"/>
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
@@ -69,7 +69,7 @@
 			<staticText>
 				<reportElement x="202" y="160" width="150" height="20" uuid="158f0680-7564-4124-8c54-9313b779027e"/>
 				<textElement textAlignment="Center"/>
-				<text><![CDATA[Diretor]]></text>
+				<text><![CDATA[Diretor(a)]]></text>
 			</staticText>
 		</band>
 	</detail>
