@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -259,6 +260,10 @@ public class Recuperando implements Serializable, FieldHandled {
 		}
 		
 		return new Passagem();
+	}
+	
+	public Passagem getUltimaPassagem() {
+		return passagens.stream().max(Comparator.comparing(Passagem::getId)).get();
 	}
 	
 	public void adicionarFotoFrente(Foto foto) {

@@ -54,7 +54,7 @@ public class Atestados {
 		
 		if (isRecuperandoAtivoNaMesmaUnidadeLogada) {
 			buildResultado.append("deu entrada nesta Unidade Prisional no dia [dataEntrada], possui [comportamento] "
-					+ "Comportamento Carcerário, uma vez que, não cometeu falta de natureza leve, média ou grave.");
+					+ "Comportamento Carcerário, uma vez que, [nao] cometeu falta de natureza leve, média ou grave.");
 		} else {
 			buildResultado.append("deu entrada nesta Unidade Prisional em [dataEntrada] e permaneceu até a data [dataSaida], "
 					+ "possuindo [comportamento] Comportamento Carcerário, uma vez que, [nao] cometeu falta de natureza leve, média ou grave.");
@@ -133,7 +133,7 @@ public class Atestados {
 	
 	private static boolean isRecuperandoAtivoNaMesmaUnidadeLogada(Recuperando rec) {
 		if (rec.getStatus() == StatusRecuperando.ATIVO) {
-			return (rec.getPassagemAtual().getLotacaoAtual().getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId());
+			return (rec.getUltimaPassagem().getUltimaLotacao().getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId());
 		} else {
 			return false;
 		}

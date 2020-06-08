@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -113,6 +114,10 @@ public class Passagem implements Serializable {
 		}
 		
 		return null;
+	}
+	
+	public PassagemLotacao getUltimaLotacao() {
+		return this.lotacao.stream().max(Comparator.comparing(PassagemLotacao::getId)).get();
 	}
 
 	public long getId() {

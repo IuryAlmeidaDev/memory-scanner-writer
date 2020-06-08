@@ -362,6 +362,11 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 		facesUtil.setObjetoSessao("tipo_relatorio", "unidade");
 	}
 	
+	public void selecionarEstruturaChamada(Estrutura estrutura) {
+		facesUtil.setObjetoSessao("estrutura", estrutura);
+		facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
+	}
+	
 	public FiltroUnidadePrisional getFiltro() {
 		return filtro;
 	}

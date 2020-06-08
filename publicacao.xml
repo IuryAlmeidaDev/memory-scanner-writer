@@ -129,7 +129,11 @@
 	</target>
 	
 	<target name="-pergunta">
-		<input message="Selecione o servidor" validargs="Teste,Homologacao,PRODUCAO" addproperty="ambiente.selecionado" />
+		<input message="Selecione o servidor" validargs="Teste,Treinamento,Homologacao,PRODUCAO" addproperty="ambiente.selecionado" />
+			<condition property="isTreinamento"> 
+				<equals arg1="${ambiente.selecionado}" arg2="Treinamento"/> 
+			</condition>
+		
 			<condition property="isTeste"> 
 				<equals arg1="${ambiente.selecionado}" arg2="Teste"/> 
 			</condition> 

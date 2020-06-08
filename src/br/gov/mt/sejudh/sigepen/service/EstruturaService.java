@@ -83,7 +83,7 @@ public class EstruturaService {
 		long lotacaoTotal = dao.quantidadeRecuperandosLotados(e);
 		List<TreeNode> filhos = no.getChildren();
 		for (TreeNode filho : filhos) {
-			lotacaoTotal += capacidadeTotalEstrutura((DefaultTreeNode)filho);
+			lotacaoTotal += lotacaoTotalEstrutura((DefaultTreeNode)filho);
 		}		
 		return lotacaoTotal;
 	}

@@ -318,11 +318,9 @@ public class RecuperandoDAO {
 		jpql.append("join fetch e.unidadePrisional u ");
 		jpql.append("left join fetch u.responsavel s ");
 		jpql.append("where r.id = :idRecuperando ");
-		jpql.append("and l.tipoTransito != :tipoTransito ");
 
 		TypedQuery<Recuperando> query = em.createQuery(jpql.toString(), Recuperando.class);
 		query.setParameter("idRecuperando", recuperandoId);
-		query.setParameter("tipoTransito", TipoTransito.REMANEJAMENTO);
 
 		return query.getSingleResult();
 	}

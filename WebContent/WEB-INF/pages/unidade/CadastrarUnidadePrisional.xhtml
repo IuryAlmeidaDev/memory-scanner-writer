@@ -209,6 +209,8 @@
 													message="Confirma a exclusão deste registro?"
 													icon="ui-icon-alert" />
 											</p:commandButton>
+											<p:commandButton title="Imprimir Lista de Chamada" icon="fa fa-print" oncomplete="PF('dlgListaDeChamada').show()"
+							 					update=":formListaChamadas" process="@this" action="#{unidadePrisionalBean.selecionarEstruturaChamada(est)}"/>
 						          		</center>
 						        	</p:column> 
 							    </p:treeTable>
@@ -334,5 +336,22 @@
 				<p:commandButton value="Fechar" onclick="PF('situacaoEstruturaUnidade').hide()" process="@this" />
 			</h:form>
 		</p:dialog>
+		<p:dialog id="dialogListaDeChamada" header="Listas de Chamadas"
+			showEffect="fade" widgetVar="dlgListaDeChamada" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+			<h:form prependId="false" id="formListaChamadas">
+				<p:panel>
+					<p:commandButton value="Lista de Chamada" icon="ui-icon-plus" oncomplete="PF('dlgListaDeChamada').hide()" actionListener="#{listaDeChamadaBean.imprimirListaDeChamada(false)}"/>
+					<br/>
+					<br/>
+					<p:commandButton value="Lista de Chamada Com Foto" icon="ui-icon-plus" oncomplete="PF('dlgListaDeChamada').hide()" actionListener="#{listaDeChamadaBean.imprimirListaDeChamada(true)}"/>
+					<br/>
+					<br/>
+					<p:commandButton value="Lista Sintética" icon="ui-icon-plus" oncomplete="PF('dlgListaDeChamada').hide()" actionListener="#{listaDeChamadaBean.imprimirListaSintetica}"/>
+					<br/>
+					<br/>
+					<p:commandButton value="Lista de Confere" icon="ui-icon-plus" oncomplete="PF('dlgListaDeChamada').hide()" actionListener="#{listaDeChamadaBean.abrirDialogConfere}"/>
+				</p:panel>
+			</h:form>
+		</p:dialog>		
     </ui:define>
 </ui:composition>

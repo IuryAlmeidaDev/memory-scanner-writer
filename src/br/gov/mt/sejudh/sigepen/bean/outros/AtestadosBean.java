@@ -1,8 +1,13 @@
 package br.gov.mt.sejudh.sigepen.bean.outros;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -18,6 +23,7 @@ import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import br.gov.mt.sejudh.sigepen.bean.FileDownloadHandlerBean;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.model.Passagem;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
@@ -64,15 +70,39 @@ public class AtestadosBean {
     	RecuperandoDTO rec = (RecuperandoDTO) facesUtil.getObjetoSessao("recuperandoAtestado");
     	recuperando = atestadosService.buscarRecuperandoComPassagens(rec.getId());
     	
-    	Optional<Passagem> optPassagem = recuperando.getPassagens().stream().filter(p -> 
-    		p.getLotacao().stream().anyMatch(l -> l.getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId())).findFirst();
+    	Optional<Passagem> optPassagem = recuperando.getPassagens().stream()
+    			.filter(p -> p.getLotacao().stream().anyMatch(l -> 
+    				l.getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId()))
+    			.max(Comparator.comparing(Passagem::getId));
     	
     	if (optPassagem.isPresent()) {
-    		Optional<PassagemLotacao> optLotacao = optPassagem.get().getLotacao().stream().filter(l ->
-    				l.getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId()).findFirst();
+    		List<PassagemLotacao> lotacoes = optPassagem.get().getLotacao().stream()
+    				.sorted(Comparator.comparing(PassagemLotacao::getId))
+    				.filter(l -> l.getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId())
+    				.collect(Collectors.toList());
+	
+    		List<PassagemLotacao> lotacaoAux = new ArrayList<>();
+    		lotacoes.forEach(l -> {
+    			lotacaoAux.add(l);
+    			
+    			if (l.getTipoTransito().equals(TipoTransito.TRANSFERENCIA)) {
+    				lotacaoAux.clear();
+    				lotacaoAux.add(l);
+    			}
+    			
+    			if (l.getTipoTransito().equals(TipoTransito.REMANEJAMENTO) && l.getDataSaida() != null) {
+    				lotacaoAux.add(l);
+    			}
+    		});
+
+    		lotacao = new PassagemLotacao();
+    		lotacao.setDataEntrada(lotacaoAux.stream().min(Comparator.comparing(PassagemLotacao::getId)).get().getDataEntrada());
+    		lotacao.setEstrutura(lotacaoAux.get(0).getEstrutura());
     		
-    		if (optLotacao.isPresent()) {
-    			lotacao = optLotacao.get();
+    		try {
+    			lotacao.setDataSaida(lotacaoAux.stream().max(Comparator.comparing(PassagemLotacao::getId)).get().getDataSaida());
+    		} catch (NoSuchElementException e) {
+    			lotacao.setDataSaida(null);
     		}
     	}
     	
