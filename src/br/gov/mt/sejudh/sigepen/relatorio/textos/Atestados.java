@@ -91,6 +91,7 @@ public class Atestados {
 	
 	private static TextoDoRelatorio getTextoPermanencia(TipoAtestado tipoAtestado, Recuperando rec, PassagemLotacao lotacao) {
 		boolean temPai = (rec.getPessoa().getNomePai() != null);
+		boolean ehBrasileiro = (rec.getPessoa().getNacionalidade().getId() == 1L);
 		boolean isRecuperandoAtivoNaMesmaUnidadeLogada = isRecuperandoAtivoNaMesmaUnidadeLogada(rec);
 		StringBuilder buildResultado = new StringBuilder();
 		
@@ -100,7 +101,11 @@ public class Atestados {
 		if (temPai)
 			buildResultado.append("[nomePai] e ");
 		
-		buildResultado.append("[nomeMae], nascido em [dataNascimento], natural de [cidade]/[estado], ");
+		buildResultado.append("[nomeMae], nascido(a) em [dataNascimento], ");
+		
+		if (ehBrasileiro) {
+			buildResultado.append("natural de [cidade]/[estado], ");
+		}
 		
 		if (isRecuperandoAtivoNaMesmaUnidadeLogada) {
 			buildResultado.append("deu entrada nesta Unidade Prisional em [dataEntrada], onde permanece detido em Regime Fechado "
@@ -115,11 +120,14 @@ public class Atestados {
 		resultado = resultado.replace("[matricula]", String.valueOf(rec.getId()));
 		resultado = resultado.replace("[nomeMae]", rec.getPessoa().getNomeMae().toUpperCase());
 		resultado = resultado.replace("[dataNascimento]", MaskUtil.getFormatoData().format(rec.getPessoa().getDataNascimento()));
-		resultado = resultado.replace("[cidade]", rec.getPessoa().getNaturalidade().getNome());
-		resultado = resultado.replace("[estado]", rec.getPessoa().getNaturalidade().getEstado().getUf());
 
 		if (temPai)
 			resultado = resultado.replace("[nomePai]", rec.getPessoa().getNomePai().toUpperCase());
+		
+		if (ehBrasileiro) {
+			resultado = resultado.replace("[cidade]", rec.getPessoa().getNaturalidade().getNome());
+			resultado = resultado.replace("[estado]", rec.getPessoa().getNaturalidade().getEstado().getUf());
+		}
 		
 		if (isRecuperandoAtivoNaMesmaUnidadeLogada) {
 			resultado = resultado.replace("[dataEntrada]", MaskUtil.getFormatoDataHora().format(lotacao.getDataEntrada()));

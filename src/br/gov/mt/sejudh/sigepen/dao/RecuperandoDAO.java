@@ -311,12 +311,13 @@ public class RecuperandoDAO {
 		jpql.append("select r ");
 		jpql.append("from Recuperando r ");
 		jpql.append("join fetch r.pessoa pe ");
-		jpql.append("join fetch pe.naturalidade c ");
 		jpql.append("join fetch r.passagens p ");
 		jpql.append("join fetch p.lotacao l ");
 		jpql.append("join fetch l.estrutura e ");
 		jpql.append("join fetch e.unidadePrisional u ");
 		jpql.append("left join fetch u.responsavel s ");
+		jpql.append("left join fetch pe.naturalidade c ");
+		jpql.append("left join fetch pe.nacionalidade n ");
 		jpql.append("where r.id = :idRecuperando ");
 
 		TypedQuery<Recuperando> query = em.createQuery(jpql.toString(), Recuperando.class);
