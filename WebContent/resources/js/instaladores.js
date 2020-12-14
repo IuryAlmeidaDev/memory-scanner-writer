@@ -1,9 +1,7 @@
 var wsDesktop;
 var versaoAtualizada;
 var versaoInstalada;
-var versaoAtual;
 
-getVersaoWebService();
 wsDesktopConnect();
 
 function wsDesktopConnect() {

@@ -200,26 +200,4 @@ public class BiometriaWebService {
 		
 		return String.valueOf(bt.getId());
 	}
-	
-	@POST
-	@Path("/versao-atual")
-	@Produces(MediaType.TEXT_PLAIN)
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String buscarVersaoAtualAplicativo() {
-		String versao = "";
-		
-		try {
-			versao = biometriaService.buscarVersaoAtualAplicativo();
-		} catch(Exception e) {
-			e.printStackTrace();
-			LoggerUtil.logWS(e, log);
-			
-			JsonObject js = new JsonObject();
-			js.addProperty("erro", "Não foi possível verificar versão do aplicativo.");
-			
-			return js.toString();
-		}
-		
-		return versao;
-	}
 }

@@ -4,7 +4,6 @@ var intervaloPing;
 var btnBio = document.getElementById("btnBio");
 var leitorHabilitado;
 var versaoInstalada;
-var versaoAtual;
 
 if (btnBio == null) {
 	btnBio = document.getElementById("tabView:btnBio");
@@ -13,7 +12,6 @@ if (btnBio == null) {
 desabilitaBotao();
 
 if (podeHabilitarEConectar) {
-	getVersaoWebService();
 	wsDesktopConnect();
 }
 

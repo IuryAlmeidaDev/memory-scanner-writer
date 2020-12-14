@@ -83,12 +83,12 @@
 		<mkdir dir="build/classes"/>
 	</target>
 	
-	<target name="replace" depends="-pergunta, -replace-desenvolvimento, -replace-teste, -replace-treinamento, -replace-homologacao, -replace-producao">
+	<target name="replace" depends="-pergunta, -replace-teste, -replace-treinamento, -replace-homologacao, -replace-producao">
 			<replace file="src/br/gov/mt/sejudh/sigepen/util/Sigepen.java">
 				<replacefilter token="SIGEPEN_OWNER_DES" value="${schema}" />
 				<replacefilter token="SIGEPEN_AUDIT_OWNER_DES" value="${schemaAudit}" />
 				<replacefilter token="SEJUDH_CONTEXT = &quot;sigepen&quot;" value="${context}" />
-				<replacefilter token="25452" value="${portanserver}" />
+				<replacefilter token="= 25452;" value="${portanserver}" />
 			</replace>
 			
 			<replace file="WebContent/WEB-INF/shiro.ini">
@@ -117,17 +117,13 @@
 		</target>
 	
 	<target name="-pergunta">
-		<input message="Selecione o servidor" validargs="Desenvolvimento,Teste,Treinamento,Homologacao,PRODUCAO" addproperty="ambiente.selecionado" />
-			<condition property="isDesenvolvimento">
-				<equals arg1="${ambiente.selecionado}" arg2="Desenvolvimento"/>
-			</condition> 
-
+		<input message="Selecione o servidor" validargs="Teste,Integracao,Homologacao,PRODUCAO" addproperty="ambiente.selecionado" />
 			<condition property="isTeste"> 
 				<equals arg1="${ambiente.selecionado}" arg2="Teste"/> 
 			</condition> 
 		
 			<condition property="isTreinamento"> 
-				<equals arg1="${ambiente.selecionado}" arg2="Treinamento"/> 
+				<equals arg1="${ambiente.selecionado}" arg2="Integracao"/> 
 			</condition> 
 
 			<condition property="isHomologacao">
@@ -138,27 +134,16 @@
 				<equals arg1="${ambiente.selecionado}" arg2="PRODUCAO"/> 
 			</condition>
 	</target>
-	
-	<target name="-replace-desenvolvimento" if="isDesenvolvimento">
-		<property name="schema" value="SIGEPEN_OWNER_DES" />
-		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER_DES" />
-		<property name="dataSource" value="java:/sigepen-dev" />
-		<property name="nomeArquivo" value="sigepen" />
-		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
-		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
-		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
-		<property name="portanserver" value="25452" />
-	</target>
-	
+
 	<target name="-replace-treinamento" if="isTreinamento">
-		<property name="schema" value="SIGEPEN_OWNER_TREI" />
-		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER_TREI" />
-		<property name="dataSource" value="java:/sigepen-dev" />
+		<property name="schema" value="SIGEPEN_USER_INT" />
+		<property name="schemaAudit" value="SIGEPEN_USER_INT" />
+		<property name="dataSource" value="java:/sigepen-int" />
 		<property name="nomeArquivo" value="sigepent" />
 		<property name="persistenceUnit" value="name=&quot;sigepent&quot;" />
 		<property name="jpaUtil" value="unitName = &quot;sigepent&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
-		<property name="portanserver" value="25452" />
+		<property name="portanserver" value="= 25452;" />
 	</target>
 	
 	<target name="-replace-teste" if="isTeste">
@@ -169,7 +154,7 @@
 		<property name="persistenceUnit" value="name=&quot;sigepenteste&quot;" />
 		<property name="jpaUtil" value="unitName = &quot;sigepenteste&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
-		<property name="portanserver" value="25452" />
+		<property name="portanserver" value="= 25453;" />
 	</target>
 	
 	<target name="-replace-homologacao" if="isHomologacao">
@@ -180,7 +165,7 @@
 		<property name="persistenceUnit" value="name=&quot;sigepenh&quot;" />
 		<property name="jpaUtil" value="unitName = &quot;sigepenh&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
-		<property name="portanserver" value="25452" />
+		<property name="portanserver" value="= 25452;" />
 	</target>
 		
 	<target name="-replace-producao" if="isProducao">
@@ -191,6 +176,6 @@
 		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
 		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
-		<property name="portanserver" value="25452" />
+		<property name="portanserver" value="= 25452;" />
 	</target>
 </project>

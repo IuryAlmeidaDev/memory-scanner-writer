@@ -3,28 +3,6 @@
 	var biometriaObrigatoria = #{(recuperandoBean.verificarSeBiometriaEhObrigatoria())};
 	var contexto = '#{sigepen.getApplicationName()}';
 	var contexto2 = '#{sigepen.getUrl()}';
-	var wsUrl = '#{sigepen.getWsUrl()}'
-
-	function getVersaoWebService() 
-	{              
-	    try 
-	    {    
-	       $.ajax({
-	         type: "POST",
-	         url: contexto2+"/services/biometria/versao-atual",
-	         contentType: "text/plain; charset=utf-8",
-	         dataType: "text",
-	         success: function(msg) {
-	               versaoAtual = msg;
-	         },
-	         failure: function(msg) { 
-	        	 console.log(msg);
-	         }
-	      });
-	    }
-	    catch (e)
-	    {
-	        console.log(e);
-	    }
-	}
+	var wsUrl = '#{sigepen.getWsUrl()}';
+	var versaoAtual = '#{utilBean.getBiometriaVersaoAtual()}';
 </script> 

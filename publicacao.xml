@@ -129,9 +129,9 @@
 	</target>
 	
 	<target name="-pergunta">
-		<input message="Selecione o servidor" validargs="Teste,Treinamento,Homologacao,PRODUCAO" addproperty="ambiente.selecionado" />
+		<input message="Selecione o servidor" validargs="Teste,Integracao,Homologacao,PRODUCAO" addproperty="ambiente.selecionado" />
 			<condition property="isTreinamento"> 
-				<equals arg1="${ambiente.selecionado}" arg2="Treinamento"/> 
+				<equals arg1="${ambiente.selecionado}" arg2="Integracao"/> 
 			</condition>
 		
 			<condition property="isTeste"> 
@@ -159,9 +159,9 @@
 	</target>
 	
 	<target name="-replace-treinamento" if="isTreinamento">
-		<property name="schema" value="SIGEPEN_OWNER_TREI" />
-		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER_TREI" />
-		<property name="dataSource" value="java:/sigepen-dev" />
+		<property name="schema" value="SIGEPEN_USER_INT" />
+		<property name="schemaAudit" value="SIGEPEN_USER_INT" />
+		<property name="dataSource" value="java:/sigepen-int" />
 		<property name="nomeArquivo" value="sigepent" />
 		<property name="persistenceUnit" value="name=&quot;sigepent&quot;" />
 		<property name="jpaUtil" value="unitName = &quot;sigepent&quot;" />
@@ -170,17 +170,17 @@
 	</target>
 	
 	<target name="-replace-teste" if="isTeste">
-		<property name="schema" value="SIGEPEN_OWNER_DES" />
-		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER_DES" />
-		<property name="dataSource" value="java:/sigepen-dev" />
+		<property name="schema" value="SIGEPEN_OWNER_TES" />
+		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER_TES" />
+		<property name="dataSource" value="java:/sigepen-teste" />
 		<property name="nomeArquivo" value="sigepenteste" />
 		<property name="persistenceUnit" value="name=&quot;sigepenteste&quot;" />
 		<property name="jpaUtil" value="unitName = &quot;sigepenteste&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepenteste&quot;" />
 		<property name="portanserver" value="= 25453;" />
-		<property name="userDsn" value="UID=sigepen_user_des;" />
-		<property name="passDsn" value="PWD=sigependes;" />
-		<property name="dsn" value="DSN=DESENVOLVIMENTO;" />
+		<property name="userDsn" value="UID=sigepen_user_tes;" />
+		<property name="passDsn" value="PWD=sigepentes;" />
+		<property name="dsn" value="DSN=TESTE;" />
 	</target>
 	
 	<target name="-replace-homologacao" if="isHomologacao">

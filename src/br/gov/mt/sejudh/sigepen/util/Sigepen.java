@@ -157,18 +157,11 @@ public class Sigepen {
 	public static String getWsUrl() {
 		String url = getUrl();
 		
-		if (url.contains("mt.gov.br")) {
-			url = url.substring(0, url.indexOf("/sigepen"))
-					.replace("https:", "wss:")
-					.replace("http:", "ws:")
-					.replace("portal.", "wso.")
-					.replace("sispen.", "wso.")
-					.concat(":8443/sigepen/biometria");
-			
-			if (url.contains("sesp")) {
-				url = url.replace("sejudh.", "sesp.");
-			}
-		}	
+		url = url.substring(0, url.indexOf("/sigepen"))
+				.replace("https:", "wss:")
+				.replace("http:", "ws:")
+				.replace("sispen.", "wso.")
+				.concat(":8443/sigepen/biometria");
 		
 		return url;
 	}
