@@ -315,6 +315,7 @@ public class RecuperandoDAO {
 		jpql.append("join fetch p.lotacao l ");
 		jpql.append("join fetch l.estrutura e ");
 		jpql.append("join fetch e.unidadePrisional u ");
+		jpql.append("join fetch pe.pais pa ");
 		jpql.append("left join fetch u.responsavel s ");
 		jpql.append("left join fetch pe.naturalidade c ");
 		jpql.append("left join fetch pe.nacionalidade n ");

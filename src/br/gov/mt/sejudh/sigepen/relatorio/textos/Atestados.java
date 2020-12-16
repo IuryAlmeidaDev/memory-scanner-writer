@@ -105,6 +105,8 @@ public class Atestados {
 		
 		if (ehBrasileiro) {
 			buildResultado.append("natural de [cidade]/[estado], ");
+		} else {
+			buildResultado.append("natural do país [pais], ");
 		}
 		
 		if (isRecuperandoAtivoNaMesmaUnidadeLogada) {
@@ -127,6 +129,8 @@ public class Atestados {
 		if (ehBrasileiro) {
 			resultado = resultado.replace("[cidade]", rec.getPessoa().getNaturalidade().getNome());
 			resultado = resultado.replace("[estado]", rec.getPessoa().getNaturalidade().getEstado().getUf());
+		} else {
+			resultado = resultado.replace("[pais]", rec.getPessoa().getPais().getNome());
 		}
 		
 		if (isRecuperandoAtivoNaMesmaUnidadeLogada) {
