@@ -364,7 +364,7 @@ public class RecuperandoDAO {
 			long resultado = (Long) query.getSingleResult();
 			return resultado;
 		} catch (NoResultException e) {
-			return null;
+			return 0L;
 		}
 	}
 }
