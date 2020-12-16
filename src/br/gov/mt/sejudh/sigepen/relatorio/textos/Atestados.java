@@ -64,7 +64,7 @@ public class Atestados {
 		resultado = resultado.replace("[nome]", rec.getPessoa().getNome().toUpperCase());
 		resultado = resultado.replace("[matricula]", String.valueOf(rec.getId()));
 		resultado = resultado.replace("[nomeMae]", rec.getPessoa().getNomeMae().toUpperCase());
-		resultado = resultado.replace("[estabelecimento]", rec.getPassagemAtual().getPassagemProcedencia().getProcedencia().getNome());
+		resultado = resultado.replace("[estabelecimento]", rec.getUltimaPassagem().getPassagemProcedencia().getProcedencia().getNome());
 		resultado = resultado.replace("[dataNascimento]", MaskUtil.getFormatoData().format(rec.getPessoa().getDataNascimento()));
 		resultado = resultado.replace("[comportamento]", comportamento.toUpperCase());
 		
