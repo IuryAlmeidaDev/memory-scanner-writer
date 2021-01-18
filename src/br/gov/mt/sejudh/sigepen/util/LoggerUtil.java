@@ -193,9 +193,11 @@ public class LoggerUtil implements Serializable {
 	
 	private static void log(LogSeverity severidade, Acao acao, Object objeto, Throwable e, Logger log) {
 		if (e != null) {
-			if (e.getMessage().toLowerCase().contains("unable to get managed connection")) {
-				System.out.println("Entrou");
-				return;
+			if (e.getMessage() != null) {
+				if (e.getMessage().toLowerCase().contains("unable to get managed connection")) {
+					System.out.println("Entrou");
+					return;
+				}
 			}
 		}
 		

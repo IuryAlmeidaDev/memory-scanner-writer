@@ -14,11 +14,6 @@
 	<ui:define name="footer">
 		<h:outputStylesheet library="css" name="corpohumano.css" />
 		<h:outputScript library="js" name="biometriav2.js?ver=#{utilBean.biometriaVersao}" />
-			<script type="text/javascript">
-				var timeout;
-				clearInterval(timeout);
-				timeout = setInterval(refresh, 600000);
-			</script>
 	</ui:define>
 		
 	<ui:define name="conteudo">
