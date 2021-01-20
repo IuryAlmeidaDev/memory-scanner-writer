@@ -35,6 +35,7 @@ import br.gov.mt.sejudh.sigepen.model.Parente;
 import br.gov.mt.sejudh.sigepen.model.Particularidade;
 import br.gov.mt.sejudh.sigepen.model.Passagem;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
+import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Regime;
@@ -125,7 +126,11 @@ public class RecuperandoService {
 			throw new ValidacaoException("Recuperando não possui maioridade!");
 		}
 		
-		validaRecuperandoJaExisteNoSistema(recuperando);
+        Long idRecup = recuperandoJaExisteNoSistema(recuperando);
+        
+        if (idRecup != null) {
+            throw new ValidacaoException("O Recuperando " + recuperando.getPessoa().getNome() + ", matrícula " + idRecup + " já existe no sistema.");
+        }
 		
 		if (possuiBio) {
 			bio = recuperando.getPessoa().getBiometria();
@@ -154,15 +159,13 @@ public class RecuperandoService {
 		return recuperando;
 	}
 	
-	public Long validaRecuperandoJaExisteNoSistema(Recuperando r) throws ValidacaoException {
-		Long recId = dao.recuperandoJaExisteNoSistema(r.getPessoa().getNome(), r.getPessoa().getNomeMae(), r.getPessoa().getDataNascimento(), r.getId());
-			
-		if (recId > 0) {
-			throw new ValidacaoException("O Recuperando " + r.getPessoa().getNome() + ", matrícula " + recId + " já existe no sistema.");
-		}
-		
-		return recId;
-	}
+    public Long recuperandoJaExisteNoSistema(Pessoa p) {
+        return dao.recuperandoJaExisteNoSistema(p.getNome(), p.getNomeMae(), p.getDataNascimento(), 0L);
+    }
+    
+    public Long recuperandoJaExisteNoSistema(Recuperando r) {
+        return dao.recuperandoJaExisteNoSistema(r.getPessoa().getNome(), r.getPessoa().getNomeMae(), r.getPessoa().getDataNascimento(), r.getId());
+    }
 
 	public void excluir(RecuperandoDTO recuperando) {
 		dao.excluir(recuperando.getId());

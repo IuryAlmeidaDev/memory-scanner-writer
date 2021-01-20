@@ -27,7 +27,6 @@ import br.gov.mt.sejudh.sigepen.model.Documento;
 import br.gov.mt.sejudh.sigepen.model.Endereco;
 import br.gov.mt.sejudh.sigepen.model.Estado;
 import br.gov.mt.sejudh.sigepen.model.Pessoa;
-import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.service.ComboService;
 import br.gov.mt.sejudh.sigepen.service.DocumentoService;
@@ -63,8 +62,6 @@ public class PreCadastroPessoaBean extends MetodosDePaginaBean {
 	@Inject
 	private Logger log;
 	
-	private Recuperando recuperando;
-	
 	private Pessoa pessoa;
 	
 	private Estado estado;
@@ -90,8 +87,7 @@ public class PreCadastroPessoaBean extends MetodosDePaginaBean {
 	@URLAction(onPostback=false)
 	public String init() {
 		try {
-			this.recuperando = ((Recuperando) facesUtil.getObjetoSessao("recuperandoPessoa"));
-			this.pessoa = this.recuperando.getPessoa();
+			this.pessoa = ((Pessoa) facesUtil.getObjetoSessao("pessoa"));
 			
 			switch(this.getAcaoDeTela()) {
 				case CADASTRAR:
@@ -164,7 +160,11 @@ public class PreCadastroPessoaBean extends MetodosDePaginaBean {
 				throw new ValidacaoException("Data de nascimento não pode ser maior que 100 anos.");
 			}
 			
-			validaRecuperandoJaExisteNoSistema();
+            Long idRecup = recuperandoJaExisteNoSistema();
+            
+            if (idRecup != null) {
+                throw new ValidacaoException("O Recuperando " + this.pessoa.getNome() + ", matrícula " + idRecup + " já existe no sistema.");
+            }
 			
 			return true;
 		} catch (ValidacaoException e) {
@@ -174,10 +174,10 @@ public class PreCadastroPessoaBean extends MetodosDePaginaBean {
 			return false;
 		}
 	}
-	
-	private void validaRecuperandoJaExisteNoSistema() throws ValidacaoException {
-		recuperandoService.validaRecuperandoJaExisteNoSistema(this.recuperando);
-	}
+
+    private Long recuperandoJaExisteNoSistema() {
+        return recuperandoService.recuperandoJaExisteNoSistema(this.pessoa);
+    }
 	
 	/*
 	 * Listeners

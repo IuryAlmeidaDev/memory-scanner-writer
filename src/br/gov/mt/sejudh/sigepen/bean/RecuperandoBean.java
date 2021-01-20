@@ -851,7 +851,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		options.put("resizable", false);
 		options.put("closable", false);
 
-		facesUtil.setObjetoSessao("recuperandoPessoa", this.recuperando);
+		facesUtil.setObjetoSessao("pessoa", this.recuperando.getPessoa());
 		facesUtil.exibirPaginaDialog(acaoDialogPreCadastroPessoa(), options, 400, 800);
 	}
 	
