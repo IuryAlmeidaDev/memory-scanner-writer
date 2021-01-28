@@ -43,6 +43,8 @@ public class FiltroCargo extends FiltroConsulta {
 
 	@Override
 	public void configurarFiltros() {
+		getCriteria().createAlias("categoria", "categoria");
+		
 		if(this.getNome()!= null && !this.getNome().equalsIgnoreCase("") ){
 			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nome", this.getNome(), MatchMode.ANYWHERE));
 		}

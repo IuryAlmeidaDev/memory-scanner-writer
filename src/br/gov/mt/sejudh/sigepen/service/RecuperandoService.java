@@ -159,8 +159,8 @@ public class RecuperandoService {
 		return recuperando;
 	}
 	
-    public Long recuperandoJaExisteNoSistema(Pessoa p) {
-        return dao.recuperandoJaExisteNoSistema(p.getNome(), p.getNomeMae(), p.getDataNascimento(), 0L);
+    public Long recuperandoJaExisteNoSistema(Pessoa p, Long idRecuperando) {
+        return dao.recuperandoJaExisteNoSistema(p.getNome(), p.getNomeMae(), p.getDataNascimento(), idRecuperando);
     }
     
     public Long recuperandoJaExisteNoSistema(Recuperando r) {

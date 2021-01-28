@@ -29,14 +29,14 @@ public class UsuarioDAO {
 		try {
 			if (usuario.getId() > 0) {
 				em.merge(usuario);
+				return buscarUsuarioPorId(usuario.getId());
 			} else {
 				em.persist(usuario);
+				return usuario;
 			}
 		} catch (Exception e){
 			throw e;
 		}
-		
-		return usuario;
 	}
 	
 	public void excluir(long usuarioId) throws Exception {

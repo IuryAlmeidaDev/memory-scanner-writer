@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -21,7 +22,9 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name = "AUTORIZACAO_CADASTRO_BIO", schema = Sigepen.SEJUDH_SCHEMA)
-public class AutorizacaoCadastroSemBiometria {
+public class AutorizacaoCadastroSemBiometria implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@SequenceGenerator(name = "SEQ_AUT_CAD_BIO_GENERATOR", sequenceName = "SEQ_AUT_CAD_BIO", initialValue = 1,  allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	@Id

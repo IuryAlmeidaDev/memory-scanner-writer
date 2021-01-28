@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +22,9 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name="BIOMETRIA_AMOSTRA", schema = Sigepen.SEJUDH_SCHEMA)
-public class BiometriaAmostra {
+public class BiometriaAmostra implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 
 	@SequenceGenerator(name = "SEQ_BIO_AMOS_GENERATOR", sequenceName = "SEQ_BIOMETRIA_AMOSTRA", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	

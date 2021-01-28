@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,8 +29,10 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name="BIOMETRIA_DEDO", schema = Sigepen.SEJUDH_SCHEMA)
-public class BiometriaDedo {
-
+public class BiometriaDedo implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
 	@SequenceGenerator(name = "SEQ_BIO_DEDO_GENERATOR", sequenceName = "SEQ_BIOMETRIA_DEDO", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	
 	@Id

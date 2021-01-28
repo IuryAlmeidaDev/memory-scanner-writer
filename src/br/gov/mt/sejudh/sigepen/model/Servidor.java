@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +35,10 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name = "SERVIDOR", schema = Sigepen.SEJUDH_SCHEMA)
-public class Servidor {
+public class Servidor implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+
 	@SequenceGenerator(name = "SEQ_SERVIDOR_GENERATOR", sequenceName = "SEQ_SERVIDOR", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	
 	@Id

@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.component.commandbutton.CommandButton;
 import org.primefaces.context.RequestContext;
@@ -64,6 +65,8 @@ public class PreCadastroPessoaBean extends MetodosDePaginaBean {
 	
 	private Pessoa pessoa;
 	
+	private Pessoa pessoaNaoAlterada;
+	
 	private Estado estado;
 	
 	private List<Cidade> cidades;
@@ -84,10 +87,13 @@ public class PreCadastroPessoaBean extends MetodosDePaginaBean {
 	
 	private boolean skip;
 	
+	private Long idRecuperando;
+	
 	@URLAction(onPostback=false)
 	public String init() {
 		try {
 			this.pessoa = ((Pessoa) facesUtil.getObjetoSessao("pessoa"));
+			this.idRecuperando = ((Long) facesUtil.getObjetoSessao("idRecuperando"));
 			
 			switch(this.getAcaoDeTela()) {
 				case CADASTRAR:
@@ -106,7 +112,9 @@ public class PreCadastroPessoaBean extends MetodosDePaginaBean {
 					break;
 					
 				case VISUALIZAR:
-				case ALTERAR:					
+				case ALTERAR:
+					this.pessoaNaoAlterada = SerializationUtils.clone(this.pessoa);
+					
 					if (this.pessoa == null || this.isDialogInvalida()) {
 						return "pretty:dashboard";
 					}
@@ -176,7 +184,7 @@ public class PreCadastroPessoaBean extends MetodosDePaginaBean {
 	}
 
     private Long recuperandoJaExisteNoSistema() {
-        return recuperandoService.recuperandoJaExisteNoSistema(this.pessoa);
+        return recuperandoService.recuperandoJaExisteNoSistema(this.pessoa, this.idRecuperando);
     }
 	
 	/*
@@ -214,11 +222,7 @@ public class PreCadastroPessoaBean extends MetodosDePaginaBean {
 	}
 	
 	public void fecharDialog(ActionEvent event) {
-		if (this.pessoa.getNome() == null) {
-			facesUtil.fecharPaginaDialog(null);
-		} else {
-			facesUtil.fecharPaginaDialog(pessoa);
-		}
+		facesUtil.fecharPaginaDialog(this.pessoaNaoAlterada);
 	}
 	
 	public boolean pessoaEhEstrangeira() {

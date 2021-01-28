@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -32,7 +33,9 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name = "BIOMETRIA", schema = Sigepen.SEJUDH_SCHEMA)
-public class Biometria {
+public class Biometria implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@SequenceGenerator(name = "SEQ_BIOMETRIA_GENERATOR", sequenceName = "SEQ_BIOMETRIA", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	

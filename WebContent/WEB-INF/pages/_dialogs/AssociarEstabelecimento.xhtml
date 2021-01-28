@@ -5,6 +5,10 @@
 	xmlns:p="http://primefaces.org/ui"
 	template="/WEB-INF/pages/_templates/dialog.xhtml"
 	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+	
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
 
 	<ui:define name="head">
 		<title>Estabelecimento</title>
@@ -39,6 +43,8 @@
 					filter="true"
 					converter="SimpleEntityConverter"
 					temSelecione="true"
+					filterMatchMode="custom"
+					filterFunction="removeAcento"
 					/>
 				
 				<br/>

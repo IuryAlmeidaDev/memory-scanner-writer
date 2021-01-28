@@ -351,17 +351,27 @@ public class RecuperandoDAO {
 
 	public Long recuperandoJaExisteNoSistema(String nome, String nomeMae, Date dataNascimento, Long idRecuperando) {
 		try {
-			Query query = em.createQuery("select r.id from Recuperando r, Pessoa p "
+			boolean possuiIdRecuperando = idRecuperando > 0;
+			StringBuilder sqlQuery = new StringBuilder();
+			
+			sqlQuery.append("select r.id from Recuperando r, Pessoa p "
 					+ "where r.id = p.recuperando.id "
 					+ "and p.nome = :nome "
 					+ "and p.nomeMae = :nomeMae "
-					+ "and p.dataNascimento = :dataNascimento "
-					+ "and r.id != :id ");
+					+ "and p.dataNascimento = :dataNascimento ");
 			
+			if (possuiIdRecuperando) {
+				sqlQuery.append("and r.id != :id ");
+			}
+			
+			Query query = em.createQuery(sqlQuery.toString());
 			query.setParameter("nome", nome.toUpperCase());
 			query.setParameter("nomeMae",nomeMae.toUpperCase());
 			query.setParameter("dataNascimento", dataNascimento);
-			query.setParameter("id", idRecuperando);
+			
+			if (possuiIdRecuperando) {
+				query.setParameter("id", idRecuperando);
+			}
 			
 			long resultado = (Long) query.getSingleResult();
 			return resultado;
