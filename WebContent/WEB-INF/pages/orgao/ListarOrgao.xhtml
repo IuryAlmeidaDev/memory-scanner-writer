@@ -5,6 +5,10 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
 
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
@@ -41,6 +45,8 @@
 								itemsValue="#{orgaoBean.cidades}" 
 								value="#{orgaoBean.filtro.cidade}"
 								filter="true"
+								filterMatchMode="custom"
+								filterFunction="removeAcento"
 								converter="SimpleEntityConverter"
 								temSelecione="true"
 								/>
