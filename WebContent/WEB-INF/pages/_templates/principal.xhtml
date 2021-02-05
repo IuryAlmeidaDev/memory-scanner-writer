@@ -84,9 +84,13 @@
 			    <p:graphicImage name="images/ajax-loader.gif" />
 			</p:dialog>
 			
-			<p:confirmDialog widgetVar="dlgVersoes" closeOnEscape="true" header="Atenção" message="É necessário atualizar a biometria.">
-				<p:button value="Atualizar" outcome="pretty:Instaladores" icon="ui-icon-disk" />
-				<p:commandButton value="Fechar" type="button" onclick="PF('dlgVersoes').hide();" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			<p:confirmDialog widgetVar="dlgVersoes" closeOnEscape="false" closable="false" header="Atenção" message="A biometria foi atualizada, por favor inicie o aplicativo biométrico.">
+				<h:outputScript>
+					function fechar() {
+						enviaComandoWs('fechar');
+					}
+				</h:outputScript>
+				<p:commandButton value="Fechar" type="button" onclick="fechar(); PF('dlgVersoes').hide();" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 			</p:confirmDialog>
 		</div>
 	</div>

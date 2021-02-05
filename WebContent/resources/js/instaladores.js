@@ -1,5 +1,4 @@
 var wsDesktop;
-var versaoAtualizada;
 var versaoInstalada;
 
 wsDesktopConnect();
