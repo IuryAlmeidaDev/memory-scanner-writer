@@ -230,7 +230,10 @@ public class RecuperandoDAO {
 		Query query2 = em.createQuery("select count(r) from Remanejamento r where r.foto.id = :idFoto");
 		query2.setParameter("idFoto", foto.getId());
 		Long contador2 = (Long)query2.getSingleResult();
-		long count = contador + contador2;
+		Query query3 = em.createQuery("select count(p) from Passagem p where p.foto.id = :idFoto");
+		query3.setParameter("idFoto", foto.getId());
+		Long contador3 = (Long)query3.getSingleResult();
+		long count = contador + contador2 + contador3;
 		return count>0;
 	}
 	

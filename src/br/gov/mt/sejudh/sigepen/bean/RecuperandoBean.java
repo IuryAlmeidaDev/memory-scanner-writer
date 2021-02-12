@@ -761,8 +761,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				throw new ValidacaoException("Não é permitido excluir foto de frente atual.");
 			}
 
-			this.recuperando.getFotos().remove(f);
 			service.excluirFoto(f);
+			this.recuperando.getFotos().remove(f);
 			LoggerUtil.logInfo(Acao.EXCLUIR, f, log);
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());

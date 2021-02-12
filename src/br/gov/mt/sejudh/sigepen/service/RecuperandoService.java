@@ -307,8 +307,8 @@ public class RecuperandoService {
 	
 	public void excluirFoto(Foto f) throws ValidacaoException {
 		if(dao.fotoVinculada(f)){
-			throw new ValidacaoException("Foto vinculada a uma movimentação. Exclusão não permitida!");
-		}
+			throw new ValidacaoException("Foto vinculada a uma movimentação ou a uma passagem. Exclusão não permitida!");
+		}	
 		dao.excluirFoto(f);
 	}
 	
