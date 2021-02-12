@@ -821,10 +821,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	}
 
 	public void excluirParticularidade(Particularidade p) {
-		this.recuperando.getParticularidades().remove(p);
-
 		try {
 			service.excluirParticularidade(p);
+			this.recuperando.getParticularidades().remove(p);
 			LoggerUtil.logInfo(Acao.EXCLUIR, p, log);
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir particularidade: " + e.getMessage());
