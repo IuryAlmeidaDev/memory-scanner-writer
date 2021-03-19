@@ -133,7 +133,7 @@ public class Pessoa implements Serializable, FieldHandled {
 	}
 
 	public void setNome(String nome) {
-		this.nome = Sigepen.formatarEspacos(nome);
+		this.nome = Sigepen.removerAcentuacao(Sigepen.formatarEspacos(nome));
 	}
 
 	public String getNomeSocial() {
@@ -153,7 +153,7 @@ public class Pessoa implements Serializable, FieldHandled {
 	}
 
 	public void setNomePai(String nomePai) {
-		this.nomePai = Sigepen.formatarEspacos(nomePai);
+		this.nomePai = Sigepen.removerAcentuacao(Sigepen.formatarEspacos(nomePai));
 	}
 
 	public Sexo getSexo() {
@@ -165,7 +165,7 @@ public class Pessoa implements Serializable, FieldHandled {
 	}	
 
 	public void setNomeMae(String nomeMae) {
-		this.nomeMae = Sigepen.formatarEspacos(nomeMae);
+		this.nomeMae = Sigepen.removerAcentuacao(Sigepen.formatarEspacos(nomeMae));
 	}
 
 	public Date getDataNascimento() {
