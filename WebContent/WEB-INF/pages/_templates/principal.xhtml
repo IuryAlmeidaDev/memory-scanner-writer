@@ -96,19 +96,7 @@
 	</div>
 	
 	<h:outputScript library="js" name="bootstrap.min.js" />
+	<h:outputScript library="js" name="sigepen.js" />
 	<ui:insert name="footer" />
-	<script type="text/javascript">
-		var timeout;
-		clearInterval(timeout);
-		timeout = setInterval(sessionTimeout, 1799000);
-	
-		function download() {
-			document.getElementById('iDownload').contentWindow.go();
-		}
-
-		function sessionTimeout() {
-			logout();
-		}
-	</script>
 </h:body>
 </html>

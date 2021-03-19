@@ -29,11 +29,7 @@
 		<iframe id="iDownload" name="iDownload" width="1" height="1" frameborder="0" src="#{sigepen.getApplicationDownloadUrl()}"/>
 	</h:panelGroup>
 	<h:outputScript library="js" name="bootstrap.min.js" />
+	<h:outputScript library="js" name="sigepen.js" />
 	<ui:insert name="footer" />
-	<script>
-	function download() {
-		document.getElementById('iDownload').contentWindow.go();
-	}
-	</script>
 </h:body>
 </html>

@@ -27,6 +27,6 @@ import org.hibernate.engine.spi.TypedValue;
 		@Override
 		public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) throws HibernateException {
 			final String[] columns = criteriaQuery.findColumns(this.propertyName, criteria);
-			return "translate(lower(" + columns[0] + "), 'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') like translate(lower(?), 'ç', 'c')";
+			return "translate(lower(" + columns[0] + "), 'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') like translate(lower(?), 'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc')";
 		}
 	}
