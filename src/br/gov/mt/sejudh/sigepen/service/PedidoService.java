@@ -240,6 +240,10 @@ public class PedidoService {
 						validarSeRecuperandoEstaEmMovimentacaoInterna(pedido);
 						break;
 						
+					case TRANSFERENCIA:
+						validarSeRecuperandoEstaAssociadoEmOutroPedidoAutorizadoOuVinculadoOuAbertoOuSuspenso(pedido);
+						break;
+						
 					default:
 						break;
 				}
@@ -248,6 +252,26 @@ public class PedidoService {
 			default:
 				break;
 						
+		}
+	}
+	
+	//Precisa refatorar e dinamizar de alguma forma os predicados (Parametrizar)
+	private void validarSeRecuperandoEstaAssociadoEmOutroPedidoAutorizadoOuVinculadoOuAbertoOuSuspenso(PedidoTransito pedido) throws ValidacaoException {
+		List<PedidoTransito> pedidosDoRecuperando = dao.buscarPedidosDoRecuperando(pedido.getRecuperando().getId());
+		
+		Predicate<PedidoTransito> pedidoAutorizado = p -> p.getStatus() == StatusPedido.AUTORIZADO;
+		Predicate<PedidoTransito> pedidoVinculado = p -> p.getStatus() == StatusPedido.VINCULADO;
+		Predicate<PedidoTransito> pedidoAndamento = p -> p.getStatus() == StatusPedido.EM_ANDAMENTO;
+		Predicate<PedidoTransito> pedidoSuspenso = p -> p.getStatus() == StatusPedido.SUSPENSO;
+		Predicate<PedidoTransito> pedidoAtualEhDiferenteDosExistentes = p -> p.getId() != pedido.getId();
+		
+		long count = pedidosDoRecuperando.stream()
+				.filter(pedidoAutorizado.or(pedidoVinculado).or(pedidoAndamento).or(pedidoSuspenso))
+				.filter(pedidoAtualEhDiferenteDosExistentes)
+				.count();
+
+		if (count > 0) {
+			throw new ValidacaoException("Já existe um Pedido de Trânsito em aberto para esse Recuperando. Operação não permitida!");
 		}
 	}
 	
@@ -264,7 +288,7 @@ public class PedidoService {
 				.count();
 
 		if (count > 0) {
-			throw new ValidacaoException("Já existe um Pedido de Trânsito Autorizado para esse Recuperando. Cadastro não permitida!");
+			throw new ValidacaoException("Já existe um Pedido de Trânsito Autorizado para esse Recuperando. Operação não permitida!");
 		}
 	}
 	

@@ -199,4 +199,12 @@ public class PedidoDAO {
 		
 		return query.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<PedidoTransito> buscarPedidosDoRecuperando(long recuperandoId) {
+		Query query = entityManager.createQuery("select p from PedidoTransito p where p.recuperando.id = :recuperandoId");
+		query.setParameter("recuperandoId", recuperandoId);
+		
+		return query.getResultList();
+	}
 }
