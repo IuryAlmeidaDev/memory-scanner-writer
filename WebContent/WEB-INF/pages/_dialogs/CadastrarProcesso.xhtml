@@ -43,6 +43,7 @@
 					paginatorPosition="bottom" sortBy="#{regimeCondicao.id}" sortOrder="descending">
 				
 					<p:column headerText="Núm. Doc">
+						<h:inputHidden value="#{regimeCondicao.id}" />
 						<h:outputText value="#{regimeCondicao.numeroDocumento}" style="word-break: break-word;" />
 					</p:column>
 					

@@ -331,6 +331,7 @@
 						sortBy="#{pass.id}" emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
 						
 						<p:column headerText="Procedência">
+							<h:inputHidden value="#{pass.id}" />
 							<h:outputText value="#{pass.passagemProcedencia.procedencia.nome}" />
 						</p:column>
 						
@@ -366,6 +367,7 @@
 					<p:dataTable id="processos" var="processo" widgetVar="processos" value="#{recuperandoBean.recuperando.processos}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true"
 						sortBy="#{processo.id}" emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
 						<p:column headerText="Nº Processo">
+							<h:inputHidden value="#{processo.id}" />
 							<h:outputText value="#{processo.numeroProcesso}" />
 						</p:column>
 						<p:column headerText="Nº Inquérito">
