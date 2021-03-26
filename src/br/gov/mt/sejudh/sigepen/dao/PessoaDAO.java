@@ -73,6 +73,10 @@ public class PessoaDAO {
 			Hibernate.initialize(p.getDocumentos());
 			Hibernate.initialize(p.getEnderecos());
 			Hibernate.initialize(p.getContatos());
+			Hibernate.initialize(p.getRecuperando().getTipoSanguineo());
+			Hibernate.initialize(p.getRecuperando().getRaca());
+
+
 			return p;
 		} catch (NoResultException e) {
 			return null;

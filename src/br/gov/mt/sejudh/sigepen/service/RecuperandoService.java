@@ -19,6 +19,8 @@ import br.gov.mt.sejudh.sigepen.dao.ProcessoDAO;
 import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroSolicitacaoVisita;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnificarRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
@@ -95,6 +97,16 @@ public class RecuperandoService {
 		return recuperandos;
 	}
 	
+	public List<RecuperandoDTO> buscarRecuperandosPorFiltro(FiltroUnificarRecuperando filtro, boolean isBuscaRelatorio) {
+		List<RecuperandoDTO> recuperandos = dao.buscarRecuperandosPorFiltro(filtro, isBuscaRelatorio);
+		
+		return recuperandos;
+	}
+	
+	public int buscarQuantidadeFiltrada(FiltroUnificarRecuperando filtro) {
+		return dao.buscarQuantidadeFiltrada(filtro);
+	}
+	
 	public Recuperando atualizarRegimeCondicaoAtualRecuperando(Recuperando recuperando){
 		List<Processo> processos = processoDao.processosPorRecuperando(recuperando.getId());
 		
@@ -157,6 +169,21 @@ public class RecuperandoService {
 		}
 		
 		return recuperando;
+	}
+	
+	public Recuperando salvarRecuperandoUnificacao(Recuperando recuperando) {
+		dao.salvar(recuperando);
+		recuperando = dao.buscarRecuperandoPorId(recuperando.getId());
+		return recuperando;
+	}
+	
+	public void excluirRecuperandoUnificacao(Recuperando recuperando) {
+		dao.excluirUnificacao(recuperando);
+	}
+
+
+	public Long recuperandoJaExisteNoSistema(Pessoa p) {
+		return dao.recuperandoJaExisteNoSistema(p.getNome(), p.getNomeMae(), p.getDataNascimento(), 0L);
 	}
 	
     public Long recuperandoJaExisteNoSistema(Pessoa p, Long idRecuperando) {

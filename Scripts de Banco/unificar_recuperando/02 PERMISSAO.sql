@@ -1,0 +1,1 @@
+insert into permissao(id, nome, descricao, funcionalidade_id) values(130, 'UnificarRecuperando', 'Permite executar unificação de cadastro de recuperandos', 8);

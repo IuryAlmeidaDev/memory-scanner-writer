@@ -1,0 +1,380 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/WEB-INF/pages/_script/biometria.xhtml" />
+	</ui:define>
+
+	<ui:define name="footer">
+		<h:outputScript library="js"
+			name="biometriav2.js?ver=#{utilBean.biometriaVersao}" />
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>Unificar Recuperando</h3>
+
+		<h:form id="meuFormulario" prependId="false">
+			<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.Condicao"
+				var="condicao" allSuffix="ALL_ENUM_VALUES" />
+
+			<p:panel>
+				<p:panelGrid>
+					<div class="row">
+						<div class="col-md-12">
+							<sgp:formInputText id="nome" labelValue="Nome Recuperando"
+								size="40" value="#{unificarRecuperandoBean.filtro.nome}" />
+							<sgp:formInputText id="mae" labelValue="Nome Mãe" size="40"
+								value="#{unificarRecuperandoBean.filtro.nomeMae}" />
+
+							<sgp:formCalendar display="text" labelValue="Data de Nascimento"
+								value="#{unificarRecuperandoBean.filtro.dataNascimento}"
+								dataMaxima="#{comboHelperBean.maxDate}"
+								styleFormLabelColumn="width: 150px" />
+
+							<br />
+							<br />
+							<br />
+							<p:commandButton value="Consultar" update=":registrosForm"
+								process="@form" icon="ui-icon-search"
+								actionListener="#{unificarRecuperandoBean.pesquisar}" />
+						</div>
+					</div>
+					<div class="row"></div>
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+
+		<h:form id="recuperandoSelecionado">
+
+			<p:panelGrid columns="2">
+				<h:panelGroup
+					rendered="#{unificarRecuperandoBean.recuperandoSelecionado1 != null}">
+					<div class="row">
+						<div class="col-md-8">
+
+							<sgp:formOutputLabel labelValue="Recuperando"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.nome}" />
+
+							<sgp:formOutputLabel labelValue="Nome da Mãe"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.nomeMae}" />
+
+							<sgp:formOutputLabel labelValue="Data Nascimento"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.dataNascimento}" />
+
+							<sgp:formOutputLabel labelValue="Unidade"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.siglaUnidade}" />
+
+							<sgp:formOutputLabel labelValue="Regime"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.regime}" />
+
+							<sgp:formOutputLabel labelValue="Condição"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.condicaoAtual.descricao}" />
+
+							<sgp:formOutputLabel labelValue="Situação"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.status}" />
+						</div>
+
+						<div class="col-md-4" align="right">
+							<p:dataGrid id="dgFoto" layout="tabular" style="width: 188px;"
+								columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.imagemFrente}"
+								var="img">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</div>
+					</div>
+
+					<div align="center">
+						<p:commandButton title="Limpar Seleção de recuperando"
+							value="Limpar Seleção"
+							action="#{unificarRecuperandoBean.limparSelecaoRecuperando(unificarRecuperandoBean.recuperandoSelecionado1)}"
+							update="recuperandoSelecionado" />
+					</div>
+
+				</h:panelGroup>
+
+				<h:panelGroup
+					rendered="#{unificarRecuperandoBean.recuperandoSelecionado2 != null}">
+					<div class="row">
+						<div class="col-md-8">
+
+							<sgp:formOutputLabel labelValue="Recuperando"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.nome}" />
+
+							<sgp:formOutputLabel labelValue="Nome da Mãe"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.nomeMae}" />
+
+							<sgp:formOutputLabel labelValue="Data Nascimento"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.dataNascimento}" />
+
+							<sgp:formOutputLabel labelValue="Unidade"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.siglaUnidade}" />
+
+							<sgp:formOutputLabel labelValue="Regime"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.regime}" />
+
+							<sgp:formOutputLabel labelValue="Condição"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.condicaoAtual.descricao}" />
+
+							<sgp:formOutputLabel labelValue="Situação"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.status}" />
+
+						</div>
+
+						<div class="col-md-4" align="right">
+							<p:dataGrid id="dgFoto2" layout="tabular" style="width: 188px;"
+								columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.imagemFrente}"
+								var="img2">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img2)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img2.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</div>
+					</div>
+					<div align="center">
+						<p:commandButton title="Limpar Seleção de recuperando"
+							value="Limpar Seleção"
+							action="#{unificarRecuperandoBean.limparSelecaoRecuperando(unificarRecuperandoBean.recuperandoSelecionado2)}"
+							update="recuperandoSelecionado" />
+					</div>
+				</h:panelGroup>
+
+			</p:panelGrid>
+
+			<div align="center">
+				<p:commandButton value="Unificar Recuperandos Selecionados"	action="#{unificarRecuperandoBean.executarUnificacao}" rendered="#{unificarRecuperandoBean.recuperandoSelecionado1 != null and unificarRecuperandoBean.recuperandoSelecionado2 != null}" />
+			</div>
+			
+		</h:form>
+
+		<h:form id="registrosForm">
+
+			<p:dataTable id="dataTable" var="rec"
+				value="#{unificarRecuperandoBean.recuperandos}" rows="10"
+				paginator="true" paginatorPosition="bottom" lazy="true"
+				sortBy="#{rec.id}" sortOrder="descending"
+				selection="#{unificarRecuperandoBean.recuperandosSelecionados}"
+				emptyMessage="Nenhum registro encontrado."
+				paginatorAlwaysVisible="false">
+
+<!-- 				<p:ajax event="rowSelectCheckbox" update="recuperandoSelecionado" -->
+<!-- 					onstart="#{unificarRecuperandoBean.selecionarRecuperandoUnificar(rec)}" /> -->
+<!-- 				<p:ajax event="rowUnselectCheckbox" update="recuperandoSelecionado" /> -->
+
+				<p:column headerText="Ação" width="115"
+					style="width:3%;text-align:center">
+					<p:commandButton title="Selecionar recuperando para unificação"
+						icon="ui-icon-check"
+						action="#{unificarRecuperandoBean.selecionarRecuperandoUnificar(rec)}"
+						update="recuperandoSelecionado" />
+				</p:column>
+
+				<!-- 				<p:column selectionMode="multiple" style="width:3%;text-align:center"/> -->
+
+				<p:column headerText="Matrícula" width="115" sortBy="#{rec.id}">
+					<h:outputText value="#{rec.id}" />
+				</p:column>
+
+				<p:column headerText="Recuperando" sortBy="#{rec.nome}">
+					<h:outputText value="#{rec.nome}" />
+				</p:column>
+
+				<p:column headerText="Nome da Mãe" sortBy="#{rec.nomeMae}">
+					<h:outputText value="#{rec.nomeMae}" />
+				</p:column>
+
+				<p:column headerText="Unidade" width="120"
+					sortBy="#{rec.siglaUnidade}">
+					<h:outputText value="#{rec.siglaUnidade}" />
+				</p:column>
+
+				<p:column headerText="Regime" width="120" sortBy="#{rec.regime}">
+					<h:outputText value="#{rec.regime}" />
+				</p:column>
+
+				<p:column headerText="Condição" width="120"
+					sortBy="#{rec.condicaoAtual}">
+					<h:outputText value="#{rec.condicaoAtual.descricao}" />
+				</p:column>
+
+				<p:column headerText="Situação" width="109" sortBy="#{rec.status}">
+					<h:outputText value="#{rec.status}" />
+				</p:column>
+
+				<f:facet name="footer">
+					Total de registros: #{unificarRecuperandoBean.recuperandos.rowCount}
+					
+					<p:dialog id="dialogRecuperandosFotos"
+						header="Atenção: Recuperando(s) similar(es) encontrado(s)"
+						widgetVar="dlgRecupFotos" modal="true" resizable="false">
+						<h:form id="formDlgRecupFotos">
+							<p:dataGrid id="dgFotosRecup" layout="grid" columns="1" rows="2"
+								paginatorAlwaysVisible="false" paginator="true"
+								paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								value="#{unificarRecuperandoBean.recuperandoSimilares}" var="r"
+								paginatorPosition="bottom">
+								<p:dataGrid id="dgFoto" layout="grid" columns="1" rows="1"
+									value="#{r.imagemFrente}" var="i">
+									<p:panelGrid>
+										<p:row style="border: 0px;">
+											<p:column style="border: 0px; width: 188px">
+												<p:graphicImage value="#{imageHandlerBean.getImagem(i)}"
+													cache="false" width="180" height="240">
+													<f:param name="hashId" value="#{i.id}" />
+												</p:graphicImage>
+											</p:column>
+
+											<p:column style="border: 0px; vertical-align: text-top;">
+												<sgp:formOutputLabel labelValue="Nome" value="#{r.nome}"
+													id="nomeRecupFoto" />
+												<sgp:formOutputLabel labelValue="Nome da Mãe"
+													value="#{r.nomeMae}" />
+												<sgp:formOutputLabel labelValue="Data Nascimento"
+													value="#{r.dataNascimento}" converterData="true" />
+												<sgp:formOutputLabel labelValue="Unidade"
+													value="#{r.unidade}" />
+												<sgp:formOutputLabel labelValue="Estrutura"
+													value="#{r.lotacaoAtualNomeEstrutura}" />
+
+												<p:button id="btnVisualizarRecuperando" title="Visualizar"
+													value="Visualizar" icon="ui-icon-document"
+													outcome="pretty:VisualizarRecuperando"
+													rendered="#{securityUtil.possuiPermissao('VisualizarRecuperando') and r.isRecuperando}">
+													<f:param name="id" value="#{r.id}" />
+												</p:button>
+												<p:button id="btnAlterarRecuperando" title="Alterar"
+													value="Alterar" icon="ui-icon-pencil"
+													outcome="pretty:AlterarRecuperando"
+													rendered="#{securityUtil.possuiPermissao('AlterarRecuperando') and r.isRecuperando and r.isMesmaUnidadeQueServidorLogado and r.status.equalsIgnoreCase('ativo')}">
+													<f:param name="id" value="#{r.id}" />
+												</p:button>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:dataGrid>
+							</p:dataGrid>
+
+							<br />
+							<p:row>
+								<p:outputLabel style="color: red;"
+									value="Eu, #{securityUtil.getNomeUsuario()}, confirmo que o recuperando a ser cadastrado não se encontra na listagem." />
+								<br />
+								<p:commandButton icon="ui-icon-check"
+									title="Confirmar e Cadastrar NOVO Recuperando"
+									value="Confirmar e prosseguir para o cadastro"
+									action="#{unificarRecuperandoBean.executarCadastro}" />
+							</p:row>
+							<br />
+							<br />
+						</h:form>
+					</p:dialog>
+				</f:facet>
+
+			</p:dataTable>
+
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+
+		<p:dialog id="dialogRecuperandoDetalhes"
+			header="Detalhes do Recuperando" widgetVar="dialogDetalhes"
+			modal="true" closeOnEscape="true" showEffect="fade" hideEffect="fade"
+			resizable="false">
+			<h:form id="formDialogDetalhes">
+				<h:panelGroup
+					rendered="#{unificarRecuperandoBean.recuperandoSelecionado == null}">
+					<p:outputLabel>Nenhuma informação.</p:outputLabel>
+				</h:panelGroup>
+
+				<h:panelGroup
+					rendered="#{unificarRecuperandoBean.recuperandoSelecionado != null}">
+					<div class="row">
+						<div class="col-md-8">
+							<sgp:formOutputLabel labelValue="Matrícula"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado.id}" />
+
+							<sgp:formOutputLabel labelValue="Nome"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado.nome}" />
+
+							<sgp:formOutputLabel labelValue="Nome Social"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado.nomeSocial}" />
+
+							<sgp:formOutputLabel labelValue="Nome da Mãe"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado.nomeMae}" />
+
+							<sgp:formOutputLabel labelValue="Lotação Atual"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado.lotacaoAtualNomeEstrutura}" />
+						</div>
+
+						<div class="col-md-4" align="right">
+							<p:dataGrid id="dgFoto" layout="tabular" style="width: 188px;"
+								columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado.imagemFrente}"
+								var="img">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</div>
+					</div>
+
+					<br />
+					<p:panel>
+						<h4>Alcunhas</h4>
+						<p:dataTable var="alc"
+							value="#{unificarRecuperandoBean.recuperandoSelecionado.alcunhas}"
+							rows="5" paginatorAlwaysVisible="false"
+							emptyMessage="Nada encontrado">
+							<p:column headerText="Nome Alcunha">
+								<h:outputText value="#{alc}" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+
+					<br />
+					<p:panel>
+						<h4>Outros Nomes</h4>
+						<p:dataTable var="out"
+							value="#{unificarRecuperandoBean.recuperandoSelecionado.outrosNomes}"
+							rows="5" paginatorAlwaysVisible="false"
+							emptyMessage="Nada encontrado">
+							<h4>Outros Nomes</h4>
+							<p:column headerText="Nome">
+								<h:outputText value="#{out.nome}" />
+							</p:column>
+							<p:column headerText="Nome da Mãe">
+								<h:outputText value="#{out.nomeMae}" />
+							</p:column>
+							<p:column headerText="Data Nascimento">
+								<h:outputText value="#{out.dataNascimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

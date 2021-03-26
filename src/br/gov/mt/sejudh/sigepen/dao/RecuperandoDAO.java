@@ -17,6 +17,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnificarRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
@@ -52,6 +53,20 @@ public class RecuperandoDAO {
 		return criteria.list();
 	}
 	
+	public int buscarQuantidadeFiltrada(FiltroUnificarRecuperando filtro) {
+		Criteria criteria = filtro.criarCriteriaParaQuantidade(Pessoa.class, em);
+		criteria.setProjection(Projections.countDistinct("id"));
+		return ((Number) criteria.uniqueResult()).intValue();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RecuperandoDTO> buscarRecuperandosPorFiltro(FiltroUnificarRecuperando filtro, boolean isBuscaRelatorio) {
+		Criteria criteria = filtro.criarCriteriaParaBusca(Pessoa.class, em, isBuscaRelatorio);
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		criteria.setResultTransformer(new AliasToBeanResultTransformer(RecuperandoDTO.class));
+		return criteria.list();
+	}
+	
 	public Recuperando salvar(Recuperando recuperando) {
 		if (recuperando.getId() > 0) {			
 			return em.merge(recuperando);
@@ -60,6 +75,20 @@ public class RecuperandoDAO {
 		}
 		
 		return recuperando;
+	}
+	
+	public void excluirUnificacao(Recuperando recuperando) {
+		em.remove(em.getReference(Recuperando.class, recuperando.getId()));
+	}
+	
+	public Recuperando salvarUnificacao(Recuperando recuperando) {
+		em.persist(recuperando);
+
+		return recuperando;
+	}
+	
+	public void excluir(Recuperando recuperando) {
+		em.remove(em.merge(recuperando));
 	}
 
 	public void excluir(long idRecuperando) {

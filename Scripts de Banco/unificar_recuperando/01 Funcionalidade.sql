@@ -1,0 +1,1 @@
+insert into funcionalidade(id, nome) values (8, 'Unificar Recuperando');

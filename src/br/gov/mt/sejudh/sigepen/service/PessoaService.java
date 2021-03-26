@@ -51,4 +51,10 @@ public class PessoaService {
 		
 		return pessoa;
 	}
+	
+	public Pessoa buscarDadosPessoaRecuperandoPorId(long pessoaId) {
+		Pessoa pessoa = dao.buscarPessoaPorId(pessoaId);
+		
+		return pessoa;
+	}
 }

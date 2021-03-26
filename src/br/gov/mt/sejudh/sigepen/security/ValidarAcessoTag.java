@@ -39,7 +39,8 @@ public class ValidarAcessoTag extends TagHandler {
 	private void validarPermissoes(FaceletContext context, UIComponent component) throws IOException {
 		String tela = PrettyContext.getCurrentInstance().getCurrentMapping().getId();
 		
-		if (possuiPermissao(tela)) {
+		//TODO Retirar após inserir permissão para unificar recuperando
+		if (tela.equals("UnificarRecuperando") || tela.equals("ListarUnificarRecuperando") || possuiPermissao(tela)) {
 			nextHandler.apply(context, component);
 		} else {
 			FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("permissao", "Usuário não tem permissão para acessar: " + PrettyContext.getCurrentInstance().getCurrentMapping().getPattern());			
