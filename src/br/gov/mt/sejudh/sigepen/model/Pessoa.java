@@ -70,6 +70,12 @@ public class Pessoa implements Serializable, FieldHandled {
 	@Column(name = "SEXO", length = 1)
 	private Sexo sexo;
 
+	@Column(name = "NOME_FONETIZADO", length = 200)
+    private String nomeFonetizado;
+    
+    @Column(name = "NOME_FONETIZADO_MAE", length = 200)
+    private String nomeFonetizadoMae;
+
 	@Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="NACIONALIDADE_ID")
@@ -134,6 +140,22 @@ public class Pessoa implements Serializable, FieldHandled {
 
 	public void setNome(String nome) {
 		this.nome = Sigepen.removerAcentuacao(Sigepen.formatarEspacos(nome));
+	}
+
+	public String getNomeFonetizado() {
+		return nomeFonetizado;
+	}
+
+	public void setNomeFonetizado(String nomeFonetizado) {
+		this.nomeFonetizado = nomeFonetizado;
+	}
+
+	public String getNomeFonetizadoMae() {
+		return nomeFonetizadoMae;
+	}
+
+	public void setNomeFonetizadoMae(String nomeFonetizadoMae) {
+		this.nomeFonetizadoMae = nomeFonetizadoMae;
 	}
 
 	public String getNomeSocial() {

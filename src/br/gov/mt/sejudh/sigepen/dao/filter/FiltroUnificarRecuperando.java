@@ -15,6 +15,8 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
 import br.gov.mt.sejudh.sigepen.model.Passagem;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.util.RestrictionsSigepen;
+import br.gov.mt.sejudh.sigepen.util.criterion.ExpressaoFonetica.MatchModeFonetica;
+import br.gov.mt.sejudh.sigepen.util.criterion.Restricao;
 
 public class FiltroUnificarRecuperando extends FiltroConsulta {
 
@@ -153,11 +155,19 @@ public class FiltroUnificarRecuperando extends FiltroConsulta {
 		}
 		
 		if (this.getNome()!= null && !this.getNome().equalsIgnoreCase("")) {
-			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nome", this.getNome(), MatchMode.ANYWHERE));
+			if (this.getIsPesquisaFonetica()) {
+				getCriteria().add(Restricao.fonetiza("nomeFonetizado", this.getNome(), MatchModeFonetica.ANYWHERE));
+			} else {
+				getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nome", this.getNome(), MatchMode.ANYWHERE));
+			}
 		}
 		
 		if (this.getNomeMae()!= null && !this.getNomeMae().equalsIgnoreCase("")) {
-			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nomeMae", this.getNomeMae(), MatchMode.ANYWHERE));
+			if (this.getIsPesquisaFonetica()) {
+				getCriteria().add(Restricao.fonetiza("nomeFonetizadoMae", this.getNomeMae(), MatchModeFonetica.ANYWHERE));
+			}else {
+				getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nomeMae", this.getNomeMae(), MatchMode.ANYWHERE));
+			}
 		}
 		
         if (this.getDataNascimento() != null) {
