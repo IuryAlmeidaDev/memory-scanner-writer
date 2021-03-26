@@ -37,6 +37,7 @@ import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
+import br.gov.mt.sejudh.sigepen.biometrics.BiometriaSDKDao;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnificarRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
@@ -135,6 +136,9 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 	
 	@Inject
 	private HistoricoRecuperandoService historicoRecuperandoService;
+	
+	@Inject
+	private BiometriaSDKDao bioDao;
 	
 	//******************************************************************************************************	
 	
@@ -409,6 +413,13 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 			return "";
 		}	
 		
+		//E04. Recuperando Com Biometria Distintas
+		String msg = validaBiometriaDistintas();
+		if(msg != null) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",msg);
+			return "";
+		}
+		
 		//E05. Recuperando com passagens concomitantes
 		if(!validaPassagensConcomitantes()) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO","Não é permitido unificar cadastros de recuperando que possuem passagens concomitantes!");
@@ -436,6 +447,26 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 		List<PedidoTransitoDTO> listPedidoTransito = pedidoService.buscaPorFiltro(filtroPedTransito, false);
 		
 		return !(listPedidoTransito != null && !listPedidoTransito.isEmpty() && listPedidoTransito.size() > 0);
+	}
+	
+	private String validaBiometriaDistintas() {
+		try {
+			if (pessoaRecuperandoSelecionado1.getBiometria() == null || pessoaRecuperandoSelecionado2.getBiometria() == null)
+				return null;
+			else {
+			
+				if(!bioDao.verificarPorTemplate(pessoaRecuperandoSelecionado1.getBiometria().getTemplate(),pessoaRecuperandoSelecionado2.getBiometria().getTemplate())) {
+					return "Não é permitido unificar cadastros de recuperando que possuem biometrias diferentes!";
+				}
+				else {
+					return null;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Não foi possível verificar as biometrias.";
+		}
+		
 	}
 
 	
