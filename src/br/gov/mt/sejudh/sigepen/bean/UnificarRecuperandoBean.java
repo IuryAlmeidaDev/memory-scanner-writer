@@ -44,7 +44,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.enumerator.OrientacaoParticularidade;
 import br.gov.mt.sejudh.sigepen.enumerator.RegiaoParticularidade;
 import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
-import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
+import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
@@ -1943,9 +1943,7 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 				LoggerUtil.logInfo(Acao.EXCLUIR, parente, log);
 			}
             this.recuperando.getParentes().remove(parente);
-		} catch (ValidacaoException e) {
-            facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", e.getMessage());
-        } catch (Exception e) {
+		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir parente do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, parente, e, log);
 		}
@@ -1972,7 +1970,7 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 						} else {
 							throw new ValidacaoException("Limite de parentes Ativos não pode ser excedido!");
 						}
-					} else if (this.parente.getStatus() == SgpStatusAlternativo.A) {
+					} else if (this.parente.getStatus() == Status.ATIVO) {
 						this.recuperando.getParentes().remove(this.parenteAux);
 
 						if (service.limiteParentes(this.recuperando)) {
