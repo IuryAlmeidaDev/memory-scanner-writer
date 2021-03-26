@@ -24,6 +24,7 @@ public class FiltroUnificarRecuperando extends FiltroConsulta {
 	private String nome;
 	private String nomeMae;
     private Date dataNascimento;
+    private Boolean isPesquisaFonetica;
 	
 	public Long getId() {
 		return id;
@@ -57,8 +58,15 @@ public class FiltroUnificarRecuperando extends FiltroConsulta {
 		this.dataNascimento = dataNascimento;
 	}
 
+    public Boolean getIsPesquisaFonetica() {
+		return isPesquisaFonetica;
+	}
 
-    @Override
+	public void setIsPesquisaFonetica(Boolean isPesquisaFonetica) {
+		this.isPesquisaFonetica = isPesquisaFonetica;
+	}
+
+	@Override
 	public void configurarFiltros() {
 		getCriteria()
 		.createAlias("recuperando", "recuperando_", JoinType.LEFT_OUTER_JOIN)

@@ -30,15 +30,21 @@
 				<p:panelGrid>
 					<div class="row">
 						<div class="col-md-12">
-							<sgp:formInputText id="nome" labelValue="Nome Recuperando"
-								size="40" value="#{unificarRecuperandoBean.filtro.nome}" />
+							<sgp:formInputText id="nome" labelValue="Nome Recuperando" 
+								size="40" value="#{unificarRecuperandoBean.filtro.nome}"
+								styleFormLabelColumn="width:170px;" />
 							<sgp:formInputText id="mae" labelValue="Nome Mãe" size="40"
-								value="#{unificarRecuperandoBean.filtro.nomeMae}" />
+								value="#{unificarRecuperandoBean.filtro.nomeMae}"
+								styleFormLabelColumn="width:170px;" />
 
 							<sgp:formCalendar display="text" labelValue="Data de Nascimento"
 								value="#{unificarRecuperandoBean.filtro.dataNascimento}"
 								dataMaxima="#{comboHelperBean.maxDate}"
-								styleFormLabelColumn="width: 150px" />
+								styleFormLabelColumn="width:170px" />
+								
+							<sgp:formCheckbox labelValue="Utilizar Pesquisa Fonética" 
+								value="#{unificarRecuperandoBean.filtro.isPesquisaFonetica}"
+								styleFormLabelColumn="width:170px" />
 
 							<br />
 							<br />
@@ -55,11 +61,11 @@
 
 		<h:form id="recuperandoSelecionado">
 
-			<p:panelGrid columns="2">
+			<p:panelGrid columns="2" layout="tabular" style="width:100%;" columnClasses="ui-g-6 ui-g-border-4 ui-g-vpad, ui-g-6 ui-g-border-4 ui-g-vpad" >
 				<h:panelGroup
 					rendered="#{unificarRecuperandoBean.recuperandoSelecionado1 != null}">
 					<div class="row">
-						<div class="col-md-8">
+						<div class="col-md-7">
 
 							<sgp:formOutputLabel labelValue="Recuperando"
 								value="#{unificarRecuperandoBean.recuperandoSelecionado1.nome}" />
@@ -83,7 +89,7 @@
 								value="#{unificarRecuperandoBean.recuperandoSelecionado1.status}" />
 						</div>
 
-						<div class="col-md-4" align="right">
+						<div class="col-md-5" align="right">
 							<p:dataGrid id="dgFoto" layout="tabular" style="width: 188px;"
 								columns="1" rows="1"
 								value="#{unificarRecuperandoBean.recuperandoSelecionado1.imagemFrente}"
@@ -95,6 +101,8 @@
 							</p:dataGrid>
 						</div>
 					</div>
+					
+					<br/><br/>
 
 					<div align="center">
 						<p:commandButton title="Limpar Seleção de recuperando"
@@ -102,13 +110,14 @@
 							action="#{unificarRecuperandoBean.limparSelecaoRecuperando(unificarRecuperandoBean.recuperandoSelecionado1)}"
 							update="recuperandoSelecionado" />
 					</div>
+					
 
 				</h:panelGroup>
 
 				<h:panelGroup
 					rendered="#{unificarRecuperandoBean.recuperandoSelecionado2 != null}">
 					<div class="row">
-						<div class="col-md-8">
+						<div class="col-md-7">
 
 							<sgp:formOutputLabel labelValue="Recuperando"
 								value="#{unificarRecuperandoBean.recuperandoSelecionado2.nome}" />
@@ -133,7 +142,7 @@
 
 						</div>
 
-						<div class="col-md-4" align="right">
+						<div class="col-md-5" align="right">
 							<p:dataGrid id="dgFoto2" layout="tabular" style="width: 188px;"
 								columns="1" rows="1"
 								value="#{unificarRecuperandoBean.recuperandoSelecionado2.imagemFrente}"
@@ -145,6 +154,7 @@
 							</p:dataGrid>
 						</div>
 					</div>
+					<br/><br/>
 					<div align="center">
 						<p:commandButton title="Limpar Seleção de recuperando"
 							value="Limpar Seleção"
@@ -154,6 +164,8 @@
 				</h:panelGroup>
 
 			</p:panelGrid>
+			
+			<br/>
 
 			<div align="center">
 				<p:commandButton value="Unificar Recuperandos Selecionados"	action="#{unificarRecuperandoBean.executarUnificacao}" rendered="#{unificarRecuperandoBean.recuperandoSelecionado1 != null and unificarRecuperandoBean.recuperandoSelecionado2 != null}" />
@@ -175,7 +187,7 @@
 <!-- 					onstart="#{unificarRecuperandoBean.selecionarRecuperandoUnificar(rec)}" /> -->
 <!-- 				<p:ajax event="rowUnselectCheckbox" update="recuperandoSelecionado" /> -->
 
-				<p:column headerText="Ação" width="115"
+				<p:column headerText="Ação" width="65"
 					style="width:3%;text-align:center">
 					<p:commandButton title="Selecionar recuperando para unificação"
 						icon="ui-icon-check"
@@ -185,7 +197,7 @@
 
 				<!-- 				<p:column selectionMode="multiple" style="width:3%;text-align:center"/> -->
 
-				<p:column headerText="Matrícula" width="115" sortBy="#{rec.id}">
+				<p:column headerText="Matrícula" width="113" sortBy="#{rec.id}">
 					<h:outputText value="#{rec.id}" />
 				</p:column>
 
@@ -196,17 +208,21 @@
 				<p:column headerText="Nome da Mãe" sortBy="#{rec.nomeMae}">
 					<h:outputText value="#{rec.nomeMae}" />
 				</p:column>
+				
+				<p:column headerText="Data de Nascimento" sortBy="#{rec.dataNascimento} " width="135">
+					<h:outputText value="#{rec.dataNascimento}" />
+				</p:column>
 
-				<p:column headerText="Unidade" width="120"
+				<p:column headerText="Unidade" width="105"
 					sortBy="#{rec.siglaUnidade}">
 					<h:outputText value="#{rec.siglaUnidade}" />
 				</p:column>
 
-				<p:column headerText="Regime" width="120" sortBy="#{rec.regime}">
+				<p:column headerText="Regime" width="105" sortBy="#{rec.regime}">
 					<h:outputText value="#{rec.regime}" />
 				</p:column>
 
-				<p:column headerText="Condição" width="120"
+				<p:column headerText="Condição" width="115"
 					sortBy="#{rec.condicaoAtual}">
 					<h:outputText value="#{rec.condicaoAtual.descricao}" />
 				</p:column>
