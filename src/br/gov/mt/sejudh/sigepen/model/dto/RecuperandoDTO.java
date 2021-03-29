@@ -45,6 +45,8 @@ public class RecuperandoDTO {
 	
 	private Imagem imagemFrente;
 	
+	private Date dataEntrada;
+	
 	public RecuperandoDTO() {
 		this.alcunhas = new ArrayList<String>();
 		this.outrosNomes = new ArrayList<OutroNome>();
@@ -282,5 +284,13 @@ public class RecuperandoDTO {
 	@Override
 	public String toString() {
 		return "Recuperando [id=" + id + ", nome=" + nome + "]";
+	}
+
+	public Date getDataEntrada() {
+		return dataEntrada;
+	}
+
+	public void setDataEntrada(Date dataEntrada) {
+		this.dataEntrada = dataEntrada;
 	}
 }
