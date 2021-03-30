@@ -31,7 +31,7 @@
 
 						<p:selectOneRadio id="customRadioMatricula"
 							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idSelecionado}"
-							layout="custom">
+							layout="custom" disabled="true">
 							<f:selectItem itemLabel="Matrícula Recuperando 1"
 								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
 							<f:selectItem itemLabel="Matrícula Recuperando 2"
@@ -155,7 +155,7 @@
 								<p:panelGrid columns="2" styleClass="ui-noborder" columnClasses="ui-g-novpad, ui-g-novpad">
 								
 									<p:radioButton id="matriculaRecuperandoSelecionado1" 
-										for="customRadioMatricula" itemIndex="0" disabled="true" />
+										for="customRadioMatricula" itemIndex="0" disabled="false" />
 									<sgp:formOutputLabel labelValue="Matrícula" 
 										value="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
 										
@@ -243,7 +243,7 @@
 							
 								<p:panelGrid columns="2" styleClass="ui-noborder" columnClasses="ui-g-novpad, ui-g-novpad">
 									<p:radioButton id="matriculaRecuperandoSelecionado2"
-										for="customRadioMatricula" itemIndex="1" disabled="true" />
+										for="customRadioMatricula" itemIndex="1" disabled="false" />
 									<sgp:formOutputLabel labelValue="Matrícula"
 										value="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
 										
@@ -983,72 +983,72 @@
 							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idOrientacaoSexual}"
 							layout="custom"  required="true" requiredMessage="O campo Orientação Sexual é obrigatório.">
 							<f:selectItem itemLabel="OrientacaoSexual 1"
-								itemValue="#{unificarRecuperandoBean.recuperando1.orientacaoSexual.id}" />
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
 							<f:selectItem itemLabel="OrientacaoSexual 2"
-								itemValue="#{unificarRecuperandoBean.recuperando2.orientacaoSexual.id}" />
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
 						</p:selectOneRadio>
 
 						<p:selectOneRadio id="customRadioIdentidadeGenero"
 							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idIdentidadeDeGenero}"
 							layout="custom">
 							<f:selectItem itemLabel="IdentidadeGenero 1"
-								itemValue="#{unificarRecuperandoBean.recuperando1.identidadeDeGenero.id}" />
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
 							<f:selectItem itemLabel="IdentidadeGenero 2"
-								itemValue="#{unificarRecuperandoBean.recuperando2.identidadeDeGenero.id}" />
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
 						</p:selectOneRadio>
 
 						<p:selectOneRadio id="customRadioNomeSocial"
-							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.nomeSocial}"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idNomeSocial}"
 							layout="custom">
 							<f:selectItem itemLabel="NomeSocial 1"
-								itemValue="#{unificarRecuperandoBean.recuperando1.pessoa.nomeSocial}" />
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
 							<f:selectItem itemLabel="NomeSocial 2"
-								itemValue="#{unificarRecuperandoBean.recuperando2.pessoa.nomeSocial}" />
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
 						</p:selectOneRadio>
 
 						<p:selectOneRadio id="customRadioEstadoCivil"
 							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idEstadoCivil}"
 							layout="custom" required="true" requiredMessage="O campo Estado Civíl é obrigatório.">
 							<f:selectItem itemLabel="EstadoCivil 1"
-								itemValue="#{unificarRecuperandoBean.recuperando1.estadoCivil.id}" />
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
 							<f:selectItem itemLabel="EstadoCivil 2"
-								itemValue="#{unificarRecuperandoBean.recuperando2.estadoCivil.id}" />
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
 						</p:selectOneRadio>
 
 						<p:selectOneRadio id="customRadioEscolaridade"
 							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idEscolaridade}"
 							layout="custom" required="true" requiredMessage="O campo Escolaridade é obrigatório.">
 							<f:selectItem itemLabel="Escolaridade 1"
-								itemValue="#{unificarRecuperandoBean.recuperando1.escolaridade.id}" />
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
 							<f:selectItem itemLabel="Escolaridade 2"
-								itemValue="#{unificarRecuperandoBean.recuperando2.escolaridade.id}" />
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
 						</p:selectOneRadio>
 
 						<p:selectOneRadio id="customRadioProfissao"
-							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.profissao}"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idProfissao}"
 							layout="custom" required="true" requiredMessage="O campo Profissão é obrigatório.">
 							<f:selectItem itemLabel="Profissao 1"
-								itemValue="#{unificarRecuperandoBean.recuperando1.profissao}" />
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
 							<f:selectItem itemLabel="Profissao 2"
-								itemValue="#{unificarRecuperandoBean.recuperando2.profissao}" />
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
 						</p:selectOneRadio>
 
 						<p:selectOneRadio id="customRadioReligiao"
 							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idReligiao}"
 							layout="custom" required="true" requiredMessage="O campo Religião é obrigatório." >
 							<f:selectItem itemLabel="Religiao 1"
-								itemValue="#{unificarRecuperandoBean.recuperando1.religiao.id}" />
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
 							<f:selectItem itemLabel="Religiao 2"
-								itemValue="#{unificarRecuperandoBean.recuperando2.religiao.id}" />
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
 						</p:selectOneRadio>
 
 						<p:selectOneRadio id="customRadioPne"
-							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.pne}"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idPne}"
 							layout="custom" required="true" requiredMessage="O campo PNE é obrigatório.">
 							<f:selectItem itemLabel="PNE 1"
-								itemValue="#{unificarRecuperandoBean.recuperando1.pne.descricao}" />
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
 							<f:selectItem itemLabel="PNE 2"
-								itemValue="#{unificarRecuperandoBean.recuperando2.pne.descricao}" />
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
 						</p:selectOneRadio>
 
 						<p:panelGrid columns="2" layout="tabular"

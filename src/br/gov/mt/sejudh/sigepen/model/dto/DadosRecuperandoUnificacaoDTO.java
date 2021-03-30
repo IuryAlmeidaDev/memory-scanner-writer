@@ -18,28 +18,32 @@ public class DadosRecuperandoUnificacaoDTO {
 	
 	//Vida Social
 	private Long idOrientacaoSexual;
-	private Long  idIdentidadeDeGenero;
-    private String nomeSocial;
-    private Long  idEstadoCivil;
-    private Long  idEscolaridade;
-    private String profissao;
-    private Long  idReligiao;
-    private String pne;
+	private Long idIdentidadeDeGenero;
+    private Long idNomeSocial;
+    private Long idEstadoCivil;
+    private Long idEscolaridade;
+    private Long idProfissao;
+    private Long idReligiao;
+    private Long idPne;
 	
-	public String getNomeSocial() {
-		return nomeSocial;
+    public Long getIdNomeSocial() {
+		return idNomeSocial;
 	}
-	public void setNomeSocial(String nomeSocial) {
-		this.nomeSocial = nomeSocial;
+	public void setIdNomeSocial(Long idNomeSocial) {
+		this.idNomeSocial = idNomeSocial;
 	}
-
-	public String getProfissao() {
-		return profissao;
+	public Long getIdProfissao() {
+		return idProfissao;
 	}
-	public void setProfissao(String profissao) {
-		this.profissao = profissao;
+	public void setIdProfissao(Long idProfissao) {
+		this.idProfissao = idProfissao;
 	}
-
+	public Long getIdPne() {
+		return idPne;
+	}
+	public void setIdPne(Long idPne) {
+		this.idPne = idPne;
+	}
 	public Long getIdSelecionado() {
 		return idSelecionado;
 	}
@@ -142,11 +146,6 @@ public class DadosRecuperandoUnificacaoDTO {
 	public void setIdReligiao(Long idReligiao) {
 		this.idReligiao = idReligiao;
 	}
-	public String getPne() {
-		return pne;
-	}
-	public void setPne(String pne) {
-		this.pne = pne;
-	}
+
 
 }
