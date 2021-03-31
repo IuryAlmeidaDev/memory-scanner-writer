@@ -274,13 +274,13 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 		//RN01 - O Sistema deve automaticamente selecionar o número de matrícula que for mais antigo (menor número de matrícula)
 		if (getRecuperando1().getId() < getRecuperando2().getId()) {
 			unificarDadosPessoais(getRecuperando1());
+			unificarAlcunha(getRecuperando1(), getRecuperando2());
 			unificarPassagens(getRecuperando1());
 			unificarVidaSocial(getRecuperando1());
 			unificarFotos(getRecuperando1());
 			unificarParticularidades(getRecuperando1());
-			unificarAlcunha(getRecuperando1());
 			unificarOutrosNomes(getRecuperando1());
-			unificarDocumentos(getRecuperando1());
+			unificarDocumentos(getRecuperando1(), getRecuperando2());
 			unificarEnderecos(getRecuperando1());
 			unificarContatos(getRecuperando1());
 			unificarParentes(getRecuperando1());
@@ -303,13 +303,13 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 			}
 		}else {
 			unificarDadosPessoais(getRecuperando2());
+			unificarAlcunha(getRecuperando2(), getRecuperando1());
 			unificarPassagens(getRecuperando2());
 			unificarVidaSocial(getRecuperando2());
 			unificarFotos(getRecuperando2());
 			unificarParticularidades(getRecuperando2());
-			unificarAlcunha(getRecuperando2());
 			unificarOutrosNomes(getRecuperando2());
-			unificarDocumentos(getRecuperando2());
+			unificarDocumentos(getRecuperando2(), getRecuperando1());
 			unificarEnderecos(getRecuperando2());
 			unificarContatos(getRecuperando2());
 			unificarParentes(getRecuperando2());
@@ -600,54 +600,54 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 		
 	}
 	
-	private void unificarAlcunha(Recuperando recuperando) {
-		if (getRecuperando1().getId() != recuperando.getId()) {
-			for (Alcunha alcunha1 : getRecuperando1().getAlcunhas()) {
-				Boolean principal = false;
-				Boolean duplicada = false;
-				for(Alcunha alcunha2 : getRecuperando2().getAlcunhas()) {
-					if(alcunha1.isPrincipal() && alcunha2.isPrincipal() && !principal) {
-						principal = true;
-					}
-					if(alcunha1.getNome().equalsIgnoreCase(alcunha2.getNome()) && !duplicada) {
-						duplicada = true;
+    /* Verifica se o recuperando tem uma passagem mais recente que rec_retirar.
+     */
+	private boolean verificaPassagemMaisRecente(Recuperando recuperando, Recuperando rec_retirar) {
+		boolean isRecente = true;
+		for (Passagem passagem1 : recuperando.getPassagens()) {
+			isRecente = true;
+			for (Passagem passagem2 : rec_retirar.getPassagens()) {
+				if(passagem1.getDataEntrada().before(passagem2.getDataEntrada())) {
+					isRecente = false;
+				}
+			}
+			if(isRecente) {
+				break;
+			}
+		}
+		
+		return isRecente;
+	}
+	
+	private void unificarAlcunha(Recuperando recuperando, Recuperando rec_retirar) {
+		
+		for (Alcunha alcunha1 : rec_retirar.getAlcunhas()) {
+			boolean duplicada = false;
+			Alcunha alcunha_dupl = null;
+			
+			for(Alcunha alcunha2 : recuperando.getAlcunhas()) {
+				
+				if(alcunha1.isPrincipal() && alcunha2.isPrincipal()) {
+					if(verificaPassagemMaisRecente(recuperando, rec_retirar)) {
+						alcunha1.setPrincipal(false);
+					}else {
+						alcunha2.setPrincipal(false);
 					}
 				}
-				if(!duplicada) {
-					if(principal) {
-						alcunha1.setRecuperando(recuperando);
-						alcunha1.setPrincipal(false);
-						recuperando.getAlcunhas().add(alcunha1);
-					}else {
-						alcunha1.setRecuperando(recuperando);
-						recuperando.getAlcunhas().add(alcunha1);
-					}
+				
+				if(alcunha1.getNome().equalsIgnoreCase(alcunha2.getNome())) {
+					duplicada = true;
+					alcunha_dupl = alcunha2;
 				}
 			}
 			
-		} else if (getRecuperando2().getId() != recuperando.getId()) {
-			for (Alcunha alcunha2 : getRecuperando2().getAlcunhas()) {
-				Boolean principal = false;
-				Boolean duplicada = false;
-				for(Alcunha alcunha1 : getRecuperando1().getAlcunhas()) {
-					if(alcunha2.isPrincipal() && alcunha1.isPrincipal() && !principal) {
-						principal = true;
-					}
-					if(alcunha2.getNome().equalsIgnoreCase(alcunha1.getNome()) && !duplicada) {
-						duplicada = true;
-					}
-				}
-				if(!duplicada) {
-					if(principal) {
-						alcunha2.setRecuperando(recuperando);
-						alcunha2.setPrincipal(false);
-						recuperando.getAlcunhas().add(alcunha2);
-					}else {
-						alcunha2.setRecuperando(recuperando);
-						recuperando.getAlcunhas().add(alcunha2);
-					}
-				}
+			if(!duplicada) {
+				alcunha1.setRecuperando(recuperando);
+				recuperando.getAlcunhas().add(alcunha1);
+			}else if(alcunha1.isPrincipal()) {
+				alcunha_dupl.setPrincipal(true);
 			}
+			
 		}
 	}
 	
@@ -682,16 +682,29 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 		}
 	}
 	
-	private void unificarDocumentos(Recuperando recuperando) {
-		if (getRecuperando1().getId() != recuperando.getId()) {
-			for (Documento documento1 : getRecuperando1().getDocumentos()) {
-				Boolean duplicada = false;
-				for(Documento documento2 : getRecuperando2().getDocumentos()) {
-					if(documento1.getTipoDocumento().getId() == documento2.getTipoDocumento().getId() && documento1.getNumero().equalsIgnoreCase(documento2.getNumero()) && !duplicada) {
-						duplicada = true;
-					}
+	
+	private void unificarDocumentosList(boolean isPessoaList, Recuperando recuperando, List<Documento> listManter, Recuperando rec_retirar, List<Documento> listRetirar) {
+		
+		for (Documento documento1 : listRetirar) {
+			boolean duplicada = false;
+			for(Documento documento2 : listManter) {
+					
+				if(documento1.getTipoDocumento().getId() == documento2.getTipoDocumento().getId() && documento1.getNumero().equalsIgnoreCase(documento2.getNumero()) && !duplicada) {
+					duplicada = true;
 				}
-				if(!duplicada) {
+			}
+			if(!duplicada) {
+								
+				if(isPessoaList) {
+					documento1.setPessoa(recuperando.getPessoa());
+					if(recuperando.getPessoa().getDocumentos() != null) {
+						recuperando.getPessoa().getDocumentos().add(documento1);						
+					}else {
+						recuperando.getPessoa().setDocumentos(new ArrayList<Documento>());
+						recuperando.getPessoa().getDocumentos().add(documento1);						
+					}
+					
+				}else {
 					documento1.setRecuperando(recuperando);
 					if(recuperando.getDocumentos() != null) {
 						recuperando.getDocumentos().add(documento1);						
@@ -700,63 +713,17 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 						recuperando.getDocumentos().add(documento1);						
 					}
 				}
-			}
-			
-			for (Documento documento1 : getRecuperando1().getPessoa().getDocumentos()) {
-				Boolean duplicada = false;
-				for(Documento documento2 : getRecuperando2().getPessoa().getDocumentos()) {
-					if(documento1.getTipoDocumento().getId() == documento2.getTipoDocumento().getId() && documento1.getNumero().equalsIgnoreCase(documento2.getNumero()) && !duplicada) {
-						duplicada = true;
-					}
-				}
-				if(!duplicada) {
-					documento1.setPessoa(recuperando.getPessoa());
-					if(recuperando.getPessoa().getDocumentos() != null) {
-						recuperando.getPessoa().getDocumentos().add(documento1);						
-					}else {
-						recuperando.getPessoa().setDocumentos(new ArrayList<Documento>());
-						recuperando.getPessoa().getDocumentos().add(documento1);						
-					}
-				}
-			}
-						
-		} else if (getRecuperando2().getId() != recuperando.getId()) {
-			for (Documento documento2 : getRecuperando2().getDocumentos()) {
-				Boolean duplicada = false;
-				for(Documento documento1 : getRecuperando1().getDocumentos()) {
-					if(documento2.getTipoDocumento().getId() == documento1.getTipoDocumento().getId() && documento2.getNumero().equalsIgnoreCase(documento1.getNumero()) && !duplicada) {
-						duplicada = true;
-					}
-				}
-				if(!duplicada) {
-					documento2.setRecuperando(recuperando);
-					if(recuperando.getDocumentos() != null) {
-						recuperando.getDocumentos().add(documento2);						
-					}else {
-						recuperando.setDocumentos(new ArrayList<Documento>());
-						recuperando.getDocumentos().add(documento2);						
-					}
-				}
-			}
-			
-			for (Documento documento2 : getRecuperando2().getPessoa().getDocumentos()) {
-				Boolean duplicada = false;
-				for(Documento documento1 : getRecuperando1().getPessoa().getDocumentos()) {
-					if(documento2.getTipoDocumento().getId() == documento1.getTipoDocumento().getId() && documento2.getNumero().equalsIgnoreCase(documento1.getNumero()) && !duplicada) {
-						duplicada = true;
-					}
-				}
-				if(!duplicada) {
-					documento2.setPessoa(recuperando.getPessoa());
-					if(recuperando.getPessoa().getDocumentos() != null) {
-						recuperando.getPessoa().getDocumentos().add(documento2);						
-					}else {
-						recuperando.getPessoa().setDocumentos(new ArrayList<Documento>());
-						recuperando.getPessoa().getDocumentos().add(documento2);						
-					}
-				}
+							
 			}
 		}
+	}
+	
+	private void unificarDocumentos(Recuperando recuperando, Recuperando rec_retirar) {
+		
+		unificarDocumentosList(false, recuperando, recuperando.getDocumentos(), rec_retirar, rec_retirar.getDocumentos());
+		unificarDocumentosList(true, recuperando, recuperando.getPessoa().getDocumentos(), rec_retirar, rec_retirar.getPessoa().getDocumentos());
+		
+
 	}
 	
 	private void unificarEnderecos(Recuperando recuperando) {
@@ -853,7 +820,8 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 				parente.setRecuperando(recuperando);
 				recuperando.getParentes().add(parente);
 			}
-			if (recuperando.getAlteracaoParentes() != null && recuperando.getAlteracaoParentes().before(getRecuperando1().getAlteracaoParentes())) {
+			if (recuperando.getAlteracaoParentes() != null && getRecuperando1().getAlteracaoParentes() != null && 
+					recuperando.getAlteracaoParentes().before(getRecuperando1().getAlteracaoParentes())) {
 				recuperando.setAlteracaoParentes(getRecuperando1().getAlteracaoParentes());
 			}
 		} else if (getRecuperando2().getId() != recuperando.getId()) {
@@ -861,7 +829,8 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 				parente.setRecuperando(recuperando);
 				recuperando.getParentes().add(parente);
 			}
-			if (recuperando.getAlteracaoParentes() != null && recuperando.getAlteracaoParentes().before(getRecuperando2().getAlteracaoParentes())) {
+			if (recuperando.getAlteracaoParentes() != null && getRecuperando2().getAlteracaoParentes() != null && 
+					recuperando.getAlteracaoParentes().before(getRecuperando2().getAlteracaoParentes())) {
 				recuperando.setAlteracaoParentes(getRecuperando2().getAlteracaoParentes());
 			}
 		}
