@@ -116,10 +116,14 @@ public class BiometriaSDKDao {
 			}
 		}
 	}
+	
+	public NBiometricStatus excluir(Biometria biometria) {
+		return cliente.delete(String.valueOf(biometria.getIdPessoa()));
+	}
 
 	public Boolean alterar(Biometria biometria) throws Exception {
 		try {			
-			NBiometricStatus statusOperacao = cliente.delete(String.valueOf(biometria.getIdPessoa()));
+			NBiometricStatus statusOperacao = excluir(biometria);
 			
 			if (statusOperacao == NBiometricStatus.OK || statusOperacao == NBiometricStatus.ID_NOT_FOUND) {
 				statusOperacao = this.salvar(biometria);

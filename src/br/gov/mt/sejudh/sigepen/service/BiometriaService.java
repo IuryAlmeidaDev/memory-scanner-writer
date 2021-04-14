@@ -27,6 +27,10 @@ public class BiometriaService {
 	@Inject
 	private BiometriaSDKDao bioDao;
 
+	public NBiometricStatus excluirBiometriaSDK(Biometria biometria) {
+		return bioDao.excluir(biometria);
+	}
+	
 	public Boolean alterarBiometriaSDK(Biometria biometria) throws Exception {
 		return bioDao.alterar(biometria);
 	}
