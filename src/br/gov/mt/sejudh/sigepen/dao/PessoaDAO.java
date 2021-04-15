@@ -60,6 +60,18 @@ public class PessoaDAO {
 	    criteria.setProjection(Projections.rowCount());		
 	    return ((Number) criteria.uniqueResult()).intValue();
 	}
+	
+	public Pessoa buscarPessoaComBiometriaPorId(long id) {
+		try {
+			String jpql="select p from Pessoa p left join fetch p.biometria b where p.id = :id and b.id = p.biometria.id";
+			TypedQuery<Pessoa> query = entityManager.createQuery(jpql, Pessoa.class);
+			query.setParameter("id", id);
+			Pessoa p = query.getSingleResult();
+			return p;
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 
 	public Pessoa buscarPessoaPorId(long id) {
 		try {

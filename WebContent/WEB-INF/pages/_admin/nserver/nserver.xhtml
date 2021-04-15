@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		
+		<h3>NServer</h3>
+			<h:form id="formExcluir">
+				<p:panel header="Excluir Template">
+					<p:inputText title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
+					<p:commandButton icon="ui-icon" value="Excluir" action="#{nServerBean.excluir}" update="@form :mensagens" />
+				</p:panel>
+			</h:form>
+			<h:form id="formImportar">
+				<br/><br/>
+				<p:panel header="Importar Template">
+					<p:inputText title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
+					<p:commandButton icon="ui-icon" value="Importar" action="#{nServerBean.importar}" update="@form :mensagens" />
+				</p:panel>
+			</h:form>
+	</ui:define>
+</ui:composition>

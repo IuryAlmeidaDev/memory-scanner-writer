@@ -18,7 +18,7 @@ import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
 @ManagedBean
 @ViewScoped
-@URLMapping(id = "Parametro", pattern = "/parametros", viewId = "/WEB-INF/pages/parametro/parametros.xhtml")
+@URLMapping(id = "Parametro", pattern = "/admin/parametros", viewId = "/WEB-INF/pages/_admin/parametro/parametros.xhtml")
 public class ParametroBean {
 
 	private Parametro param;
