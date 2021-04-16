@@ -9,18 +9,28 @@
 	<ui:define name="conteudo">
 		
 		<h3>NServer</h3>
-			<h:form id="formExcluir">
-				<p:panel header="Excluir Template">
-					<p:inputText title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
-					<p:commandButton icon="ui-icon" value="Excluir" action="#{nServerBean.excluir}" update="@form :mensagens" />
-				</p:panel>
-			</h:form>
-			<h:form id="formImportar">
-				<br/><br/>
-				<p:panel header="Importar Template">
-					<p:inputText title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
-					<p:commandButton icon="ui-icon" value="Importar" action="#{nServerBean.importar}" update="@form :mensagens" />
-				</p:panel>
-			</h:form>
+		
+		<h:form>
+			<p:poll interval="5" listener="#{nServerBean.checkStatus}" async="true" global="false" update=":formStatusNserver" />
+		</h:form>
+		<h:form id="formStatusNserver">
+			<p:outputLabel value="Status NServer: " />
+			<p:graphicImage id="situacao" name="#{(nServerBean.statusNserver ? 'green.png' : 'red.png')}" library="icons"/>
+		</h:form>
+		
+		<h:form id="formExcluir">
+			<br/><br/>
+			<p:panel header="Excluir Template">
+				<p:inputText title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
+				<p:commandButton icon="ui-icon" value="Excluir" action="#{nServerBean.excluir}" update="@form :mensagens" />
+			</p:panel>
+		</h:form>
+		<h:form id="formImportar">
+			<br/><br/>
+			<p:panel header="Importar Template">
+				<p:inputText title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
+				<p:commandButton icon="ui-icon" value="Importar" action="#{nServerBean.importar}" update="@form :mensagens" />
+			</p:panel>
+		</h:form>
 	</ui:define>
 </ui:composition>

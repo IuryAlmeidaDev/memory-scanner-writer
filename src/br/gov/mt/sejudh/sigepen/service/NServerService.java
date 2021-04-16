@@ -47,6 +47,10 @@ public class NServerService {
 		}
 	}
 	
+	public Boolean checkStatus() {
+		return cliente.checkStatus();
+	}
+	
 	private void validarPessoaId(Long pessoaId) throws Exception {
 		if (pessoaId == null || pessoaId <= 0L) {
 			throw new Exception("Preencha o campo ID corretamente!");

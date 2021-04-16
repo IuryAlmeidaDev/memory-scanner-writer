@@ -19,6 +19,8 @@ import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 public class NServerBean {
 	
 	private Long idPessoa;
+	
+	private Boolean statusNServer;
 
 	@Inject
 	private FacesUtil facesUtil;
@@ -71,6 +73,10 @@ public class NServerBean {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 		}
 	}
+	
+	public void checkStatus() {
+		statusNServer = service.checkStatus();
+	}
 
 	public Long getIdPessoa() {
 		return idPessoa;
@@ -78,5 +84,13 @@ public class NServerBean {
 
 	public void setIdPessoa(Long idPessoa) {
 		this.idPessoa = idPessoa;
+	}
+
+	public Boolean getStatusNServer() {
+		return statusNServer;
+	}
+
+	public void setStatusNServer(Boolean statusNServer) {
+		this.statusNServer = statusNServer;
 	}
 }

@@ -2,6 +2,11 @@ package br.gov.mt.sejudh.sigepen.biometrics;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -63,6 +68,25 @@ public class BiometriaSDKCliente implements Serializable {
 		connection.setSelectAllQuery("select DBID, TEMPLATE from " + Sigepen.SEJUDH_SCHEMA + ".USERTBL");
 
 		biometricClient.setDatabaseConnection(connection);*/
+	}
+	
+	public Boolean checkStatus() {
+		ExecutorService executor = Executors.newCachedThreadPool();
+		Future<?> future = executor.submit(() -> {
+			this.biometricClient.getCount();
+		});
+		
+		try {
+			future.get(1000, TimeUnit.MILLISECONDS);
+		} catch (TimeoutException ex) {
+			return false;
+		} catch (Exception e) {
+			return false;
+		} finally {
+		   future.cancel(true);
+		}
+
+		return true;
 	}
 
 	public NBiometricStatus identify(NSubject subject) {
