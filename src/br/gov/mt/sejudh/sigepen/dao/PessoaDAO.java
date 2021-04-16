@@ -75,6 +75,7 @@ public class PessoaDAO {
 			Hibernate.initialize(p.getContatos());
 			Hibernate.initialize(p.getRecuperando().getTipoSanguineo());
 			Hibernate.initialize(p.getRecuperando().getRaca());
+			Hibernate.initialize(p.getBiometria());
 
 
 			return p;

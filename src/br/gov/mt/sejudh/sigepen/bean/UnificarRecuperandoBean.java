@@ -48,6 +48,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
+import br.gov.mt.sejudh.sigepen.service.BiometriaService;
 import br.gov.mt.sejudh.sigepen.service.HistoricoRecuperandoService;
 import br.gov.mt.sejudh.sigepen.service.PassagemService;
 import br.gov.mt.sejudh.sigepen.service.PedidoService;
@@ -122,6 +123,9 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 	@Inject
 	private PassagemService passagemService;
 			
+	@Inject
+	private BiometriaService bioService;
+
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
 		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
@@ -292,6 +296,9 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 			try {
 				service.salvarRecuperandoUnificacao(getRecuperando1());
 				service.excluirRecuperandoUnificacao(getRecuperando2());
+				bioService.excluirBiometriaSDK(getRecuperando1().getPessoa().getBiometria());
+				bioService.excluirBiometriaSDK(getRecuperando2().getPessoa().getBiometria());
+				bioService.salvarBiometriaSDK(getRecuperando1().getPessoa().getBiometria());
 				service.atualizarRegimeCondicaoAtualRecuperando(getRecuperando1());
 				limparRecuperandosUnificacao();
 
@@ -321,6 +328,9 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 			try {
 				service.salvarRecuperandoUnificacao(getRecuperando2());
 				service.excluirRecuperandoUnificacao(getRecuperando1());
+				bioService.excluirBiometriaSDK(getRecuperando1().getPessoa().getBiometria());
+				bioService.excluirBiometriaSDK(getRecuperando2().getPessoa().getBiometria());
+				bioService.salvarBiometriaSDK(getRecuperando2().getPessoa().getBiometria());
 				service.atualizarRegimeCondicaoAtualRecuperando(getRecuperando2());
 				limparRecuperandosUnificacao();
 
