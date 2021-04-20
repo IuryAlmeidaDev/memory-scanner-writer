@@ -28,6 +28,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
 import br.gov.mt.sejudh.sigepen.model.Alcunha;
 import br.gov.mt.sejudh.sigepen.model.Contato;
 import br.gov.mt.sejudh.sigepen.model.Documento;
@@ -518,13 +519,16 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 	}
 	
 	private void unificarFotos(Recuperando recuperando) {
+		
 		if (getRecuperando1().getId() != recuperando.getId()) {
 			for (Foto foto : getRecuperando1().getFotos()) {
+				foto.setIsAtual(false);
 				foto.setRecuperando(recuperando);
 				recuperando.getFotos().add(foto);
 			}
 		} else if (getRecuperando2().getId() != recuperando.getId()) {
 			for (Foto foto : getRecuperando2().getFotos()) {
+				foto.setIsAtual(false);
 				foto.setRecuperando(recuperando);
 				recuperando.getFotos().add(foto);
 			}
