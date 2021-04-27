@@ -297,16 +297,16 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 			try {
 				service.salvarRecuperandoUnificacao(getRecuperando1());
 				service.excluirRecuperandoUnificacao(getRecuperando2());
-				if(getRecuperando1().getPessoa().getBiometria() != null && getRecuperando1().getPessoa().getBiometria().getTemplate() != null)
-					bioService.excluirBiometriaSDK(getRecuperando1().getPessoa().getBiometria());
-				if(getRecuperando2().getPessoa().getBiometria() != null && getRecuperando2().getPessoa().getBiometria().getTemplate() != null)
-					bioService.excluirBiometriaSDK(getRecuperando2().getPessoa().getBiometria());
+				
 				if(getRecuperando1().getPessoa().getBiometria() == null) {
 					if(getRecuperando2().getPessoa().getBiometria() != null) {
 						getRecuperando1().getPessoa().setBiometria(getRecuperando2().getPessoa().getBiometria());
+						bioService.salvarBiometriaSDK(getRecuperando1().getPessoa().getBiometria());
 					}
-				} else if(getRecuperando1().getPessoa().getBiometria() != null)
-					bioService.salvarBiometriaSDK(getRecuperando1().getPessoa().getBiometria());
+				} 
+
+				if(getRecuperando2().getPessoa().getBiometria() != null && getRecuperando2().getPessoa().getBiometria().getTemplate() != null)
+					bioService.excluirBiometriaSDK(getRecuperando2().getPessoa().getBiometria());
 				
 				service.atualizarRegimeCondicaoAtualRecuperando(getRecuperando1());
 				limparRecuperandosUnificacao();
@@ -337,17 +337,16 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 			try {
 				service.salvarRecuperandoUnificacao(getRecuperando2());
 				service.excluirRecuperandoUnificacao(getRecuperando1());
-				if(getRecuperando1().getPessoa().getBiometria() != null && getRecuperando1().getPessoa().getBiometria().getTemplate() != null)
-					bioService.excluirBiometriaSDK(getRecuperando1().getPessoa().getBiometria());
-				if(getRecuperando2().getPessoa().getBiometria() != null && getRecuperando2().getPessoa().getBiometria().getTemplate() != null)
-					bioService.excluirBiometriaSDK(getRecuperando2().getPessoa().getBiometria());
 				
 				if(getRecuperando2().getPessoa().getBiometria() == null) {
 					if(getRecuperando1().getPessoa().getBiometria() != null) {
 						getRecuperando2().getPessoa().setBiometria(getRecuperando1().getPessoa().getBiometria());
+						bioService.salvarBiometriaSDK(getRecuperando2().getPessoa().getBiometria());
 					}
-				} else if(getRecuperando2().getPessoa().getBiometria() != null)
-					bioService.salvarBiometriaSDK(getRecuperando2().getPessoa().getBiometria());
+				} 
+
+				if(getRecuperando1().getPessoa().getBiometria() != null && getRecuperando1().getPessoa().getBiometria().getTemplate() != null)
+					bioService.excluirBiometriaSDK(getRecuperando1().getPessoa().getBiometria());
 				
 				service.atualizarRegimeCondicaoAtualRecuperando(getRecuperando2());
 				limparRecuperandosUnificacao();
