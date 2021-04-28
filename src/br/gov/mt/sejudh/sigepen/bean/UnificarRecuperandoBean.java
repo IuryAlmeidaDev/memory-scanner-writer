@@ -469,8 +469,10 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 		
 		if(getRecuperando1().getId() == dadosRecuperandoUnificacaoDTO.getIdNaturalidade()) {
 			recuperando.getPessoa().setNaturalidade(getRecuperando1().getPessoa().getNaturalidade());
+			recuperando.getPessoa().setPais(getRecuperando1().getPessoa().getPais());
 		}else if(getRecuperando2().getId() == dadosRecuperandoUnificacaoDTO.getIdNaturalidade()) {
 			recuperando.getPessoa().setNaturalidade(getRecuperando2().getPessoa().getNaturalidade());
+			recuperando.getPessoa().setPais(getRecuperando2().getPessoa().getPais());
 		}
 
 		if(getRecuperando1().getId() == dadosRecuperandoUnificacaoDTO.getIdSinalTatuagem()) {
