@@ -205,12 +205,15 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 			if (pessoaRecuperandoSelecionado1.getBiometria() == null || pessoaRecuperandoSelecionado2.getBiometria() == null)
 				return null;
 			else {
-			
-				if(!bioDao.verificarPorTemplate(pessoaRecuperandoSelecionado1.getBiometria().getTemplate(),pessoaRecuperandoSelecionado2.getBiometria().getTemplate())) {
-					return "Não é permitido unificar cadastros de recuperando que possuem biometrias diferentes!";
-				}
-				else {
+				if(pessoaRecuperandoSelecionado1.getBiometria().getTemplate() == null || pessoaRecuperandoSelecionado2.getBiometria().getTemplate() == null) {
 					return null;
+				}else {
+					if(!bioDao.verificarPorTemplate(pessoaRecuperandoSelecionado1.getBiometria().getTemplate(),pessoaRecuperandoSelecionado2.getBiometria().getTemplate())) {
+						return "Não é permitido unificar cadastros de recuperando que possuem biometrias diferentes!";
+					}
+					else {
+						return null;
+					}
 				}
 			}
 		} catch (Exception e) {
