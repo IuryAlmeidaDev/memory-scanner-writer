@@ -183,8 +183,10 @@
 										
 									<p:radioButton id="naturalidadeRecuperandoSelecionado1"
 										for="customRadioNaturalidade" itemIndex="0" />
-									<sgp:formOutputLabel labelValue="Naturalidade"
+									<sgp:formOutputLabel labelValue="Naturalidade" rendered="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.naturalidade != null}"
 										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.naturalidade.nome}" />
+									<sgp:formOutputLabel labelValue="Naturalidade" rendered="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.pais != null}"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.pais.nome}" />
 										
 									<p:radioButton id="sinalTatuagemRecuperandoSelecionado1"
 										for="customRadioSinalTatuagem" itemIndex="0" />
@@ -271,8 +273,10 @@
 										
 									<p:radioButton id="naturalidadeRecuperandoSelecionado2"
 										for="customRadioNaturalidade" itemIndex="1" />
-									<sgp:formOutputLabel labelValue="Naturalidade"
+									<sgp:formOutputLabel labelValue="Naturalidade" rendered="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.naturalidade != null}"
 										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.naturalidade.nome}" />
+									<sgp:formOutputLabel labelValue="Naturalidade" rendered="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.pais != null}"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.pais.nome}" />
 										
 									<p:radioButton id="sinalTatuagemRecuperandoSelecionado2"
 										for="customRadioSinalTatuagem" itemIndex="1" />
