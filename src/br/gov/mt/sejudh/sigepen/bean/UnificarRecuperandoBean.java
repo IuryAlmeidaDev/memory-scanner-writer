@@ -250,6 +250,20 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 				}
 			}
 		}
+		for(Passagem passagemRecuperando1 : recuperando1.getPassagens()) {
+			for(Passagem passagemRecuperando2 : recuperando2.getPassagens()) {
+				if (passagemRecuperando1.getDataSaida() == null && (passagemRecuperando2.getDataEntrada().after(passagemRecuperando1.getDataEntrada()))) {
+					return false;
+				}
+			}
+		}
+		for(Passagem passagemRecuperando2 : recuperando2.getPassagens()) {
+			for(Passagem passagemRecuperando1 : recuperando1.getPassagens()) {
+				if (passagemRecuperando2.getDataSaida() == null && (passagemRecuperando1.getDataEntrada().after(passagemRecuperando2.getDataEntrada()))) {
+					return false;
+				}
+			}
+		}
 		return true;
 	}
 	
