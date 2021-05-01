@@ -538,18 +538,28 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 	
 	private void unificarFotos(Recuperando recuperando) {
 		
-		if (getRecuperando1().getId() != recuperando.getId()) {
+		if (getRecuperando1().getId() == recuperando.getId()) {
 			for (Foto foto : getRecuperando1().getFotos()) {
 				foto.setIsAtual(false);
-				foto.setRecuperando(recuperando);
-				recuperando.getFotos().add(foto);
 			}
-		} else if (getRecuperando2().getId() != recuperando.getId()) {
+		} else if (getRecuperando2().getId() == recuperando.getId()) {
 			for (Foto foto : getRecuperando2().getFotos()) {
 				foto.setIsAtual(false);
+			}
+		}
+		
+		if (getRecuperando1().getId() != recuperando.getId()) {
+			for (Foto foto : getRecuperando1().getFotos()) {
 				foto.setRecuperando(recuperando);
 				recuperando.getFotos().add(foto);
 			}
+			getRecuperando1().getFotos().clear();
+		} else if (getRecuperando2().getId() != recuperando.getId()) {
+			for (Foto foto : getRecuperando2().getFotos()) {
+				foto.setRecuperando(recuperando);
+				recuperando.getFotos().add(foto);
+			}
+			getRecuperando2().getFotos().clear();
 		}
 	}
 	
