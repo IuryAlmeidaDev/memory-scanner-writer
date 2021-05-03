@@ -450,13 +450,15 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 	
 	private void unificarAutorizacaoCadastro(Recuperando recuperando) {
 		if (getRecuperando1().getId() != recuperando.getId()) {
-			if(recuperando.getPessoa().getAutorizacaoCadastro() == null) {
+			if(recuperando.getPessoa().getAutorizacaoCadastro() == null || (getRecuperando1().getPessoa().getAutorizacaoCadastro() != null && getRecuperando1().getPessoa().getAutorizacaoCadastro().getDataAutorizacao().after(recuperando.getPessoa().getAutorizacaoCadastro().getDataAutorizacao()))) {
 				recuperando.getPessoa().setAutorizacaoCadastro(getRecuperando1().getPessoa().getAutorizacaoCadastro());
+				getRecuperando2().getPessoa().setAutorizacaoCadastro(null);
 			}
 			
 		} else if (getRecuperando2().getId() != recuperando.getId()) {
-			if(recuperando.getPessoa().getAutorizacaoCadastro() == null) {
+			if(recuperando.getPessoa().getAutorizacaoCadastro() == null || (getRecuperando2().getPessoa().getAutorizacaoCadastro() != null && getRecuperando2().getPessoa().getAutorizacaoCadastro().getDataAutorizacao().after(recuperando.getPessoa().getAutorizacaoCadastro().getDataAutorizacao()))) {
 				recuperando.getPessoa().setAutorizacaoCadastro(getRecuperando2().getPessoa().getAutorizacaoCadastro());
+				getRecuperando1().getPessoa().setAutorizacaoCadastro(null);
 			}
 		}
 	}
