@@ -726,7 +726,12 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 					recuperando.getOutrosNomes().add(outroNome1);
 				}
 			}
-			
+			OutroNome trinca = new OutroNome();
+			trinca.setDataNascimento(getRecuperando1().getPessoa().getDataNascimento());
+			trinca.setNome(getRecuperando1().getPessoa().getNome());
+			trinca.setNomeMae(getRecuperando1().getPessoa().getNomeMae());
+			trinca.setRecuperando(recuperando);
+			service.salvarOutroNome(trinca);
 		} else if (getRecuperando2().getId() != recuperando.getId()) {
 			for (OutroNome outroNome2 : getRecuperando2().getOutrosNomes()) {
 				Boolean duplicada = false;
@@ -740,6 +745,12 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 					recuperando.getOutrosNomes().add(outroNome2);
 				}
 			}
+			OutroNome trinca = new OutroNome();
+			trinca.setDataNascimento(getRecuperando2().getPessoa().getDataNascimento());
+			trinca.setNome(getRecuperando2().getPessoa().getNome());
+			trinca.setNomeMae(getRecuperando2().getPessoa().getNomeMae());
+			trinca.setRecuperando(recuperando);
+			service.salvarOutroNome(trinca);
 		}
 	}
 	
@@ -885,6 +896,8 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 					recuperando.getAlteracaoParentes().before(getRecuperando1().getAlteracaoParentes())) {
 				recuperando.setAlteracaoParentes(getRecuperando1().getAlteracaoParentes());
 			}
+			if(getRecuperando1().getAlteracaoParentes() != null && getRecuperando1().getAlteracaoParentes().before(recuperando.getAlteracaoParentes()))
+				recuperando.setAlteracaoParentes(getRecuperando1().getAlteracaoParentes());
 		} else if (getRecuperando2().getId() != recuperando.getId()) {
 			for (Parente parente : getRecuperando2().getParentes()) {
 				parente.setRecuperando(recuperando);
@@ -894,6 +907,8 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 					recuperando.getAlteracaoParentes().before(getRecuperando2().getAlteracaoParentes())) {
 				recuperando.setAlteracaoParentes(getRecuperando2().getAlteracaoParentes());
 			}
+			if(getRecuperando2().getAlteracaoParentes() != null && getRecuperando2().getAlteracaoParentes().before(recuperando.getAlteracaoParentes()))
+				recuperando.setAlteracaoParentes(getRecuperando2().getAlteracaoParentes());
 		}
 	}
 	
