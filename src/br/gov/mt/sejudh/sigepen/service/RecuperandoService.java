@@ -17,6 +17,7 @@ import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PessoaDAO;
 import br.gov.mt.sejudh.sigepen.dao.ProcessoDAO;
 import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
+import br.gov.mt.sejudh.sigepen.dao.UnificarRecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnificarRecuperando;
@@ -40,6 +41,7 @@ import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.dto.DadosRecuperandoUnificacaoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO.PassagemExtratoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
@@ -73,6 +75,9 @@ public class RecuperandoService {
 	@Inject
 	private HistoricoRecuperandoService historicoService;
 		
+	@Inject
+	private UnificarRecuperandoDAO unificarDao;
+
 	public int buscarQuantidadeFiltrada(FiltroRecuperando filtro) {
 		return dao.buscarQuantidadeFiltrada(filtro);
 	}
@@ -484,6 +489,11 @@ public class RecuperandoService {
 	public Boolean verificaRecuperandoPossuiPassagemNaUnidadeLogada(Long recuperandoId) {
 		return dao.verificaRecuperandoPossuiPassagemNaUnidadeLogada(recuperandoId, SecurityUtil.getUnidadeSelecionada().getId());
 	}
+
+	public void unificarRecuperando(Recuperando recuperando1, Recuperando recuperando2, DadosRecuperandoUnificacaoDTO dados) throws Exception {
+		unificarDao.unificarRecuperando(recuperando1, recuperando2, dados);
+	}
+
 }
 
 

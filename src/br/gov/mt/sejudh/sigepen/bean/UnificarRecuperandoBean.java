@@ -292,96 +292,20 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
     }
 	
 	public String salvarUnificacao() {        
-        
-		//RN01 - O Sistema deve automaticamente selecionar o número de matrícula que for mais antigo (menor número de matrícula)
-		if (getRecuperando1().getId() < getRecuperando2().getId()) {
-			unificarDadosPessoais(getRecuperando1());
-			unificarAlcunha(getRecuperando1(), getRecuperando2());
-			unificarPassagens(getRecuperando1());
-			unificarVidaSocial(getRecuperando1());
-			unificarFotos(getRecuperando1());
-			unificarParticularidades(getRecuperando1());
-			unificarOutrosNomes(getRecuperando1());
-			unificarDocumentos(getRecuperando1(), getRecuperando2());
-			unificarEnderecos(getRecuperando1());
-			unificarContatos(getRecuperando1());
-			unificarParentes(getRecuperando1());
-			unificarPedidoTransito(getRecuperando1());
-			unificarHistoricoRecuperando(getRecuperando1());
-			unificarAutorizacaoCadastro(getRecuperando1());
-			unificarStatusRecuperando(getRecuperando1());
-
-			try {
-				service.salvarRecuperandoUnificacao(getRecuperando1());
-				service.excluirRecuperandoUnificacao(getRecuperando2());
-				
-				if(getRecuperando1().getPessoa().getBiometria() == null) {
-					if(getRecuperando2().getPessoa().getBiometria() != null) {
-						getRecuperando1().getPessoa().setBiometria(getRecuperando2().getPessoa().getBiometria());
-						bioService.salvarBiometriaSDK(getRecuperando1().getPessoa().getBiometria());
-					}
-				} 
-
-				if(getRecuperando2().getPessoa().getBiometria() != null && getRecuperando2().getPessoa().getBiometria().getTemplate() != null)
-					bioService.excluirBiometriaSDK(getRecuperando2().getPessoa().getBiometria());
-				
-				service.atualizarRegimeCondicaoAtualRecuperando(getRecuperando1());
-				limparRecuperandosUnificacao();
-
-				facesUtil.exibirMensagemInfo("Recuperando Unificado com Sucesso!", true);
-
-				return "pretty:ListarUnificarRecuperando";
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}else {
-			unificarDadosPessoais(getRecuperando2());
-			unificarAlcunha(getRecuperando2(), getRecuperando1());
-			unificarPassagens(getRecuperando2());
-			unificarVidaSocial(getRecuperando2());
-			unificarFotos(getRecuperando2());
-			unificarParticularidades(getRecuperando2());
-			unificarOutrosNomes(getRecuperando2());
-			unificarDocumentos(getRecuperando2(), getRecuperando1());
-			unificarEnderecos(getRecuperando2());
-			unificarContatos(getRecuperando2());
-			unificarParentes(getRecuperando2());
-			unificarPedidoTransito(getRecuperando2());
-			unificarHistoricoRecuperando(getRecuperando2());
-			unificarAutorizacaoCadastro(getRecuperando2());
-			unificarStatusRecuperando(getRecuperando2());
-
-			try {
-				service.salvarRecuperandoUnificacao(getRecuperando2());
-				service.excluirRecuperandoUnificacao(getRecuperando1());
-				
-				if(getRecuperando2().getPessoa().getBiometria() == null) {
-					if(getRecuperando1().getPessoa().getBiometria() != null) {
-						getRecuperando2().getPessoa().setBiometria(getRecuperando1().getPessoa().getBiometria());
-						bioService.salvarBiometriaSDK(getRecuperando2().getPessoa().getBiometria());
-					}
-				} 
-
-				if(getRecuperando1().getPessoa().getBiometria() != null && getRecuperando1().getPessoa().getBiometria().getTemplate() != null)
-					bioService.excluirBiometriaSDK(getRecuperando1().getPessoa().getBiometria());
-				
-				service.atualizarRegimeCondicaoAtualRecuperando(getRecuperando2());
-				limparRecuperandosUnificacao();
-
-				facesUtil.exibirMensagemInfo("Recuperando Unificado com Sucesso!", true);
-				
-				return "pretty:ListarUnificarRecuperando";
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}		
+        try {
+			service.unificarRecuperando(getRecuperando1(), getRecuperando2(), dadosRecuperandoUnificacaoDTO);
+			facesUtil.exibirMensagemInfo("Recuperando Unificado com Sucesso!", true);
+			limparRecuperandosUnificacao();
+			
+			return "pretty:ListarUnificarRecuperando";
+		} catch (Exception e) {
+			limparRecuperandosUnificacao();
+			
+			e.printStackTrace();
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,"Erro", "Erro ao salvar unificação do Recuperando!");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
-		
-		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,"Erro", "Erro ao salvar unificação do Recuperando!");
-		FacesContext.getCurrentInstance().addMessage(null, msg);
-		
 		return "";
-		
     }
 	
 	public void limparRecuperandosUnificacao() {
