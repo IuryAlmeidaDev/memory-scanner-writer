@@ -896,7 +896,7 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 					recuperando.getAlteracaoParentes().before(getRecuperando1().getAlteracaoParentes())) {
 				recuperando.setAlteracaoParentes(getRecuperando1().getAlteracaoParentes());
 			}
-			if(getRecuperando1().getAlteracaoParentes() != null && getRecuperando1().getAlteracaoParentes().before(recuperando.getAlteracaoParentes()))
+			if(getRecuperando1().getAlteracaoParentes() != null && recuperando.getAlteracaoParentes() != null && getRecuperando1().getAlteracaoParentes().before(recuperando.getAlteracaoParentes()))
 				recuperando.setAlteracaoParentes(getRecuperando1().getAlteracaoParentes());
 		} else if (getRecuperando2().getId() != recuperando.getId()) {
 			for (Parente parente : getRecuperando2().getParentes()) {
@@ -907,7 +907,7 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 					recuperando.getAlteracaoParentes().before(getRecuperando2().getAlteracaoParentes())) {
 				recuperando.setAlteracaoParentes(getRecuperando2().getAlteracaoParentes());
 			}
-			if(getRecuperando2().getAlteracaoParentes() != null && getRecuperando2().getAlteracaoParentes().before(recuperando.getAlteracaoParentes()))
+			if(getRecuperando2().getAlteracaoParentes() != null && recuperando.getAlteracaoParentes() != null  && getRecuperando2().getAlteracaoParentes().before(recuperando.getAlteracaoParentes()))
 				recuperando.setAlteracaoParentes(getRecuperando2().getAlteracaoParentes());
 		}
 	}
