@@ -74,7 +74,8 @@
 								value="#{unificarRecuperandoBean.recuperandoSelecionado1.nomeMae}" />
 
 							<sgp:formOutputLabel labelValue="Data Nascimento"
-								value="#{unificarRecuperandoBean.recuperandoSelecionado1.dataNascimento}" />
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.dataNascimento}" 
+								converterData="true" />
 
 							<sgp:formOutputLabel labelValue="Unidade"
 								value="#{unificarRecuperandoBean.recuperandoSelecionado1.siglaUnidade}" />
@@ -126,7 +127,8 @@
 								value="#{unificarRecuperandoBean.recuperandoSelecionado2.nomeMae}" />
 
 							<sgp:formOutputLabel labelValue="Data Nascimento"
-								value="#{unificarRecuperandoBean.recuperandoSelecionado2.dataNascimento}" />
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.dataNascimento}" 
+								converterData="true" />
 
 							<sgp:formOutputLabel labelValue="Unidade"
 								value="#{unificarRecuperandoBean.recuperandoSelecionado2.siglaUnidade}" />
@@ -206,7 +208,9 @@
 				</p:column>
 				
 				<p:column headerText="Data de Nascimento" sortBy="#{rec.dataNascimento} " width="135">
-					<h:outputText value="#{rec.dataNascimento}" />
+					<h:outputText value="#{rec.dataNascimento}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
 				</p:column>
 
 				<p:column headerText="Unidade" width="105"
