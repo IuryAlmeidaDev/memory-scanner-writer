@@ -169,7 +169,8 @@
 										value="#{unificarRecuperandoBean.recuperandoSelecionado1.nomeMae}" />
 									<h:outputLabel value="" />
 									<sgp:formOutputLabel labelValue="Dt. Nascimento"
-										value="#{unificarRecuperandoBean.recuperandoSelecionado1.dataNascimento}" />
+										value="#{unificarRecuperandoBean.recuperandoSelecionado1.dataNascimento}" 
+										converterData="true"/>
 										
 									<p:radioButton id="sexoRecuperandoSelecionado1"
 										for="customRadioSexo" itemIndex="0" />
@@ -259,7 +260,8 @@
 										value="#{unificarRecuperandoBean.recuperandoSelecionado2.nomeMae}" />
 									<h:outputLabel value="" />
 									<sgp:formOutputLabel labelValue="Dt. Nascimento"
-										value="#{unificarRecuperandoBean.recuperandoSelecionado2.dataNascimento}" />
+										value="#{unificarRecuperandoBean.recuperandoSelecionado2.dataNascimento}" 
+										converterData="true"/>
 										
 									<p:radioButton id="sexoRecuperandoSelecionado2"
 										for="customRadioSexo" itemIndex="1" />
