@@ -620,11 +620,11 @@ public class UnificarRecuperandoDAO {
 	}
 
 	private void unificarFotos(Recuperando recuperando) {
-		if (getRecuperando1().getId() != recuperando.getId()) {
+		if (getRecuperando1().getId() == recuperando.getId()) {
 			for (Foto foto : getRecuperando1().getFotos()) {
 				foto.setIsAtual(false);
 			}
-		} else if (getRecuperando2().getId() != recuperando.getId()) {
+		} else if (getRecuperando2().getId() == recuperando.getId()) {
 			for (Foto foto : getRecuperando2().getFotos()) {
 				foto.setIsAtual(false);
 			}
