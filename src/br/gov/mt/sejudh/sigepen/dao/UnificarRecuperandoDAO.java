@@ -182,10 +182,22 @@ public class UnificarRecuperandoDAO {
 			recuperando.getPessoa().setNome(getRecuperando1().getPessoa().getNome());
 			recuperando.getPessoa().setNomeMae(getRecuperando1().getPessoa().getNomeMae());
 			recuperando.getPessoa().setDataNascimento(getRecuperando1().getPessoa().getDataNascimento());
+			OutroNome trinca = new OutroNome();
+			trinca.setDataNascimento(getRecuperando2().getPessoa().getDataNascimento());
+			trinca.setNome(getRecuperando2().getPessoa().getNome());
+			trinca.setNomeMae(getRecuperando2().getPessoa().getNomeMae());
+			trinca.setRecuperando(recuperando);
+			service.salvarOutroNome(trinca);
 		} else if (getRecuperando2().getId() == dadosRecuperandoUnificacaoDTO.getIdNomeNomeMaeDataNascimento()) {
 			recuperando.getPessoa().setNome(getRecuperando2().getPessoa().getNome());
 			recuperando.getPessoa().setNomeMae(getRecuperando2().getPessoa().getNomeMae());
 			recuperando.getPessoa().setDataNascimento(getRecuperando2().getPessoa().getDataNascimento());
+			OutroNome trinca = new OutroNome();
+			trinca.setDataNascimento(getRecuperando1().getPessoa().getDataNascimento());
+			trinca.setNome(getRecuperando1().getPessoa().getNome());
+			trinca.setNomeMae(getRecuperando1().getPessoa().getNomeMae());
+			trinca.setRecuperando(recuperando);
+			service.salvarOutroNome(trinca);
 		}
 
 		if (getRecuperando1().getId() == dadosRecuperandoUnificacaoDTO.getIdSexo()) {
@@ -309,12 +321,6 @@ public class UnificarRecuperandoDAO {
 					recuperando.getOutrosNomes().add(outroNome1);
 				}
 			}
-			OutroNome trinca = new OutroNome();
-			trinca.setDataNascimento(getRecuperando1().getPessoa().getDataNascimento());
-			trinca.setNome(getRecuperando1().getPessoa().getNome());
-			trinca.setNomeMae(getRecuperando1().getPessoa().getNomeMae());
-			trinca.setRecuperando(recuperando);
-			service.salvarOutroNome(trinca);
 		} else if (getRecuperando2().getId() != recuperando.getId()) {
 			for (OutroNome outroNome2 : getRecuperando2().getOutrosNomes()) {
 				Boolean duplicada = false;
@@ -331,12 +337,6 @@ public class UnificarRecuperandoDAO {
 					recuperando.getOutrosNomes().add(outroNome2);
 				}
 			}
-			OutroNome trinca = new OutroNome();
-			trinca.setDataNascimento(getRecuperando2().getPessoa().getDataNascimento());
-			trinca.setNome(getRecuperando2().getPessoa().getNome());
-			trinca.setNomeMae(getRecuperando2().getPessoa().getNomeMae());
-			trinca.setRecuperando(recuperando);
-			service.salvarOutroNome(trinca);
 		}
 	}
 
