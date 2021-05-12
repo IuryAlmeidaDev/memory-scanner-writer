@@ -118,7 +118,7 @@ public class BiometriaSDKDao {
 	}
 	
 	public NBiometricStatus excluir(Biometria biometria) {
-		return cliente.delete(String.valueOf(biometria.getId()));
+		return cliente.delete(String.valueOf(biometria.getIdPessoa()));
 	}
 
 	public Boolean alterar(Biometria biometria) throws Exception {

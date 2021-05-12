@@ -16,6 +16,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.model.Alcunha;
+import br.gov.mt.sejudh.sigepen.model.Biometria;
 import br.gov.mt.sejudh.sigepen.model.Contato;
 import br.gov.mt.sejudh.sigepen.model.Documento;
 import br.gov.mt.sejudh.sigepen.model.Endereco;
@@ -94,11 +95,17 @@ public class UnificarRecuperandoDAO {
 				unificarStatusRecuperando(getRecuperando1());
 
 				try {
-					if (getRecuperando1().getPessoa().getBiometria() == null && getRecuperando2().getPessoa().getBiometria() != null) {
+					if ((getRecuperando1().getPessoa().getBiometria() == null || 
+							(getRecuperando1().getPessoa().getBiometria() != null && getRecuperando1().getPessoa().getBiometria().getTemplate() == null)) && 
+							(getRecuperando2().getPessoa().getBiometria() != null && getRecuperando2().getPessoa().getBiometria().getTemplate() != null)) {
+						Biometria b = getRecuperando2().getPessoa().getBiometria();
+						b.setIdPessoa(getRecuperando1().getPessoa().getId());
+						bioService.salvarBiometriaSDK(b);
 						getRecuperando1().getPessoa().setBiometria(getRecuperando2().getPessoa().getBiometria());
-						this.updateUserTbl(getRecuperando1(), getRecuperando2());
 					} 
-					this.excluirUserTbl(getRecuperando2());
+					Biometria b = getRecuperando2().getPessoa().getBiometria();
+					b.setIdPessoa(getRecuperando2().getPessoa().getId());
+					bioService.excluirBiometriaSDK(b);
 					
 					service.salvarRecuperandoUnificacao(getRecuperando1());
 					service.excluirRecuperandoUnificacao(getRecuperando2());
@@ -126,11 +133,18 @@ public class UnificarRecuperandoDAO {
 				unificarStatusRecuperando(getRecuperando2());
 
 				try {
-					if (getRecuperando2().getPessoa().getBiometria() == null && getRecuperando1().getPessoa().getBiometria() != null) {
+					if ((getRecuperando2().getPessoa().getBiometria() == null || 
+							(getRecuperando2().getPessoa().getBiometria() != null && getRecuperando2().getPessoa().getBiometria().getTemplate() == null)) && 
+							(getRecuperando1().getPessoa().getBiometria() != null && getRecuperando1().getPessoa().getBiometria().getTemplate() != null)) {
+						Biometria b = getRecuperando1().getPessoa().getBiometria();
+						b.setIdPessoa(getRecuperando2().getPessoa().getId());
+						bioService.salvarBiometriaSDK(b);
 						getRecuperando2().getPessoa().setBiometria(getRecuperando1().getPessoa().getBiometria());
-						this.updateUserTbl(getRecuperando2(), getRecuperando1());
 					}
-					this.excluirUserTbl(getRecuperando1());
+					
+					Biometria b = getRecuperando2().getPessoa().getBiometria();
+					b.setIdPessoa(getRecuperando2().getPessoa().getId());
+					bioService.excluirBiometriaSDK(b);
 
 					service.salvarRecuperandoUnificacao(getRecuperando2());
 					service.excluirRecuperandoUnificacao(getRecuperando1());
@@ -144,21 +158,6 @@ public class UnificarRecuperandoDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void updateUserTbl(Recuperando menor, Recuperando maior) {
-		String jpql = "UPDATE " + Sigepen.SEJUDH_SCHEMA + ".USERTBL SET DBID = :menor WHERE DBID = :maior";
-		Query query = em.createNativeQuery(jpql);
-		query.setParameter("menor", menor.getPessoa().getId());
-		query.setParameter("maior", maior.getPessoa().getId());
-		query.executeUpdate();
-	}
-	
-	private void excluirUserTbl(Recuperando maior) {
-		String jpql = "DELETE FROM " + Sigepen.SEJUDH_SCHEMA + ".USERTBL WHERE DBID = :maior";
-		Query query = em.createNativeQuery(jpql);
-		query.setParameter("maior", maior.getPessoa().getId());
-		query.executeUpdate();
 	}
 	
 	public Recuperando getRecuperando1() {
