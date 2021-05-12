@@ -703,7 +703,6 @@ public class UnificarRecuperandoDAO {
 							&& getRecuperando1().getPessoa().getAutorizacaoCadastro().getDataAutorizacao()
 									.after(recuperando.getPessoa().getAutorizacaoCadastro().getDataAutorizacao()))) {
 				recuperando.getPessoa().setAutorizacaoCadastro(getRecuperando1().getPessoa().getAutorizacaoCadastro());
-				getRecuperando2().getPessoa().setAutorizacaoCadastro(null);
 			}
 
 		} else if (getRecuperando2().getId() != recuperando.getId()) {
@@ -712,7 +711,6 @@ public class UnificarRecuperandoDAO {
 							&& getRecuperando2().getPessoa().getAutorizacaoCadastro().getDataAutorizacao()
 									.after(recuperando.getPessoa().getAutorizacaoCadastro().getDataAutorizacao()))) {
 				recuperando.getPessoa().setAutorizacaoCadastro(getRecuperando2().getPessoa().getAutorizacaoCadastro());
-				getRecuperando1().getPessoa().setAutorizacaoCadastro(null);
 			}
 		}
 	}
