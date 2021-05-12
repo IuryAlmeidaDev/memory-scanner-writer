@@ -72,92 +72,84 @@ public class UnificarRecuperandoDAO {
 			DadosRecuperandoUnificacaoDTO dados) throws Exception {
 		// RN01 - O Sistema deve automaticamente selecionar o número de matrícula que
 		// for mais antigo (menor número de matrícula)
-		try {
-			this.setRecuperando1(recuperando1);
-			this.setRecuperando2(recuperando2);
-			this.setDadosRecuperandoUnificacaoDTO(dados);
+		
+		
+		this.setRecuperando1(recuperando1);
+		this.setRecuperando2(recuperando2);
+		this.setDadosRecuperandoUnificacaoDTO(dados);
 
-			if (getRecuperando1().getId() < getRecuperando2().getId()) {
-				unificarDadosPessoais(getRecuperando1());
-				unificarAlcunha(getRecuperando1(), getRecuperando2());
-				unificarVidaSocial(getRecuperando1());
-				unificarFotos(getRecuperando1());
-				unificarPassagens(getRecuperando1());
-				unificarParticularidades(getRecuperando1());
-				unificarOutrosNomes(getRecuperando1());
-				unificarDocumentos(getRecuperando1(), getRecuperando2());
-				unificarEnderecos(getRecuperando1());
-				unificarContatos(getRecuperando1());
-				unificarParentes(getRecuperando1());
-				unificarPedidoTransito(getRecuperando1());
-				unificarHistoricoRecuperando(getRecuperando1());
-				unificarAutorizacaoCadastro(getRecuperando1());
-				unificarStatusRecuperando(getRecuperando1());
+		if (getRecuperando1().getId() < getRecuperando2().getId()) {
+			unificarDadosPessoais(getRecuperando1());
+			unificarAlcunha(getRecuperando1(), getRecuperando2());
+			unificarVidaSocial(getRecuperando1());
+			unificarFotos(getRecuperando1());
+			unificarPassagens(getRecuperando1());
+			unificarParticularidades(getRecuperando1());
+			unificarOutrosNomes(getRecuperando1());
+			unificarDocumentos(getRecuperando1(), getRecuperando2());
+			unificarEnderecos(getRecuperando1());
+			unificarContatos(getRecuperando1());
+			unificarParentes(getRecuperando1());
+			unificarPedidoTransito(getRecuperando1());
+			unificarHistoricoRecuperando(getRecuperando1());
+			unificarAutorizacaoCadastro(getRecuperando1());
+			unificarStatusRecuperando(getRecuperando1());
 
-				try {
-					if ((getRecuperando1().getPessoa().getBiometria() == null || 
-							(getRecuperando1().getPessoa().getBiometria() != null && getRecuperando1().getPessoa().getBiometria().getTemplate() == null)) && 
-							(getRecuperando2().getPessoa().getBiometria() != null && getRecuperando2().getPessoa().getBiometria().getTemplate() != null)) {
-						Biometria b = getRecuperando2().getPessoa().getBiometria();
-						b.setIdPessoa(getRecuperando1().getPessoa().getId());
-						bioService.salvarBiometriaSDK(b);
-						getRecuperando1().getPessoa().setBiometria(getRecuperando2().getPessoa().getBiometria());
-					} 
-					Biometria b = getRecuperando2().getPessoa().getBiometria();
-					b.setIdPessoa(getRecuperando2().getPessoa().getId());
-					bioService.excluirBiometriaSDK(b);
-					
-					service.salvarRecuperandoUnificacao(getRecuperando1());
-					service.excluirRecuperandoUnificacao(getRecuperando2());
-					
-					service.atualizarRegimeCondicaoAtualRecuperando(getRecuperando1());
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else {
-				unificarDadosPessoais(getRecuperando2());
-				unificarAlcunha(getRecuperando2(), getRecuperando1());
-				unificarVidaSocial(getRecuperando2());
-				unificarFotos(getRecuperando2());
-				unificarPassagens(getRecuperando2());
-				unificarParticularidades(getRecuperando2());
-				unificarOutrosNomes(getRecuperando2());
-				unificarDocumentos(getRecuperando2(), getRecuperando1());
-				unificarEnderecos(getRecuperando2());
-				unificarContatos(getRecuperando2());
-				unificarParentes(getRecuperando2());
-				unificarPedidoTransito(getRecuperando2());
-				unificarHistoricoRecuperando(getRecuperando2());
-				unificarAutorizacaoCadastro(getRecuperando2());
-				unificarStatusRecuperando(getRecuperando2());
-
-				try {
-					if ((getRecuperando2().getPessoa().getBiometria() == null || 
-							(getRecuperando2().getPessoa().getBiometria() != null && getRecuperando2().getPessoa().getBiometria().getTemplate() == null)) && 
-							(getRecuperando1().getPessoa().getBiometria() != null && getRecuperando1().getPessoa().getBiometria().getTemplate() != null)) {
-						Biometria b = getRecuperando1().getPessoa().getBiometria();
-						b.setIdPessoa(getRecuperando2().getPessoa().getId());
-						bioService.salvarBiometriaSDK(b);
-						getRecuperando2().getPessoa().setBiometria(getRecuperando1().getPessoa().getBiometria());
-					}
-					
-					Biometria b = getRecuperando2().getPessoa().getBiometria();
-					b.setIdPessoa(getRecuperando2().getPessoa().getId());
-					bioService.excluirBiometriaSDK(b);
-
-					service.salvarRecuperandoUnificacao(getRecuperando2());
-					service.excluirRecuperandoUnificacao(getRecuperando1());
-					
-					service.atualizarRegimeCondicaoAtualRecuperando(getRecuperando2());
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			if ((getRecuperando1().getPessoa().getBiometria() == null || 
+					(getRecuperando1().getPessoa().getBiometria() != null && getRecuperando1().getPessoa().getBiometria().getTemplate() == null)) && 
+					(getRecuperando2().getPessoa().getBiometria() != null && getRecuperando2().getPessoa().getBiometria().getTemplate() != null)) {
+				Biometria b = getRecuperando2().getPessoa().getBiometria();
+				b.setIdPessoa(getRecuperando1().getPessoa().getId());
+				bioService.salvarBiometriaSDK(b);
+				getRecuperando1().getPessoa().setBiometria(getRecuperando2().getPessoa().getBiometria());
+			} 
+			if(getRecuperando2().getPessoa().getBiometria() != null) {
+				Biometria b = getRecuperando2().getPessoa().getBiometria();
+				b.setIdPessoa(getRecuperando2().getPessoa().getId());
+				bioService.excluirBiometriaSDK(b);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+			service.salvarRecuperandoUnificacao(getRecuperando1());
+			service.excluirRecuperandoUnificacao(getRecuperando2());
+			
+			service.atualizarRegimeCondicaoAtualRecuperando(getRecuperando1());
+		} else {
+			unificarDadosPessoais(getRecuperando2());
+			unificarAlcunha(getRecuperando2(), getRecuperando1());
+			unificarVidaSocial(getRecuperando2());
+			unificarFotos(getRecuperando2());
+			unificarPassagens(getRecuperando2());
+			unificarParticularidades(getRecuperando2());
+			unificarOutrosNomes(getRecuperando2());
+			unificarDocumentos(getRecuperando2(), getRecuperando1());
+			unificarEnderecos(getRecuperando2());
+			unificarContatos(getRecuperando2());
+			unificarParentes(getRecuperando2());
+			unificarPedidoTransito(getRecuperando2());
+			unificarHistoricoRecuperando(getRecuperando2());
+			unificarAutorizacaoCadastro(getRecuperando2());
+			unificarStatusRecuperando(getRecuperando2());
+
+			if ((getRecuperando2().getPessoa().getBiometria() == null || 
+					(getRecuperando2().getPessoa().getBiometria() != null && getRecuperando2().getPessoa().getBiometria().getTemplate() == null)) && 
+					(getRecuperando1().getPessoa().getBiometria() != null && getRecuperando1().getPessoa().getBiometria().getTemplate() != null)) {
+				Biometria b = getRecuperando1().getPessoa().getBiometria();
+				b.setIdPessoa(getRecuperando2().getPessoa().getId());
+				bioService.salvarBiometriaSDK(b);
+				getRecuperando2().getPessoa().setBiometria(getRecuperando1().getPessoa().getBiometria());
+			}
+			if(getRecuperando2().getPessoa().getBiometria() != null) {
+				Biometria b = getRecuperando2().getPessoa().getBiometria();
+				b.setIdPessoa(getRecuperando2().getPessoa().getId());
+				bioService.excluirBiometriaSDK(b);
+			}
+
+			service.salvarRecuperandoUnificacao(getRecuperando2());
+			service.excluirRecuperandoUnificacao(getRecuperando1());
+			
+			service.atualizarRegimeCondicaoAtualRecuperando(getRecuperando2());
 		}
+		
 	}
 	
 	public Recuperando getRecuperando1() {
