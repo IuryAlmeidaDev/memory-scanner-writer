@@ -138,9 +138,9 @@ public class UnificarRecuperandoDAO {
 				bioService.salvarBiometriaSDK(b);
 				getRecuperando2().getPessoa().setBiometria(getRecuperando1().getPessoa().getBiometria());
 			}
-			if(getRecuperando2().getPessoa().getBiometria() != null) {
-				Biometria b = getRecuperando2().getPessoa().getBiometria();
-				b.setIdPessoa(getRecuperando2().getPessoa().getId());
+			if(getRecuperando1().getPessoa().getBiometria() != null) {
+				Biometria b = getRecuperando1().getPessoa().getBiometria();
+				b.setIdPessoa(getRecuperando1().getPessoa().getId());
 				bioService.excluirBiometriaSDK(b);
 			}
 
