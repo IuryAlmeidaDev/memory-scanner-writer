@@ -170,25 +170,25 @@ public class UnificarRecuperandoDAO {
 
 	private void unificarDadosPessoais(Recuperando recuperando) {
 		if (getRecuperando1().getId() == dadosRecuperandoUnificacaoDTO.getIdNomeNomeMaeDataNascimento()) {
-			recuperando.getPessoa().setNome(getRecuperando1().getPessoa().getNome());
-			recuperando.getPessoa().setNomeMae(getRecuperando1().getPessoa().getNomeMae());
-			recuperando.getPessoa().setDataNascimento(getRecuperando1().getPessoa().getDataNascimento());
 			OutroNome trinca = new OutroNome();
 			trinca.setDataNascimento(getRecuperando2().getPessoa().getDataNascimento());
 			trinca.setNome(getRecuperando2().getPessoa().getNome());
 			trinca.setNomeMae(getRecuperando2().getPessoa().getNomeMae());
 			trinca.setRecuperando(recuperando);
-			service.salvarOutroNome(trinca);
+			recuperando.getOutrosNomes().add(trinca);
+			recuperando.getPessoa().setNome(getRecuperando1().getPessoa().getNome());
+			recuperando.getPessoa().setNomeMae(getRecuperando1().getPessoa().getNomeMae());
+			recuperando.getPessoa().setDataNascimento(getRecuperando1().getPessoa().getDataNascimento());
 		} else if (getRecuperando2().getId() == dadosRecuperandoUnificacaoDTO.getIdNomeNomeMaeDataNascimento()) {
-			recuperando.getPessoa().setNome(getRecuperando2().getPessoa().getNome());
-			recuperando.getPessoa().setNomeMae(getRecuperando2().getPessoa().getNomeMae());
-			recuperando.getPessoa().setDataNascimento(getRecuperando2().getPessoa().getDataNascimento());
 			OutroNome trinca = new OutroNome();
 			trinca.setDataNascimento(getRecuperando1().getPessoa().getDataNascimento());
 			trinca.setNome(getRecuperando1().getPessoa().getNome());
 			trinca.setNomeMae(getRecuperando1().getPessoa().getNomeMae());
 			trinca.setRecuperando(recuperando);
-			service.salvarOutroNome(trinca);
+			recuperando.getOutrosNomes().add(trinca);
+			recuperando.getPessoa().setNome(getRecuperando2().getPessoa().getNome());
+			recuperando.getPessoa().setNomeMae(getRecuperando2().getPessoa().getNomeMae());
+			recuperando.getPessoa().setDataNascimento(getRecuperando2().getPessoa().getDataNascimento());
 		}
 
 		if (getRecuperando1().getId() == dadosRecuperandoUnificacaoDTO.getIdSexo()) {
