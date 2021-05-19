@@ -56,6 +56,7 @@ import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Contato;
 import br.gov.mt.sejudh.sigepen.model.Documento;
 import br.gov.mt.sejudh.sigepen.model.Endereco;
+import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.Foto;
 import br.gov.mt.sejudh.sigepen.model.Imagem;
 import br.gov.mt.sejudh.sigepen.model.OutroNome;
@@ -321,6 +322,21 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	}
 	
 	private boolean validarRecuperando() {
+		Estrutura estruturaAtual = service.lotacaoAtual(recuperando);
+		
+		if (getAcaoDeTela().equals(AcaoDeTela.ALTERAR)) {
+			if (!recuperando.getStatus().equals(StatusRecuperando.ATIVO))
+				return false;
+			
+			if (estruturaAtual == null) 
+				return false;
+
+			boolean isUnidadeLogadaIgualLotacaoRecuperando = estruturaAtual.getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId();
+			
+			if (!isUnidadeLogadaIgualLotacaoRecuperando)
+				return false;
+		}
+
 		return true;
 	}
 	

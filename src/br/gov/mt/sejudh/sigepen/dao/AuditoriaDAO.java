@@ -34,9 +34,9 @@ public class AuditoriaDAO {
 		try {
 		List<Number> revisoes = auditReader.getRevisions(objeto.getClass(), id);
 		long revisao = (long) revisoes.get(0);
-			String jpql="select s.nome, r.data from " + Sigepen.SEJUDH_AUDIT_SCHEMA +  ".revisao r "
-					+ "inner join " + Sigepen.SEJUDH_SCHEMA +  ".usuario u on r.usuario_id = u.id "
-					+ "inner join " + Sigepen.SEJUDH_SCHEMA +  ".servidor s on u.servidor_id = s.id "
+			String jpql="select case when s.id is null then 'Administrador' else s.nome end, r.data from " + Sigepen.SEJUDH_AUDIT_SCHEMA +  ".revisao r "
+					+ "left outer join " + Sigepen.SEJUDH_SCHEMA +  ".usuario u on r.usuario_id = u.id "
+					+ "left outer join " + Sigepen.SEJUDH_SCHEMA +  ".servidor s on u.servidor_id = s.id "
 					+ "where r.id = :revisao";
 			Query query = entityManager.createNativeQuery(jpql);
 			query.setParameter("revisao", revisao);			
@@ -66,9 +66,9 @@ public class AuditoriaDAO {
 			List<Number> revisoes = auditReader.getRevisions(objeto.getClass(),	id);
 			
 			long revisao = (long) revisoes.get(revisoes.size()-1);
-			String jpql="select s.nome, r.data from " + Sigepen.SEJUDH_AUDIT_SCHEMA + ".revisao r "
-					+ "inner join " + Sigepen.SEJUDH_SCHEMA +  ".usuario u on r.usuario_id = u.id "
-					+ "inner join " + Sigepen.SEJUDH_SCHEMA +  ".servidor s on u.servidor_id = s.id "
+			String jpql="select case when s.id is null then 'Administrador' else s.nome end, r.data from " + Sigepen.SEJUDH_AUDIT_SCHEMA + ".revisao r "
+					+ "left outer join " + Sigepen.SEJUDH_SCHEMA +  ".usuario u on r.usuario_id = u.id "
+					+ "left outer join " + Sigepen.SEJUDH_SCHEMA +  ".servidor s on u.servidor_id = s.id "
 					+ "where r.id = :revisao";
 			Query query = entityManager.createNativeQuery(jpql);
 			query.setParameter("revisao", revisao);
