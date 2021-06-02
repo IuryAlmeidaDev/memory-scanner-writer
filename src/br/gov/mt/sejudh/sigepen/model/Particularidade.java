@@ -17,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
@@ -37,6 +38,9 @@ public class Particularidade implements Comparable<Particularidade> {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PARTICULARIDADE_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 	
 	@ManyToOne(optional = false, fetch=FetchType.LAZY)
 	@JoinColumn(name = "RECUPERANDO_ID")

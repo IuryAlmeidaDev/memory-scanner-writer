@@ -22,6 +22,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -43,6 +44,9 @@ public class Biometria implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BIOMETRIA_GENERATOR")
 	@Column(name="ID")
 	private long id;
+	
+	@Version
+	private long versao;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CAPTURA", nullable = false)

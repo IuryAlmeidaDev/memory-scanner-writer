@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
@@ -66,6 +67,9 @@ public class Recuperando implements Serializable, FieldHandled {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_RECUPERANDO_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private long versao;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "PESSOA_ID", nullable = false)

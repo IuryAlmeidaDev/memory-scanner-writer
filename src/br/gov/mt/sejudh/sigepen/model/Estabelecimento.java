@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -30,6 +31,9 @@ public class Estabelecimento {
 	@GeneratedValue (strategy = GenerationType.SEQUENCE, generator = "SEQ_ESTABELECIMENTO_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 	
 	@Column(name = "NOME", length = 80, nullable = false)
 	private String nome;

@@ -13,9 +13,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
+
+import org.hibernate.envers.Audited;
 
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
+@Audited
 @Entity
 @Table(name = "PASSAGEM_PROCEDENCIA", schema=Sigepen.SEJUDH_SCHEMA)
 public class PassagemProcedencia implements Serializable{
@@ -27,6 +31,9 @@ public class PassagemProcedencia implements Serializable{
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PASSAGEM_PROCEDENCIA_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 	
 	@ManyToOne
 	@JoinColumn(name="PROCEDENCIA_ID")

@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 
@@ -31,6 +32,9 @@ public class AutorizacaoCadastroSemBiometria implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AUT_CAD_BIO_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
+	
+	@Version
+	private Long versao;
 	
 	@Column(name = "DATA_AUTORIZACAO", nullable = false)
 	@Temporal(TemporalType.DATE)

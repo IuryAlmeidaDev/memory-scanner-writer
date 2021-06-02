@@ -25,11 +25,7 @@ public class UtilBean {
 	public String getBiometriaVersao() {
 		return "11122020"; //bioService.buscarVersaoAtualAplicativo();
 	}
-	
-	public String refresh() {
-		return "ok";
-	}
-	
+
 	public String getBiometriaVersaoAtual() {
 		String versao = "";
 		

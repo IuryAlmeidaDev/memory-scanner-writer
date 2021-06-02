@@ -18,6 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
@@ -43,6 +44,9 @@ public class Estrutura implements Serializable, FieldHandled {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ESTRUTURA_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 	
 	@Column(name="NOME", length = 80, nullable = false)
 	private String nome;
