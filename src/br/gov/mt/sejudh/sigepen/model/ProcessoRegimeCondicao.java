@@ -50,7 +50,7 @@ public class ProcessoRegimeCondicao implements Serializable {
 	@Column(name="TIPO_PROCESSO")
 	private TipoProcesso tipoProcesso;
 	
-	@Column(name="NUMERO_DOCUMENTO", length = 80)
+	@Column(name="NUMERO_DOCUMENTO", length = 250)
 	private String numeroDocumento;
 	
 	@Temporal(TemporalType.DATE)

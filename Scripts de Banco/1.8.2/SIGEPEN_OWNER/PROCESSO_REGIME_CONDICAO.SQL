@@ -1,0 +1,1 @@
+alter table PROCESSO_REGIME_CONDICAO modify numero_documento VARCHAR2(250 CHAR);
