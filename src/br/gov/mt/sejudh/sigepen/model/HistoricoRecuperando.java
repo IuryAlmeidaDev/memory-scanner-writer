@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -31,6 +32,9 @@ public class HistoricoRecuperando {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HISTORICO_RECUPERANDO_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "RECUPERANDO_ID")

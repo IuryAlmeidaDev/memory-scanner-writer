@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -36,6 +37,9 @@ public class Acesso implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ACESSO_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 
 	@OneToOne
 	@JoinColumn(name = "UNIDADE_ID")
