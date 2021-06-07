@@ -1,11 +1,29 @@
 var timeout;
-clearInterval(timeout);
-timeout = setInterval(sessionTimeout, 1799000);
 
 function download() {
 	document.getElementById('iDownload').contentWindow.go();
 }
 
-function sessionTimeout() {
-	logout();
+function sessionRefresh() {
+	refresh();
+}
+
+function handleVisibilityChange() {
+  if (document.hidden) {
+    clearInterval(timeout);
+  } else  {
+    sessionRefresh();
+    setTimeout();
+  }
+}
+
+document.addEventListener("visibilitychange", handleVisibilityChange, false);
+
+window.addEventListener("load", function(e) {
+	setTimeout();
+});
+
+function setTimeout() {
+	clearInterval(timeout);
+	timeout = setInterval(sessionRefresh, 70000);
 }

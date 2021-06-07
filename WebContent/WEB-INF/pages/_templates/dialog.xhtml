@@ -19,6 +19,9 @@
 </h:head>
 
 <h:body>
+	<h:form>
+		<p:remoteCommand name="refresh" action="#{utilBean.refresh}" />
+	</h:form>
 	<ui:insert name="conteudo" />
 	<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()" oncomplete="PF('statusDialog').hide()"/>
 
@@ -29,7 +32,7 @@
 		<iframe id="iDownload" name="iDownload" width="1" height="1" frameborder="0" src="#{sigepen.getApplicationDownloadUrl()}"/>
 	</h:panelGroup>
 	<h:outputScript library="js" name="bootstrap.min.js" />
-	<h:outputScript library="js" name="sigepen.js" />
+	<h:outputScript library="js" name="sigepen.js?ver=#{utilBean.sigepenJsVersao}" />
 	<ui:insert name="footer" />
 </h:body>
 </html>
