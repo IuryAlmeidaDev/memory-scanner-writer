@@ -18,6 +18,8 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.mgt.RealmSecurityManager;
+import org.apache.shiro.realm.Realm;
 
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
@@ -26,6 +28,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.model.Acesso;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.service.LoginService;
+import br.gov.mt.sejudh.sigepen.realm.SigepenRealm;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -35,6 +38,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @RequestScoped
 @URLMappings(mappings = {
 @URLMapping(id = "login", pattern = "/login", viewId = "/WEB-INF/pages/login/Login.xhtml"),
+@URLMapping(id = "erro", pattern = "/erro", viewId = "/WEB-INF/pages/erro.xhtml"),
 @URLMapping(id = "SelecionarUnidade", pattern = "/login/unidade", viewId = "/WEB-INF/pages/login/Unidade.xhtml") })
 public class LoginBean {
 
@@ -102,12 +106,21 @@ public class LoginBean {
 	public void setUnidades(List<UnidadePrisional> unidades) {
 		this.unidades = unidades;
 	}
+	
+	private void clearCache() {
+		for (Realm realm : ((RealmSecurityManager) SecurityUtils.getSecurityManager()).getRealms()) {
+		    if (realm.getName().equals("jdbcRealm")) {
+		    	SigepenRealm realm2 = (SigepenRealm)realm;
+		    	realm2.getAuthorizationCache().remove(SecurityUtils.getSubject().getPrincipals());
+		    }
+		}
+	}
 
 	public void login() {
 		try {
 			SecurityUtils.getSubject().login(new UsernamePasswordToken(usuario, senha));
-			SecurityUtil.clearCache();
-			SecurityUtil.setUsuario(service.buscarUsuario(SecurityUtil.getLoginUsuario()));
+			clearCache();
+			SecurityUtils.getSubject().getSession().setAttribute("usuario", service.buscarUsuario(SecurityUtil.getLoginUsuario()));
 			LoggerUtil.logInfo(Acao.LOGAR, usuario, log);
 			FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_DASHBOARD_URL);
 		} 
@@ -142,7 +155,7 @@ public class LoginBean {
 	
 	public void setarUnidade() throws IOException {
 		SecurityUtil.setUnidadeSelecionada(unidadeSelecionada);
-		SecurityUtil.clearCache();
+		clearCache();
 		LoggerUtil.logInfo(Acao.LOGAR, unidadeSelecionada, log);
 		FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_DASHBOARD_URL);
 	}

@@ -28,6 +28,7 @@ public class ViewExpiredExceptionHandler extends ExceptionHandlerWrapper {
 	@Override
 	public void handle() throws FacesException {
 		Iterable<ExceptionQueuedEvent> events = getUnhandledExceptionQueuedEvents();
+		//Iterable<ExceptionQueuedEvent> eventz = getHandledExceptionQueuedEvents();
 		
 		for (Iterator<ExceptionQueuedEvent> iterator = events.iterator(); iterator.hasNext();) {
 			ExceptionQueuedEvent event = iterator.next();
@@ -38,7 +39,14 @@ public class ViewExpiredExceptionHandler extends ExceptionHandlerWrapper {
 				FacesContext context = FacesContext.getCurrentInstance();
 
 				try {
-					context.getExternalContext().redirect(Sigepen.APPLICATION_LOGIN_URL);
+					//HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+				    //String url = request.getRequestURL().toString();
+				    //String uri = request.getRequestURI();
+				    
+				    //System.out.println(url);
+				    //System.out.println(uri);
+				    
+					context.getExternalContext().redirect(Sigepen.getApplicationName() + "/erro");
 					context.getPartialViewContext().setRenderAll(true);
 					context.renderResponse();
 				} catch (Exception exc) {
