@@ -25,5 +25,5 @@ window.addEventListener("load", function(e) {
 
 function setTimeout() {
 	clearInterval(timeout);
-	timeout = setInterval(sessionRefresh, 70000);
+	timeout = setInterval(sessionRefresh, 1810000);
 }
