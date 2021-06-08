@@ -50,7 +50,7 @@
 		<h:form id="userTbl">
 			<br/>
 			<p:dataTable id="dataTable" var="user" value="#{nServerBean.userTblList}" rows="10" paginator="true" paginatorPosition="bottom" sortBy="#{user.pessoa_id}"
-			             emptyMessage="Nenhum registro encontrado." >
+			             emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
 				<f:facet name="header">
 					Templates que estão no NServer e não estão em Pessoa (com biometria coletada)
 				</f:facet>
@@ -66,7 +66,7 @@
 		<h:form id="pessoas">
 			<br/><br/>
 			<p:dataTable id="dataTable" var="pessoa" value="#{nServerBean.pessoaList}" rows="10" paginator="true" paginatorPosition="bottom" sortBy="#{pessoa.id}"
-			             emptyMessage="Nenhum registro encontrado.">
+			             emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
 				<f:facet name="header">
 					Pessoas com biometria que não estão no NServer
 				</f:facet>
