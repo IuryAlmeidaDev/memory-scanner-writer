@@ -46,7 +46,7 @@ public class NServerDAO {
 		 * List<PessoaNServerDTO> pessoas = entityManager.createQuery("select new br.gov.mt.sejudh.sigepen.model.dto.PessoaNServerDTO(p.id, r.id, v.id, b.id, p.nome, p.nomeMae, p.dataNascimento) from Pessoa p join p.biometria b left join p.recuperando r left join p.visitante v where b.template is not null and p.id not in (select u.pessoa_id from UserTbl u)", PessoaNServerDTO.class).getResultList();
 		 * 
 		 */
-		List<PessoaNServerDTO> pessoas = entityManager.createQuery("select new br.gov.mt.sejudh.sigepen.model.dto.PessoaNServerDTO(p.id, r.id, null, b.id, p.nome, p.nomeMae, p.dataNascimento) from Pessoa p join p.biometria b left join p.recuperando r where b.template is not null and p.id not in (select u.pessoa_id from UserTbl u)", PessoaNServerDTO.class).getResultList();
+		List<PessoaNServerDTO> pessoas = entityManager.createQuery("select new br.gov.mt.sejudh.sigepen.model.dto.PessoaNServerDTO(p.id, r.id, 0L, b.id, p.nome, p.nomeMae, p.dataNascimento) from Pessoa p join p.biometria b left join p.recuperando r where b.template is not null and p.id not in (select u.pessoa_id from UserTbl u)", PessoaNServerDTO.class).getResultList();
 		return pessoas;
 	}
 }
