@@ -28,14 +28,14 @@
 		</h:form>
 		
 		<h:form id="formExcluir">
-			<br/><br/>
+			<br/>
 			<p:panel header="Excluir Template">
 				<p:inputText title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
 				<p:commandButton icon="ui-icon" value="Excluir" action="#{nServerBean.excluir}" update="@form :mensagens  :userTbl :pessoas" />
 			</p:panel>
 		</h:form>
 		<h:form id="formImportar">
-			<br/><br/>
+			<br/>
 			<p:panel header="Importar Template">
 				<p:inputText title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
 				<p:commandButton icon="ui-icon" value="Importar" action="#{nServerBean.importar}" update="@form :mensagens :userTbl :pessoas" />
@@ -52,34 +52,34 @@
 			<p:dataTable id="dataTable" var="user" value="#{nServerBean.userTblList}" rows="10" paginator="true" paginatorPosition="bottom" sortBy="#{user.pessoa_id}"
 			             emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
 				<f:facet name="header">
-					Templates que estão no NServer e não estão em Pessoa (com biometria coletada)
+					Templates que estão na UserTbl e não estão em Pessoa (com biometria coletada)
 				</f:facet>
-				<p:column headerText="Id" width="100" sortBy="#{user.id}">
+				<p:column headerText="Template Id" sortBy="#{user.id}">
 					<h:outputText value="#{user.id}" />
 				</p:column>
-				<p:column headerText="Id Pessoa" sortBy="#{user.pessoa_id}">
+				<p:column headerText="Pessoa Id" sortBy="#{user.pessoa_id}">
 					<h:outputText value="#{user.pessoa_id}" />
 				</p:column>
 			</p:dataTable>
 		</h:form>
 		
 		<h:form id="pessoas">
-			<br/><br/>
+			<br/>
 			<p:dataTable id="dataTable" var="pessoa" value="#{nServerBean.pessoaList}" rows="10" paginator="true" paginatorPosition="bottom" sortBy="#{pessoa.id}"
 			             emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
 				<f:facet name="header">
-					Pessoas com biometria que não estão no NServer
+					Pessoas com biometria que não estão na UserTbl
 				</f:facet>
-				<p:column headerText="Pessoa Id" width="100" sortBy="#{pessoa.id}">
+				<p:column headerText="Pessoa Id" width="120" sortBy="#{pessoa.id}">
 					<h:outputText value="#{pessoa.id}" />
 				</p:column>
-				<p:column headerText="Bio Id" sortBy="#{pessoa.biometria_id}">
+				<p:column headerText="Bio Id" width="120" sortBy="#{pessoa.biometria_id}">
 					<h:outputText value="#{pessoa.biometria_id}" />
 				</p:column>
-				<p:column headerText="Recup. Id" sortBy="#{pessoa.matricula}">
+				<p:column headerText="Recup. Id" width="120" sortBy="#{pessoa.matricula}">
 					<h:outputText value="#{pessoa.matricula}" />
 				</p:column>
-				<p:column headerText="Visit. Id" sortBy="#{pessoa.codigo_visitante}">
+				<p:column headerText="Visit. Id"  width="120" sortBy="#{pessoa.codigo_visitante}">
 					<h:outputText value="#{pessoa.codigo_visitante}" />
 				</p:column>
 				<p:column headerText="Nome" sortBy="#{pessoa.nome}">
@@ -88,7 +88,7 @@
 				<p:column headerText="Nome da mãe" sortBy="#{pessoa.nomeMae}">
 					<h:outputText value="#{pessoa.nomeMae}" />
 				</p:column>
-				<p:column headerText="Data de Nascimento" sortBy="#{pessoa.dataNascimento}">
+				<p:column headerText="Data de Nascimento" width="170" sortBy="#{pessoa.dataNascimento}">
 					<h:outputText value="#{pessoa.dataNascimento}">
 						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>
