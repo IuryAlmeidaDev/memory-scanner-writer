@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.UsuarioDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUsuario;
@@ -13,6 +14,7 @@ import br.gov.mt.sejudh.sigepen.model.Acesso;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.dto.UsuarioDTO;
 import br.gov.mt.sejudh.sigepen.security.HashedPassSaltGenerator;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Stateless
@@ -41,6 +43,7 @@ public class UsuarioService {
 		return usuario;
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public Usuario salvar(Usuario usuario, boolean senhaMudou) throws Exception {
 		if (usuario.getServidor() == null) {
 			throw new ValidacaoException("É necessário associar um servidor.");

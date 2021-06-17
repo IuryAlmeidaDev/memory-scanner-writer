@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PessoaDAO;
@@ -11,6 +12,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPessoa;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.dto.PessoaDTO;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 @Stateless
 public class PessoaService {
@@ -21,6 +23,7 @@ public class PessoaService {
 	@Inject
 	private AuditoriaDAO auditDAO;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(Pessoa pessoa) {
 		dao.salvar(pessoa);
 	}

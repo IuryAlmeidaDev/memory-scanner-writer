@@ -11,19 +11,19 @@ function sessionRefresh() {
 function handleVisibilityChange() {
   if (document.hidden) {
     clearInterval(timeout);
-  } else  {
+  } else {
     sessionRefresh();
-    setTimeout();
+    setarTimeout();
   }
 }
 
 document.addEventListener("visibilitychange", handleVisibilityChange, false);
 
-window.addEventListener("load", function(e) {
-	setTimeout();
+window.addEventListener("load", function() {
+	setarTimeout();
 });
 
-function setTimeout() {
+function setarTimeout() {
 	clearInterval(timeout);
 	timeout = setInterval(sessionRefresh, 1810000);
 }
