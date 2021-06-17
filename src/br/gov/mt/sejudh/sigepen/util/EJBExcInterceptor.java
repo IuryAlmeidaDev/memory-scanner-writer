@@ -15,7 +15,7 @@ public class EJBExcInterceptor {
 		try {
 			result = context.proceed();
 		} catch (OptimisticLockException e) {
-			throw new RegistroJaAtualizadoException("Este registro foi alterado por outro usuário, atualize a página e repita a operação.");
+			throw new RegistroJaAtualizadoException("Este registro foi alterado, atualize a página e repita a operação.");
 		}
 		
 		return result;
