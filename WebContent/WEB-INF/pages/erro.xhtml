@@ -1,12 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>Sessão expirada</title>
-        <meta http-equiv="refresh" content="0;url=#{sigepen.getApplicationName()}/login" />
-    </head>
-    <body>
-        <h1>Sessão expirada</h1>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="head">
+		<meta http-equiv="refresh" content="0;url=#{sigepen.getApplicationName()}/login" />
+	</ui:define>
+	
+	<ui:define name="conteudo">		
+		<h1>Sessão expirada</h1>
         <h3>Você será redirecionado</h3>
         <p><a href="#{sigepen.getApplicationName()}/login">Tentar novamente</a>.</p>
-    </body>
-</html>
+	</ui:define>
+</ui:composition>

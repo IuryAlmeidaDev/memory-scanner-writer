@@ -315,7 +315,6 @@ public class PedidoTransitoBean extends MetodosDePaginaBean {
 		
 		if(estabelecimento != null){
 			this.filtro.setEstabelecimento(estabelecimento);
-			this.pedido.setResponsavelDestino(null);
 		}		
 	}
 	
