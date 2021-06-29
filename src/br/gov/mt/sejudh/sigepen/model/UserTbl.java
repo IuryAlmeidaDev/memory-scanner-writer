@@ -23,7 +23,7 @@ public class UserTbl implements Serializable {
 	private long id;
 	
 	@Column(name = "DBID")
-	private long pessoa_id;
+	private String pessoa_id;
 	
 	@Lob
 	private byte[] template;
@@ -36,11 +36,11 @@ public class UserTbl implements Serializable {
 		this.id = id;
 	}
 
-	public long getPessoa_id() {
+	public String getPessoa_id() {
 		return pessoa_id;
 	}
 
-	public void setPessoa_id(long pessoa_id) {
+	public void setPessoa_id(String pessoa_id) {
 		this.pessoa_id = pessoa_id;
 	}
 
