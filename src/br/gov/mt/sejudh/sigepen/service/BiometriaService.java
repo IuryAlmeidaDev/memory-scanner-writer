@@ -62,6 +62,7 @@ public class BiometriaService {
 			bioUtil.setBioJsonString(json, true);
 			bioT.setTemplate(bioUtil.getBiometriaTemplate());
 			bioT.setJson(bioUtil.getBiometriaJsonString());
+			bioT.setDataColeta(Sigepen.getDataAtual());
 			
 			bioT = dao.salvarBiometriaTemporaria(bioT);
 		} catch (Throwable t) {
