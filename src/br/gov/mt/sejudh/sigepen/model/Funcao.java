@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 
@@ -32,6 +33,9 @@ public class Funcao implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FUNCAO_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private long versao;
 	
 	@Column(name = "NOME", length = 80, nullable = false)
 	private String nome;

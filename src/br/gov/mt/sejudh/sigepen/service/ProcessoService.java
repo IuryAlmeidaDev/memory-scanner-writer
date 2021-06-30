@@ -2,11 +2,13 @@ package br.gov.mt.sejudh.sigepen.service;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.ProcessoDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
 import br.gov.mt.sejudh.sigepen.model.Processo;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 @Stateless
 public class ProcessoService {
@@ -14,6 +16,7 @@ public class ProcessoService {
 	@Inject
 	private ProcessoDAO dao;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public Processo salvar(Processo processo){
 		dao.salvar(processo);
 		return processo;

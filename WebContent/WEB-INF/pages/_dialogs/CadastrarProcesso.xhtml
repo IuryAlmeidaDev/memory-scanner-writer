@@ -173,7 +173,7 @@
     		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.Modalidade" var="modalidade" allSuffix="ALL_ENUM_VALUES" />
     		
     		<h:form id="formRegimeCondicaoProcesso">
-    			<sgp:formInputText labelValue="Núm. Documento" value="#{cadastrarProcessoBean.processoRegimeCondicoes.numeroDocumento}" permiteCaracterEspecial="true"/>
+    			<sgp:formInputText labelValue="Núm. Documento" value="#{cadastrarProcessoBean.processoRegimeCondicoes.numeroDocumento}" permiteCaracterEspecial="true" maxlength="250"/>
     			
     			<sgp:formSelectOneMenu
 					id="tipoProcesso"

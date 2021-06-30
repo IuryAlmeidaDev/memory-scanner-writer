@@ -20,7 +20,6 @@
 		<sgp:validarAcesso />
 	
 		<h:form prependId="false">
-			<p:remoteCommand name="refresh" actionListener="#{utilBean.refresh}" />
 			<p:remoteCommand autoRun="true" oncomplete="#{recuperandoBean.executarPreCadastroPessoaRemoteCommand()}"/>
 			<p:commandButton id="cb" actionListener="#{recuperandoBean.abrirDialogPreCadastroPessoa}" style="display:none">
 				<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarPreCadastroPessoa}" update=":tabView:formConteudo :tabView:formConteudoRec :tabView:groupBotaoSalvarRec :tabView:formFoto :tabView:infoPeric"/>

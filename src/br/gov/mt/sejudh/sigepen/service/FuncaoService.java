@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.FuncaoDAO;
@@ -11,6 +12,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroFuncao;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Cargo;
 import br.gov.mt.sejudh.sigepen.model.Funcao;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
 @Stateless
@@ -22,6 +24,7 @@ public class FuncaoService {
 	@Inject
 	private AuditoriaDAO auditDao;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(Funcao funcao) throws ValidacaoException {
 		if (jaExisteFuncaoComMesmoNome(funcao)) {
 			throw new ValidacaoException("Já existe uma função com o mesmo nome (" + funcao.getNome() + ") no cargo selecionado.");

@@ -1,19 +1,19 @@
 package br.gov.mt.sejudh.sigepen.util;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.mgt.RealmSecurityManager;
-import org.apache.shiro.realm.Realm;
 
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
-import br.gov.mt.sejudh.sigepen.realm.SigepenRealm;
+import java.io.Serializable;
 
 @Named
-@ApplicationScoped
-public class SecurityUtil {
+@SessionScoped
+public class SecurityUtil implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public static String getLoginUsuario() {
 		return SecurityUtils.getSubject().getPrincipal().toString();
@@ -35,11 +35,7 @@ public class SecurityUtil {
 		Usuario usuario = (Usuario) SecurityUtils.getSubject().getSession().getAttribute("usuario");
 		return usuario;
 	}
-	
-	public static void setUsuario(Usuario usuario) {
-		SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
-	}
-	
+
 	public static UnidadePrisional getUnidadeSelecionada() {
 		UnidadePrisional unidade = (UnidadePrisional) SecurityUtils.getSubject().getSession().getAttribute("unidadeSelecionada");
 		return unidade;
@@ -102,14 +98,5 @@ public class SecurityUtil {
 		}
 		
 		return resultado;
-	}
-
-	public static void clearCache() {
-		for (Realm realm : ((RealmSecurityManager) SecurityUtils.getSecurityManager()).getRealms()) {
-		    if (realm.getName().equals("jdbcRealm")) {
-		    	SigepenRealm realm2 = (SigepenRealm)realm;
-		    	realm2.getAuthorizationCache().remove(SecurityUtils.getSubject().getPrincipals());
-		    }
-		}
 	}
 }

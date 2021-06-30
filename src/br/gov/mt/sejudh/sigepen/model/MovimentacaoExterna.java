@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 
@@ -37,6 +38,9 @@ public class MovimentacaoExterna {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_MOV_EXT_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 
 	@OneToMany(mappedBy="movimentacaoExterna", fetch = FetchType.LAZY)
 	private List<PedidoTransito> pedidos;

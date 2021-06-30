@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
@@ -28,6 +32,10 @@ public class BiometriaTemporaria {
 	@Lob
 	@Column(name = "JSON")
 	private String json;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_COLETA")
+	private Date dataColeta;
 
 	public long getId() {
 		return id;
@@ -51,5 +59,13 @@ public class BiometriaTemporaria {
 
 	public void setJson(String json) {
 		this.json = json;
+	}
+
+	public Date getDataColeta() {
+		return dataColeta;
+	}
+
+	public void setDataColeta(Date dataColeta) {
+		this.dataColeta = dataColeta;
 	}
 }

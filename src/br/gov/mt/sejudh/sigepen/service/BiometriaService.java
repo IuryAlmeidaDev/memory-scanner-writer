@@ -1,6 +1,8 @@
 package br.gov.mt.sejudh.sigepen.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,7 @@ import br.gov.mt.sejudh.sigepen.biometrics.BiometriaDedoPosicaoImagem;
 import br.gov.mt.sejudh.sigepen.biometrics.BiometriaSDKDao;
 import br.gov.mt.sejudh.sigepen.biometrics.BiometriaUtil;
 import br.gov.mt.sejudh.sigepen.model.Biometria;
+import br.gov.mt.sejudh.sigepen.model.BiometriaDedo;
 import br.gov.mt.sejudh.sigepen.model.BiometriaTemporaria;
 import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
@@ -66,6 +69,7 @@ public class BiometriaService {
 			bioUtil.setBioJsonString(json, true);
 			bioT.setTemplate(bioUtil.getBiometriaTemplate());
 			bioT.setJson(bioUtil.getBiometriaJsonString());
+			bioT.setDataColeta(Sigepen.getDataAtual());
 			
 			bioT = dao.salvarBiometriaTemporaria(bioT);
 		} catch (Throwable t) {
@@ -106,15 +110,24 @@ public class BiometriaService {
 
 	public void vincularBiometriaAPessoa(Biometria bio, Pessoa pessoa) {
 		if (pessoa.getBiometria() != null) {
-			bio.setId(pessoa.getBiometria().getId());
-			bio.setIdPessoa(pessoa.getId());
-			
 			if (pessoa.getBiometria().getId() != 0) {
-				bio.setBiometriaFoiAlterada(true);
+				pessoa.getBiometria().setBiometriaFoiAlterada(true);
+				pessoa.getBiometria().setDataCaptura(bio.getDataCaptura());
+				pessoa.getBiometria().setTemplate(bio.getTemplate());
+				
+				pessoa.getBiometria().setDedos(new HashSet<BiometriaDedo>());
+				
+				for (Iterator<BiometriaDedo> i = bio.getDedos().iterator(); i.hasNext();) {
+					BiometriaDedo d = i.next();
+					d.setBiometria(pessoa.getBiometria());
+					
+					pessoa.getBiometria().getDedos().add(d);
+				}
 			}
+		} else {
+			bio.setIdPessoa(pessoa.getId());
+			pessoa.setBiometria(bio);
 		}
-		
-		pessoa.setBiometria(bio);
 	}
 
 	public Boolean verificarSeAmostrasSaoIdenticasPorImagem(String listaAmostras) throws Exception {

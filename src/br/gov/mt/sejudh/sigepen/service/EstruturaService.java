@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -14,6 +15,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
 
@@ -30,6 +32,7 @@ public class EstruturaService {
 	public EstruturaService(){		
 		}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public Estrutura salvar(Estrutura estrutura) {
 		if(!estrutura.getCela()){
 			estrutura.setCapacidade(0);
@@ -163,6 +166,7 @@ public class EstruturaService {
 	 * 		
 	 * @param situacaoEstruturaUnidade
 	 */
+	@Interceptors(EJBExcInterceptor.class)
 	public void alterarSituacaoEstruturasFilhos(SituacaoEstruturaUnidade situacaoEstruturaUnidade, DefaultTreeNode root, Estrutura estrutura){
 		Estrutura est;
 		SituacaoEstruturaUnidade s;
@@ -250,6 +254,7 @@ public class EstruturaService {
 	 * @param situacaoEstruturaUnidade
 	 * @param root
 	 */
+	@Interceptors(EJBExcInterceptor.class)
 	public void alterarSituacaoEstruturaPai(SituacaoEstruturaUnidade situacaoEstruturaUnidade, DefaultTreeNode root){
 		Estrutura e = (Estrutura) root.getData();
 		Estrutura est;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.UnidadePrisionalDAO;
@@ -13,6 +14,7 @@ import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
 @Stateless
@@ -24,6 +26,7 @@ public class UnidadePrisionalService {
 	@Inject
 	private AuditoriaDAO auditDAO;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public UnidadePrisional salvar(UnidadePrisional unidade) throws ValidacaoException {		
 		if(jaExisteUnidadePrisionalComMesmoNome(unidade)){
 			throw new ValidacaoException("Já existe uma Unidade Prisional com o mesmo Nome (" + unidade.getNome() + "), e não está INATIVA.");
@@ -47,6 +50,7 @@ public class UnidadePrisionalService {
 		return dao.jaExisteUnidadePrisionalComMesmoNome(unidadePrisional);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void alterar(UnidadePrisional unidade){
 		dao.alterar(unidade);
 	}

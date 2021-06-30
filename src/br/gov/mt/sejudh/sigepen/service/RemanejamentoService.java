@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoDAO;
@@ -18,6 +19,7 @@ import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.Remanejamento;
 import br.gov.mt.sejudh.sigepen.model.dto.RemanejamentoDTO;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
 @Stateless
@@ -35,6 +37,7 @@ public class RemanejamentoService {
 	@Inject
 	private AuditoriaDAO auditDAO;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(Remanejamento remanejamento) throws ValidacaoException {
 		
 		Date dataFim = new Date();
@@ -71,7 +74,8 @@ public class RemanejamentoService {
 		
 		return remanejamento;
     }
-		
+
+	@Interceptors(EJBExcInterceptor.class)
 	public void finalizarRemanejamento(Remanejamento remanejamento) throws ValidacaoException {
 		Date dataFim = new Date();
 		if (remanejamento.getPedido().getRecuperando().getPassagemAtual().getLotacaoAtual().getDataEntrada().after(dataFim)) {

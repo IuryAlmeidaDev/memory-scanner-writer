@@ -14,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 
@@ -32,6 +33,9 @@ public class BiometriaAmostra implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BIO_AMOS_GENERATOR")
 	@Column(name="ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 	
 	@Column(name="AMOSTRA_NUMERO")
 	private Integer amostraNumero;

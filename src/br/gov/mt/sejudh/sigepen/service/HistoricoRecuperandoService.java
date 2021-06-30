@@ -4,9 +4,11 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.HistoricoRecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.model.HistoricoRecuperando;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 @Stateless
 public class HistoricoRecuperandoService {
@@ -18,6 +20,7 @@ public class HistoricoRecuperandoService {
 		
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(HistoricoRecuperando historicoRecuperando){
 		dao.salvar(historicoRecuperando);
 	}

@@ -17,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 
@@ -35,6 +36,9 @@ public class PassagemLotacao implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PASSAGEM_LOTACAO_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ESTRUTURA_ID")

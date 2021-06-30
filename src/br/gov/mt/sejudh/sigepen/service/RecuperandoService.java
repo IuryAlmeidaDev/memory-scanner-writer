@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PessoaDAO;
@@ -46,6 +47,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO.PassagemExtratoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
 @Stateless
@@ -111,6 +113,7 @@ public class RecuperandoService {
 		return dao.buscarQuantidadeFiltrada(filtro);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public Recuperando atualizarRegimeCondicaoAtualRecuperando(Recuperando recuperando){
 		List<Processo> processos = processoDao.processosPorRecuperando(recuperando.getId());
 		
@@ -127,6 +130,7 @@ public class RecuperandoService {
 		return recuperando;
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public Recuperando salvar(Recuperando recuperando) throws Exception {
 		boolean possuiBio = recuperando.getPessoa().getBiometria() != null;
 		boolean isNovaBio = false;
@@ -221,6 +225,7 @@ public class RecuperandoService {
 		return dao.buscarRecuperandoSimplesPorIdPessoa(idPessoa);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvarOutroNome(OutroNome outroNome){		
 		dao.salvarOutroNome(outroNome);
 	}
@@ -229,6 +234,7 @@ public class RecuperandoService {
 		dao.excluirOutroNome(outroNome);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void tornarNomePrincipal(Recuperando recuperando, OutroNome outroNome){
 		String nome = recuperando.getPessoa().getNome();
 		String nomeMae = recuperando.getPessoa().getNomeMae();
@@ -247,6 +253,7 @@ public class RecuperandoService {
 		
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvarParente(Parente parente){
 		Calendar data = Calendar.getInstance();
 		data.add(Calendar.MONTH, 4);
@@ -268,6 +275,7 @@ public class RecuperandoService {
 		return total;
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvarAlcunha(Alcunha alcunha){
 		if(alcunha.isPrincipal()){
 		dao.atualizarAlcunhaPrincipal(false, alcunha.getRecuperando().getId());
@@ -308,6 +316,7 @@ public class RecuperandoService {
 		}
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public List<Foto> salvarFoto(Foto foto) {
 		foto = dao.salvarFoto(foto);
 		List<Foto> fotos = dao.listarFotos(foto.getRecuperando().getId());

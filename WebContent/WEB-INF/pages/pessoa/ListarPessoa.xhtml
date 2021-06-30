@@ -18,6 +18,8 @@
 		<h:form id="meuFormulario">
 			<p:panel>
 				<p:outputLabel value="Pesquisar" />
+				<sgp:formInputText labelValue="Id"
+					value="#{pessoaBean.filtro.id}" size="40" maxlength="80" />
 				<sgp:formInputText labelValue="Nome"
 					value="#{pessoaBean.filtro.nome}" size="40" maxlength="80" />
 				<sgp:formInputText labelValue="Nome da Mãe"
@@ -31,7 +33,7 @@
 		<h:form id="registrosForm">
 			<p:dataTable id="dataTable" var="pessoa" value="#{pessoaBean.pessoas}"
 				rows="10" paginator="true" paginatorPosition="bottom" lazy="true"
-				sortBy="#{pessoa.id}" emptyMessage="Nenhum registro encontrado.">
+				sortBy="#{pessoa.id}" sortOrder="descending" emptyMessage="Nenhum registro encontrado.">
 				<p:column headerText="Código" width="100" sortBy="#{pessoa.id}">
 					<h:outputText value="#{pessoa.id}" />
 				</p:column>

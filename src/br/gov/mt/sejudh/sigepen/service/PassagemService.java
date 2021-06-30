@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.PassagemDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoDAO;
@@ -18,6 +19,7 @@ import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Stateless
@@ -50,6 +52,7 @@ public class PassagemService {
 		return dao.buscarRecuperandoPorIdDesligamento(id);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void desligar(Recuperando recuperando, Passagem passagem, PassagemLotacao lotacao) throws Exception {
 		if (passagem.getDataSaida().after(Sigepen.getDataAtual())) {
 			throw new ValidacaoException("Data de saída não pode ser maior que data atual.");

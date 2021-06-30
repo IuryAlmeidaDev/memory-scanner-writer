@@ -70,23 +70,21 @@ public class BiometriaSDKCliente implements Serializable {
 		biometricClient.setDatabaseConnection(connection);*/
 	}
 	
-	public Boolean checkStatus() {
+	public Long checkStatus() {
 		ExecutorService executor = Executors.newCachedThreadPool();
-		Future<?> future = executor.submit(() -> {
-			this.biometricClient.getCount();
+		Future<Long> future = (Future<Long>) executor.submit(() -> {
+			return Long.parseLong(String.valueOf(biometricClient.getCount()));
 		});
 		
 		try {
-			future.get(1000, TimeUnit.MILLISECONDS);
+			return future.get(1000, TimeUnit.MILLISECONDS);
 		} catch (TimeoutException ex) {
-			return false;
+			return -1L;
 		} catch (Exception e) {
-			return false;
+			return -1L;
 		} finally {
 		   future.cancel(true);
 		}
-
-		return true;
 	}
 
 	public NBiometricStatus identify(NSubject subject) {

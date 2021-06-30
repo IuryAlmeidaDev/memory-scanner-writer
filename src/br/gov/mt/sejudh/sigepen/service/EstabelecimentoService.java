@@ -4,12 +4,14 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.EstabelecimentoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEstabelecimento;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estabelecimento;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
 @Stateless
@@ -21,6 +23,7 @@ public class EstabelecimentoService {
 	@Inject
 	private AuditoriaDAO auditDAO;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(Estabelecimento estabelecimento) throws ValidacaoException {
 		if (jaExisteProcedenciaComMesmoNome(estabelecimento)) {
 			throw new ValidacaoException("Já existe uma procedência com o mesmo nome (" + estabelecimento.getNome() + ").");

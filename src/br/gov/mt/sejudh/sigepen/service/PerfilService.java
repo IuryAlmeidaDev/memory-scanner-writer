@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.primefaces.model.DualListModel;
 
@@ -14,6 +15,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPerfil;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Perfil;
 import br.gov.mt.sejudh.sigepen.model.Permissao;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 @Stateless
 public class PerfilService {
@@ -24,6 +26,7 @@ public class PerfilService {
 	@Inject
 	private AuditoriaDAO auditDAO;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(Perfil perfil) throws Exception {
 		if (jaExistePerfilComMesmoNome(perfil)) {
 			throw new ValidacaoException("Já existe um perfil com o mesmo nome (" + perfil.getNome() + ").");
