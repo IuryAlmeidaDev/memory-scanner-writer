@@ -24,13 +24,12 @@ public class BiometriaDAO {
 		BiometriaTemporaria bioTemp = em.find(BiometriaTemporaria.class, id);
 		boolean foiRemovido = false;
 		
-		if (bioTemp != null) 
+		if (bioTemp != null) {
 			em.remove(em.merge(bioTemp));
-		
-		bioTemp = em.find(BiometriaTemporaria.class, id);
-		
-		if (bioTemp == null)
 			foiRemovido = true;
+		}
+		
+		//bioTemp = em.find(BiometriaTemporaria.class, id);			
 		
 		return foiRemovido;
 	}

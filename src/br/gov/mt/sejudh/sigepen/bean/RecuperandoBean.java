@@ -508,7 +508,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", e.getMessage());
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Erro ao dar entrada em recuperando (" + this.recuperando.getPessoa().getNome() + "): " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Erro ao salvar recuperando (" + this.recuperando.getPessoa().getNome() + "): " + e.getMessage());
 			LoggerUtil.logErro(Acao.SALVAR, this.recuperando, e, log);
 		}
 

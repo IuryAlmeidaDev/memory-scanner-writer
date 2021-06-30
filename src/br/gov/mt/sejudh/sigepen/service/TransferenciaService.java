@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoDAO;
@@ -17,6 +18,7 @@ import br.gov.mt.sejudh.sigepen.model.Escolta;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Servidor;
 import br.gov.mt.sejudh.sigepen.model.Transferencia;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
 @Stateless
@@ -31,6 +33,7 @@ public class TransferenciaService {
 	@Inject
 	private AuditoriaDAO auditDAO;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(Transferencia transferencia) {
 		dao.salvar(transferencia);
 		for(PedidoTransito pedido : transferencia.getPedidos()){
@@ -40,6 +43,7 @@ public class TransferenciaService {
 		  }		
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void excluir(Transferencia transferencia) throws ValidacaoException {
 		Transferencia transf = buscaTransferenciaPorId(transferencia.getId());
 		if(transferencia.getStatus() != StatusMovimentacao.PENDENTE){
@@ -53,6 +57,7 @@ public class TransferenciaService {
 		dao.excluir(transferencia);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void iniciarTransferencia(Transferencia transferencia) {
 		transferencia.setStatus(StatusMovimentacao.EM_ANDAMENTO);
 		transferencia.setDataInicio(new Date());
@@ -107,6 +112,7 @@ public class TransferenciaService {
 		return false;
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void cancelarTransferencia(Transferencia transferencia) throws ValidacaoException {
 		if(transferencia.getStatus() == StatusMovimentacao.PENDENTE || transferencia.getStatus() == StatusMovimentacao.EM_ANDAMENTO){			
 		
@@ -124,6 +130,7 @@ public class TransferenciaService {
 		}
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void finalizarTransferencia(Transferencia transferencia) {
 		transferencia.setStatus(StatusMovimentacao.FINALIZADO);
 		transferencia.setDataConclusao(new Date());		

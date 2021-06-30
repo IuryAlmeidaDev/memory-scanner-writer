@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.Logger;
 
+import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 
 import br.gov.mt.sejudh.sigepen.service.BiometriaService;
@@ -22,14 +23,19 @@ public class UtilBean {
 	@Inject
 	private Logger log;
 	
+	public String refresh() {
+		String viewId = PrettyContext.getCurrentInstance().getCurrentMapping().getPattern();
+	    return viewId + "?faces-redirect=true";
+	}
+	
 	public String getBiometriaVersao() {
 		return "11122020"; //bioService.buscarVersaoAtualAplicativo();
 	}
 	
-	public String refresh() {
-		return "ok";
+	public String getSigepenJsVersao() {
+		return "07062021";
 	}
-	
+
 	public String getBiometriaVersaoAtual() {
 		String versao = "";
 		

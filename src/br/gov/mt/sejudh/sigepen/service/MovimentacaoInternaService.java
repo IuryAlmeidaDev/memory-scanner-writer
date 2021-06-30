@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.MovimentacaoInternaDAO;
@@ -20,6 +21,7 @@ import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.MovimentacaoInterna;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Servidor;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
 @Stateless
@@ -40,6 +42,7 @@ public class MovimentacaoInternaService {
 	@Inject
 	private PedidoService pedidoService;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(MovimentacaoInterna movimentacao) {
 		dao.salvar(movimentacao);
 		
@@ -50,6 +53,7 @@ public class MovimentacaoInternaService {
 		  }		
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void excluir(MovimentacaoInterna movimentacao) {
 		MovimentacaoInterna mov = buscaMovimentacaoPorId(movimentacao.getId());
 		for(PedidoTransito pedido : mov.getPedidos()){
@@ -60,6 +64,7 @@ public class MovimentacaoInternaService {
 		dao.excluir(movimentacao);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void iniciarMovimentacao(MovimentacaoInterna movimentacao) {
 		movimentacao.setStatus(StatusMovimentacao.EM_ANDAMENTO);
 		movimentacao.setDataInicio(new Date());
@@ -113,6 +118,7 @@ public class MovimentacaoInternaService {
 		return false;
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void cancelarMovimentacao(MovimentacaoInterna movimentacao) {
 		for(PedidoTransito pedido : movimentacao.getPedidos()){
 			pedido.setResultado(movimentacao.getResultado());
@@ -125,6 +131,7 @@ public class MovimentacaoInternaService {
 		dao.salvar(movimentacao);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void finalizarMovimentacao(MovimentacaoInterna movimentacao) {
 		movimentacao.setStatus(StatusMovimentacao.FINALIZADO);
 		movimentacao.setDataConclusao(new Date());		

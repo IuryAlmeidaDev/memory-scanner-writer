@@ -19,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.envers.Audited;
@@ -42,6 +43,9 @@ public class ProcessoRegimeCondicao implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Version
+	private Long versao;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROCESSO_ID")
 	private Processo processo;
@@ -50,7 +54,7 @@ public class ProcessoRegimeCondicao implements Serializable {
 	@Column(name="TIPO_PROCESSO")
 	private TipoProcesso tipoProcesso;
 	
-	@Column(name="NUMERO_DOCUMENTO", length = 80)
+	@Column(name="NUMERO_DOCUMENTO", length = 250)
 	private String numeroDocumento;
 	
 	@Temporal(TemporalType.DATE)

@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 
@@ -29,6 +30,9 @@ public class Escolta {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ESCOLTA_GENERATOR")
 	@Column(name = "ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 	
 	@ManyToOne
 	@JoinColumn(name = "SERVIDOR_ID")

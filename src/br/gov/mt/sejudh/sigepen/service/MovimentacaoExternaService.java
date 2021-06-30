@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.MovimentacaoExternaDAO;
@@ -16,6 +17,7 @@ import br.gov.mt.sejudh.sigepen.model.Escolta;
 import br.gov.mt.sejudh.sigepen.model.MovimentacaoExterna;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Servidor;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
 @Stateless
@@ -30,6 +32,7 @@ public class MovimentacaoExternaService {
 	@Inject
 	private AuditoriaDAO auditDAO;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(MovimentacaoExterna movimentacao) {
 		dao.salvar(movimentacao);
 		for(PedidoTransito pedido : movimentacao.getPedidos()){
@@ -39,11 +42,13 @@ public class MovimentacaoExternaService {
 		  }		
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvarMovimentacao(MovimentacaoExterna movimentacao) {
 		dao.salvar(movimentacao);
 		  		
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void excluir(MovimentacaoExterna movimentacao) {
 		MovimentacaoExterna mov = buscaMovimentacaoPorId(movimentacao.getId());
 		for(PedidoTransito pedido : mov.getPedidos()){
@@ -54,6 +59,7 @@ public class MovimentacaoExternaService {
 		dao.excluir(movimentacao);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void iniciarMovimentacao(MovimentacaoExterna movimentacao) {
 		movimentacao.setStatus(StatusMovimentacao.EM_ANDAMENTO);
 		movimentacao.setDataInicio(new Date());
@@ -106,6 +112,7 @@ public class MovimentacaoExternaService {
 		return false;
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void cancelarMovimentacao(MovimentacaoExterna movimentacao) {
 		for(PedidoTransito pedido : movimentacao.getPedidos()){
 			pedido.setResultado(movimentacao.getResultado());
@@ -118,6 +125,7 @@ public class MovimentacaoExternaService {
 		dao.salvar(movimentacao);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void finalizarMovimentacao(MovimentacaoExterna movimentacao) {
 		movimentacao.setStatus(StatusMovimentacao.FINALIZADO);
 		movimentacao.setDataConclusao(new Date());		

@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -39,6 +40,9 @@ public class BiometriaDedo implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BIO_DEDO_GENERATOR")
 	@Column(name="ID")
 	private long id;
+	
+	@Version
+	private Long versao;
 
 	@Column(name = "DEDO")
 	@Convert(converter = EnumCustomConverter.class, disableConversion = true)

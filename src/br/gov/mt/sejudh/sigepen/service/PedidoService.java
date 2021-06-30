@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.MovimentacaoExternaDAO;
@@ -25,6 +26,7 @@ import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
 @Stateless
@@ -51,6 +53,7 @@ public class PedidoService {
 	@Inject
 	private RecuperandoService recuperandoService;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(PedidoTransito pedido) {		
 		dao.salvar(pedido);						
 	}
@@ -79,6 +82,7 @@ public class PedidoService {
 		return dao.quantidadeFiltrados(filtro);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void autorizarPedido(PedidoTransito pedido, boolean autorizado) {
 		if(autorizado){
 			pedido.setStatus(StatusPedido.AUTORIZADO);	
@@ -89,12 +93,14 @@ public class PedidoService {
 		dao.salvar(pedido);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void cancelarPedido(PedidoTransito pedido) {
 		pedido.setStatus(StatusPedido.CANCELADO);
 		pedido.setDataCancelamento(new Date());
 		dao.salvar(pedido);
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void cancelarPedidoMovInt(PedidoTransito pedido) {
 		pedido.setStatus(StatusPedido.CANCELADO);
 		pedido.setDataCancelamento(new Date());
@@ -103,6 +109,7 @@ public class PedidoService {
 		movIntDao.salvar(pedido.getMovimentacaoInterna());
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void cancelarPedidoMovExt(PedidoTransito pedido) {
 		pedido.setStatus(StatusPedido.CANCELADO);
 		pedido.setDataCancelamento(new Date());
@@ -111,6 +118,7 @@ public class PedidoService {
 		movExtDao.salvar(pedido.getMovimentacaoExterna());
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void cancelarPedidoTransferencia(PedidoTransito pedido) {
 		pedido.setStatus(StatusPedido.CANCELADO);
 		pedido.setDataCancelamento(new Date());
@@ -119,6 +127,7 @@ public class PedidoService {
 		transfDao.salvar(pedido.getTransferencia());
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void finalizarPedidoMovInt(PedidoTransito pedido) throws ValidacaoException {
 		// validar data fim maior que data inicio
 		Date dataFim = new Date();
@@ -144,6 +153,7 @@ public class PedidoService {
 		
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void finalizarPedidoMovExt(PedidoTransito pedido) throws ValidacaoException {		
 		pedido.setStatus(StatusPedido.FINALIZADO);
 		pedido.setDataConclusao(new Date());
@@ -154,6 +164,7 @@ public class PedidoService {
 	}
 	
 	//falta implementar o recebimento da transferencia
+	@Interceptors(EJBExcInterceptor.class)
 	public void finalizarPedidoTransferencia(PedidoTransito pedido) throws ValidacaoException {
 		// validar data fim maior que data inicio
 		Date dataFim = new Date();

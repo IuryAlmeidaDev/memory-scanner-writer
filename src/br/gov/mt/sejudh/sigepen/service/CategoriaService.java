@@ -4,12 +4,14 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.CategoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroCategoria;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Categoria;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
 @Stateless
@@ -21,7 +23,8 @@ public class CategoriaService {
 	@Inject
 	private AuditoriaDAO auditDao;
 	
-	public void salvar(Categoria categoria) throws ValidacaoException {
+	@Interceptors(EJBExcInterceptor.class)
+	public void salvar(Categoria categoria) throws Exception {
 		if (jaExisteCategoriaComMesmoNome(categoria)) {
 			throw new ValidacaoException("Já existe uma categoria com o mesmo nome (" + categoria.getNome() + ").");
 		}

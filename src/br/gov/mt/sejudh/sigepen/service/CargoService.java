@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.CargoDAO;
@@ -12,6 +13,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroCargo;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Cargo;
 import br.gov.mt.sejudh.sigepen.model.Categoria;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
 @Stateless
@@ -26,6 +28,7 @@ public class CargoService {
 	@Inject
 	private AuditoriaDAO auditDao;
 	
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(Cargo cargo) throws ValidacaoException {
 		if (cargo.getId() == 0 && jaExisteCargoComMesmoNome(cargo)) {
 			throw new ValidacaoException("Já existe um cargo com o mesmo nome (" + cargo.getNome() + ").");

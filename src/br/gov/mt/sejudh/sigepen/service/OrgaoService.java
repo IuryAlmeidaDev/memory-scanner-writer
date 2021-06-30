@@ -4,12 +4,14 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.OrgaoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroOrgao;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Orgao;
+import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Stateless
@@ -21,6 +23,7 @@ public class OrgaoService {
 	@Inject
 	private AuditoriaDAO auditDAO;
 
+	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(Orgao orgao) throws ValidacaoException {
 		if (orgao.getId() == Sigepen.SEJUDH_ID) {
 			throw new ValidacaoException("Operação não permitida.");
