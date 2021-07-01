@@ -39,7 +39,7 @@ public class Transferencia {
 	@Column(name = "ID")
 	private long id;
 	
-	@Version
+	@Transient
 	private Long versao;
 
 	@OneToMany(mappedBy="transferencia", fetch = FetchType.LAZY)

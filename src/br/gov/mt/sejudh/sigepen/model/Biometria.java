@@ -45,7 +45,7 @@ public class Biometria implements Serializable {
 	@Column(name="ID")
 	private long id;
 	
-	@Version
+	@Transient
 	private long versao;
 	
 	@Temporal(TemporalType.TIMESTAMP)

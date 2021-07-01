@@ -8,7 +8,7 @@ import br.gov.mt.sejudh.sigepen.exception.RegistroJaAtualizadoException;
 
 public class EJBExcInterceptor {
 
-	@AroundInvoke
+	//@AroundInvoke
 	public Object intercept(InvocationContext context) throws Exception {
 		Object result = null;
 		
