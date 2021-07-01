@@ -46,7 +46,7 @@ public class PedidoTransito implements Serializable{
 	@Column(name = "ID")
 	private long id;
 	
-	@Version
+	@Transient
 	private Long versao;
 	
 	@Enumerated(EnumType.STRING)

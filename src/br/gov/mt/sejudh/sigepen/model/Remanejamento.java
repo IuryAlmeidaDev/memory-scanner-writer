@@ -35,7 +35,7 @@ public class Remanejamento {
 	@Column(name = "ID")
 	private long id;
 	
-	@Version
+	@Transient
 	private Long versao;
 
 	@ManyToOne

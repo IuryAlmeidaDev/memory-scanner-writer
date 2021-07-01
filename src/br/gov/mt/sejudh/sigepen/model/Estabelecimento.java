@@ -32,7 +32,7 @@ public class Estabelecimento {
 	@Column(name = "ID")
 	private long id;
 	
-	@Version
+	@Transient
 	private Long versao;
 	
 	@Column(name = "NOME", length = 80, nullable = false)

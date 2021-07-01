@@ -68,7 +68,7 @@ public class Recuperando implements Serializable, FieldHandled {
 	@Column(name = "ID")
 	private long id;
 	
-	@Version
+	@Transient
 	private long versao;
 	
 	@OneToOne(cascade = CascadeType.ALL)

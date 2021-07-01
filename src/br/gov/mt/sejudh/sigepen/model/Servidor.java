@@ -47,7 +47,7 @@ public class Servidor implements Serializable {
 	@Column(name = "ID")
 	private long id;
 	
-	@Version
+	@Transient
 	private Long versao;
 	
 	@Column(name = "MATRICULA", nullable = false, length = 10)
