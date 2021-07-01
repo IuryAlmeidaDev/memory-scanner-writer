@@ -44,7 +44,7 @@ public class Passagem implements Serializable {
 	@Column(name = "ID")
 	private long id;
 	
-	@Version
+	@Transient
 	private Long versao;
 	
 	@Temporal(TemporalType.DATE)

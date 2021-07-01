@@ -39,7 +39,7 @@ public class MovimentacaoInterna {
 	@Column(name = "ID")
 	private long id;
 	
-	@Version
+	@Transient
 	private Long versao;
 
 	@OneToMany(mappedBy="movimentacaoInterna", fetch = FetchType.LAZY)

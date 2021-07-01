@@ -38,7 +38,7 @@ public class Perfil implements Serializable{
 	@Column(name = "ID")
 	private long id;
 	
-	@Version
+	@Transient
 	private Long versao;
 
 	@Column(name = "NOME", length = 80, nullable = false, unique = true)
