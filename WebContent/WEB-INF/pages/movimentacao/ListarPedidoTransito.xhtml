@@ -4,6 +4,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:pe="http://primefaces.org/ui/extensions"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
 
 	<ui:define name="conteudo">
@@ -17,6 +18,8 @@
 			
 		<p:panel>	
 		<h:form id="meuFormulario">
+				<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.StatusPedido" var="statusPedido" allSuffix="ALL_ENUM_VALUES" />
+				
 				<p:outputLabel value="Consulta"/>
 				
 				<sgp:formInputText 
@@ -153,7 +156,7 @@
 								rendered="#{securityUtil.possuiPermissao('ExcluirPedidoTransito') and pedido.status.descricao.equalsIgnoreCase('Solicitado')}">
 								 <p:confirm header="Confirmação" message="Deseja excluir o pedido?" icon="ui-icon-alert" />
 							</p:commandButton>
-							<p:commandButton title="Imprimir" icon="fa fa-print" action="#{pedidoTransitoBean.imprimirRelatorio(pedido)}" process="@this" />
+							<p:commandButton title="Imprimir" icon="fa fa-print" rendered="#{pedido.status ne statusPedido.SOLICITADO}" action="#{pedidoTransitoBean.imprimirRelatorio(pedido)}" process="@this" />
 						</center>
 					</p:column>
 					
