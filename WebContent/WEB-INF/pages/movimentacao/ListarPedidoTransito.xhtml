@@ -156,7 +156,7 @@
 								rendered="#{securityUtil.possuiPermissao('ExcluirPedidoTransito') and pedido.status.descricao.equalsIgnoreCase('Solicitado')}">
 								 <p:confirm header="Confirmação" message="Deseja excluir o pedido?" icon="ui-icon-alert" />
 							</p:commandButton>
-							<p:commandButton title="Imprimir" icon="fa fa-print" rendered="#{pedido.status ne statusPedido.SOLICITADO}" action="#{pedidoTransitoBean.imprimirRelatorio(pedido)}" process="@this" />
+							<p:commandButton title="Imprimir" icon="fa fa-print" disabled="#{pedido.status eq statusPedido.SOLICITADO}" action="#{pedidoTransitoBean.imprimirRelatorio(pedido)}" process="@this" />
 						</center>
 					</p:column>
 					
