@@ -19,6 +19,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.MovimentacaoPassos;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
@@ -216,6 +217,7 @@ public class PedidoService {
 			throw new ValidacaoException("É necessário adicionar um recuperando!");
 		}
 		
+		validarStatusRecuperando(pedido.getRecuperando());
 		validarOrigemDoRecuperando(pedido);
 		
 		switch (passoAtual) {
@@ -265,8 +267,15 @@ public class PedidoService {
 						
 		}
 	}
-	
-	//Precisa refatorar e dinamizar de alguma forma os predicados (Parametrizar)
+
+	private void validarStatusRecuperando(Recuperando recuperando) throws ValidacaoException {
+		StatusRecuperando status = recuperandoService.statusAtualRecuperando(recuperando.getId());
+		
+		if (status.equals(StatusRecuperando.INATIVO)) {
+			throw new ValidacaoException("Recuperando selecionado foi desligado, altere ou cancele este Pedido de Trânsito!");
+		}
+	}
+
 	private void validarSeRecuperandoEstaAssociadoEmOutroPedidoAutorizadoOuVinculadoOuAbertoOuSuspenso(PedidoTransito pedido) throws ValidacaoException {
 		List<PedidoTransito> pedidosDoRecuperando = dao.buscarPedidosDoRecuperando(pedido.getRecuperando().getId());
 		

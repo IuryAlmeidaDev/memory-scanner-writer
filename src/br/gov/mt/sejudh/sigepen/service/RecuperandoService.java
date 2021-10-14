@@ -330,7 +330,7 @@ public class RecuperandoService {
 	}
 	
 	public StatusRecuperando statusAtualRecuperando(long id){
-		return null;
+		return dao.statusAtualRecuperando(id);
 	}
 	
 	public Regime regimeAtualRecuperando(List<Processo> processos) {
