@@ -1,6 +1,9 @@
 package br.gov.mt.sejudh.sigepen.service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -15,6 +18,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
+import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
@@ -50,6 +54,10 @@ public class EstruturaService {
 	
 	public Estrutura buscaEstraturaRaizUnidade(Long id) {		
 		return dao.buscaEstraturaRaizUnidade(id);
+	}
+	
+	public List<EstruturaDto> buscarEstruturasUnidade(Long idUnidade) {
+		return dao.buscarEstruturasUnidade(idUnidade);
 	}
 	
 	public Estrutura buscaEstruturaCompletaPorId(Long id) {
@@ -365,4 +373,49 @@ public class EstruturaService {
 		return dao.listarPorUnidade(unidadePrisional);
 	}
 
+	public void buscarEstruturasFilhos(Estrutura estrutura, List<Estrutura> retorno){
+		List<Estrutura> filhos = dao.buscaEstruturaFilho(estrutura);
+		for (Estrutura e : filhos) {
+			if(e.getCela()) {
+				retorno.add(e);
+			}else {
+				retorno.add(e);
+				buscarEstruturasFilhos(e, retorno);
+			}
+		}
+		return;
+	}
+
+	public void montarArvoreDaUnidade(List<EstruturaDto> estruturas, TreeNode no) {
+		Optional<EstruturaDto> optPai = estruturas.stream().filter(e -> e.getIdEstruturaPai() == null).findFirst();
+		
+		if (optPai.isPresent()) {
+			EstruturaDto estruturaPai = optPai.get();
+			TreeNode noPai = new DefaultTreeNode(estruturaPai, no);
+			List<EstruturaDto> estruturasFilho = estruturas.stream().filter(e -> Objects.equals(e.getIdEstruturaPai(), estruturaPai.getId())).collect(Collectors.toList());
+			
+			if (estruturasFilho.size() > 0) { 
+				estruturaPai.setTemEstruturaFilho(true);
+				noPai.setExpanded(true);
+			}
+			
+			estruturasFilho.forEach(e -> {
+				montarArvoreDaUnidade(estruturas, e, noPai);
+			});	
+		}
+	}
+	
+	private void montarArvoreDaUnidade(List<EstruturaDto> estruturas, EstruturaDto estruturaPai, TreeNode no) {
+		TreeNode noPai = new DefaultTreeNode(estruturaPai, no);
+		List<EstruturaDto> estruturasFilho = estruturas.stream().filter(e -> Objects.equals(e.getIdEstruturaPai(), estruturaPai.getId())).collect(Collectors.toList());
+
+		if (estruturasFilho.size() > 0) { 
+			estruturaPai.setTemEstruturaFilho(true);
+			noPai.setExpanded(true);
+		}
+		
+		estruturasFilho.forEach(e -> {
+			montarArvoreDaUnidade(estruturas, e, noPai);
+		});
+	}
 }

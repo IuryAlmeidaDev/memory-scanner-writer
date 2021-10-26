@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.bean.outros;
 
+import java.util.List;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -10,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.model.DefaultTreeNode;
 
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
 import br.gov.mt.sejudh.sigepen.service.EstruturaService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
@@ -51,15 +54,24 @@ public class AssociarEstruturaBean extends MetodosDialogBean {
 	}
 	
 	public void carregarArvore() {
-		root = new DefaultTreeNode( new Estrutura() , null);
+		Long unidadeSelecionadaUsuario = null;
+		try {
+			unidadeSelecionadaUsuario = (Long) facesUtil.getObjetoSessao("unidadeSelecionadaUsuario");
+		} catch (Exception e) {
+		}
+		root = new DefaultTreeNode( new EstruturaDto() , null);
 		root.setExpanded(true);
-		Estrutura estrutura = service.buscaEstraturaRaizUnidade(SecurityUtil.getUnidadeSelecionada().getId());
-		service.montarArvoreEstrutura(estrutura, root);
-		service.capacidadeTotalEstrutura(root);
+
+		if(unidadeSelecionadaUsuario == null)
+			unidadeSelecionadaUsuario = SecurityUtil.getUnidadeSelecionada().getId();
+		
+		List<EstruturaDto> estruturas = service.buscarEstruturasUnidade(unidadeSelecionadaUsuario);
+		service.montarArvoreDaUnidade(estruturas, root);
 	}
 	
-	public void selecionarEstrutura(Estrutura estrutura) {		
-		facesUtil.fecharPaginaDialog(estrutura);
+	public void selecionarEstrutura(EstruturaDto estrutura) {
+		Estrutura e = service.buscaPorId(estrutura.getId());
+		facesUtil.fecharPaginaDialog(e);
 	}
 	
 	public void fecharDialog(ActionEvent event) {

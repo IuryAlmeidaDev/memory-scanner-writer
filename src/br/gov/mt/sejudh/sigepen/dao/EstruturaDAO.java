@@ -9,6 +9,8 @@ import javax.persistence.Query;
 
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
+import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 
 @RequestScoped
@@ -101,5 +103,22 @@ public class EstruturaDAO {
 		Query query = entityManager.createQuery("select count(p) from PassagemLotacao p where p.estrutura = :estrutura and p.dataSaida is null");
 		query.setParameter("estrutura", estrutura);
 		return (long) query.getSingleResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<EstruturaDto> buscarEstruturasUnidade(Long idUnidade) {
+		Query query = entityManager.createNativeQuery("select level nivel,"
+				+ "       e.id,"
+				+ "       e.estruturapai_id,"
+				+ "       e.nome,"
+				+ "       e.capacidade,"
+				+ "       e.cela"
+				+ " from  " + Sigepen.SEJUDH_SCHEMA + ".estrutura e"
+				+ " start with e.estruturapai_id is null"
+				+ " and e.unidadeprisional_id = :idUnidade"
+				+ " connect by prior e.id = e.estruturapai_id"
+				+ " order siblings by e.id", EstruturaDto.class);
+		query.setParameter("idUnidade", idUnidade);
+		return query.getResultList();
 	}
 }
