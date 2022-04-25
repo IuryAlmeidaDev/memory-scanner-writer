@@ -276,7 +276,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					break;
 					
 				case LISTAR:
-					unidadesPrisionais   = comboService.getUnidadesPrisionais();
+					unidadesPrisionais   = unidadeService.listarUnidadesNaoInativas();
 					pesquisar();
 					logDeAcesso(log, "Recuperandos");
 					break;
