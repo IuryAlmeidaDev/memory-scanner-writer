@@ -945,7 +945,11 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
 		return this.gestante.equals(SimNao.S);
     }
 
-    public List<HistoricoRecuperando> getHistoricos() {
+    public SimNao getGestante() {
+		return gestante;
+	}
+
+	public List<HistoricoRecuperando> getHistoricos() {
 		return historicos;
 	}
 
