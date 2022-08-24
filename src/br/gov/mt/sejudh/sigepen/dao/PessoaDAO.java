@@ -34,12 +34,13 @@ public class PessoaDAO {
 		this.entityManager = entityManager;
 	}
 	
-	public void salvar(Pessoa pessoa) {
+	public Pessoa salvar(Pessoa pessoa) {
 		if (pessoa.getId()>0) {
 			pessoa = entityManager.merge(pessoa);
 		} else {
 			entityManager.persist(pessoa);
 		}
+		return pessoa;
 	}
 
 	public void excluir(long pessoaId) {
@@ -60,18 +61,6 @@ public class PessoaDAO {
 	    criteria.setProjection(Projections.rowCount());		
 	    return ((Number) criteria.uniqueResult()).intValue();
 	}
-	
-	public Pessoa buscarPessoaComBiometriaPorId(long id) {
-		try {
-			String jpql="select p from Pessoa p left join fetch p.biometria b where p.id = :id and b.id = p.biometria.id";
-			TypedQuery<Pessoa> query = entityManager.createQuery(jpql, Pessoa.class);
-			query.setParameter("id", id);
-			Pessoa p = query.getSingleResult();
-			return p;
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
 
 	public Pessoa buscarPessoaPorId(long id) {
 		try {
@@ -85,17 +74,29 @@ public class PessoaDAO {
 			Hibernate.initialize(p.getDocumentos());
 			Hibernate.initialize(p.getEnderecos());
 			Hibernate.initialize(p.getContatos());
-			Hibernate.initialize(p.getRecuperando().getTipoSanguineo());
-			Hibernate.initialize(p.getRecuperando().getRaca());
+			if(p.getRecuperando() != null) {
+				Hibernate.initialize(p.getRecuperando().getTipoSanguineo());
+				Hibernate.initialize(p.getRecuperando().getRaca());
+			}
 			Hibernate.initialize(p.getBiometria());
-
-
 			return p;
 		} catch (NoResultException e) {
 			return null;
 		}
 	}
 	
+	public Pessoa buscarPessoaComBiometriaPorId(long id) {
+		try {
+			String jpql="select p from Pessoa p left join fetch p.biometria b where p.id = :id and b.id = p.biometria.id";
+			TypedQuery<Pessoa> query = entityManager.createQuery(jpql, Pessoa.class);
+			query.setParameter("id", id);
+			Pessoa p = query.getSingleResult();
+			return p;
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
 	public boolean isPessoaAssociadaAUmRecuperando(long pessoa) {
 		Query query = entityManager.createQuery("SELECT COUNT(r) FROM Recuperando r WHERE r.pessoa.id = :pessoa");
 		query.setParameter("pessoa", pessoa);

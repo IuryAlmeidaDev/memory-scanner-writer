@@ -22,7 +22,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -66,10 +65,10 @@ public class Biometria implements Serializable {
 	private byte[] template;
 	
 	@Transient
-	private boolean biometriaFoiAlterada = false;
+	private long idPessoa;
 	
 	@Transient
-	private long idPessoa;
+	private Boolean biometriaFoiAlterada = false;
 	
 	public Biometria() {
 		this.dedos = new HashSet<BiometriaDedo>();
@@ -107,14 +106,6 @@ public class Biometria implements Serializable {
 
 	public void setDedos(Set<BiometriaDedo> dedos) {
 		this.dedos = dedos;
-	}
-
-	public boolean isBiometriaFoiAlterada() {
-		return biometriaFoiAlterada;
-	}
-
-	public void setBiometriaFoiAlterada(boolean biometriaFoiAlterada) {
-		this.biometriaFoiAlterada = biometriaFoiAlterada;
 	}
 
 	@Deprecated
@@ -166,5 +157,13 @@ public class Biometria implements Serializable {
 		i.setId(amostra.getId());
 		 
 		return i;
+	}
+
+	public Boolean getBiometriaFoiAlterada() {
+		return biometriaFoiAlterada;
+	}
+
+	public void setBiometriaFoiAlterada(Boolean biometriaFoiAlterada) {
+		this.biometriaFoiAlterada = biometriaFoiAlterada;
 	}
 }

@@ -10,31 +10,48 @@ import javax.faces.bean.ManagedBean;
 import javax.inject.Inject;
 
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.CorCabelo;
 import br.gov.mt.sejudh.sigepen.enumerator.CorOlho;
 import br.gov.mt.sejudh.sigepen.enumerator.Esfera;
+import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
+import br.gov.mt.sejudh.sigepen.enumerator.IdadeRecuperando;
+import br.gov.mt.sejudh.sigepen.enumerator.Lgbt;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
+import br.gov.mt.sejudh.sigepen.enumerator.NaturezaFaltaDisciplinar;
 import br.gov.mt.sejudh.sigepen.enumerator.Periculosidade;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
+import br.gov.mt.sejudh.sigepen.enumerator.PopulacaoFeminino;
 import br.gov.mt.sejudh.sigepen.enumerator.PronomeTratamento;
 import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
+import br.gov.mt.sejudh.sigepen.enumerator.SgpStatus;
+import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
+import br.gov.mt.sejudh.sigepen.enumerator.SituacaoFaltaDisciplinar;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
+import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamentosVisita;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante;
+import br.gov.mt.sejudh.sigepen.enumerator.TempoCondenacao;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoContato;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDeficiencia;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamento;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDocumentoPedidoTransito;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoInterdicao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoParticularidade;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoProcesso;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoVisitaObrigatoriedade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
 import br.gov.mt.sejudh.sigepen.model.Estado;
 import br.gov.mt.sejudh.sigepen.model.EstadoCivil;
@@ -52,6 +69,7 @@ import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
 import br.gov.mt.sejudh.sigepen.model.TipoSanguineo;
 import br.gov.mt.sejudh.sigepen.model.TipoServidor;
 import br.gov.mt.sejudh.sigepen.model.TipoUnidade;
+import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.service.ComboService;
 
 @ManagedBean(eager=true)
@@ -77,6 +95,8 @@ public class ComboHelperBean {
 	private TipoInterdicao[] tipoInterdicao;
 	
 	private TipoDeficiencia[] tipoDeficiencia;
+	
+	private List<TipoVisita> tipoVisita;
 
 	private List<Pais> paises;
 	
@@ -145,7 +165,40 @@ public class ComboHelperBean {
 	private TipoPlantao[] plantoes;
 	
 	private TipoAtestado[] atestados;
+
+	private TipoEntrada[] tipoEntrada;
+
+	private NaturezaFaltaDisciplinar[] naturezaFaltaDisciplinar;
+
+	private SituacaoFaltaDisciplinar[] situacaoFaltaDisciplinars;
+
+	private SimNao[] simNao;
+
+	private FaseCredenciamento[] faseCredenciamento;
+
+	private StatusCredenciamento[] situacaoCredenciamento;
 	
+	private StatusCredenciamentosVisita[] situacaoCredenciamentoVisita;
+
+	private StatusCredenciamento[] filtroSituacaoCredenciamento;
+	
+	private StatusCredenciamentosVisita[]filtroSituacaoCredenciamentoVisita;
+	
+	private SituacaoVisita [] situacaoVisita;
+	
+	private IdadeRecuperando[] idadeRecuperando;
+	
+	private TempoCondenacao[] tempoCondenacao;
+	
+	private Lgbt[] lgbt;
+	
+	private TipoRelatorioEntradaSaidaRec[] TipoRelatorioEntradaSaidaRec;
+	
+	private PopulacaoFeminino[] populacaoFeminino;
+	
+	private TipoVisitaObrigatoriedade[] tipoVisitaObrigatoriedade;
+
+
 	@Inject
 	private ComboService comboService;	
 	
@@ -195,8 +248,30 @@ public class ComboHelperBean {
 		esfera						= comboService.getEsfera();
 		plantoes					= comboService.getPlantoes();
 		atestados					= comboService.getAtestados();
-		
+		tipoEntrada					= comboService.getTipoEntrada();
+		simNao						= comboService.getSimNao();
+		faseCredenciamento			= comboService.getFaseCredenciamento();
+		situacaoCredenciamentoVisita = comboService.getSituacaoCredenciamentoVisita();
+		situacaoCredenciamento		= comboService.getSituacaoCredenciamento();
+		naturezaFaltaDisciplinar    = comboService.getNaturezaFaltaDisciplinar();
+		situacaoFaltaDisciplinars   = comboService.getSituacaoFaltaDisciplinar();
+		filtroSituacaoCredenciamento= comboService.getFiltroSituacaoCredenciamento();
+		filtroSituacaoCredenciamentoVisita = comboService.getFiltroSituacaoCredenciamentoVisita();
+		tipoVisita = comboService.getTipoVisitas();
+		situacaoVisita = comboService.getSituacaoVisita();
+		idadeRecuperando = comboService.getIdadeRecuperando();
+		tempoCondenacao = comboService.getTempoCondenacao();
+		lgbt = comboService.getLgbt();
+		TipoRelatorioEntradaSaidaRec = comboService.getTipoRelatorioEntradaSaidaRec();
+		populacaoFeminino = comboService.getPopulacaoFeminino();
+		tipoVisitaObrigatoriedade = comboService.getTipoVisitaObrigatoriedade();
 	}
+
+	public NaturezaFaltaDisciplinar[] getNaturezaFaltaDisciplinar(){
+		return this.naturezaFaltaDisciplinar;
+	}
+
+	public SituacaoFaltaDisciplinar[] getSituacaoFaltaDisciplinar() { return this.situacaoFaltaDisciplinars; }
 	
 	public Date getMaxDate(){
 		Calendar now = Calendar.getInstance();
@@ -208,7 +283,18 @@ public class ComboHelperBean {
 		return status;
 	}
 
-	
+	public SgpStatusAlternativo[] getSgpStatusAlternativo() {
+		return SgpStatusAlternativo.values();
+	}
+
+    public SgpStatus[] getStatusSgp() {
+        return SgpStatus.values();
+    }
+
+    public StatusVisitante[] getStatusVisitantes() {
+        return StatusVisitante.values();
+    }
+    
 	public List<Pais> getPaises() {
 		return paises;
 	}
@@ -555,5 +641,125 @@ public class ComboHelperBean {
 
 	public void setAtestados(TipoAtestado[] atestados) {
 		this.atestados = atestados;
+	}
+
+	public TipoEntrada[] getTipoEntrada() {
+		return tipoEntrada;
+	}
+
+	public void setTipoEntrada(TipoEntrada[] tipoEntrada) {
+		this.tipoEntrada = tipoEntrada;
+	}
+
+	public SimNao[] getSimNao() {
+		return simNao;
+	}
+
+	public void setSimNao(SimNao[] simNao) {
+		this.simNao = simNao;
+	}
+
+	public FaseCredenciamento[] getFaseCredenciamento() {
+		return faseCredenciamento;
+	}
+
+	public void setFaseCredenciamento(FaseCredenciamento[] faseCredenciamentos) {
+		this.faseCredenciamento = faseCredenciamentos;
+	}
+
+	public StatusCredenciamento[] getSituacaoCredenciamento() {
+		return situacaoCredenciamento;
+	}
+
+	public void setSituacaoCredenciamento(StatusCredenciamento[] situacaoCredenciamento) {
+		this.situacaoCredenciamento = situacaoCredenciamento;
+	}
+
+	public StatusCredenciamento[] getFiltroSituacaoCredenciamento() {
+		return filtroSituacaoCredenciamento;
+	}
+
+	public void setFiltroSituacaoCredenciamento(StatusCredenciamento[] filtroSituacaoCredenciamento) {
+		this.filtroSituacaoCredenciamento = filtroSituacaoCredenciamento;
+	}
+	
+	public StatusCredenciamentosVisita[] getSituacaoCredenciamentoVisita() {
+		return situacaoCredenciamentoVisita;
+	}
+
+	public void setSituacaoCredenciamento(StatusCredenciamentosVisita[] situacaoCredenciamentoVisita) {
+		this.situacaoCredenciamentoVisita = situacaoCredenciamentoVisita;
+	}
+
+	public StatusCredenciamentosVisita[] getFiltroSituacaoCredenciamentoVisita() {
+		return filtroSituacaoCredenciamentoVisita;
+	}
+
+	public void setFiltroSituacaoCredenciamento(StatusCredenciamentosVisita[] filtroSituacaoCredenciamentoVisita) {
+		this.filtroSituacaoCredenciamentoVisita = filtroSituacaoCredenciamentoVisita;
+	}
+	
+	public List<TipoVisita> getTipoVisita() {
+		return tipoVisita;
+	}
+
+	public void setTipoVisita(List<TipoVisita> tipoVisita) {
+		this.tipoVisita = tipoVisita;
+	}
+	
+	public SituacaoVisita[] getSituacaoVisita() {
+		return situacaoVisita;
+	}
+
+	public void setSituacaoVisita(SituacaoVisita[] situacaoVisita) {
+		this.situacaoVisita = situacaoVisita;
+	}
+
+	public IdadeRecuperando[] getIdadeRecuperando() {
+		return idadeRecuperando;
+	}
+
+	public void setIdadeRecuperando(IdadeRecuperando[] idadeRecuperando) {
+		this.idadeRecuperando = idadeRecuperando;
+	}
+
+	public TempoCondenacao[] getTempoCondenacao() {
+		return tempoCondenacao;
+	}
+
+	public void setTempoCondenacao(TempoCondenacao[] tempoCondenacao) {
+		this.tempoCondenacao = tempoCondenacao;
+	}
+
+	public Lgbt[] getLgbt() {
+		return lgbt;
+	}
+
+	public void setLgbt(Lgbt[] lgbt) {
+		this.lgbt = lgbt;
+	}
+	
+	public TipoRelatorioEntradaSaidaRec[] getTipoRelatorioEntradaSaidaRec() {
+		return TipoRelatorioEntradaSaidaRec;
+	}
+
+	public void setTipoRelatorioEntradaSaidaRec(TipoRelatorioEntradaSaidaRec[] tipoRelatorioEntradaSaidaRec) {
+		TipoRelatorioEntradaSaidaRec = tipoRelatorioEntradaSaidaRec;
+	}
+	
+	public PopulacaoFeminino[] getPopulacaoFeminino() {
+		return populacaoFeminino;
+	}
+
+	public void setPopulacaoFeminino(PopulacaoFeminino[] populacaoFeminino) {
+		this.populacaoFeminino = populacaoFeminino;
+	}
+
+	public TipoVisitaObrigatoriedade[] getTipoVisitaObrigatoriedade() {
+		return tipoVisitaObrigatoriedade;
+	}
+
+	public void setTipoVisitaObrigatoriedade(TipoVisitaObrigatoriedade[] tipoVisitaObrigatoriedade) {
+		this.tipoVisitaObrigatoriedade = tipoVisitaObrigatoriedade;
 	}
 }

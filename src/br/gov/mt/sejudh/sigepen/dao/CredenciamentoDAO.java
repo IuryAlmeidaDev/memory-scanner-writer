@@ -1,0 +1,420 @@
+package br.gov.mt.sejudh.sigepen.dao;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
+import org.hibernate.Hibernate;
+
+import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
+import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
+import br.gov.mt.sejudh.sigepen.enumerator.ParametroVisitante;
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
+import br.gov.mt.sejudh.sigepen.model.CredencialCertidao;
+import br.gov.mt.sejudh.sigepen.model.CredencialDocumento;
+import br.gov.mt.sejudh.sigepen.model.Credenciamento;
+import br.gov.mt.sejudh.sigepen.model.FaseDoCredenciamento;
+import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
+import br.gov.mt.sejudh.sigepen.model.Recuperando;
+import br.gov.mt.sejudh.sigepen.model.Visitante;
+import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
+import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
+import br.gov.mt.sejudh.sigepen.service.VisitanteService;
+import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
+
+@RequestScoped
+public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
+
+
+	private static final long serialVersionUID = -5039677954279568518L;
+	
+	@Inject
+	private ParametroUnidadeDAO parametroUnidadeDAO;
+	
+	@Inject VisitanteService visitanteService;
+	
+	@Override
+    public Credenciamento buscarPorId(Long id) {
+        return this.buscarPorId(id, false);
+    }
+
+    @Override
+    public Credenciamento buscarPorId(Long id, Boolean buscarAuditoria) {
+    	Credenciamento credenciamento = super.buscarPorId(id, buscarAuditoria);
+
+        if (credenciamento != null) {
+            Hibernate.initialize(credenciamento.getFasesDoCredenciamento());
+            Optional.ofNullable(credenciamento.getRecuperando()).ifPresent(
+                    recuperando -> Hibernate.initialize(recuperando.getFotos())
+            );
+        }
+
+        return credenciamento;
+    }
+
+    public Optional<List<Credenciamento>> listaVisitantes(Recuperando recuperando) {
+        try {
+            String jpql = "SELECT vr FROM Credenciamento vr WHERE vr.recuperando = :recuperando";
+            Query query = this.em.createQuery(jpql, Credenciamento.class);
+            query.setParameter("recuperando", recuperando);
+
+            return Optional.of(query.getResultList());
+        }catch(NoResultException e){
+            return Optional.empty();
+        }
+    }
+    
+	public Credenciamento buscarCredenciamentos(Credenciamento credenciamento) {
+		Credenciamento vr = this.em.find(Credenciamento.class, credenciamento.getId());
+    	for(FaseDoCredenciamento vc : vr.getFasesDoCredenciamento()){
+        	
+        	for(CredencialDocumento cd : vc.getCredencialDocumentos()){
+        		Hibernate.initialize(cd.getVisitanteDocumento());
+        	}
+        	
+        	for(CredencialCertidao cd : vc.getCredencialCertidaos()){
+        		Hibernate.initialize(cd.getVisitanteCertidao());
+        	}
+        	
+        	Hibernate.initialize(vr.getVisitante());
+        	Hibernate.initialize(vr.getVisitante().getTipoVisita());
+        	Hibernate.initialize(vr.getVisitante().getTipoVisita().getTipoVisitaDocumento());
+        	Hibernate.initialize(vr.getVisitante().getTipoVisita().getTipoVisitaCertidao());
+    	}
+    	return vr;
+    }
+
+	public void setDocumentosValidados(long id, long idCredenciamento, Visitante visitante) {
+		Credenciamento vr = super.buscarPorId(id, false);
+		Hibernate.initialize(vr.getFasesDoCredenciamento());
+		Hibernate.initialize(vr.getUltimoCredenciamento());
+		
+		if(vr.getUltimoCredenciamento() != null) {
+			Hibernate.initialize(vr.getUltimoCredenciamento().getCredencialDocumentos());
+			Hibernate.initialize(vr.getUltimoCredenciamento().getCredencialCertidaos());
+		}
+		
+		if(idCredenciamento == 0) {
+	        for(VisitanteDocumento x : visitante.getVisitanteDocumentos()) {
+	        	if(vr.getUltimoCredenciamento() != null) {
+	            	for(CredencialDocumento y : vr.getUltimoCredenciamento().getCredencialDocumentos()) {
+	            		if(y.getVisitanteDocumento().getId().equals(x.getId())) {
+	            			x.setValidado(y.getValidado());
+	            		}
+	            	}
+	        	} else {
+	        		x.setValidado(SimNao.N);
+	        	}
+	        }
+			
+	        for(VisitanteCertidao x : visitante.getCertidoes()) {
+	        	if(vr.getUltimoCredenciamento() != null) {
+	            	for(CredencialCertidao y : vr.getUltimoCredenciamento().getCredencialCertidaos()) {
+	            		if(y.getVisitanteCertidao().getId().equals(x.getId())) {
+	            			x.setValidado(y.getValidado());
+	            		}
+	            	}
+	        	} else {
+	        		x.setValidado(SimNao.N);
+	        	}
+	        }
+		} else {
+	        for(VisitanteDocumento x : visitante.getVisitanteDocumentos()) {
+	        	for(FaseDoCredenciamento vc : vr.getFasesDoCredenciamento()) {
+	        		if(vc.getId() == idCredenciamento) {
+		            	for(CredencialDocumento y : vc.getCredencialDocumentos()) {
+		            		if(y.getVisitanteDocumento().getId().equals(x.getId())) {
+		            			x.setValidado(y.getValidado());
+		            		}
+		            	}
+	        			
+	        		}
+	        	}
+	        }
+			
+	        for(VisitanteCertidao x : visitante.getCertidoes()) {
+	        	for(FaseDoCredenciamento vc : vr.getFasesDoCredenciamento()) {
+	        		if(vc.getId() == idCredenciamento) {
+		            	for(CredencialCertidao y : vc.getCredencialCertidaos()) {
+		            		if(y.getVisitanteCertidao().getId().equals(x.getId())) {
+		            			x.setValidado(y.getValidado());
+		            		}
+		            	}
+	        			
+	        		}
+	        	}
+	        }
+		}
+	}
+
+	public void atualizarStatusCredenciamento(FaseDoCredenciamento fase) {
+		this.atualizarStatusCredenciamento(fase.getCredenciamento());
+	}
+
+	private Integer buscarFase(FaseCredenciamento fase) {
+		
+        List<ParametroUnidade> parametros = parametroUnidadeDAO.buscaPorCampo("unidadePrisional", SecurityUtil.getUnidadeSelecionada());
+
+        switch (fase) {
+            case RECEBIMENTO:
+                return this.atribuirFaseRecebimento(fase, parametros).getId();
+            case CHECAGEM:
+                return this.atribuirFaseChecagem(fase, parametros).getId();
+            case CONFERENCIA:
+            	return this.atribuirFaseConferencia(fase, parametros).getId();
+            case ANALISE:
+            	return this.atribuirFaseAnalise(fase).getId();
+            case APROVACAO:
+            	return FaseCredenciamento.APROVACAO.getId();
+            default:
+                return FaseCredenciamento.RECEBIMENTO.getId();
+        }
+	}
+	
+    private FaseCredenciamento atribuirFaseRecebimento(FaseCredenciamento fase, List<ParametroUnidade> parametros) {
+        if (parametros.stream().noneMatch(
+                param -> param.getNome() == ParametroVisitante.CHECAGEM_DOCUMENTO && param.getValidar() == SimNao.S)
+        ) {
+            return this.atribuirFaseChecagem(fase, parametros);
+        }
+
+        return FaseCredenciamento.CHECAGEM;
+    }
+    
+    private FaseCredenciamento atribuirFaseChecagem(FaseCredenciamento fase, List<ParametroUnidade> parametros) {
+        if (parametros.stream().noneMatch(
+                param -> param.getNome() == ParametroVisitante.CONFERENCIA_AUTENTICACAO && param.getValidar() == SimNao.S)
+        ) {
+            
+            return this.atribuirFaseConferencia(fase, parametros);
+        }
+
+        return FaseCredenciamento.CONFERENCIA;
+    }
+    
+    private FaseCredenciamento atribuirFaseConferencia(FaseCredenciamento fase, List<ParametroUnidade> parametros) {
+        if (parametros.stream().noneMatch(
+                param -> param.getNome() == ParametroVisitante.ANALISE_CERTIDAO && param.getValidar() == SimNao.S)
+        ) {
+            return this.atribuirFaseAnalise(fase);
+        }
+
+        return FaseCredenciamento.ANALISE;
+    }
+    
+    private FaseCredenciamento atribuirFaseAnalise(FaseCredenciamento fase) {
+        return FaseCredenciamento.APROVACAO;
+    }
+
+    private FaseCredenciamento atribuirFaseAprovacao(FaseCredenciamento fase) {
+        return FaseCredenciamento.RECEBIMENTO;
+    }
+
+	public void atualizarStatusExcluir(FaseDoCredenciamento fase) {
+		Credenciamento vr = this.buscarPorId(fase.getCredenciamento().getId());
+		vr.setStatusCredenciamento(StatusCredenciamento.PENDENTE.getId());
+        if(fase.getFaseCredenciamento() == FaseCredenciamento.RECEBIMENTO)
+        	vr.setFaseCredenciamento(FaseCredenciamento.RECEBIMENTO.getId());
+        else
+        	vr.setFaseCredenciamento(this.buscarFaseExcluir(fase.getFaseCredenciamento()));
+        this.salvar(vr);
+		
+	}
+
+	private Integer buscarFaseExcluir(FaseCredenciamento fase) {
+		
+        List<ParametroUnidade> parametros = parametroUnidadeDAO.buscaPorCampo("unidadePrisional", SecurityUtil.getUnidadeSelecionada());
+
+        switch (fase) {
+	        case APROVACAO:
+	        	return this.atribuirFaseAprovacaoExcluir(fase, parametros).getId();
+            case ANALISE:
+            	return this.atribuirFaseAnaliseExcluir(fase, parametros).getId();
+            case CONFERENCIA:
+            	return this.atribuirFaseConferenciaExcluir(fase, parametros).getId();
+            case CHECAGEM:
+                return this.atribuirFaseChecagemExcluir(fase, parametros).getId();
+            default:
+                return FaseCredenciamento.RECEBIMENTO.getId();
+        }
+	}
+	
+    private FaseCredenciamento atribuirFaseAprovacaoExcluir(FaseCredenciamento fase, List<ParametroUnidade> parametros) {
+    	int i = parametros.size();
+    	while (true)  {
+    		i--;
+    		if(i<0) break;
+    		ParametroUnidade param = parametros.get(i);
+    		if(param.getNome() == ParametroVisitante.ANALISE_CERTIDAO && param.getValidar() == SimNao.S) {
+    			return FaseCredenciamento.ANALISE;
+    		}
+    	}
+    	
+    	return this.atribuirFaseAnaliseExcluir(fase, parametros);
+    }
+    
+    private FaseCredenciamento atribuirFaseAnaliseExcluir(FaseCredenciamento fase, List<ParametroUnidade> parametros) {
+    	int i = parametros.size();
+    	while (true)  {
+    		i--;
+    		if(i<0) break;
+    		ParametroUnidade param = parametros.get(i);
+    		if(param.getNome() == ParametroVisitante.CONFERENCIA_AUTENTICACAO && param.getValidar() == SimNao.S) {
+    			return FaseCredenciamento.CONFERENCIA;
+    		}
+    	}
+    	
+    	return this.atribuirFaseConferenciaExcluir(fase, parametros);
+    }
+    
+    private FaseCredenciamento atribuirFaseConferenciaExcluir(FaseCredenciamento fase, List<ParametroUnidade> parametros) {
+    	int i = parametros.size();
+    	while (true)  {
+    		i--;
+    		if(i<0) break;
+    		ParametroUnidade param = parametros.get(i);
+    		if(param.getNome() == ParametroVisitante.CHECAGEM_DOCUMENTO && param.getValidar() == SimNao.S) {
+    			return FaseCredenciamento.CHECAGEM;
+    		}
+    	}
+    	
+    	return this.atribuirFaseChecagemExcluir(fase, parametros);
+    }
+    
+    private FaseCredenciamento atribuirFaseChecagemExcluir(FaseCredenciamento fase, List<ParametroUnidade> parametros) {
+    	int i = parametros.size();
+    	while (true)  {
+    		i--;
+    		if(i<0) break;
+    		ParametroUnidade param = parametros.get(i);
+    		if(param.getNome() == ParametroVisitante.RECEBIMENTO_DOCUMENTACAO && param.getValidar() == SimNao.S) {
+    			return FaseCredenciamento.RECEBIMENTO;
+    		}
+    	}
+    	
+    	return FaseCredenciamento.RECEBIMENTO;
+    }
+
+	public List<Credenciamento> inativarVisitantesRecuperando(Recuperando recuperando) {
+        try {
+        	String jpql = "SELECT vr FROM Credenciamento vr WHERE vr.recuperando = :recuperando";
+            Query query = this.em.createQuery(jpql, Credenciamento.class);
+            query.setParameter("recuperando", recuperando);
+            List<Credenciamento> lista= query.getResultList();
+            for(Credenciamento vr : lista){
+            	
+            	vr.setStatusCredenciamento(StatusCredenciamento.INATIVO.getId());
+            	this.em.merge(vr);
+            	for(FaseDoCredenciamento vc : vr.getFasesDoCredenciamento()){
+            		vc.setStatusCredenciamento(StatusCredenciamento.INATIVO);
+            		this.em.merge(vc);
+            	}
+            	this.visitanteService.atribuirStatusVisitantePosCredenciamentoInativar(vr.getVisitante());
+            	
+            }
+            return lista;
+        }catch(NoResultException e){
+            return new ArrayList<Credenciamento>();
+        }
+	}
+	
+	public FaseDoCredenciamento buscarUltimoCredenciamento(Credenciamento vr) {
+		
+		String jpql = "SELECT vr FROM Credenciamento vr WHERE vr = :vr ";
+        Query query = this.em.createQuery(jpql, Credenciamento.class);
+        query.setParameter("vr", vr);
+        Credenciamento v = (Credenciamento)query.getSingleResult();
+        
+		jpql = "SELECT vc FROM FaseDoCredenciamento vc WHERE vc.credenciamento = :vr ORDER BY faseCredenciamento DESC ";
+        query = this.em.createQuery(jpql, FaseDoCredenciamento.class);
+        query.setParameter("vr", vr);
+        
+        List<FaseDoCredenciamento> vc = query.getResultList();
+        
+        if(vc.size() > 0)
+        	return vc.get(0);
+        
+        return new FaseDoCredenciamento();
+        
+	}
+	
+	public void atualizarStatusCredenciamento(Credenciamento credenciamento) {
+		Credenciamento vr = this.em.find(Credenciamento.class, credenciamento.getId());
+		FaseDoCredenciamento vc = this.buscarUltimoCredenciamento(credenciamento);
+		if(vc.getId() == null) {
+			vr.setFaseCredenciamento(FaseCredenciamento.RECEBIMENTO.getId());
+			vr.setStatusCredenciamento(StatusCredenciamento.PENDENTE.getId());
+		} else {
+			vr.setFaseCredenciamento(parametroUnidadeDAO.buscarFase(vc).getId());
+			if(FaseCredenciamento.APROVACAO == vc.getFaseCredenciamento()) {
+				vr.setStatusCredenciamento(vc.getStatusCredenciamento().getId());
+			} else {
+				vr.setStatusCredenciamento(StatusCredenciamento.PENDENTE.getId());
+			}
+		}
+		this.em.merge(vr);
+	}
+	
+
+	public void atualizarStatusCredenciamento(Visitante visitante) {
+		String jpql = "SELECT vr FROM Credenciamento vr WHERE visitante = :visitante";
+        Query query = this.em.createQuery(jpql, Credenciamento.class);
+        query.setParameter("visitante", visitante);
+        List<Credenciamento> lista = query.getResultList();
+        if(lista.size() > 0) {
+        	for(Credenciamento vr : lista) {
+        		this.atualizarStatusCredenciamento(vr);
+        	}
+        }
+	}
+
+	public void atualizarStatusAprovacao(Credenciamento visitante, StatusCredenciamento status) {
+		String jpql = "SELECT vr FROM Credenciamento vr WHERE vr = :visitante";
+        Query query = this.em.createQuery(jpql, Credenciamento.class);
+        query.setParameter("visitante", visitante);
+        List<Credenciamento> lista = query.getResultList();
+        if(lista.size() > 0) {
+        	Credenciamento m = lista.get(0);
+        	m.setFaseCredenciamento(FaseCredenciamento.APROVACAO.getId());
+        	m.setStatusCredenciamento(status.getId());
+        	this.em.merge(m);
+        }
+	}
+
+	public Credenciamento buscarCredenciamento(Visitante visitante, Recuperando recuperando) {
+		String jpql = "SELECT vr FROM Credenciamento vr WHERE visitante = :visitante AND recuperando = :recuperando ORDER BY id DESC";
+        Query query = this.em.createQuery(jpql, Credenciamento.class);
+        query.setParameter("visitante", visitante);
+        query.setParameter("recuperando", recuperando);
+        List<Credenciamento> lista = query.getResultList();
+        if(lista.size() > 0) {
+        	return lista.get(0);
+        }
+        return new Credenciamento();
+	}
+	
+	public Credenciamento buscarUltimoCredenciamento(Visitante visitante) {
+		String jpql = "SELECT vr FROM Credenciamento vr WHERE visitante = :visitante ORDER BY id DESC";
+        Query query = this.em.createQuery(jpql, Credenciamento.class);
+        query.setParameter("visitante", visitante);
+        List<Credenciamento> lista = query.getResultList();
+        if(lista.size() > 0) {
+        	return lista.get(0);
+        }
+        return new Credenciamento();
+	}
+	
+	public List<Credenciamento> buscarPorVisitante(Visitante visitante) {
+		String jpql = "SELECT vr FROM Credenciamento vr WHERE visitante = :visitante ORDER BY id DESC";
+        Query query = this.em.createQuery(jpql, Credenciamento.class);
+        query.setParameter("visitante", visitante);
+        List<Credenciamento> lista = query.getResultList();
+        return lista;
+	}
+}

@@ -76,3 +76,11 @@ jboss/server/minimal/work/**/*
 
 *.DEPLOYED
 .tern-project
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+out/

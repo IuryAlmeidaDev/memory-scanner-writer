@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/pages/_templates/dialog.xhtml"
+                xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+    <ui:define name="head">
+        <title>Certidao</title>
+    </ui:define>
+
+    <ui:define name="conteudo">
+        <h:form id="contatoForm">
+            <p:panel>
+
+                <sgp:formSelectOneMenu
+                        labelValue="Certidão"
+                        value="#{associarCertidaoBean.certidao.certidao}"
+                        itemsValue="#{associarCertidaoBean.certidoes}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        temSelecione="true" appendTo="contatoForm"
+                        validationRequired="true"
+                        converter="SimpleEntityConverter"
+                        styleFormLabelColumn="width:200px;"
+                        display="text">
+                </sgp:formSelectOneMenu>
+
+                <sgp:formSelectOneMenu
+                        labelValue="Entregue pelo Visitante?"
+                        value="#{associarCertidaoBean.certidao.entregue}"
+                        validationRequired="true"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        labelValue="Obrigatório?"
+                        value="#{associarCertidaoBean.certidao.obrigatorio}"
+                        validationRequired="true"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form"
+                                 action="#{associarCertidaoBean.incluirContato()}"/>
+                <p:commandButton value="Fechar" icon="ui-icon-close" immediate="true"
+                                 actionListener="#{associarCertidaoBean.fecharDialog}"/>
+
+                <br/>
+            </p:panel>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -35,6 +35,8 @@ import br.gov.mt.sejudh.sigepen.model.Remanejamento;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RemanejamentoDTO;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
+import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.ComboService;
 import br.gov.mt.sejudh.sigepen.service.PedidoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
@@ -73,6 +75,9 @@ public class RemanejamentoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private PedidoService pedService;
+	
+	@Inject
+	private FileDownloadHandlerBean fileDownload;
 	
 	@Inject
 	private RecuperandoService recService;
@@ -326,5 +331,50 @@ public class RemanejamentoBean extends MetodosDePaginaBean {
 
 	public List<UnidadePrisional> getUnidadesPrisionais() {
 		return unidadesPrisionais;
-	}	
+	}
+	
+	
+	public void imprimir() {
+		try {			
+			List<RemanejamentoDTO> lista = service.buscaPorFiltro(filtro);
+			
+			if (lista.size() == 0) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
+				return;
+			}
+			
+			lista.stream().forEach(t -> {
+				t.setFiltro(filtro);
+			});
+
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.ListarRemanejamento));
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Remanejamento", log);
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir lista de Remanejamento: " + e.getMessage());
+			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Remanejamento", e, log);
+		}
+	}
+	
+		
+	
+	public void imprimirRegistro(RemanejamentoDTO remanejamento) {
+		try {
+		
+
+			FiltroRemanejamento f = new FiltroRemanejamento();
+			f.setId(remanejamento.getId());
+
+			List<RemanejamentoDTO> recs = service.buscaPorFiltro(f);
+
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(recs, Relatorio.RegistroRemanejamento));
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, remanejamento, log);
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro imprimir registro de remanejamento (" + remanejamento.getRecuperando() + "): " + e.getMessage());
+			LoggerUtil.logErro(Acao.IMPRIMIR, remanejamento, e, log);
+		}
+	}
+
 }

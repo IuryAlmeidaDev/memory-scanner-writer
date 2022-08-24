@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+
+		<h3><strong>Relatórios</strong></h3>
+
+		<h:form id="meuFormulario">
+			<p:panel>
+                <sgp:formSelectOneMenu
+                        labelValue="Funcionalidade"
+                        value="#{relatorioBean.funcionalidade}" 
+                        itemsValue="#{relatorioBean.funcionalidades}"
+                        itemValue="#{item}" 
+                        itemLabel="#{item.nome}" 
+                        converter="SimpleEntityConverter"
+                        temSelecione="true" 
+                       >
+                        <p:ajax listener="#{relatorioBean.selecionarFuncionalidade}" update="meuFormulario:combo_relatorios"  process="@this" />
+                </sgp:formSelectOneMenu>
+				
+				<h:panelGroup id="combo_relatorios">
+
+						<sgp:formSelectOneMenu labelValue="Relatórios" value="#{relatorioBean.relatorioSelecionado}" display="text" 
+							 >
+							<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+							
+							<c:forEach items="#{relatorioBean.relatorios}" var="entry">
+							    <f:selectItem itemLabel="#{entry.nome}" itemValue="#{entry.id}" />
+							</c:forEach>
+							<p:ajax listener="#{relatorioBean.mostrarFiltros2}" process="@this" />
+						</sgp:formSelectOneMenu>
+
+                </h:panelGroup>
+                
+                <br /><br />
+			</p:panel>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

@@ -345,35 +345,3 @@
 .ui-g-nopad {
     padding: 0px;
 }
-
-.ui-g-novpad {
-    padding-top: 0px !important;
-    padding-bottom: 0px !important;
-}
-
-.ui-g-nohpad {
-    padding-right: 0px !important;
-    padding-left: 0px !important;
-}
-
-.ui-g-vpad {
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-}
-
-.ui-g-border-4 {
-    border-width: 4px !important;
-}
-
-.ui-g-border-left{
-	border-left: 1px solid #cccccc !important;
-}
-
-.ui-g-border-right{
-	border-right: 1px solid #cccccc !important;
-}
-
-.ui-datagrid-no-border>.ui-datagrid-content {
-	border: none;
-}
-

@@ -7,13 +7,11 @@
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	template="/WEB-INF/pages/_templates/principal.xhtml">  
 
-	<ui:define name="head">
-		<ui:include src="/WEB-INF/pages/_script/biometria.xhtml" />
-	</ui:define>
-
 	<ui:define name="footer">
+		<ui:include src="/WEB-INF/pages/_script/biometriaRecuperandoConfig.xhtml" />
+		<h:outputScript library="js" name="biometriaCore.js?ver=#{biometriaUtilBean.getBiometriaJsVersao('core')}" />
+		<h:outputScript library="js" name="biometriaCliente.js?ver=#{biometriaUtilBean.getBiometriaJsVersao('cliente')}" />
 		<h:outputStylesheet library="css" name="corpohumano.css" />
-		<h:outputScript library="js" name="biometriav2.js?ver=#{utilBean.biometriaVersao}" />
 	</ui:define>
 		
 	<ui:define name="conteudo">
@@ -24,6 +22,8 @@
 			<p:commandButton id="cb" actionListener="#{recuperandoBean.abrirDialogPreCadastroPessoa}" style="display:none">
 				<p:ajax event="dialogReturn" listener="#{recuperandoBean.associarPreCadastroPessoa}" update=":tabView:formConteudo :tabView:formConteudoRec :tabView:groupBotaoSalvarRec :tabView:formFoto :tabView:infoPeric"/>
 			</p:commandButton>
+			
+			<p:remoteCommand name="retornoBiometria" actionListener="#{recuperandoBean.retornoOperacaoBiometrica()}" update=":tabView:biometriaCapturada" />
 		</h:form>
 		
 		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.RegiaoParticularidade" var="Regiao" allSuffix="ALL_ENUM_VALUES" />
@@ -98,6 +98,29 @@
 								<sgp:formInputMask id="altura" labelValue="Altura" value="#{recuperandoBean.recuperando.altura}" size="4" mask="9?.99" maxlength="5" display="text"
 									validationRequired="true" disabled="#{recuperandoBean.isVisualizacao}"/>
 								
+								<sgp:formSelectOneMenu display="text" requiredMessage="*" id="Raca" labelValue="Raça" temSelecione="true" itemValue="#{item}" validationRequired="true"
+									value="#{recuperandoBean.recuperando.raca}" itemsValue="#{comboHelperBean.racas}" itemLabel="#{item.descricao}"
+									disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" >
+									<p:ajax listener="#{recuperandoBean.selecionarEtnia()}" update="tabView:etnia"  process="@this" />
+								</sgp:formSelectOneMenu>
+								
+								<h:panelGroup id="etnia">
+					                <sgp:formSelectOneMenu
+					                        labelValue="Etnia"
+					                        value="#{recuperandoBean.recuperando.etnia}"
+					                        itemsValue="#{recuperandoBean.etnias}"
+					                        itemValue="#{item}"
+					                        filter="true"  filterMatchMode="contains" filterFunction="removeAcento"
+					                        itemLabel="#{item.descricao}"
+					                        style="width: 200px;"
+					                        temSelecione="true"
+					                        rendered="#{recuperandoBean.mostrarEtnia()}"
+					                        display="text"
+					                        converter="SimpleEntityConverter"
+					                        disabled="#{recuperandoBean.isVisualizacao}"
+					                />
+								</h:panelGroup>
+								
 								<sgp:formInputNumber id="peso" labelValue="Peso" value="#{recuperandoBean.recuperando.peso}" size="6" maxlength="6" display="text"
 									 disabled="#{recuperandoBean.isVisualizacao}"/>
 		
@@ -105,10 +128,6 @@
 									value="#{recuperandoBean.recuperando.tipoSanguineo}" itemsValue="#{comboHelperBean.tipoSanguineo}" itemLabel="#{item.descricao}"
 									disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" />				
 				
-								<sgp:formSelectOneMenu display="text" requiredMessage="*" id="Raca" labelValue="Raça" temSelecione="true" itemValue="#{item}"
-									value="#{recuperandoBean.recuperando.raca}" itemsValue="#{comboHelperBean.racas}" itemLabel="#{item.descricao}"
-									disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" />
-									
 								<sgp:formSelectOneMenu display="text" requiredMessage="*" id="corOlho" labelValue="Cor dos Olhos" itemValue="#{item}" temSelecione="true"
 									value="#{recuperandoBean.recuperando.corOlho}" itemsValue="#{comboHelperBean.corOlho}" itemLabel="#{item.descricao}"
 									disabled="#{recuperandoBean.isVisualizacao}" />
@@ -122,7 +141,7 @@
 							
 							<h:panelGroup id="groupBotaoSalvarRec">
 								<br/><br/><br/>
-								<p:commandButton value="Salvar" update=":formCabecalho :mensagens :tabView:formConteudo :tabView:formConteudoRec :tabView:formFoto :tabView:infoPeric :tabView:biometriaCapturada :tabView:formBio :tabView:formPassagem :tabView:formInfos :tabView:formAbaFotos :tabView:formAbaFotosImg :tabView:formAbaFotosHistorico :tabView:formInfoParticularidade :tabView:formCorpo :tabView:formParticularidades :tabView:formSocial :tabView:formParente" action="#{recuperandoBean.salvar()}" 
+								<p:commandButton value="Salvar" update=":formCabecalho :mensagens :tabView:formConteudo :tabView:formConteudoRec :tabView:formFoto :tabView:infoPeric :tabView:biometriaCapturada :tabView:formPassagem :tabView:formInfos :tabView:formAbaFotos :tabView:formAbaFotosImg :tabView:formAbaFotosHistorico :tabView:formInfoParticularidade :tabView:formCorpo :tabView:formParticularidades :tabView:formSocial :tabView:formParente" action="#{recuperandoBean.salvar()}" 
 									disabled="#{(empty recuperandoBean.recuperando.pessoa.nome)}"
 									icon="ui-icon-disk" rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando') ) and !recuperandoBean.isVisualizacao}" />
 		
@@ -155,20 +174,14 @@
 						</h:panelGroup>
 						
 						<h:panelGroup id="digital">
-							<p:commandButton value="Registrar Biometria" id="btnBio" onclick="enviaComandoWs('registrar');" icon="ui-icon-bio" rendered="#{(((securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and recuperandoBean.verificarSeBiometriaEhObrigatoria()))}" />
-							
-							<h:form prependId="false" id="formGamb">
-								<h:inputHidden value="#{recuperandoBean.temBiometria}" id="temBiometria" />
-								<h:inputHidden value="#{recuperandoBean.recuperando.id}" id="idRecuperando"/>
-							</h:form>
+							<p:commandButton value="Registrar Biometria" id="botaoBiometria" styleClass="botaoBiometrico" onclick="registrar(#{recuperandoBean.recuperando.pessoa.id}); return false;" icon="ui-icon-bio" rendered="#{(((securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and recuperandoBean.verificarSeBiometriaEhObrigatoria()))}" />
 						</h:panelGroup>
 						
-						<div id="divRegistroBiometrico" style="display: inline;">
-							<h:form prependId="false" id="formBio">
-								<p:remoteCommand name="executarBiometria" actionListener="#{recuperandoBean.registrarBiometria}" update=":tabView:biometriaCapturada" />
-								<h:inputHidden value="#{recuperandoBean.biometria}" id="paramBiometria" />
-							</h:form>
-						</div>
+						<h:panelGroup>
+							<p:commandButton value="Imprimir Biometrias" actionListener="#{recuperandoBean.imprimirBiometria}" icon="fa fa-file-pdf-o" 
+								rendered="#{recuperandoBean.mostrarImprimirBiometria()}"/>
+							<br/><br/>
+						</h:panelGroup>
 						
 						<h:panelGroup id="biometriaCapturada">
 							<p:panelGrid rendered="#{recuperandoBean.recuperando.pessoa.biometria.dedos.size() gt 0 or recuperandoBean.recuperando.pessoa.biometria.id gt 0}" style="border-width:1px; border-style:solid; margin-bottom: 15px">
@@ -307,10 +320,10 @@
 							 </p:panelGrid>
 						 </h:panelGroup>
 						 
-						 <p:panel header="Autorização de cadastro sem biometria" id="autorizadorBiometria" rendered="#{recuperandoBean.recuperando.pessoa.autorizacaoCadastro != null}">
-						 		<sgp:formOutputLabel labelValue="Autorizador" value="#{recuperandoBean.recuperando.pessoa.autorizacaoCadastro.usuario.servidor.nome}" />
-								<sgp:formOutputLabel labelValue="Observação" value="#{recuperandoBean.recuperando.pessoa.autorizacaoCadastro.observacao}" />
-								<sgp:formOutputLabel labelValue="Data" value="#{recuperandoBean.recuperando.pessoa.autorizacaoCadastro.dataAutorizacao}" converterData="true" />
+						 <p:panel header="Autorização de cadastro sem biometria" id="autorizadorBiometria" rendered="#{recuperandoBean.recuperando.autorizacaoCadastroSemBiometria != null}">
+						 		<sgp:formOutputLabel labelValue="Autorizador" value="#{recuperandoBean.recuperando.autorizacaoCadastroSemBiometria.usuario.servidor.nome}" />
+								<sgp:formOutputLabel labelValue="Observação" value="#{recuperandoBean.recuperando.autorizacaoCadastroSemBiometria.observacao}" />
+								<sgp:formOutputLabel labelValue="Data" value="#{recuperandoBean.recuperando.autorizacaoCadastroSemBiometria.dataAutorizacao}" converterData="true" />
 						</p:panel>						 
 					</div>
 				</div>
@@ -349,7 +362,16 @@
 						<p:column headerText="Lotação">						
 						<p:commandButton title="Lotação" icon="ui-icon-document" action="#{recuperandoBean.visualizarLotacao(pass)}" 
 							oncomplete="PF('visualizarPassagem').show()" update="passagemForm" process="@this" />
+							
+						<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarPassagem" 
+							rendered="#{securityUtil.possuiPermissao('AlterarPassagem') and !recuperandoBean.isVisualizacao}" >
+							<f:param name="id" value="#{recuperandoBean.recuperando.id}"/>
+							<f:param name="idPassagem" value="#{pass.id}"/>
+						</p:button>
+						
 						</p:column>
+						
+						
 					</p:dataTable>
 					
 					<br/>
@@ -463,7 +485,10 @@
 								<h:outputText value="#{outroNome.dataNascimento}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
-							</p:column>													
+							</p:column>
+							<p:column headerText="Nome do Pai">
+								<h:outputText value="#{outroNome.nomePai}"/>
+							</p:column>
 							<p:column width="120">
 								<center>
 									<p:commandButton action="#{recuperandoBean.tornarNomePrincipal(outroNome)}" immediate="true" icon="fa fa-exchange" title="Tornar Principal" update=":tabView:formInfos:outrosNomes :tabView:formConteudo :tabView:formConteudoRec :cabecalho :mensagens"
@@ -1180,6 +1205,7 @@
 			
 			<p:tab id="tabVidaSocial" title="Vida Social" disabled="#{recuperandoBean.bloquearAbas()}">
 				<h:form id="formSocial">
+					<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoDeficiencia" var="_td" allSuffix="ALL_ENUM_VALUES" />
 					<p:panel>
 					<sgp:formSelectOneMenu id="orientacaoSexual" labelValue="Orientação Sexual" itemValue="#{item}" temSelecione="true" styleFormLabelColumn="width: 140px"
 						value="#{recuperandoBean.recuperando.orientacaoSexual}" itemsValue="#{comboHelperBean.orientacaoSexual}" itemLabel="#{item.descricao}" 
@@ -1214,16 +1240,99 @@
 						
 					<sgp:formInputText id="profissao" labelValue="Profissão" styleFormLabelColumn="width: 140px"
 						value="#{recuperandoBean.recuperando.profissao}" size="40" disabled="#{recuperandoBean.isVisualizacao}" maxlength="80" />
-				
+
+					<sgp:formSelectOneMenu labelValue="Aposentado?" styleFormLabelColumn="width: 140px" value="#{recuperandoBean.recuperando.aposentado}" display="text" 
+						rendered="#{recuperandoBean.mostrarAposentado()}"
+						disabled="#{recuperandoBean.isVisualizacao}" 
+								itemsValue="#{comboHelperBean.simNao}"
+								itemValue="#{item}"
+								itemLabel="#{item.descricao}"
+								temSelecione="true">
+					</sgp:formSelectOneMenu>
+
 					<sgp:formSelectOneMenu id="Religiao" labelValue="Religião" itemValue="#{item}" temSelecione="true" styleFormLabelColumn="width: 140px"
 						value="#{recuperandoBean.recuperando.religiao}" itemsValue="#{comboHelperBean.religioes}" itemLabel="#{item.descricao}"
 						disabled="#{recuperandoBean.isVisualizacao}" converter="SimpleEntityConverter" />
 						
-					<sgp:formSelectOneMenu labelValue="PNE" itemValue="#{item}" temSelecione="true" styleFormLabelColumn="width: 140px"
+					<sgp:formSelectOneMenu labelValue="PCD" itemValue="#{item}" temSelecione="true" styleFormLabelColumn="width: 140px"
 						value="#{recuperandoBean.recuperando.pne}" itemsValue="#{comboHelperBean.tipoDeficiencia}" 
-						itemLabel="#{item.descricao}" disabled="#{recuperandoBean.isVisualizacao}" />
+						itemLabel="#{item.descricao}" disabled="#{recuperandoBean.isVisualizacao}" >
+						<p:ajax listener="#{recuperandoBean.selecionarPcd()}" update="tabView:formSocial:recebe_beneficio"  process="@this" />
+					</sgp:formSelectOneMenu>
 						
-					<sgp:formCheckbox labelValue="Gestante" styleFormLabelColumn="width: 140px" value="#{recuperandoBean.recuperando.gestante}" disabled="#{recuperandoBean.isVisualizacao or recuperandoBean.recuperando.pessoa.sexo == 'M'}"/>
+					<h:panelGroup id="recebe_beneficio">
+						<sgp:formSelectOneMenu labelValue="Recebe Benefício?" styleFormLabelColumn="width: 140px" value="#{recuperandoBean.recuperando.recebeBeneficio}" display="text" 
+							rendered="#{recuperandoBean.mostrarRecebeBeneficio()}" 
+							disabled="#{recuperandoBean.isVisualizacao}"
+								itemsValue="#{comboHelperBean.simNao}"
+								itemValue="#{item}"
+								itemLabel="#{item.descricao}"
+								temSelecione="true">
+						</sgp:formSelectOneMenu>
+					</h:panelGroup>
+					
+					<sgp:formSelectOneMenu labelValue="Gestante" styleFormLabelColumn="width: 140px" value="#{recuperandoBean.recuperando.gestante}" display="text" 
+						rendered="#{recuperandoBean.recuperando.pessoa.sexo == 'F'}" temSelecione="true"
+						disabled="#{recuperandoBean.isVisualizacao}" >
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+						<p:ajax listener="#{recuperandoBean.selecionarGestante()}" update="tabView:formSocial:inicio_gestacao"  process="@this" />
+					</sgp:formSelectOneMenu>
+										
+					<h:panelGroup id="inicio_gestacao">
+						<sgp:formCalendar  
+							labelValue="A partir da data?" 
+							styleFormLabelColumn="width: 140px" 
+							value="#{recuperandoBean.recuperando.inicioGestacao}"  
+							display="text" 
+							pattern="dd/MM/yyyy"
+							rendered="#{recuperandoBean.recuperando.pessoa.sexo == 'F'and recuperandoBean.recuperando.ehGestante()}"
+							disabled="#{recuperandoBean.isVisualizacao}"
+							/>
+					</h:panelGroup>
+
+					<sgp:formSelectOneMenu labelValue="Lactante" styleFormLabelColumn="width: 140px" value="#{recuperandoBean.recuperando.lactante}" display="text" 
+						rendered="#{recuperandoBean.recuperando.pessoa.sexo == 'F'}" disabled="#{recuperandoBean.isVisualizacao}"
+								itemsValue="#{comboHelperBean.simNao}"
+								itemValue="#{item}"
+								itemLabel="#{item.descricao}"
+								temSelecione="true">
+						<p:ajax listener="#{recuperandoBean.selecionarLactante()}" update="tabView:formSocial:inicio_lactante"  process="@this" />
+					</sgp:formSelectOneMenu>
+						
+					<h:panelGroup id="inicio_lactante">
+						<sgp:formCalendar  
+							labelValue="A partir da data?" 
+							styleFormLabelColumn="width: 140px" 
+							value="#{recuperandoBean.recuperando.inicioLactante}"  
+							display="text" 
+							pattern="dd/MM/yyyy"
+							rendered="#{recuperandoBean.recuperando.pessoa.sexo == 'F' and recuperandoBean.recuperando.ehLactante()}"
+							disabled="#{recuperandoBean.isVisualizacao}"
+							/>
+					</h:panelGroup>
+
+					<sgp:formSelectOneMenu labelValue="Possui filho(s)?" styleFormLabelColumn="width: 140px" value="#{recuperandoBean.recuperando.possuiFilho}" display="text" 
+						disabled="#{recuperandoBean.isVisualizacao}" 
+								itemsValue="#{comboHelperBean.simNao}"
+								itemValue="#{item}"
+								itemLabel="#{item.descricao}"
+								temSelecione="true">
+						<p:ajax listener="#{recuperandoBean.selecionarPossuiFilho()}" update="tabView:formSocial:possui_filho"  process="@this" />
+					</sgp:formSelectOneMenu>
+					
+					<h:panelGroup id="possui_filho">
+						<sgp:formSelectOneMenu labelValue="Filho PCD" styleFormLabelColumn="width: 140px" value="#{recuperandoBean.recuperando.filhoPcd}" display="text" 
+							rendered="#{recuperandoBean.recuperando.ehPossuiFilho()}"
+							disabled="#{recuperandoBean.isVisualizacao}"
+								itemsValue="#{comboHelperBean.simNao}"
+								itemValue="#{item}"
+								itemLabel="#{item.descricao}"
+								temSelecione="true">
+						</sgp:formSelectOneMenu>
+							
+					</h:panelGroup>
+					
 					<br/>
 					</p:panel>
 					<br/><br/>
@@ -1241,32 +1350,36 @@
 				<p:panel header="Parentes">
 							
 					<p:commandButton title="Adicionar" icon="ui-icon-plus" value="Adicionar" action="#{recuperandoBean.adicionarParente()}" oncomplete="PF('novoParente').show()"  update=":formParente" process="@this" 
-						rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}" />
+						rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and (recuperandoBean.alterarParentes() or recuperandoBean.adicionarParentes())}" />
 					
 					<sgp:formOutputLabel labelValue="Data da próxima alteração" value="#{recuperandoBean.recuperando.alteracaoParentes}" converterData="true"/>	
 					
 					
 					<p:dataTable id="parentes" var="parente" emptyMessage="Nenhum parente adicionado." value="#{recuperandoBean.recuperando.parentes}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{parente.status.descricao}">
-						<p:column headerText="Nome">
+						<p:column headerText="Nome Informado pelo Recuperando">
 							<h:outputText value="#{parente.nome}" />
 						</p:column>
 						<p:column headerText="Parentesco">
-							<h:outputText value="#{parente.parentesco.descricao}"/>
+							<h:outputText value="#{parente.parentesco.descricao}" rendered="#{!parente.filhoPcd}"/>
+							<h:outputText value="#{parente.parentesco.descricao} (PCD)" rendered="#{parente.filhoPcd}"/>
 						</p:column>	
 						<p:column headerText="Data de Nascimento">
 								<h:outputText value="#{parente.dataNascimento}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
 							</p:column>
-						<p:column headerText="Situação" width="120" sortBy="#{cargo.status}">
+							<p:column headerText="Nome do Visitante Credenciado">
+								<h:outputText value="#{parente.getVisitanteCredenciado()}" />
+							</p:column>
+							<p:column headerText="Situação" width="120" sortBy="#{cargo.status}">
 							<h:outputText value="#{parente.status.descricao}" />						
 						</p:column>												
 						<p:column width="90">
 							<center>
 								<p:commandButton title="Alterar Parente" icon="ui-icon-pencil" action="#{recuperandoBean.alterarParente(parente)}" oncomplete="PF('novoParente').show()"  update=":formParente" process="@this" 
-									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}"/>							
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and (recuperandoBean.alterarParentes() or recuperandoBean.adicionarParentes())}"/>							
 								<p:commandButton action="#{recuperandoBean.excluirParente(parente)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":tabView:formParente:parentes :mensagens"
-									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}">
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and (recuperandoBean.alterarParentes() or recuperandoBean.adicionarParentes())}">
 							 		<p:confirm header="Confirmação" message="Deseja excluir este Parente?" icon="ui-icon-alert" />
 								</p:commandButton>							
 							</center>
@@ -1326,7 +1439,10 @@
 							
 					<sgp:formCalendar display="text" labelValue="Nascimento"
 						value="#{recuperandoBean.outroNome.dataNascimento}" dataMaxima="#{comboHelperBean.maxDate}"
-						validationRequired="true" disabled="#{recuperandoBean.isVisualizacao}" />			
+						validationRequired="true" disabled="#{recuperandoBean.isVisualizacao}" />
+						
+					<sgp:formInputText id="nomePai" labelValue="Nome do Pai" value="#{recuperandoBean.outroNome.nomePai}" 
+						size="40" maxlength="80" disabled="#{recuperandoBean.isVisualizacao}" />
 					
 					<br/><br/><br/>				
 					<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form :tabView:formInfos:outrosNomes" action="#{recuperandoBean.incluirNome()}" 
@@ -1402,22 +1518,31 @@
 						itemLabel="#{item.descricao}"
 						disabled="#{recuperandoBean.isVisualizacao}"
 						converter="SimpleEntityConverter">
-						<f:ajax event="change" render=":formParente:jud:input" />
+						<f:ajax event="change" render=":formParente:jud:input :formParente:filho_pcd" />
 					</sgp:formSelectOneMenu>
 
+					<h:panelGroup id="filho_pcd">
+						<sgp:formSelectOneMenu labelValue="Filho PCD" styleFormLabelColumn="width: 140px" value="#{recuperandoBean.parente.filhoPcd}" display="text" 
+							rendered="#{recuperandoBean.parente.parentesco.id == 3}">
+							<f:selectItem itemLabel="Sim" itemValue="true" />
+							<f:selectItem itemLabel="Não" itemValue="false" />
+						</sgp:formSelectOneMenu>
+							
+					</h:panelGroup>
+
 					<sgp:formCheckbox id="jud" labelValue="Possui decisão Judicial" value="#{recuperandoBean.parente.judicial}" display="text"
-								    validatorId="checkBoxValidator"	disabled="#{recuperandoBean.isVisualizacao or !(recuperandoBean.parente.parentesco.grau>1)}" />
+								    	disabled="#{recuperandoBean.isVisualizacao or !(recuperandoBean.parente.parentesco.grau>1)}" />
 
 					<sgp:formSelectOneMenu id="status" labelValue="Status"
 						value="#{recuperandoBean.parente.status}"
-						itemsValue="#{comboHelperBean.status}" itemValue="#{item}"
+						itemsValue="#{comboHelperBean.sgpStatusAlternativo}" itemValue="#{item}"
 						itemLabel="#{item.descricao}"
 						disabled="#{recuperandoBean.isVisualizacao}" display="text" />
 
 					<br/>	
 					<br/>			
-				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form :tabView:formParente:parentes" action="#{recuperandoBean.incluirParente()}" 
-					rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}"/>
+				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" action="#{recuperandoBean.incluirParente()}" 
+					rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and (recuperandoBean.alterarParentes() or recuperandoBean.adicionarParentes())}"/>
 			 		
 				<p:commandButton value="Fechar" onclick="PF('novoParente').hide()" process="@this"/>
 				

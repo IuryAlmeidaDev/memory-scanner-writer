@@ -24,7 +24,9 @@ public abstract class FiltroConsulta implements Serializable {
 	private int paginacaoIndex;
 	private ValueExpression valueExpression;
 	private SortOrder sortOrder;
-	
+
+    private boolean projetarDados;
+
 	public int getPrimeiroRegistro() {
 		return primeiroRegistro;
 	}
@@ -87,8 +89,16 @@ public abstract class FiltroConsulta implements Serializable {
 	public SortOrder getSortOrder() {
 		return sortOrder;
 	}
-	
-	public <T> Criteria criarCriteriaParaQuantidade(Class<T> classe, EntityManager em) {
+
+    public boolean isProjetarDados() {
+        return projetarDados;
+    }
+
+    public void setProjetarDados(boolean projetarDados) {
+        this.projetarDados = projetarDados;
+    }
+
+    public <T> Criteria criarCriteriaParaQuantidade(Class<T> classe, EntityManager em) {
 		return criarCriteria(classe, em, false, false);
 	}
 	

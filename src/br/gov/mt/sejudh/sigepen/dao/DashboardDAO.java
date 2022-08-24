@@ -10,7 +10,10 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang3.time.DateUtils;
 
+import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
+import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
@@ -186,5 +189,53 @@ public class DashboardDAO {
 		} catch (NoResultException e) {
 			return Long.valueOf(0);
 		}
+	}
+
+	public Long solicitacaoVisitaPendente(long unidadeId) {
+		String jpql = "select count(distinct sl.id) from SolicitacaoVisita sl"
+				+ " where sl.status = :stat and sl.unidadePrisional.id = :unidadeId";
+		Query query = em.createQuery(jpql);
+		query.setParameter("stat", SgpStatusAlternativo.P);
+		query.setParameter("unidadeId", unidadeId);
+		try {
+			return (Long) query.getSingleResult();
+		} catch (NoResultException e) {
+			return Long.valueOf(0);
+		}
+	}
+
+	private Long totalCredenciamentoPendente(long unidadeId, FaseCredenciamento fase, StatusCredenciamento situacao) {
+		String jpql = "select count(distinct v.id) from Visitante v join v.credenciamentos vr"
+				+ " where vr.faseCredenciamento = :fase and vr.statusCredenciamento = :situacao and vr.unidadePrisional.id = :unidadeId";
+		Query query = em.createQuery(jpql);
+		query.setParameter("fase", fase.getId());
+		query.setParameter("situacao", situacao.getId());
+		query.setParameter("unidadeId", unidadeId);
+		try {
+			Long x = (Long) query.getSingleResult(); 
+			return x;
+		} catch (NoResultException e) {
+			return Long.valueOf(0);
+		}
+	}
+
+	public Long totalCredenciamentoRecebimentoPendente(long unidadeId) {
+		return this.totalCredenciamentoPendente(unidadeId, FaseCredenciamento.RECEBIMENTO, StatusCredenciamento.PENDENTE);
+	}
+
+	public Long totalCredenciamentoChecagemPendente(long unidadeId) {
+		return this.totalCredenciamentoPendente(unidadeId, FaseCredenciamento.CHECAGEM, StatusCredenciamento.PENDENTE);
+	}
+
+	public Long totalCredenciamentoConferenciaPendente(long unidadeId) {
+		return this.totalCredenciamentoPendente(unidadeId, FaseCredenciamento.CONFERENCIA, StatusCredenciamento.PENDENTE);
+	}
+
+	public Long totalCredenciamentoAnalisePendente(long unidadeId) {
+		return this.totalCredenciamentoPendente(unidadeId, FaseCredenciamento.ANALISE, StatusCredenciamento.PENDENTE);
+	}
+
+	public Long totalCredenciamentoAprovacaoPendente(long unidadeId) {
+		return this.totalCredenciamentoPendente(unidadeId, FaseCredenciamento.APROVACAO, StatusCredenciamento.PENDENTE);
 	}
 }

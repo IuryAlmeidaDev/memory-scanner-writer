@@ -1,0 +1,267 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                template="/WEB-INF/pages/_templates/principal.xhtml">
+
+    <ui:define name="conteudo">
+        <style>
+            .ui-outputlabel .ui-outputlabel-rfi {
+                margin-left: 0.4em;
+                float: right;
+                margin-right: 12px;
+                color: red;
+            }
+        </style>
+
+        <sgp:validarAcesso/>
+
+        <h3>#{tipoVisitaBean.tituloPagina} Tipo Visita</h3>
+        <h:form prependId="false">
+            <p:panel footer="Cadastrado por: #{tipoVisitaBean.tipoVisita.autorRegistro.usuario} em #{tipoVisitaBean.tipoVisita.autorRegistro.data} | Última alteração: #{tipoVisitaBean.tipoVisita.autorUltimaAlteracao.usuario} em #{tipoVisitaBean.tipoVisita.autorUltimaAlteracao.data}">
+                <sgp:formInputText
+                        id="descricao"
+                        labelValue="Descrição"
+                        value="#{tipoVisitaBean.tipoVisita.descricao}"
+                        validationRequired="true"
+                        maxlength="80"
+                        disabled="#{tipoVisitaBean.isVisualizacao}"
+                        display="text"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        id="tipoEntrada" labelValue="Tipo Entrada"
+                        value="#{tipoVisitaBean.tipoVisita.tipoEntrada}"
+                        validationRequired="true"
+                        itemsValue="#{comboHelperBean.tipoEntrada}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        disabled="#{tipoVisitaBean.isVisualizacao}"
+                        temSelecione="true"
+                        display="text"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        id="obrigatorioCredenciamento" labelValue="Obrigatório Credenciamento?"
+                        value="#{tipoVisitaBean.tipoVisita.obrigatorioCredenciamento}"
+                        validationRequired="true"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        disabled="#{tipoVisitaBean.isVisualizacao}"
+                        temSelecione="true"
+                        display="text"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        id="estaNoRolDeParentes" labelValue="Está no Rol de Parentes?"
+                        value="#{tipoVisitaBean.tipoVisita.estaNoRolDeParentes}"
+                        validationRequired="true"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        disabled="#{tipoVisitaBean.isVisualizacao}"
+                        temSelecione="true"
+                        display="text"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        id="obrigatorioRecuperando" labelValue="Obrigatório Recuperando?"
+                        value="#{tipoVisitaBean.tipoVisita.obrigatorioRecuperando}"
+                        validationRequired="true"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        disabled="#{tipoVisitaBean.isVisualizacao}"
+                        temSelecione="true"
+                        display="text"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        id="status" labelValue="Situação"
+                        value="#{tipoVisitaBean.tipoVisita.status}"
+                        validationRequired="true"
+                        itemsValue="#{comboHelperBean.statusSgp}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        disabled="#{tipoVisitaBean.isVisualizacao}"
+                        temSelecione="true"
+                        display="text"
+                        styleFormLabelColumn="width:200px;"/>
+                <br/>
+                <br/>
+            </p:panel>
+            <br/>
+
+            <p:panel header="Documentos">
+                <p:commandButton action="#{tipoVisitaBean.criaDocumento()}" oncomplete="PF('dialogDocumento').show()" icon="ui-icon-plus" value="Adicionar" update="dialogDocumento"
+                	process="@this" rendered="#{!tipoVisitaBean.isVisualizacao}">
+                </p:commandButton>
+
+                <br/>
+                <br/>
+
+                <p:dataTable id="documentos" var="doc" emptyMessage="Nenhum documento adicionado."
+                             value="#{tipoVisitaBean.tipoVisita.tipoVisitaDocumento}" rows="5" paginator="true"
+                             paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{doc.id}">
+                    <p:column headerText="Tipo Documento">
+                        <h:outputText value="#{doc.tipoDocumento.descricao}"/>
+                    </p:column>
+                    <p:column headerText="Obrigatório para">
+                        <h:outputText value="#{doc.tipoObrigatoriedade.descricao}"/>
+                    </p:column>
+                    <p:column width="90">
+                        <p:commandButton
+                                title="Alterar" icon="ui-icon-pencil" process="@this" action="#{tipoVisitaBean.abrirDialogAlterarDocumento(doc)}"
+                                oncomplete="PF('dialogDocumento').show()" update="dialogDocumento"
+                                rendered="#{!tipoVisitaBean.isVisualizacao}">
+                        </p:commandButton>
+                        
+                        <p:commandButton action="#{tipoVisitaBean.excluirDocumento(doc)}" immediate="true" icon="ui-icon-trash" title="Excluir" rendered="#{!tipoVisitaBean.isVisualizacao}" update="documentos">
+	                       <p:confirm header="Confirmação" message="Deseja excluir o documento?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+            </p:panel>
+            <br/>
+
+            <p:panel header="Certidões">
+                <p:commandButton action="#{tipoVisitaBean.criaCertidao()}" oncomplete="PF('dialogCertidao').show()" icon="ui-icon-plus" value="Adicionar"
+                                 process="@this" update="dialogCertidao"
+                                 rendered="#{!tipoVisitaBean.isVisualizacao}">
+                </p:commandButton>
+
+                <br/>
+                <br/>
+
+                <p:dataTable id="certidoes" var="cert" emptyMessage="Nenhuma certidão adicionada."
+                             value="#{tipoVisitaBean.tipoVisita.tipoVisitaCertidao}" rows="5" paginator="true"
+                             paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{cert.id}">
+                    <p:column headerText="Descrição">
+                        <h:outputText value="#{cert.certidao.descricao}"/>
+                    </p:column>
+                    <p:column headerText="Obrigatório para">
+                        <h:outputText value="#{cert.tipoObrigatoriedade.descricao}"/>
+                    </p:column>
+                    <p:column width="90">
+                        <p:commandButton
+                                title="Alterar" icon="ui-icon-pencil" process="@this"
+                                action="#{tipoVisitaBean.abrirDialogAlterarCertidao(cert)}"
+                                oncomplete="PF('dialogCertidao').show()" update="dialogCertidao"
+                                rendered="#{!tipoVisitaBean.isVisualizacao}">
+                        </p:commandButton>
+                        <p:commandButton
+                                action="#{tipoVisitaBean.excluirCertidao(cert)}" immediate="true"
+                                icon="ui-icon-trash" title="Excluir" rendered="#{!tipoVisitaBean.isVisualizacao}"
+                                update="certidoes">
+                        	 <p:confirm header="Confirmação" message="Deseja excluir a Certidão?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+            </p:panel>
+            <br/>
+
+            <p:commandButton value="Salvar" action="#{tipoVisitaBean.salvar()}" icon="ui-icon-disk"
+                             rendered="#{(securityUtil.possuiPermissao('CadastrarTipoVisita') and !tipoVisitaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarTipoVisita') and !tipoVisitaBean.isVisualizacao)}"
+                            update="@form"/>
+            <p:button outcome="pretty:ListarTipoVisita" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+                <f:param name="list" value="1"/>
+            </p:button>
+        </h:form>
+
+       <p:confirmDialog global="true">
+			<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+       </p:confirmDialog>
+                    
+        <p:dialog id="dialogDocumento" header="Documento" showEffect="fade" widgetVar="dialogDocumento" modal="true"
+                  draggable="false" resizable="false" closeOnEscape="true" dynamic="true">
+
+            <h:form>
+                <p:panel>
+                    <sgp:formSelectOneMenu
+                            id="tipoDocumento" labelValue="Tipo"
+                            value="#{tipoVisitaBean.tipoVisitaDocumentoAux.tipoDocumento}"
+                            validationRequired="true"
+                            itemsValue="#{comboHelperBean.tipoDocumento}"
+                            itemValue="#{item}"
+                            itemLabel="#{item.descricao}"
+                            converter="SimpleEntityConverter"
+                            disabled="#{tipoVisitaBean.isVisualizacao}"
+                            temSelecione="true"
+                            styleFormLabelColumn="width:150px;" style="width: 180px;"/>
+
+                    <sgp:formSelectOneMenu
+                            id="obrigatorio" labelValue="Obrigatório para"
+                            value="#{tipoVisitaBean.tipoVisitaDocumentoAux.tipoObrigatoriedade}"
+                            validationRequired="true"
+                            itemsValue="#{comboHelperBean.tipoVisitaObrigatoriedade}"
+                            itemValue="#{item}"
+                            itemLabel="#{item.descricao}"
+                            disabled="#{tipoVisitaBean.isVisualizacao}"
+                            temSelecione="true"
+                            styleFormLabelColumn="width:150px;" style="width: 180px;"/>
+
+                    <br />
+                    <br />
+                </p:panel>
+
+                <br />
+
+                <p:commandButton value="Adicionar" action="#{tipoVisitaBean.adicionaDocumento()}" update="@form, documentos"
+                                 process="@form">
+                </p:commandButton>
+                <p:commandButton value="Fechar" onclick="PF('dialogDocumento').hide();" process="@this"/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dialogCertidao" header="Certidão" showEffect="fade" widgetVar="dialogCertidao" modal="true"
+                  draggable="false" resizable="false" closeOnEscape="true" dynamic="true">
+
+            <h:form>
+                <p:panel id="panelCertidao">
+                    <h:panelGroup id="panelDescricaoCertidao">
+                        <p:outputLabel for="labelcert" value="Certidão:" style="width:175px; padding-left: 5px; "/>
+                        <p:inputText id="labelcert" value="#{tipoVisitaBean.tipoVisitaCertidaoAux.certidao.descricao}"
+                                     validationRequired="true" required="true"
+                                     readonly="true" style="width: 180px;"/>
+                        <p:commandButton
+                                title="Adicionar" icon="fa fa-plus" style="margin-left: 5px;"
+                                actionListener="#{tipoVisitaBean.abrirDialogTipoCertidao}" process="@this">
+                            <p:ajax event="dialogReturn" listener="#{tipoVisitaBean.incluirCertidao}" update="panelDescricaoCertidao, panelBtn"/>
+                        </p:commandButton>
+                    </h:panelGroup>
+
+                    <sgp:formSelectOneMenu
+                            id="maiorIdade" labelValue="Obrigatório para"
+                            value="#{tipoVisitaBean.tipoVisitaCertidaoAux.tipoObrigatoriedade}"
+                            validationRequired="true"
+                            itemsValue="#{comboHelperBean.tipoVisitaObrigatoriedade}"
+                            itemValue="#{item}"
+                            itemLabel="#{item.descricao}"
+                            disabled="#{tipoVisitaBean.isVisualizacao}"
+                            temSelecione="true"
+                            styleFormLabelColumn="width:150px;" style="width: 180px;"/>
+
+                    <br />
+                    <br />
+                </p:panel>
+
+                <br />
+
+                <h:panelGroup id="panelBtn">
+                    <p:commandButton
+                            value="Adicionar" disabled="#{tipoVisitaBean.tipoVisitaCertidaoAux.certidao eq null}"
+                            action="#{tipoVisitaBean.adicionaCertidao()}"
+                            update="@form, certidoes" process="@form">
+                    </p:commandButton>
+                    <p:commandButton value="Fechar" onclick="PF('dialogCertidao').hide();" process="@this"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

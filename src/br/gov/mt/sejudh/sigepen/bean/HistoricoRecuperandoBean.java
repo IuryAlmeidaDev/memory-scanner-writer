@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -14,7 +15,9 @@ import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.exception.NaoEncontradoException;
 import br.gov.mt.sejudh.sigepen.model.HistoricoRecuperando;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
-import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
+import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.HistoricoRecuperandoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
@@ -30,7 +33,7 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean{
 	
 	private Recuperando recuperando;
 	
-	private RecuperandoDTO rec;
+	private RecuperandoView rec;
 	
 	@Inject
 	private FacesUtil facesUtil;
@@ -44,7 +47,14 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean{
 	@Inject
 	HistoricoRecuperandoService historicoRecuperandoService;
 		
+	@Inject
+	private FileDownloadHandlerBean fileDownload;
+
+	private int opcaoDetalhamento = 0;
+	
 	public void salvar(){
+		if(this.historicoRecuperando.getId() > 0)
+			this.historicoRecuperando.setId(0);
 		try {
 			this.historicoRecuperando.setRecuperando(this.recuperando);
 			this.historicoRecuperandoService.salvar(this.historicoRecuperando);
@@ -54,13 +64,14 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean{
 			this.historicoRecuperando = new HistoricoRecuperando();
 			facesUtil.exibirMensagemInfo("Histórico salvo com Sucesso!", false);
 			RequestContext.getCurrentInstance().update("mensagens");
+			RequestContext.getCurrentInstance().update("dialogTextEditor");
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao salvar histórico do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.SALVAR, this.historicoRecuperando, e, log);
 		}
 	}
 	
-	public void cadastrarHistoricoRecuperando(RecuperandoDTO recuperando) {
+	public void cadastrarHistoricoRecuperando(RecuperandoView recuperando) {
 		try {
 			this.historicoRecuperando = new HistoricoRecuperando();
 			this.rec = recuperando;
@@ -118,12 +129,67 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean{
 		this.historicos = historicos;
 	}
 
-	public RecuperandoDTO getRec() {
+	public RecuperandoView getRec() {
 		return rec;
 	}
 
-	public void setRec(RecuperandoDTO rec) {
+	public void setRec(RecuperandoView rec) {
 		this.rec = rec;
 	}
 	
+	public void visualizarDetalhamento(Long id) {
+		this.opcaoDetalhamento  = 1;
+		this.historicoRecuperando = historicoRecuperandoService.buscarHistoricoPorId(id);
+		RequestContext.getCurrentInstance().execute("PF('dialogTextEditor').show()");
+		RequestContext.getCurrentInstance().update("dialogTextEditor");
+	}
+
+	private String getFontName(String name) {
+		String t0 = "Font";
+		String t1 = "is not available to the JVM";
+		if(name != null && name.contains(t0)) {
+			int i0 = name.indexOf(t0) + t0.length();
+			int i1 = name.indexOf(t1);
+			return name.substring(i0, i1);
+		}
+		return "";
+	}
+	
+	public void imprimirRegistro(HistoricoRecuperando h) {
+		this.historicoRecuperando = historicoRecuperandoService.buscarHistoricoPorId(h.getId());
+		List<HistoricoRecuperando> lista = new ArrayList<HistoricoRecuperando>();
+		lista.add(this.historicoRecuperando);
+		try {
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.HistoricoRecuperando));
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, this.historicoRecuperando, log);
+		} catch (Exception e) {
+			String erro = e.getMessage();
+			if(erro.contains("Font")) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "A font de texto " + getFontName(erro) + " não foi encontrada. Entre em contato com o Administrador.");
+			} else { 
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Ocorreu um erro ao imprimir: " + erro);
+			}
+		}
+	}
+
+	public int getOpcaoDetalhamento() {
+		return opcaoDetalhamento;
+	}
+
+	public void setOpcaoDetalhamento(int opcaoDetalhamento) {
+		this.opcaoDetalhamento = opcaoDetalhamento;
+	}
+	
+	public void adicionarDetalhamento() {
+		this.opcaoDetalhamento = 0;
+		RequestContext.getCurrentInstance().update("dialogTextEditor");
+	}
+	
+	public void closeTextEditor() {
+		if(this.opcaoDetalhamento == 1) {
+			this.historicoRecuperando = new HistoricoRecuperando();
+			RequestContext.getCurrentInstance().update("dialogTextEditor");
+		}
+	}
 }

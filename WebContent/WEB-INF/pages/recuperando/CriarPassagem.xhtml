@@ -4,35 +4,218 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:pe="http://primefaces.org/ui/extensions"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="footer">
+		<ui:include src="/WEB-INF/pages/_script/biometriaPassagemConfig.xhtml" />
+		<h:outputScript library="js" name="biometriaCore.js?ver=#{biometriaUtilBean.getBiometriaJsVersao('core')}" />
+		<h:outputScript library="js" name="biometriaPassagem.js?ver=#{biometriaUtilBean.getBiometriaJsVersao('cliente')}" />
+	</ui:define>
 	
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 		
 		<h3>Nova Passagem</h3>
 		
+		<h:form prependId="false">
+			<p:remoteCommand name="retornoBiometria" actionListener="#{passagemBean.retornoOperacaoBiometrica()}" />
+		</h:form>
+				
 		<h:form id="formPassagem">
+			<h:inputHidden value="#{passagemBean.visitanteTemBiometria}" id="visitanteTemBiometria" />
 			<p:panel header="Recuperando">
 			<div class="row">
 				<div class="col-md-3" align="center">
-							<p:dataGrid id="foto" layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.fotoFrenteAtual}" emptyMessage="Sem foto de frente." var="f">
-								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
-									<f:param name="hashId" value="#{f.imagem.id}" />
-								</p:graphicImage>
+					<p:dataGrid id="foto" layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.fotoFrenteAtual}" emptyMessage="Sem foto de frente." var="f">
+					    <p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
+						   <f:param name="hashId" value="#{f.imagem.id}" />
+						</p:graphicImage>
 							</p:dataGrid>
 							<br/>
-							<p:commandButton icon="fa fa-camera" value="Adicionar Foto" immediate="true" actionListener="#{passagemBean.abrirDialogFoto}" rendered="#{!recuperandoBean.isVisualizacao}">
-								<p:ajax event="dialogReturn" listener="#{passagemBean.associarFoto}" update=":formPassagem:foto" />
-							</p:commandButton>
+							
 				</div>
-				<div class="col-md-9">
+			
+				<div class="col-md-5">
 					<sgp:formOutputLabel labelValue="Matrícula" value="#{passagemBean.recuperando.id}" />
 					<sgp:formOutputLabel labelValue="Nome" value="#{passagemBean.recuperando.pessoa.nome}" />
 					<sgp:formOutputLabel labelValue="Nome da mãe" value="#{passagemBean.recuperando.pessoa.nomeMae}" />
 					<sgp:formOutputLabel labelValue="Data Nascimento" value="#{passagemBean.recuperando.pessoa.dataNascimento}" converterData="true"/>
-				</div>	
-				</div>
-			</p:panel>
+					<sgp:formOutputLabel labelValue="Periculosidade" value="#{passagemBean.recuperando.periculosidade}" />
+				    <sgp:formOutputLabel labelValue="Regime Atual" value="#{passagemBean.recuperando.regimeAtual.descricao}" />
+				    <sgp:formOutputLabel labelValue="Condição Atual" value="#{passagemBean.recuperando.condicaoAtual}" />
+		            	  
+                                 <h:panelGroup id="statusValidacaoBio" rendered="#{passagemBean.mostrarAutorizacao()}">
+									<h:outputLabel class="fa fa-exclamation-circle" style="color: red; margin-right: 3px" rendered="#{passagemBean.biometriaValida eq false and passagemBean.autorizacaoValida eq false}"/>
+									<p:outputLabel value="NECESSÁRIO VALIDAR A BIOMETRIA" style="color: red" rendered="#{passagemBean.biometriaValida eq false and passagemBean.autorizacaoValida eq false}" />
+
+									<h:outputLabel class="fa fa-exclamation-circle" style="color: green; margin-right: 3px" rendered="#{passagemBean.biometriaValida eq true or passagemBean.autorizacaoValida eq true}"/>
+									<p:outputLabel value="VALIDAÇÃO BIOMÉTRICA REALIZADA" rendered="#{passagemBean.biometriaValida eq true or passagemBean.autorizacaoValida eq true}" />
+								</h:panelGroup>
+				    
+				    <div class="row">
+                            <div class="ui-g">
+                                <p:commandButton icon="fa fa-camera" value="Adicionar Foto" immediate="true" actionListener="#{passagemBean.abrirDialogFoto}" rendered="#{!recuperandoBean.isVisualizacao}" style="margin-right: 12px;margin-left: -220px; margin-top: 25px;">
+									<p:ajax event="dialogReturn" listener="#{passagemBean.associarFoto}" update=":formPassagem:foto"/>
+								</p:commandButton>
+								
+                                <p:commandButton value="Autorizar sem Biometria" icon="ui-icon-bio" id="btnAutorizacaoSem" process="@this"
+                                	actionListener="#{passagemBean.abrirDlgAutorizar}"
+                                        style="margin-right: 12px;margin-left: 20px; margin-top: 25px;"  immediate = "true"
+                                        rendered="#{passagemBean.mostrarAutorizacao()}" />
+								
+								<p:commandButton value="Validar Biometria" id="btnBios" styleClass="botaoBiometrico" onclick="capturar(); return false;" icon="ui-icon-bio" style="margin-right: 12px;margin-left: 20px; margin-top: 25px;" rendered="#{passagemBean.mostrarAutorizacao()}"/>
+								<p:remoteCommand global="false" autoRun="true" id="rcBiometria" oncomplete="validaBotaoBiometrico();" process="@this btnBios" />
+							</div>
+		            </div>
+				    
+				</div>			
+
+
+				 <h:panelGroup id="biometriaCapturada">
+                                        <pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.BiometriaTipoDedo" var="TipoDedo" allSuffix="ALL_ENUM_VALUES" />
+                                        <center>
+                                            <p:panelGrid rendered="#{passagemBean.recuperando.pessoa.biometria.dedos.size() gt 0 or passagemBean.recuperando.pessoa.biometria.id gt 0 or true}" style="border-width:1px; border-style:solid; margin-bottom: 15px">
+                                                <f:facet name="header">
+                                                    <p:row>
+                                                        <p:column colspan="3">
+                                                            <h:outputText value="Biometria capturada em: "/>
+                                                            <h:outputText value="#{passagemBean.recuperando.pessoa.biometria.dataCaptura}">
+                                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                            </h:outputText>
+                                                        </p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1"/>
+                                                        <p:column colspan="1">Esquerda</p:column>
+                                                        <p:column colspan="1">Direita</p:column>
+                                                    </p:row>
+                                                </f:facet>
+                                                <p:row>
+                                                    <p:column style="font-weight: bold;">Polegar</p:column>
+                                                    <p:column style="text-align: center" rowspan="1">
+                                                        <p:graphicImage id="bioPE" name="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_ESQUERDO) ? 'green.png' : 'red.png')}" library="icons"/>
+                                                        <p:overlayPanel for="bioPE" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_ESQUERDO))}">
+                                                            <p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.POLEGAR_ESQUERDO)}" var="f">
+                                                                <p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+                                                                    <f:param name="hashId" value="#{f.id}" />
+                                                                </p:graphicImage>
+                                                            </p:dataGrid>
+                                                        </p:overlayPanel>
+                                                    </p:column>
+                                                    <p:column style="text-align: center">
+                                                        <p:graphicImage id="bioPD" name="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_DIREITO) ? 'green.png' : 'red.png')}" library="icons"/>
+                                                        <p:overlayPanel for="bioPD" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_DIREITO))}">
+                                                            <p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.POLEGAR_DIREITO)}" var="f">
+                                                                <p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+                                                                    <f:param name="hashId" value="#{f.id}" />
+                                                                </p:graphicImage>
+                                                            </p:dataGrid>
+                                                        </p:overlayPanel>
+                                                    </p:column>
+                                                </p:row>
+
+                                                <p:row>
+                                                    <p:column style="font-weight: bold;">Indicador</p:column>
+                                                    <p:column style="text-align: center" rowspan="1">
+                                                        <p:graphicImage id="bioIE" name="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_ESQUERDO) ? 'green.png' : 'red.png')}" library="icons"/>
+                                                        <p:overlayPanel for="bioIE" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_ESQUERDO))}">
+                                                            <p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.INDICADOR_ESQUERDO)}" var="f">
+                                                                <p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+                                                                    <f:param name="hashId" value="#{f.id}" />
+                                                                </p:graphicImage>
+                                                            </p:dataGrid>
+                                                        </p:overlayPanel>
+                                                    </p:column>
+                                                    <p:column style="text-align: center">
+                                                        <p:graphicImage id="bioID" name="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_DIREITO) ? 'green.png' : 'red.png')}" library="icons"/>
+                                                        <p:overlayPanel for="bioID" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_DIREITO))}">
+                                                            <p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.INDICADOR_DIREITO)}" var="f">
+                                                                <p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+                                                                    <f:param name="hashId" value="#{f.id}" />
+                                                                </p:graphicImage>
+                                                            </p:dataGrid>
+                                                        </p:overlayPanel>
+                                                    </p:column>
+                                                </p:row>
+
+                                                <p:row>
+                                                    <p:column style="font-weight: bold;">Médio</p:column>
+                                                    <p:column style="text-align: center" rowspan="1">
+                                                        <p:graphicImage id="bioME" name="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_ESQUERDO) ? 'green.png' : 'red.png')}" library="icons"/>
+                                                        <p:overlayPanel for="bioME" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_ESQUERDO))}">
+                                                            <p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MEDIO_ESQUERDO)}" var="f">
+                                                                <p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+                                                                    <f:param name="hashId" value="#{f.id}" />
+                                                                </p:graphicImage>
+                                                            </p:dataGrid>
+                                                        </p:overlayPanel>
+                                                    </p:column>
+                                                    <p:column style="text-align: center">
+                                                        <p:graphicImage id="bioMD" name="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_DIREITO) ? 'green.png' : 'red.png')}" library="icons"/>
+                                                        <p:overlayPanel for="bioMD" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_DIREITO))}">
+                                                            <p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MEDIO_DIREITO)}" var="f">
+                                                                <p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+                                                                    <f:param name="hashId" value="#{f.id}" />
+                                                                </p:graphicImage>
+                                                            </p:dataGrid>
+                                                        </p:overlayPanel>
+                                                    </p:column>
+                                                </p:row>
+
+                                                <p:row>
+                                                    <p:column style="font-weight: bold;">Anelar</p:column>
+                                                    <p:column style="text-align: center" rowspan="1">
+                                                        <p:graphicImage id="bioAE" name="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_ESQUERDO) ? 'green.png' : 'red.png')}" library="icons"/>
+                                                        <p:overlayPanel for="bioAE" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_ESQUERDO))}">
+                                                            <p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.ANELAR_ESQUERDO)}" var="f">
+                                                                <p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+                                                                    <f:param name="hashId" value="#{f.id}" />
+                                                                </p:graphicImage>
+                                                            </p:dataGrid>
+                                                        </p:overlayPanel>
+                                                    </p:column>
+                                                    <p:column style="text-align: center">
+                                                        <p:graphicImage id="bioAD" name="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_DIREITO) ? 'green.png' : 'red.png')}" library="icons"/>
+                                                        <p:overlayPanel for="bioAD" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_DIREITO))}">
+                                                            <p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.ANELAR_DIREITO)}" var="f">
+                                                                <p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+                                                                    <f:param name="hashId" value="#{f.id}" />
+                                                                </p:graphicImage>
+                                                            </p:dataGrid>
+                                                        </p:overlayPanel>
+                                                    </p:column>
+                                                </p:row>
+
+                                                <p:row>
+                                                    <p:column style="font-weight: bold;">Mínimo</p:column>
+                                                    <p:column style="text-align: center" rowspan="1">
+                                                        <p:graphicImage id="bioMIE" name="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_ESQUERDO) ? 'green.png' : 'red.png')}" library="icons"/>
+                                                        <p:overlayPanel for="bioMIE" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_ESQUERDO))}">
+                                                            <p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MINIMO_ESQUERDO)}" var="f">
+                                                                <p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+                                                                    <f:param name="hashId" value="#{f.id}" />
+                                                                </p:graphicImage>
+                                                            </p:dataGrid>
+                                                        </p:overlayPanel>
+                                                    </p:column>
+                                                    <p:column style="text-align: center">
+                                                        <p:graphicImage id="bioMID" name="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_DIREITO) ? 'green.png' : 'red.png')}" library="icons"/>
+                                                        <p:overlayPanel for="bioMID" my="right bottom" at="left top" showEvent="mouseover" hideEvent="mouseout" appendToBody="true" rendered="#{(passagemBean.recuperando.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_DIREITO))}">
+                                                            <p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MINIMO_DIREITO)}" var="f">
+                                                                <p:graphicImage value="#{imageHandlerBean.getImagem(f)}" cache="false" width="180" height="240">
+                                                                    <f:param name="hashId" value="#{f.id}" />
+                                                                </p:graphicImage>
+                                                            </p:dataGrid>
+                                                        </p:overlayPanel>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                       </center>
+                                 </h:panelGroup>
+                                 	
+			                </div>    
+						</p:panel>
 
 			<br/>
 			<p:panel header="Passagem">
@@ -137,9 +320,32 @@
 				<br />
 			
 			</p:panel>
+
 			<br />
+
 			<p:commandButton value="Salvar" icon="ui-icon-disk" action="#{passagemBean.salvar}" update="@form"/>
-			<p:button outcome="pretty:ListarRecuperando" value="Voltar" icon="ui-icon-arrowreturnthick-1-w" />
+			<p:button outcome="pretty:ListarRecuperando" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+				<f:param name="list" value="1"/>
+			</p:button>
 		</h:form>
+		
+	    <h:form id="formAutCadBio2" prependId="false">
+	        <p:dialog id="dialogAutorizacaoBiometria2" dynamic="true" header="Autorização para passagem SEM BIOMETRIA" showEffect="fade" widgetVar="dlgAutBio2" modal="true" draggable="false"
+	                  resizable="false" closeOnEscape="true">
+	            <h:panelGroup id="divAut2">
+	                <sgp:formInputText id="login2" labelValue="Login" maxlength="11" minlength="4" value="#{passagemBean.loginUsuarioAutorizador}" validationRequired="true"
+	                                   display="text" requiredMessage="*"/>
+	                <sgp:formInputPassword id="senha2" labelValue="Senha" maxlength="15" display="text" requiredMessage="*"
+	                                       value="#{passagemBean.senhaUsuarioAutorizador}" validationRequired="true" />
+	                <sgp:formInputTextarea id="observacao2" labelValue="Observação" value="#{passagemBean.observacaoUsuarioAutorizador}"
+	                                       columns="40" maxlength="250" display="text" requiredMessage="*" validationRequired="true" />
+	
+	                <br/><br/><br/>
+	                <p:commandButton value="Autorizar" action="#{passagemBean.autorizarPassagemSemBiometria()}" icon="ui-icon-disk" />
+	                <p:commandButton value="Fechar" onclick="PF('dlgAutBio2').hide()" immediate="true"/>
+	            </h:panelGroup>
+	        </p:dialog>
+	    </h:form>
+	    
 	</ui:define>
 </ui:composition>

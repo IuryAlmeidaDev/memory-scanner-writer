@@ -1,0 +1,167 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                template="/WEB-INF/pages/_templates/principal.xhtml">
+
+    <ui:define name="conteudo">
+        <sgp:validarAcesso/>
+
+        <h3>#{solicitacaoVisitaBean.tituloPagina} Solicitação de Visita</h3>
+        <h:form prependId="false">
+            <pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.SimNao" var="SimNao" allSuffix="ALL_ENUM_VALUES" />
+            <p:panel footer="Cadastrado por: #{solicitacaoVisitaBean.solicitacaoVisita.autorRegistro.usuario} em #{solicitacaoVisitaBean.solicitacaoVisita.autorRegistro.data} | Última alteração: #{solicitacaoVisitaBean.solicitacaoVisita.autorUltimaAlteracao.usuario} em #{solicitacaoVisitaBean.solicitacaoVisita.autorUltimaAlteracao.data}">
+
+                <p:panel id="panelRecuperando">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <h4>Recuperando</h4>
+                        </div>
+                        <div class="ui-g-12">
+                            <p:commandButton value="Adicionar" actionListener="#{solicitacaoVisitaBean.abrirDialogRecuperando}"
+                                             process="@this" style="width: 150px;" rendered="#{not solicitacaoVisitaBean.isVisualizacao}" 
+                                             disabled="#{solicitacaoVisitaBean.solicitacaoVisita.recuperando.id > 0}">
+                                <p:ajax event="dialogReturn" listener="#{solicitacaoVisitaBean.associarRecuperando}" update="panelRecuperando, dialog"/>
+                            </p:commandButton>
+                        </div>
+                        <h:panelGroup styleClass="ui-g-12" rendered="#{solicitacaoVisitaBean.solicitacaoVisita.recuperando ne null}">
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="ui-g">
+                                        <div class="ui-g-2 ui-g-nopad">
+                                            <h:outputLabel value="Matrícula:"/>
+                                        </div>
+                                        <div class="ui-g-10 ui-g-nopad">
+                                            <h:outputLabel value="#{solicitacaoVisitaBean.solicitacaoVisita.recuperando.id}"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g">
+                                        <div class="ui-g-2 ui-g-nopad">
+                                            <h:outputLabel value="Nome:"/>
+                                        </div>
+                                        <div class="ui-g-10 ui-g-nopad">
+                                            <h:outputLabel value="#{solicitacaoVisitaBean.solicitacaoVisita.recuperando.pessoa.nome}"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g">
+                                        <div class="ui-g-2 ui-g-nopad">
+                                            <h:outputLabel value="Lotação Atual:"/>
+                                        </div>
+                                        <div class="ui-g-10 ui-g-nopad">
+                                            <h:outputLabel value="#{solicitacaoVisitaBean.solicitacaoVisita.recuperando.lotacaoAtual}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </div>
+                </p:panel>
+
+                <br/>
+
+                <sgp:formInputText
+                        labelValue="Nome Visitante"
+                        value="#{solicitacaoVisitaBean.solicitacaoVisita.pessoaSolicitacao.nome}"
+                        validationRequired="true"
+                        disabled="#{solicitacaoVisitaBean.isVisualizacao}"
+                        display="text" styleFormLabelColumn="width: 160px"
+                        maxlength="80"/>
+
+                <sgp:formInputText
+                        labelValue="Nome Social"
+                        value="#{solicitacaoVisitaBean.solicitacaoVisita.pessoaSolicitacao.nomeSocial}"
+                        validationRequired="false"
+                        disabled="#{solicitacaoVisitaBean.isVisualizacao}"
+                        display="text" styleFormLabelColumn="width: 160px"
+                        maxlength="80"/>
+
+                <sgp:formInputText
+                        labelValue="Nome do Pai"
+                        value="#{solicitacaoVisitaBean.solicitacaoVisita.pessoaSolicitacao.nomePai}"
+                        validationRequired="false"
+                        disabled="#{solicitacaoVisitaBean.isVisualizacao}"
+                        display="text" styleFormLabelColumn="width: 160px"
+                        maxlength="80"/>
+
+                <sgp:formInputText
+                        labelValue="Nome da Mãe"
+                        value="#{solicitacaoVisitaBean.solicitacaoVisita.pessoaSolicitacao.nomeMae}"
+                        validationRequired="true"
+                        disabled="#{solicitacaoVisitaBean.isVisualizacao}"
+                        display="text" styleFormLabelColumn="width: 160px"
+                        maxlength="80"/>
+
+                <sgp:formCalendar display="text" labelValue="Nascimento"
+                                  value="#{solicitacaoVisitaBean.solicitacaoVisita.pessoaSolicitacao.dataNascimento}"
+                                  styleFormLabelColumn="width: 160px"
+                                  validationRequired="true" disabled="#{solicitacaoVisitaBean.isVisualizacao}"/>
+
+
+                <sgp:formInputMask labelValue="CPF" mask="999.999.999-99" maxlength="11"
+                                   value="#{solicitacaoVisitaBean.solicitacaoVisita.pessoaSolicitacao.cpf}"
+                                   converter="CpfConverter"
+                                   disabled="#{solicitacaoVisitaBean.isVisualizacao}"
+                                   display="text" styleFormLabelColumn="width: 160px"
+                                   validatorId="CpfValidator" />
+
+                <sgp:formSelectOneMenu display="text"  temSelecione="true"
+                                       validationRequired="true"
+                                       labelValue="Grau Parentesco" itemValue="#{item}" itemLabel="#{item.descricao}"
+                                       disabled="#{solicitacaoVisitaBean.isVisualizacao}"
+                                       itemsValue="#{comboHelperBean.parentescos}"
+                                       value="#{solicitacaoVisitaBean.solicitacaoVisita.parentesco}" filter="true"
+                                       filterMatchMode="contains" styleFormLabelColumn="width: 160px"
+                                       converter="SimpleEntityConverter" />
+
+                <sgp:formSelectOneMenu
+                        labelValue="Possui Decisão Judicial?" temSelecione="true"
+                        value="#{solicitacaoVisitaBean.solicitacaoVisita.possuiDecisaoJudicial}"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}" styleFormLabelColumn="width: 160px"
+                        validationRequired="false"
+                        disabled="#{solicitacaoVisitaBean.isVisualizacao}"
+                        itemLabel="#{item.descricao}" >
+                    <p:ajax event="change" update="numeroDecisaoJudicial" process="@this"/>
+                </sgp:formSelectOneMenu>
+
+                <h:panelGroup id="numeroDecisaoJudicial">
+                    <sgp:formInputText
+                            labelValue="Nº Decisão Judicial"
+                            value="#{solicitacaoVisitaBean.solicitacaoVisita.numeroDecisaoJudicial}"
+                            validationRequired="#{solicitacaoVisitaBean.solicitacaoVisita.possuiDecisaoJudicial eq SimNao.S}"
+                            disabled="#{solicitacaoVisitaBean.isVisualizacao}"
+                            display="text" styleFormLabelColumn="width: 160px"
+                            maxlength="80"/>
+                </h:panelGroup>
+
+                <sgp:formSelectOneMenu
+                        labelValue="Situação"
+                        rendered="#{(solicitacaoVisitaBean.acaoDeTela ne 'CADASTRAR') and (solicitacaoVisitaBean.acaoDeTela ne 'ALTERAR')}"
+                        value="#{solicitacaoVisitaBean.solicitacaoVisita.status}"
+                        validationRequired="true"
+                        itemsValue="#{comboHelperBean.sgpStatusAlternativo}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        disabled="#{solicitacaoVisitaBean.isVisualizacao}"
+                        temSelecione="true"
+                        styleFormLabelColumn="width:160px;"/>
+
+                <br/>
+                <br/>
+
+                <p:commandButton value="Salvar" action="#{solicitacaoVisitaBean.salvar()}"
+                                 update="@form" icon="ui-icon-disk"
+                                 rendered="#{(securityUtil.possuiPermissao('CadastrarSolicitacaoVisita') and !solicitacaoVisitaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarSolicitacaoVisita') and !solicitacaoVisitaBean.isVisualizacao)}"/>
+                <p:button outcome="pretty:ListarSolicitacaoVisita" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+                    <f:param name="list" value="1"/>
+                </p:button>
+            </p:panel>
+        </h:form>
+        
+        <ui:include src="dialog/ParentesSolicitacaoVisita.xhtml"/>
+        
+    </ui:define>
+</ui:composition>

@@ -21,9 +21,9 @@ public class BiometriaSDKDao {
 	@Inject
 	private BiometriaSDKCliente cliente;
 
-	public long pesquisaPorTemplateParaRecuperando(byte[] template) throws Exception {
+	public long pesquisaPorTemplateParaPessoaWS(byte[] template) throws Exception {
 		NSubject subject = new NSubject();
-		long idRecuperando = (long) 0;
+		long idPessoa = (long) 0;
 		
 		try {
 			@SuppressWarnings("unused")
@@ -40,7 +40,7 @@ public class BiometriaSDKDao {
 
 			if (subject.getMatchingResults().size() > 0) {
 				NMatchingResult nMatchingResult = subject.getMatchingResults().get(0);
-				idRecuperando = Long.valueOf(nMatchingResult.getId());
+				idPessoa = Long.valueOf(nMatchingResult.getId());
 			}
 		} catch (Exception e) {
 			throw e;
@@ -51,7 +51,7 @@ public class BiometriaSDKDao {
 			}
 		}
 		
-		return idRecuperando;
+		return idPessoa;
 	}
 	
 	public List<Long> pesquisarPorTemplate(byte[] template) throws Exception {
@@ -66,9 +66,10 @@ public class BiometriaSDKDao {
 			
 			try {
 				statusOperacao = cliente.identify(subject);
+			} catch (RuntimeException e) {
+				throw new RuntimeException("Servidor biométrico inoperante, entre em contato com o Suporte Sigepen");
 			} catch (Exception e) {
 				e.printStackTrace();
-				//throw new IOException("Servidor biométrico inoperante, entre em contato com o Suporte Sigepen");
 			}
 
 			for (NMatchingResult matchingResult : subject.getMatchingResults()) {

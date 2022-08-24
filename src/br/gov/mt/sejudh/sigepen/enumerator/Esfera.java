@@ -1,7 +1,7 @@
 package br.gov.mt.sejudh.sigepen.enumerator;
 
 public enum Esfera {
-
+	TODAS("Todas"),
 	ESTADUAL("Estadual"),
 	FEDERAL("Federal");
 	

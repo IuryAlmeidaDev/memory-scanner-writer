@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -18,8 +19,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 
@@ -30,8 +32,10 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name="FOTO", schema = Sigepen.SEJUDH_SCHEMA)
-public class Foto implements Comparable<Foto> {
-	
+public class Foto implements Comparable<Foto>, Serializable {
+
+	private static final long serialVersionUID = -59636397175074101L;
+
 	@SequenceGenerator(name = "SEQ_FOTO_GENERATOR", sequenceName = "SEQ_FOTO", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FOTO_GENERATOR")
@@ -56,7 +60,8 @@ public class Foto implements Comparable<Foto> {
 	
 	@Column(name="IS_ATUAL")
 	private Boolean isAtual;
-	
+
+	@NotFound(action = NotFoundAction.IGNORE)
 	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
 	@JoinColumn(name = "IMAGEM_ID")
 	private Imagem imagem;

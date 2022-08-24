@@ -24,8 +24,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.envers.Audited;
 
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamento;
@@ -100,13 +101,19 @@ public class Passagem implements Serializable {
 	
 	@Column(name = "NUMERO_DOCUMENTO", length = 80)
 	private String numeroDocumento;
+	
+	@OneToMany(mappedBy = "passagem", cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<AutorizacaoValidacaoSemBiometria> autorizacaoValidacaoSemBiometria;
 
 	public Passagem() {
 		this.lotacao = new ArrayList<PassagemLotacao>();
+		this.autorizacaoValidacaoSemBiometria = new ArrayList<AutorizacaoValidacaoSemBiometria>();
 	}
 	
 	public Passagem(Recuperando recuperando) {
 		this.lotacao = new ArrayList<PassagemLotacao>();
+		this.autorizacaoValidacaoSemBiometria = new ArrayList<AutorizacaoValidacaoSemBiometria>();
 		this.recuperando = recuperando;
 	}
 	
@@ -250,6 +257,15 @@ public class Passagem implements Serializable {
 
 	public void setNumeroDocumento(String numeroDocumento) {
 		this.numeroDocumento = numeroDocumento;
+	}
+
+	public List<AutorizacaoValidacaoSemBiometria> getAutorizacaoValidacaoSemBiometria() {
+		return autorizacaoValidacaoSemBiometria;
+	}
+
+	public void setAutorizacaoValidacaoSemBiometria(
+			List<AutorizacaoValidacaoSemBiometria> autorizacaoValidacaoSemBiometria) {
+		this.autorizacaoValidacaoSemBiometria = autorizacaoValidacaoSemBiometria;
 	}
 
 	@Override

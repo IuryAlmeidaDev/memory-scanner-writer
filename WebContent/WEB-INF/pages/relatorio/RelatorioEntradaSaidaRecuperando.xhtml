@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+
+		<h3><strong>Relatório Entrada / Saida do Recuperando </strong></h3>
+
+		<h:form id="meuFormulario">
+			<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec" var="tipo_rel" allSuffix="ALL_ENUM_VALUES" />
+			<p:panel>
+		        
+				<h:panelGroup id="panel_filtros" >
+				
+					<sgp:formSelectOneMenuRelatorios
+						labelValue="Tipo"
+						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.tipoRelatorioEntradaSaidaRec}"
+						itemsValue="#{comboHelperBean.tipoRelatorioEntradaSaidaRec}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text"
+						styleFormLabelColumn="width:145px">
+						<p:ajax update="meuFormulario:panel_filtros" />
+					</sgp:formSelectOneMenuRelatorios>
+						
+					<ui:remove>
+					<sgp:formSelectOneMenuRelatorios 
+						labelValue="Tipo de Entrada"
+						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.tipoProcesso}"
+						itemsValue="#{relatorioEntradaSaidaRecuperandoBean.getTipoEntrada()}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text"
+						styleFormLabelColumn="width:145px"
+						rendered="#{relatorioEntradaSaidaRecuperandoBean.mostrarTipoEntrada()}"
+						/>
+					</ui:remove>
+					
+					<sgp:formSelectOneMenuRelatorios 
+						labelValue="Tipo de Desligamento"
+						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.tipoDesligamento}"
+						itemsValue="#{relatorioEntradaSaidaRecuperandoBean.getTipoDesligamento()}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text" 
+						styleFormLabelColumn="width:145px"
+						rendered="#{relatorioEntradaSaidaRecuperandoBean.mostrarTipoDesligamento()}"
+						/>
+							
+					<sgp:formCalendar labelValue="Data Inicial" 
+						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.dataInicial}" display="text"
+						validationRequired="false" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 145px">
+						<p:ajax event="dateSelect" />
+						<p:ajax event="change"  />
+					</sgp:formCalendar>
+					
+					<sgp:formCalendar labelValue="Data Final" 
+						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.dataFinal}" display="text"
+						validationRequired="false" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 145px">
+						<p:ajax event="dateSelect" />
+						<p:ajax event="change"  />
+					</sgp:formCalendar>
+					
+					<ui:remove>
+					<sgp:formSelectOneMenu 
+						labelValue="Regime"
+						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.regime}"
+						itemsValue="#{relatorioEntradaSaidaRecuperandoBean.regimes}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						temSelecione="true"
+						filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+						converter="SimpleEntityConverter"
+						styleFormLabelColumn="width:145px"/>
+					
+					<sgp:formSelectOneMenuRelatorios 
+						labelValue="Condição"
+						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.condicaoAtual}"
+						itemsValue="#{relatorioEntradaSaidaRecuperandoBean.getCondicao()}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text"
+						styleFormLabelColumn="width:145px"/>
+					</ui:remove>
+					
+				</h:panelGroup>
+				<br/>
+				<br/>
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{relatorioEntradaSaidaRecuperandoBean.imprimir()}" />
+				<p:button outcome="pretty:Relatorio" value="Voltar" icon="ui-icon-arrowreturnthick-1-w"/>					
+			</p:panel>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

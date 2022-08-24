@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Impedimento Visitante</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarImpedimento" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarImpedimento')}" />
+		</h:form>
+
+        <h:form id="meuFormulario">
+            <p:panel>
+                <p:outputLabel value="Consulta"/>
+
+                <sgp:formInputText id="pesquisar" labelValue="Nome"
+                                   value="#{impedimentoBean.filtro.nome}" maxlength="80"
+                                   styleFormLabelColumn="width:135px"/>
+
+                <sgp:formInputText id="cpf" labelValue="CPF" value="#{impedimentoBean.filtro.cpf}" maxlength="80"
+                                   styleFormLabelColumn="width:135px"/>
+
+                <sgp:formSelectOneMenu
+                        styleFormLabelColumn="width:135px"
+                        id="status" labelValue="Situação"
+                        value="#{impedimentoBean.filtro.status}"
+                        itemsValue="#{comboHelperBean.statusSgp}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        temSelecione="true"/>
+
+                <br/>
+                <br/>
+                <p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"/>
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{impedimentoBean.imprimir()}"/>
+            </p:panel>
+        </h:form>
+
+        <h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="impedimento" value="#{impedimentoBean.lazyDataModel}" rows="10"
+                             paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{impedimento.id}" sortOrder="descending"
+                             emptyMessage="Nenhum registro encontrado.">
+
+					<p:column headerText="Código" width="100" sortBy="#{impedimento.id}">
+						<h:outputText value="#{impedimento.id}" />
+					</p:column>
+
+                    <p:column headerText="Nome" width="100" sortBy="#{impedimento.id}">
+                        <h:outputText value="#{impedimento.visitante.pessoa.nome}" />
+                    </p:column>
+
+                    <p:column headerText="Data Nascimento" width="100" sortBy="#{impedimento.dataImpedimento}">
+                        <h:outputText value="#{impedimento.visitante.pessoa.dataNascimento}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Impedimento" width="100" sortBy="#{impedimento.tipoImpedimento}">
+                        <h:outputText value="#{impedimento.tipoImpedimento.descricao}" />
+                    </p:column>
+
+                    <p:column headerText="Situação" width="100" sortBy="#{impedimento.status}">
+                        <h:outputText value="#{impedimento.status.descricao}" />
+                    </p:column>
+
+					<p:column headerText="Ações" width="120" >
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarImpedimento" rendered="#{securityUtil.possuiPermissao('VisualizarImpedimento')}">
+								<f:param name="id" value="#{impedimento.id}" />
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarImpedimento" rendered="#{securityUtil.possuiPermissao('AlterarImpedimento')}">
+								<f:param name="id" value="#{impedimento.id}" />
+							</p:button>
+							<p:commandButton action="#{impedimentoBean.excluir(impedimento)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirImpedimento')}">
+								 <p:confirm header="Confirmação" message="Deseja excluir o Impedimento?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					<f:facet name="footer">
+						Total de registros: #{impedimentoBean.lazyDataModel.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

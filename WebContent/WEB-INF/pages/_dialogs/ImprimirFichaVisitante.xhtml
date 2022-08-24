@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Selecione um tipo de Relatório</title>
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="meuFormulario" >
+			<p:panel>
+				<p:panel>
+					<sgp:formOutputLabel labelValue="Visitante" value="#{imprimirFichaVisitanteBean.visitante.pessoa.nome}"/>
+				</p:panel>
+					<br />
+				<p:dataTable value="#{imprimirFichaVisitanteBean.credenciamentos}" var="cred"
+					paginatorAlwaysVisible="false" rows="5" paginator="true"
+					paginatorPosition="bottom" lazy="true" rendered="#{imprimirFichaVisitanteBean.tipRel == 0}">
+					<p:column headerText="Recuperando">
+						<h:outputText value="#{cred.recuperando.pessoa.nome}" />
+					</p:column>
+					
+					<p:column headerText="Tipo de Visita">
+						<h:outputText value="#{cred.tipoVisita.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Unidade Prisional">
+						<h:outputText value="#{cred.unidadePrisional.nome}" />
+					</p:column>
+					
+					
+					
+					<p:column width="30">
+						<center>
+							<p:commandButton title="Imprimir" icon="fa fa-file-pdf-o"  actionListener="#{imprimirFichaVisitanteBean.selecionarRecuperando(cred)}" />
+						</center>
+					</p:column>
+					
+					<f:facet name="header">Credenciamentos</f:facet>
+
+				</p:dataTable>
+				
+				<div style="text-align: center">
+					<p:commandButton id="btnImprimir" value="Imprimir" rendered="#{imprimirFichaVisitanteBean.tipRel == 1}"  icon="fa fa-file-pdf-o" actionListener="#{imprimirFichaVisitanteBean.imprimir()}" />
+				</div>
+
+				<br />
+				<br />						
+
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

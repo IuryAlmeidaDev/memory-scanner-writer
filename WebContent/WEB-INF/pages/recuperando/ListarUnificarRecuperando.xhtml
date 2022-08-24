@@ -7,16 +7,6 @@
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
 
-	<ui:define name="head">
-		<ui:include src="/WEB-INF/pages/_script/biometria.xhtml" />
-	</ui:define>
-
-	<ui:define name="footer">
-		<h:outputScript library="js"
-			name="biometriav2.js?ver=#{utilBean.biometriaVersao}" />
-		<h:outputScript library="js" name="selectOneMenuFilter.js" />
-	</ui:define>
-
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 

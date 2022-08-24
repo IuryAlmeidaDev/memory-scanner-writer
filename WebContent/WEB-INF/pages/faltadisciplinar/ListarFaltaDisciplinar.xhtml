@@ -1,0 +1,205 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                template="/WEB-INF/pages/_templates/principal.xhtml">
+
+    <ui:define name="conteudo">
+        <sgp:validarAcesso/>
+        
+        
+        <h3>Falta Disciplinar Recuperando</h3>
+
+        <h:form>
+            <p:button value="Cadastrar" outcome="pretty:CadastrarFaltaDisciplinar" icon="ui-icon-plus"
+                      rendered="#{securityUtil.possuiPermissao('CadastrarFaltaDisciplinar')}"/>
+        </h:form>
+        
+
+        <p:panel>
+            <h:form id="meuFormulario">
+            <style type="text/css">
+                   .ui-selectonemenu-panel {width: 600px !important;}
+				   .menu .ui-selectonemenu {width: 300px !important;max-width: 300px !important;}
+				   .menu .ui-selectonemenu-items-wrapper {width: 300px !important;max-width: 300px !important;}
+				   .menu .ui-selectonemenu-label {max-width: 300px !important;width: 300px !important;}
+				   .ui-selectonemenu {max-width: 600px !important;width: 100%;} 
+                 </style>
+                <p:outputLabel value="Consulta"/>
+
+                <sgp:formInputText
+                        id="matricula"
+                        labelValue="Matrícula"
+                        value="#{faltaDisciplinarBean.filtro.matricula}"
+                        maxlength="12"
+                        display="text"
+                        styleFormLabelColumn="min-width:150px !important"
+                />
+
+                <sgp:formInputText id="nome" labelValue="Nome Recuperando" size="50" maxlength="80"
+                                   value="#{faltaDisciplinarBean.filtro.nome}"
+                                   styleFormLabelColumn="min-width:150px !important"
+                                   />
+
+                <sgp:formSelectOneMenu 
+                        id="tipo" labelValue="Tipo Falta Disciplinar"
+						validationRequired="false"
+                        filter="false"
+                        value="#{faltaDisciplinarBean.filtro.tipo}"
+                        itemsValue="#{faltaDisciplinarBean.tipoFaltaDisciplinars}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        temSelecione="true"
+                        converter="SimpleEntityConverter"
+                        display="text"
+                        styleFormLabelColumn="width:150px !important">
+                    <f:ajax event="change" render=":meuFormulario:groupNatureza"/>
+                </sgp:formSelectOneMenu>
+                <h:panelGroup id="groupNatureza" class="col-md-4">
+                    <sgp:formOutputText id="natureza" labelValue="Natureza"
+                                         value="#{faltaDisciplinarBean.filtro.tipo.natureza.descricao}" styleFormLabelColumn="min-width:150px !important" rendered="#{faltaDisciplinarBean.filtro.tipo != null}"/>
+                </h:panelGroup>
+                <div class="form-block ">
+                    <div class="form-label-column" style="min-width:145px !important"><label>Data de Ocorrência:</label></div>
+                    <div class="form-input-column">
+                        <div>
+                            <sgp:formCalendar display="text" requiredMessage="*" labelValue=""
+                                              styleFormLabelColumn="display: none"
+                                              value="#{faltaDisciplinarBean.filtro.dataInicio}"
+                                              validationRequired="false"
+                                              />
+                        </div>
+                        <div>
+                            <div class="form-label-column" style="margin-top: 10px; min-width: auto">à</div>
+                        </div>
+                        <div>
+                            <sgp:formCalendar display="text" requiredMessage="*" labelValue=""
+                                              styleFormLabelColumn="display: none"
+                                              styleFormRequiredColumn="display: none"
+                                              value="#{faltaDisciplinarBean.filtro.dataFim}"
+                                              validationRequired="false"/>
+                        </div>
+                    </div>
+                </div>
+                <sgp:formSelectOneMenu
+                        id="situacao" labelValue="Situação"
+                        validationRequired="false"
+                        value="#{faltaDisciplinarBean.filtro.situacao}"
+                        itemsValue="#{comboHelperBean.situacaoFaltaDisciplinar}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        temSelecione="true"
+                        display="text"
+                        styleFormLabelColumn="min-width:150px !important"
+                >
+                </sgp:formSelectOneMenu>
+                <div class="form-block "></div>
+                <br/>
+                <p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"/>
+                <p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
+                                 actionListener="#{faltaDisciplinarBean.imprimir()}"/>
+            </h:form>
+        </p:panel>
+
+        <br/>
+
+        <h:form id="registrosForm">
+            <p:dataTable id="dataTable" var="faltaDisciplinar" value="#{faltaDisciplinarBean.faltaDisciplinars}" rows="10" paginator="true"
+                         paginatorPosition="bottom" lazy="true" sortBy="#{faltaDisciplinar.id}" sortOrder="descending"
+                         emptyMessage="Nenhum registro encontrado.">
+
+                <p:column headerText="Nº" width="60" sortBy="#{faltaDisciplinar.id}">
+                    <h:outputText value="#{faltaDisciplinar.id}"/>
+                </p:column>
+
+                <p:column headerText="Matrícula" width="120" sortBy="#{faltaDisciplinar.matricula}">
+                    <h:outputText value="#{faltaDisciplinar.matricula}"/>
+                </p:column>
+
+                <p:column headerText="Nome Recuperando" sortBy="#{faltaDisciplinar.recuperando}">
+                    <h:outputText value="#{faltaDisciplinar.recuperando}"/>
+                </p:column>
+
+                <p:column headerText="Tipo Falta Disciplinar " sortBy="#{faltaDisciplinar.tipoFalta}">
+                    <h:outputText value="#{faltaDisciplinar.tipoFalta}"/>
+                </p:column>
+
+                <p:column headerText="Data da Ocorrência" sortBy="#{faltaDisciplinar.data}" width="150">
+                    <h:outputText value="#{faltaDisciplinar.data}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Situação" width="120" sortBy="#{faltaDisciplinar.situacao.descricao}">
+                    <h:outputText value="#{faltaDisciplinar.situacao.descricao}"/>
+                </p:column>
+
+                <p:column headerText="Ações" width="210">
+                    <center>
+                        <p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarFaltaDisciplinar"
+                                  rendered="#{securityUtil.possuiPermissao('VisualizarFaltaDisciplinar')}">
+                            <f:param name="id" value="#{faltaDisciplinar.id}"/>
+                        </p:button>
+                        <p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarFaltaDisciplinar"
+                                  rendered="#{faltaDisciplinarBean.exibirAcaoAlterar(faltaDisciplinar.situacao)}">
+                            <f:param name="id" value="#{faltaDisciplinar.id}"/>
+                        </p:button>
+                        <p:commandButton title="Iniciar" icon="fa fa-play" action="#{faltaDisciplinarBean.abrirJanelaIniciarFalta(faltaDisciplinar)}"
+                                  rendered="#{faltaDisciplinarBean.exibirAcaoIniciar(faltaDisciplinar.situacao)}">
+                            <p:confirm header="Confirmação" message="Deseja Iniciar falta disciplinar do recuperando?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                        <p:commandButton title="Concluir" icon="fa fa-check" action="#{faltaDisciplinarBean.abrirJanelaConcluirFalta(faltaDisciplinar)}"
+                                  rendered="#{faltaDisciplinarBean.exibirAcaoConcluir(faltaDisciplinar.situacao)}">
+                            <p:confirm header="Confirmação" message="Deseja concluir falta disciplinar do recuperando?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                        <p:commandButton title="Cancelar" icon="ui-icon-cancel" action="#{faltaDisciplinarBean.cancelarFaltaDisciplinar(faltaDisciplinar)}" oncomplete="PF('cancelarFaltaDisciplinar').show()" update="cancelarForm" process="@this"
+                                         rendered="#{faltaDisciplinarBean.exibirAcaoCancelar(faltaDisciplinar.situacao)}" />
+                        <p:commandButton action="#{faltaDisciplinarBean.excluir(faltaDisciplinar)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens"
+                                         rendered="#{faltaDisciplinarBean.exibirAcaoExcluir(faltaDisciplinar.situacao)}">
+                            <p:confirm header="Confirmação" message="Deseja excluir o registro?" icon="ui-icon-alert" />
+                        </p:commandButton>
+
+                        <p:commandButton title="Imprimir" icon="fa fa-print" action="#{faltaDisciplinarBean.imprimirFaltaDisciplinar(faltaDisciplinar.id)}" process="@this" />
+
+                    </center>
+                </p:column>
+
+                <f:facet name="footer">
+                    Total de registros: #{faltaDisciplinarBean.faltaDisciplinars.rowCount}
+                </f:facet>
+            </p:dataTable>
+
+            <p:confirmDialog global="true">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+            </p:confirmDialog>
+        </h:form>
+        <p:dialog id="dialogCacel" header="Cancelar Falta Disciplinar" showEffect="fade" widgetVar="cancelarFaltaDisciplinar" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+            <h:form id="cancelarForm">
+                <p:panel>
+                    <sgp:formInputTextarea id="motivoCancel"
+                                           labelValue="Motivo do Cancelamento"
+                                           value="#{faltaDisciplinarBean.faltaDisciplinar.motivoCancelamento}"
+                                           validationRequired="true"
+                                           requiredMessage="Motivo do Cancelamento é obrigatório."
+                                           disabled="#{faltaDisciplinarBean.isVisualizacao}"
+                                           rows="10" columns="50"
+                                           maxlength="250" autoResize="true"
+                                           size="#{faltaDisciplinarBean.faltaDisciplinar.motivoCancelamento.length()+5}"
+                                           display="text" />
+                    <br/>
+                    <br/>
+                    <p:commandButton title="Salvar" value="Confirmar" icon="ui-icon-check" update="@form :registrosForm :mensagens" action="#{faltaDisciplinarBean.confirmarCancelamentoFaltaDisciplinar()}"
+                                     rendered="#{securityUtil.possuiPermissao('CancelarFaltaDisciplinar')}"/>
+
+                    <p:commandButton value="Fechar" onclick="PF('cancelarFaltaDisciplinar').hide()" process="@this"/>
+
+                    <br/>
+                </p:panel>
+
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

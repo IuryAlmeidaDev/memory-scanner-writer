@@ -15,25 +15,25 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
+import com.ocpsoft.pretty.faces.annotation.URLAction;
+import com.ocpsoft.pretty.faces.annotation.URLMapping;
+
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
-import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
-
-import com.ocpsoft.pretty.faces.annotation.URLAction;
-import com.ocpsoft.pretty.faces.annotation.URLMapping;
 
 @ManagedBean
 @ViewScoped
 @URLMapping(id = "AssociarRecuperando", pattern = "/associar/recuperando", viewId = "/WEB-INF/pages/_dialogs/AssociarRecuperando.xhtml")
 public class AssociarRecuperandoBean extends MetodosDialogBean {
 
-	private FiltroRecuperando filtro;
+	private FiltroRecuperandoView filtro;
 	
-	private LazyDataModel<RecuperandoDTO> recuperandos;
+	private LazyDataModel<RecuperandoView> recuperandos;
 	
 	@Inject
 	private FacesUtil facesUtil;
@@ -50,8 +50,9 @@ public class AssociarRecuperandoBean extends MetodosDialogBean {
 			if (this.isDialogInvalida()) {
 				return "pretty:dashboard";
 			}
+            this.setFiltro((FiltroRecuperandoView) facesUtil.getObjetoSessao("filtroRecuperando"));
 			
-			pesquisar();
+			this.pesquisar();
 		} catch (Exception e){
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(e, log);
@@ -61,18 +62,20 @@ public class AssociarRecuperandoBean extends MetodosDialogBean {
 	}
 	
 	private void pesquisar() {
-		this.setFiltro(new FiltroRecuperando());
+	    if (this.getFiltro() == null) {
+            this.setFiltro(new FiltroRecuperandoView());
+        }
 		
 		this.filtro.setUnidade(SecurityUtil.getUnidadeSelecionada());
 		
 		this.filtro.setStatus(StatusRecuperando.ATIVO);
 		
-		this.setRecuperandos(new LazyDataModel<RecuperandoDTO>() {
+		this.setRecuperandos(new LazyDataModel<RecuperandoView>() {
 			
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public List<RecuperandoDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {	
+			public List<RecuperandoView> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {	
 				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
 			
 				if (first >= getRowCount()) {
@@ -88,7 +91,7 @@ public class AssociarRecuperandoBean extends MetodosDialogBean {
 		});
 	}
 	
-	public void selecionarRecuperando(RecuperandoDTO recuperando) {
+	public void selecionarRecuperando(RecuperandoView recuperando) {
 		facesUtil.fecharPaginaDialog(recuperando);
 	}
 	
@@ -115,19 +118,19 @@ public class AssociarRecuperandoBean extends MetodosDialogBean {
 		return "";
 	}
 
-	public FiltroRecuperando getFiltro() {
+	public FiltroRecuperandoView getFiltro() {
 		return filtro;
 	}
 
-	public void setFiltro(FiltroRecuperando filtro) {
+	public void setFiltro(FiltroRecuperandoView filtro) {
 		this.filtro = filtro;
 	}
 
-	public LazyDataModel<RecuperandoDTO> getRecuperandos() {
+	public LazyDataModel<RecuperandoView> getRecuperandos() {
 		return recuperandos;
 	}
 
-	public void setRecuperandos(LazyDataModel<RecuperandoDTO> recuperandos) {
+	public void setRecuperandos(LazyDataModel<RecuperandoView> recuperandos) {
 		this.recuperandos = recuperandos;
 	}
 	

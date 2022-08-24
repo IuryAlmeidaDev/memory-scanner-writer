@@ -24,8 +24,8 @@ public class ProcessoService {
 	
 	public void configurarModalidadeProcesso(Processo processo) {
 		if (processo.getCondicaoAtual().equals(Condicao.PROVISORIO)) {
-			long prevCount = processo.getProcessosRegimeCondicao().stream().filter(p -> p.getModalidade().equals(Modalidade.PREVENTIVA)).count();
-			long tempCount = processo.getProcessosRegimeCondicao().stream().filter(p -> p.getModalidade().equals(Modalidade.TEMPORARIA)).count();
+			long prevCount = processo.getProcessosRegimeCondicao().stream().filter(p -> (p.getModalidade()!= null && p.getModalidade().equals(Modalidade.PREVENTIVA))).count();
+			long tempCount = processo.getProcessosRegimeCondicao().stream().filter(p -> (p.getModalidade()!= null && p.getModalidade().equals(Modalidade.TEMPORARIA))).count();
 			
 			if (prevCount > 0) {
 				processo.setModalidade(Modalidade.PREVENTIVA);

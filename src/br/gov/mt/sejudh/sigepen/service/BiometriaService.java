@@ -9,13 +9,14 @@ import javax.inject.Inject;
 
 import com.neurotec.biometrics.NBiometricStatus;
 
+import br.gov.mt.sejudh.sigepen.bean.outros.BiometriaUtilBean;
 import br.gov.mt.sejudh.sigepen.biometrics.BiometriaDAO;
 import br.gov.mt.sejudh.sigepen.biometrics.BiometriaDedoPosicaoImagem;
 import br.gov.mt.sejudh.sigepen.biometrics.BiometriaSDKDao;
-import br.gov.mt.sejudh.sigepen.biometrics.BiometriaUtil;
 import br.gov.mt.sejudh.sigepen.model.Biometria;
 import br.gov.mt.sejudh.sigepen.model.BiometriaTemporaria;
 import br.gov.mt.sejudh.sigepen.model.Pessoa;
+import br.gov.mt.sejudh.sigepen.model.dto.PessoaBiometriaWSDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Stateless
@@ -31,7 +32,7 @@ public class BiometriaService {
 		return bioDao.excluir(biometria);
 	}
 	
-	public Boolean alterarBiometriaSDK(Biometria biometria) throws Exception {
+	private Boolean alterarBiometriaSDK(Biometria biometria) throws Exception {
 		return bioDao.alterar(biometria);
 	}
 	
@@ -59,21 +60,16 @@ public class BiometriaService {
 	}
 	
 	public BiometriaTemporaria salvarBiometriaTemporaria(String json) {
-		BiometriaTemporaria bioT = new BiometriaTemporaria();
-		BiometriaUtil bioUtil = new BiometriaUtil();
+		BiometriaTemporaria bioTemp = new BiometriaTemporaria();
 		
 		try {
-			bioUtil.setBioJsonString(json, true);
-			bioT.setTemplate(bioUtil.getBiometriaTemplate());
-			bioT.setJson(bioUtil.getBiometriaJsonString());
-			bioT.setDataColeta(Sigepen.getDataAtual());
-			
-			bioT = dao.salvarBiometriaTemporaria(bioT);
+			bioTemp = criarBiometriaTemporariaFromJson(json);
+			bioTemp = dao.salvarBiometriaTemporaria(bioTemp);
 		} catch (Throwable t) {
 			throw t;
 		}
 		
-		return bioT;
+		return bioTemp;
 	}
 	
 	public List<Long> pesquisarBiometriaPorTemplateByte(byte[] template) throws Exception {
@@ -84,42 +80,59 @@ public class BiometriaService {
 		return pesquisarBiometriaPorTemplateByte(Sigepen.decodeStringToByte(template));
 	}
 
-	public Long pesquisaPorTemplateParaRecuperando(String template) throws Exception {
-		return bioDao.pesquisaPorTemplateParaRecuperando(Sigepen.decodeStringToByte(template));
+	public Long pesquisaPorTemplateParaPessoaWS(String template) throws Exception {
+		return bioDao.pesquisaPorTemplateParaPessoaWS(Sigepen.decodeStringToByte(template));
+	}
+	
+	public Biometria converterBiometriaColetadaAppEmBiometriaObjeto(String biometriaAppJson) {
+		BiometriaTemporaria bioTemp = criarBiometriaTemporariaFromJson(biometriaAppJson);
+		return converterBiometriaTemporariaEmBiometria(bioTemp);
+	}
+	
+	private BiometriaTemporaria criarBiometriaTemporariaFromJson(String json) {
+		BiometriaTemporaria bioT = new BiometriaTemporaria();
+		BiometriaUtilBean bioUtil = new BiometriaUtilBean();
+		
+		bioUtil.setBioJsonString(json, true);
+		bioT.setTemplate(bioUtil.getBiometriaTemplate());
+		bioT.setJson(bioUtil.getBiometriaJsonString());
+		
+		return bioT;
 	}
 	
 	private Biometria converterBiometriaTemporariaEmBiometria(BiometriaTemporaria bioTemp) {
 		Biometria bio = new Biometria();
-		BiometriaUtil bioUtil = new BiometriaUtil();
+		BiometriaUtilBean bioUtil = new BiometriaUtilBean();
 		
-		try {
-			bioUtil.setBioJsonString(bioTemp.getJson(), true);
-			bio.setTemplate(bioUtil.getBiometriaTemplate());
-			bio.setDataCaptura(Sigepen.getDataAtual());
-			
-			bioUtil.getBiometriaFromJson(bio);
-		} catch (Throwable t) {
-			throw t;
-		}
+		bioUtil.setBioJsonString(bioTemp.getJson(), true);
+		bio.setTemplate(bioUtil.getBiometriaTemplate());
+		bio.setDataCaptura(Sigepen.getDataAtual());
+		
+		bioUtil.getBiometriaFromJson(bio);
 
 		return bio;
 	}
 
 	public void vincularBiometriaAPessoa(Biometria bio, Pessoa pessoa) {
-		if (pessoa.getBiometria() != null) {
-			bio.setId(pessoa.getBiometria().getId());
-			bio.setIdPessoa(pessoa.getId());
-			
-			if (pessoa.getBiometria().getId() != 0) {
-				bio.setBiometriaFoiAlterada(true);
-			}
-		}
-		
+		bio.setIdPessoa(pessoa.getId());
+		bio.setBiometriaFoiAlterada(true);
 		pessoa.setBiometria(bio);
+	}
+	
+	public void salvarBiometriaNServer(Pessoa p) throws Exception {
+    	if (p.getBiometria() == null || p.getBiometria().getTemplate() == null)
+    		return;
+    	
+    	if (p.getBiometria().getBiometriaFoiAlterada() != null && p.getBiometria().getBiometriaFoiAlterada()) {    	
+			Biometria bio = p.getBiometria();
+			bio.setIdPessoa(p.getId());
+	
+			alterarBiometriaSDK(bio);
+    	}
 	}
 
 	public Boolean verificarSeAmostrasSaoIdenticasPorImagem(String listaAmostras) throws Exception {
-		BiometriaUtil bioUtil = new BiometriaUtil();
+		BiometriaUtilBean bioUtil = new BiometriaUtilBean();
 		
 		bioUtil.setBioJsonString(listaAmostras, false);
 		
@@ -138,7 +151,7 @@ public class BiometriaService {
 	}
 	
 	public Boolean verificarSeAmostrasSaoIdenticasPorTemplate(String listaAmostras) throws Exception {
-		BiometriaUtil bioUtil = new BiometriaUtil();
+		BiometriaUtilBean bioUtil = new BiometriaUtilBean();
 		
 		bioUtil.setBioJsonString(listaAmostras, false);
 		
@@ -157,7 +170,7 @@ public class BiometriaService {
 	}
 
 	public String verificarSeExistemDedosRepetidosPorImagem(String listaImagensDedos) throws Exception {
-		BiometriaUtil bioUtil = new BiometriaUtil();
+		BiometriaUtilBean bioUtil = new BiometriaUtilBean();
 		
 		bioUtil.setBioJsonString(listaImagensDedos, false);
 		
@@ -176,7 +189,7 @@ public class BiometriaService {
 	}
 	
 	public String verificarSeExistemDedosRepetidosPorTemplate(String listaTemplatesDedos) throws Exception {
-		BiometriaUtil bioUtil = new BiometriaUtil();
+		BiometriaUtilBean bioUtil = new BiometriaUtilBean();
 		
 		bioUtil.setBioJsonString(listaTemplatesDedos, false);
 		
@@ -196,5 +209,9 @@ public class BiometriaService {
 
 	public String buscarVersaoAtualAplicativo() {
 		return dao.buscarVersaoAtualAplicativo();
+	}
+
+	public PessoaBiometriaWSDTO buscarIdsVinculadosAPessoa(Long idPessoa) {
+		return dao.buscarIdsVinculadosAPessoa(idPessoa);
 	}
 }

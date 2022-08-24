@@ -1,0 +1,644 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                template="/WEB-INF/pages/_templates/principal.xhtml"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+    <ui:define name="conteudo">
+    <h:outputScript library="js" name="selectOneMenuFilter.js"/>
+        <sgp:validarAcesso/>
+
+        <h3>Consultar Visitas</h3>
+
+        <h:form id="meuFormulario">
+            <p:panel>
+                <p:outputLabel value="Consulta"/>
+                <pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada" var="tipoEntr" allSuffix="ALL_ENUM_VALUES" />
+				<sgp:formCalendar labelValue="Data Inicio" 
+					value="#{consultarVisitaBean.filtro.dataInicio}" display="text"
+					validationRequired="false" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 170px">
+					<p:ajax event="dateSelect" />
+					<p:ajax event="change"  />
+				</sgp:formCalendar>
+
+				<sgp:formCalendar labelValue="Data Fim"
+					value="#{consultarVisitaBean.filtro.dataFim}" display="text"
+					validationRequired="false" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 170px">
+					<p:ajax event="dateSelect" />
+					<p:ajax event="change"  />
+				</sgp:formCalendar>
+				
+				<sgp:formSelectOneMenu 
+						id="unidade" labelValue="Unidade Prisional"
+						value="#{consultarVisitaBean.filtro.unidade}"
+						itemsValue="#{consultarVisitaBean.unidadesPrisionais}" 
+						itemValue="#{item}"
+						itemLabel="#{item.nome}" 
+						temSelecione="true"
+						styleFormLabelColumn="width: 170px"
+						filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+						converter="SimpleEntityConverter"
+						rendered="#{securityUtil.possuiPermissao('ConsultarVisitaPorUnidade')}"
+						/>	
+				
+				 <sgp:formSelectOneMenu
+                        id="tipoEntrada" labelValue="Tipo de Entrada"
+                        value="#{consultarVisitaBean.filtro.tipoEntrada}"
+                        itemsValue="#{comboHelperBean.tipoEntrada}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        styleFormLabelColumn="width: 170px"
+                        style="width: 300px;"
+                        temSelecione="true">
+                        
+                        <p:ajax listener="#{consultarVisitaBean.selecionarTipoEntrada()}"
+                                update="meuFormulario:panelTipoVisita"  process="@this" />
+                        
+                </sgp:formSelectOneMenu>
+                
+				<h:panelGroup id="panelTipoVisita">
+					<sgp:formSelectOneMenu 
+						id="tipoVisita" labelValue="Tipo de Visita"
+						value="#{consultarVisitaBean.filtro.tipoVisita}"
+						itemsValue="#{consultarVisitaBean.tipoVisitas}"
+						filter="true"  filterMatchMode="custom" filterFunction="removeAcento"
+						styleFormLabelColumn="width: 170px"
+						itemValue="#{item}" itemLabel="#{item.descricao}"
+						style="width: 300px;" temSelecione="true" 
+						converter="SimpleEntityConverter" />
+				</h:panelGroup>
+
+				<sgp:formInputText id="pesquisarNome" labelValue="Nome do Visitante" value="#{consultarVisitaBean.filtro.nome}"
+                                   maxlength="80" style="width: 300px;" styleFormLabelColumn="width: 170px"/>
+
+
+				<ui:remove>
+				<sgp:formCheckbox labelValue="Utilizar Pesquisa Fonética"
+					value="#{consultarVisitaBean.filtro.pesquisaFonetica}"
+					styleFormLabelColumn="width:170px" style="width: 200px;" />
+				</ui:remove>
+				
+				<sgp:formCheckbox
+					labelValue="Possui Dependente?" 
+					value="#{consultarVisitaBean.filtro.possuiDependente}"
+					styleFormLabelColumn="width:170px"
+					style="width: 200px;" />
+
+				<sgp:formCalendar labelValue="Data de Nascimento"
+					value="#{consultarVisitaBean.filtro.dataNascimento}" display="text"
+					styleFormLabelColumn="width: 170px"
+					validationRequired="false" pattern="dd/MM/yyyy">
+				</sgp:formCalendar>
+
+				<sgp:formSelectOneMenu labelValue="Emancipado?" temSelecione="true"
+					value="#{consultarVisitaBean.filtro.emancipado}" display="text"
+					requiredMessage="Emancipado é obrigatório."
+					itemsValue="#{comboHelperBean.simNao}" itemValue="#{item}"
+					styleFormLabelColumn="width: 170px"
+					itemLabel="#{item.descricao}" style="width: 300px;">
+				</sgp:formSelectOneMenu>
+
+				<sgp:formSelectOneMenu display="text" id="nacionalidade"
+					labelValue="Nacionalidade" itemValue="#{item}" temSelecione="true"
+					itemLabel="#{item.descricao}"
+					itemsValue="#{comboHelperBean.nacionalidades}"
+					styleFormLabelColumn="width: 170px"
+					value="#{consultarVisitaBean.filtro.nacionalidade}"
+					style="width: 300px;"
+					converter="SimpleEntityConverter"
+					>
+				</sgp:formSelectOneMenu>
+
+                <sgp:formSelectOneMenu
+                        id="pne"
+                        labelValue="PNE?" temSelecione="true"
+                        value="#{consultarVisitaBean.filtro.pne}"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}"
+                        styleFormLabelColumn="width: 170px" style="width: 300px;"
+                        itemLabel="#{item.descricao}"
+                        />
+				
+                <sgp:formSelectOneMenu
+                        labelValue="Permanente?" temSelecione="true"
+                        value="#{consultarVisitaBean.filtro.permanente}"
+                        display="text"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}"
+                        styleFormLabelColumn="width: 170px"
+                        style="width: 300px;"
+                        itemLabel="#{item.descricao}"/>
+
+				<sgp:formInputText id="recuperando" labelValue=" Nome Recuperando" value="#{consultarVisitaBean.filtro.nomeRecuperando}"
+                                   maxlength="80" styleFormLabelColumn="width: 170px"  style="width: 300px;"/>
+                                   
+
+				<sgp:formSelectOneMenu labelValue="Situação" temSelecione="true"
+					value="#{consultarVisitaBean.filtro.situacao}" display="text"
+					itemsValue="#{comboHelperBean.situacaoVisita}" itemValue="#{item}"
+					styleFormLabelColumn="width: 170px" style="width: 300px;"
+					itemLabel="#{item.descricao}" />
+
+				<br />
+			    <br />
+
+				<p:commandButton value="Pesquisar" update=":registrosForm"
+					actionListener="#{consultarVisitaBean.pesquisar()}" process="@form"
+					icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
+					actionListener="#{consultarVisitaBean.imprimir()}" process="@this" />
+			</p:panel>
+        </h:form>
+
+        <h:form id="registrosForm">
+        	<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamento" var="_tipo" allSuffix="ALL_ENUM_VALUES" />
+        	<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante" var="_status" allSuffix="ALL_ENUM_VALUES" />
+        	<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada" var="tipoEntr" allSuffix="ALL_ENUM_VALUES" />
+        	<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita" var="situacaoVisita" allSufix="ALL_ENUM_VALUES" />
+
+			<p:dataTable id="dataTable" var="rec"
+				value="#{consultarVisitaBean.entradas}" rows="10" paginator="true"
+				paginatorPosition="bottom" lazy="true" sortBy="#{visitante.id}"
+				emptyMessage="Nenhum registro encontrado." sortOrder="DESCENDING">
+
+				<p:column headerText="Tipo de Visita" sortBy="#{rec.credenciamento.tipoVisita}"
+					width="25%">
+					<h:outputText value="#{rec.credenciamento.tipoVisita.descricao}" />
+				</p:column>
+
+				<p:column headerText="Nome Visitante" sortBy="#{rec.pessoa_visitante.nome}"
+					width="25%">
+					<h:outputText value="#{rec.entrada.visitante.pessoa.nome}" />
+				</p:column>
+				
+				<p:column headerText="Nome do Responsavel" sortBy="#{rec.pessoa_responsavel.nome}"
+					width="25%">
+					<h:outputText value="#{rec.entrada.visitante.responsavel.pessoa.nome}" />
+				</p:column>
+				
+				<p:column headerText="Parentesco/Profissão" 
+					width="30%">
+					<h:outputText value="#{rec.credenciamento.parente.parentesco.descricao}" rendered="#{rec.credenciamento.parente.parentesco.descricao != null}" style="text-transform: uppercase" />
+					<h:outputText value="#{rec.credenciamento.profissao}" rendered="#{rec.credenciamento.parente.parentesco.descricao == null}" style="text-transform: uppercase" />
+				</p:column>
+				
+				<p:column headerText="Recuperando" sortBy="#{rec.pessoa_recuperando.nome}"
+					width="28%">
+					<h:outputText value="#{rec.credenciamento.recuperando.pessoa.nome}" />
+				</p:column>
+				
+				<p:column headerText="Data Inicio" sortBy="#{rec.entrada.dataEntrada}"
+					width="15%" style="text-align: center;">
+					<h:outputText value="#{rec.entrada.dataEntrada}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Data Fim" sortBy="#{rec.entrada.dataSaida}"
+					width="15%" style="text-align: center;">
+					<h:outputText value="#{rec.entrada.dataSaida}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm"  />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Situação" 
+					width="15%">
+					<h:outputText value="#{rec.entrada.situacao.descricao}" style="text-transform: uppercase" />
+				</p:column>
+				
+				 <p:column headerText="Ações" width="15%">
+                    <center>
+                    <p:commandButton  title="Visualizar Visita" icon="ui-icon-document" oncomplete="PF('dialogVisualizarEntradaSaida').show()"
+                        action="#{consultarVisitaBean.abrirVisualizarVisita(rec)}"  immediate="true" update="dialogVisualizarEntradaSaida">
+                         </p:commandButton>
+                        <p:commandButton  title="Finalizar Visita" icon="fa fa-check" oncomplete="PF('dialogFinalizarVisita').show()"
+                        action="#{consultarVisitaBean.abrirFinalizarVisita(rec)}"
+                         rendered="#{rec.entrada.situacao eq situacaoVisita.EM_ANDAMENTO}" immediate="true"/>
+                        </center>
+                        </p:column>				
+				</p:dataTable>
+		</h:form>
+		
+			<p:dialog id="dialogFinalizarVisita"
+					header="Finalizar a Visita" dynamic="true" closable="true"
+					width= "auto" height="auto" showEffect="fade"
+					widgetVar="dialogFinalizarVisita" modal="true" draggable="false"
+					resizable="false">
+					<h:form id="formDialogFinalizarVisita" prependId="false">
+						<div class="ui-g-12">
+								<sgp:formInputTextarea labelValue="Motivo de Finalizar Visita"
+									id="idMotivoFinalizarVisita"
+									value="#{consultarVisitaBean.entrada.motivoFinalizacao}" rows="10"
+									columns="100" maxlength="250" autoResize="true" display="text" />
+							</div>
+							<center>
+							<p:commandButton value="Finalizar" rendered="true" actionListener="#{consultarVisitaBean.finalizarVisita()}"
+						update=":registrosForm" />
+						</center>
+					</h:form>
+				</p:dialog>
+				
+				<p:dialog id="dialogVisualizarEntradaSaida"
+					header="Visualizar Entrada/Saida" dynamic="true" closable="true"
+					width= "1100" height="100%" showEffect="fade"
+					widgetVar="dialogVisualizarEntradaSaida" modal="true" draggable="false"
+					resizable="false">
+					<h:form id="formDialogVisualizarEntradaSaida" prependId="false">
+		                <pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoAutorizacaoValidacaoSemBio" var="acaoAut" allSuffix="ALL_ENUM_VALUES" />
+					                
+				<p:panel id="panelVisitante" style="width: 100%;" rendered="#{consultarVisitaBean.entrada.visitante.responsavel eq null and consultarVisitaBean.mostrarPanelVisitante == true}">
+					<div class="ui-g">
+						<div class="ui-g-8">
+							<div>
+							<h:outputLabel value="Nome:" style="width: 150px" />
+							<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.nome}" />
+							</div>
+							<div>
+								<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.nomeMae}" />
+							</div>
+							<div>
+								<h:outputLabel value="Nome do Pai:" style="width: 150px;"   />
+								<h:outputLabel value="#{consultaVisitanteBean.entrada.visitante.pessoa.nomePai}" />
+							</div>
+							<div>
+								<h:outputLabel value="Nascimento:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.dataNascimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputLabel>
+							</div>
+							<div>
+								<h:outputLabel value="Emancipado:" style="width: 150px;" rendered="#{consultarVisitaBean.isMenor(consultarVisitaBean.entrada.visitante.pessoa.dataNascimento)}"/>
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.emancipado.descricao}" rendered="#{consultarVisitaBean.isMenor(consultaVisitanteBean.entrada.visitante.pessoa.dataNascimento)}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.nacionalidade.descricao}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.pais.nome}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Estado:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.naturalidade.estado.nome}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Cidade:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.naturalidade.nome}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Sexo:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.sexo.descricao}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.identidadeDeGenero.descricao}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Nome Social:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.nomeSocial}"/>
+							</div>
+							<div>
+								<div>
+									<h:outputLabel value="PNE:" style="width: 150px;" />
+									<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pne.descricao}" />
+								</div>
+								<div>
+									<h:panelGroup rendered="#{consultarVisitaBean.entrada.visitante.pne eq 'S'}">
+										<h:outputLabel value="Permanente:" style="width: 150px;" />
+										<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pnePermanente.descricao}" />
+									</h:panelGroup>
+								</div>
+							</div>
+						</div>
+						<div class="ui-g-4">
+							<p:dataGrid layout="tabular" style="width: 188px;margin-left: -5px;" columns="1"
+								rows="1"
+								value="#{consultarVisitaBean.entrada.visitante.fotoFrenteAtual}"
+								emptyMessage="Sem foto de frente." var="f">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{f.imagem.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</div>
+					</div>
+				</p:panel>
+				
+				
+						
+				<!--  PAINEL COM RESPONSAVEL -->
+				<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-border-right, ui-g-border-left" style="width: 100%;" rendered="#{consultarVisitaBean.entrada.visitante.responsavel ne null and consultarVisitaBean.mostrarPanelResponsavel == true}">
+				<p:panel header="Informações do Visitante" id="panelVisitanteCopia" style="border:none; width: 100%;">
+					<div class="ui-g">
+						<div class="ui-g-8">
+							<div>
+							<h:outputLabel value="Nome:" style="width: 150px" />
+							<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.nome}" />
+							</div>
+							<div>
+								<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.nomeMae}" />
+							</div>
+							<div>
+								<h:outputLabel value="Nome do Pai:" style="width: 150px;"   />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.nomePai}" />
+							</div>
+							<div>
+								<h:outputLabel value="Nascimento:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.dataNascimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputLabel>
+							</div>
+							<div>
+								<h:outputLabel value="Emancipado:" style="width: 150px;" rendered="#{consultarVisitaBean.isMenor(consultarVisitaBean.entrada.visitante.pessoa.dataNascimento)}"/>
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.emancipado.descricao}" rendered="#{consultarVisitaBean.isMenor(consultarVisitaBean.entrada.visitante.pessoa.dataNascimento)}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.nacionalidade.descricao}" />
+							</div>
+							<div>
+								<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.pais.nome}" />
+							</div>
+							<div>
+								<h:outputLabel value="Estado:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.naturalidade.estado.nome}"	/>
+							</div>
+							<div>
+								<h:outputLabel value="Cidade:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.naturalidade.nome}" />
+							</div>
+							<div>
+								<h:outputLabel value="Sexo:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.sexo.descricao}" />
+							</div>
+							<div>
+								<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.identidadeDeGenero.descricao}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Nome Social:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pessoa.nomeSocial}" />
+							</div>
+							<div>
+								<div>
+									<h:outputLabel value="PNE:" style="width: 150px;" />
+									<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.pne.descricao}" />
+								</div>
+								<div>
+									<h:panelGroup rendered="#{consultarVisitaBean.entrada.visitante.pne eq 'S'}">
+										<h:outputLabel value="Permanente:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{consultarVisitaBean.entrada.visitante.pnePermanente.descricao}" />
+									</h:panelGroup>
+								</div>
+							</div>
+						</div>
+						<div class="ui-g-4">
+							<p:dataGrid layout="tabular" style="width: 188px;margin-left: -5px;" columns="1"
+								rows="1"
+								value="#{consultarVisitaBean.entrada.visitante.fotoFrenteAtual}"
+								emptyMessage="Sem foto de frente." var="f">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{f.imagem.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</div>
+					</div>
+				</p:panel>
+				
+	
+				<p:panel header="Visitante Responsável" id="panelResponsavelCopia" rendered="#{consultarVisitaBean.entrada.visitante.responsavel ne null and consultarVisitaBean.mostrarPanelResponsavel == true}" style="border:none; width: 100%;" >
+					<div class="ui-g">
+						<div class="ui-g-8">
+						<h:outputLabel value="Nome:" style="width: 150px;" />
+							<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pessoa.nome}" />
+							<div>
+								<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pessoa.nomeMae}" />
+							</div>
+							<div>
+								<h:outputLabel value="Nome do Pai:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pessoa.nomePai}" />
+							</div>
+							<div>
+								<h:outputLabel value="Nascimento:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pessoa.dataNascimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputLabel>
+							</div>
+							<div>
+								<h:outputLabel value="Emancipado:" style="width: 150px;"  rendered="#{consultarVisitaBean.isMenor(consultarVisitaBean.entrada.visitante.responsavel.pessoa.dataNascimento)}"/>
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.emancipado.descricao}"  rendered="#{consultarVisitaBean.isMenor(consultarVisitaBean.entrada.visitante.responsavel.pessoa.dataNascimento)}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pessoa.nacionalidade.descricao}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pessoa.pais.nome}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Estado:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pessoa.naturalidade.estado.nome}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Cidade:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pessoa.naturalidade.nome}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Sexo:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pessoa.sexo.descricao}"	/>
+							</div>
+							<div>
+								<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.identidadeDeGenero.descricao}"/>
+							</div>
+							<div>
+								<h:outputLabel value="Nome Social:" style="width: 150px;" />
+								<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pessoa.nomeSocial}" />
+							</div>
+							<div>
+								<div>
+									<h:outputLabel value="PNE:" style="width: 150px;" />
+									<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pne.descricao}"/>
+								</div>
+								<div>
+									<h:panelGroup>
+										<h:outputLabel value="Permanente:" style="width: 150px;" />
+										<h:outputLabel value="#{consultarVisitaBean.entrada.visitante.responsavel.pnePermanente.descricao}" />
+									</h:panelGroup>
+								</div>
+							</div>
+						</div>
+						<div class="ui-g-4">
+							<p:dataGrid layout="tabular" style="width: 188px; margin-left: -15px;" columns="1"
+								rows="1"
+								value="#{consultarVisitaBean.entrada.visitante.responsavel.fotoFrenteAtual}"
+								emptyMessage="Sem foto de frente." var="f">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{f.imagem.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</div>
+					</div>
+				</p:panel>
+				</p:panelGrid>
+					<!--  PAINEL COM RESPONSAVEL -->
+				
+				
+				<br />							
+				<!--  DATA TABLE -->
+				
+			<h:form id="registrosVisualizar">    	
+			<p:dataTable id="dataTableVisualizar" var="rec"
+				value="#{consultarVisitaBean.entrada}" rows="3"
+				paginatorPosition="bottom" lazy="true" sortBy="#{consultarVisitaBean.entrada.visitante.id}}"
+				emptyMessage="Nenhum registro encontrado." sortOrder="DESCENDING">
+				
+				<p:column headerText="Data Entrada" sortBy="#{consultarVisitaBean.entrada.dataEntrada}"
+					width="25%" style="text-align: center;">
+					<h:outputText value="#{consultarVisitaBean.entrada.dataEntrada}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Data Saida" sortBy="#{consultarVisitaBean.entrada.dataSaida}" rendered="#{consultarVisitaBean.entrada.dataSaida != null}"
+					width="25%" style="text-align: center;">
+					<h:outputText value="#{consultarVisitaBean.entrada.dataSaida}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm"  />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Data Cancelamento" sortBy="#{consultarVisitaBean.entrada.dataCancelamento}" rendered="#{consultarVisitaBean.entrada.dataCancelamento != null}"
+					width="25%" style="text-align: center;">
+					<h:outputText value="#{consultarVisitaBean.entrada.dataCancelamento}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm"  />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Situação" 
+					width="25%">
+					<h:outputText value="#{consultarVisitaBean.entrada.situacao.descricao}" style="text-transform: uppercase" />
+				</p:column>
+				<p:column headerText="Motivo da Visita" rendered="#{consultarVisitaBean.entrada.motivoEntrada ne null}" width="25%">
+					<h:outputText value="#{consultarVisitaBean.entrada.motivoEntrada}" style="text-transform: uppercase" />
+				</p:column>
+				</p:dataTable>
+			</h:form>
+					<!--  DATA TABLE -->
+					
+					<p:panel style="border:none; width: 100%;">					
+					<!--  Autorização de entrada sem biometria -->
+					
+						<div class="ui-g">
+						<div class="ui-g-6">
+							<p:panel header="Autorização de entrada sem biometria"
+								id="autorizadorBiometria"
+								rendered="#{consultarVisitaBean.entrada.getAutorizacao(acaoAut.ENTRADA_VISITANTE) != null}">
+								<sgp:formOutputLabel labelValue="Autorizador"
+									value="#{consultarVisitaBean.entrada.getAutorizacao(acaoAut.ENTRADA_VISITANTE).usuario.servidor.nome}" />
+								<sgp:formOutputLabel labelValue="Observação"
+									value="#{consultarVisitaBean.entrada.getAutorizacao(acaoAut.ENTRADA_VISITANTE).observacao}" />
+								<sgp:formOutputLabel labelValue="Data"
+									value="#{consultarVisitaBean.entrada.getAutorizacao(acaoAut.ENTRADA_VISITANTE).dataAutorizacao}"
+									converterData="true" />
+							</p:panel>
+							</div>
+					<!--  Autorização de entrada sem biometria -->
+					
+					
+						<!--  Autorização de saida sem biometria -->
+						<div class="ui-g-6">
+							<p:panel header="Autorização de saida sem biometria"
+								id="autorizadorBiometriaSaida"
+								rendered="#{consultarVisitaBean.entrada.getAutorizacao(acaoAut.SAIDA_VISITANTE) != null}">
+								<sgp:formOutputLabel labelValue="Autorizador"
+									value="#{consultarVisitaBean.entrada.getAutorizacao(acaoAut.SAIDA_VISITANTE).usuario.servidor.nome}" />
+								<sgp:formOutputLabel labelValue="Observação"
+									value="#{consultarVisitaBean.entrada.getAutorizacao(acaoAut.SAIDA_VISITANTE).observacao}" />
+								<sgp:formOutputLabel labelValue="Data"
+									value="#{consultarVisitaBean.entrada.getAutorizacao(acaoAut.SAIDA_VISITANTE).dataAutorizacao}"
+									converterData="true" />
+							</p:panel>
+							</div>
+							</div>	
+							
+							</p:panel>			
+					<!--  Autorização de  saida  sem biometria -->
+					
+					
+					<!--  Descrição de finalização -->						
+					<div class="ui-g-12">
+								<sgp:formInputTextarea labelValue="Descrição de finalização " rendered="#{consultarVisitaBean.entrada.motivoFinalizacao ne null}"
+									id="idDescricaoFinalizacao" disabled="true"
+									value="#{consultarVisitaBean.entrada.motivoFinalizacao}" rows="10"
+									columns="100"  autoResize="true"  />
+							</div>
+					<!--  Descrição de finalização -->
+					
+					
+					<!--  Descrição de cancelamento -->						
+					<div class="ui-g-12">
+								<sgp:formInputTextarea labelValue="Descrição de Cancelamento " rendered="#{consultarVisitaBean.entrada.motivoCancelamento ne null}"
+									id="idDescricaoCancelamento" disabled="true"
+									value="#{consultarVisitaBean.entrada.motivoCancelamento}" rows="10"
+									columns="100"  autoResize="true"  />
+							</div>
+					<!-- Descrição de cancelamento -->
+					
+  								<br/>
+  								<div>
+  								<center>
+  								<p:commandButton value="Finalizar" update=":formAutCadBio"  rendered="#{consultarVisitaBean.entrada.situacao.id == 1}"
+							action="${consultarVisitaBean.abrirDlgAutorizar}"  process="@this"/>
+						<p:commandButton value="Fechar" onclick="PF('dialogVisualizarEntradaSaida').hide();"
+							immediate="true" />
+							</center>
+							</div>
+					</h:form>
+				</p:dialog>
+				
+				
+				<h:form id="formAutCadBio" prependId="false">
+				<p:dialog id="dialogAutorizacaoBiometria" dynamic="true"
+					header="Autorizar Saida sem biometria" showEffect="fade"
+					widgetVar="dlgAutBio" modal="true" draggable="false"
+					resizable="false" closeOnEscape="true">
+					<h:panelGroup id="divAut">
+						<sgp:formInputText id="login" labelValue="Login" maxlength="11"
+							minlength="4" value="#{consultarVisitaBean.loginUsuarioAutorizador}"
+							validationRequired="true" display="text" requiredMessage="*" />
+						<sgp:formInputPassword id="senha" labelValue="Senha"
+							maxlength="15" display="text" requiredMessage="*"
+							value="#{consultarVisitaBean.senhaUsuarioAutorizador}"
+							validationRequired="true" />
+						<sgp:formInputTextarea id="observacao" labelValue="Observação"
+							value="#{consultarVisitaBean.observacaoUsuarioAutorizador}"
+							columns="40" maxlength="250" display="text" requiredMessage="*"
+							validationRequired="true" />
+
+						<br />
+						<br />
+						<br />
+						<p:commandButton value="Autorizar" update="divAut"
+							action="#{consultarVisitaBean.autorizarCadastroSemBiometria()}"
+							icon="ui-icon-disk"/>
+						<p:commandButton value="Fechar" onclick="PF('dlgAutBio').hide();"
+							immediate="true" />
+					</h:panelGroup>
+				</p:dialog>
+			</h:form>
+		
+    </ui:define>
+</ui:composition>

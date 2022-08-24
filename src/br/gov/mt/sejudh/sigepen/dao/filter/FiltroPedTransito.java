@@ -1,10 +1,13 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.NullPrecedence;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -180,7 +183,7 @@ public class FiltroPedTransito extends FiltroConsulta {
 		.createAlias("estabelecimento", "estabelecimento", JoinType.LEFT_OUTER_JOIN)
 		.createAlias("estruturaDestino", "estrutura", JoinType.LEFT_OUTER_JOIN)
 		.createAlias("estruturaOrigem", "estrutura2", JoinType.LEFT_OUTER_JOIN)
-		.createAlias("transferencia", "transferencia", JoinType.LEFT_OUTER_JOIN);
+        .createAlias("transferencia", "transferencia", JoinType.LEFT_OUTER_JOIN);
 		
 		getCriteria()
 			.createAlias("estrutura2.estruturaComplemento", "estruturacomplOrigem", JoinType.LEFT_OUTER_JOIN)
@@ -272,7 +275,48 @@ public class FiltroPedTransito extends FiltroConsulta {
 		
 		if (this.getStatus() != null) {
 			getCriteria().add(Restrictions.eq("status", this.getStatus()));
-		}		
-		
+		}
+						
 	}
+	
+	@Override
+	public void configurarOrdenacao() {
+		super.configurarOrdenacao();
+		
+		if (this.getOrdenacao() != null) {
+			getCriteria().addOrder((this.getOrdenacao().isAscending() ? Order.asc("idTransferencia") : Order.desc("idTransferencia")));
+			
+			if (this.getPropriedadeOrdenacao().equals("idTransferencia")) {
+				this.getOrdenacao().nulls(NullPrecedence.LAST);
+			}
+		}
+	}
+
+	public String getDescricao() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		String filtros = "";
+		
+		if(this.getId()!= null)
+			filtros += "Número Pedido: " + this.getId() + ", ";
+		
+		if(this.getRecuperandoId()!= null)
+			filtros += "Matrícula Recuperando: " + this.getRecuperandoId() + ", "; 
+		
+		if (this.getNome()!= null && !this.getNome().equalsIgnoreCase(""))
+			filtros += "Nome Recuperando: " + this.getNome() + ", ";
+		
+		if(this.getDataInicio() != null && this.getDataFim() != null)
+			filtros += "Período: " + sdf.format(this.getDataInicio()) + " a " + sdf.format(this.getDataFim()) + ", ";
+		
+		if (this.getStatus() != null) 
+			filtros += "Status: " + this.getStatus().getDescricao() + ", ";
+		
+		if(!"".equals(filtros))
+			return "Filtro utilizado: " + filtros;
+		return null;
+	}
+		
 }
+
+
+

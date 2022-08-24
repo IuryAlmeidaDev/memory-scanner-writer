@@ -18,12 +18,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
-import org.hibernate.bytecode.internal.javassist.FieldHandled;
-import org.hibernate.bytecode.internal.javassist.FieldHandler;
+import org.hibernate.engine.spi.PersistentAttributeInterceptable;
+import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 import org.hibernate.envers.Audited;
 
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
@@ -33,226 +32,228 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name = "ESTRUTURA", schema = Sigepen.SEJUDH_SCHEMA)
-public class Estrutura implements Serializable, FieldHandled {
-	
-	private static final long serialVersionUID = 9073895500689612495L;
-	private FieldHandler handler;
-	
-	@SequenceGenerator(name = "SEQ_ESTRUTURA_GENERATOR", sequenceName = "SEQ_ESTRUTURA", allocationSize = 1, initialValue = 1, schema = Sigepen.SEJUDH_SCHEMA)
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ESTRUTURA_GENERATOR")
-	@Column(name = "ID")
-	private long id;
-	
+public class Estrutura implements Serializable, PersistentAttributeInterceptable {
+
+    private static final long serialVersionUID = 9073895500689612495L;
+
+    @SequenceGenerator(name = "SEQ_ESTRUTURA_GENERATOR", sequenceName = "SEQ_ESTRUTURA", allocationSize = 1, initialValue = 1, schema = Sigepen.SEJUDH_SCHEMA)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ESTRUTURA_GENERATOR")
+    @Column(name = "ID")
+    private long id;
+
 	@Transient
 	private Long versao;
-	
-	@Column(name="NOME", length = 80, nullable = false)
-	private String nome;
-	
-	@Transient
-	private String nomeCompleto;
-	
-	@Column(name="CELA")
-	private boolean cela;
-	
-	@Column(name="CAPACIDADE")
-	private int capacidade;
-	
-	@Enumerated
-	@Column(name = "SITUACAO")
-	private SituacaoUnidade situacaoUnidade;
-	
-	@OneToMany(mappedBy = "estrutura", cascade = CascadeType.ALL, orphanRemoval=true)
-	private List<SituacaoEstruturaUnidade> historicoSituacaoEstrutura;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	private UnidadePrisional unidadePrisional;
-	
-	@ManyToOne
-	private Estrutura estruturaPai;
-	
-	@OneToMany(mappedBy="estruturaPai", fetch = FetchType.LAZY)
-	private List<Estrutura> estruturas;
-	
-	@Transient
-	private int capacidadeTotal;
-	
-	@Transient
-	private boolean temEstruturaFilho;
-	
-	@OneToOne(mappedBy="estrutura", fetch = FetchType.LAZY)
-	@LazyToOne(LazyToOneOption.NO_PROXY)
-	private EstruturaComplemento estruturaComplemento;
 
-	public Estrutura() {
-		this.historicoSituacaoEstrutura = new ArrayList<SituacaoEstruturaUnidade>();
-	}
-	
-	public Estrutura(String nome){
-		this.nome = Sigepen.formatarEspacos(nome);
-	}
+    @Column(name="NOME", length = 80, nullable = false)
+    private String nome;
 
-	public long getId() {
-		return id;
-	}
+    @Transient
+    private String nomeCompleto;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    @Column(name="CELA")
+    private boolean cela;
 
-	public String getNome() {
-		return nome;
-	}	
+    @Column(name="CAPACIDADE")
+    private int capacidade;
 
-	public void setNome(String nome) {
-		this.nome =  Sigepen.formatarEspacos(nome);
-	}
+    @Enumerated
+    @Column(name = "SITUACAO")
+    private SituacaoUnidade situacaoUnidade;
 
-	public EstruturaComplemento getEstruturaComplemento() {
-		if (this.handler != null) {
-			return (EstruturaComplemento) this.handler.readObject(this, "estruturaComplemento", estruturaComplemento);
-		}
+    @OneToMany(mappedBy = "estrutura", cascade = CascadeType.ALL, orphanRemoval=true)
+    private List<SituacaoEstruturaUnidade> historicoSituacaoEstrutura;
 
-		return estruturaComplemento;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UnidadePrisional unidadePrisional;
 
-	public void setEstruturaComplemento(EstruturaComplemento estruturaComplemento) {
-		if (this.handler != null) {
-			this.estruturaComplemento = (EstruturaComplemento) this.handler.writeObject(this, "estruturaComplemento", this.estruturaComplemento, estruturaComplemento);
-		} else {
-			this.estruturaComplemento = estruturaComplemento;
-		}
-	}
+    @ManyToOne
+    private Estrutura estruturaPai;
 
-	public String getNomeCompleto() {
-		String nome = "";
-		Estrutura est = this;
-		while (est.getEstruturaPai() != null) {
-			nome = est.getEstruturaPai().getNome() +" > "+ nome;			
-			est = est.getEstruturaPai();
-		}
-		return nome + getNome() ;
-	}
-	
-	public boolean getCela() {
-		return cela;
-	}
+    @OneToMany(mappedBy="estruturaPai", fetch = FetchType.LAZY)
+    private List<Estrutura> estruturas;
 
-	public void setCela(boolean cela) {
-		this.cela = cela;
-	}
+    @Transient
+    private int capacidadeTotal;
 
-	public int getCapacidade() {
-		return capacidade;
-	}
+    @Transient
+    private boolean temEstruturaFilho;
 
-	public void setCapacidade(int capacidade) {
-		this.capacidade = capacidade;
-	}
-	
+    @OneToOne(mappedBy="estrutura", fetch = FetchType.LAZY)
+    @LazyToOne(LazyToOneOption.NO_PROXY)
+    private EstruturaComplemento estruturaComplemento;
 
-	public SituacaoUnidade getSituacaoUnidade() {
-		return situacaoUnidade;
-	}
+    @Transient
+    private PersistentAttributeInterceptor persistentAttributeInterceptor;
 
-	public void setSituacaoUnidade(SituacaoUnidade situacaoUnidade) {
-		this.situacaoUnidade = situacaoUnidade;
-	}
+    public Estrutura() {
+        this.historicoSituacaoEstrutura = new ArrayList<SituacaoEstruturaUnidade>();
+    }
 
-	public Estrutura getEstruturaPai() {
-		return estruturaPai;
-	}
+    public Estrutura(String nome){
+        this.nome = Sigepen.formatarEspacos(nome);
+    }
 
-	public void setEstruturaPai(Estrutura estruturaPai) {
-		this.estruturaPai = estruturaPai;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public List<Estrutura> getEstruturas() {
-		return estruturas;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public void setEstruturas(List<Estrutura> estruturas) {
-		this.estruturas = estruturas;
-	}
+    public String getNome() {
+        return nome;
+    }
 
-	public UnidadePrisional getUnidadePrisional() {
-		return unidadePrisional;
-	}
+    public void setNome(String nome) {
+        this.nome =  Sigepen.formatarEspacos(nome);
+    }
 
-	public void setUnidadePrisional(UnidadePrisional unidadePrisional) {
-		this.unidadePrisional = unidadePrisional;
-	}
-	
-	public int getCapacidadeTotal() {
-		return capacidadeTotal;
-	}
+    public EstruturaComplemento getEstruturaComplemento() {
+        if (this.persistentAttributeInterceptor != null) {
+            return (EstruturaComplemento) this.persistentAttributeInterceptor.readObject(this, "estruturaComplemento", estruturaComplemento);
+        }
 
-	public void setCapacidadeTotal(int capacidaTotal) {
-		this.capacidadeTotal = capacidaTotal;
-	}
+        return estruturaComplemento;
+    }
 
-	public boolean isTemEstruturaFilho() {
-		return temEstruturaFilho;
-	}
+    public void setEstruturaComplemento(EstruturaComplemento estruturaComplemento) {
+        if (this.persistentAttributeInterceptor != null) {
+            this.estruturaComplemento = (EstruturaComplemento) this.persistentAttributeInterceptor.writeObject(this, "estruturaComplemento", this.estruturaComplemento, estruturaComplemento);
+        } else {
+            this.estruturaComplemento = estruturaComplemento;
+        }
+    }
 
-	public void setTemEstruturaFilho(boolean temEstrturaFilho) {
-		this.temEstruturaFilho = temEstrturaFilho;
-	}
+    public String getNomeCompleto() {
+        String nome = "";
+        Estrutura est = this;
+        while (est.getEstruturaPai() != null) {
+            nome = est.getEstruturaPai().getNome() +" > "+ nome;
+            est = est.getEstruturaPai();
+        }
+        return nome + getNome() ;
+    }
 
-	public List<SituacaoEstruturaUnidade> getHistoricoSituacaoEstrutura() {
-		return historicoSituacaoEstrutura;
-	}
+    public boolean getCela() {
+        return cela;
+    }
 
-	public void setHistoricoSituacaoEstrutura(List<SituacaoEstruturaUnidade> historicoSituacaoEstrutura) {
-		this.historicoSituacaoEstrutura = historicoSituacaoEstrutura;
-	}
+    public void setCela(boolean cela) {
+        this.cela = cela;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((estruturaPai == null) ? 0 : estruturaPai.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime
-				* result
-				+ ((unidadePrisional == null) ? 0 : unidadePrisional.hashCode());
-		return result;
-	}
+    public int getCapacidade() {
+        return capacidade;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Estrutura other = (Estrutura) obj;
-		if (estruturaPai == null) {
-			if (other.estruturaPai != null)
-				return false;
-		} else if (!estruturaPai.equals(other.estruturaPai))
-			return false;
-		if (id != other.id)
-			return false;
-		return true;
-	}
+    public void setCapacidade(int capacidade) {
+        this.capacidade = capacidade;
+    }
 
-	@Override
-	public String toString() {
-		return "Estrutura [id=" + id + ", nome=" + nome + "]";
-	}
 
-	@Override
-	public FieldHandler getFieldHandler() {
-		return this.handler;
-	}
+    public SituacaoUnidade getSituacaoUnidade() {
+        return situacaoUnidade;
+    }
 
-	@Override
-	public void setFieldHandler(FieldHandler arg0) {
-		this.handler = arg0;
-	}
+    public void setSituacaoUnidade(SituacaoUnidade situacaoUnidade) {
+        this.situacaoUnidade = situacaoUnidade;
+    }
+
+    public Estrutura getEstruturaPai() {
+        return estruturaPai;
+    }
+
+    public void setEstruturaPai(Estrutura estruturaPai) {
+        this.estruturaPai = estruturaPai;
+    }
+
+    public List<Estrutura> getEstruturas() {
+        return estruturas;
+    }
+
+    public void setEstruturas(List<Estrutura> estruturas) {
+        this.estruturas = estruturas;
+    }
+
+    public UnidadePrisional getUnidadePrisional() {
+        return unidadePrisional;
+    }
+
+    public void setUnidadePrisional(UnidadePrisional unidadePrisional) {
+        this.unidadePrisional = unidadePrisional;
+    }
+
+    public int getCapacidadeTotal() {
+        return capacidadeTotal;
+    }
+
+    public void setCapacidadeTotal(int capacidaTotal) {
+        this.capacidadeTotal = capacidaTotal;
+    }
+
+    public boolean isTemEstruturaFilho() {
+        return temEstruturaFilho;
+    }
+
+    public void setTemEstruturaFilho(boolean temEstrturaFilho) {
+        this.temEstruturaFilho = temEstrturaFilho;
+    }
+
+    public List<SituacaoEstruturaUnidade> getHistoricoSituacaoEstrutura() {
+        return historicoSituacaoEstrutura;
+    }
+
+    public void setHistoricoSituacaoEstrutura(List<SituacaoEstruturaUnidade> historicoSituacaoEstrutura) {
+        this.historicoSituacaoEstrutura = historicoSituacaoEstrutura;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((estruturaPai == null) ? 0 : estruturaPai.hashCode());
+        result = prime * result + (int) (id ^ (id >>> 32));
+        result = prime
+                * result
+                + ((unidadePrisional == null) ? 0 : unidadePrisional.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Estrutura other = (Estrutura) obj;
+        if (estruturaPai == null) {
+            if (other.estruturaPai != null)
+                return false;
+        } else if (!estruturaPai.equals(other.estruturaPai))
+            return false;
+        if (id != other.id)
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Estrutura [id=" + id + ", nome=" + nome + "]";
+    }
+
+    @Override
+    public PersistentAttributeInterceptor $$_hibernate_getInterceptor() {
+        return this.persistentAttributeInterceptor;
+    }
+
+    @Override
+    public void $$_hibernate_setInterceptor(PersistentAttributeInterceptor persistentAttributeInterceptor) {
+        this.persistentAttributeInterceptor = persistentAttributeInterceptor;
+    }
 }

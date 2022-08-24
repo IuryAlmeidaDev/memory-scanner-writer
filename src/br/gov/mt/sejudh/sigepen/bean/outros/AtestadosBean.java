@@ -29,7 +29,7 @@ import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.TextoDoRelatorio;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.relatorio.textos.Atestados;
@@ -67,7 +67,7 @@ public class AtestadosBean {
 
     @URLAction(onPostback=false)
     public String init() {
-    	RecuperandoDTO rec = (RecuperandoDTO) facesUtil.getObjetoSessao("recuperandoAtestado");
+    	RecuperandoView rec = (RecuperandoView) facesUtil.getObjetoSessao("recuperandoAtestado");
     	recuperando = atestadosService.buscarRecuperandoComPassagens(rec.getId());
     	
     	Optional<Passagem> optPassagem = recuperando.getPassagens().stream()
@@ -107,10 +107,6 @@ public class AtestadosBean {
     	}
     	
         return null;
-    }
-    
-    public boolean exibeBotaoAtestado(RecuperandoDTO rec) {
-    	return atestadosService.verificaRecuperandoPossuiPassagemNaUnidadeLogada(rec.getId());
     }
     
 	public void imprimirAtestado() {

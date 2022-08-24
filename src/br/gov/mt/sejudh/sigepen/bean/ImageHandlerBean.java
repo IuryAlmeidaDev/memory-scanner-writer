@@ -42,4 +42,25 @@ public class ImageHandlerBean {
 			return new DefaultStreamedContent(new ByteArrayInputStream(imgSessao.getArquivo()), imgSessao.getContentType());
 		}
 	}
+
+	public StreamedContent getImagemVisitante(Imagem img) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		String hashId = context.getExternalContext().getRequestParameterMap().get("hashId");
+		
+		if (img != null) {
+			facesUtil.setObjetoSessao("IdVisitante" + String.valueOf(img.getId()), img);
+		}
+		
+		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
+			return new DefaultStreamedContent();
+		} else {
+			if (hashId == null || hashId.isEmpty()) {
+				InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/images/fotoplaceholder.png");
+				return new DefaultStreamedContent(stream, "image/png");
+			}
+	
+			Imagem imgSessao = (Imagem) facesUtil.getObjetoSessao("IdVisitante" + hashId, false);
+			return new DefaultStreamedContent(new ByteArrayInputStream(imgSessao.getArquivo()), imgSessao.getContentType());
+		}
+	}
 }

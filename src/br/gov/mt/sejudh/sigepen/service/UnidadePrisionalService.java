@@ -27,7 +27,12 @@ public class UnidadePrisionalService {
 	private AuditoriaDAO auditDAO;
 
 	@Interceptors(EJBExcInterceptor.class)
-	public UnidadePrisional salvar(UnidadePrisional unidade) throws ValidacaoException {		
+	public UnidadePrisional salvar(UnidadePrisional unidade) throws ValidacaoException {
+
+		if(unidade.getNome() == null || unidade.getSigla() == null || unidade.getTipoUnidade() == null){
+			throw new ValidacaoException("Preencha os campos obrigatórios!");
+		}
+
 		if(jaExisteUnidadePrisionalComMesmoNome(unidade)){
 			throw new ValidacaoException("Já existe uma Unidade Prisional com o mesmo Nome (" + unidade.getNome() + "), e não está INATIVA.");
 		}
@@ -97,5 +102,9 @@ public class UnidadePrisionalService {
 
 	public Boolean verificarSeBiometriaEhObrigatoria(long unidadeId) {
 		return dao.verificarSeBiometriaEhObrigatoria(unidadeId);
+	}
+	
+	public List<UnidadePrisional> listarUnidadesComParamVisitanteAtivo(boolean listarTodasUnidades){
+		return dao.listarUnidadesComParamVisitanteAtivo(listarTodasUnidades);
 	}
 }

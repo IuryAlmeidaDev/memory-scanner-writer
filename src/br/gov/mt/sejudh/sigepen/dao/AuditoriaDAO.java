@@ -25,7 +25,7 @@ public class AuditoriaDAO {
 	public AuditoriaDAO() {
 	}
 	
-	public AutoriaRegistro autorRegistro(Object objeto, long id){
+	public AutoriaRegistro autorRegistro(Object objeto, Number id){
 		
 		if(auditReader.isEntityClassAudited(objeto.getClass())){
 			
@@ -56,7 +56,7 @@ public class AuditoriaDAO {
 			return null;
 	}
 	
-	public AutoriaRegistro autorUltimaAlteracao(Object objeto, long id) {
+	public AutoriaRegistro autorUltimaAlteracao(Object objeto, Number id) {
         
         if(auditReader.isEntityClassAudited(objeto.getClass())){
         	

@@ -92,11 +92,12 @@
 							disabled="#{estabelecimentoBean.isVisualizacao}" />								
 							
 					<sgp:formSelectOneMenu id="esfera" labelValue="Esfera"
-							value="#{estabelecimentoBean.estabelecimento.esfera}"
-							itemsValue="#{comboHelperBean.esfera}" 
-							itemValue="#{item}" display="text" validationRequired="true"
-							itemLabel="#{item.descricao}" 
-							disabled="#{estabelecimentoBean.isVisualizacao}" />
+							value="#{estabelecimentoBean.estabelecimento.esfera}" display="text" validationRequired="true" 
+							disabled="#{estabelecimentoBean.isVisualizacao}" temSelecione="true">
+
+							<f:selectItem itemLabel="Estadual" itemValue="ESTADUAL" />
+							<f:selectItem itemLabel="Federal" itemValue="FEDERAL" />
+					</sgp:formSelectOneMenu>
 							
 					<sgp:formSelectOneMenu id="procedencia" labelValue="É procedência?" value="#{estabelecimentoBean.estabelecimento.proced}" display="text" 
 						validationRequired="true" temSelecione="true" disabled="#{estabelecimentoBean.isVisualizacao}" >

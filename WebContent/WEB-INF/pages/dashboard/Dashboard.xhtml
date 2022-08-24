@@ -18,7 +18,7 @@
 					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_SISTEMA)}">
 						<h:outputText value="#{dashboardBean.totalRecuperandosAtivos}" styleClass="ui-dash-text-panel-40"/>
 						<br/>
-						<h:outputText value="Recuperandos ativos no Sistema" styleClass="ui-dash-text-panel-20"/>
+						<h:outputText value="Recuperandos ativos no Sistema" styleClass="ui-dash-text-panel-18"/>
 					</h:commandLink>
 				</p:panel>
 				
@@ -26,7 +26,7 @@
 					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_UNIDADE)}">
 						<h:outputText value="#{dashboardBean.totalRecuperandosAtivosNaUnidade}" styleClass="ui-dash-text-panel-40"/>
 						<br/> 
-						<h:outputText value="Recuperandos ativos na Unidade" styleClass="ui-dash-text-panel-20"/>
+						<h:outputText value="Recuperandos ativos na Unidade" styleClass="ui-dash-text-panel-18"/>
 					</h:commandLink> 
 				</p:panel>
 		
@@ -34,7 +34,7 @@
 					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_CADASTRO_INCOMPLETO_UNIDADE)}">
 						<h:outputText value="#{dashboardBean.totalRecuperandosComCadastroIncompleto}" styleClass="ui-dash-text-panel-40"/>
 						<br/>
-						<h:outputText value="Cadastros ativos incompletos" styleClass="ui-dash-text-panel-20"/>
+						<h:outputText value="Cadastros ativos incompletos" styleClass="ui-dash-text-panel-18"/>
 					</h:commandLink>
 				</p:panel>
 				
@@ -42,7 +42,7 @@
 					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_A_VENCER)}">
 						<h:outputText value="#{dashboardBean.temporariosNaUnidadeAVencer}" styleClass="ui-dash-text-panel-40"/>
 						<br/>
-						<h:outputText value="Temporários na unidade a vencer" styleClass="ui-dash-text-panel-20"/>
+						<h:outputText value="Temporários na unidade a vencer" styleClass="ui-dash-text-panel-18"/>
 					</h:commandLink>
 				</p:panel>
 				
@@ -50,7 +50,7 @@
 					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE)}">
 						<h:outputText value="#{dashboardBean.temporariosNaUnidadeVenceHoje}" styleClass="ui-dash-text-panel-40"/>
 						<br/>
-						<h:outputText value="Temporários na unidade vence hoje" styleClass="ui-dash-text-panel-20"/>
+						<h:outputText value="Temporários na unidade vence hoje" styleClass="ui-dash-text-panel-18"/>
 					</h:commandLink>
 				</p:panel>
 				
@@ -58,7 +58,7 @@
 					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCIDA)}">
 						<h:outputText value="#{dashboardBean.temporariosNaUnidadeVencido}" styleClass="ui-dash-text-panel-40"/>
 						<br/>
-						<h:outputText value="Temporários na unidade vencida" styleClass="ui-dash-text-panel-20"/>
+						<h:outputText value="Temporários na unidade vencida" styleClass="ui-dash-text-panel-18"/>
 					</h:commandLink>
 				</p:panel>
 				
@@ -66,7 +66,7 @@
 					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER)}">
 						<h:outputText value="#{dashboardBean.temporariosNoSistemaAVencer}" styleClass="ui-dash-text-panel-40"/>
 						<br/>
-						<h:outputText value="Temporários no sistema a vencer" styleClass="ui-dash-text-panel-20"/>
+						<h:outputText value="Temporários no sistema a vencer" styleClass="ui-dash-text-panel-18"/>
 					</h:commandLink>
 				</p:panel>
 				
@@ -74,7 +74,7 @@
 					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE)}">
 						<h:outputText value="#{dashboardBean.temporariosNoSistemaVenceHoje}" styleClass="ui-dash-text-panel-40"/>
 						<br/>
-						<h:outputText value="Temporários no sistema vence hoje" styleClass="ui-dash-text-panel-20"/>
+						<h:outputText value="Temporários no sistema vence hoje" styleClass="ui-dash-text-panel-18"/>
 					</h:commandLink>
 				</p:panel>
 				
@@ -82,9 +82,68 @@
 					<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCIDA)}">
 						<h:outputText value="#{dashboardBean.temporariosNoSistemaVencido}" styleClass="ui-dash-text-panel-40"/>
 						<br/>
-						<h:outputText value="Temporários no sistema vencido" styleClass="ui-dash-text-panel-20"/>
+						<h:outputText value="Temporários no sistema vencido" styleClass="ui-dash-text-panel-18"/>
 					</h:commandLink>
 				</p:panel>
+ 
+				<p:panel id="#{dash.SOLICITACAO_VISITA_PENDENTE.descricao}" styleClass="ui-dash-panel" style="background-color: #FD7E14;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.SOLICITACAO_VISITA_PENDENTE)}">
+						<h:outputText value="#{dashboardBean.solicitacaoVisitaPendente}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Solicitações de visita pendentes" styleClass="ui-dash-text-panel-18"/>
+					</h:commandLink>
+				</p:panel>
+
+				<p:panel id="#{dash.TOTAL_CREDENCIAMENTO_RECEBIMENTO_PENDENTE.descricao}" styleClass="ui-dash-panel" style="background-color: #04509E;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_RECEBIMENTO_PENDENTE)}">
+						<h:outputText value="#{dashboardBean.totalCredenciamentoRecebimentoPendente}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Visitantes Pendentes" styleClass="ui-dash-text-panel-18"/>
+						<br/>
+						<h:outputText value="Fase de Recebimentos de Documentação" styleClass="ui-dash-text-panel-18"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.TOTAL_CREDENCIAMENTO_CHECAGEM_PENDENTE.descricao}" styleClass="ui-dash-panel" style="background-color: #30ACD9;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_CHECAGEM_PENDENTE)}">
+						<h:outputText value="#{dashboardBean.totalCredenciamentoChecagemPendente}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Visitantes Pendentes" styleClass="ui-dash-text-panel-18"/>
+						<br/>
+						<h:outputText value="Fase de Checagem de Documentação" styleClass="ui-dash-text-panel-18"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.TOTAL_CREDENCIAMENTO_CONFERENCIA_PENDENTE.descricao}" styleClass="ui-dash-panel" style="background-color: #2781C2;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_CONFERENCIA_PENDENTE)}">
+						<h:outputText value="#{dashboardBean.totalCredenciamentoConferenciaPendente}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Visitantes Pendentes" styleClass="ui-dash-text-panel-18"/>
+						<br/>
+						<h:outputText value="Fase de Conferência e Autenticações" styleClass="ui-dash-text-panel-18"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.TOTAL_CREDENCIAMENTO_ANALISE_PENDENTE.descricao}" styleClass="ui-dash-panel" style="background-color: #FFB300;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_ANALISE_PENDENTE)}">
+						<h:outputText value="#{dashboardBean.totalCredenciamentoAnalisePendente}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Visitantes Pendentes" styleClass="ui-dash-text-panel-18"/>
+						<br/>
+						<h:outputText value="Fase de Análise e Autenticação de Certidões" styleClass="ui-dash-text-panel-18"/>
+					</h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE.descricao}" styleClass="ui-dash-panel" style="background-color: #CC3300;">
+					<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE)}">
+						<h:outputText value="#{dashboardBean.totalCredenciamentoAprovacaoPendente}" styleClass="ui-dash-text-panel-40"/>
+						<br/>
+						<h:outputText value="Visitantes Pendentes" styleClass="ui-dash-text-panel-18"/>
+						<br/>
+						<h:outputText value="Fase de Aprovação" styleClass="ui-dash-text-panel-18"/>
+					</h:commandLink>
+				</p:panel>
+				
 			</p:dashboard>
 		</h:form>
 	</ui:define>

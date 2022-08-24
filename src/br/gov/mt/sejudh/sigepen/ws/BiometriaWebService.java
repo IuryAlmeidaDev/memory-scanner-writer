@@ -1,6 +1,5 @@
 package br.gov.mt.sejudh.sigepen.ws;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +13,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import br.gov.mt.sejudh.sigepen.model.BiometriaTemporaria;
-import br.gov.mt.sejudh.sigepen.model.Recuperando;
+import br.gov.mt.sejudh.sigepen.model.dto.PessoaBiometriaWSDTO;
 import br.gov.mt.sejudh.sigepen.service.BiometriaService;
-import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 
 @Path("/biometria")
@@ -28,10 +27,7 @@ public class BiometriaWebService {
 	
 	@Inject
 	private BiometriaService biometriaService;
-	
-	@Inject
-	private RecuperandoService recuperandoService;
-	
+
 	@Inject
 	private Logger log;
 	
@@ -132,7 +128,7 @@ public class BiometriaWebService {
 		
 		try {
 			biometrias = biometriaService.pesquisarBiometriaPorTemplateString(template);
-		} catch (IOException e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 			JsonObject js = new JsonObject();
@@ -148,35 +144,34 @@ public class BiometriaWebService {
 	}
 	
 	@POST
-	@Path("/buscar-id-recuperando")
+	@Path("/buscar-ids")
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.TEXT_PLAIN)
-	public String buscarRecuperandoIdPorTemplate(String template) {
-		Long idRecuperando = (long) 0;
+	public String buscarIdsPorTemplate(String template) {
+		Long idPessoa = (long) 0;
 		
 		try {
-			idRecuperando = biometriaService.pesquisaPorTemplateParaRecuperando(template);
+			idPessoa = biometriaService.pesquisaPorTemplateParaPessoaWS(template);
 			
-			if (idRecuperando > 0) {
-				Recuperando recup = recuperandoService.buscarRecuperandoSimplesPorIdPessoa(idRecuperando);
-				
-				if (recup != null) {
-					idRecuperando = recup.getId();
+			if (idPessoa > 0) {
+				PessoaBiometriaWSDTO pessoa = biometriaService.buscarIdsVinculadosAPessoa(idPessoa);
+
+				if (pessoa != null) {
+					return new Gson().toJson(pessoa);
+				} else {
+					return null;
 				}
 			}
-		} catch (IOException e) {
+			
+			return null;
+		} catch (Exception e) {
 			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 			JsonObject js = new JsonObject();
 			js.addProperty("erro", e.getMessage());
 			
 			return js.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-			LoggerUtil.logWS(e, log);
 		}
-		
-		return String.valueOf(idRecuperando);
 	}
 	
 	@POST

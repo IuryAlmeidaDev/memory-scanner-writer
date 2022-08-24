@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components">
+
+    <h4>Histórico de Fotos</h4>
+
+    <h:form id="formAbaFotosHistorico">
+        <p:dataGrid id="dataGridFotos" layout="grid" columns="4" rows="8" lazy="true" paginatorAlwaysVisible="false"
+                    paginator="true"
+                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                    value="#{visitanteBean.visitante.fotos}" var="foto" emptyMessage="Nenhuma foto adicionada.">
+            <p:panel header="#{foto.tipo.descricao}" style="text-align: center; width: 220px;">
+                <p:dataGrid id="dgFoto" layout="tabular" style="width: 188px;" columns="1" rows="1" value="#{foto}"
+                            var="f">
+                    <p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}"
+                                    onclick="PF('dlgExibeFoto#{f.imagem.id}').show();" cache="false" width="180"
+                                    height="240">
+                        <f:param name="hashId" value="#{f.imagem.id}"/>
+                    </p:graphicImage>
+
+                    <div style="text-align: center; padding-top: 5px">
+                        <p:commandButton actionListener="#{visitanteBean.excluirFoto(f)}" icon="ui-icon-trash"
+                                         title="Excluir"
+                                         update=":tabView:formAbaFotosHistorico "
+                                         rendered="#{securityUtil.possuiPermissao('ExcluirFoto') and !visitanteBean.isVisualizacao}">
+                            <p:confirm header="Confirmação" message="Deseja excluir a foto?" icon="ui-icon-alert"/>
+                        </p:commandButton>
+
+                        <p:selectBooleanButton value="#{f.atual}" onLabel="Foto Atual" offLabel="Marcar Atual"
+                                               rendered="#{securityUtil.possuiPermissao('AlterarVisitante') and !visitanteBean.isVisualizacao}"
+                                               disabled="#{visitanteBean.isVisualizacao or f.isAtual()}">
+                            <p:ajax listener="#{visitanteBean.configurarFotoAtual(foto)}"
+                                    update=":tabView:formAbaFotosHistorico "/>
+                        </p:selectBooleanButton>
+
+                        <p:confirmDialog global="true">
+                            <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes"
+                                             icon="ui-icon-check"/>
+                            <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"
+                                             icon="ui-icon-close"/>
+                        </p:confirmDialog>
+                    </div>
+                </p:dataGrid>
+
+                <p:dialog header="#{foto.tipo.descricao}" widgetVar="dlgExibeFoto#{foto.imagem.id}" resizable="false"
+                          closeOnEscape="true" modal="true" draggable="false">
+                    <p:graphicImage value="#{imageHandlerBean.getImagem(foto.imagem)}" cache="false">
+                        <f:param name="hashId" value="#{foto.imagem.id}"/>
+                    </p:graphicImage>
+                </p:dialog>
+            </p:panel>
+        </p:dataGrid>
+
+    </h:form>
+
+</ui:composition>

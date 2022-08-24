@@ -1,0 +1,146 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/pages/_templates/principal.xhtml">
+                
+    <ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+    <ui:define name="conteudo">
+        <sgp:validarAcesso/>
+
+        <h3>#{impedimentoBean.tituloPagina} Impedimento</h3>
+        <h:form prependId="false">
+            <pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.SimNao" var="SimNao" allSuffix="ALL_ENUM_VALUES" />
+            <p:panel footer="Cadastrado por: #{impedimentoBean.impedimento.autorRegistro.usuario} em #{impedimentoBean.impedimento.autorRegistro.data} | Última alteração: #{impedimentoBean.impedimento.autorUltimaAlteracao.usuario} em #{impedimentoBean.impedimento.autorUltimaAlteracao.data}">
+
+                <p:panel id="panelVisitante" header="Visitante">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <p:commandButton value="Adicionar" actionListener="#{impedimentoBean.abrirDialogVisitante}"
+                                             process="@this" style="width: 150px;" rendered="#{not impedimentoBean.isVisualizacao}">
+                                <p:ajax event="dialogReturn" listener="#{impedimentoBean.associarVisitante}" update="panelVisitante"/>
+                            </p:commandButton>
+                        </div>
+                        <h:panelGroup styleClass="ui-g-12" rendered="#{impedimentoBean.impedimento.visitante ne null}">
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="ui-g">
+                                        <div class="ui-g-2 ui-g-nopad">
+                                            <h:outputLabel value="Nome:"/>
+                                        </div>
+                                        <div class="ui-g-10 ui-g-nopad">
+                                            <h:outputLabel value="#{impedimentoBean.impedimento.visitante.pessoa.nome}"/>
+                                        </div>
+                                    </div>
+
+                                    <h:panelGroup rendered="#{impedimentoBean.impedimento.visitante ne null }">
+                                        <ui:repeat value="#{impedimentoBean.impedimento.visitante.visitanteDocumentos}" var="doc">
+                                            <ui:fragment rendered="#{doc.documento.tipoDocumento.descricao eq 'CPF' or doc.documento.tipoDocumento.descricao eq 'RG'}">
+                                                <div class="ui-g">
+                                                    <div class="ui-g-2 ui-g-nopad">
+                                                        <h:outputLabel value="#{doc.documento.tipoDocumento.descricao}:"/>
+                                                    </div>
+                                                    <div class="ui-g-10 ui-g-nopad">
+                                                        <h:outputLabel value="#{doc.documento.numero}"/>
+                                                    </div>
+                                                </div>
+                                            </ui:fragment>
+                                        </ui:repeat>
+                                    </h:panelGroup>
+
+                                    <div class="ui-g">
+                                        <div class="ui-g-2 ui-g-nopad">
+                                            <h:outputLabel value="Data de Nascimento:"/>
+                                        </div>
+                                        <div class="ui-g-10 ui-g-nopad">
+                                            <h:outputLabel value="#{impedimentoBean.impedimento.visitante.pessoa.dataNascimento}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputLabel>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </div>
+                </p:panel>
+
+                <br/>
+
+                <sgp:formCalendar display="text" labelValue="Data de Ocorrência" 
+                                  value="#{impedimentoBean.impedimento.dataImpedimento}"
+                                  styleFormLabelColumn="width: 160px" dataMaxima="#{impedimentoBean.dataAtual}"
+                                  validationRequired="true" disabled="#{impedimentoBean.isVisualizacao}"/>
+
+                <sgp:formSelectOneMenu display="text" temSelecione="true" id="tipoImpedimento"
+                                       labelValue="Tipo Impedimento" itemValue="#{item}" itemLabel="#{item.descricao}"
+                                       disabled="#{impedimentoBean.isVisualizacao}"
+                                       itemsValue="#{impedimentoBean.tipoImpedimentos}"
+                                       value="#{impedimentoBean.impedimento.tipoImpedimento}" filter="true"
+                                       filterMatchMode="custom" styleFormLabelColumn="width: 160px"
+                                       validationRequired="true" filterFunction="removeAcento"
+                                       converter="SimpleEntityConverter"/>
+                                       
+                 <sgp:formInputText id="nomeDoucmento"
+					labelValue="Nome do Documento"
+					value="#{impedimentoBean.impedimento.nomeDocumento}"
+					validationRequired="true"
+					requiredMessage="Nome do documento é obrigatório."
+					disabled="#{impedimentoBean.isVisualizacao}"  maxlength="80"
+					size="80" display="text" styleFormLabelColumn="width: 160px" />
+                                       
+
+				<sgp:formInputText id="numeroDocumento"
+					labelValue="Nº Documento"
+					value="#{impedimentoBean.impedimento.numeroDocumento}"
+					validationRequired="true"
+					requiredMessage="Número do documento é obrigatório."
+					disabled="#{impedimentoBean.isVisualizacao}"  maxlength="80"
+					size="80" display="text" styleFormLabelColumn="width: 160px" />
+
+				<sgp:formInputTextarea id="observacao" labelValue="Observação"
+                                       value="#{impedimentoBean.impedimento.observacao}"
+                                       rows="10"
+                                       columns="100"
+                                       maxlength="4000"
+                                       autoResize="true"
+                                       display="text"
+                                       disabled="#{impedimentoBean.isVisualizacao}"
+                                       styleFormLabelColumn="width: 160px"
+                                       validationRequired="true"/>
+
+                <sgp:formSelectOneMenu
+                        labelValue="Situação" temSelecione="true"
+                        value="#{impedimentoBean.impedimento.status}"
+                        itemsValue="#{comboHelperBean.statusSgp}"
+                        itemValue="#{item}" styleFormLabelColumn="width: 160px"
+                        validationRequired="false"
+                        disabled="#{impedimentoBean.isVisualizacao}"
+                        itemLabel="#{item.descricao}" />
+
+                <sgp:formCalendar display="text" labelValue="Data Fim do Impedimento"
+                                  value="#{impedimentoBean.impedimento.fimImpedimento}" 
+                                  styleFormLabelColumn="width: 160px" dataMinima="#{impedimentoBean.dataAtual}"
+                                  disabled="#{impedimentoBean.isVisualizacao}"
+                                  validationRequired="true" />
+
+                <br/>
+                <br/>
+                <br/>
+
+                <p:commandButton value="Salvar" action="#{impedimentoBean.salvar()}"
+                                 update="@form" icon="ui-icon-disk"
+                                 rendered="#{(securityUtil.possuiPermissao('CadastrarImpedimento') and !impedimentoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarImpedimento') and !impedimentoBean.isVisualizacao)}"/>
+                <p:button outcome="pretty:ListarImpedimento" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+                    <f:param name="list" value="1"/>
+                </p:button>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

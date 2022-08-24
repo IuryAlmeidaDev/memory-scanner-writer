@@ -1,9 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:p="http://primefaces.org/ui">
+	
+<ui:include src="/WEB-INF/pages/_script/biometriaConfig.xhtml" />
+
 <script type="text/javascript">
-	var podeHabilitarEConectar = #{(recuperandoBean.isListagem || !recuperandoBean.isVisualizacao)};
-	var biometriaObrigatoria = #{(recuperandoBean.verificarSeBiometriaEhObrigatoria())};
-	var contexto = '#{sigepen.getApplicationName()}';
-	var contexto2 = '#{sigepen.getUrl()}';
-	var wsUrl = '#{sigepen.getWsUrl()}';
-	var versaoAtual = '#{utilBean.getBiometriaVersaoAtual()}';
-	var 
-</script> 
+	sistemaPodeConectarComAppDesktop = #{(recuperandoBean.isListagem || !recuperandoBean.isVisualizacao)};
+</script>
+
+<h:form prependId="false">
+	<p:remoteCommand name="setUsuarioPossuiLeitorBiometricoAtivo" actionListener="#{recuperandoBean.setUsuarioPossuiLeitorBiometricoAtivo}" global="false" />
+</h:form>
+
+</html>

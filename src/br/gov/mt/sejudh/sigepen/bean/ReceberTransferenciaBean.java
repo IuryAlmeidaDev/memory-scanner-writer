@@ -31,6 +31,8 @@ import br.gov.mt.sejudh.sigepen.model.Foto;
 import br.gov.mt.sejudh.sigepen.model.Imagem;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
+import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.PedidoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
@@ -66,6 +68,9 @@ public class ReceberTransferenciaBean extends MetodosDePaginaBean {
 	
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private FileDownloadHandlerBean fileDownload;
 	
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
@@ -272,6 +277,42 @@ public class ReceberTransferenciaBean extends MetodosDePaginaBean {
 	public Date getDataMinima() {
 		dataMinima = new Date();		
 		return dataMinima;
+	}
+	
+	public void imprimir() {
+		try {			
+			List<PedidoTransitoDTO> lista = service.buscaPorFiltro(filtro, true);
+			
+			if (lista.size() == 0) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
+				return;
+			}
+			
+			lista.stream().forEach(t -> {
+				t.setFiltro(filtro);
+			});
+			
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.ListarReceberTransferencia));
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Recebimento de Transferências", log);
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir lista de recebimento de transferências: " + e.getMessage());
+			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Recebimento de Transferências", e, log);
+		}
+	}
+	
+	public void imprimirRegistro(PedidoTransitoDTO pedidoTransferencia) {
+		try {
+			PedidoTransito pedido = service.buscaPedidoPorId(pedidoTransferencia.getId());
+
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(pedido, Relatorio.RegistroRecebimentoTransferencia));
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, pedidoTransferencia, log);
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro imprimir registro de recebimento de transferencia (" + pedidoTransferencia.getRecuperando() + "): " + e.getMessage());
+			LoggerUtil.logErro(Acao.IMPRIMIR, pedidoTransferencia, e, log);
+		}
 	}
 
 }

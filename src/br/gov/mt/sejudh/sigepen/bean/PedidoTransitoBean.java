@@ -33,7 +33,7 @@ import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.PedidoService;
@@ -248,7 +248,7 @@ public class PedidoTransitoBean extends MetodosDePaginaBean {
 	}
 	
 	public void associarRecuperando(SelectEvent event) {
-		RecuperandoDTO r = (RecuperandoDTO) event.getObject();	
+		RecuperandoView r = (RecuperandoView) event.getObject();
 		
 		try {
 			if (r == null) {

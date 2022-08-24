@@ -9,10 +9,10 @@
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 		
-		<h3>#{receberTransferenciaBean.tituloPagina} Receber Transferência</h3>
+		<h3>#{receberTransferenciaBean.tituloPagina} Transferência</h3>
 			<h:form id="formPed">
-				<p:panel>
-				   
+				<p:panel footer="Cadastrado por: #{receberTransferenciaBean.pedido.autorRegistro.usuario} em #{receberTransferenciaBean.pedido.autorRegistro.data} 
+				#{receberTransferenciaBean.pedido.status.descricao.equals('Finalizado') ? '| Alterado por: '.concat(receberTransferenciaBean.pedido.autorUltimaAlteracao.usuario).concat(' em ').concat(receberTransferenciaBean.pedido.autorUltimaAlteracao.data) : ''}">
 				   <p:panel>
 				   	<h4>Recuperando</h4>
 				   

@@ -28,4 +28,8 @@ public class HistoricoRecuperandoService {
 	public List<HistoricoRecuperando> listarHistoricoRecuperando(Long recuperandoId){
 		return dao.listarHistoricoRecuperando(recuperandoId);
 	}
+	
+	public HistoricoRecuperando buscarHistoricoPorId(long id) {
+		return this.dao.buscarHistoricoPorId(id);
+	}
 }

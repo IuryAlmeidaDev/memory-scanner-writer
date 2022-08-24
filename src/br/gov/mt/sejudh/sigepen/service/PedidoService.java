@@ -15,10 +15,12 @@ import br.gov.mt.sejudh.sigepen.dao.MovimentacaoInternaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoDAO;
 import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.dao.TransferenciaDAO;
+import br.gov.mt.sejudh.sigepen.dao.VisitanteDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.MovimentacaoPassos;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
@@ -52,6 +54,9 @@ public class PedidoService {
 
 	@Inject
 	private RecuperandoService recuperandoService;
+	
+	@Inject
+	private VisitanteDAO visitanteDao;
 
 	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(PedidoTransito pedido) {		
@@ -163,9 +168,8 @@ public class PedidoService {
 		
 	}
 	
-	//falta implementar o recebimento da transferencia
 	@Interceptors(EJBExcInterceptor.class)
-	public void finalizarPedidoTransferencia(PedidoTransito pedido) throws ValidacaoException {
+	public void finalizarPedidoTransferencia(PedidoTransito pedido) throws Exception {
 		// validar data fim maior que data inicio
 		Date dataFim = new Date();
 		if (pedido.getRecuperando().getPassagemAtual().getLotacaoAtual().getDataEntrada().after(dataFim)) {
@@ -187,6 +191,8 @@ public class PedidoService {
 		}
 		transfDao.salvar(pedido.getTransferencia());
 		
+		//Inativar Credenciamentos vinculados a este recuperando
+		visitanteDao.inativarCredenciamentosVinculadosAoRecuperando(pedido.getRecuperando());
 	}
 	
 	public void expirarPedidosTransito(){
@@ -216,6 +222,7 @@ public class PedidoService {
 			throw new ValidacaoException("É necessário adicionar um recuperando!");
 		}
 		
+		validarStatusRecuperando(pedido.getRecuperando());
 		validarOrigemDoRecuperando(pedido);
 		
 		switch (passoAtual) {
@@ -265,8 +272,15 @@ public class PedidoService {
 						
 		}
 	}
-	
-	//Precisa refatorar e dinamizar de alguma forma os predicados (Parametrizar)
+
+	private void validarStatusRecuperando(Recuperando recuperando) throws ValidacaoException {
+		StatusRecuperando status = recuperandoService.statusAtualRecuperando(recuperando.getId());
+		
+		if (status.equals(StatusRecuperando.INATIVO)) {
+			throw new ValidacaoException("Recuperando selecionado foi desligado, altere ou cancele este Pedido de Trânsito!");
+		}
+	}
+
 	private void validarSeRecuperandoEstaAssociadoEmOutroPedidoAutorizadoOuVinculadoOuAbertoOuSuspenso(PedidoTransito pedido) throws ValidacaoException {
 		List<PedidoTransito> pedidosDoRecuperando = dao.buscarPedidosDoRecuperando(pedido.getRecuperando().getId());
 		
@@ -361,5 +375,9 @@ public class PedidoService {
 		if (count > 0) {
 			throw new ValidacaoException("Recuperando já possui um pedido do tipo movimentação interna em aberto para o mesmo destino.");
 		}
+	}
+	
+	public List<PedidoTransito> buscarPedidosDoRecuperando(long recuperandoId) {
+		return this.dao.buscarPedidosDoRecuperando(recuperandoId); 
 	}
 }

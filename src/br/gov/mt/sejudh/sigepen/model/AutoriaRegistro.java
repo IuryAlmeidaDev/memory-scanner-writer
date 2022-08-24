@@ -1,9 +1,12 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class AutoriaRegistro {
+public class AutoriaRegistro implements Serializable {
+
+	private static final long serialVersionUID = -8783260402451055006L;
 
 	private Date data;
 	

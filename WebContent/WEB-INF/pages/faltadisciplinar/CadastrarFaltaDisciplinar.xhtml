@@ -1,0 +1,354 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:sgp="http://sejudh.mt.gov.br/components"
+				template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		<h3>#{faltaDisciplinarBean.tituloPagina} Falta Disciplinar Recuperando</h3>
+			<h:form id="formFalta">
+				<p:panel >
+					<div class="row">
+						<div class="col-md-10">
+							<h4>Recuperando</h4>
+
+							<p:commandButton id="adicionarRecuperando" icon="ui-icon-plus" value="Adicionar"
+											 immediate="true"
+											 actionListener="#{faltaDisciplinarBean.abrirDialogRecuperando}"
+											 rendered="#{faltaDisciplinarBean.podeAlterarDadosIniciais()}">
+								<p:ajax event="dialogReturn" listener="#{faltaDisciplinarBean.associarRecuperando}"
+										update=":formFalta:recuperando :formFalta:recuperandoFoto"/>
+							</p:commandButton>
+
+							<h:panelGroup id="recuperando">
+								<sgp:formOutputLabel labelValue="Matrícula"
+													 value="#{faltaDisciplinarBean.faltaDisciplinar.recuperando.id}"
+													 styleFormLabelColumn="width: 150px"/>
+								<sgp:formOutputLabel labelValue="Nome"
+													 value="#{faltaDisciplinarBean.faltaDisciplinar.recuperando.pessoa.nome}"
+													 styleFormLabelColumn="width: 150px"/>
+								<sgp:formOutputLabel labelValue="Estrutura (Cela) Ocorrência"
+													 value="#{faltaDisciplinarBean.faltaDisciplinar.estruturaOcorrencia.nomeCompleto}"
+													 styleFormLabelColumn="width: 150px"/>
+
+								<p:commandButton
+										style="margin-top: -5px"
+										icon="ui-icon ui-icon-search"
+										title="Selecionar Estrutura"
+										immediate="true"
+										actionListener="#{faltaDisciplinarBean.abrirDialogEstrutura}"
+										rendered="#{faltaDisciplinarBean.podeAlterarDadosIniciais()}">
+									<p:ajax event="dialogReturn" listener="#{faltaDisciplinarBean.associarEstrutura}" update=":formFalta:recuperando" />
+								</p:commandButton>
+							</h:panelGroup>
+						</div>
+						<div class="col-md-2">
+							<h:panelGroup id="recuperandoFoto">
+								<p:dataGrid layout="tabular" style="width: 143px" columns="1" rows="1"
+											value="#{faltaDisciplinarBean.faltaDisciplinar.recuperando.fotoFrenteAtual}"
+											rendered="#{faltaDisciplinarBean.faltaDisciplinar.recuperando.fotoFrenteAtual != null}"
+											emptyMessage="Sem foto de frente." var="f">
+									<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false"
+													width="135" height="180">
+										<f:param name="hashId" value="#{f.imagem.id}"/>
+									</p:graphicImage>
+								</p:dataGrid>
+							</h:panelGroup>
+						</div>
+					</div>
+				</p:panel>
+				<br/>
+				<p:panel
+						header="Nº Falta Disciplinar:  #{faltaDisciplinarBean.faltaDisciplinar.id}"
+						footer="Cadastrado por: #{faltaDisciplinarBean.faltaDisciplinar.autorRegistro.usuario} em #{faltaDisciplinarBean.faltaDisciplinar.autorRegistro.data} | Alterado por: #{faltaDisciplinarBean.faltaDisciplinar.autorUltimaAlteracao.usuario} em #{faltaDisciplinarBean.faltaDisciplinar.autorUltimaAlteracao.data}">
+					
+		            <style type="text/css">
+	                   .ui-selectonemenu-panel {width: 600px !important;}
+					   .menu .ui-selectonemenu {width: 300px !important;max-width: 300px !important;}
+					   .menu .ui-selectonemenu-items-wrapper {width: 300px !important;max-width: 300px !important;}
+					   .menu .ui-selectonemenu-label {max-width: 300px !important;width: 300px !important;}
+					   .ui-selectonemenu {max-width: 600px !important;width: 100%;} 
+	                 </style>
+					
+					<sgp:formSelectOneMenu 
+						id="tipo" labelValue="Tipo Falta Disciplinar"
+						validationRequired="true"
+						filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+						value="#{faltaDisciplinarBean.faltaDisciplinar.tipo}"
+						itemsValue="#{faltaDisciplinarBean.tipoFaltaDisciplinars}"
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}"
+						temSelecione="true"
+						converter="SimpleEntityConverter"
+						disabled="#{!faltaDisciplinarBean.podeAlterarDadosIniciais()}"
+						display="text">
+							<f:ajax event="change" render=":formFalta:groupNatureza"/>
+						</sgp:formSelectOneMenu>
+
+					<h:panelGroup id="groupNatureza" class="col-md-4">
+						<sgp:formOutputText id="natureza" labelValue="Natureza"
+											value="#{faltaDisciplinarBean.faltaDisciplinar.tipo.natureza.descricao}" styleFormLabelColumn="min-width:60px;" rendered="#{faltaDisciplinarBean.faltaDisciplinar.tipo != null}"/>
+					</h:panelGroup>
+
+					<sgp:formCalendar display="text" labelValue="Data de Ocorrência"
+									  value="#{faltaDisciplinarBean.faltaDisciplinar.data}"
+									  validationRequired="true"
+									  requiredMessage="Data de ocorrência é obrigatória."
+									  disabled="#{!faltaDisciplinarBean.podeAlterarDadosIniciais()}"
+									  styleFormLabelColumn="min-width:140px" 
+									  pattern="dd/MM/yyyy HH:mm" />
+
+					<sgp:formInputText
+						id="nomeTestemunha"
+						labelValue="Testemunha"
+						value="#{faltaDisciplinarBean.faltaDisciplinar.nomeTestemunha}"
+						validationRequired="false"
+						disabled="#{!faltaDisciplinarBean.podeAlterarDadosIniciais()}"
+						maxlength="250"
+						size="80"
+						display="text"
+						styleFormLabelColumn="min-width:140px"/>
+
+					<sgp:formInputText
+							id="fatoNumeroDocumento"
+							labelValue="Nº Documento"
+							value="#{faltaDisciplinarBean.faltaDisciplinar.fatoNumeroDocumento}"
+							validationRequired="true"
+							requiredMessage="Número do documento é obrigatório."
+							disabled="#{!faltaDisciplinarBean.podeAlterarDadosIniciais()}"
+							rendered="#{faltaDisciplinarBean.exibirDadosFato()}"
+							maxlength="80"
+							size="80"
+							display="text"
+							styleFormLabelColumn="min-width:140px"/>
+
+					<sgp:formCalendar 
+						labelValue="Data Documento"
+						value="#{faltaDisciplinarBean.faltaDisciplinar.fatoData}"
+						display="text" 
+						dataMinima="#{faltaDisciplinarBean.faltaDisciplinar.data}"
+						validationRequired="true"
+						requiredMessage="Data do documento é obrigatória."
+						pattern="dd/MM/yyyy"
+						disabled="#{!faltaDisciplinarBean.podeAlterarDadosIniciais()}"
+						rendered="#{faltaDisciplinarBean.exibirDadosFato()}"
+						styleFormLabelColumn="min-width:140px" />
+					<br/>
+					
+					<sgp:formSelectOneMenu labelValue="Suspensão de Visita?" value="#{faltaDisciplinarBean.faltaDisciplinar.fatoSuspendeVisita}" display="text" 
+						disabled="#{!faltaDisciplinarBean.podeAlterarDadosIniciais()}"
+						styleFormLabelColumn="width: 140px" >
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+					</sgp:formSelectOneMenu>
+					
+					<sgp:formInputTextarea
+							labelValue="Descrição do Fato"
+							value="#{faltaDisciplinarBean.faltaDisciplinar.fatoDescricao}"
+							validationRequired="true"
+							requiredMessage="Descrição do fato é obrigatória."
+							id="fatoDescricao"
+							rendered="#{faltaDisciplinarBean.exibirDadosFato()}"
+							disabled="#{!faltaDisciplinarBean.podeAlterarDadosIniciais()}"
+							display="display"
+							maxlength="4000"
+                            rows="10"
+                            columns="100"
+							styleFormLabelColumn="min-width:140px" />
+
+						<br/>
+
+					
+					<h:panelGroup rendered="#{faltaDisciplinarBean.exibirDivisaDadosPad() }">
+						<div class="form-block tr-line"></div>
+					</h:panelGroup>
+
+					<h:panelGroup rendered="#{faltaDisciplinarBean.exibirDadosPad()}">
+						<sgp:formInputText
+								id="padNumeroDocumento"
+								labelValue="Nº Documento PAD"
+								value="#{faltaDisciplinarBean.faltaDisciplinar.padNumeroDocumento}"
+								validationRequired="true"
+								requiredMessage="Número do documento PAD obrigatório."
+								disabled="#{!faltaDisciplinarBean.podeAlterarDadosPad()}"
+								rendered="#{faltaDisciplinarBean.exibirDadosPad()}"
+								maxlength="80"
+								size="80"
+								display="text"
+								styleFormLabelColumn="min-width:140px"/>
+
+						<sgp:formCalendar
+								labelValue="Data Documento PAD"
+								value="#{faltaDisciplinarBean.faltaDisciplinar.padDataDocumento}"
+								display="text"
+								dataMinima="#{faltaDisciplinarBean.faltaDisciplinar.data}"
+								validationRequired="true"
+								requiredMessage="Data do documento PAD obrigatória."
+								pattern="dd/MM/yyyy"
+								disabled="#{!faltaDisciplinarBean.podeAlterarDadosPad()}"
+								rendered="#{faltaDisciplinarBean.exibirDadosPad()}"
+								styleFormLabelColumn="min-width:140px"/>
+
+						<sgp:formSelectOneMenu labelValue="Suspensão de Visita?" value="#{faltaDisciplinarBean.faltaDisciplinar.padSuspendeVisita}" disabled="#{!faltaDisciplinarBean.podeAlterarDadosPad()}" display="text" 
+							styleFormLabelColumn="width: 140px" >
+							<f:selectItem itemLabel="Sim" itemValue="true" />
+							<f:selectItem itemLabel="Não" itemValue="false" />
+						</sgp:formSelectOneMenu>
+						
+						
+						<sgp:formInputTextarea
+								id="padDescricao"
+								labelValue="Descrição PAD"
+								value="#{faltaDisciplinarBean.faltaDisciplinar.padDescricao}"
+								validationRequired="true"
+								requiredMessage="Descrição do PAD obrigatória."
+								disabled="#{!faltaDisciplinarBean.podeAlterarDadosPad()}"
+								rendered="#{faltaDisciplinarBean.exibirDadosPad()}"
+								display="display"
+								maxlength="4000"
+                               	rows="10"
+                               	columns="150"
+								styleFormLabelColumn="min-width:140px"/>
+
+					</h:panelGroup>
+
+					<h:panelGroup rendered="#{faltaDisciplinarBean.exibirDivisaDadosParecer()}">
+						<div class="form-block tr-line"></div>
+					</h:panelGroup>
+
+					<h:panelGroup rendered="#{faltaDisciplinarBean.exibirDadosParecer()}">
+						<sgp:formInputText
+								id="parecerNumeroDocumento"
+								labelValue="Nº Parecer"
+								value="#{faltaDisciplinarBean.faltaDisciplinar.parecerNumero}"
+								validationRequired="true"
+								requiredMessage="Número do parecer obrigatório."
+								disabled="#{!faltaDisciplinarBean.podeAlterarDadosParecer()}"
+								rendered="#{faltaDisciplinarBean.exibirDadosParecer()}"
+								maxlength="80"
+								size="80"
+								display="text"
+								styleFormLabelColumn="min-width:140px"/>
+
+						<sgp:formCalendar
+								labelValue="Data do Parecer"
+								value="#{faltaDisciplinarBean.faltaDisciplinar.parecerData}"
+								display="text"
+								dataMinima="#{faltaDisciplinarBean.faltaDisciplinar.data}"
+								validationRequired="true"
+								requiredMessage="Data do parecer obrigatória."
+								pattern="dd/MM/yyyy"
+								disabled="#{!faltaDisciplinarBean.podeAlterarDadosParecer()}"
+								rendered="#{faltaDisciplinarBean.exibirDadosParecer()}"
+								styleFormLabelColumn="min-width:140px"/>
+								
+						<sgp:formSelectOneMenu labelValue="Suspensão de Visita?" value="#{faltaDisciplinarBean.faltaDisciplinar.parecerSuspendeVisita}" disabled="#{!faltaDisciplinarBean.podeAlterarDadosParecer()}" display="text" 
+							styleFormLabelColumn="width: 140px" >
+							<f:selectItem itemLabel="Sim" itemValue="true" />
+							<f:selectItem itemLabel="Não" itemValue="false" />
+						</sgp:formSelectOneMenu>
+						
+						<sgp:formInputTextarea id="parecerDescricao"
+											   labelValue="Descrição Parecer"
+											   value="#{faltaDisciplinarBean.faltaDisciplinar.parecerDescricao}"
+											   validationRequired="true"
+											   requiredMessage="Descrição do parecer é obrigatória."
+											   disabled="#{!faltaDisciplinarBean.podeAlterarDadosParecer()}"
+											   rendered="#{faltaDisciplinarBean.exibirDadosParecer()}"
+											   display="display"
+											   maxlength="4000"
+				                               rows="10"
+				                               columns="150"
+												styleFormLabelColumn="min-width:140px"/>
+						<br/>
+						<sgp:formSelectOneMenu
+								id="faltaReconhecida" labelValue="Falta Reconhecida?"
+								validationRequired="true"
+								requiredMessage="Campo Falta Reconhecida é obrigatório."
+								value="#{faltaDisciplinarBean.faltaDisciplinar.reconhecida}"
+								itemsValue="#{comboHelperBean.simNao}"
+								itemValue="#{item}"
+								itemLabel="#{item.descricao}"
+								temSelecione="true"
+								disabled="#{!faltaDisciplinarBean.podeAlterarDadosParecer()}"
+								rendered="#{faltaDisciplinarBean.exibirDadosParecer()}"
+								display="text"
+								styleFormLabelColumn="min-width:140px">
+							<f:ajax event="change"
+									render=":formFalta:groupNatureza :formFalta:dataInicio :formFalta:dataFim"/>
+						</sgp:formSelectOneMenu>
+
+						<div class="form-block tr-line"></div>
+
+						<div class="form-block">
+							<div class="col-md-6">
+								<sgp:formCalendar
+										id="dataInicio"
+										labelValue="Data Início Falta Disciplinar"
+										value="#{faltaDisciplinarBean.faltaDisciplinar.dataInicio}"
+										display="text"
+										dataMinima="#{faltaDisciplinarBean.faltaDisciplinar.fatoData}"
+										validationRequired="#{faltaDisciplinarBean.faltaDisciplinar.reconhecida.toString().equals('S')}"
+										requiredMessage="Data início da falta disciplinar é obrigatória."
+										pattern="dd/MM/yyyy"
+										disabled="#{!faltaDisciplinarBean.podeAlterarDadosParecer()}"
+										rendered="#{faltaDisciplinarBean.exibirDadosParecer()}"
+										styleFormLabelColumn="min-width:140px"/>
+							</div>
+							<div class="col-md-6">
+								<sgp:formCalendar
+										id="dataFim"
+										labelValue="Data Fim Falta Disciplinar"
+										value="#{faltaDisciplinarBean.faltaDisciplinar.dataFim}"
+										display="text"
+										dataMinima="#{faltaDisciplinarBean.faltaDisciplinar.dataInicio}"
+										validationRequired="#{faltaDisciplinarBean.faltaDisciplinar.reconhecida.toString().equals('S')}"
+										requiredMessage="Data fim da falta disciplinar é obrigatória."
+										pattern="dd/MM/yyyy"
+										disabled="#{!faltaDisciplinarBean.podeAlterarDadosParecer()}"
+										rendered="#{faltaDisciplinarBean.exibirDadosParecer()}"
+										styleFormLabelColumn="min-width:140px"/>
+							</div>
+						</div>
+						<div class="form-block tr-line"></div>
+					</h:panelGroup>
+
+					<sgp:formOutputLabel id="situacao" labelValue="Situação" value="#{faltaDisciplinarBean.faltaDisciplinar.situacaoTransicao}" />
+
+					<h:panelGroup rendered="#{faltaDisciplinarBean.exibirMotivoCancelamento()}">
+						<div class="form-block tr-line"></div>
+						<sgp:formInputTextarea id="cancelamentoMontivo"
+											   labelValue="Motivo cancelamento"
+											   value="#{faltaDisciplinarBean.faltaDisciplinar.motivoCancelamento}"
+											   disabled="true"
+											   rendered="#{faltaDisciplinarBean.exibirMotivoCancelamento()}"
+											   rows="8" columns="80"
+											   maxlength="250" autoResize="true"
+											   size="#{faltaDisciplinarBean.faltaDisciplinar.fatoDescricao.length()+5}"
+												styleFormLabelColumn="min-width:140px"/>
+					</h:panelGroup>
+					<div class="form-block tr-line"></div>
+
+					<p:commandButton id="confirmarSemConfirmacao" value="Confirmar" action="#{faltaDisciplinarBean.salvar()}" update="@form" icon="ui-icon-disk"
+									 rendered="#{faltaDisciplinarBean.exibirBotaoConfirmarSemConfirmacao()}" >
+					</p:commandButton>
+					<p:button outcome="pretty:ListarFaltaDisciplinar" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+				</p:panel>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+				</p:confirmDialog>
+		
+			</h:form>
+	</ui:define>
+</ui:composition>

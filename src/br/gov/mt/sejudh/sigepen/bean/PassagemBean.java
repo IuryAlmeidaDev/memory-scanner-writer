@@ -1,7 +1,10 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -10,17 +13,32 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
+import com.ocpsoft.pretty.faces.annotation.URLAction;
+import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import com.ocpsoft.pretty.faces.annotation.URLMappings;
+
+import br.gov.mt.sejudh.sigepen.biometrics.BiometriaRetorno;
+import br.gov.mt.sejudh.sigepen.biometrics.BiometriaSDKDao;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoAutorizacaoValidacaoSemBio;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamento;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
+import br.gov.mt.sejudh.sigepen.model.AutorizacaoValidacaoSemBiometria;
 import br.gov.mt.sejudh.sigepen.model.Estabelecimento;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.Foto;
@@ -28,25 +46,26 @@ import br.gov.mt.sejudh.sigepen.model.Imagem;
 import br.gov.mt.sejudh.sigepen.model.Passagem;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.PassagemProcedencia;
+import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
+import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.service.PassagemService;
+import br.gov.mt.sejudh.sigepen.service.PedidoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
+import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
-import com.ocpsoft.pretty.faces.annotation.URLAction;
-import com.ocpsoft.pretty.faces.annotation.URLMapping;
-import com.ocpsoft.pretty.faces.annotation.URLMappings;
-
 @ManagedBean
 @ViewScoped
 @URLMappings(mappings = {
 		@URLMapping(id = "CadastrarNovaPassagem", pattern = "/passagem/iniciar/#{id}", viewId = "/WEB-INF/pages/recuperando/CriarPassagem.xhtml"),
-		@URLMapping(id = "DesligarRecuperando", pattern = "/passagem/finalizar/#{id}", viewId = "/WEB-INF/pages/recuperando/DesligarRecuperando.xhtml")
+		@URLMapping(id = "DesligarRecuperando", pattern = "/passagem/finalizar/#{id}", viewId = "/WEB-INF/pages/recuperando/DesligarRecuperando.xhtml"),
+		@URLMapping(id = "AlterarPassagem", pattern = "/passagem/alterar/#{id}", viewId = "/WEB-INF/pages/recuperando/AlterarPassagem.xhtml"),
 })
 public class PassagemBean extends MetodosDePaginaBean {
 	
@@ -75,8 +94,35 @@ public class PassagemBean extends MetodosDePaginaBean {
 	@Inject
 	private UnidadePrisionalService unidadeService;
 
+	@Inject
+	private BiometriaSDKDao biometriaSDKDao;
+
+	private boolean biometriaValida;
+	
+	private boolean autorizacaoValida;
+	
+	@Inject
+	private PedidoService pedidoService;
+
+    private String loginUsuarioAutorizador;
+    private String senhaUsuarioAutorizador;
+    private String observacaoUsuarioAutorizador;
+
+    @Inject
+    private UsuarioService usuarioService;
+
+	private boolean primeiraPassagem = true;
+
+	private Boolean usuarioPossuiLeitorBiometricoAtivo = false;
+	
+	private Boolean recuperandoTemBiometria = null;
+	
+	private Boolean visitanteTemBiometria = null;
+
 	@URLAction(onPostback=false)
 	public String init() {
+		this.biometriaValida = false;
+		this.autorizacaoValida = false;
 		try {
 			this.modificaTituloPagina();
 
@@ -86,6 +132,10 @@ public class PassagemBean extends MetodosDePaginaBean {
 				facesUtil.exibirMensagemErro("Recuperando não encontrado.", true);
 				return "pretty:ListarRecuperando";
 			}
+
+			buscarPrimeiraPassagem(id);
+
+			long idPassagem = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("idPassagem"));;
 			
 			switch(this.getAcaoDeTela()) {
 				case INICIAR:
@@ -110,6 +160,16 @@ public class PassagemBean extends MetodosDePaginaBean {
 					
 					this.passagem = this.recuperando.getPassagemAtual();
 					this.lotacao = this.passagem.getLotacaoAtual();
+					
+					break;
+					
+				case ALTERAR:
+					this.passagem = this.passagemService.buscarPassagemPorId(idPassagem);
+					this.passagemProcedencia = this.passagem.getPassagemProcedencia();
+					this.lotacao = this.passagem.getUltimaLotacao();
+					if(this.lotacao == null) {
+						this.lotacao = new PassagemLotacao();
+					}
 					break;
 			
 				default:
@@ -149,6 +209,9 @@ public class PassagemBean extends MetodosDePaginaBean {
 		
 		switch(this.getAcaoDeTela()) {
 			case INICIAR:
+				this.recuperando = passagemService.buscarRecuperandoPorIdNovaPassagem(id);
+				break;				
+			case ALTERAR:
 				this.recuperando = passagemService.buscarRecuperandoPorIdNovaPassagem(id);
 				break;
 			case FINALIZAR:
@@ -196,6 +259,9 @@ public class PassagemBean extends MetodosDePaginaBean {
 	
 	public String salvar() throws ValidacaoException {
 		try {
+			if(this.getAcaoDeTela() != AcaoDeTela.ALTERAR && mostrarAutorizacao() && !this.biometriaValida && !this.autorizacaoValida) {
+				throw new ValidacaoException("É necessário validar o recuperando.");
+			}
 			if (this.lotacao.getEstrutura() == null) {
 				throw new ValidacaoException("É necessário adicionar uma lotação (estrutura) para a passagem do recuperando.");
 			}
@@ -215,34 +281,49 @@ public class PassagemBean extends MetodosDePaginaBean {
 			if (this.passagem.getDataEntrada().after(Sigepen.getDataAtual())) {
 				throw new ValidacaoException("A data da Entrada não pode ser maior que a data atual.");
 			}
-			
-			if (passagemService.possuiPasagemAberta(this.recuperando)) {
-				throw new ValidacaoException("Recuperndo possui uma passagem não finalizada!");
+				
+			if (this.getAcaoDeTela() != AcaoDeTela.ALTERAR && passagemService.possuiPasagemAberta(this.recuperando)) {
+					throw new ValidacaoException("Recuperando possui uma passagem não finalizada!");
 			}
-			
-			if (!passagemService.validarDataNovaPasagem(this.recuperando, this.passagem.getDataEntrada())) {
+							
+			if (this.getAcaoDeTela() != AcaoDeTela.ALTERAR &&  !passagemService.validarDataNovaPasagem(this.recuperando, this.passagem.getDataEntrada())) {
 				throw new ValidacaoException("A data da Entrada não pode ser anterior a saída da última passagem!");
 			}
 			
-			this.passagem.setFoto(this.recuperando.getFotoFrenteAtual());
-			this.lotacao.setDataEntrada(this.passagem.getDataEntrada());
-			this.passagem.getLotacao().add(this.lotacao);
-			this.passagem.setPassagemProcedencia(this.passagemProcedencia);
-			this.passagemProcedencia.setPassagem(this.passagem);
-			this.recuperando.getPassagens().add(this.passagem);
-			this.recuperando.setStatus(StatusRecuperando.ATIVO);
-
-			if (this.recuperando.getPassagemAtual().getDataInclusaoNoSistema() == null) {
-				this.recuperando.getPassagemAtual().setDataInclusaoNoSistema(Sigepen.getDataAtual());
+			if (this.getAcaoDeTela() != AcaoDeTela.ALTERAR &&  !passagemService.validarDataNovaPasagem(this.recuperando, this.passagem.getDataEntrada())) {
+				throw new ValidacaoException("A data da Entrada não pode ser anterior a saída da última passagem!");
 			}
+			
+			if (this.getAcaoDeTela() == AcaoDeTela.ALTERAR) {
+				this.passagemService.alterar(this.passagem);
+				
+				LoggerUtil.logInfo(Acao.ALTERAR, this.recuperando, log);
+				facesUtil.exibirMensagemInfo("Passagem do recuperando(a) " + this.recuperando.getPessoa().getNome() + " alterada com sucesso!", true);
+				return "pretty:ListarRecuperando";
+			} else {
+				
+				this.passagem.setFoto(this.recuperando.getFotoFrenteAtual());
+				this.lotacao.setDataEntrada(this.passagem.getDataEntrada());
+				this.passagem.getLotacao().add(this.lotacao);
+				this.passagem.setPassagemProcedencia(this.passagemProcedencia);
+				this.passagemProcedencia.setPassagem(this.passagem);
+				this.recuperando.getPassagens().add(this.passagem);
+				this.recuperando.setStatus(StatusRecuperando.ATIVO);
 
-			recuperandoService.salvar(this.recuperando);
-			
-			recuperandoService.atualizarRegimeCondicaoAtualRecuperando(this.recuperando);
-			LoggerUtil.logInfo(Acao.INICIAR, this.recuperando, log);
-			facesUtil.exibirMensagemInfo("Entrada do recuperando(a) " + this.recuperando.getPessoa().getNome() + " realizada com sucesso!", true);
-			
-			return "pretty:ListarRecuperando";
+				if (this.recuperando.getPassagemAtual().getDataInclusaoNoSistema() == null) {
+					this.recuperando.getPassagemAtual().setDataInclusaoNoSistema(Sigepen.getDataAtual());
+				}
+				
+				facesUtil.setObjetoSessao("NOVA_PASSAGEM", "NOVA_PASSAGEM");
+				recuperandoService.salvar(this.recuperando);
+				recuperandoService.atualizarRegimeCondicaoAtualRecuperando(this.recuperando);
+				this.recuperando.setDataCadastroParente(null);
+				recuperandoService.resetarDataCadastroParente(this.recuperando);
+				LoggerUtil.logInfo(Acao.INICIAR, this.recuperando, log);
+				
+				facesUtil.exibirMensagemInfo("Entrada do recuperando(a) " + this.recuperando.getPessoa().getNome() + " iniciada com sucesso!", true);
+				return "pretty:ListarRecuperando";
+			}			
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
 		} catch (Exception e) {
@@ -255,6 +336,8 @@ public class PassagemBean extends MetodosDePaginaBean {
 	
 	public String desligar() {
 		try {
+			validaPedidoTransito();
+			
 			passagemService.desligar(this.recuperando, this.passagem, this.lotacao);
 			LoggerUtil.logInfo(Acao.FINALIZAR, this.recuperando, log);
 			facesUtil.exibirMensagemInfo("Desligamento do(a) recuperando(a) " + this.recuperando.getPessoa().getNome() + " realizado com sucesso!", true);
@@ -284,11 +367,17 @@ public class PassagemBean extends MetodosDePaginaBean {
 		Foto foto = new Foto();
 		foto.setRecuperando(this.recuperando);
 		foto.setTipo(TipoFoto.FRENTE);
-		foto.setIsAtual(true);
 		foto.setDataInclusao(Sigepen.getDataAtual());
 		foto.setImagem((Imagem) retorno);
 
-		this.recuperando.adicionarFotoFrente(foto);
+		if(this.getAcaoDeTela().equals(AcaoDeTela.INICIAR)) {
+			foto.setIsAtual(true);
+			this.recuperando.adicionarFotoFrente(foto);
+		} else {
+			foto.setIsAtual(false);
+			this.passagem.setFoto(foto);
+		}
+
 		LoggerUtil.logInfo(Acao.ADICIONAR, foto + " " + this.recuperando, log);
 	}
 	
@@ -427,5 +516,186 @@ public class PassagemBean extends MetodosDePaginaBean {
 
 	public void setProcedencia(Estabelecimento procedencia) {
 		this.procedencia = procedencia;
+	}
+	
+	public void retornoOperacaoBiometrica() {
+		switch (BiometriaRetorno.getOperacao(facesUtil)) {
+			case Capturar:
+				validarBiometria(BiometriaRetorno.getValor());
+				break;
+			default:
+				break;
+		}
+	}
+	
+	public void validarBiometria(String templateCapturado) {
+		if(this.recuperando.getPessoa().getBiometria() != null && this.recuperando.getPessoa().getBiometria().getTemplate() != null) {
+			try {
+				byte[] templateBiometricoCapturado = Base64.getDecoder().decode(new String(templateCapturado).getBytes("UTF-8"));
+				byte[] templateBiometricoCadastrado = this.recuperando.getPessoa().getBiometria().getTemplate();
+
+				boolean asBiometriasSaoCorrespondentes = biometriaSDKDao.verificarPorTemplate(templateBiometricoCapturado, templateBiometricoCadastrado);
+
+				if (asBiometriasSaoCorrespondentes) {
+					this.biometriaValida = true;
+				} else {
+					facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Biometria inválida!");
+				}
+				
+
+			} catch (Exception e) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao validar Biometria do Visitante!");
+				LoggerUtil.logErro(e, log);
+			}
+		}
+		RequestContext.getCurrentInstance().update("formPassagem:statusValidacaoBio");
+	}
+
+	public boolean isBiometriaValida() {
+		return biometriaValida;
+	}
+
+	public void setBiometriaValida(boolean biometriaValida) {
+		this.biometriaValida = biometriaValida;
+	}
+	
+	public void abrirLeitor() {
+		RequestContext.getCurrentInstance().execute("capturar();");
+	}
+	
+	private void validaPedidoTransito() throws ValidacaoException {
+		List<PedidoTransito> pedidos = pedidoService.buscarPedidosDoRecuperando(this.recuperando.getId());
+		for(PedidoTransito p : pedidos) {
+			if(p.getUnidadeOrigem().getId() == SecurityUtil.getUnidadeSelecionada().getId() && !StatusPedido.NAO_AUTORIZADO.equals(p.getStatus()) && !StatusPedido.FINALIZADO.equals(p.getStatus()) && !StatusPedido.CANCELADO.equals(p.getStatus())){
+				throw new ValidacaoException("Operação não permitida: Existe(m) Pedido(s) de Trânsito não finalizado(s) para este Recuperando. Favor cancelar todos que não estiverem Finalizados.");
+			}
+		}
+	}
+
+	public boolean desabilitarBotaoAutorizar() {
+		return this.recuperando.getPessoa().getBiometria() != null && this.recuperando.getPessoa().getBiometria().getTemplate() != null;
+	}
+	
+	public void abrirDlgAutorizar(ActionEvent event) {
+		RequestContext.getCurrentInstance().execute("PF('dlgAutBio2').show()");
+	}
+
+	public String autorizarPassagemSemBiometria() {
+        try {
+            AuthenticationInfo authenticationInfo = SecurityUtils.getSecurityManager().authenticate(
+                    new UsernamePasswordToken(this.loginUsuarioAutorizador, this.senhaUsuarioAutorizador)
+            );
+            SecurityUtils.getSecurityManager().checkPermission(authenticationInfo.getPrincipals(), "AutorizarNovaPassagemSemBiometria");
+            Usuario usuario = usuarioService.buscarUsuarioPorLogin(this.loginUsuarioAutorizador);
+
+            AutorizacaoValidacaoSemBiometria autValid = new AutorizacaoValidacaoSemBiometria();
+            autValid.setObservacao(this.observacaoUsuarioAutorizador);
+            autValid.setUsuario(usuario);
+            autValid.setDataAutorizacao(Sigepen.getDataAtual());
+            autValid.setTipoAutorizacaoValidacaoSemBio(TipoAutorizacaoValidacaoSemBio.NOVA_PASSAGEM_RECUPERANDO);
+            autValid.setPassagem(this.passagem);
+            
+            this.passagem.getAutorizacaoValidacaoSemBiometria().add(autValid);
+
+			this.autorizacaoValida = true;
+
+            RequestContext.getCurrentInstance().execute("PF('dlgAutBio2').hide()");
+			RequestContext.getCurrentInstance().update("tipoVisitaTornarVisitante");
+			RequestContext.getCurrentInstance().update("tipoVisitaBiometria");
+			RequestContext.getCurrentInstance().update("panelTornarVisitante");
+			RequestContext.getCurrentInstance().update("panelTipoVisita");
+			RequestContext.getCurrentInstance().update("formPassagem:statusValidacaoBio");
+
+        } catch (UnauthorizedException e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Usuário informado não possui permissão para autorizar nova passagem.");
+        } catch (UnknownAccountException | IncorrectCredentialsException e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Usuário ou senha inválidos.");
+        } catch (Exception e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao autorizar passagem sem biometria.");
+            LoggerUtil.logErro(e, log);
+        }
+
+        return null;
+    }
+
+	public String getLoginUsuarioAutorizador() {
+		return loginUsuarioAutorizador;
+	}
+
+	public void setLoginUsuarioAutorizador(String loginUsuarioAutorizador) {
+		this.loginUsuarioAutorizador = loginUsuarioAutorizador;
+	}
+
+	public String getSenhaUsuarioAutorizador() {
+		return senhaUsuarioAutorizador;
+	}
+
+	public void setSenhaUsuarioAutorizador(String senhaUsuarioAutorizador) {
+		this.senhaUsuarioAutorizador = senhaUsuarioAutorizador;
+	}
+
+	public String getObservacaoUsuarioAutorizador() {
+		return observacaoUsuarioAutorizador;
+	}
+
+	public void setObservacaoUsuarioAutorizador(String observacaoUsuarioAutorizador) {
+		this.observacaoUsuarioAutorizador = observacaoUsuarioAutorizador;
+	}
+
+	public boolean isAutorizacaoValida() {
+		return autorizacaoValida;
+	}
+
+	public void setAutorizacaoValida(boolean autorizacaoValida) {
+		this.autorizacaoValida = autorizacaoValida;
+	}
+
+	public boolean mostrarAutorizacao() {
+		return !primeiraPassagem && 
+				(this.recuperando.getPessoa().getBiometria() != null && this.recuperando.getPessoa().getBiometria().getTemplate() != null);
+	}
+
+	private void buscarPrimeiraPassagem(long idRecuperando) {
+		this.primeiraPassagem = this.passagemService.buscarPrimeiraPassagem(idRecuperando);
+	}
+
+	public boolean verificaSeRecuperandoTemBiometria() {
+		if (this.recuperando == null) {
+			return false;
+		}
+		
+		return (this.recuperando.getPessoa().getBiometria() != null && this.recuperando.getPessoa().getBiometria().getTemplate() != null);
+	}
+
+	public void setUsuarioPossuiLeitorBiometricoAtivo() {
+		Map<String, String> map = facesUtil.getParameters();
+		this.usuarioPossuiLeitorBiometricoAtivo = Boolean.parseBoolean(map.get("status"));
+		
+		if (this.passagem != null) {
+			recuperandoTemBiometria = verificaSeRecuperandoTemBiometria();
+			Boolean habilitaBotaoAutorizacao = null;
+			
+			if (this.usuarioPossuiLeitorBiometricoAtivo && recuperandoTemBiometria) {
+				habilitaBotaoAutorizacao = false;
+			} else if (this.usuarioPossuiLeitorBiometricoAtivo && !recuperandoTemBiometria) {
+				habilitaBotaoAutorizacao = true;
+			} else if (!this.usuarioPossuiLeitorBiometricoAtivo) {
+				habilitaBotaoAutorizacao = true;
+			}
+			
+			RequestContext.getCurrentInstance().execute("setStatusBotaoAutorizacao("+ habilitaBotaoAutorizacao + ", 'formPassagem:btnAutorizacao')");
+		}
+	}
+
+	public Boolean getVisitanteTemBiometria() {
+		return visitanteTemBiometria;
+	}
+
+	public void setVisitanteTemBiometria(Boolean visitanteTemBiometria) {
+		this.visitanteTemBiometria = visitanteTemBiometria;
+	}
+	
+	public String getAcao() {
+		return this.getAcaoDeTela().toString();
 	}
 }

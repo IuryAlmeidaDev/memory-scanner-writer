@@ -11,6 +11,7 @@
 	
 <cc:interface>
 	<cc:clientBehavior event="dateSelect" name="dateSelect" default="true" targets="input" />
+	<cc:clientBehavior event="change" name="change" default="true" targets="input" />
 	<cc:attribute name="labelValue" required="true" />
 	<cc:attribute name="id" required="false"/>
 	<cc:attribute name="minlength" default="10" />
@@ -28,6 +29,7 @@
 	<cc:attribute name="requiredMessage" required="false"/>
 	<cc:attribute name="toolTip" required="false"/>
 	<cc:attribute name="styleFormLabelColumn" required="false"/>
+	<cc:attribute name="styleFormRequiredColumn" required="false"/>
 </cc:interface>
 
 <cc:implementation>
@@ -37,7 +39,7 @@
 			<h:outputLabel for="input" value="#{cc.attrs.labelValue}:" />
 		</div>
 
-		<div class="form-required-column">
+		<div class="form-required-column" style="#{cc.attrs.styleFormRequiredColumn}">
 			<ui:fragment rendered="#{cc.attrs.validationRequired}">*</ui:fragment>
 			<p:spacer width="15px" rendered="#{!cc.attrs.validationRequired}" />
 		</div>

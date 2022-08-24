@@ -303,4 +303,19 @@ input, textarea {
 	color:#FFF;
 }
 
+.ui-dash-text-panel-18{
+	font-size:18px;
+	color:#FFF;
+}
+
+.ui-state-active .ui-icon {
+    margin-left: -1px;
+    margin-top: -1px;
+}
+
+.tr-line {
+	border-bottom-color: #cccccc;
+	border-bottom-style: solid;
+	border-bottom-width: thin;
+	margin-bottom: 10px;
 }

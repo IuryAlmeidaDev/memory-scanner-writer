@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="processos" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a9b955f9-9039-4234-b435-20e6291b9861">
+	<property name="ireport.zoom" value="1.9487171000000065"/>
+	<property name="ireport.x" value="256"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\subrelatorios\\ListarRelatorioSecaoJurisdicionalNovo\\"]]></defaultValueExpression>
+	</parameter>
+	<field name="processoId" class="java.lang.Long"/>
+	<field name="processoNumero" class="java.lang.String"/>
+	<field name="processoOficio" class="java.lang.String"/>
+	<field name="processoInquerito" class="java.lang.String"/>
+	<field name="documentos" class="java.util.Collection"/>
+	<group name="documentos">
+		<groupExpression><![CDATA[$F{processoId}]]></groupExpression>
+		<groupFooter>
+			<band height="32">
+				<subreport>
+					<reportElement x="0" y="0" width="802" height="32" uuid="1d954c59-aca1-49d5-94d6-4456ef06dbec"/>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{documentos})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "documentos.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<rectangle>
+				<reportElement x="402" y="0" width="400" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="3981989d-2f04-4277-95fd-5e8b666b653e"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="402" y="15" width="200" height="15" uuid="aa24ce06-ab2e-4344-ab98-c7271a3a0b3a"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{processoNumero}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="602" y="15" width="100" height="15" uuid="6bbdc5d5-3ac8-488b-889a-90e2e491f12f"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{processoOficio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="702" y="15" width="100" height="15" uuid="732f09ae-08c9-41cc-b574-d862e2f92356"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{processoInquerito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="402" y="15" width="200" height="15" uuid="a0d1d6a9-502d-4e08-b161-481ef12a02f7">
+					<printWhenExpression><![CDATA[$F{processoNumero} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="602" y="15" width="100" height="15" uuid="d9f59209-8036-42da-97e2-5cbfb104f3fc">
+					<printWhenExpression><![CDATA[$F{processoOficio} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="702" y="15" width="100" height="15" uuid="b9fb12e7-b911-4cf2-83ea-fb1a65b0368f">
+					<printWhenExpression><![CDATA[$F{processoInquerito} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="702" y="0" width="100" height="15" uuid="473650a3-8c90-4def-9623-b34f4f661b50"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Inquérito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="0" width="200" height="15" uuid="ec632ad4-f2ce-4daa-8768-1c2571dd7fc2"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número do Processo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="602" y="0" width="100" height="15" uuid="0285d1fd-0e22-45e1-b35d-26584d1eaa7a"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ofício]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

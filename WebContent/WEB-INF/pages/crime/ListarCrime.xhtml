@@ -48,7 +48,7 @@
 		</h:form>
 		
 		<h:form id="registrosForm">
-			<p:dataTable id="dataTable" var="crime" value="#{crimeBean.crimes}" paginator="true" paginatorPosition="bottom" rows="10" lazy="true"  sortBy="#{crime.id}"
+			<p:dataTable id="dataTable" var="crime" value="#{crimeBean.crimes}" paginator="true" paginatorPosition="bottom" rows="10" lazy="true"
 			             emptyMessage="Nenhum registro encontrado.">		
 						
 				<p:column headerText="Legislação" sortBy="#{crime.nomeLegislacao}">

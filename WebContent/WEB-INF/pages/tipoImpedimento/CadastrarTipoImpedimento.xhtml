@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                template="/WEB-INF/pages/_templates/principal.xhtml">
+
+    <ui:define name="conteudo">
+        <sgp:validarAcesso/>
+
+        <h3>#{tipoImpedimentoBean.tituloPagina} Tipo Impedimento</h3>
+        <h:form>
+            <p:panel footer="Cadastrado por: #{tipoImpedimentoBean.tipoImpedimento.autorRegistro.usuario} em #{tipoImpedimentoBean.tipoImpedimento.autorRegistro.data} | Última alteração: #{tipoImpedimentoBean.tipoImpedimento.autorUltimaAlteracao.usuario} em #{tipoImpedimentoBean.tipoImpedimento.autorUltimaAlteracao.data}">
+                <sgp:formInputText
+                        id="nomeTipoImpedimento"
+                        labelValue="Descrição"
+                        value="#{tipoImpedimentoBean.tipoImpedimento.descricao}"
+                        validationRequired="true"
+                        disabled="#{tipoImpedimentoBean.isVisualizacao}"
+                        display="text"
+                        maxlength="80"/>
+
+                <sgp:formSelectOneMenu
+                        id="status" labelValue="Status"
+                        value="#{tipoImpedimentoBean.tipoImpedimento.status}"
+                        itemsValue="#{comboHelperBean.statusSgp}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        disabled="#{tipoImpedimentoBean.isVisualizacao}"
+                        display="text"/>
+
+                <br/>
+                <br/>
+
+                <p:commandButton value="Salvar" action="#{tipoImpedimentoBean.salvar()}" update="@form"
+                                 icon="ui-icon-disk"
+                                 rendered="#{(securityUtil.possuiPermissao('CadastrarTipoImpedimento') and !tipoImpedimentoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarTipoImpedimento') and !tipoImpedimentoBean.isVisualizacao)}"/>
+                <p:button outcome="pretty:ListarTipoImpedimento" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+                    <f:param name="list" value="1"/>
+                </p:button>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

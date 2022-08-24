@@ -1,0 +1,135 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                template="/WEB-INF/pages/_templates/principal.xhtml">
+
+    <ui:define name="conteudo">
+        <sgp:validarAcesso />
+
+        <h3>Tipo Visita</h3>
+
+        <h:form>
+            <p:button value="Cadastrar" outcome="pretty:CadastrarTipoVisita" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarTipoVisita')}"/>
+        </h:form>
+
+        <h:form id="pesquisaFormulario">
+            <p:panel>
+                <p:outputLabel value="Consulta"/>
+                <sgp:formInputText id="descricao"
+                                   labelValue="Descrição"
+                                   maxlength="80"
+                                   value="#{tipoVisitaBean.filtro.descricao}"
+                                   styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        id="tipoEntrada" labelValue="Tipo Entrada"
+                        value="#{tipoVisitaBean.filtro.tipoEntrada}"
+                        itemsValue="#{comboHelperBean.tipoEntrada}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        temSelecione="true"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        id="obrigatorioCredenciamento" labelValue="Obrigatório Credenciamento?"
+                        value="#{tipoVisitaBean.filtro.obrigatorioCredenciamento}"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        temSelecione="true"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        id="estaNoRolDeParentes" labelValue="Está no Rol de Parentes?"
+                        value="#{tipoVisitaBean.filtro.estaNoRolDeParentes}"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        temSelecione="true"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        id="obrigatorioRecuperando" labelValue="Obrigatório Recuperando?"
+                        value="#{tipoVisitaBean.filtro.obrigatorioRecuperando}"
+                        itemsValue="#{comboHelperBean.simNao}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        temSelecione="true"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <sgp:formSelectOneMenu
+                        id="status" labelValue="Situação"
+                        value="#{tipoVisitaBean.filtro.status}"
+                        itemsValue="#{comboHelperBean.statusSgp}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        temSelecione="true"
+                        styleFormLabelColumn="width:200px;"/>
+
+                <br />
+                <br />
+                <p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+                <p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{tipoVisitaBean.imprimir()}"/>
+            </p:panel>
+        </h:form>
+
+        <h:form id="registrosForm">
+            <p:dataTable id="dataTable" var="tipoVisita" value="#{tipoVisitaBean.tipoVisitas}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{tipoVisita.id}"
+                         emptyMessage="Nenhum registro encontrado.">
+                <p:column headerText="Código" width="100" sortBy="#{tipoVisita.id}">
+                    <h:outputText value="#{tipoVisita.id}" />
+                </p:column>
+
+                <p:column headerText="Descrição" sortBy="#{tipoVisita.descricao}">
+                    <h:outputText value="#{tipoVisita.descricao}" />
+                </p:column>
+
+                <p:column headerText="Tipo Entrada" width="120" sortBy="#{tipoVisita.tipoEntrada}">
+                    <h:outputText value="#{tipoVisita.tipoEntrada.descricao}" />
+                </p:column>
+
+                <p:column headerText="Credenciamento" width="150" sortBy="#{tipoVisita.obrigatorioCredenciamento}">
+                    <h:outputText value="#{tipoVisita.obrigatorioCredenciamento.descricao}" />
+                </p:column>
+
+                <p:column headerText="Rol de Parentes" width="120" sortBy="#{tipoVisita.estaNoRolDeParentes}">
+                    <h:outputText value="#{tipoVisita.estaNoRolDeParentes.descricao}" />
+                </p:column>
+
+                <p:column headerText="Obrigatório Recuperando" width="120" >
+                    <h:outputText value="#{tipoVisita.obrigatorioRecuperando.descricao}" />
+                </p:column>
+
+                <p:column headerText="Situação" width="120" sortBy="#{tipoVisita.status}">
+                    <h:outputText value="#{tipoVisita.status.descricao}" />
+                </p:column>
+
+                <p:column headerText="Ações" width="120">
+                    <center>
+                        <p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarTipoVisita" rendered="#{securityUtil.possuiPermissao('VisualizarTipoVisita')}">
+                            <f:param name="id" value="#{tipoVisita.id}" />
+                        </p:button>
+                        <p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarTipoVisita" rendered="#{securityUtil.possuiPermissao('AlterarTipoVisita')}">
+                            <f:param name="id" value="#{tipoVisita.id}" />
+                        </p:button>
+                        <p:commandButton action="#{tipoVisitaBean.excluir(tipoVisita)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirTipoVisita')}" >
+                            <p:confirm header="Confirmação" message="Deseja excluir Tipo Visita?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </center>
+                </p:column>
+
+                <f:facet name="footer">
+                    Total de registros: #{tipoVisitaBean.tipoVisitas.rowCount}
+                </f:facet>
+            </p:dataTable>
+
+            <p:confirmDialog global="true">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

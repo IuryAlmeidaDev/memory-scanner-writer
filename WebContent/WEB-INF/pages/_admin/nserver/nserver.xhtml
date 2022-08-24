@@ -30,14 +30,16 @@
 		<h:form id="formExcluir">
 			<br/>
 			<p:panel header="Excluir Template">
-				<p:inputText title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
+				<p:outputLabel for="txtPessoa" value="Pessoa ID:" style="margin-right: 5px;" />
+				<p:inputText id="txtPessoa" title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
 				<p:commandButton icon="ui-icon" value="Excluir" action="#{nServerBean.excluir}" update="@form :mensagens  :userTbl :pessoas" />
 			</p:panel>
 		</h:form>
 		<h:form id="formImportar">
 			<br/>
 			<p:panel header="Importar Template">
-				<p:inputText title="IdPessoa" value="#{nServerBean.idPessoa}" /><br/><br/>
+				<p:outputLabel for="txtPessoa2" value="Pessoa ID:" style="margin-right: 5px;" />
+				<p:inputText title="IdPessoa" id="txtPessoa2" value="#{nServerBean.idPessoa}" /><br/><br/>
 				<p:commandButton icon="ui-icon" value="Importar" action="#{nServerBean.importar}" update="@form :mensagens :userTbl :pessoas" />
 			</p:panel>
 		</h:form>

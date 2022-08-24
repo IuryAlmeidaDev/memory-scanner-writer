@@ -22,6 +22,17 @@ public class Nacionalidade implements Serializable {
 	@Column(name="DESCRICAO", columnDefinition="nvarchar2")
 	private String descricao;
 
+	public Nacionalidade() {
+		super();
+	}
+	
+	public Nacionalidade(long id, String descricao) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+	}
+
+
 	public long getId() {
 		return id;
 	}
@@ -66,4 +77,5 @@ public class Nacionalidade implements Serializable {
 			return false;
 		return true;
 	}
+	
 }

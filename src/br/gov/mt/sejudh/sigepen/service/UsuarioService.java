@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.UsuarioDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUsuario;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
@@ -22,6 +23,9 @@ public class UsuarioService {
 	
 	@Inject
 	private UsuarioDAO dao;
+	
+	@Inject
+	private AuditoriaDAO auditDAO;
 	
 	private Usuario configurarUsuario(Usuario usuario, boolean senhaMudou) {
 		if (usuario.getId() <= 0) {
@@ -67,7 +71,14 @@ public class UsuarioService {
 		
 		validarSeUsuarioPossuiAcessoSemPerfil(usuario);
 		
-		return dao.salvar(configurarUsuario(usuario, senhaMudou));
+		usuario = dao.salvar(configurarUsuario(usuario, senhaMudou));
+				
+		if (usuario != null) {
+			usuario.setAutorRegistro(auditDAO.autorRegistro(usuario, usuario.getId()));
+			usuario.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(usuario, usuario.getId()));
+		}
+		
+		return usuario;
 	}
 	
 	private void validarSeUsuarioPossuiAcessoSemPerfil(Usuario usuario) throws ValidacaoException {
@@ -85,7 +96,14 @@ public class UsuarioService {
 	}
 
 	public Usuario buscarUsuarioPorId(long usuarioId) {
-		return dao.buscarUsuarioPorId(usuarioId);
+		Usuario usuario = dao.buscarUsuarioPorId(usuarioId);
+		
+		if (usuario != null) {
+			usuario.setAutorRegistro(auditDAO.autorRegistro(usuario, usuario.getId()));
+			usuario.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(usuario, usuario.getId()));
+		}
+		
+		return usuario;
 	}
 
 	public int buscarQuantidadeFiltrada(FiltroUsuario filtro) {

@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 
@@ -48,6 +47,9 @@ public class OutroNome implements Serializable {
 	@Column(name = "NOME_MAE", length = 80, nullable = false)
 	private String nomeMae;
 	
+	@Column(name = "NOME_PAI", length = 80, nullable = false)
+	private String nomePai;
+	
 	@Column(name = "DATA_NASCIMENTO", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date dataNascimento;
@@ -61,6 +63,8 @@ public class OutroNome implements Serializable {
 		this.recuperando = outroNome.getRecuperando();
 		this.setNome(outroNome.getNome());
 		this.setNomeMae(outroNome.getNomeMae());
+		this.setNomePai(outroNome.getNomePai());
+		
 		this.dataNascimento = outroNome.getDataNascimento();
 	}
 
@@ -101,6 +105,14 @@ public class OutroNome implements Serializable {
 
 	public void setDataNascimento(Date dataNascimento) {
 		this.dataNascimento = dataNascimento;
+	}
+
+	public String getNomePai() {
+		return nomePai;
+	}
+
+	public void setNomePai(String nomePai) {
+		this.nomePai = Sigepen.formatarEspacos(nomePai);
 	}
 
 	@Override

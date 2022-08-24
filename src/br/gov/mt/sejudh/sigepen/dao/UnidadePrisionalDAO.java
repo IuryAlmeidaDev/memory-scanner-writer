@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -16,10 +17,13 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnidadePrisional;
+import br.gov.mt.sejudh.sigepen.enumerator.ParametroVisitante;
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
+import br.gov.mt.sejudh.sigepen.model.Acesso;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
-
+import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
 @RequestScoped
 public class UnidadePrisionalDAO {
@@ -53,6 +57,7 @@ public class UnidadePrisionalDAO {
 				Hibernate.initialize(unidade.getEndereco());
 				Hibernate.initialize(unidade.getTipoUnidade());
 				Hibernate.initialize(unidade.getContatos());
+				Hibernate.initialize(unidade.getParametrosVisita());
 		return unidade;
 	}
 	
@@ -118,5 +123,34 @@ public class UnidadePrisionalDAO {
 		Query query = entityManager.createQuery(sql, Boolean.class);
 		query.setParameter("unidadeId", unidadeId);
 		return Boolean.parseBoolean(query.getSingleResult().toString());
+	}
+	
+	public List<UnidadePrisional> listarUnidadesComParamVisitanteAtivo(boolean listarTodasUnidades){
+		List<UnidadePrisional> retorno = new ArrayList<UnidadePrisional>();
+		List<UnidadePrisional> unidades = new ArrayList<UnidadePrisional>();
+		for (Acesso acesso : SecurityUtil.getUsuario().getAcessos()) {
+			unidades.add(acesso.getUnidade());
+		}
+
+		try {
+			String jpql="select u from UnidadePrisional u join fetch u.parametrosUnidade pu WHERE pu.nome =:paramNome and pu.validar =:paramValidar ORDER BY u.nome ";
+			TypedQuery<UnidadePrisional> query = entityManager.createQuery(jpql, UnidadePrisional.class);
+			query.setParameter("paramNome", ParametroVisitante.RECEBIMENTO_DOCUMENTACAO);
+			query.setParameter("paramValidar", SimNao.S);
+			List<UnidadePrisional> lista = query.getResultList();
+			if(listarTodasUnidades) {
+				return lista;
+			}
+			for(UnidadePrisional l : lista) {
+				for(UnidadePrisional u : unidades) {
+					if(u.getId() == l.getId()) {
+						retorno.add(l);
+					}
+				}
+			}
+			return retorno;
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 }

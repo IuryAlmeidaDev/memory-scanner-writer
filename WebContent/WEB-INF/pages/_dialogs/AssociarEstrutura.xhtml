@@ -14,13 +14,7 @@
 		<h:form id="formEstruturas">
 			<p:treeTable id="treeTableEstrutura" value="#{associarEstruturaBean.root}" var="est" selectionMode="single" >
 				<p:column headerText="Nome">
-					<h:outputText value="#{est.nome}" />
-				</p:column>
-				
-				<p:column headerText="Capacidade">
-					<center>
-						<h:outputText value="#{est.capacidadeTotal}"/>
-					</center>
+					<h:outputText value="#{est.estruturaNome}" />
 				</p:column>
 				
 				<p:column headerText="É cela?">
@@ -32,17 +26,11 @@
 	
 				<p:column width="50">
 					<center>
-						<p:commandButton title="Associar" icon="ui-icon-check" actionListener="#{associarEstruturaBean.selecionarEstrutura(est)}" rendered="#{est.cela}">
-							<p:confirm header="Atenção" message="Salve o cadastro para confirmar a alteração!" icon="ui-icon-alert" />
+						<p:commandButton title="Associar" icon="ui-icon-check" actionListener="#{associarEstruturaBean.selecionarEstrutura(est)}" rendered="#{est.cela or associarEstruturaBean.associarQualquerEstrutura}">
 						</p:commandButton>
 					</center>
 				</p:column> 
 			</p:treeTable>
-			
-			<p:confirmDialog global="true">
-				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-			</p:confirmDialog>
 
 			<div style="text-align: center">
 				<br/>

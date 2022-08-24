@@ -22,6 +22,16 @@ public class Raca implements Serializable{
 	@Column(name = "DESCRICAO", length = 80, nullable = false)
 	private String descricao;
 
+	public Raca() {
+		super();
+	}
+	
+	public Raca(long id, String descricao) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+	}
+
 	public long getId() {
 		return id;
 	}

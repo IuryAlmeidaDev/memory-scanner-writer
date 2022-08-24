@@ -6,8 +6,6 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
@@ -36,7 +34,6 @@ import br.gov.mt.sejudh.sigepen.service.BiometriaService;
 import br.gov.mt.sejudh.sigepen.service.HistoricoRecuperandoService;
 import br.gov.mt.sejudh.sigepen.service.PedidoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
-import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
 public class UnificarRecuperandoDAO {
@@ -698,19 +695,19 @@ public class UnificarRecuperandoDAO {
 
 	private void unificarAutorizacaoCadastro(Recuperando recuperando) {
 		if (getRecuperando1().getId() != recuperando.getId()) {
-			if (recuperando.getPessoa().getAutorizacaoCadastro() == null
-					|| (getRecuperando1().getPessoa().getAutorizacaoCadastro() != null
-							&& getRecuperando1().getPessoa().getAutorizacaoCadastro().getDataAutorizacao()
-									.after(recuperando.getPessoa().getAutorizacaoCadastro().getDataAutorizacao()))) {
-				recuperando.getPessoa().setAutorizacaoCadastro(getRecuperando1().getPessoa().getAutorizacaoCadastro());
+			if (recuperando.getAutorizacaoCadastroSemBiometria() == null
+					|| (getRecuperando1().getAutorizacaoCadastroSemBiometria() != null
+							&& getRecuperando1().getAutorizacaoCadastroSemBiometria().getDataAutorizacao()
+									.after(recuperando.getAutorizacaoCadastroSemBiometria().getDataAutorizacao()))) {
+				recuperando.setAutorizacaoCadastroSemBiometria(getRecuperando1().getAutorizacaoCadastroSemBiometria());
 			}
 
 		} else if (getRecuperando2().getId() != recuperando.getId()) {
-			if (recuperando.getPessoa().getAutorizacaoCadastro() == null
-					|| (getRecuperando2().getPessoa().getAutorizacaoCadastro() != null
-							&& getRecuperando2().getPessoa().getAutorizacaoCadastro().getDataAutorizacao()
-									.after(recuperando.getPessoa().getAutorizacaoCadastro().getDataAutorizacao()))) {
-				recuperando.getPessoa().setAutorizacaoCadastro(getRecuperando2().getPessoa().getAutorizacaoCadastro());
+			if (recuperando.getAutorizacaoCadastroSemBiometria() == null
+					|| (getRecuperando2().getAutorizacaoCadastroSemBiometria() != null
+							&& getRecuperando2().getAutorizacaoCadastroSemBiometria().getDataAutorizacao()
+									.after(recuperando.getAutorizacaoCadastroSemBiometria().getDataAutorizacao()))) {
+				recuperando.setAutorizacaoCadastroSemBiometria(getRecuperando2().getAutorizacaoCadastroSemBiometria());
 			}
 		}
 	}

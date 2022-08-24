@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Certidão</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarCertidao" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarCertidao')}" />
+		</h:form>		
+			
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+
+				<sgp:formInputText
+						id="pesquisar"
+						labelValue="Nome"
+						maxlength="80"
+						value="#{certidaoBean.filtro.descricao}"
+						styleFormLabelColumn="min-width:60px !important"/>
+				
+				<sgp:formSelectOneMenu
+					styleFormLabelColumn="min-width:60px !important"
+					id="status" labelValue="Situação"
+					value="#{certidaoBean.filtro.status}"
+					itemsValue="#{comboHelperBean.statusSgp}"
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					temSelecione="true"
+				/>
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{certidaoBean.imprimir()}"/>
+			</p:panel>
+		</h:form>	
+
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="certidao" value="#{certidaoBean.lazyDataModel}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{certidao.id}"
+                             emptyMessage="Nenhum registro encontrado.">
+					<p:column headerText="Código" width="100" sortBy="#{certidao.id}">
+						<h:outputText value="#{certidao.id}" />
+					</p:column>
+
+					<p:column headerText="Descrição" sortBy="#{certidao.descricao}">
+						<h:outputText value="#{certidao.descricao}" />
+					</p:column>
+
+					<p:column headerText="Situação" width="120" sortBy="#{certidao.status}">
+						<h:outputText value="#{certidao.status.descricao}" />
+					</p:column>
+
+					<p:column headerText="Ações" width="120" >
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarCertidao" rendered="#{securityUtil.possuiPermissao('VisualizarCertidao')}">
+								<f:param name="id" value="#{certidao.id}" />
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarCertidao" rendered="#{securityUtil.possuiPermissao('AlterarCertidao')}">
+								<f:param name="id" value="#{certidao.id}" />
+							</p:button>
+							<p:commandButton action="#{certidaoBean.excluir(certidao)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirCertidao')}">
+								 <p:confirm header="Confirmação" message="Deseja excluir a certidão?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					<f:facet name="footer">
+						Total de registros: #{certidaoBean.lazyDataModel.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

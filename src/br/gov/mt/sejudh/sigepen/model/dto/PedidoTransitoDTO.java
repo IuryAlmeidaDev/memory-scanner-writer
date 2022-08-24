@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.model.dto;
 
 import java.util.Date;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 
@@ -49,6 +50,16 @@ public class PedidoTransitoDTO {
 	private Date dataTerminoMovExt;
 	
 	private Date dataTerminoTransf;
+	
+	private Date dataDocumento;
+	
+	private String numeroDocumento;
+	
+	private String motivo;
+	
+	private String resultado;
+		
+	private FiltroPedTransito filtro;
 	
 	@SuppressWarnings("unused")
 	private String destinoParaExibicaoDataTable;
@@ -232,9 +243,51 @@ public class PedidoTransitoDTO {
 	public void setEstruturaDestinoNomeCompletoComUnidade(String estruturaDestinoNomeCompletoComUnidade) {
 		this.estruturaDestinoNomeCompletoComUnidade = estruturaDestinoNomeCompletoComUnidade;
 	}
-
+	
+	
 	@Override
 	public String toString() {
 		return "Pedido Transito [id=" + id + "]";
 	}
+
+	public String getNumeroDocumento() {
+		return numeroDocumento;
+	}
+
+	public void setNumeroDocumento(String numeroDocumento) {
+		this.numeroDocumento = numeroDocumento;
+	}
+
+	public Date getDataDocumento() {
+		return dataDocumento;
+	}
+
+	public void setDataDocumento(Date dataDocumento) {
+		this.dataDocumento = dataDocumento;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+
+	public String getResultado() {
+		return resultado;
+	}
+
+	public void setResultado(String resultado) {
+		this.resultado = resultado;
+	}
+
+	public FiltroPedTransito getFiltro() {
+		return filtro;
+	}
+
+	public void setFiltro(FiltroPedTransito filtro) {
+		this.filtro = filtro;
+	}
+
 }

@@ -21,7 +21,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -80,6 +79,12 @@ public class Usuario implements Serializable {
 	@OneToMany(mappedBy = "usuario", orphanRemoval=true, fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	@Fetch(FetchMode.SUBSELECT)	
 	private List<Acesso> acessos;
+	
+	@Transient
+	private AutoriaRegistro autorRegistro;
+	
+	@Transient
+	private AutoriaRegistro autorUltimaAlteracao;
 	
 	public Usuario(Status status) {
 		this.status = status;
@@ -176,6 +181,22 @@ public class Usuario implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = Sigepen.formatarEspacos(email);
+	}
+
+	public AutoriaRegistro getAutorRegistro() {
+		return autorRegistro;
+	}
+
+	public void setAutorRegistro(AutoriaRegistro autorRegistro) {
+		this.autorRegistro = autorRegistro;
+	}
+
+	public AutoriaRegistro getAutorUltimaAlteracao() {
+		return autorUltimaAlteracao;
+	}
+
+	public void setAutorUltimaAlteracao(AutoriaRegistro autorUltimaAlteracao) {
+		this.autorUltimaAlteracao = autorUltimaAlteracao;
 	}
 
 	@Override

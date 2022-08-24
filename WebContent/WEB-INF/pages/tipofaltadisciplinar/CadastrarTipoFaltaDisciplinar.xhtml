@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>#{tipoFaltaDisciplinarBean.tituloPagina} Tipo Falta Disciplinar</h3>
+			<h:form>
+				<p:panel footer="Cadastrado por: #{tipoFaltaDisciplinarBean.tipoFaltaDisciplinar.autorRegistro.usuario} em #{tipoFaltaDisciplinarBean.tipoFaltaDisciplinar.autorRegistro.data} | Última alteração: #{tipoFaltaDisciplinarBean.tipoFaltaDisciplinar.autorUltimaAlteracao.usuario} em #{tipoFaltaDisciplinarBean.tipoFaltaDisciplinar.autorUltimaAlteracao.data}">
+					<sgp:formInputText 
+						id="descricaoTipoFaltaDisciplinar" 
+						labelValue="Descricao"
+						value="#{tipoFaltaDisciplinarBean.tipoFaltaDisciplinar.descricao}"
+						validationRequired="true"
+						disabled="#{tipoFaltaDisciplinarBean.isVisualizacao}" 
+						display="text"
+						maxlength="250"/>
+
+					<sgp:formSelectOneMenu
+							id="natureza"
+							labelValue="Natureza"
+							validationRequired="true"
+							value="#{tipoFaltaDisciplinarBean.tipoFaltaDisciplinar.natureza}"
+							itemsValue="#{comboHelperBean.naturezaFaltaDisciplinar}"
+							itemValue="#{item}"
+							itemLabel="#{item.descricao}"
+							disabled="#{tipoFaltaDisciplinarBean.isVisualizacao}"
+							display="text"
+							temSelecione="true" />
+					
+					<sgp:formSelectOneMenu 
+						id="status" labelValue="Status"
+						value="#{tipoFaltaDisciplinarBean.tipoFaltaDisciplinar.status}"
+						itemsValue="#{comboHelperBean.status}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						disabled="#{tipoFaltaDisciplinarBean.isVisualizacao}"
+						display="text" />
+						
+											
+					<br />
+					<br />
+
+					<p:commandButton value="Salvar" action="#{tipoFaltaDisciplinarBean.salvar()}" update="@form" icon="ui-icon-disk" 
+					rendered="#{(securityUtil.possuiPermissao('CadastrarTipoFaltaDisciplinar') and !tipoFaltaDisciplinarBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarTipoFaltaDisciplinar') and !tipoFaltaDisciplinarBean.isVisualizacao)}" />
+					<p:button outcome="pretty:ListarTipoFaltaDisciplinar" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+				</p:panel>
+			</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                template="/WEB-INF/pages/_templates/principal.xhtml">
+
+    <ui:define name="conteudo">
+        <sgp:validarAcesso/>
+
+        <h3>#{certidaoBean.tituloPagina} Certidão</h3>
+        <h:form>
+            <p:panel footer="Cadastrado por: #{certidaoBean.certidao.autorRegistro.usuario} em #{certidaoBean.certidao.autorRegistro.data} | Última alteração: #{certidaoBean.certidao.autorUltimaAlteracao.usuario} em #{certidaoBean.certidao.autorUltimaAlteracao.data}">
+                <sgp:formInputText
+                        id="nomeCertidao"
+                        labelValue="Descrição"
+                        value="#{certidaoBean.certidao.descricao}"
+                        validationRequired="true"
+                        disabled="#{certidaoBean.isVisualizacao}"
+                        display="text"
+                        maxlength="100"/>
+
+                <sgp:formSelectOneMenu
+                        id="status" labelValue="Status"
+                        value="#{certidaoBean.certidao.status}"
+                        itemsValue="#{comboHelperBean.statusSgp}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        disabled="#{certidaoBean.isVisualizacao}"
+                        display="text"/>
+
+                <br/>
+                <br/>
+
+                <p:commandButton value="Salvar" action="#{certidaoBean.salvar()}" update="@form"
+                                 icon="ui-icon-disk"
+                                 rendered="#{(securityUtil.possuiPermissao('CadastrarCertidao') and !certidaoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCertidao') and !certidaoBean.isVisualizacao)}"/>
+                <p:button outcome="pretty:ListarCertidao" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+                    <f:param name="list" value="1"/>
+                </p:button>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

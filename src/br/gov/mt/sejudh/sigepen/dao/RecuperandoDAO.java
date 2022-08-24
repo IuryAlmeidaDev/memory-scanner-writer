@@ -1,7 +1,9 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -12,39 +14,62 @@ import javax.persistence.TypedQuery;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.QueryHints;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroSolicitacaoVisita;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnificarRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Alcunha;
+import br.gov.mt.sejudh.sigepen.model.Credenciamento;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.EstruturaComplemento;
+import br.gov.mt.sejudh.sigepen.model.Etnia;
 import br.gov.mt.sejudh.sigepen.model.Foto;
+import br.gov.mt.sejudh.sigepen.model.Imagem;
 import br.gov.mt.sejudh.sigepen.model.OutroNome;
 import br.gov.mt.sejudh.sigepen.model.Parente;
 import br.gov.mt.sejudh.sigepen.model.Particularidade;
 import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.SolicitacaoVisita;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 
 @RequestScoped
 public class RecuperandoDAO {
 	
 	@Inject
 	private EntityManager em;
+	
+	@Inject
+	private SolicitacaoVisitaDAO solicitacaoVisitaDao;
 
-	public int buscarQuantidadeFiltrada(FiltroRecuperando filtro) {
-		Criteria criteria = filtro.criarCriteriaParaQuantidade(Pessoa.class, em);
+	public int buscarQuantidadeFiltrada(FiltroRecuperandoView filtro) {
+		Criteria criteria = filtro.criarCriteriaParaQuantidade(RecuperandoView.class, em);
+		criteria.addQueryHint(QueryHints.READ_ONLY);
 		criteria.setProjection(Projections.rowCount());
+
 		return ((Number) criteria.uniqueResult()).intValue();
 	}
+	
+	public int buscarQuantidadeFiltrada(FiltroRecuperando filtro) {
+		Criteria criteria = filtro.criarCriteriaParaQuantidade(Pessoa.class, em);
+		criteria.addQueryHint(QueryHints.READ_ONLY);
+		criteria.setProjection(Projections.countDistinct("id"));
 
+		return ((Number) criteria.uniqueResult()).intValue();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<RecuperandoDTO> buscarRecuperandosPorFiltro(FiltroRecuperando filtro, boolean isBuscaRelatorio) {
 		Criteria criteria = filtro.criarCriteriaParaBusca(Pessoa.class, em, isBuscaRelatorio);
@@ -52,7 +77,15 @@ public class RecuperandoDAO {
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(RecuperandoDTO.class));
 		return criteria.list();
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public List<RecuperandoView> buscarRecuperandosPorFiltro(FiltroRecuperandoView filtro, boolean isBuscaRelatorio) {
+		Criteria criteria = filtro.criarCriteriaParaBusca(RecuperandoView.class, em, isBuscaRelatorio);
+		criteria.addQueryHint(QueryHints.READ_ONLY);
+		List<RecuperandoView> list = criteria.list();
+		return list;
+	}
+
 	public int buscarQuantidadeFiltrada(FiltroUnificarRecuperando filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(Pessoa.class, em);
 		criteria.setProjection(Projections.countDistinct("id"));
@@ -96,17 +129,33 @@ public class RecuperandoDAO {
 		em.remove(em.merge(r));
 	}
 
-	public Recuperando buscarRecuperandoSimplesPorId(long idRecuperando) {
+	public Recuperando buscarRecuperandoDocumentosPorId(long idRecuperando) {
 		try {
-			String jpql="select new br.gov.mt.sejudh.sigepen.model.Recuperando(r.id,r.pessoa.nome) from Recuperando r where r.id = :id";
-			TypedQuery<Recuperando> query = em.createQuery(jpql, Recuperando.class);
-			query.setParameter("id", idRecuperando);
-			
-			return query.getSingleResult();
+            String jpql="select r from Recuperando r where r.id = :id";
+            TypedQuery<Recuperando> query = em.createQuery(jpql, Recuperando.class);
+            query.setParameter("id", idRecuperando);
+            Recuperando r = query.getSingleResult();
+
+            Hibernate.initialize(r.getPessoa());
+            Hibernate.initialize(r.getPessoa().getDocumentos());
+
+            return r;
 		} catch (NoResultException e) {
 			return null;
 		}
 	}
+
+    public Recuperando buscarRecuperandoSimplesPorId(long idRecuperando) {
+        try {
+            String jpql="select new br.gov.mt.sejudh.sigepen.model.Recuperando(r.id,r.pessoa.nome) from Recuperando r where r.id = :id";
+            TypedQuery<Recuperando> query = em.createQuery(jpql, Recuperando.class);
+            query.setParameter("id", idRecuperando);
+
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 	
 	public Recuperando buscarRecuperandoSimplesPorIdPessoa(long idPessoa) throws ValidacaoException {
 		try {
@@ -119,6 +168,22 @@ public class RecuperandoDAO {
 			throw new ValidacaoException("Pessoa " + idPessoa + " não encontrada.");
 		}
 	}
+
+    public Date buscarUltimaPassagemRecuperandoPessoa(long idPessoa) {
+        try {
+            String jpql="select max(p.dataSaida)" +
+                    "from Recuperando r " +
+                    "left join r.passagens p " +
+                    "where r.pessoa.id = :id and r.status = :status ";
+            TypedQuery<Date> query = em.createQuery(jpql, Date.class);
+            query.setParameter("id", idPessoa);
+            query.setParameter("status", StatusRecuperando.INATIVO);
+
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 	
 	public Recuperando buscarRecuperandoPorId(long idRecuperando) {
 		try {
@@ -132,10 +197,25 @@ public class RecuperandoDAO {
 			Hibernate.initialize(r.getOutrosNomes());
 			Hibernate.initialize(r.getDocumentos());
 			Hibernate.initialize(r.getParentes());
+			Hibernate.initialize(r.getHistoricos());
+			if(r.getParentes() != null) {
+				for(Parente p : r.getParentes()) {
+					Hibernate.initialize(p.getCredenciamentos());
+					if(p.getCredenciamentos()!=null) {
+						for(Credenciamento vr : p.getCredenciamentos()) {
+							Hibernate.initialize(vr.getVisitante());
+							if(vr.getVisitante()!=null) {
+								Hibernate.initialize(vr.getVisitante().getPessoa());
+							}
+						}
+					}
+				}
+			}
 			Hibernate.initialize(r.getOrientacaoSexual());
 			Hibernate.initialize(r.getIdentidadeDeGenero());
 			Hibernate.initialize(r.getEscolaridade());
 			Hibernate.initialize(r.getRaca());
+			Hibernate.initialize(r.getEtnia());
 			Hibernate.initialize(r.getEstadoCivil());
 			Hibernate.initialize(r.getTipoSanguineo());
 			Hibernate.initialize(r.getReligiao());
@@ -147,11 +227,9 @@ public class RecuperandoDAO {
 			Hibernate.initialize(r.getPessoa().getDocumentos());
 			Hibernate.initialize(r.getPessoa().getEnderecos());
 			Hibernate.initialize(r.getPessoa().getContatos());
-			Hibernate.initialize(r.getPessoa().getAutorizacaoCadastro());
 			Hibernate.initialize(r.getProcessos());
 			Hibernate.initialize(r.getPassagens());
-			Hibernate.initialize(r.getSituacaoCadastro());
-			Hibernate.initialize(r.getSituacaoCadastroCompleto());
+
 			return r;
 		} catch (NoResultException e) {
 			return null;
@@ -193,7 +271,18 @@ public class RecuperandoDAO {
 	}
 
 	public void excluirParente(Parente parente) {
-		em.remove(em.merge(parente));
+        FiltroSolicitacaoVisita filtro = new FiltroSolicitacaoVisita();
+        filtro.setParente(parente);
+        List<SolicitacaoVisita> lista = solicitacaoVisitaDao.buscarPorParente2(parente);
+        if(lista!=null) {
+            for(SolicitacaoVisita s : lista) {
+            	s.setParente(null);
+            	em.merge(s);
+            }
+
+    		em.remove(em.merge(parente));
+        	
+        }
 	}
 	
 	/*
@@ -240,6 +329,14 @@ public class RecuperandoDAO {
 	
 	public void atualizarAlteracaoParentes(Date data, long idRecuperando){
 		String jpql="update Recuperando r set  r.alteracaoParentes = :data where r.id = :idRec";
+		Query query = em.createQuery(jpql);
+		query.setParameter("data", data);
+		query.setParameter("idRec", idRecuperando);
+		query.executeUpdate();
+	}
+	
+	public void atualizarDataCadastroParente(Date data, long idRecuperando){
+		String jpql="update Recuperando r set  r.dataCadastroParente = :data where r.id = :idRec";
 		Query query = em.createQuery(jpql);
 		query.setParameter("data", data);
 		query.setParameter("idRec", idRecuperando);
@@ -297,6 +394,18 @@ public class RecuperandoDAO {
 		} catch (NoResultException e) {
 			return null;
 		}		
+	}
+	
+	public StatusRecuperando buscarStatusRecuperandoPorIdVisitante(long idVisitante){
+		try {
+			String jpql="select r.status from Recuperando r, Visitante v where r.pessoa.id = v.pessoa.id and v.id = :id";
+			Query query = em.createQuery(jpql);
+			query.setParameter("id", idVisitante);
+			StatusRecuperando status = (StatusRecuperando)query.getSingleResult();
+			return status;
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 	
 	public void atualizarRegimeCondicaoAtualRecuperando(Recuperando recuperando, Regime regime, Condicao condicao) {
@@ -411,6 +520,173 @@ public class RecuperandoDAO {
 			
 			long resultado = (Long) query.getSingleResult();
 			return resultado;
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public Optional<Recuperando> buscarRecuperandoPorIdPessoa(Long idPessoa)  {
+		try {
+			String jpql="select r from Recuperando r where r.pessoa.id = :id";
+			TypedQuery<Recuperando> query = em.createQuery(jpql, Recuperando.class);
+			query.setParameter("id", idPessoa);
+
+			Recuperando result = query.getSingleResult();
+			Hibernate.initialize(result.getFotoFrenteAtual());
+
+			return Optional.of(result);
+		} catch (NoResultException e) {
+			return Optional.empty();
+		}
+	}
+
+	public Recuperando buscarPessoaRecuperando(Pessoa pessoa) {
+    	StringBuilder jpql = new StringBuilder();
+		
+		jpql.append("select r ");
+		jpql.append("from Recuperando r ");
+		jpql.append("join fetch r.fotos f ");
+		jpql.append("Where r.pessoa = :pessoa");
+
+		TypedQuery<Recuperando> query = em.createQuery(jpql.toString(), Recuperando.class);
+		query.setParameter("pessoa", pessoa);
+		try {
+			Recuperando r = query.getSingleResult();
+			return r;
+		} catch (Exception e) {
+			Recuperando r = new Recuperando();
+			Pessoa p = this.em.find(Pessoa.class, pessoa.getId());
+			if(p.getBiometria() != null)
+				Hibernate.initialize(p.getBiometria().getDedos());
+			r.setPessoa(p);
+			return r;
+		}
+		    	
+    }
+
+	public void resetarDataCadastroParente(long idRecuperando) {
+		String jpql="update Recuperando r set  r.dataCadastroParente = null, r.alteracaoParentes = null where r.id = :idRec";
+		Query query = em.createQuery(jpql);
+		query.setParameter("idRec", idRecuperando);
+		query.executeUpdate();
+	}
+
+	public List<Etnia> listarEtnias() {
+		try {
+			String jpql="select e from Etnia e";
+			TypedQuery<Etnia> query = em.createQuery(jpql, Etnia.class);
+
+			return query.getResultList();
+
+		} catch (NoResultException e) {
+			return new ArrayList<Etnia>();
+		}
+	}
+
+	public void expirarGestante(Date dataExpirar) {
+		String jpql="update Recuperando r set r.gestante = :gestante where r.gestante = true and r.inicioGestacao is not null and r.inicioGestacao < :dataExpirar";
+		Query query = em.createQuery(jpql);
+		query.setParameter("gestante", false);
+		query.setParameter("dataExpirar", dataExpirar);
+		query.executeUpdate();
+	}
+
+	public void expirarLactante(Date dataExpirar) {
+		String jpql="update Recuperando r set r.lactante = :lactante where r.lactante = :ehLactante and r.inicioLactante is not null and r.inicioLactante < :dataExpirar";
+		Query query = em.createQuery(jpql);
+		query.setParameter("lactante", SimNao.N);
+		query.setParameter("ehLactante", SimNao.S);
+		query.setParameter("dataExpirar", dataExpirar);
+		query.executeUpdate();
+	}
+
+	public RecuperandoView buscarRecuperandoSelecionado(Long idPessoa) {
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append("select r from RecuperandoView r left join r.estrutura e where r.pessoaId = :id");
+
+		TypedQuery<RecuperandoView> query = em.createQuery(jpql.toString(), RecuperandoView.class);
+		query.setParameter("id", idPessoa);
+		
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	
+	public Recuperando alterar(Recuperando recuperando) {
+		boolean novaFoto = false;
+		for(Foto f : recuperando.getFotos()) {
+			if(f.getId() == 0) {
+				novaFoto = true;
+			}
+			f.setIsAtual(false);
+		}
+		if(novaFoto) {
+			for(Foto f : recuperando.getFotos()) {
+				f.setIsAtual(false);
+				if(f.getId() == 0) {
+					f.setIsAtual(true);
+				}
+			}
+		}
+		return this.em.merge(recuperando);
+	}
+
+	public String buscarLotacaoAtual(long idRecuperando, boolean isTrazerUnidade) {
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append("select e from EstruturaComplemento e, RecuperandoView r where r.id = :id and e.id = r.estruturaId");
+
+		TypedQuery<EstruturaComplemento> query = em.createQuery(jpql.toString(), EstruturaComplemento.class);
+		query.setParameter("id", idRecuperando);
+		
+		EstruturaComplemento est = null;
+		
+		try {
+		 est = query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+		
+		if (isTrazerUnidade) {
+			return est.getNomeCompletoUnidade();
+		} else {
+			return est.getNomeCompleto();
+		}
+	}
+
+	public byte[] buscarFotoFrente(Long recuperandoId) {
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append("select f ");
+		jpql.append("from Foto f ");
+		jpql.append("where f.tipo = 1");
+		jpql.append("and f.isAtual = 1");
+		jpql.append("and f.recuperando.id = :idRecuperando ");
+
+		TypedQuery<Foto> query = em.createQuery(jpql.toString(), Foto.class);
+		query.setParameter("idRecuperando", recuperandoId);
+
+		return query.getSingleResult().getImagem().getArquivo();
+	}
+
+	public Imagem buscarImagemFrente(Long id) {
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append("select i ");
+		jpql.append("from Foto f, Imagem i ");
+		jpql.append("where f.tipo = 1 ");
+		jpql.append("and f.isAtual = 1 ");
+		jpql.append("and f.imagem.id = i.id ");
+		jpql.append("and f.recuperando.id = :idRecuperando ");
+
+		TypedQuery<Imagem> query = em.createQuery(jpql.toString(), Imagem.class);
+		query.setParameter("idRecuperando", id);
+
+		try {
+			return query.getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		}

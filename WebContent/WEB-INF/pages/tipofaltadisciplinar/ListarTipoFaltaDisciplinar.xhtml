@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Tipo Falta Disciplinar</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarTipoFaltaDisciplinar" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarTipoFaltaDisciplinar')}" />
+		</h:form>	
+		
+		<style type="text/css">
+		.singleLine
+		{
+		    table-layout: fixed;
+		    word-wrap: break-word;
+		}
+		</style>
+			
+			
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"/>
+				<sgp:formInputText id="pesquisar" labelValue="Descricao" maxlength="80" value="#{tipoFaltaDisciplinarBean.filtro.decricacao}" styleFormLabelColumn="min-width:85px !important"/>
+
+				<sgp:formSelectOneMenu
+						id="naturezaFaltaDisciplinar" labelValue="Natureza"
+						styleFormLabelColumn="min-width:85px !important"
+						value="#{tipoFaltaDisciplinarBean.filtro.natureza}"
+						itemsValue="#{comboHelperBean.naturezaFaltaDisciplinar}"
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}"
+						display="text"
+						temSelecione="true" />
+
+				<sgp:formSelectOneMenu 
+					styleFormLabelColumn="min-width:85px !important"
+					id="status" labelValue="Status"
+					value="#{tipoFaltaDisciplinarBean.filtro.status}"
+					itemsValue="#{comboHelperBean.status}" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					temSelecione="true"/>
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{tipoFaltaDisciplinarBean.imprimir()}"/>
+			</p:panel>
+		</h:form>	
+
+		<h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="tipoFaltaDisciplinar" value="#{tipoFaltaDisciplinarBean.tipoFaltaDisciplinars}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{tipoFaltaDisciplinar.id}"
+							 emptyMessage="Nenhum registro encontrado.">
+					<p:column headerText="Código" width="100" sortBy="#{tipoFaltaDisciplinar.id}">
+						<h:outputText value="#{tipoFaltaDisciplinar.id}" />
+					</p:column>
+					<p:column styleClass="singleLine" headerText="Descrição" sortBy="#{tipoFaltaDisciplinar.descricao}">
+						<h:outputText value="#{tipoFaltaDisciplinar.descricao}" />
+					</p:column>
+					<p:column headerText="Natureza" sortBy="#{tipoFaltaDisciplinar.natureza}" width="120">
+						<h:outputText value="#{tipoFaltaDisciplinar.natureza.descricao}" />
+					</p:column>
+					<p:column headerText="Situação" width="120" sortBy="#{tipoFaltaDisciplinar.status}">
+						<h:outputText value="#{tipoFaltaDisciplinar.status.descricao}" />
+					</p:column>
+					<p:column headerText="Ações" width="120">
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarTipoFaltaDisciplinar" rendered="#{securityUtil.possuiPermissao('VisualizarTipoFaltaDisciplinar')}">
+								<f:param name="id" value="#{tipoFaltaDisciplinar.id}" />
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarTipoFaltaDisciplinar" rendered="#{securityUtil.possuiPermissao('AlterarTipoFaltaDisciplinar')}">
+								<f:param name="id" value="#{tipoFaltaDisciplinar.id}" />
+							</p:button>
+							<p:commandButton action="#{tipoFaltaDisciplinarBean.excluir(tipoFaltaDisciplinar)}" icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirTipoFaltaDisciplinar')}">
+								 <p:confirm header="Confirmação" message="Deseja excluir o registro?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					<f:facet name="footer">
+						Total de registros: #{tipoFaltaDisciplinarBean.tipoFaltaDisciplinars.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

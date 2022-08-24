@@ -94,6 +94,7 @@ public class PedidoDAO {
 			if(p.getTipoTransito() == TipoTransito.INTERNA){
 				Hibernate.initialize(p.getEstruturaOrigem());
 				Hibernate.initialize(p.getEstruturaDestino());
+				Hibernate.initialize(p.getEstruturaDestino().getEstruturaComplemento());
 				Hibernate.initialize(p.getMovimentacaoInterna());
 			}
 			if(p.getTipoTransito() == TipoTransito.EXTERNA){
@@ -204,7 +205,11 @@ public class PedidoDAO {
 	public List<PedidoTransito> buscarPedidosDoRecuperando(long recuperandoId) {
 		Query query = entityManager.createQuery("select p from PedidoTransito p where p.recuperando.id = :recuperandoId");
 		query.setParameter("recuperandoId", recuperandoId);
-		
-		return query.getResultList();
+		List<PedidoTransito> lista = query.getResultList();
+		for(PedidoTransito p : lista) {
+			Hibernate.initialize(p.getUnidadeOrigem());
+			Hibernate.initialize(p.getUnidadeDestino());
+		}
+		return lista;
 	}
 }

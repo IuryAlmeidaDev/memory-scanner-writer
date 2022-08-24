@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -18,8 +19,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 
@@ -32,8 +34,10 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name="PARTICULARIDADE", schema = Sigepen.SEJUDH_SCHEMA)
-public class Particularidade implements Comparable<Particularidade> {
+public class Particularidade implements Serializable, Comparable<Particularidade> {
 	
+	private static final long serialVersionUID = 1010523348798586426L;
+
 	@SequenceGenerator(name = "SEQ_PARTICULARIDADE_GENERATOR", sequenceName = "SEQ_PARTICULARIDADE", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PARTICULARIDADE_GENERATOR")
@@ -65,7 +69,8 @@ public class Particularidade implements Comparable<Particularidade> {
 	@Column(name = "DATA_INCLUSAO")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataInclusao;
-	
+
+    @NotFound(action = NotFoundAction.IGNORE)
 	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
 	@JoinColumn(name = "IMAGEM_ID")
 	private Imagem imagem;

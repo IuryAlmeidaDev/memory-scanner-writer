@@ -11,7 +11,7 @@
 		
 		<h3>#{usuarioBean.tituloPagina} Usuário</h3>
 				<h:form id="formUsuario">
-					<p:panel>
+					<p:panel footer="Cadastrado por: #{usuarioBean.usuario.autorRegistro.usuario} em #{usuarioBean.usuario.autorRegistro.data} | Última alteração: #{usuarioBean.usuario.autorUltimaAlteracao.usuario} em #{usuarioBean.usuario.autorUltimaAlteracao.data}">
 						<p:panel header="Servidor">
 							<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{usuarioBean.abrirDialogServidor}" rendered="#{!usuarioBean.isVisualizacao and usuarioBean.usuario.id == 0}">
 								<p:ajax event="dialogReturn" listener="#{usuarioBean.associarServidor}" update="@form" />
@@ -101,7 +101,7 @@
 						
 						<br/>
 						<br/>
-						<p:commandButton action="#{usuarioBean.salvar()}" update=":formUsuario :mensagens" icon="ui-icon-disk" value="Salvar" rendered="#{(securityUtil.possuiPermissao('CadastrarUsuario') and !usuarioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUsuario') and !usuarioBean.isVisualizacao)}" />
+						<p:commandButton action="#{usuarioBean.salvar()}" update="@form :mensagens" icon="ui-icon-disk" value="Salvar" rendered="#{(securityUtil.possuiPermissao('CadastrarUsuario') and !usuarioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUsuario') and !usuarioBean.isVisualizacao)}" />
 						<p:button outcome="pretty:ListarUsuario" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
 							<f:param name="list" value="1" />
 						</p:button>

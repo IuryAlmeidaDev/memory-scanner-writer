@@ -62,17 +62,21 @@ public class SecurityUtil implements Serializable {
 		
 		switch (categoria.toLowerCase()) {
 			case "tabelasauxiliares":
-				resultado =		this.possuiPermissao("ListarCategoria") ||			
+				resultado =		this.possuiPermissao("ListarCategoria") ||
 								this.possuiPermissao("ListarCargo") ||
 								this.possuiPermissao("ListarCrime") ||
 								this.possuiPermissao("ListarFuncao") ||
 								this.possuiPermissao("ListarEstabelecimento") ||
 								this.possuiPermissao("ListarOrgao") ||
 								this.possuiPermissao("ListarPessoa") ||
-								this.possuiPermissao("ListarServidor") || 
-								this.possuiPermissao("ListarUnidade");
+								this.possuiPermissao("ListarServidor") ||
+								this.possuiPermissao("ListarUnidade") ||
+								this.possuiPermissao("ListarTipoVisita") || 
+								this.possuiPermissao("ListarTipoImpedimento") ||
+								this.possuiPermissao("ListarCertidao") ||
+								this.possuiPermissao("ListarTipoFaltaDisciplinar");
 				break;
-				
+
 			case "controledeacesso":
 				resultado = this.possuiPermissao("ListarUsuario") || 
 							this.possuiPermissao("ListarPerfil")  || 
@@ -80,7 +84,9 @@ public class SecurityUtil implements Serializable {
 				break;
 				
 			case "recuperando":
-				resultado = this.possuiPermissao("ListarRecuperando");
+				resultado = this.possuiPermissao("ListarRecuperando") || 
+							this.possuiPermissao("ListarFaltaDisciplinar") || 
+							this.possuiPermissao("UnificarRecuperando");
 				break;
 				
 			case "movimentacoes":
@@ -94,6 +100,16 @@ public class SecurityUtil implements Serializable {
 				
 			case "auditoria":
 				resultado = this.possuiPermissao("ListarLog");
+				break;
+            case "visitantes":
+                resultado = this.possuiPermissao("ListarVisitante")
+                        || this.possuiPermissao("ListarSolicitacaoVisita")
+                        || this.possuiPermissao("ListarImpedimento")
+                        || this.possuiPermissao("ListarEntradaSaida")
+        				|| this.possuiPermissao("ConsultarListaVisitas");
+                break;
+			case "relatorio":
+				resultado = this.possuiPermissao("Relatorio");
 				break;
 		}
 		

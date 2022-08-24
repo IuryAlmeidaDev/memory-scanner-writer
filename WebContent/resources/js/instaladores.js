@@ -15,9 +15,11 @@ function wsDesktopConnect() {
 
 	wsDesktop.onclose = function(e)
 	{
-		setStatus('Aplicativo biométrico fechado ou não instalado.');
-		showVersao(false);
-		PF('statusDialog').hide();
+		appFechado();
+	};
+	
+	wsDesktop.onerror = function(e) {
+		appFechado();
 	};
 
 	wsDesktop.onmessage = function(e)
@@ -39,6 +41,12 @@ function wsDesktopConnect() {
 			}
 		}
 	};
+}
+
+function appFechado() {
+	setStatus('Aplicativo biométrico fechado ou não instalado.');
+	showVersao(false);
+	PF('statusDialog').hide();
 }
 
 function setStatus(mensagem) {

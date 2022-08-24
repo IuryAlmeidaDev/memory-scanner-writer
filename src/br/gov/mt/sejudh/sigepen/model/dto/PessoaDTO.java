@@ -9,6 +9,8 @@ public class PessoaDTO {
 	private String cpf;
 	private Date dataNascimento;
 	private String nomeMae;
+	private String nomeSocial;
+	private String nomePai;
 
 	public long getId() {
 		return id;
@@ -48,6 +50,22 @@ public class PessoaDTO {
 
 	public void setNomeMae(String nomeMae) {
 		this.nomeMae = nomeMae;
+	}
+	
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
+	}
+
+	public String getNomePai() {
+		return nomePai;
+	}
+
+	public void setNomePai(String nomePai) {
+		this.nomePai = nomePai;
 	}
 
 	@Override
