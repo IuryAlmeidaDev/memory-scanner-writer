@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -57,8 +58,9 @@ public class DashboardDAO {
 		}
 	}
 	
-	public Long recuperandosTemporariosNaUnidadeDataSolturaAVencer(long unidadeId) {
-		String jpql = "select count(distinct r.id) from Recuperando r, Processo p, ProcessoRegimeCondicao prc, "
+	@SuppressWarnings("unchecked")
+	public List<Long> recuperandosTemporariosNaUnidadeDataSolturaAVencer(long unidadeId) {
+		String jpql = "select r.id from Recuperando r, Processo p, ProcessoRegimeCondicao prc, "
 				+ " Passagem pa, PassagemLotacao pl, Estrutura e "
 				+ " where prc.processo.id = p.id "
 				+ " and p.recuperando.id = pa.recuperando.id "
@@ -70,21 +72,19 @@ public class DashboardDAO {
 				+ " and pl.dataSaida is null "
 				+ " and pl.estrutura.id = e.id "
 				+ " and e.unidadePrisional.id = :unidadeId "
-				+ " and trunc(prc.dataSoltura) > trunc(:dataHoje)";
+				+ " group by r.id "
+				+ " having max(prc.dataSoltura) > trunc(:dataHoje)";
 		Query query = em.createQuery(jpql);
 		query.setParameter("dataHoje", DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE));
 		query.setParameter("unidadeId", unidadeId);
 		query.setParameter("modalidade", Modalidade.TEMPORARIA);
 		
-		try {
-			return (Long) query.getSingleResult();
-		} catch (NoResultException e) {
-			return Long.valueOf(0);
-		}
+		return query.getResultList();
 	}
 	
-	public Long recuperandosTemporariosNaUnidadeDataSolturaVencida(long unidadeId) {
-		String jpql = "select count(distinct r.id) from Recuperando r, Processo p, ProcessoRegimeCondicao prc, "
+	@SuppressWarnings("unchecked")
+	public List<Long> recuperandosTemporariosNaUnidadeDataSolturaVencida(long unidadeId) {
+		String jpql = "select r.id from Recuperando r, Processo p, ProcessoRegimeCondicao prc, "
 				+ " Passagem pa, PassagemLotacao pl, Estrutura e "
 				+ " where prc.processo.id = p.id "
 				+ " and p.recuperando.id = pa.recuperando.id "
@@ -97,21 +97,19 @@ public class DashboardDAO {
 				+ " and pl.dataSaida is null "
 				+ " and pl.estrutura.id = e.id "
 				+ " and e.unidadePrisional.id = :unidadeId "
-				+ " and trunc(prc.dataSoltura) < trunc(:dataHoje)";
+				+ " group by r.id "
+				+ " having max(prc.dataSoltura) < trunc(:dataHoje)";
 		Query query = em.createQuery(jpql);
 		query.setParameter("dataHoje", DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE));
 		query.setParameter("unidadeId", unidadeId);
 		query.setParameter("modalidade", Modalidade.TEMPORARIA);
-		
-		try {
-			return (Long) query.getSingleResult();
-		} catch (NoResultException e) {
-			return Long.valueOf(0);
-		}
+
+		return query.getResultList();
 	}
 	
-	public Long recuperandosTemporariosNaUnidadeDataSolturaVenceHoje(long unidadeId) {
-		String jpql = "select count(distinct r.id) from Recuperando r, Processo p, ProcessoRegimeCondicao prc, "
+	@SuppressWarnings("unchecked")
+	public List<Long> recuperandosTemporariosNaUnidadeDataSolturaVenceHoje(long unidadeId) {
+		String jpql = "select r.id from Recuperando r, Processo p, ProcessoRegimeCondicao prc, "
 				+ " Passagem pa, PassagemLotacao pl, Estrutura e "
 				+ " where prc.processo.id = p.id "
 				+ " and p.recuperando.id = pa.recuperando.id "
@@ -123,72 +121,63 @@ public class DashboardDAO {
 				+ " and pl.dataSaida is null "
 				+ " and pl.estrutura.id = e.id "
 				+ " and e.unidadePrisional.id = :unidadeId "
-				+ " and trunc(prc.dataSoltura) = trunc(:dataHoje)";
+				+ " group by r.id "
+				+ "	having max(prc.dataSoltura) = trunc(:dataHoje) ";
 		Query query = em.createQuery(jpql);
 		query.setParameter("dataHoje", DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE));
 		query.setParameter("unidadeId", unidadeId);
 		query.setParameter("modalidade", Modalidade.TEMPORARIA);
-		
-		try {
-			return (Long) query.getSingleResult();
-		} catch (NoResultException e) {
-			return Long.valueOf(0);
-		}
+
+		return query.getResultList();
 	}
 	
-	public Long recuperandosTemporariosNoSistemaDataSolturaAVencer() {
-		String jpql = "select count(distinct r.id) from Recuperando r, Processo p, ProcessoRegimeCondicao prc "
+	@SuppressWarnings("unchecked")
+	public List<Long> recuperandosTemporariosNoSistemaDataSolturaAVencer() {
+		String jpql = "select r.id from Recuperando r, Processo p, ProcessoRegimeCondicao prc "
 				+ " where prc.processo.id = p.id "
 				+ " and p.recuperando.id = r.id "
 				+ " and r.status = 1 "
 				+ " and p.modalidade = :modalidade "
-				+ " and trunc(prc.dataSoltura) > trunc(:dataHoje)";
+				+ " group by r.id "
+				+ " having max(prc.dataSoltura) > trunc(:dataHoje)";
 		Query query = em.createQuery(jpql);
 		query.setParameter("dataHoje", DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE));
 		query.setParameter("modalidade", Modalidade.TEMPORARIA);
 		
-		try {
-			return (Long) query.getSingleResult();
-		} catch (NoResultException e) {
-			return Long.valueOf(0);
-		}
+		return query.getResultList();
 	}
 	
-	public Long recuperandosTemporariosNoSistemaDataSolturaVencida() {
-		String jpql = "select count(distinct r.id) from Recuperando r, Processo p, ProcessoRegimeCondicao prc "
+	@SuppressWarnings("unchecked")
+	public List<Long> recuperandosTemporariosNoSistemaDataSolturaVencida() {
+		String jpql = "select r.id from Recuperando r, Processo p, ProcessoRegimeCondicao prc "
 				+ " where prc.processo.id = p.id "
 				+ " and p.recuperando.id = r.id "
 				+ " and r.status = 1 "
 				+ " and p.modalidade = :modalidade "
 				+ " and prc.regime.id <> 4 "
-				+ " and trunc(prc.dataSoltura) < trunc(:dataHoje)";
+				+ " group by r.id "
+				+ " having max(prc.dataSoltura) < trunc(:dataHoje)";
 		Query query = em.createQuery(jpql);
 		query.setParameter("dataHoje", DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE));
 		query.setParameter("modalidade", Modalidade.TEMPORARIA);
-		
-		try {
-			return (Long) query.getSingleResult();
-		} catch (NoResultException e) {
-			return Long.valueOf(0);
-		}
+
+		return query.getResultList();
 	}
 	
-	public Long recuperandosTemporariosNoSistemaDataSolturaVenceHoje() {
-		String jpql = "select count(distinct r.id) from Recuperando r, Processo p, ProcessoRegimeCondicao prc "
+	@SuppressWarnings("unchecked")
+	public List<Long> recuperandosTemporariosNoSistemaDataSolturaVenceHoje() {
+		String jpql = "select r.id from Recuperando r, Processo p, ProcessoRegimeCondicao prc "
 					+ " where prc.processo.id = p.id "
 					+ " and p.recuperando.id = r.id "
 					+ " and r.status = 1 "
 					+ " and p.modalidade = :modalidade "
-					+ " and trunc(prc.dataSoltura) = trunc(:dataHoje)";
+					+ " group by r.id "
+					+ " having max(prc.dataSoltura) = trunc(:dataHoje)";
 		Query query = em.createQuery(jpql);
 		query.setParameter("dataHoje", DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE));
 		query.setParameter("modalidade", Modalidade.TEMPORARIA);
-		
-		try {
-			return (Long) query.getSingleResult();
-		} catch (NoResultException e) {
-			return Long.valueOf(0);
-		}
+
+		return query.getResultList();
 	}
 
 	public Long solicitacaoVisitaPendente(long unidadeId) {

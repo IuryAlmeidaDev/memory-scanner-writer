@@ -24,7 +24,6 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroSolicitacaoVisita;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVwVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.Dashboard;
 import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
-import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
@@ -49,6 +48,14 @@ public class DashboardBean {
 	private Long temporariosNoSistemaAVencer;
 	private Long temporariosNoSistemaVencido;
 	private Long temporariosNoSistemaVenceHoje;
+	
+	private List<Long> listaTemporariosNaUnidadeAVencer;
+	private List<Long> listaTemporariosNaUnidadeVencido;
+	private List<Long> listaTemporariosNaUnidadeVenceHoje;
+	private List<Long> listaTemporariosNoSistemaAVencer;
+	private List<Long> listaTemporariosNoSistemaVencido;
+	private List<Long> listaTemporariosNoSistemaVenceHoje;
+	
 	private Long solicitacaoVisitaPendente;
 	private Long totalCredenciamentoRecebimentoPendente;
 	private Long totalCredenciamentoChecagemPendente;
@@ -103,27 +110,33 @@ public class DashboardBean {
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_A_VENCER:
-				this.temporariosNaUnidadeAVencer = service.recuperandosTemporariosNaUnidadeDataSolturaAVencer(SecurityUtil.getUnidadeSelecionada().getId());
+				this.listaTemporariosNaUnidadeAVencer = service.recuperandosTemporariosNaUnidadeDataSolturaAVencer(SecurityUtil.getUnidadeSelecionada().getId());
+				this.temporariosNaUnidadeAVencer = Long.parseLong(String.valueOf(this.listaTemporariosNaUnidadeAVencer.size()));
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCEHOJE:
-				this.temporariosNaUnidadeVenceHoje = service.recuperandosTemporariosNaUnidadeDataSolturaVenceHoje(SecurityUtil.getUnidadeSelecionada().getId());
+				this.listaTemporariosNaUnidadeVenceHoje = service.recuperandosTemporariosNaUnidadeDataSolturaVenceHoje(SecurityUtil.getUnidadeSelecionada().getId());				
+				this.temporariosNaUnidadeVenceHoje = Long.parseLong(String.valueOf(this.listaTemporariosNaUnidadeVenceHoje.size()));
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCIDA:
-				this.temporariosNaUnidadeVencido = service.recuperandosTemporariosNaUnidadeDataSolturaVencida(SecurityUtil.getUnidadeSelecionada().getId());
+				this.listaTemporariosNaUnidadeVencido = service.recuperandosTemporariosNaUnidadeDataSolturaVencida(SecurityUtil.getUnidadeSelecionada().getId());
+				this.temporariosNaUnidadeVencido = Long.parseLong(String.valueOf(this.listaTemporariosNaUnidadeVencido.size()));
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER:
-				this.temporariosNoSistemaAVencer = service.recuperandosTemporariosNoSistemaDataSolturaAVencer();
+				this.listaTemporariosNoSistemaAVencer = service.recuperandosTemporariosNoSistemaDataSolturaAVencer();
+				this.temporariosNoSistemaAVencer = Long.parseLong(String.valueOf(this.listaTemporariosNoSistemaAVencer.size()));
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE:
-				this.temporariosNoSistemaVenceHoje = service.recuperandosTemporariosNoSistemaDataSolturaVenceHoje();
+				this.listaTemporariosNoSistemaVenceHoje = service.recuperandosTemporariosNoSistemaDataSolturaVenceHoje();
+				this.temporariosNoSistemaVenceHoje = Long.parseLong(String.valueOf(this.listaTemporariosNoSistemaVenceHoje.size()));
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCIDA:
-				this.temporariosNoSistemaVencido = service.recuperandosTemporariosNoSistemaDataSolturaVencida();
+				this.listaTemporariosNoSistemaVencido = service.recuperandosTemporariosNoSistemaDataSolturaVencida();
+				this.temporariosNoSistemaVencido = Long.parseLong(String.valueOf(this.listaTemporariosNoSistemaVencido.size()));
 				break;
 				
 			case SOLICITACAO_VISITA_PENDENTE:
@@ -214,47 +227,50 @@ public class DashboardBean {
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_A_VENCER:
-				filtro.setUnidade(SecurityUtil.getUnidadeSelecionada());
-				filtro.setStatus(StatusRecuperando.ATIVO);
-				filtro.setModalidade(Modalidade.TEMPORARIA);
-				filtro.setIsTemporarioAVencer(true);
+				if (this.listaTemporariosNaUnidadeAVencer.size()==0)
+					this.listaTemporariosNaUnidadeAVencer.add(-1L);
+				
+				filtro.setRecuperandoIds(this.listaTemporariosNaUnidadeAVencer);
 				facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCEHOJE:
-				filtro.setUnidade(SecurityUtil.getUnidadeSelecionada());
-				filtro.setStatus(StatusRecuperando.ATIVO);
-				filtro.setModalidade(Modalidade.TEMPORARIA);
-				filtro.setIsTemporarioVenceHoje(true);
+				if (this.listaTemporariosNaUnidadeVenceHoje.size()==0)
+					this.listaTemporariosNaUnidadeVenceHoje.add(-1L);
+				
+				filtro.setRecuperandoIds(this.listaTemporariosNaUnidadeVenceHoje);
 				facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCIDA:
-				filtro.setUnidade(SecurityUtil.getUnidadeSelecionada());
-				filtro.setStatus(StatusRecuperando.ATIVO);
-				filtro.setModalidade(Modalidade.TEMPORARIA);
-				filtro.setIsTemporarioVencido(true);
+				if (this.listaTemporariosNaUnidadeVencido.size()==0)
+					this.listaTemporariosNaUnidadeVencido.add(-1L);
+				
+				filtro.setRecuperandoIds(this.listaTemporariosNaUnidadeVencido);
 				facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER:
-				filtro.setStatus(StatusRecuperando.ATIVO);
-				filtro.setModalidade(Modalidade.TEMPORARIA);
-				filtro.setIsTemporarioAVencer(true);
+				if (this.listaTemporariosNoSistemaAVencer.size()==0)
+					this.listaTemporariosNoSistemaAVencer.add(-1L);
+				
+				filtro.setRecuperandoIds(this.listaTemporariosNoSistemaAVencer);
 				facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE:
-				filtro.setStatus(StatusRecuperando.ATIVO);
-				filtro.setModalidade(Modalidade.TEMPORARIA);
-				filtro.setIsTemporarioVenceHoje(true);
+				if (this.listaTemporariosNoSistemaVenceHoje.size()==0)
+					this.listaTemporariosNoSistemaVenceHoje.add(-1L);
+				
+				filtro.setRecuperandoIds(this.listaTemporariosNoSistemaVenceHoje);
 				facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 				break;
 				
 			case RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCIDA:
-				filtro.setStatus(StatusRecuperando.ATIVO);
-				filtro.setModalidade(Modalidade.TEMPORARIA);
-				filtro.setIsTemporarioVencido(true);
+				if (this.listaTemporariosNoSistemaVencido.size()==0)
+					this.listaTemporariosNoSistemaVencido.add(-1L);
+				
+				filtro.setRecuperandoIds(this.listaTemporariosNoSistemaVencido);
 				facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 				break;
 

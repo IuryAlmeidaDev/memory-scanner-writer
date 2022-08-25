@@ -24,8 +24,8 @@ import br.gov.mt.sejudh.sigepen.model.SituacaoCadastroRecuperando;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.util.RestrictionsSigepen;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
-import br.gov.mt.sejudh.sigepen.util.criterion.Restricao;
 import br.gov.mt.sejudh.sigepen.util.criterion.ExpressaoFonetica.MatchModeFonetica;
+import br.gov.mt.sejudh.sigepen.util.criterion.Restricao;
 
 public class FiltroRecuperandoView extends FiltroConsulta {
 
@@ -48,17 +48,15 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 	private String siglaUnidade;
 	
 	private Boolean isCadastroCompleto;
-	
-	private Boolean isTemporarioAVencer = false;
-	private Boolean isTemporarioVenceHoje = false;
-	private Boolean isTemporarioVencido = false;
-	
+
 	private Boolean listarTodasUnidades = false;
 	
 	private Boolean isBuscarFotoFrente = false;
 	private Boolean isTrazerEstruturaNome = false;
 	
 	private Boolean isPesquisaFonetica = false;
+	
+	private List<Long> recuperandoIds;
 
 	@Override
 	public void configurarFiltros() {
@@ -150,25 +148,22 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 			
 			getCriteria().add(Subqueries.propertyIn("unidadeId", critUnidade));
 		}
+		
+		if(this.getRecuperandoIds() != null && this.getRecuperandoIds().size() > 0) {
+			getCriteria().add(Restrictions.in("id", this.getRecuperandoIds()));
+		}
 
 		if (this.getModalidade() != null) {
 			DetachedCriteria critModalidade = DetachedCriteria.forClass(ProcessoRegimeCondicao.class, "prc")
 				.add(Restrictions.eq("prc.modalidade", this.getModalidade()))
 				.createAlias("prc.processo", "proc", JoinType.INNER_JOIN)
-				.setProjection(Projections.property("proc.recuperando.id"));
+				.setProjection(Projections.projectionList()
+						.add(Projections.groupProperty("proc.recuperando.id")));
 			
 			critModalidade.add(Restrictions.eq("proc.modalidade", this.getModalidade()));
 
 			if (this.getModalidade() == Modalidade.TEMPORARIA) {
 				critModalidade.add(Restrictions.ne("prc.regime.id", 4L));
-				
-				if (isTemporarioAVencer) {
-					critModalidade.add(Restrictions.sqlRestriction("trunc({alias}.data_soltura) > trunc(sysdate)"));
-				} else if (isTemporarioVenceHoje) {
-					critModalidade.add(Restrictions.sqlRestriction("trunc({alias}.data_soltura) = trunc(sysdate)"));
-				} else if (isTemporarioVencido) {
-					critModalidade.add(Restrictions.sqlRestriction("trunc({alias}.data_soltura) < trunc(sysdate)"));
-				}
 			}
 			
 			getCriteria().add(Subqueries.propertyIn("id", critModalidade));
@@ -332,30 +327,6 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 		this.isCadastroCompleto = isCadastroCompleto;
 	}
 
-	public Boolean getIsTemporarioAVencer() {
-		return isTemporarioAVencer;
-	}
-
-	public void setIsTemporarioAVencer(Boolean isTemporarioAVencer) {
-		this.isTemporarioAVencer = isTemporarioAVencer;
-	}
-
-	public Boolean getIsTemporarioVenceHoje() {
-		return isTemporarioVenceHoje;
-	}
-
-	public void setIsTemporarioVenceHoje(Boolean isTemporarioVenceHoje) {
-		this.isTemporarioVenceHoje = isTemporarioVenceHoje;
-	}
-
-	public Boolean getIsTemporarioVencido() {
-		return isTemporarioVencido;
-	}
-
-	public void setIsTemporarioVencido(Boolean isTemporarioVencido) {
-		this.isTemporarioVencido = isTemporarioVencido;
-	}
-
 	public Boolean getListarTodasUnidades() {
 		return listarTodasUnidades;
 	}
@@ -378,5 +349,13 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 
 	public void setIsTrazerEstruturaNome(Boolean isTrazerEstruturaNome) {
 		this.isTrazerEstruturaNome = isTrazerEstruturaNome;
+	}
+
+	public List<Long> getRecuperandoIds() {
+		return recuperandoIds;
+	}
+
+	public void setRecuperandoIds(List<Long> recuperandoIds) {
+		this.recuperandoIds = recuperandoIds;
 	}
 }

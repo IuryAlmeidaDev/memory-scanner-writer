@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.service;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -23,27 +25,27 @@ public class DashboardService {
 		return dao.totalRecuperandosComCadastroIncompleto(unidadeId);
 	}
 	
-	public Long recuperandosTemporariosNaUnidadeDataSolturaAVencer(long unidadeId) {
+	public List<Long> recuperandosTemporariosNaUnidadeDataSolturaAVencer(long unidadeId) {
 		return dao.recuperandosTemporariosNaUnidadeDataSolturaAVencer(unidadeId);
 	}
 	
-	public Long recuperandosTemporariosNaUnidadeDataSolturaVencida(long unidadeId) {
+	public List<Long> recuperandosTemporariosNaUnidadeDataSolturaVencida(long unidadeId) {
 		return dao.recuperandosTemporariosNaUnidadeDataSolturaVencida(unidadeId);
 	}
 	
-	public Long recuperandosTemporariosNaUnidadeDataSolturaVenceHoje(long unidadeId) {
+	public List<Long> recuperandosTemporariosNaUnidadeDataSolturaVenceHoje(long unidadeId) {
 		return dao.recuperandosTemporariosNaUnidadeDataSolturaVenceHoje(unidadeId);
 	}
 	
-	public Long recuperandosTemporariosNoSistemaDataSolturaAVencer() {
+	public List<Long> recuperandosTemporariosNoSistemaDataSolturaAVencer() {
 		return dao.recuperandosTemporariosNoSistemaDataSolturaAVencer();
 	}
 	
-	public Long recuperandosTemporariosNoSistemaDataSolturaVencida() {
+	public List<Long> recuperandosTemporariosNoSistemaDataSolturaVencida() {
 		return dao.recuperandosTemporariosNoSistemaDataSolturaVencida();
 	}
 	
-	public Long recuperandosTemporariosNoSistemaDataSolturaVenceHoje() {
+	public List<Long> recuperandosTemporariosNoSistemaDataSolturaVenceHoje() {
 		return dao.recuperandosTemporariosNoSistemaDataSolturaVenceHoje();
 	}
 
