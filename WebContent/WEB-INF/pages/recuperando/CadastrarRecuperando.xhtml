@@ -1273,9 +1273,9 @@
 					
 					<sgp:formSelectOneMenu labelValue="Gestante" styleFormLabelColumn="width: 140px" value="#{recuperandoBean.recuperando.gestante}" display="text" 
 						rendered="#{recuperandoBean.recuperando.pessoa.sexo == 'F'}" temSelecione="true"
-						disabled="#{recuperandoBean.isVisualizacao}" >
-						<f:selectItem itemLabel="Sim" itemValue="true" />
-						<f:selectItem itemLabel="Não" itemValue="false" />
+						disabled="#{recuperandoBean.isVisualizacao}" itemsValue="#{comboHelperBean.simNao}"
+								itemValue="#{item}"
+								itemLabel="#{item.descricao}">
 						<p:ajax listener="#{recuperandoBean.selecionarGestante()}" update="tabView:formSocial:inicio_gestacao"  process="@this" />
 					</sgp:formSelectOneMenu>
 										
