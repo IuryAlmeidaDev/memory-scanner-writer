@@ -28,6 +28,7 @@
 			<p:dataTable id="dataTable" var="rec" value="#{associarRecuperandoBean.recuperandos}" rows="5" paginator="true" paginatorPosition="bottom" lazy="true" 
 				sortBy="#{rec.id}" emptyMessage="Nenhum registro encontrado." paginatorAlwaysVisible="false">
 				
+				<ui:remove>
 				<p:column width="30" sortBy="#{rec.situacaoCadastro}">
 					<p:graphicImage id="situacao" name="#{(rec.situacaoCadastro ? 'green.png' : 'red.png')}" library="icons"/>
 					<p:tooltip for="situacao">
@@ -41,6 +42,7 @@
 						<p:row rendered="#{!rec.temParente}">- Falta aba parentes;<br/></p:row>
 					</p:tooltip>
 				</p:column>
+				</ui:remove>
 				
 				<p:column headerText="Matr." sortBy="#{rec.id}" width="80">
 					<h:outputText value="#{rec.id}" />
@@ -50,13 +52,9 @@
 					<h:outputText value="#{rec.nome}" />
 				</p:column>
 				
-				<p:column headerText="Unidade" sortBy="#{rec.unidade}">
-					<h:outputText value="#{rec.unidade}" />
-				</p:column>				
-				
-				<p:column headerText="Perículosidade" width="150" sortBy="#{rec.periculosidade}" style="background:#{associarRecuperandoBean.corPeric(rec.periculosidade)}">
-					<h:outputText value="#{rec.periculosidade}" />
-				</p:column>			
+				<p:column headerText="Nome da Mãe" sortBy="#{rec.nomeMae}">
+					<h:outputText value="#{rec.nomeMae}" />
+				</p:column>
 				
 				<p:column width="50">
 					<center>

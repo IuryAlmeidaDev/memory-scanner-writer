@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,13 +10,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Immutable;
+
+import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Entity
-@Table(name="SITUACAO_CADASTRO_RECUPERANDO", schema=Sigepen.SEJUDH_SCHEMA)
-public class SituacaoCadastroRecuperando {
-	
+@Immutable
+@Table(name="CADASTRO_RECUPERANDO", schema=Sigepen.SEJUDH_SCHEMA)
+public class SituacaoCadastroRecuperando implements Serializable {
+
+	private static final long serialVersionUID = -4191186100920382978L;
+
 	@Id
+	@Column(name = "id", updatable = false, nullable = false)
 	private Integer id;
 
 	@Column(name="TEM_TATUAGEM")
@@ -38,11 +47,22 @@ public class SituacaoCadastroRecuperando {
 	@Column(name="TEM_PARENTE")
 	private boolean temParente;
 	
+	@Column(name="CADASTRO_COMPLETO")
+	private boolean cadastroCompleto;
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ID")
-	private Recuperando recuperando;
+	private RecuperandoView recuperando;
 
-	public boolean getIsTemTatuagem() {
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public boolean getTemTatuagem() {
 		return temTatuagem;
 	}
 
@@ -50,7 +70,7 @@ public class SituacaoCadastroRecuperando {
 		this.temTatuagem = temTatuagem;
 	}
 
-	public boolean getIsTemFotoTatuagem() {
+	public boolean getTemFotoTatuagem() {
 		return temFotoTatuagem;
 	}
 
@@ -58,7 +78,7 @@ public class SituacaoCadastroRecuperando {
 		this.temFotoTatuagem = temFotoTatuagem;
 	}
 
-	public boolean getIsTemFotoFrente() {
+	public boolean getTemFotoFrente() {
 		return temFotoFrente;
 	}
 
@@ -66,7 +86,7 @@ public class SituacaoCadastroRecuperando {
 		this.temFotoFrente = temFotoFrente;
 	}
 
-	public boolean getIsTemFotoPerfil() {
+	public boolean getTemFotoPerfil() {
 		return temFotoPerfil;
 	}
 
@@ -74,7 +94,7 @@ public class SituacaoCadastroRecuperando {
 		this.temFotoPerfil = temFotoPerfil;
 	}
 
-	public boolean getIsTemFotoCorpoInteiro() {
+	public boolean getTemFotoCorpoInteiro() {
 		return temFotoCorpoInteiro;
 	}
 
@@ -82,7 +102,7 @@ public class SituacaoCadastroRecuperando {
 		this.temFotoCorpoInteiro = temFotoCorpoInteiro;
 	}
 
-	public boolean getIsVidaSocialCompleta() {
+	public boolean getVidaSocialCompleta() {
 		return vidaSocialCompleta;
 	}
 
@@ -90,7 +110,7 @@ public class SituacaoCadastroRecuperando {
 		this.vidaSocialCompleta = vidaSocialCompleta;
 	}
 
-	public boolean getIsTemParente() {
+	public boolean getTemParente() {
 		return temParente;
 	}
 
@@ -98,11 +118,19 @@ public class SituacaoCadastroRecuperando {
 		this.temParente = temParente;
 	}
 
-	public Recuperando getRecuperando() {
+	public boolean getCadastroCompleto() {
+		return cadastroCompleto;
+	}
+
+	public void setCadastroCompleto(boolean cadastroCompleto) {
+		this.cadastroCompleto = cadastroCompleto;
+	}
+
+	public RecuperandoView getRecuperando() {
 		return recuperando;
 	}
 
-	public void setRecuperando(Recuperando recuperando) {
+	public void setRecuperando(RecuperandoView recuperando) {
 		this.recuperando = recuperando;
 	}
 }

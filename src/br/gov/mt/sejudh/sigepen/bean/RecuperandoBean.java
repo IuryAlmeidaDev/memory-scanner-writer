@@ -2,6 +2,9 @@ package br.gov.mt.sejudh.sigepen.bean;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -31,22 +34,24 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
+import br.gov.mt.sejudh.sigepen.biometrics.BiometriaRetorno;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
+import br.gov.mt.sejudh.sigepen.enumerator.BiometriaTipoDedo;
 import br.gov.mt.sejudh.sigepen.enumerator.OrientacaoParticularidade;
 import br.gov.mt.sejudh.sigepen.enumerator.RegiaoParticularidade;
 import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
-import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoDeficiencia;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Alcunha;
@@ -54,10 +59,13 @@ import br.gov.mt.sejudh.sigepen.model.AutorizacaoCadastroSemBiometria;
 import br.gov.mt.sejudh.sigepen.model.Biometria;
 import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Contato;
+import br.gov.mt.sejudh.sigepen.model.Credenciamento;
 import br.gov.mt.sejudh.sigepen.model.Documento;
 import br.gov.mt.sejudh.sigepen.model.Endereco;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.Etnia;
 import br.gov.mt.sejudh.sigepen.model.Foto;
+import br.gov.mt.sejudh.sigepen.model.HistoricoRecuperando;
 import br.gov.mt.sejudh.sigepen.model.Imagem;
 import br.gov.mt.sejudh.sigepen.model.OutroNome;
 import br.gov.mt.sejudh.sigepen.model.Parente;
@@ -70,15 +78,17 @@ import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
+import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.BiometriaService;
-import br.gov.mt.sejudh.sigepen.service.ComboService;
 import br.gov.mt.sejudh.sigepen.service.ContatoService;
 import br.gov.mt.sejudh.sigepen.service.DocumentoService;
 import br.gov.mt.sejudh.sigepen.service.EnderecoService;
+import br.gov.mt.sejudh.sigepen.service.HistoricoRecuperandoService;
 import br.gov.mt.sejudh.sigepen.service.PassagemService;
 import br.gov.mt.sejudh.sigepen.service.PedidoService;
 import br.gov.mt.sejudh.sigepen.service.PessoaService;
@@ -86,6 +96,7 @@ import br.gov.mt.sejudh.sigepen.service.ProcessoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.service.UsuarioService;
+import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -94,7 +105,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ManagedBean
 @ViewScoped
 @URLMappings(mappings = {
-		@URLMapping(id = "ListarRecuperando", pattern = "/recuperando", viewId = "/WEB-INF/pages/recuperando/ListarRecuperando.xhtml"),
+		@URLMapping(id = "ListarRecuperando", pattern = "/recuperando", viewId = "/WEB-INF/pages/recuperando/ListarRecuperandoNovo.xhtml"),
 		@URLMapping(id = "CadastrarRecuperando", pattern = "/recuperando/cadastrar", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "AlterarRecuperando", pattern = "/recuperando/alterar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "VisualizarRecuperando", pattern = "/recuperando/visualizar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
@@ -102,15 +113,15 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 })
 public class RecuperandoBean extends MetodosDePaginaBean {
 
-	private String biometria;
+	private Boolean usuarioEstaCadastrando = false;
 	
-	private Boolean isCadastro = false;
+	private Boolean usuarioPossuiLeitorBiometricoAtivo = false;
 	
-	private FiltroRecuperando filtro;
+	private FiltroRecuperandoView filtro;
 	
-	private LazyDataModel<RecuperandoDTO> recuperandos;
+	private LazyDataModel<RecuperandoView> recuperandos;
 	
-	private List<RecuperandoDTO> recuperandoSimilares;
+	private List<RecuperandoView> recuperandoSimilares;
 	
 	private Recuperando recuperando;
 	
@@ -150,8 +161,6 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	private Processo processo;
 
 	private Particularidade particularidade;
-	
-	private Boolean temBiometria = true;
 
 	@Inject
 	private SecurityUtil securityUtil;
@@ -201,39 +210,50 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	private String emTransferencia;
 	
-	private RecuperandoDTO recuperandoSelecionado;
+	private RecuperandoView recuperandoSelecionado;
 	
 	@Inject
 	private PassagemService passagemService;
 	
 	private List<UnidadePrisional> unidadesPrisionais;
 	
-	@Inject
-	private ComboService comboService;
-	
 	private UnidadePrisional unidadeInfopenSelecionada;
+
+    @Inject
+    private VisitanteService visitanteService;
+    
+    @Inject
+    private HistoricoRecuperandoService historicoService;
+	
+	private List<Etnia> etnias;
 	
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
 		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
-			FiltroRecuperando filtroDash = (FiltroRecuperando)facesUtil.getFlashParameter("filtroRecuperandoDash");
+			FiltroRecuperandoView filtroDash = (FiltroRecuperandoView)facesUtil.getFlashParameter("filtroRecuperandoDash");
 			
 			if (filtroDash != null) {
 				setFiltro(filtroDash);
 			} else {
-				super.carregarFiltroPaginacao(FiltroRecuperando.class, this);
+				super.carregarFiltroPaginacao(FiltroRecuperandoView.class, this);
 			}
 		}
 	}
 
 	@URLAction(onPostback=false)
 	public String init() {
+		this.listarEtnias();
 		try {	
 			switch(this.getAcaoDeTela()) {
 				case CADASTRAR:
+					boolean tornar = false;
 					long pessoaId = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
 					Pessoa p = null;
-					
+					Long idPessoa = (Long)facesUtil.getObjetoSessao("idPessoa");
+					if (pessoaId == 0 && idPessoa != null) {
+						pessoaId = idPessoa;
+						tornar = true;
+					}
 					//A pessoa pode já existir no sistema como visitante ou outros...
 					if (pessoaId > 0) {
 						p = pessoaService.buscarPessoaPorId(pessoaId);
@@ -246,9 +266,34 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 						p = new Pessoa();
 						p.setNaturalidade(new Cidade());
 					}
-					
+
+					Visitante v = null;
+					Long idVisitante = null;
+					Long tornarRecuperandoIdVisitante = (Long)facesUtil.getObjetoSessao("tornarRecuperandoIdVisitante");
+					if(tornarRecuperandoIdVisitante != null) {
+						idVisitante = tornarRecuperandoIdVisitante;
+						v = visitanteService.buscarPorId(idVisitante);
+					}
+
 					this.recuperando = new Recuperando(StatusRecuperando.INATIVO_PARCIAL);
 					this.recuperando.setPessoa(p);
+					this.recuperando.setTornarRecuperando(tornar);
+					this.recuperando.setTornarRecuperandoIdVisitante(idVisitante);
+
+					if(v != null && tornarRecuperandoIdVisitante != null) {
+						Foto foto = new Foto();
+						foto.setIsAtual(true);
+						foto.setRecuperando(this.recuperando);
+						foto.setDataInclusao(new Date());
+						foto.setTipo(TipoFoto.FRENTE);
+						Imagem imagem = new Imagem();
+						imagem.setDataInclusao(new Date());
+						imagem.setArquivo(v.getFotoFrenteAtual().getImagem().getArquivo());
+						foto.setImagem(imagem);
+						this.recuperando.setFotos(new ArrayList<Foto>());
+						this.recuperando.getFotos().add(foto);						
+					}
+					
 					inicializarVariaveis();
 					break;
 					
@@ -325,16 +370,18 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		Estrutura estruturaAtual = service.lotacaoAtual(recuperando);
 		
 		if (getAcaoDeTela().equals(AcaoDeTela.ALTERAR)) {
-			if (!recuperando.getStatus().equals(StatusRecuperando.ATIVO))
+			if (!recuperando.getStatus().equals(StatusRecuperando.ATIVO) && !securityUtil.possuiPermissao("AlterarRecuperandoInativo"))
 				return false;
 			
-			if (estruturaAtual == null) 
+			if (estruturaAtual == null && !securityUtil.possuiPermissao("AlterarRecuperandoInativo")) 
 				return false;
 
-			boolean isUnidadeLogadaIgualLotacaoRecuperando = estruturaAtual.getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId();
+			if(estruturaAtual != null) {
+				boolean isUnidadeLogadaIgualLotacaoRecuperando = estruturaAtual.getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId();
 			
-			if (!isUnidadeLogadaIgualLotacaoRecuperando)
-				return false;
+				if (!isUnidadeLogadaIgualLotacaoRecuperando)
+					return false;
+			}
 		}
 
 		return true;
@@ -373,32 +420,37 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	 * Métodos da Listagem
 	 */
 	private void pesquisar() {
-		this.recuperandos = new LazyDataModel<RecuperandoDTO>() {
+		this.recuperandos = new LazyDataModel<RecuperandoView>() {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public Object getRowKey(RecuperandoDTO object) {
-				return object != null ? object.getId() : null;
+			public Object getRowKey(RecuperandoView object) {
+				if(object != null && object.getId() != null) {
+					return object.getId();
+				} else if(object != null && object.getVisitanteId() != null) {
+					return object.getVisitanteId();
+				}
+				return null;
 			}
 
 			@Override
-			public RecuperandoDTO getRowData(String rowKey) {
+			public RecuperandoView getRowData(String rowKey) {
 				if (rowKey == null || rowKey.isEmpty()) {
 					return null;
 				}
+				for (RecuperandoView rec : recuperandos) {
+					if (rec.getId() != null && rec.getId().equals(Long.valueOf(rowKey))) {
+						return rec;
 
-				for (RecuperandoDTO rec : recuperandos) {
-					if (rec.getId().equals(Long.valueOf(rowKey))) {
-						service.buscarAlcunhasEOutrosNomes(rec);
+					} else if (rec.getVisitanteId() != null && rec.getVisitanteId().equals(Long.valueOf(rowKey))) {
 						return rec;
 					}
 				}
-				
 				return null;
 			}
 			
 			@Override
-			public List<RecuperandoDTO> load(int first, int pageSize,
+			public List<RecuperandoView> load(int first, int pageSize,
 					String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
 				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
@@ -409,19 +461,21 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					e.printStackTrace();
 				}
 
-				List<RecuperandoDTO> recuperandos = service.buscarRecuperandosPorFiltro(getFiltro(), false);
+				List<RecuperandoView> recuperandos = service.buscarRecuperandosPorFiltroEAtestados(getFiltro(), false);
 
-				if (isCadastro) {
+				if (usuarioEstaCadastrando) {
 					if (recuperandos.size() > 0) {
+						getFiltro().setIsBuscarFotoFrente(true);
 						recuperandoSimilares = service.buscarRecuperandosPorFiltro(getFiltro(), true);
-						
+						getFiltro().setIsBuscarFotoFrente(false);
+
 						RequestContext.getCurrentInstance().execute("PF('dlgRecupFotos').show()");
 					} else {
 						RequestContext.getCurrentInstance().execute("PF('confirmaCadastro').show()");
 					}
 				}
 
-				isCadastro = false;
+				usuarioEstaCadastrando = false;
 				
 				return recuperandos;
 			}
@@ -430,7 +484,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	
 	public void imprimir() {
 		try {
-			List<RecuperandoDTO> lista = service.buscarRecuperandosPorFiltro(filtro, true);
+			filtro.setIsTrazerEstruturaNome(true);
+			List<RecuperandoView> lista = service.buscarRecuperandosPorFiltro(filtro, true);
+			filtro.setIsTrazerEstruturaNome(false);
 			
 			if (lista.size() == 0) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
@@ -470,26 +526,64 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	/*
 	 * Métodos de Bean
 	 */
-
+	
 	public String salvar() {
 		try {
 			if (!this.recuperando.possuiFotoFrenteAtual()) {
 				throw new ValidacaoException("É necessário associar uma foto de frente atual do recuperando.");
 			}
 			
+			if(this.recuperando.ehGestante() && this.recuperando.getInicioGestacao() == null) {
+				throw new ValidacaoException("É necessário informar o campo início da gestação.");
+			}
+			
+			if(this.recuperando.ehLactante() && this.recuperando.getInicioLactante() == null) {
+				throw new ValidacaoException("É necessário informar o campo início da lactação.");
+			}
+			Date hj = new Date();
+			if(this.recuperando.ehGestante() && this.recuperando.getInicioGestacao() != null && this.recuperando.getInicioGestacao().after(hj)) {
+				throw new ValidacaoException("Campo início gestação deve ser inferior que a data atual.");
+			}
+			
+			if(this.recuperando.ehLactante() && this.recuperando.getInicioLactante() != null && this.recuperando.getInicioLactante().after(hj)) {
+				throw new ValidacaoException("Campo início lactação deve ser inferior que a data atual.");
+			}
+			
+			if(this.recuperando.getRaca() != null && this.recuperando.getRaca().getId() == 5 && this.recuperando.getEtnia() == null) {
+				throw new ValidacaoException("Campo Etnia deve ser informado");
+			}
+			
 			if (verificarSeBiometriaEhObrigatoria()) {
-				if (this.temBiometria && this.recuperando.getPessoa().getBiometria() == null) {
-					RequestContext.getCurrentInstance().execute("enviaComandoWs('registrar')");
+				if (this.usuarioPossuiLeitorBiometricoAtivo && this.recuperando.getPessoa().getBiometria() == null) {
+					RequestContext.getCurrentInstance().execute("enviaComandoParaApp({acao: 'registrar', idPessoa: " + this.recuperando.getPessoa().getId() + "})");
 					return null;
 				} 
-				else if (!this.temBiometria && this.recuperando.getPessoa().getAutorizacaoCadastro() == null && this.recuperando.getPessoa().getBiometria() == null) {
+				else if (!this.usuarioPossuiLeitorBiometricoAtivo && this.recuperando.getAutorizacaoCadastroSemBiometria() == null && this.recuperando.getPessoa().getBiometria() == null) {
 					RequestContext.getCurrentInstance().execute("PF('confirmaCadBio').show()");
 					return null;
 				}
 			}
-
+			if(this.recuperando.getParentes() != null) {
+				int conjuges = 0;
+				for(Parente p : this.recuperando.getParentes()) {
+					if(p.getParentesco().getDescricao().equals("Conjugê") && p.getStatus().equals(SgpStatusAlternativo.A)){
+						conjuges++;
+					}	
+				}
+				if(conjuges > 1) {
+					facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Não pode haver mais de um cadastro conjugê ativo!");
+					return null;
+				}
+			}
+			boolean isTornarRecuperando = this.recuperando.getTornarRecuperandoIdVisitante() != null && this.recuperando.getTornarRecuperandoIdVisitante() > 0;
 			boolean isNovoRecuperando = this.recuperando.getId() <= 0;
 			this.recuperando = service.salvar(this.recuperando);
+
+			bioService.salvarBiometriaNServer(this.recuperando.getPessoa());
+
+			if(!isTornarRecuperando)
+				buscarRecuperando(this.recuperando.getId());
+
 			LoggerUtil.logInfo(Acao.SALVAR, this.recuperando, log);
 			String mensagemSucesso = "Recuperando(a) " + this.recuperando.getPessoa().getNome() + " salvo com sucesso!";
 
@@ -525,8 +619,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			autCad.setObservacao(this.observacaoUsuarioAutorizador);
 			autCad.setUsuario(u);
 			autCad.setDataAutorizacao(Sigepen.getDataAtual());
+			autCad.setRecuperando(this.recuperando);
 		
-			this.recuperando.getPessoa().setAutorizacaoCadastro(autCad);
+			this.recuperando.setAutorizacaoCadastroSemBiometria(autCad);
 		
 			RequestContext.getCurrentInstance().execute("PF('dlgAutBio').hide()");
 			
@@ -544,7 +639,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		return null;
 	}
 
-	public void excluir(RecuperandoDTO recuperando) {
+	public void excluir(RecuperandoView recuperando) {
 		try {
 			service.excluir(recuperando);
 			facesUtil.exibirMensagemInfo("Recuperando(a) " + recuperando.getNome() + " excluído(a) com sucesso!", false);
@@ -568,38 +663,46 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		}
 	}
 
-	public void pesquisarBiometria() {
+	private void pesquisarBiometria(List<Long> ids) {
 		try {
-			this.setFiltro(new FiltroRecuperando());
-			this.filtro.setPessoasIds(new Gson().fromJson(this.biometria, new TypeToken<ArrayList<Long>>(){}.getType()));
-			this.biometria = null;
+			this.setFiltro(new FiltroRecuperandoView());
+			this.filtro.setPessoasIds(ids);
+			RequestContext.getCurrentInstance().update("registrosForm");
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao pesquisar por biometria: " + e.getMessage());
 			LoggerUtil.logErro(e, log);
 		}
 	}
+	
+	public void setUsuarioPossuiLeitorBiometricoAtivo() {
+		Map<String, String> map = facesUtil.getParameters();
+		this.usuarioPossuiLeitorBiometricoAtivo = Boolean.parseBoolean(map.get("status"));
+	}
+	
+	public void retornoOperacaoBiometrica() {
+		switch (BiometriaRetorno.getOperacao(facesUtil)) {
+			case Pesquisar:
+				pesquisarBiometria(BiometriaRetorno.getValor());
+				break;
+			case Registrar:
+				registrarBiometria(BiometriaRetorno.getValor());
+				break;
+			default:
+				break;
+		}
+	}
 
-	public void registrarBiometria() {
+	private void registrarBiometria(Long idBiometriaTemp) {
 		try {
 			if (this.getIsVisualizacao()) {
 				return;
 			}
 
-			if (this.biometria == null) {
+			if (idBiometriaTemp == null) {
 				throw new Exception("Biometria inválida.");
 			}
 			
-			Biometria bio = bioService.buscarBiometriaConvertida(Long.parseLong(this.biometria));
-			
-			/*if (bio != null) {
-				List<Long> pessoas = bioService.pesquisarBiometriaPorTemplateByte(bio.getTemplate());
-
-				if (pessoas.size() > 0 && pessoas.get(0).longValue() != recuperando.getPessoa().getId() && pessoas.get(0).longValue() > 0) {
-					Recuperando rec = service.buscarRecuperandoSimplesPorIdPessoa(pessoas.get(0).longValue());
-					throw new ValidacaoException("A biometria informada já existe na matrícula " + rec.getId() + " com o nome de " + rec.getPessoa().getNome());
-				}
-			}*/
-			
+			Biometria bio = bioService.buscarBiometriaConvertida(idBiometriaTemp);
 			bioService.vincularBiometriaAPessoa(bio, this.recuperando.getPessoa());
 
 			facesUtil.exibirMensagemInfo("Biometria capturada!", false);
@@ -891,16 +994,14 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_RECUPERANDO_URL);
 			}
 		} else {
-			if (pessoa.getSexo() == Sexo.M) {
-				this.recuperando.setGestante(false);
-			}
-			
 			this.recuperando.setPessoa(pessoa);
 		}
 	}
 
 	public boolean bloquearAbas() {
-		return (this.recuperando.getId() <= 0);
+		if(this.recuperando != null)
+			return (this.recuperando.getId() <= 0);
+		return true;
 	}
 	
 
@@ -1257,6 +1358,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public void adicionarParente() {
 		this.parente = new Parente();
+		this.parente.setStatus(SgpStatusAlternativo.A);
 		this.parenteAux = null;
 	}
 
@@ -1268,19 +1370,22 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public void excluirParente(Parente parente) {
 		try {
-			this.recuperando.getParentes().remove(parente);
-			
+
 			if (this.recuperando.getId() > 0) {
 				service.excluirParente(parente);
 				LoggerUtil.logInfo(Acao.EXCLUIR, parente, log);
 			}
-		} catch (Exception e) {
+            this.recuperando.getParentes().remove(parente);
+		} catch (ValidacaoException e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", e.getMessage());
+        } catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir parente do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, parente, e, log);
 		}
 	}
 
 	public void incluirParente() {
+		
 		try {
 			Calendar c = Calendar.getInstance();
 			c.add(Calendar.MONTH, 4);
@@ -1290,27 +1395,39 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			c.set(Calendar.MILLISECOND, 00);
 
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-			if (service.habilitaAlteracaoParente(this.recuperando)) {
+	
+			if (service.habilitaAlteracaoParente(this.recuperando) || service.habilitaAdicionarParente(this.recuperando)) {
 
 				if (this.parente != null) {
 					if (this.parenteAux == null) {
-						if (service.limiteParentes(this.recuperando)) {
-							this.parente.setRecuperando(this.recuperando);
-							this.recuperando.getParentes().add(this.parente);
-						} else {
-							throw new ValidacaoException("Limite de parentes Ativos não pode ser excedido!");
-						}
-					} else if (this.parente.getStatus() == Status.ATIVO) {
-						this.recuperando.getParentes().remove(this.parenteAux);
+						this.parente.setRecuperando(this.recuperando);
+						this.parente.setCredenciamentos(new ArrayList<Credenciamento>());
+					}
+					
+					for(Parente p : this.recuperando.getParentes()) {
+						if(SgpStatusAlternativo.A.equals(this.parente.getStatus()) && p.getParentesco().getDescricao().equals("Conjugê") && p.getStatus().equals(SgpStatusAlternativo.A) && 
+								p.getId() != this.parente.getId() && this.parente.getParentesco().getDescricao().equals("Conjugê")){
+							if(parenteAux != null)
+								this.parente.setStatus(parenteAux.getStatus());
+							throw new ValidacaoException("Não pode haver mais de um cadastro conjugê ativo!");							
+						}	
+					}
+						
 
-						if (service.limiteParentes(this.recuperando)) {
-							this.recuperando.getParentes().add(this.parente);
-						} else {
-							this.recuperando.getParentes().add(this.parenteAux);
-							throw new ValidacaoException("Limite de parentes Ativos não pode ser excedido!");
+					if (this.parente.getStatus().equals(SgpStatusAlternativo.A)  && !this.parente.getMenorIdade()) {
+
+						if (!service.limiteParentes(this.recuperando, this.parente)) {
+							if(this.parenteAux != null) {
+								this.parente.setParentesco(this.parenteAux.getParentesco());
+								this.parente.setStatus(this.parenteAux.getStatus());
+								this.parente.setDataNascimento(this.parenteAux.getDataNascimento());
+							}
+							throw new ValidacaoException("Limite de parentes Ativos, maior de idade, não pode ser excedido!");
 						}
 					}
+					
+					if(this.parenteAux == null)
+						this.recuperando.getParentes().add(this.parente);
 					
 					if (this.parente.getDataNascimento() != null) {
 						if (this.parente.getDataNascimento().after(new Date())) {
@@ -1318,14 +1435,13 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 						}
 					}
 					
-					this.recuperando.setAlteracaoParentes(c.getTime());
-					
 					if (this.recuperando.getId() > 0) {
 						service.salvarParente(this.parente);
 						LoggerUtil.logInfo(Acao.SALVAR, this.parente, log);
 					}
-					
+					this.recuperando = service.buscarRecuperandoPorId(recuperando.getId(), false);
 					RequestContext.getCurrentInstance().execute("PF('novoParente').hide()");
+					RequestContext.getCurrentInstance().update("tabView:formParente:parentes");
 				}
 			} else {
 				throw new ValidacaoException("Alterações só serão permitidas a partir de " + sdf.format(this.recuperando.getAlteracaoParentes()));
@@ -1338,7 +1454,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		}
 	}
 	
-	public void abrirDialogAtestados(RecuperandoDTO recuperando) {
+	public void abrirDialogAtestados(RecuperandoView recuperando) {
 		facesUtil.setObjetoSessao("recuperandoAtestado", recuperando);
 		facesUtil.exibirPaginaDialog("AtestadosRecuperando", 170, 370);
 	}
@@ -1362,19 +1478,28 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		}
 	}
 	
-	public void imprimirRegistro(RecuperandoDTO recuperando) {
+	public void imprimirRegistro(RecuperandoView recuperando) {
 		try {
-			
-			this.recuperando = service.buscarRecuperandoPorId(recuperando.getId(), false);
+			Recuperando r = service.buscarRecuperandoPorId(recuperando.getId(), false);
 			List<Recuperando> recs = new ArrayList<Recuperando>();
-			this.recuperando.setRegimeAtual(this.recuperando.getRegimeAtual());
-			this.recuperando.setCondicaoAtual(this.recuperando.getCondicaoAtual());
-			this.recuperando.setLotacaoAtual(recuperando.getLotacaoAtualNomeEstrutura());
-			this.recuperando.setUnidadeAtual(recuperando.getUnidade());
+			r.setLotacaoAtual(this.service.buscarLotacaoAtual(recuperando.getId(), false));
+			r.setUnidadeAtual(recuperando.getNomeUnidade());
+			
+			List<HistoricoRecuperando> hists = new ArrayList<HistoricoRecuperando>();	
+			for(HistoricoRecuperando his: historicoService.listarHistoricoRecuperando(recuperando.getId())){
+				if(his != null) {
+					HistoricoRecuperando historicos = new HistoricoRecuperando();
+					historicos.setTipoHistorico(his.getTipoHistorico());
+					historicos.setDataRegistro(his.getDataRegistro());
+					historicos.setObservacao(his.getObservacao());
+					historicos.setRecuperando(r);
+					hists.add(his);
+				}
+			}
 			
 			List<Processo> processos = new ArrayList<Processo>();
 			//Iteração para setar regime e condição atual de cada processo
-			for(Processo p : this.recuperando.getProcessos()) {
+			for(Processo p : r.getProcessos()) {
 				Processo proc = processoService.buscaProcessoPorId(p);
 				
 				List<ProcessoRegimeCondicao> collectProc = proc.getProcessosRegimeCondicao().stream()
@@ -1396,38 +1521,38 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					processos.add(pAux);
 				}
 			}
-			this.recuperando.getProcessos().clear();
-			this.recuperando.setProcessos(processos);
+			r.getProcessos().clear();
+			r.setProcessos(processos);
 			
 			List<Foto> fotos = new ArrayList<Foto>();
-			for(Foto f : this.recuperando.getFotos()){
+			for(Foto f : r.getFotos()){
 				if(f.getIsAtual()){
 					fotos.add(f);
 				}
 			}
-			this.recuperando.getFotos().clear();
-			this.recuperando.setFotos(fotos);
+			r.getFotos().clear();
+			r.setFotos(fotos);
 			
-			for(Alcunha a : this.recuperando.getAlcunhas()){
+			for(Alcunha a : r.getAlcunhas()){
 				if(a.isPrincipal()){
-					this.recuperando.setAlcunhaPrincipal(a.getNome());
+					r.setAlcunhaPrincipal(a.getNome());
 				}
 			}
 			
-			for(Parente p : this.recuperando.getParentes()){
+			for(Parente p : r.getParentes()){
 				if(p.getParentesco().getDescricao().equals("Conjugê")){
-					this.recuperando.setConjuge(p.getNome());
+					r.setConjuge(p.getNome());
 				}
 			}
 			
 			int i = 0;
-			for(Parente p : this.recuperando.getParentes()){
+			for(Parente p : r.getParentes()){
 				if(p.getParentesco().getDescricao().equals("Filho(a)")){
 					i++;
 				}
 			}
-			this.recuperando.setQuantFilhos(i);
-			recs.add(this.recuperando);
+			r.setQuantFilhos(i);
+			recs.add(r);
 			
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(recs, Relatorio.RegistroRecuperando));
 			RequestContext.getCurrentInstance().execute("download()");
@@ -1447,19 +1572,19 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	/*
 	 * Getter e Setters
 	 */
-	public FiltroRecuperando getFiltro() {
+	public FiltroRecuperandoView getFiltro() {
 		return filtro;
 	}
 
-	public void setFiltro(FiltroRecuperando filtro) {
+	public void setFiltro(FiltroRecuperandoView filtro) {
 		this.filtro = filtro;
 	}
 
-	public LazyDataModel<RecuperandoDTO> getRecuperandos() {
+	public LazyDataModel<RecuperandoView> getRecuperandos() {
 		return recuperandos;
 	}
 
-	public void setRecuperandos(LazyDataModel<RecuperandoDTO> recuperandos) {
+	public void setRecuperandos(LazyDataModel<RecuperandoView> recuperandos) {
 		this.recuperandos = recuperandos;
 	}
 
@@ -1471,7 +1596,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		this.recuperando = recuperando;
 	}
 
-	public List<RecuperandoDTO> getRecuperandoSimilares() {
+	public List<RecuperandoView> getRecuperandoSimilares() {
 		return recuperandoSimilares;
 	}
 
@@ -1568,6 +1693,10 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		return service.habilitaAlteracaoParente(this.recuperando);
 	}
 
+	public boolean adicionarParentes() {
+		return service.habilitaAdicionarParente(this.recuperando);
+	}
+
 	public Foto getFotoDoFormulario() {
 		return fotoDoFormulario;
 	}
@@ -1590,14 +1719,6 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public void setParticularidade(Particularidade particularidade) {
 		this.particularidade = particularidade;
-	}
-
-	public String getBiometria() {
-		return biometria;
-	}
-
-	public void setBiometria(String biometria) {
-		this.biometria = biometria;
 	}
 
 	public Passagem getPassagemSelecionada() {
@@ -1656,20 +1777,12 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		this.observacaoUsuarioAutorizador = observacaoUsuarioAutorizador;
 	}
 
-	public RecuperandoDTO getRecuperandoSelecionado() {
+	public RecuperandoView getRecuperandoSelecionado() {
 		return recuperandoSelecionado;
 	}
 
-	public void setRecuperandoSelecionado(RecuperandoDTO recuperandoSelecionado) {
+	public void setRecuperandoSelecionado(RecuperandoView recuperandoSelecionado) {
 		this.recuperandoSelecionado = recuperandoSelecionado;
-	}
-
-	public Boolean getTemBiometria() {
-		return temBiometria;
-	}
-
-	public void setTemBiometria(Boolean temBiometria) {
-		this.temBiometria = temBiometria;
 	}
 
 	public List<UnidadePrisional> getUnidadesPrisionais() {
@@ -1680,12 +1793,12 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		this.unidadesPrisionais = unidadesPrisionais;
 	}
 
-	public Boolean getIsCadastro() {
-		return isCadastro;
+	public Boolean getUsuarioEstaCadastrando() {
+		return usuarioEstaCadastrando;
 	}
 
-	public void setIsCadastro(Boolean isCadastro) {
-		this.isCadastro = isCadastro;
+	public void setUsuarioEstaCadastrando(Boolean usuarioEstaCadastrando) {
+		this.usuarioEstaCadastrando = usuarioEstaCadastrando;
 	}
 
 	public UnidadePrisional getUnidadeInfopenSelecionada() {
@@ -1694,5 +1807,180 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public void setUnidadeInfopenSelecionada(UnidadePrisional unidadeInfopenSelecionada) {
 		this.unidadeInfopenSelecionada = unidadeInfopenSelecionada;
+	}
+	
+	public String tornarRecuperando(RecuperandoView rec) {
+		facesUtil.setObjetoSessao("idPessoa", rec.getPessoaId());
+		facesUtil.setObjetoSessao("tornarRecuperandoIdVisitante", rec.getVisitanteId());
+		
+	    if(rec.getVisitanteId() != null) {
+	    	RequestContext.getCurrentInstance().execute("PF('avisoTornarRecuperando').show()");
+		    return "";
+	    }
+		return "pretty:CadastrarRecuperando";
+	}
+	
+	public String executarTornarRecuperando() {
+		FacesContext context = FacesContext.getCurrentInstance();
+	    Map<String,String> params = context.getExternalContext().getRequestParameterMap();
+	    String idPessoa = params.get("idPessoa");
+	    String idVisitante = params.get("idVisitante");
+	    if("0".equals(idVisitante))
+	    	idVisitante = null;
+		facesUtil.setObjetoSessao("idPessoa", idPessoa);
+		facesUtil.setObjetoSessao("tornarRecuperandoIdVisitante", idVisitante);
+	    if(idVisitante != null) {
+	    	RequestContext.getCurrentInstance().execute("PF('avisoTornarRecuperando').show()");
+		    return "";
+	    }
+		return "pretty:CadastrarRecuperando";
+	}
+	
+	public void selectRecuperando(SelectEvent event) {
+		RecuperandoView rec = (RecuperandoView) event.getObject();
+	    
+	    if (rec != null) {
+		    this.recuperandoSelecionado = service.buscarRecuperandoSelecionado(rec.getPessoaId());
+		    
+		    if(rec.getIsRecuperando() == false) {
+		    	RequestContext.getCurrentInstance().execute("PF('dialogDetalhesVisitanteRecuperando').show()");
+		    	return;
+		    }
+		    
+		    RequestContext.getCurrentInstance().execute("PF('dialogDetalhes').show()");
+	    }
+	}
+	
+	public void selecionarGestante() {
+		this.recuperando.setInicioGestacao(null);
+		this.recuperando.setLactante(SimNao.N);
+	}
+	
+	public void selecionarPossuiFilho() {
+		this.recuperando.setFilhoPcd(SimNao.N);
+	}
+	
+	public boolean mostrarAposentado() {
+		Date dataNascimento = this.recuperando.getPessoa().getDataNascimento(); 
+    	if(dataNascimento != null) {
+    		java.util.Date dtAux = new java.util.Date(dataNascimento.getYear(), dataNascimento.getMonth(), dataNascimento.getDate());
+	    	LocalDate niver = dtAux.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();		
+	    	int idade = Period.between(niver, LocalDate.now()).getYears();
+	    	
+	    	return idade >= 60;
+    	}
+    	
+    	return false;
+
+	}
+	
+	public boolean mostrarRecebeBeneficio() {
+		return null != this.recuperando.getPne() && !TipoDeficiencia.NAO_POSSUI.equals(this.recuperando.getPne());
+	}
+	
+	public void selecionarPcd() {
+		this.recuperando.setRecebeBeneficio(SimNao.N);
+	}
+	
+    public void listarEtnias() {
+        try {
+        	this.etnias = this.service.listarEtnias();
+        } catch (Exception e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao listar etnias: " + e.getMessage());
+            LoggerUtil.logErro(e, log);
+        }
+    }
+
+	public List<Etnia> getEtnias() {
+		return etnias;
+	}
+
+	public void setEtnias(List<Etnia> etnias) {
+		this.etnias = etnias;
+	}
+
+	public void selecionarEtnia() {
+		this.recuperando.setEtnia(null);
+	}
+
+	public boolean mostrarEtnia() {
+		if(this.recuperando != null && this.recuperando.getRaca() != null)
+			return this.recuperando.getRaca().getId() == 5;
+		return false;
+	}
+
+	public void selecionarLactante() {
+		this.recuperando.setInicioLactante(null);
+	}
+
+	public HistoricoRecuperandoService getHistoricoService() {
+		return historicoService;
+	}
+
+	public void setHistoricoService(HistoricoRecuperandoService historicoService) {
+		this.historicoService = historicoService;
+	}
+	
+	public void imprimirBiometria() {
+		List<RecuperandoDTO> lista = new ArrayList<RecuperandoDTO>();
+		RecuperandoDTO r = new RecuperandoDTO();
+		r.setId(this.recuperando.getId());
+		r.setNome(this.recuperando.getPessoa().getNome());
+		r.setNomeSocial(this.recuperando.getPessoa().getNomeSocial());
+		r.setNomeMae(this.recuperando.getPessoa().getNomeMae());
+		r.setDataNascimento(this.recuperando.getPessoa().getDataNascimento());
+		r.setRegime(this.recuperando.getRegimeAtual().getDescricao());
+		r.setCondicaoAtual(this.recuperando.getCondicaoAtual());
+		r.setLotacaoAtualNomeEstrutura(this.service.buscarLotacaoAtual(recuperando.getId(), true));
+		r.setImprimirBiometria(false);
+		
+		if (this.recuperando.getAutorizacaoCadastroSemBiometria() != null) {
+			AutorizacaoCadastroSemBiometria aut = this.recuperando.getAutorizacaoCadastroSemBiometria();
+
+			r.setDataAutorizacao(aut.getDataAutorizacao());
+			r.setObservacao(aut.getObservacao());
+			r.setUsuario(aut.getUsuario().getServidor().getNome());
+		}
+		
+		r.setImagemFrente(recuperando.getFotoFrenteAtual().getImagem());
+		
+		if (this.recuperando.getPessoa().getBiometria() != null) {
+			r.setImprimirBiometria(true);
+			r.setPolegarEsquerdo(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.POLEGAR_ESQUERDO));
+			r.setPolegarDireito(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.POLEGAR_DIREITO));
+			r.setIndicadorEsquerdo(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.INDICADOR_ESQUERDO));
+			r.setIndicadorDireito(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.INDICADOR_DIREITO));
+			r.setMedioEsquerdo(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.MEDIO_ESQUERDO));
+			r.setMedioDireito(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.MEDIO_DIREITO));
+			r.setAnelarEsquerdo(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.ANELAR_ESQUERDO));
+			r.setAnelarDireito(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.ANELAR_DIREITO));
+			r.setMinimoEsquerdo(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.MINIMO_ESQUERDO));
+			r.setMinimoDireito(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.MINIMO_DIREITO));
+		}
+		lista.add(r);
+		try {
+
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.Biometrias));
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório de Entrada/Saída de Recuperandos", log);
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro imprimir Relatório de Entrada/Saída de Recuperandos " + e.getMessage());
+			LoggerUtil.logErro(Acao.IMPRIMIR, "Relatório de Entrada/Saída de Recuperandos", e, log);
+		}
+		
+	}
+	
+	public boolean mostrarImprimirBiometria() {
+		if(!securityUtil.possuiPermissao("ImprimirBiometriaRecuperando"))
+			return false;
+		
+		if(this.recuperando != null && this.recuperando.getPessoa() != null && this.recuperando.getPessoa().getBiometria() != null)
+			return true;
+		
+		if(this.recuperando != null && this.recuperando.getPessoa() != null && this.recuperando.getAutorizacaoCadastroSemBiometria() != null)
+			return true;
+		
+		return false;
 	}
 }

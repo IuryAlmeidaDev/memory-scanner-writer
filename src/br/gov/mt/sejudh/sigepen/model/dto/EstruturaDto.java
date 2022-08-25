@@ -7,8 +7,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Immutable;
 
-@Entity
 @Immutable
+@Entity
 public class EstruturaDto {
 	
 	@Column(name = "NIVEL")

@@ -7,6 +7,8 @@ import javax.persistence.EntityManager;
 import org.hibernate.Hibernate;
 
 import br.gov.mt.sejudh.sigepen.model.Contato;
+import br.gov.mt.sejudh.sigepen.model.Endereco;
+import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
 
 
 @RequestScoped
@@ -42,6 +44,14 @@ public class ContatoDAO {
 
 	public void excluir(Contato contato) {
 		entityManager.remove(entityManager.merge(contato));
+	}
+	
+	public void excluir(Endereco endereco) {
+		entityManager.remove(entityManager.merge(endereco));
+	}
+	
+	public void excluir(VisitanteCertidao certidao) {
+		entityManager.remove(entityManager.merge(certidao));
 	}
 		
 	

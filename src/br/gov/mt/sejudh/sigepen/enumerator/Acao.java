@@ -12,6 +12,7 @@ public enum Acao {
 	EXCLUIR,
 	FINALIZAR,
 	INICIAR,
+	CONCLUIR,
 	IMPRIMIR,
 	LOGAR,
 	REMOVER,

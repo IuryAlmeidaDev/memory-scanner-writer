@@ -3,9 +3,13 @@ package br.gov.mt.sejudh.sigepen.bean.outros;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 
+import org.primefaces.component.selectonemenu.SelectOneMenu;
+
 import br.gov.mt.sejudh.sigepen.model.Documento;
+import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 
 import com.ocpsoft.pretty.faces.annotation.URLAction;
@@ -20,6 +24,8 @@ public class AssociarDocumentoBean extends MetodosDialogBean {
 		
 	@Inject
 	private FacesUtil facesUtil;
+	
+	private Boolean cpf = false;
 	
 	@URLAction(onPostback=false)
 	public String init() {
@@ -51,5 +57,19 @@ public class AssociarDocumentoBean extends MetodosDialogBean {
 	public void setDocumento(Documento documento) {
 		this.documento = documento;
 	}
+	
+	public void tipoDocumentoChanged(final AjaxBehaviorEvent event)  {
+		TipoDocumento td = (TipoDocumento) ((SelectOneMenu) event.getSource()).getValue();
+		this.cpf = "CPF".equals(td.getDescricao());
+	}
+
+	public Boolean getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(Boolean cpf) {
+		this.cpf = cpf;
+	}
+	
 	
 }

@@ -197,7 +197,7 @@
 					<sgp:formSelectOneMenu id="tipo" labelValue="Tipo" value="#{preCadastroPessoaBean.documento.tipoDocumento}" itemsValue="#{comboHelperBean.tipoDocumento}" itemValue="#{item}" 
 						itemLabel="#{item.descricao}" validationRequired="true"  requiredMessage="*" converter="SimpleEntityConverter" temSelecione="true" display="text" disabled="#{preCadastroPessoaBean.documento.id>0}"/>
 					 	
-					<sgp:formInputText id="numero" labelValue="Número" validationRequired="true" value="#{preCadastroPessoaBean.documento.numero}" size="30" display="text" maxlength="20" 
+					<sgp:formInputText id="numero" labelValue="Número" validationRequired="true" value="#{preCadastroPessoaBean.documento.numero}" size="30" display="text" maxlength="50" 
 						disabled="#{preCadastroPessoaBean.documento.id>0}" requiredMessage="*"/>
 					
 					<sgp:formCalendar labelValue="Emissão" value="#{preCadastroPessoaBean.documento.dataEmissao}" display="text" />

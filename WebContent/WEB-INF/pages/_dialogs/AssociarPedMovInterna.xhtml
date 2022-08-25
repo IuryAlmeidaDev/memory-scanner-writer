@@ -50,12 +50,12 @@
 					
 					<p:column headerText="Data Prev." sortBy="#{pedido.dataPrevista}" width="105">
 						<h:outputText value="#{pedido.dataPrevista}">
-							<f:convertDateTime pattern="dd/MM/yyyy" />
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 						</h:outputText>
 					</p:column>
 					
-					<p:column headerText="Destino" sortBy="#{pedido.estruturaNome}">
-						<h:outputText value="#{pedido.estruturaNome}" />
+					<p:column headerText="Destino" sortBy="#{pedido.estruturaDestinoNomeCompleto}">
+						<h:outputText value="#{pedido.estruturaDestinoNomeCompleto}" />
 					</p:column>
 				
 					<p:column headerText="Status"  width="90" sortBy="#{pedido.status}">

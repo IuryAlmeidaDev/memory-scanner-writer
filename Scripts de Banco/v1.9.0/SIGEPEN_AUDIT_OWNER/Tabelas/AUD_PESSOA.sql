@@ -1,0 +1,1 @@
+alter table AUD_PESSOA drop column autorizacao_cad_id;

@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/pages/_templates/dialog.xhtml"
+                xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+    <ui:define name="head">
+        <title>Selecionar Certidão</title>
+    </ui:define>
+
+    <ui:define name="conteudo">
+        <h:form id="registrosForm">
+            <p:panel>
+                <sgp:formInputText
+                        id="descricao"
+                        labelValue="Descrição"
+                        value="#{associarTipoCertidaoBean.filtro.descricao}"
+                        maxlength="80"
+                        display="text"/>
+
+                <br />
+                <br />
+
+                <p:commandButton value="Pesquisar" update="@form, dataTable" process="@form"
+                                 icon="ui-icon-search"/>
+                <br/>
+            </p:panel>
+            <br />
+            <p:dataTable id="dataTable" var="cert" widgetVar="associareCertidao"
+                         emptyMessage="Nenhuma certidão adicionada."
+                         value="#{associarTipoCertidaoBean.lazyDataModel}" rows="5" paginator="true"
+                         paginatorAlwaysVisible="false" paginatorPosition="bottom" lazy="true">
+
+                <p:column headerText="Código" width="70">
+                    <h:outputText value="#{cert.id}"/>
+                </p:column>
+                <p:column headerText="Descrição?">
+                    <h:outputText value="#{cert.descricao}"/>
+                </p:column>
+                <p:column width="30">
+                    <p:commandButton title="Selecionar" icon="fa fa-check"
+                                     actionListener="#{associarTipoCertidaoBean.selecionarCertidao(cert)}"
+                                     process="@this"/>
+                </p:column>
+                <f:facet name="footer">
+                    Total de registros: #{associarTipoCertidaoBean.lazyDataModel.rowCount}
+                </f:facet>
+            </p:dataTable>
+            <br/>
+        </h:form>
+    </ui:define>
+</ui:composition>

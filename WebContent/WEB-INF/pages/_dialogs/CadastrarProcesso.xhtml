@@ -22,7 +22,26 @@
 
 					<sgp:formOutputLabel id="condAtual" labelValue="Condição Atual" value="#{cadastrarProcessoBean.processo.condicaoAtual.descricao}" />
 					
+					<ui:remove>
 					<sgp:formOutputLabel id="condenacao" rendered="#{cadastrarProcessoBean.processo.condicaoAtual.descricao.equals('Condenado')}" labelValue="Condenado a" value="#{cadastrarProcessoBean.processo.ano} ano(s), #{cadastrarProcessoBean.processo.mes} mês(es), #{cadastrarProcessoBean.processo.dia} dia(s)." />
+					</ui:remove>					
+				</h:panelGroup>
+				
+				<h:panelGroup id="anoMesDia">
+					<p:panel header="Tempo total de condenação" style="width: 450px; margin-top:25px; margin-bottom:20px; padding-bottom:25px" rendered="#{cadastrarProcessoBean.processo.condicaoAtual != null and cadastrarProcessoBean.processo.condicaoAtual.descricao.equalsIgnoreCase('Condenado')}">
+						<p:focus for="formPassCrime:ano:input"/>
+						<sgp:formInputNumber decimalPlaces="0" id="ano" value="#{cadastrarProcessoBean.processo.ano}" labelValue="Anos" size="2" maxlength="3" maxValue="999" mask="999" validationRequired="true" display="text"
+							disabled="#{cadastrarProcessoBean.isVisualizacao}" requiredMessage="*"
+							rendered="#{cadastrarProcessoBean.processo.condicaoAtual != null}"/>
+				
+						<sgp:formInputNumber decimalPlaces="0" id="mes" value="#{cadastrarProcessoBean.processo.mes}" labelValue="Mêses" size="2" maxlength="2"  maxValue="12" mask="99" validationRequired="true" display="text" 
+							disabled="#{cadastrarProcessoBean.isVisualizacao}" requiredMessage="*"
+							rendered="#{cadastrarProcessoBean.processo.condicaoAtual != null}"/>
+				
+						<sgp:formInputNumber decimalPlaces="0" id="dia" value="#{cadastrarProcessoBean.processo.dia}" labelValue="Dias" size="2" maxlength="2" maxValue="31" mask="99" validationRequired="true" display="text" 
+							disabled="#{cadastrarProcessoBean.isVisualizacao}" requiredMessage="*"
+							rendered="#{cadastrarProcessoBean.processo.condicaoAtual != null}"/>
+					</p:panel>
 				</h:panelGroup>
 
 				<sgp:formInputText id="numeroProcesso" labelValue="Nº Processo" value="#{cadastrarProcessoBean.processo.numeroProcesso}" size="40" permiteCaracterEspecial="true" maxlength="80" disabled="#{cadastrarProcessoBean.isVisualizacao}"/>
@@ -36,7 +55,7 @@
 				
 				<h2>Regime e Condição do Processo</h2>
 
-                <p:commandButton icon="ui-icon-plus" immediate="true" update=":formRegimeCondicaoProcesso" oncomplete="PF('dialogRegimeCondicaoProcesso').show()" title="Adicionar" value="Adicionar" action="#{cadastrarProcessoBean.adicionarRegimeCondicao(null)}" rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') and !cadastrarProcessoBean.isVisualizacao)}" />			
+                <p:commandButton icon="ui-icon-plus" immediate="true" update=":formRegimeCondicaoProcesso" oncomplete="PF('dialogRegimeCondicaoProcesso').show()" title="Adicionar" value="Adicionar" action="#{cadastrarProcessoBean.adicionarRegimeCondicao(null)}" rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') and !cadastrarProcessoBean.isVisualizacao)}"/>		
 				<br/><br/>
 			
 				<p:dataTable id="regCond" widgetVar="regCondDT" var="regimeCondicao" emptyMessage="Nenhum item adicionado." value="#{cadastrarProcessoBean.processo.processosRegimeCondicao}" rows="5" paginator="true" paginatorAlwaysVisible="false"  
@@ -47,7 +66,7 @@
 						<h:outputText value="#{regimeCondicao.numeroDocumento}" style="word-break: break-word;" />
 					</p:column>
 					
-					<p:column headerText="Tipo">
+					<p:column headerText="Tipo" width="auto">
 						<h:outputText value="#{regimeCondicao.tipoProcesso.descricao}" />
 					</p:column>
 					
@@ -57,11 +76,11 @@
 						</h:outputText>
 					</p:column>
 					
-					<p:column headerText="Estabelecimento">
+					<p:column headerText="Estabelecimento" width="125">
 						<h:outputText value="#{regimeCondicao.estabelecimento.nome}" />
 					</p:column>
 					
-					<p:column headerText="Observação">
+					<p:column headerText="Observação" width="90">
 						<h:outputText value="#{regimeCondicao.observacao}" />
 					</p:column>
 
@@ -69,11 +88,11 @@
 						<h:outputText value="#{regimeCondicao.regime.descricao}" />
 					</p:column>
 					
-					<p:column headerText="Condição">
+					<p:column headerText="Condição" width="70">
 						<h:outputText value="#{regimeCondicao.condicao.descricao}" />
 					</p:column>
 					
-					<p:column headerText="Situação Temp.">
+					<p:column headerText="Situação Temp." width="auto">
 						<h:outputText value="#{regimeCondicao.situacaoTemporaria}" />
 					</p:column>
 					
@@ -168,6 +187,8 @@
 		<!-- Inserir Documento de Encaminhamento ou alteração de Processo -->
 		<p:dialog id="dialogRegimeCondicaoProcesso" header="Regime e Condição do Processo" showEffect="fade" widgetVar="dialogRegimeCondicaoProcesso" modal="true"
     			draggable="false" resizable="false" closeOnEscape="true">
+    			
+    		<p:ajax event="close" update="formRegimeCondicaoProcesso" resetValues="true" />
     		
     		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.Condicao" var="condicao" allSuffix="ALL_ENUM_VALUES" />
     		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.Modalidade" var="modalidade" allSuffix="ALL_ENUM_VALUES" />
@@ -250,22 +271,8 @@
 					validationRequired="true"
 					requiredMessage="*"
 					temSelecione="true">
-					<p:ajax event="change" global="false" update=":formRegimeCondicaoProcesso:anoMesDia :formRegimeCondicaoProcesso:groupModalidade" />
+					<p:ajax event="change" global="false" update=":formRegimeCondicaoProcesso:groupModalidade" />
 				</sgp:formSelectOneMenu>
-					
-				<h:panelGroup id="anoMesDia" rendered="#{!cadastrarProcessoBean.isVisualizacao}">
-					<sgp:formInputText id="ano" value="#{cadastrarProcessoBean.processo.ano}" labelValue="Ano" size="10" maxlength="4" validationRequired="true" display="text"
-						disabled="#{cadastrarProcessoBean.isVisualizacao or cadastrarProcessoBean.processo.condicaoAtual.descricao.equalsIgnoreCase('Condenado')}" requiredMessage="*"
-						rendered="#{cadastrarProcessoBean.processoRegimeCondicoes.condicao != null and cadastrarProcessoBean.processoRegimeCondicoes.condicao.descricao.equalsIgnoreCase('Condenado')}"/>
-			
-					<sgp:formInputText id="mes" value="#{cadastrarProcessoBean.processo.mes}" labelValue="Mês" size="10" maxlength="2" validationRequired="true" display="text" 
-						disabled="#{cadastrarProcessoBean.isVisualizacao or cadastrarProcessoBean.processo.condicaoAtual.descricao.equalsIgnoreCase('Condenado')}" requiredMessage="*"
-						rendered="#{cadastrarProcessoBean.processoRegimeCondicoes.condicao != null and cadastrarProcessoBean.processoRegimeCondicoes.condicao.descricao.equalsIgnoreCase('Condenado')}"/>
-			
-					<sgp:formInputText id="dia" value="#{cadastrarProcessoBean.processo.dia}" labelValue="Dia" size="10" maxlength="2" validationRequired="true" display="text" 
-						disabled="#{cadastrarProcessoBean.isVisualizacao or cadastrarProcessoBean.processo.condicaoAtual.descricao.equalsIgnoreCase('Condenado')}" requiredMessage="*"
-						rendered="#{cadastrarProcessoBean.processoRegimeCondicoes.condicao != null and cadastrarProcessoBean.processoRegimeCondicoes.condicao.descricao.equalsIgnoreCase('Condenado')}"/>
-				</h:panelGroup>
 				
 				<h:panelGroup id="groupModalidade">
 					<sgp:formSelectOneMenu id="modalidade" labelValue="Modalidade" value="#{cadastrarProcessoBean.processoRegimeCondicoes.modalidade}"
@@ -282,10 +289,12 @@
 				</h:panelGroup>
 				
     			<br/><br/><br/>
-    			<p:commandButton value="Adicionar" update="@form :formPassCrime:regCond :formPassCrime:regCondAtual" action="#{cadastrarProcessoBean.associarRegimeCondicao}" icon="ui-icon-disk" >
+    			<p:commandButton value="Adicionar" update=":formPassCrime:regCond :formPassCrime:regCondAtual :formRegimeCondicaoProcesso" action="#{cadastrarProcessoBean.associarRegimeCondicao}" icon="ui-icon-disk" >
     				<p:confirm header="Confirmação" message="Salve o processo para concluir a alteração?" icon="ui-icon-alert" />
 				</p:commandButton>
-    			 <p:commandButton value="Fechar" onclick="PF('dialogRegimeCondicaoProcesso').hide()"/>
+    			 <p:commandButton value="Fechar">
+    			 	<p:ajax event="click" update="formRegimeCondicaoProcesso" resetValues="true" oncomplete="PF('dialogRegimeCondicaoProcesso').hide()" />
+    			 </p:commandButton>
     		</h:form>
     			
 		</p:dialog>

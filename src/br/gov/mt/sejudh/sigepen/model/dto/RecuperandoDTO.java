@@ -8,8 +8,10 @@ import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.Periculosidade;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamento;
+import br.gov.mt.sejudh.sigepen.model.EstadoCivil;
 import br.gov.mt.sejudh.sigepen.model.Imagem;
 import br.gov.mt.sejudh.sigepen.model.OutroNome;
+import br.gov.mt.sejudh.sigepen.model.Regime;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
 public class RecuperandoDTO {
@@ -18,6 +20,7 @@ public class RecuperandoDTO {
 	private Long pessoaId;
 	private String nome;
 	private String nomeMae;
+	private String nomePai;
 	private String nomeSocial;
 	private Date dataNascimento;
 	private StatusRecuperando status;
@@ -44,6 +47,28 @@ public class RecuperandoDTO {
 	private List<OutroNome> outrosNomes;
 	
 	private Imagem imagemFrente;
+	private EstadoCivil estadoCivil;
+	private Regime regimeAtual;
+	private Long idVisitante;
+	private Imagem visitanteImagemFrente;
+	private Imagem polegarEsquerdo;
+	private Imagem polegarDireito;
+	private Imagem indicadorEsquerdo;
+	private Imagem indicadorDireito;
+	private Imagem medioEsquerdo;
+	private Imagem medioDireito;
+	private Imagem anelarEsquerdo;
+	private Imagem anelarDireito;
+	private Imagem minimoEsquerdo;
+	private Imagem minimoDireito;
+	
+	private Date dataEntrada;
+	
+	private Date dataAutorizacao;
+	private String observacao;
+	private String usuario;
+	
+	private boolean imprimirBiometria;
 	
 	public RecuperandoDTO() {
 		this.alcunhas = new ArrayList<String>();
@@ -279,8 +304,170 @@ public class RecuperandoDTO {
 		this.nomeSocial = nomeSocial;
 	}
 
+	public EstadoCivil getEstadoCivil() {
+		return estadoCivil;
+	}
+
+	public void setEstadoCivil(EstadoCivil estadoCivil) {
+		this.estadoCivil = estadoCivil;
+	}
+
+	public Regime getRegimeAtual() {
+		return regimeAtual;
+	}
+
+	public void setRegimeAtual(Regime regimeAtual) {
+		this.regimeAtual = regimeAtual;
+	}
+
+	
+	public String getNomePai() {
+		return nomePai;
+	}
+
+	public void setNomePai(String nomePai) {
+		this.nomePai = nomePai;
+	}
+
+	public Long getIdVisitante() {
+		return idVisitante;
+	}
+
+	public void setIdVisitante(Long idVisitante) {
+		this.idVisitante = idVisitante;
+	}
+
+	public Imagem getVisitanteImagemFrente() {
+		return visitanteImagemFrente;
+	}
+
+	public void setVisitanteImagemFrente(Imagem visitanteImagemFrente) {
+		this.visitanteImagemFrente = visitanteImagemFrente;
+	}
+
 	@Override
 	public String toString() {
 		return "Recuperando [id=" + id + ", nome=" + nome + "]";
 	}
+
+	public Date getDataEntrada() {
+		return dataEntrada;
+	}
+
+	public void setDataEntrada(Date dataEntrada) {
+		this.dataEntrada = dataEntrada;
+	}
+	
+	public Imagem getPolegarEsquerdo() {
+		return polegarEsquerdo;
+	}
+
+	public void setPolegarEsquerdo(Imagem polegarEsquerdo) {
+		this.polegarEsquerdo = polegarEsquerdo;
+	}
+
+	public Imagem getPolegarDireito() {
+		return polegarDireito;
+	}
+
+	public void setPolegarDireito(Imagem polegarDireito) {
+		this.polegarDireito = polegarDireito;
+	}
+
+	public Imagem getIndicadorEsquerdo() {
+		return indicadorEsquerdo;
+	}
+
+	public void setIndicadorEsquerdo(Imagem indicadorEsquerdo) {
+		this.indicadorEsquerdo = indicadorEsquerdo;
+	}
+
+	public Imagem getIndicadorDireito() {
+		return indicadorDireito;
+	}
+
+	public void setIndicadorDireito(Imagem indicadorDireito) {
+		this.indicadorDireito = indicadorDireito;
+	}
+
+	public Imagem getMedioEsquerdo() {
+		return medioEsquerdo;
+	}
+
+	public void setMedioEsquerdo(Imagem medioEsquerdo) {
+		this.medioEsquerdo = medioEsquerdo;
+	}
+
+	public Imagem getMedioDireito() {
+		return medioDireito;
+	}
+
+	public void setMedioDireito(Imagem medioDireito) {
+		this.medioDireito = medioDireito;
+	}
+
+	public Imagem getAnelarEsquerdo() {
+		return anelarEsquerdo;
+	}
+
+	public void setAnelarEsquerdo(Imagem anelarEsquerdo) {
+		this.anelarEsquerdo = anelarEsquerdo;
+	}
+
+	public Imagem getAnelarDireito() {
+		return anelarDireito;
+	}
+
+	public void setAnelarDireito(Imagem anelarDireito) {
+		this.anelarDireito = anelarDireito;
+	}
+
+	public Imagem getMinimoEsquerdo() {
+		return minimoEsquerdo;
+	}
+
+	public void setMinimoEsquerdo(Imagem minimoEsquerdo) {
+		this.minimoEsquerdo = minimoEsquerdo;
+	}
+
+	public Imagem getMinimoDireito() {
+		return minimoDireito;
+	}
+
+	public void setMinimoDireito(Imagem minimoDireito) {
+		this.minimoDireito = minimoDireito;
+	}
+
+	public Date getDataAutorizacao() {
+		return dataAutorizacao;
+	}
+
+	public void setDataAutorizacao(Date dataAutorizacao) {
+		this.dataAutorizacao = dataAutorizacao;
+	}
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public boolean isImprimirBiometria() {
+		return imprimirBiometria;
+	}
+
+	public void setImprimirBiometria(boolean imprimirBiometria) {
+		this.imprimirBiometria = imprimirBiometria;
+	}
+	
 }

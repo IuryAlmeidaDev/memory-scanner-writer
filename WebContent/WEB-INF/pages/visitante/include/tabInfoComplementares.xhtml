@@ -1,0 +1,204 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components">
+
+		<style type="text/css">
+		.singleLine
+		{
+		    table-layout: fixed;
+		    word-wrap: break-word;
+		}
+		</style>
+
+        <div>
+        	<h4>Documentos</h4>
+			<p:commandButton title="Adicionar Documento" icon="ui-icon-plus"
+				value="Adicionar" actionListener="#{visitanteBean.novoDocumento()}"
+				process="@this" disabled="#{visitanteBean.isVisualizacao}">
+				<p:ajax event="dialogReturn" listener="#{visitanteBean.incluirDocumento}" update="visualizarDocumentos" />
+			</p:commandButton>
+		    	<br/><br/>
+            <p:dataTable id="visualizarDocumentos" var="doc" emptyMessage="Nenhum documento adicionado."
+                         value="#{visitanteBean.visitante.visitanteDocumentos}" rows="5" paginator="true"
+                         paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{doc.id}">
+                <p:column styleClass="singleLine" headerText="Tipo" width="124">
+                    <h:outputText id="tipoDocumento"
+                                  value="#{doc.documento.tipoDocumento.descricao}"/>
+                </p:column>
+                <p:column styleClass="singleLine" headerText="Número" width="135">
+                    <h:outputText id="numdoc" value="#{doc.documento.numero}"/>
+                </p:column>
+                <p:column styleClass="singleLine" headerText="Descrição" width="136">
+                    <h:outputText id="descricao"
+                                  value="#{doc.documento.descricao}"/>
+                </p:column>
+                <p:column headerText="Emissão" width="68">
+                    <h:outputText value="#{doc.documento.dataEmissao}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Validade" width="68">
+                    <h:outputText value="#{doc.documento.dataValidade}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+			<p:column width="90">
+				<center>
+					<p:commandButton title="Alterar Documento" icon="ui-icon-pencil"
+						actionListener="#{visitanteBean.alterarDocumento(doc)}"
+						process="@this" disabled="#{visitanteBean.isVisualizacao}">
+						<p:ajax event="dialogReturn"
+							listener="#{visitanteBean.incluirDocumento}" update="visualizarDocumentos" />
+					</p:commandButton>
+					<p:commandButton action="#{visitanteBean.excluirDocumento(doc)}"
+						immediate="true" icon="ui-icon-trash" title="Excluir"
+						rendered="#{!visitanteBean.isVisualizacao}" update="visualizarDocumentos">
+						<p:confirm header="Confirmação"
+							message="Deseja excluir o documento?" icon="ui-icon-alert" />
+					</p:commandButton>
+				</center>
+			</p:column>
+		</p:dataTable>
+
+            <br/>
+            <br/>
+
+				<h4>Endereços</h4>
+			<p:commandButton title="Adicionar Endereço" icon="ui-icon-plus"
+				value="Adicionar" actionListener="#{visitanteBean.novoEndereco()}"
+				process="@this" disabled="#{visitanteBean.isVisualizacao}">
+				<p:ajax event="dialogReturn"
+					listener="#{visitanteBean.incluirEndereco}" update="VisualizarEnderecos" />
+			</p:commandButton>
+			<br/><br/>
+            <p:dataTable id="VisualizarEnderecos" var="endereco" emptyMessage="Nenhum endereço adicionado."
+                         value="#{visitanteBean.visitante.pessoa.enderecos}" rows="5" paginator="true"
+                         paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{endereco.id}">
+                
+                <p:column headerText="Logradouro" width="120">
+                    <h:outputText styleClass="singleLine" id="logradouro" value="#{endereco.logradouro}"/>
+                </p:column>
+                <p:column styleClass="singleLine" headerText="Nº" width="30">
+                    <h:outputText value="#{endereco.numero}"/>
+                </p:column>
+                <p:column styleClass="singleLine" headerText="Bairro" width="130">
+                    <h:outputText id="bairro" value="#{endereco.bairro}"/>
+                </p:column>
+                <p:column styleClass="singleLine" headerText="Complemento" width="120">
+                    <h:outputText id="complemento" value="#{endereco.complemento}"/>
+                </p:column>
+                <p:column styleClass="singleLine" headerText="Cidade" width="120">
+                    <h:outputText id="cidade" value="#{endereco.cidade.nome}"/>
+                </p:column>
+                <p:column headerText="UF" width="20">
+                    <h:outputText value="#{endereco.cidade.estado.uf}"/>
+                </p:column>
+                <p:column width="90">
+				<center>
+					<p:commandButton title="Alterar Endereço" icon="ui-icon-pencil"
+						actionListener="#{visitanteBean.alterarEndereco(endereco)}"
+						process="@this" disabled="#{visitanteBean.isVisualizacao}">
+						<p:ajax event="dialogReturn"
+							listener="#{visitanteBean.incluirEndereco}" update="VisualizarEnderecos" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{visitanteBean.excluirEndereco(endereco)}"
+						immediate="true" icon="ui-icon-trash" title="Excluir"
+						rendered="#{!visitanteBean.isVisualizacao}" update="VisualizarEnderecos">
+						<p:confirm header="Confirmação"
+							message="Deseja excluir o endereço?" icon="ui-icon-alert" />
+					</p:commandButton>
+				</center>
+			</p:column>
+            </p:dataTable>
+
+            <br/>
+            <br/>
+            
+			<h4>Contatos</h4>
+			<p:commandButton title="Adicionar Contato" icon="ui-icon-plus"
+				value="Adicionar" actionListener="#{visitanteBean.novoContato()}"
+				process="@this" disabled="#{visitanteBean.isVisualizacao}">
+				<p:ajax event="dialogReturn" listener="#{visitanteBean.incluirContato}" update="visualizarContatos" />
+			</p:commandButton>
+		<br/><br/>
+            <p:dataTable id="visualizarContatos" var="contato" emptyMessage="Nenhum contato adicionado."
+                         value="#{visitanteBean.visitante.pessoa.contatos}" rows="5" paginator="true"
+                         paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{contato.id}">
+                
+                <p:column styleClass="singleLine" headerText="Nome" width="120">
+                    <h:outputText value="#{contato.nome}"/>
+                </p:column>
+                <p:column styleClass="singleLine" headerText="Tipo" width="100">
+                    <h:outputText value="#{contato.tipoContato.descricao}"/>
+                </p:column>
+                <p:column headerText="Valor" width="120">
+                    <h:outputText value="#{contato.valor}"/>
+                </p:column>
+                <p:column styleClass="singleLine" headerText="Observação" width="120">
+                    <h:outputText value="#{contato.observacao}"/>
+                </p:column>
+                <p:column width="90">
+				<center>
+					<p:commandButton title="Alterar Contato" icon="ui-icon-pencil"
+						actionListener="#{visitanteBean.alterarContato(contato)}"
+						process="@this" disabled="#{visitanteBean.isVisualizacao}">
+						<p:ajax event="dialogReturn"
+							listener="#{visitanteBean.incluirContato}" update="visualizarContatos" />
+					</p:commandButton>
+					<p:commandButton action="#{visitanteBean.excluirContato(contato)}"
+						immediate="true" icon="ui-icon-trash" title="Excluir"
+						rendered="#{!visitanteBean.isVisualizacao}" update="visualizarContatos">
+						<p:confirm header="Confirmação"
+							message="Deseja excluir o Contato?" icon="ui-icon-alert" />
+					</p:commandButton>
+				</center>
+			</p:column>
+            </p:dataTable>
+
+            <br/>
+            <br/>
+
+			<h4>Certidões</h4>
+			<p:commandButton title="Adicionar Certidão" icon="ui-icon-plus" value="Adicionar"
+                                     actionListener="#{visitanteBean.novaCertidao()}"
+                                     process="@this" disabled="#{visitanteBean.isVisualizacao}">
+                        <p:ajax event="dialogReturn" listener="#{visitanteBean.incluirCertidao}" update="visualizarCertidoes"/>
+                    </p:commandButton>
+							<br/><br/>
+            <p:dataTable id="visualizarCertidoes" var="certidao" emptyMessage="Nenhuma certidão adicionada."
+                         value="#{visitanteBean.visitante.certidoes}" rows="5" paginator="true"
+                         paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{certidao.id}">
+                
+                <p:column headerText="Descrição" width="60%">
+                    <h:outputText value="#{certidao.certidao.descricao}"/>
+                </p:column>
+                <p:column styleClass="singleLine" headerText="Entregue pelo Visitante?" width="15%">
+                    <h:outputText value="#{certidao.entregue.descricao}"/>
+                </p:column>
+                <p:column headerText="Obrigatório?" width="15%">
+                    <h:outputText value="#{certidao.obrigatorio.descricao}"/>
+                </p:column>
+                <p:column width="90">
+				<center>
+					<p:commandButton title="Alterar Certidão" icon="ui-icon-pencil"
+						actionListener="#{visitanteBean.alterarCertidao(certidao)}"
+						process="@this" disabled="#{visitanteBean.isVisualizacao}">
+						<p:ajax event="dialogReturn"
+							listener="#{visitanteBean.incluirCertidao}" update="visualizarCertidoes" />
+					</p:commandButton>
+					<p:commandButton
+						action="#{visitanteBean.excluirCertidao(certidao)}"
+						immediate="true" icon="ui-icon-trash" title="Excluir"
+						update="visualizarCertidoes" rendered="#{!visitanteBean.isVisualizacao}">
+						<p:confirm header="Confirmação"
+							message="Deseja excluir a certidão?" icon="ui-icon-alert" />
+					</p:commandButton>
+				</center>
+			</p:column>
+            </p:dataTable>
+        </div>
+</ui:composition>

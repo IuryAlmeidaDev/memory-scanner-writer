@@ -14,6 +14,10 @@
 	<cc:attribute name="id" required="false"/>
 	<cc:attribute name="minlength" default="1" />
 	<cc:attribute name="maxlength" default="999999999" />
+	<cc:attribute name="maxValue" default="999.99" />
+	<cc:attribute name="decimalSeparator" default="." />
+	<cc:attribute name="thousandSeparator" default="" />
+	<cc:attribute name="decimalPlaces" default="2" />
 	<cc:attribute name="size" />
 	<cc:attribute name="validationRequired" required="false" default="false" type="java.lang.Boolean" />
 	<cc:attribute name="value" required="false" />
@@ -50,11 +54,11 @@
 				style="#{cc.attrs.style}"
 				autocomplete="off"
 				title="#{cc.attrs.toolTip}"
-				decimalSeparator="."
-				thousandSeparator=""
+				decimalSeparator="#{cc.attrs.decimalSeparator}"
+				thousandSeparator="#{cc.attrs.thousandSeparator}"
 				minValue="0"
-				maxValue="999.99"
-				decimalPlaces="2"
+				maxValue="#{cc.attrs.maxValue}"
+				decimalPlaces="#{cc.attrs.decimalPlaces}"
 				>
 				
 					<c:choose>

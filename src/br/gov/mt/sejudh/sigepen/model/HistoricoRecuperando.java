@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -9,13 +10,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -25,7 +26,9 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name = "HISTORICO_RECUPERANDO", schema = Sigepen.SEJUDH_SCHEMA)
-public class HistoricoRecuperando {
+public class HistoricoRecuperando implements Serializable {
+
+	private static final long serialVersionUID = 8195563536690216091L;
 
 	@SequenceGenerator(name = "SEQ_HISTORICO_RECUPERANDO_GENERATOR", sequenceName = "SEQ_HISTORICO_RECUPERANDO", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	
@@ -52,6 +55,10 @@ public class HistoricoRecuperando {
 	
 	@Column(name = "OBSERVACAO")
 	private String observacao;
+
+	@Lob
+    @Column(name="DETALHAMENTO")
+	private String detalhamento;
 
 	public long getId() {
 		return id;
@@ -97,6 +104,12 @@ public class HistoricoRecuperando {
 	public String toString() {
 		return "Historico Recuperando [id=" + id + ", recuperando="+ recuperando +"]";
 	}
-	
-	
+
+	public String getDetalhamento() {
+		return detalhamento;
+	}
+
+	public void setDetalhamento(String detalhamento) {
+		this.detalhamento = detalhamento;
+	}
 }

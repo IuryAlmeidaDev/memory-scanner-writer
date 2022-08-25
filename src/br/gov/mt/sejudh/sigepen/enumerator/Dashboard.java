@@ -10,7 +10,13 @@ public enum Dashboard {
 	RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCEHOJE("TemporariosNaUnidadeVenceHoje"),
 	RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER("TemporariosNoSistemaAVencer"),
 	RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCIDA("TemporariosNoSistemaVencido"),
-	RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE("TemporariosNoSistemaVenceHoje");
+	RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE("TemporariosNoSistemaVenceHoje"),
+	SOLICITACAO_VISITA_PENDENTE("TotalSolicitacaoVisitasPendentesPorUnidade"),
+	TOTAL_CREDENCIAMENTO_RECEBIMENTO_PENDENTE("TotalCredenciamentoRecebimentoPorUnidade"),
+	TOTAL_CREDENCIAMENTO_CHECAGEM_PENDENTE("TotalCredenciamentoChecagemPorUnidade"),
+	TOTAL_CREDENCIAMENTO_CONFERENCIA_PENDENTE("TotalCredenciamentoConferenciaPorUnidade"),
+	TOTAL_CREDENCIAMENTO_ANALISE_PENDENTE("TotalCredenciamentoAnalisePorUnidade"),
+	TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE("TotalCredenciamentoAprovacaoPorUnidade");
 	
 	private String descricao;
 	

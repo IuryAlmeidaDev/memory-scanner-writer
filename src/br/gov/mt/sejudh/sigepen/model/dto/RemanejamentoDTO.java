@@ -2,8 +2,10 @@ package br.gov.mt.sejudh.sigepen.model.dto;
 
 import java.util.Date;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRemanejamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
+import br.gov.mt.sejudh.sigepen.model.Foto;
 
 
 public class RemanejamentoDTO {
@@ -23,9 +25,29 @@ public class RemanejamentoDTO {
 	
 	private String unidadeOrigem;
 	
+	private String observacao;
+	
+	private String nomeMaeRecuperando;
+	
+	private String numeroDocumento;
+	
+	private Date dataDocumento;
+	
+	private String nomeUnidadeDestino;
+	
+	private String motivo;
+	
+	private Foto foto;
+	
+	private String resultado;
+	
+	private String unidadeRecuperando;
+	
 	private StatusMovimentacao status;
 
 	private TipoTransito tipoTransito;
+	
+	private FiltroRemanejamento filtro;
 
 	public long getId() {
 		return id;
@@ -98,11 +120,89 @@ public class RemanejamentoDTO {
 	public void setTipoTransito(TipoTransito tipoTransito) {
 		this.tipoTransito = tipoTransito;
 	}
+	
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
 
 	@Override
 	public String toString() {
 		return "Remanejamento [id=" + id + "]";
 	}
 
-		
+	public Date getDataDocumento() {
+		return dataDocumento;
+	}
+
+	public void setDataDocumento(Date dataDocumento) {
+		this.dataDocumento = dataDocumento;
+	}
+
+	public String getNomeMaeRecuperando() {
+		return nomeMaeRecuperando;
+	}
+
+	public void setNomeMaeRecuperando(String nomeMaeRecuperando) {
+		this.nomeMaeRecuperando = nomeMaeRecuperando;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+
+	public Foto getFoto() {
+		return foto;
+	}
+
+	public void setFoto(Foto foto) {
+		this.foto = foto;
+	}
+
+	public String getNumeroDocumento() {
+		return numeroDocumento;
+	}
+
+	public void setNumeroDocumento(String numeroDocumento) {
+		this.numeroDocumento = numeroDocumento;
+	}
+
+	public String getResultado() {
+		return resultado;
+	}
+
+	public void setResultado(String resultado) {
+		this.resultado = resultado;
+	}
+
+	public String getNomeUnidadeDestino() {
+		return nomeUnidadeDestino;
+	}
+
+	public void setNomeUnidadeDestino(String nomeUnidadeDestino) {
+		this.nomeUnidadeDestino = nomeUnidadeDestino;
+	}
+
+	public String getUnidadeRecuperando() {
+		return unidadeRecuperando;
+	}
+
+	public void setUnidadeRecuperando(String unidadeRecuperando) {
+		this.unidadeRecuperando = unidadeRecuperando;
+	}
+
+	public FiltroRemanejamento getFiltro() {
+		return filtro;
+	}
+
+	public void setFiltro(FiltroRemanejamento filtro) {
+		this.filtro = filtro;
+	}
 }

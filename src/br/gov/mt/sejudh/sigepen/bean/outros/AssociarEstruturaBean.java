@@ -11,6 +11,11 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.model.DefaultTreeNode;
 
+import com.ocpsoft.pretty.PrettyContext;
+import com.ocpsoft.pretty.faces.annotation.URLAction;
+import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import com.ocpsoft.pretty.faces.annotation.URLMappings;
+
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
 import br.gov.mt.sejudh.sigepen.service.EstruturaService;
@@ -18,15 +23,17 @@ import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
-import com.ocpsoft.pretty.faces.annotation.URLAction;
-import com.ocpsoft.pretty.faces.annotation.URLMapping;
-
 @ManagedBean
 @ViewScoped
-@URLMapping(id = "AssociarEstrutura", pattern = "/associar/estrutura", viewId = "/WEB-INF/pages/_dialogs/AssociarEstrutura.xhtml")
+@URLMappings(mappings = {
+		@URLMapping(id = "AssociarEstrutura", pattern = "/associar/estrutura", viewId = "/WEB-INF/pages/_dialogs/AssociarEstrutura.xhtml"),
+		@URLMapping(id = "AssociarQualquerEstrutura", pattern = "/associar/estrutura/qualquer", viewId = "/WEB-INF/pages/_dialogs/AssociarEstrutura.xhtml"),
+})
 public class AssociarEstruturaBean extends MetodosDialogBean {
 
 	private DefaultTreeNode root;
+
+	private boolean associarQualquerEstrutura = false;
 	
 	@Inject
 	private EstruturaService service;	
@@ -42,6 +49,10 @@ public class AssociarEstruturaBean extends MetodosDialogBean {
 		try {
 			if (this.isDialogInvalida()) {
 				return "pretty:dashboard";
+			}
+
+			if(PrettyContext.getCurrentInstance().getCurrentMapping().getId().equals("AssociarQualquerEstrutura")){
+				this.associarQualquerEstrutura=true;
 			}
 			
 			carregarArvore();
@@ -59,6 +70,7 @@ public class AssociarEstruturaBean extends MetodosDialogBean {
 			unidadeSelecionadaUsuario = (Long) facesUtil.getObjetoSessao("unidadeSelecionadaUsuario");
 		} catch (Exception e) {
 		}
+
 		root = new DefaultTreeNode( new EstruturaDto() , null);
 		root.setExpanded(true);
 
@@ -84,5 +96,13 @@ public class AssociarEstruturaBean extends MetodosDialogBean {
 
 	public void setRoot(DefaultTreeNode root) {
 		this.root = root;
+	}
+
+	public boolean isAssociarQualquerEstrutura() {
+		return associarQualquerEstrutura;
+	}
+
+	public void setAssociarQualquerEstrutura(boolean associarQualquerEstrutura) {
+		this.associarQualquerEstrutura = associarQualquerEstrutura;
 	}
 }

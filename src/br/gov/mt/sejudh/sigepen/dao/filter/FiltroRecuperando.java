@@ -3,6 +3,8 @@ package br.gov.mt.sejudh.sigepen.dao.filter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.NullPrecedence;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -15,6 +17,7 @@ import org.hibernate.sql.JoinType;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
 import br.gov.mt.sejudh.sigepen.enumerator.Periculosidade;
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
 import br.gov.mt.sejudh.sigepen.model.Alcunha;
@@ -50,12 +53,15 @@ public class FiltroRecuperando extends FiltroConsulta {
 	private Boolean isTemporarioAVencer;
 	private Boolean isTemporarioVenceHoje;
 	private Boolean isTemporarioVencido;
-	
+
+	private Boolean listarTodasUnidades;
+
 	public FiltroRecuperando() {
 		this.pessoasIds = new ArrayList<Long>();
 		this.isTemporarioAVencer = false;
 		this.isTemporarioVenceHoje = false;
 		this.isTemporarioVencido = false;
+		this.listarTodasUnidades = false;
 	}
 	
 	public Long getId() {
@@ -202,10 +208,20 @@ public class FiltroRecuperando extends FiltroConsulta {
 		this.isTemporarioVencido = isTemporarioVencido;
 	}
 
-	@Override
+    public Boolean getListarTodasUnidades() {
+        return listarTodasUnidades;
+    }
+
+    public void setListarTodasUnidades(Boolean listarTodasUnidades) {
+        this.listarTodasUnidades = listarTodasUnidades;
+    }
+
+    @Override
 	public void configurarFiltros() {
 		getCriteria()
 		.createAlias("recuperando", "recuperando_", JoinType.LEFT_OUTER_JOIN)
+		.createAlias("visitante", "visitantes_", JoinType.LEFT_OUTER_JOIN)
+		//.createAlias("recuperando_.estrutura", "estrutura_", JoinType.LEFT_OUTER_JOIN)
 		.createAlias("recuperando_.passagens", "passagem_", JoinType.LEFT_OUTER_JOIN)
 		.createAlias("passagem_.lotacao", "lotacao", JoinType.LEFT_OUTER_JOIN)
 		.createAlias("lotacao.estrutura", "estrutura", JoinType.LEFT_OUTER_JOIN)
@@ -221,32 +237,37 @@ public class FiltroRecuperando extends FiltroConsulta {
 		.createAlias("estrutura.estruturaComplemento", "estruturacompl", JoinType.LEFT_OUTER_JOIN);
 	
 		
-		ProjectionList proj = Projections.projectionList()
-				.add(Projections.property("id").as("pessoaId"))
-				.add(Projections.property("recuperando_.id").as("id"))
-				.add(Projections.property("nome").as("nome"))
-				.add(Projections.property("nomeSocial").as("nomeSocial"))
-				.add(Projections.property("nomeMae").as("nomeMae"))
-				.add(Projections.property("dataNascimento").as("dataNascimento"))
-				.add(Projections.property("unidade.nome").as("unidade"))
-				.add(Projections.property("unidade.sigla").as("siglaUnidade"))
-				.add(Projections.property("unidade.id").as("unidadeId"))
-				.add(Projections.property("estruturacompl.nomeCompleto").as("lotacaoAtualNomeEstrutura"))
-				.add(Projections.property("recuperando_.status").as("status"))
-				.add(Projections.property("recuperando_.condicaoAtual").as("condicaoAtual"))
-				.add(Projections.property("regimeAtual.descricao").as("regime"))
-				.add(Projections.property("recuperando_.periculosidade").as("periculosidade"))
-				.add(Projections.property("passagem_.tipoDesligamento").as("taVivo"))
-				
-				//Situação do cadastro do Recuperando
-				.add(Projections.property("situacaoCadastro.cadastroCompleto").as("situacaoCadastro"))
-				.add(Projections.property("situacaoCadastroCompleto.temTatuagem").as("temTatuagem"))
-				.add(Projections.property("situacaoCadastroCompleto.temFotoTatuagem").as("temFotoTatuagem"))
-				.add(Projections.property("situacaoCadastroCompleto.temFotoFrente").as("temFotoFrente"))
-				.add(Projections.property("situacaoCadastroCompleto.temFotoPerfil").as("temFotoPerfil"))
-				.add(Projections.property("situacaoCadastroCompleto.temFotoCorpoInteiro").as("temFotoCorpoInteiro"))
-				.add(Projections.property("situacaoCadastroCompleto.vidaSocialCompleta").as("vidaSocialCompleta"))
-				.add(Projections.property("situacaoCadastroCompleto.temParente").as("temParente"));
+		ProjectionList proj = Projections.projectionList();
+        proj.add(Projections.distinct(Projections.projectionList()
+                .add(Projections.property("id").as("pessoaId"))
+                .add(Projections.property("recuperando_.id").as("id"))
+                .add(Projections.property("visitantes_.id").as("idVisitante"))
+                .add(Projections.property("nome").as("nome"))
+                .add(Projections.property("nomeSocial").as("nomeSocial"))
+                .add(Projections.property("nomeMae").as("nomeMae"))
+                .add(Projections.property("dataNascimento").as("dataNascimento"))
+                .add(Projections.property("passagem_.dataEntrada").as("dataEntrada"))
+                .add(Projections.property("unidade.nome").as("unidade"))
+                .add(Projections.property("unidade.sigla").as("siglaUnidade"))
+                .add(Projections.property("unidade.id").as("unidadeId"))
+                .add(Projections.property("estruturacompl.nomeCompleto").as("lotacaoAtualNomeEstrutura"))
+                .add(Projections.property("recuperando_.status").as("status"))
+                .add(Projections.property("recuperando_.condicaoAtual").as("condicaoAtual"))
+                .add(Projections.property("regimeAtual.descricao").as("regime"))
+                .add(Projections.property("recuperando_.periculosidade").as("periculosidade"))
+                .add(Projections.property("recuperando_.tipoDesligamento").as("taVivo"))
+
+                //Situação do cadastro do Recuperando
+                .add(Projections.property("situacaoCadastro.cadastroCompleto").as("situacaoCadastro"))
+                .add(Projections.property("situacaoCadastroCompleto.temTatuagem").as("temTatuagem"))
+                .add(Projections.property("situacaoCadastroCompleto.temFotoTatuagem").as("temFotoTatuagem"))
+                .add(Projections.property("situacaoCadastroCompleto.temFotoFrente").as("temFotoFrente"))
+                .add(Projections.property("situacaoCadastroCompleto.temFotoPerfil").as("temFotoPerfil"))
+                .add(Projections.property("situacaoCadastroCompleto.temFotoCorpoInteiro").as("temFotoCorpoInteiro"))
+                .add(Projections.property("situacaoCadastroCompleto.vidaSocialCompleta").as("vidaSocialCompleta"))
+                .add(Projections.property("situacaoCadastroCompleto.temParente").as("temParente"))
+        ));
+
 				//End Situação do cadastro
 		
 		getCriteria().setProjection(proj);
@@ -256,10 +277,13 @@ public class FiltroRecuperando extends FiltroConsulta {
 			.createAlias("foto_.imagem", "imagem_", JoinType.LEFT_OUTER_JOIN);
 		
 		proj.add(Projections.property("foto_.imagem").as("imagemFrente"));
-		
-		getCriteria().add(Restrictions.and(Restrictions.eq("foto_.isAtual", true)));
-		getCriteria().add(Restrictions.and(Restrictions.eq("foto_.tipo", TipoFoto.FRENTE)));
 
+		getCriteria()
+		.createAlias("visitantes_.fotos", "visitanteFoto_", JoinType.LEFT_OUTER_JOIN)
+		.createAlias("visitanteFoto_.imagem", "visitanteImagem_", JoinType.LEFT_OUTER_JOIN);
+		
+		proj.add(Projections.property("visitanteFoto_.imagem").as("visitanteImagemFrente"));
+		
 		//Subselect para trazer apenas a ultima passagem e ultima lotação
 		DetachedCriteria critPassagem = DetachedCriteria.forClass(Passagem.class, "pass")
 				.add(Restrictions.eqProperty("pass.recuperando.id", "recuperando_.id"))
@@ -270,16 +294,26 @@ public class FiltroRecuperando extends FiltroConsulta {
 				.setProjection(Projections.projectionList().add(Projections.max("lot.id")));
 		
 		getCriteria().add(
-			Restrictions.or(
-				Restrictions.conjunction()
-					.add(Restrictions.isNotNull("recuperando_.id"))
-					.add(Restrictions.or(
-							Restrictions.isNull("passagem_.id"),
-							Restrictions.conjunction()
-								.add(Subqueries.propertyEq("passagem_.id", critPassagem))
-								.add(Subqueries.propertyEq("lotacao.id", critLotacao)))),
-				Restrictions.isNull("recuperando_.id")));
+				Restrictions.or(
+					Restrictions.conjunction()
+						.add(Restrictions.isNotNull("recuperando_.id"))
+						.add(Restrictions.and(Restrictions.eq("foto_.isAtual", true)))
+						.add(Restrictions.and(Restrictions.eq("foto_.tipo", TipoFoto.FRENTE)))
+						.add(Restrictions.or(
+								Restrictions.isNull("passagem_.id"),
+								Restrictions.conjunction()
+									.add(Subqueries.propertyEq("passagem_.id", critPassagem))
+									.add(Subqueries.propertyEq("lotacao.id", critLotacao)))),
+					Restrictions.isNull("recuperando_.id")));
 
+			getCriteria().add(
+					Restrictions.or(
+						Restrictions.conjunction()
+						.add(Restrictions.isNotNull("visitantes_.id"))
+						.add(Restrictions.eq("visitanteFoto_.fotoAtual", SimNao.S))
+						.add(Restrictions.eq("visitanteFoto_.tipo", TipoFoto.FRENTE)),
+					Restrictions.isNull("visitantes_.id")));
+		
 		if (this.getId() != null) {
 			getCriteria().add(Restrictions.eq("recuperando_.id", this.getId()));
 		}
@@ -300,9 +334,14 @@ public class FiltroRecuperando extends FiltroConsulta {
 			getCriteria().add(Restrictions.eq("recuperando_.condicaoAtual", this.getCondicaoAtual()));
 		}
 		
-		if (this.getUnidade() != null) {
+		if (this.getUnidade() != null && !this.getListarTodasUnidades()) {
 			getCriteria().add(Restrictions.eq("unidade.id", this.getUnidade().getId()));				
 		}
+
+		if (this.getListarTodasUnidades()) {
+            Criteria parametroVisitante = getCriteria().createAlias("unidade.parametrosUnidade", "parametroVisitante", JoinType.LEFT_OUTER_JOIN);
+            parametroVisitante.add(Restrictions.eq("parametroVisitante.validar", SimNao.S));
+        }
 		
 		if(this.getAlcunha() != null && !this.getAlcunha().equalsIgnoreCase("")){
 			DetachedCriteria critAlcunha = DetachedCriteria.forClass(Alcunha.class, "a")
@@ -376,6 +415,10 @@ public class FiltroRecuperando extends FiltroConsulta {
 		
 		if (this.getOrdenacao() != null) {
 			getCriteria().addOrder((this.getOrdenacao().isAscending() ? Order.asc("pessoaId") : Order.desc("pessoaId")));
+			
+			if (this.getPropriedadeOrdenacao().equals("id")) {
+				this.getOrdenacao().nulls(NullPrecedence.LAST);
+			}
 		}
 	}
-}
+} 

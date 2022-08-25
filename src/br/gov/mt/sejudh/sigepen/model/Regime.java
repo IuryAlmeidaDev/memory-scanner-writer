@@ -23,6 +23,16 @@ public class Regime implements Serializable{
 	@Column(name = "DESCRICAO", length = 80, nullable = false)
 	private String descricao;
 
+	public Regime() {
+		super();
+	}
+	
+	public Regime(long id, String descricao) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+	}
+
 	public long getId() {
 		return id;
 	}

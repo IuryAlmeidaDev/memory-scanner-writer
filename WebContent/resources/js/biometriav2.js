@@ -47,6 +47,10 @@ function wsDesktopConnect() {
 
 		if (obj != null) {
 			switch (obj.acao) {
+				case "capturar_template":
+					preencherTemplate(obj.valor);
+					break;
+					
 				case "pesquisar":
 					enviarParametroParaServidor(obj.valor);
 					break;
@@ -67,6 +71,9 @@ function wsDesktopConnect() {
 					console.log('ping rcv');
 					break;
 						
+				case "objeto":
+					//console.log(obj.valor);
+					break;
 				default:
 					break;
 			}
@@ -86,25 +93,45 @@ function checaStatusWs() {
 	}
 }
 
+function preencherTemplate(template) {
+	var h = document.getElementById("paramTemplate")
+	h.value = template;
+	capturarTemplate();
+}
+
 function enviarParametroParaServidor(obj) {
+    var isValidar = document.getElementById("paramIsValidar");
 	var h = document.getElementById("paramBiometria");
+	var hBioRec = document.getElementById("paramBiometriaRecuperando");
+	var hTemplate = document.getElementById("paramTemplate");
+	
+	if(hBioRec) 
+		hBioRec.value = obj;
+	
 
 	if (h == null)
 		h = document.getElementById("tabView:paramBiometria");
 
-	h.value = obj;
-	
-	executarBiometria();
+    if (h) {
+        h.value = obj;
+        if(isValidar && isValidar.value === "true")
+        	remoteValidarBiometriaRecuperandoVisitante();
+        else
+        	executarBiometria();
+    }
+    
 }
 
 function enviaComandoWs(comando) {
 	var obj;
 	
 	if (comando == 'registrar') {
-		var idRecuperando = document.getElementById("tabView:idRecuperando");
-		obj = { acao: comando, idRecuperando: idRecuperando.value };
+		var idPessoa = document.getElementById("tabView:idPessoa");
+		obj = { acao: comando, idPessoa: idPessoa.value };
 	} else if (comando == 'validar_leitor') {
 		obj = { acao: comando, contexto: contexto, contexto2: contexto2 };
+	} else if (comando == 'capturar_template') {
+		obj = { acao: 'pesquisar' };
 	} else {
 		obj = { acao: comando };
 	}
@@ -185,8 +212,9 @@ function habilitaBotao() {
 }
 
 function validaBiometriaAtiva(param) {
+	validaBioTelaPesquisa(param);
 	var h = document.getElementById("tabView:temBiometria");
-	
+
 	if (h != null) {
 		h.value = param;
 		PrimeFaces.ajax.Request.handle({
@@ -195,4 +223,24 @@ function validaBiometriaAtiva(param) {
 			,process:'tabView:formGamb'
 			});
 	}
+}
+
+function validaBioTelaPesquisa(param) {
+	var h = document.getElementById("temBio");
+	if (h != null) {
+		h.value = param;
+
+		PrimeFaces.ajax.Request.handle({
+			formId:'frmInit'
+			,source:'frmInit'
+			,process:'frmInit'
+		});
+	}
+}
+
+
+function clickValidarBiometriaRecuperandoVisitante(){
+	var c = document.getElementById("paramIsValidar");
+	c.value = true;
+	enviaComandoWs('pesquisar');
 }

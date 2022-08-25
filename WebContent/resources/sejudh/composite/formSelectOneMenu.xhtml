@@ -16,6 +16,7 @@
 		<cc:attribute name="itemValue" required="true" />
 		<cc:attribute name="itemsValue" required="true" />
 		<cc:attribute name="itemLabel" required="true" />
+        <cc:attribute name="appendTo" required="false" />
 		<cc:attribute name="validationRequired" required="false" type="java.lang.Boolean" />
 		<cc:attribute name="validationGroup" required="false" />
 		<cc:attribute name="rendered" required="false" type="java.lang.Boolean" />
@@ -30,6 +31,7 @@
 		<cc:attribute name="filterMatchMode" required="false"/>
 		<cc:attribute name="filterFunction" required="false"/>
 		<cc:attribute name="styleFormLabelColumn" required="false"/>
+		<cc:attribute name="style" required="false"/>
 </cc:interface>
 
 <cc:implementation>
@@ -46,7 +48,10 @@
 
 		<div class="form-input-column">
 
-				<p:selectOneMenu id="input" label="#{cc.attrs.labelValue}" value="#{cc.attrs.value}" disabled ="#{cc.attrs.disabled}" effect="fade" filter="#{cc.attrs.filter}" required="#{cc.attrs.validationRequired}">
+				<p:selectOneMenu
+                        style="#{cc.attrs.style}" id="input" label="#{cc.attrs.labelValue}" value="#{cc.attrs.value}"
+                        disabled ="#{cc.attrs.disabled}" effect="fade" filter="#{cc.attrs.filter}"
+                        required="#{cc.attrs.validationRequired}" appendTo="#{cc.attrs.appendTo}">
 					<c:if test="#{cc.attrs.temSelecione ne null and cc.attrs.temSelecione}">
 						<f:selectItem itemLabel="Selecione" noSelectionOption="true"/>
 					</c:if>

@@ -13,9 +13,20 @@
 		
 		<h:form id="formDesligamento">
 			<p:panel header="Recuperando">
+			  <div class="row">
+				<div class="col-md-3">
+                	<p:dataGrid layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.recuperando.fotoFrenteAtual}" emptyMessage="Sem foto de frente." var="f">
+                         <p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
+                            <f:param name="hashId" value="#{f.imagem.id}" />
+                               </p:graphicImage>
+                          </p:dataGrid>
+               			</div>
+             	<div class="col-md-4">
 				<sgp:formOutputLabel labelValue="Nome" value="#{passagemBean.recuperando.pessoa.nome}" />
 				<sgp:formOutputLabel labelValue="Nome da mãe" value="#{passagemBean.recuperando.pessoa.nomeMae}" />
 				<sgp:formOutputLabel labelValue="Data Nascimento" value="#{passagemBean.recuperando.pessoa.dataNascimento}" converterData="true"/>
+				</div>
+				</div>
 			</p:panel>
 			<br/>
 			<p:panel header="Desligamento">

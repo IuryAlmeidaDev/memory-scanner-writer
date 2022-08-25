@@ -6,10 +6,13 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PessoaDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPessoa;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
+import br.gov.mt.sejudh.sigepen.model.Documento;
 import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.dto.PessoaDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
@@ -19,6 +22,9 @@ public class PessoaService {
 
 	@Inject
 	private PessoaDAO dao;
+
+	@Inject
+    private DocumentoService documentoService;
 	
 	@Inject
 	private AuditoriaDAO auditDAO;
@@ -27,6 +33,17 @@ public class PessoaService {
 	public void salvar(Pessoa pessoa) {
 		dao.salvar(pessoa);
 	}
+
+    public void salvarPessoaVisitante(Pessoa pessoa) {
+        this.salvar(pessoa);
+
+        if (CollectionUtils.isEmpty(pessoa.getDocumentos())) {
+            return;
+        }
+        for (Documento documento : pessoa.getDocumentos()) {
+            this.documentoService.salvarDocumento(documento);
+        }
+    }
 
 	public void excluir(long pessoaId) throws ValidacaoException {
 		if(dao.isPessoaAssociadaAUmRecuperando(pessoaId)){
@@ -51,6 +68,12 @@ public class PessoaService {
 			pessoa.setAutorRegistro(auditDAO.autorRegistro(pessoa, pessoa.getId()));
 			pessoa.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pessoa, pessoa.getId()));
 		}
+		
+		return pessoa;
+	}
+	
+	public Pessoa buscarDadosPessoaRecuperandoPorId(long pessoaId) {
+		Pessoa pessoa = dao.buscarPessoaPorId(pessoaId);
 		
 		return pessoa;
 	}

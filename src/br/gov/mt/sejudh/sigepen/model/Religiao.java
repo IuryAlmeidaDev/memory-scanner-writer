@@ -22,6 +22,16 @@ public class Religiao implements Serializable{
 	@Column(name = "DESCRICAO", length = 80, nullable = false)
 	private String descricao;
 
+	public Religiao() {
+		super();
+	}
+	
+	public Religiao(long id, String descricao) {
+			super();
+		this.id = id;
+		this.descricao = descricao;
+	}
+
 	public long getId() {
 		return id;
 	}

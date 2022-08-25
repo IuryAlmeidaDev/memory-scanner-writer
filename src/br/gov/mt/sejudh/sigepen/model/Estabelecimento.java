@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,7 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -24,7 +25,10 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name = "ESTABELECIMENTO", schema = Sigepen.SEJUDH_SCHEMA)
-public class Estabelecimento {
+public class Estabelecimento implements Serializable {
+
+	private static final long serialVersionUID = 5499378672563374695L;
+
 	@SequenceGenerator(name = "SEQ_ESTABELECIMENTO_GENERATOR", sequenceName = "SEQ_ESTABELECIMENTO", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	
 	@Id

@@ -1,0 +1,151 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components">
+
+    <h4>Histórico de Credenciamento</h4>
+
+        <div class="ui-g">
+		<h:form prependId="false" id="tableCredenciamentos02">
+            <ui:repeat value="#{visitanteBean.visitante.credenciamentos}" var="credenciamento">
+                <div class="ui-g-12">
+                    <p:dataTable value="#{credenciamento.fasesDoCredenciamento}"
+                                 var="credencial"
+                                 emptyMessage="Nenhum credencimento encontrado.">
+
+                        <f:facet name="header">
+                            <p:outputLabel value="Tipo Visita: #{credenciamento.tipoVisita.descricao}" style="margin-right: 60px;"/>
+                            <p:outputLabel value="Recuperando: #{credenciamento.recuperando.pessoa.nome}" rendered="#{credenciamento.recuperando ne null}"/><br/>
+                            <p:outputLabel value="Unidade: #{credenciamento.unidadePrisional.nome}" rendered="#{credenciamento.unidadePrisional ne null}"/>
+                        </f:facet>
+
+                        <p:column headerText="Fase Credenciamento">
+                            <h:outputText value="#{credencial.faseCredenciamento.descricao}"/>
+                        </p:column>
+
+                        <p:column headerText="Data Aprovação">
+                            <h:outputText value="#{credencial.dataAprovacao}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Usuário Aprovação">
+                            <h:outputText value="#{credencial.usuarioAprovacao.servidor.nome}"/>
+                        </p:column>
+
+                        <p:column headerText="Situação">
+                            <h:outputText value="#{credencial.statusCredenciamento.descricao}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Observação">
+                            <h:outputText value="#{credencial.observacao}"/>
+                        </p:column>
+
+                        <p:column headerText="Ações" style="text-align: center;" width="150"
+                                  rendered="#{visitanteBean.isVisualizacao}">
+
+
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarFasesCredenciamento"
+	                        	rendered="#{securityUtil.possuiPermissao('VisualizarFasesCredenciamento')}">
+	                            <f:param name="id" value="#{credencial.credenciamento.id}"/>
+	                            <f:param name="idCredenciamento" value="#{credencial.id}"/>
+	                            <f:param name="acaoCredenciamento" value="VISUALIZAR_CREDENCIAMENTO"/>
+	                            <f:param name="acaoAtual" value="#{visitanteBean.acaoAtual}" />
+	                        </p:button>
+
+
+							<p:commandButton title="Documentos Aprovados" icon="fa fa-files-o"
+                                         actionListener="#{visitanteBean.documentosAprovados(credencial)}"
+                                         process="@this" 
+                                         update="tabView:idDialogDocsAprov"
+                                         />
+
+						</p:column>
+                        
+                        <p:column headerText="Ações" style="text-align: center;" width="150"
+                                  rendered="#{not visitanteBean.isVisualizacao}">
+
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarFasesCredenciamento"
+	                        	rendered="#{securityUtil.possuiPermissao('VisualizarFasesCredenciamento')}">
+	                            <f:param name="id" value="#{credencial.credenciamento.id}"/>
+	                            <f:param name="idCredenciamento" value="#{credencial.id}"/>
+	                            <f:param name="acaoCredenciamento" value="VISUALIZAR_CREDENCIAMENTO"/>
+	                            <f:param name="acaoAtual" value="#{visitanteBean.acaoAtual}" />
+	                        </p:button>                      
+                            
+	                        <p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarFasesCredenciamento"
+	                        	rendered="#{securityUtil.possuiPermissao('AlterarFasesCredenciamento')}">
+	                            <f:param name="id" value="#{credencial.credenciamento.id}"/>
+	                            <f:param name="idCredenciamento" value="#{credencial.id}"/>
+	                            <f:param name="acaoCredenciamento" value="ALTERAR_CREDENCIAMENTO"/>
+	                            <f:param name="acaoAtual" value="#{visitanteBean.acaoAtual}" />
+	                        </p:button>
+
+                            <p:button title="Credenciar Visitante" icon="fa fa-newspaper-o"
+                                      outcome="pretty:CadastrarFasesCredenciamento"
+                                      rendered="#{securityUtil.possuiPermissao('CadastrarFasesCredenciamento')
+                                      and credencial.credenciamento.visitante.status ne 'I' and 1 == 0}">
+                                <f:param name="id" value="#{credencial.credenciamento.id}"/>
+                            </p:button>
+
+	                        <p:commandButton title="Documentos Aprovados" icon="fa fa-files-o"
+                                         actionListener="#{visitanteBean.documentosAprovados(credencial)}" 
+                                         update="tabView:idDialogDocsAprov"
+                                         />
+
+                            <p:commandButton action="#{visitanteBean.excluirCredenciamento(credencial.id)}" icon="ui-icon-trash"
+                                             title="Excluir" update="tabView:tableCredenciamentos02"
+                                             rendered="#{securityUtil.possuiPermissao('ExcluirCredenciarVisitante')}"
+                                             disabled="#{(credencial.id != credenciamento.faseAtualCredenciamento.id) or (credencial.credenciamento.tipoVisita.tipoEntrada eq 'ATENDIMENTO') or (credencial.credenciamento.tipoVisita.tipoEntrada eq 'ENTRADA_SAIDA')}">
+                                <p:confirm header="Confirmação" message="Deseja excluir o Credenciamento?"
+                                           icon="ui-icon-alert"/>
+                            </p:commandButton>
+                            
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <h:outputText value="Credenciamento válido até: "/>
+                            <h:outputText value="#{credenciamento.dataValidade}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </f:facet>
+                    </p:dataTable>
+                </div>
+            </ui:repeat>
+		</h:form>
+        </div>
+        
+        <p:dialog widgetVar="dialogDocsAprov" header="Documentos Aprovados" modal="true" height="350px" width="820px">
+        	<h:form prependId="false" id="idDialogDocsAprov" >
+        	
+                <div class="ui-g-12">
+					<p:dataTable value="#{visitanteBean.documentosAprovados}"
+					                                 var="doc"
+					                                 emptyMessage="Nenhum documento aprovado nesta fase.">
+					                                 
+			             <p:column headerText="Documento">
+			                 <h:outputText value="#{doc.visitanteDocumento.documento.tipoDocumento.descricao}"/>
+			             </p:column>
+			             
+					</p:dataTable>
+					
+					<br /><br />
+					
+					<p:dataTable value="#{visitanteBean.certidoesAprovadas}"
+					                                 var="doc"
+					                                 emptyMessage="Nenhuma certidão aprovada nesta fase.">
+					                                 
+			             <p:column headerText="Certidão">
+			                 <h:outputText value="#{doc.visitanteCertidao.certidao.descricao}"/>
+			             </p:column>
+			             
+					</p:dataTable>
+					
+				</div>
+		        <p:commandButton value="Fechar" type="button" onclick="PF('dialogDocsAprov').hide();" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+	        </h:form>
+        </p:dialog>
+        
+</ui:composition>

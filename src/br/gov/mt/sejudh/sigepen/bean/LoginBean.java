@@ -12,6 +12,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
+import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
+import br.gov.mt.sejudh.sigepen.service.ParametroUnidadeService;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -55,6 +58,9 @@ public class LoginBean {
 	
 	@Inject
 	private Logger log;
+
+	@Inject
+	private ParametroUnidadeService parametroUnidadeService;
 	
 	@PostConstruct
 	public void init() {		
@@ -154,9 +160,15 @@ public class LoginBean {
 	}
 	
 	public void setarUnidade() throws IOException {
+		ativarModuloVisitante();
 		SecurityUtil.setUnidadeSelecionada(unidadeSelecionada);
 		clearCache();
 		LoggerUtil.logInfo(Acao.LOGAR, unidadeSelecionada, log);
 		FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_DASHBOARD_URL);
+	}
+
+	private void ativarModuloVisitante(){
+		List<ParametroUnidade> parametros = parametroUnidadeService.listarPorUnidade(unidadeSelecionada);
+		unidadeSelecionada.setAtivaModuloVisitante(parametros.size() > 0 && parametros.stream().anyMatch(parametroUnidade -> parametroUnidade.getValidar() == SimNao.S));
 	}
 }

@@ -142,7 +142,7 @@ public class ServidorDAO {
 	}
 	
 	public boolean unidadePossuiServidoresLotados(UnidadePrisional unidade) {
-		Query query = entityManager.createQuery("select count(l) from Lotacao l where l.unidade = :unidade and (l.dataFim is null or l.dataFim <= :hoje)");
+		Query query = entityManager.createQuery("select count(l) from Lotacao l where l.unidade = :unidade and (l.dataFim is null or l.dataFim > :hoje)");
 		query.setParameter("unidade", unidade);
 		query.setParameter("hoje", new Date());
 		return (long) query.getSingleResult() > 0;

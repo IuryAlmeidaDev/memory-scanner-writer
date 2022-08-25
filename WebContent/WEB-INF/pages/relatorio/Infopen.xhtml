@@ -1,0 +1,200 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+
+		<h3><strong>Relatório Infopen</strong></h3>
+
+		<h:form id="meuFormulario">
+			<p:panel>
+
+		 		<sgp:formSelectOneMenuRelatorios id="tipo_relatorio" value="#{infopenBean.filtro.tipoRelatorio}" labelValue="Tipo do relatório" styleFormLabelColumn="width:145px">
+		            <f:selectItem itemLabel="Sintético" itemValue="0" />	 			
+		            <f:selectItem itemLabel="Detalhado" itemValue="1" />
+		            <p:ajax update="meuFormulario:panel_filtros" />
+		        </sgp:formSelectOneMenuRelatorios>
+		        
+				<h:panelGroup id="panel_filtros" >
+					<sgp:formSelectOneMenuRelatorios
+						labelValue="Nacionalidade"
+						value="#{infopenBean.filtro.nacionalidade}"
+						itemsValue="#{infopenBean.nacionalidades}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text"
+						process="@this"
+						converter="SimpleEntityConverter"
+						labelTodos="Todas" 
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+						styleFormLabelColumn="width:145px"/>
+					
+					<sgp:formSelectOneMenuRelatorios 
+						labelValue="Raça"
+						value="#{infopenBean.filtro.raca}"
+						itemsValue="#{infopenBean.raca}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text"
+						process="@this"
+						converter="SimpleEntityConverter"
+						labelTodos="Todas" 
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+						styleFormLabelColumn="width:145px"/>
+						
+					<sgp:formSelectOneMenuRelatorios 
+						labelValue="Etnia"
+						value="#{infopenBean.filtro.etnia}"
+						itemsValue="#{infopenBean.etnia}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text"
+						process="@this"
+						converter="SimpleEntityConverter"
+						labelTodos="Todas" 
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+						styleFormLabelColumn="width:145px"/>
+						
+					<sgp:formSelectOneMenuRelatorios 
+						labelValue="Regime Prisional"
+						value="#{infopenBean.filtro.regime}"
+						itemsValue="#{infopenBean.regimes}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text"
+						process="@this"
+						converter="SimpleEntityConverter"
+						labelTodos="Todos" 
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+						styleFormLabelColumn="width:145px"/>
+						
+					<sgp:formSelectOneMenu
+					        labelValue="Idade"
+					        value="#{infopenBean.filtro.idadeRecuperando}"
+					        itemsValue="#{comboHelperBean.idadeRecuperando}"
+					        itemValue="#{item}"
+					        itemLabel="#{item.descricao}"
+					        display="text"
+					        rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+					        styleFormLabelColumn="width:145px"/>
+						
+                    <sgp:formSelectOneMenu
+                            labelValue="Aposentado"
+                            value="#{infopenBean.filtro.aposentado}"
+                            itemsValue="#{comboHelperBean.simNao}"
+                            itemValue="#{item}"
+                            itemLabel="#{item.descricao}"
+                            temSelecione="true"
+                            rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+                            styleFormLabelColumn="width:145px;"/>
+
+					<sgp:formSelectOneMenuRelatorios 
+						labelValue="Estado Civil"
+						value="#{infopenBean.filtro.estadoCivil}"
+						itemsValue="#{infopenBean.estadoCivil}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text"
+						process="@this"
+						converter="SimpleEntityConverter"
+						labelTodos="Todos" 
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+						styleFormLabelColumn="width:145px"/>
+						
+					<sgp:formSelectOneMenuRelatorios 
+						labelValue="Religião"
+						value="#{infopenBean.filtro.religiao}"
+						itemsValue="#{infopenBean.religiao}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text"
+						process="@this"
+						converter="SimpleEntityConverter"
+						labelTodos="Todas" 
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+						styleFormLabelColumn="width:145px"/>
+						
+					<sgp:formSelectOneMenuRelatorios 
+						labelValue="Escolaridade"
+						value="#{infopenBean.filtro.escolaridade}"
+						itemsValue="#{infopenBean.escolaridade}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						display="text"
+						process="@this"
+						converter="SimpleEntityConverter"
+						labelTodos="Todas" 
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+						styleFormLabelColumn="width:145px"/>
+						
+					<sgp:formSelectOneMenu
+					        labelValue="PCD"
+					        value="#{infopenBean.filtro.tipoDeficiencia}"
+					        itemsValue="#{infopenBean.getTiposDeficiencia()}"
+					        itemValue="#{item}"
+					        itemLabel="#{item.descricao}"
+					        display="text"
+					        rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+					        styleFormLabelColumn="width:145px"/>
+
+                    <sgp:formSelectOneMenu
+                            labelValue="Recebe Auxílio?"
+                            value="#{infopenBean.filtro.recebeAuxilio}"
+                            itemsValue="#{comboHelperBean.simNao}"
+                            itemValue="#{item}"
+                            itemLabel="#{item.descricao}"
+                            temSelecione="true"
+                            rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+                            styleFormLabelColumn="width:145px;"/>
+
+					<sgp:formSelectOneMenu
+					        labelValue="Mulheres"
+					        value="#{infopenBean.filtro.populacaoFeminino}"
+					        itemsValue="#{comboHelperBean.populacaoFeminino}"
+					        itemValue="#{item}"
+					        itemLabel="#{item.descricao}"
+					        display="text"
+					        rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+					        styleFormLabelColumn="width:145px"/>
+
+					<sgp:formSelectOneMenu
+					        labelValue="Identidade de Gênero"
+					        value="#{infopenBean.filtro.lgbt}"
+					        itemsValue="#{comboHelperBean.lgbt}"
+					        itemValue="#{item}"
+					        itemLabel="#{item.descricao}"
+					        display="text"
+					        rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+					        styleFormLabelColumn="width:145px"/>
+
+					<sgp:formSelectOneMenu
+					        labelValue="Tempo de Condenação"
+					        value="#{infopenBean.filtro.tempoCondenacao}"
+					        itemsValue="#{comboHelperBean.tempoCondenacao}"
+					        itemValue="#{item}"
+					        itemLabel="#{item.descricao}"
+					        display="text"
+					        rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
+					        styleFormLabelColumn="width:145px"/>
+					        
+				</h:panelGroup>
+				<br/>
+				<br/>
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{infopenBean.imprimir()}" />
+				<p:button outcome="pretty:Relatorio" value="Voltar" icon="ui-icon-arrowreturnthick-1-w"/>					
+			</p:panel>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

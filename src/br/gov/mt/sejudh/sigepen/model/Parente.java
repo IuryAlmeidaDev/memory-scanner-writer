@@ -2,7 +2,9 @@ package br.gov.mt.sejudh.sigepen.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -12,17 +14,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
-import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
+import br.gov.mt.sejudh.sigepen.util.ModelUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
@@ -62,10 +65,16 @@ public class Parente implements Serializable {
 	
 	@Enumerated
 	@Column(name = "STATUS")
-	private Status status;
+	private SgpStatusAlternativo status;
 
+    @OneToMany(orphanRemoval = true, mappedBy = "parente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Credenciamento> credenciamentos;
+    
+    @Column(name = "FILHO_PCD")
+    private boolean filhoPcd;
+    
 	public Parente() {
-		this.status = Status.ATIVO;
+		this.status = SgpStatusAlternativo.P;
 	}	
 	
 
@@ -128,14 +137,18 @@ public class Parente implements Serializable {
 		this.judicial = judicial;
 	}
 
-	public Status getStatus() {
+	public SgpStatusAlternativo getStatus() {
 		return status;
 	}
 
-	public void setStatus(Status status) {
+	public void setStatus(SgpStatusAlternativo status) {
 		this.status = status;
 	}
-
+	
+    public Boolean getMenorIdade() {
+    	return ModelUtil.isMenorDeIdade(dataNascimento);
+	}
+      
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -161,5 +174,27 @@ public class Parente implements Serializable {
 	@Override
 	public String toString() {
 		return "Parente [id=" + id + ", nome=" + this.getNome() + "]";
+	}
+
+	public List<Credenciamento> getCredenciamentos() {
+		return credenciamentos;
+	}
+
+	public void setCredenciamentos(List<Credenciamento> credenciamentos) {
+		this.credenciamentos = credenciamentos;
+	}
+	
+	public String getVisitanteCredenciado() {
+		if(credenciamentos != null && credenciamentos.size() > 0)
+			return credenciamentos.get(0).getVisitante().getPessoa().getNome();
+		return "";
+	}
+
+	public boolean isFilhoPcd() {
+		return filhoPcd;
+	}
+
+	public void setFilhoPcd(boolean filhoPcd) {
+		this.filhoPcd = filhoPcd;
 	}
 }

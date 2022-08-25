@@ -56,7 +56,7 @@ public class Documento implements Serializable {
 	@JoinColumn(name = "TIPO_DOCUMENTO_ID", nullable = false)
 	private TipoDocumento tipoDocumento;
 	
-	@Column(name="NUMERO", length = 20)
+	@Column(name="NUMERO", length = 50)
 	private String numero;
 	
 	@Column(name = "DATA_EMISSAO")

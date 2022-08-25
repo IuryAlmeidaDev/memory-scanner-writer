@@ -17,7 +17,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
@@ -73,9 +72,16 @@ public class UnidadePrisional implements Serializable {
 	
 	@OneToOne(fetch=FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Estrutura estrutura;
-	
+
+    @NotFound(action = NotFoundAction.IGNORE)
+	@OneToMany(mappedBy = "unidadePrisional", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ParametroUnidade> parametrosUnidade;
+
 	@Transient
 	private AutoriaRegistro autorRegistro;
+
+	@Transient
+	private Boolean ativaModuloVisitante;
 	
 	@Transient
 	private AutoriaRegistro autorUltimaAlteracao;
@@ -83,6 +89,9 @@ public class UnidadePrisional implements Serializable {
 	@Column(name = "BIOMETRIA_OBRIGATORIA", nullable = false, columnDefinition = "NUMBER(1) DEFAULT 1")
 	private Boolean biometriaObrigatoria;
 
+	@OneToMany(mappedBy = "unidade", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ParametroVisita> parametrosVisita;
+	
 	public UnidadePrisional() {
 		this.contatos = new ArrayList<Contato>();
 		this.biometriaObrigatoria = true;
@@ -92,6 +101,10 @@ public class UnidadePrisional implements Serializable {
 		this.contatos = new ArrayList<Contato>();
 		this.id = id;
 		this.setNome(nome);
+	}
+
+	public UnidadePrisional (Long id) {
+		this.id = id;
 	}
 
 	public long getId() {
@@ -194,11 +207,30 @@ public class UnidadePrisional implements Serializable {
 		return autorUltimaAlteracao;
 	}
 
+	public Boolean getAtivaModuloVisitante() {
+		return ativaModuloVisitante;
+	}
+
+	public void setAtivaModuloVisitante(Boolean ativaModuloVisitante) {
+		this.ativaModuloVisitante = ativaModuloVisitante;
+	}
+
 	public void setAutorUltimaAlteracao(AutoriaRegistro autorUltimaAlteracao) {
 		this.autorUltimaAlteracao = autorUltimaAlteracao;
 	}
 
-	@Override
+    public List<ParametroUnidade> getParametrosUnidade() {
+	    if (this.parametrosUnidade == null) {
+            this.parametrosUnidade = new ArrayList<>();
+        }
+        return this.parametrosUnidade;
+    }
+
+    public void setParametrosUnidade(List<ParametroUnidade> parametrosUnidade) {
+        this.parametrosUnidade = parametrosUnidade;
+    }
+
+    @Override
 	public String toString() {
 		return "Unidade Prisional [id=" + id + ", nome=" + nome + "]";
 	}
@@ -233,4 +265,11 @@ public class UnidadePrisional implements Serializable {
 		return true;
 	}
 
+	public List<ParametroVisita> getParametrosVisita() {
+		return parametrosVisita;
+	}
+
+	public void setParametrosVisita(List<ParametroVisita> parametrosVisita) {
+		this.parametrosVisita = parametrosVisita;
+	}
 }

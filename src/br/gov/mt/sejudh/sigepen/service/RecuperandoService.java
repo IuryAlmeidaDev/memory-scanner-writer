@@ -13,24 +13,37 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.transaction.Transactional;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
+import br.gov.mt.sejudh.sigepen.dao.CredenciamentoDAO;
+import br.gov.mt.sejudh.sigepen.dao.ParenteDAO;
 import br.gov.mt.sejudh.sigepen.dao.PessoaDAO;
 import br.gov.mt.sejudh.sigepen.dao.ProcessoDAO;
 import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
+import br.gov.mt.sejudh.sigepen.dao.SolicitacaoVisitaDAO;
+import br.gov.mt.sejudh.sigepen.dao.UnificarRecuperandoDAO;
+import br.gov.mt.sejudh.sigepen.dao.VisitanteDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnificarRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
-import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Alcunha;
 import br.gov.mt.sejudh.sigepen.model.Biometria;
+import br.gov.mt.sejudh.sigepen.model.Credenciamento;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.Etnia;
 import br.gov.mt.sejudh.sigepen.model.Foto;
+import br.gov.mt.sejudh.sigepen.model.Imagem;
 import br.gov.mt.sejudh.sigepen.model.OutroNome;
 import br.gov.mt.sejudh.sigepen.model.Parente;
 import br.gov.mt.sejudh.sigepen.model.Particularidade;
@@ -40,11 +53,17 @@ import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.SolicitacaoVisita;
+import br.gov.mt.sejudh.sigepen.model.TipoVisita;
+import br.gov.mt.sejudh.sigepen.model.Visitante;
+import br.gov.mt.sejudh.sigepen.model.dto.DadosRecuperandoUnificacaoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO.PassagemExtratoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
+import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
 @Stateless
@@ -61,10 +80,10 @@ public class RecuperandoService {
 	
 	@Inject
 	private AuditoriaDAO auditDao;
-	
+
 	@Inject
-	private BiometriaService biometriaService;
-	
+	private ParenteDAO parenteDAO;
+
 	@Inject
 	private PassagemService passagemService;
 	
@@ -72,28 +91,72 @@ public class RecuperandoService {
 	private PedidoService pedidoService;
 	
 	@Inject
+	private AtestadosService atestadosService;
+	
+	@Inject
 	private HistoricoRecuperandoService historicoService;
-		
+
+	@Inject
+	private SolicitacaoVisitaDAO solicitacaoVisitaDAO;
+	
+	private static final Integer LIMITE_VISITANTE_MAIOR_IDADE = 5;
+
+	@Inject
+	private CredenciamentoDAO credenciamentoDAO;
+
+	@Inject
+	private VisitanteDAO visitanteDAO;
+
+    @Inject
+    private VisitanteService visitanteService;
+
+    @Inject
+    private FaseDoCredenciamentoService faseDoCredenciamentoService;
+
+	@Inject
+	private UnificarRecuperandoDAO unificarDao;
+	
+	@Inject
+	private FacesUtil facesUtil;
+
 	public int buscarQuantidadeFiltrada(FiltroRecuperando filtro) {
 		return dao.buscarQuantidadeFiltrada(filtro);
 	}
-
+	
 	public List<RecuperandoDTO> buscarRecuperandosPorFiltro(FiltroRecuperando filtro, boolean isBuscaRelatorio) {
 		List<RecuperandoDTO> recuperandos = dao.buscarRecuperandosPorFiltro(filtro, isBuscaRelatorio);
+
+		return recuperandos;
+	}
+	
+    public int buscarQuantidadeFiltrada(FiltroRecuperandoView filtro) {
+		return dao.buscarQuantidadeFiltrada(filtro);
+	}
+
+    public List<RecuperandoView> buscarRecuperandosPorFiltroEAtestados(FiltroRecuperandoView filtro, boolean isBuscaRelatorio) {
+    	List<RecuperandoView> recuperandos = dao.buscarRecuperandosPorFiltro(filtro, isBuscaRelatorio);
+    	
+    	for (RecuperandoView r : recuperandos) {
+    		r.setPossuiAtestadoUnidade(atestadosService.verificaRecuperandoPossuiPassagemNaUnidadeLogada(r.getId()));
+		}
+    	
+    	return recuperandos;
+    }
+    
+	public List<RecuperandoView> buscarRecuperandosPorFiltro(FiltroRecuperandoView filtro, boolean isBuscaRelatorio) {
+		List<RecuperandoView> recuperandos = dao.buscarRecuperandosPorFiltro(filtro, isBuscaRelatorio);
 		
-		/* mecanismo de atribuição dinâmica do regime e condição na listagem de recuperando.
-		 * 
-		for(RecuperandoDTO rec: recuperandos){
-			List<Processo> processos = processoDao.processosPorRecuperando(rec.getId());
-			if(!processos.isEmpty()){
-				Regime regime = this.regimeAtualRecuperando(processos);
-				Condicao condicao = this.condicaoAtualRecuperando(processos);
-				rec.setRegimeAtual(regime != null ? regime.getDescricao() : "");
-				dao.atualizarRegimeAtualRecuperando(rec, regime);
-				rec.setCondicaoAtual(condicao != null ? condicao.getDescricao() : "");
-				dao.atualizarCondicaoAtualRecuperando(rec, condicao);
+		if (filtro.getIsBuscarFotoFrente()) {
+			for (RecuperandoView r : recuperandos) {
+				if (r.getId() != null)
+					r.setLotacaoAtual(dao.buscarLotacaoAtual(r.getId(), true));
+					r.setImagemFrente(dao.buscarImagemFrente(r.getId()));
+				
+				if (r.getVisitanteId() != null) 
+					r.setImagemFrente(visitanteService.buscarImagemFrente(r.getVisitanteId()));
 			}
-		}*/
+		}
+
 		return recuperandos;
 	}
 	
@@ -116,12 +179,6 @@ public class RecuperandoService {
 	
 	@Interceptors(EJBExcInterceptor.class)
 	public Recuperando salvar(Recuperando recuperando) throws Exception {
-		boolean possuiBio = recuperando.getPessoa().getBiometria() != null;
-		boolean isNovaBio = false;
-		boolean isBioAlterada = false;
-		
-		Biometria bio = null;
-		
 		if (recuperando.getPessoa() == null) {
 			throw new ValidacaoException("É necessário associar uma pessoa.");
 		}
@@ -130,40 +187,87 @@ public class RecuperandoService {
 			throw new ValidacaoException("Recuperando não possui maioridade!");
 		}
 		
-        Long idRecup = recuperandoJaExisteNoSistema(recuperando);
+		Long idRecup = recuperandoJaExisteNoSistema(recuperando);
         
         if (idRecup != null) {
             throw new ValidacaoException("O Recuperando " + recuperando.getPessoa().getNome() + ", matrícula " + idRecup + " já existe no sistema.");
         }
 		
-		if (possuiBio) {
-			bio = recuperando.getPessoa().getBiometria();
-			isNovaBio =  bio.getId() == 0;
-			isBioAlterada = bio.isBiometriaFoiAlterada();
-		}
-		
 		if (recuperando.getId() > 0 && recuperando.getFotoFrenteAtual().getId() == 0) {
 			recuperando.setFotos(salvarFoto(recuperando.getFotoFrenteAtual()));
 		}
-		
-		dao.salvar(recuperando);
-		recuperando = dao.buscarRecuperandoPorId(recuperando.getId());
 
-		if (possuiBio) {
-			if (isBioAlterada) {
-				biometriaService.alterarBiometriaSDK(bio);
-			}
+		Biometria b = recuperando.getPessoa().getBiometria();
+		if(recuperando.isTornarRecuperando() && recuperando.getPessoa() != null && recuperando.getPessoa().getId() > 0) {
+			Long idPessoa = recuperando.getPessoa().getId();
+			Pessoa p = pessoaDao.buscarPessoaPorId(idPessoa);
+			p.setRecuperando(recuperando);
+			recuperando.setPessoa(p);
+		}
 		
-			if (isNovaBio) {
-				bio.setIdPessoa(recuperando.getPessoa().getId());
-				biometriaService.salvarBiometriaSDK(bio);
+		Long idVisitante = recuperando.getTornarRecuperandoIdVisitante(); 
+		if(recuperando.getId() > 0) {
+			List<Parente> parentes = this.parenteDAO.listarPorRecuperando(recuperando);
+			if (parentes.size() > 0){
+				parentes.stream().forEach(p -> p.setStatus(SgpStatusAlternativo.P));
 			}
 		}
 		
+		dao.salvar(recuperando);
+
+		if(recuperando.isTornarRecuperando() && recuperando.getPessoa() != null && recuperando.getPessoa().getId() > 0) {
+			Long idPessoa = recuperando.getPessoa().getId();
+			Pessoa p = pessoaDao.buscarPessoaPorId(idPessoa);
+			
+			if (b != null) {
+				p.setBiometria(b);
+			}
+			
+			pessoaDao.salvar(p);
+		}
+		
+		if(idVisitante != null) {
+			desativarCredenciamentos(idVisitante);
+		}
+		
+		String novaPassagem = (String) facesUtil.getObjetoSessao("NOVA_PASSAGEM");
+		if(novaPassagem != null)
+			reativarSolicitacaoVisita(recuperando);
+		
+		reativarVisitante(recuperando);
+		recuperando = dao.buscarRecuperandoPorId(recuperando.getId());
+		
+		//GAMB
+		if (b != null) {
+			recuperando.getPessoa().getBiometria().setBiometriaFoiAlterada(b.getBiometriaFoiAlterada());
+		}
+
 		return recuperando;
 	}
-	
-    public Long recuperandoJaExisteNoSistema(Pessoa p, Long idRecuperando) {
+
+	private void reativarVisitante(Recuperando recuperando) {
+		Optional<List<Credenciamento>> credenciamentos = this.credenciamentoDAO.listaVisitantes(recuperando);
+		if (credenciamentos.get().size() > 0) {
+			credenciamentos.get().stream().forEach(vr -> {
+				Visitante visitante = this.visitanteDAO.buscarPorId(vr.getVisitante().getId());
+				if(visitante.getStatus() == StatusVisitante.I){
+					visitante.setStatus(StatusVisitante.P);
+					this.visitanteDAO.salvar(visitante);
+				}
+			});
+		}
+	}
+
+	private void ativaStatusParenteNaSolicitacaoDeVisita(Parente parente) {
+		Optional<SolicitacaoVisita> solicitacaoVisita = this.solicitacaoVisitaDAO.buscarPorParente(parente);
+		if (solicitacaoVisita.isPresent()) {
+			SolicitacaoVisita solicitacaoVisitaRecuperada = solicitacaoVisita.get();
+			solicitacaoVisitaRecuperada.setStatus(parente.getStatus());
+		}
+
+	}
+
+	public Long recuperandoJaExisteNoSistema(Pessoa p, Long idRecuperando) {
         return dao.recuperandoJaExisteNoSistema(p.getNome(), p.getNomeMae(), p.getDataNascimento(), idRecuperando);
     }
     
@@ -171,7 +275,7 @@ public class RecuperandoService {
         return dao.recuperandoJaExisteNoSistema(r.getPessoa().getNome(), r.getPessoa().getNomeMae(), r.getPessoa().getDataNascimento(), r.getId());
     }
 
-	public void excluir(RecuperandoDTO recuperando) {
+	public void excluir(RecuperandoView recuperando) {
 		dao.excluir(recuperando.getId());
 	}
 
@@ -189,10 +293,18 @@ public class RecuperandoService {
 	public Recuperando buscarRecuperandoSimplesPorId(long id) {
 		return dao.buscarRecuperandoSimplesPorId(id);
 	}
+
+    public Recuperando buscarRecuperandoDocumentosPorId(long id) {
+        return dao.buscarRecuperandoDocumentosPorId(id);
+    }
 	
 	public Recuperando buscarRecuperandoSimplesPorIdPessoa(long idPessoa) throws ValidacaoException {
 		return dao.buscarRecuperandoSimplesPorIdPessoa(idPessoa);
 	}
+
+    public Date buscarUltimaPassagemRecuperandoPessoa(long idPessoa) {
+        return dao.buscarUltimaPassagemRecuperandoPessoa(idPessoa);
+    }
 	
 	@Interceptors(EJBExcInterceptor.class)
 	public void salvarOutroNome(OutroNome outroNome){		
@@ -207,37 +319,49 @@ public class RecuperandoService {
 	public void tornarNomePrincipal(Recuperando recuperando, OutroNome outroNome){
 		String nome = recuperando.getPessoa().getNome();
 		String nomeMae = recuperando.getPessoa().getNomeMae();
+		String nomePai = recuperando.getPessoa().getNomePai();
 		Date dataNascimento = recuperando.getPessoa().getDataNascimento();
 		
 		recuperando.getPessoa().setNome(outroNome.getNome());
 		recuperando.getPessoa().setNomeMae(outroNome.getNomeMae());
+		recuperando.getPessoa().setNomePai(outroNome.getNomePai());
 		recuperando.getPessoa().setDataNascimento(outroNome.getDataNascimento());
 		
 		outroNome.setNome(nome);
 		outroNome.setNomeMae(nomeMae);
+		outroNome.setNomePai(nomePai);
 		outroNome.setDataNascimento(dataNascimento);
 		
 		pessoaDao.salvar( recuperando.getPessoa());
 		dao.salvarOutroNome(outroNome);
 		
 	}
-	
+
+	@Transactional
 	@Interceptors(EJBExcInterceptor.class)
 	public void salvarParente(Parente parente){
 		Calendar data = Calendar.getInstance();
 		data.add(Calendar.MONTH, 4);
+		data.set(Calendar.HOUR_OF_DAY, 00);
+		data.set(Calendar.SECOND, 00);
+		data.set(Calendar.MINUTE, 00);
+		data.set(Calendar.MILLISECOND, 00);
+		
 		dao.atualizarAlteracaoParentes(data.getTime(), parente.getRecuperando().getId());
+		if(parente.getRecuperando().getDataCadastroParente() == null)
+			dao.atualizarDataCadastroParente(new Date(), parente.getRecuperando().getId());
 		dao.salvarParente(parente);
+		ativaStatusParenteNaSolicitacaoDeVisita(parente);
 	}
 	
-	public void excluirParente(Parente parente){
+	public void excluirParente(Parente parente) throws ValidacaoException {
 		dao.excluirParente(parente);
 	}
-	
+
 	public int quantidadeParentesAtivos(Recuperando recuperando){
 		int total =0;
 		for(Parente parente : recuperando.getParentes()){
-			if(parente.getStatus() == Status.ATIVO){
+			if(parente.getStatus() == SgpStatusAlternativo.A){
 				total++;
 			}
 		}
@@ -256,19 +380,37 @@ public class RecuperandoService {
 		dao.excluirAlcunha(alcunha);
 	}
 	
-	public boolean limiteParentes(Recuperando recuperando){
+	public boolean limiteParentes(Recuperando recuperando, Parente p){
 		int limite = 0;
 		
 		for(Parente parente : recuperando.getParentes()){
-			if (parente.getStatus() == Status.ATIVO){
+			if (parente.getId() != p.getId() && parente.getStatus() == SgpStatusAlternativo.A && !parente.getMenorIdade()){
 				limite++;
 			}
 		}
 		
-		return limite<4;		
+		return limite < LIMITE_VISITANTE_MAIOR_IDADE;		
 	}
 	
 	public boolean habilitaAlteracaoParente(Recuperando recuperando){
+		Calendar data = Calendar.getInstance();
+		data.add(Calendar.MONTH, 4);
+		data.set(Calendar.HOUR_OF_DAY, 23);
+		data.set(Calendar.SECOND, 59);
+		data.set(Calendar.MINUTE, 59);
+		data.set(Calendar.MILLISECOND, 00);
+
+		if (recuperando.getAlteracaoParentes() == null){		
+			return true;
+		}else if(recuperando.getAlteracaoParentes().after(data.getTime())){
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	
+	public boolean habilitaAdicionarParente(Recuperando recuperando){
 		Calendar data = Calendar.getInstance();
 		data.add(Calendar.MONTH, 4);
 		data.set(Calendar.HOUR_OF_DAY, 00);
@@ -276,14 +418,26 @@ public class RecuperandoService {
 		data.set(Calendar.MINUTE, 00);
 		data.set(Calendar.MILLISECOND, 00);
 
-		if (recuperando.getAlteracaoParentes() == null){		
+		Calendar data2 = Calendar.getInstance();
+		if(recuperando != null && recuperando.getDataCadastroParente() != null) {
+			data2.setTime(recuperando.getDataCadastroParente());
+			data2.add(Calendar.DAY_OF_WEEK, 1);
+		}else{
+			data2.setTime(new Date());
+			data2.add(Calendar.DAY_OF_WEEK, -1);
+		}
+		
+		if(data2.getTime().after(new Date())){
+			return true;
+		}else if (recuperando.getAlteracaoParentes() == null){		
 			return true;
 		}else if(recuperando.getAlteracaoParentes().before(new Date()) || recuperando.getAlteracaoParentes().equals(data.getTime())){
 			return true;
-		}else{
+		}else {
 			return false;
 		}
 	}
+	
 	
 	@Interceptors(EJBExcInterceptor.class)
 	public List<Foto> salvarFoto(Foto foto) {
@@ -331,6 +485,10 @@ public class RecuperandoService {
 	
 	public StatusRecuperando statusAtualRecuperando(long id){
 		return dao.statusAtualRecuperando(id);
+	}
+	
+	public StatusRecuperando buscarStatusRecuperandoPorIdVisitante(long idVisitante) {
+		return dao.buscarStatusRecuperandoPorIdVisitante(idVisitante);
 	}
 	
 	public Regime regimeAtualRecuperando(List<Processo> processos) {
@@ -466,6 +624,120 @@ public class RecuperandoService {
 
 	public Boolean verificaRecuperandoPossuiPassagemNaUnidadeLogada(Long recuperandoId) {
 		return dao.verificaRecuperandoPossuiPassagemNaUnidadeLogada(recuperandoId, SecurityUtil.getUnidadeSelecionada().getId());
+	}
+
+    public Boolean selecionarParentescoRecuperado(Recuperando recuperando, TipoVisita tipoVisita) {
+	    if (tipoVisita.getTipoEntrada() != null && tipoVisita.getTipoEntrada() == TipoEntrada.FAMILIA) {
+            recuperando.setParentes(this.parenteDAO.listarPorRecuperando(recuperando));
+            return true;
+        }
+
+	    return false;
+    }
+    
+    public Recuperando buscarPessoaRecuperando(Pessoa pessoa){
+    	return dao.buscarPessoaRecuperando(pessoa);
+    }
+
+    public List<Parente> listarPorRecuperando(Recuperando recuperando){
+    	return this.parenteDAO.listarPorRecuperando(recuperando);
+    }
+    
+	private void desativarCredenciamentos(Long idVisitante) {
+		Visitante visitante = this.visitanteService.buscarPorId(idVisitante, true);
+		
+		for (Credenciamento vr : visitante.getCredenciamentos()) {
+			this.faseDoCredenciamentoService.inativarUltimoCredenciamentoVR(vr);
+		}
+		this.visitanteService.inativarVisitante(visitante);
+	}
+
+	public Recuperando salvarRecuperandoUnificacao(Recuperando recuperando) {
+		dao.salvar(recuperando);
+		recuperando = dao.buscarRecuperandoPorId(recuperando.getId());
+		return recuperando;
+	}
+	
+	public void excluirRecuperandoUnificacao(Recuperando recuperando) {
+		dao.excluirUnificacao(recuperando);
+	}
+
+	public void unificarRecuperando(Recuperando recuperando1, Recuperando recuperando2, DadosRecuperandoUnificacaoDTO dados) throws Exception {
+		unificarDao.unificarRecuperando(recuperando1, recuperando2, dados);
+	}
+	
+	public int buscarQuantidadeFiltrada(FiltroUnificarRecuperando filtro) {
+		return dao.buscarQuantidadeFiltrada(filtro);
+	}
+	
+	public List<RecuperandoDTO> buscarRecuperandosPorFiltro(FiltroUnificarRecuperando filtro, boolean isBuscaRelatorio) {
+		List<RecuperandoDTO> recuperandos = dao.buscarRecuperandosPorFiltro(filtro, isBuscaRelatorio);
+		
+		return recuperandos;
+	}
+	
+	public void resetarDataCadastroParente(Recuperando recuperando) {
+		dao.resetarDataCadastroParente(recuperando.getId());
+	}
+	
+    private void reativarSolicitacaoVisita(Recuperando recuperando) {
+        List<Parente> parentes = this.parenteDAO.listarPorRecuperando(recuperando);
+        for(Parente p : parentes) {
+    		Optional<SolicitacaoVisita> solicitacaoVisita = this.solicitacaoVisitaDAO.buscarPorParente(p);
+    		if (solicitacaoVisita.isPresent()) {
+				SolicitacaoVisita solicitacaoVisitaRecuperada = solicitacaoVisita.get();
+				solicitacaoVisitaRecuperada.setStatus(SgpStatusAlternativo.P);
+				this.solicitacaoVisitaDAO.salvar(solicitacaoVisitaRecuperada);
+    		}
+        }
+    }
+
+	public List<Etnia> listarEtnias() {
+		return dao.listarEtnias();
+	}
+
+	public void expirarGestante() {
+		Calendar dataExpirar = Calendar.getInstance();
+		dataExpirar.add(Calendar.MONTH, -9);
+		dao.expirarGestante(dataExpirar.getTime());
+	}
+
+	public void expirarLactante() {
+		Calendar dataExpirar = Calendar.getInstance();
+		dataExpirar.add(Calendar.MONTH, -6);
+		dao.expirarLactante(dataExpirar.getTime());
+	}
+	
+	public RecuperandoView buscarRecuperandoSelecionado(Long id) {
+		RecuperandoView r = dao.buscarRecuperandoSelecionado(id);
+
+		if (r.getId() != null) {
+			r.setAlcunhas(dao.buscarAlcunhas(r.getId()));
+			r.setOutrosNomes(dao.buscarOutrosNomes(r.getId()));
+			r.setLotacaoAtual(dao.buscarLotacaoAtual(r.getId(), false));
+			
+			Imagem imgRec = dao.buscarImagemFrente(r.getId());
+			
+			if (imgRec != null)
+				r.setImagemFrente(imgRec);
+		}
+		
+		if (r.getVisitanteId() != null) {
+			Imagem imgVis = visitanteService.buscarImagemFrente(r.getVisitanteId());
+			
+			if (imgVis != null)
+				r.setVisitanteImagemFrente(imgVis);
+		}
+		
+		return r;
+	}
+
+	public Recuperando alterar(Recuperando recuperando) {
+		return this.dao.alterar(recuperando);
+	}
+
+	public String buscarLotacaoAtual(long idRecuperando, boolean isTrazerUnidade) {
+		return this.dao.buscarLotacaoAtual(idRecuperando, isTrazerUnidade);
 	}
 }
 

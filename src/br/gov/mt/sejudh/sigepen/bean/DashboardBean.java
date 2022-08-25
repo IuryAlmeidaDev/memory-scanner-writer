@@ -19,9 +19,14 @@ import org.primefaces.model.DefaultDashboardModel;
 
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroSolicitacaoVisita;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVwVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.Dashboard;
+import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
+import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.service.DashboardService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
@@ -44,6 +49,12 @@ public class DashboardBean {
 	private Long temporariosNoSistemaAVencer;
 	private Long temporariosNoSistemaVencido;
 	private Long temporariosNoSistemaVenceHoje;
+	private Long solicitacaoVisitaPendente;
+	private Long totalCredenciamentoRecebimentoPendente;
+	private Long totalCredenciamentoChecagemPendente;
+	private Long totalCredenciamentoConferenciaPendente;
+	private Long totalCredenciamentoAnalisePendente;
+	private Long totalCredenciamentoAprovacaoPendente;
 	
 	@Inject
 	private DashboardService service;
@@ -115,6 +126,26 @@ public class DashboardBean {
 				this.temporariosNoSistemaVencido = service.recuperandosTemporariosNoSistemaDataSolturaVencida();
 				break;
 				
+			case SOLICITACAO_VISITA_PENDENTE:
+				this.solicitacaoVisitaPendente = service.solicitacaoVisitaPendente(SecurityUtil.getUnidadeSelecionada().getId());
+				break;
+				
+			case TOTAL_CREDENCIAMENTO_RECEBIMENTO_PENDENTE:
+				this.totalCredenciamentoRecebimentoPendente = service.totalCredenciamentoRecebimentoPendente(SecurityUtil.getUnidadeSelecionada().getId());
+				break;
+			case TOTAL_CREDENCIAMENTO_CHECAGEM_PENDENTE:
+				this.totalCredenciamentoChecagemPendente = service.totalCredenciamentoChecagemPendente(SecurityUtil.getUnidadeSelecionada().getId());
+				break;
+			case TOTAL_CREDENCIAMENTO_CONFERENCIA_PENDENTE:
+				this.totalCredenciamentoConferenciaPendente = service.totalCredenciamentoConferenciaPendente(SecurityUtil.getUnidadeSelecionada().getId());
+				break;
+			case TOTAL_CREDENCIAMENTO_ANALISE_PENDENTE:
+				this.totalCredenciamentoAnalisePendente = service.totalCredenciamentoAnalisePendente(SecurityUtil.getUnidadeSelecionada().getId());
+				break;
+			case TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE:
+				this.totalCredenciamentoAprovacaoPendente = service.totalCredenciamentoAprovacaoPendente(SecurityUtil.getUnidadeSelecionada().getId());
+				break;
+				
 			default:
 				break;	
 		}
@@ -159,7 +190,9 @@ public class DashboardBean {
 	}
 
 	public String executarAcao(Dashboard dash) {
-		FiltroRecuperando filtro = new FiltroRecuperando();
+		FiltroRecuperandoView filtro = new FiltroRecuperandoView();
+		FiltroSolicitacaoVisita filtroSolicitacaoVisita = new FiltroSolicitacaoVisita();
+		FiltroVwVisitante filtroVisitante = new FiltroVwVisitante();
 		
 		switch (dash) {
 			case RECUPERANDOS_ATIVOS_SISTEMA:
@@ -224,6 +257,48 @@ public class DashboardBean {
 				filtro.setIsTemporarioVencido(true);
 				facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 				break;
+
+			case SOLICITACAO_VISITA_PENDENTE:
+				filtroSolicitacaoVisita.setStatus(SgpStatusAlternativo.P);
+				filtroSolicitacaoVisita.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+				facesUtil.setFlashParameter("filtroSolicitacaoVisitaDash", filtroSolicitacaoVisita);
+				return "pretty:ListarSolicitacaoVisita";
+				
+			case TOTAL_CREDENCIAMENTO_RECEBIMENTO_PENDENTE:
+				filtroVisitante.setFaseCredenciamento(FaseCredenciamento.RECEBIMENTO);
+				filtroVisitante.setSituacaoCredenciamento(StatusCredenciamento.PENDENTE);
+				filtroVisitante.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+				facesUtil.setFlashParameter("filtroVisitanteDash", filtroVisitante);
+				return "pretty:ListarVisitante";
+				
+			case TOTAL_CREDENCIAMENTO_CHECAGEM_PENDENTE:
+				filtroVisitante.setFaseCredenciamento(FaseCredenciamento.CHECAGEM);
+				filtroVisitante.setSituacaoCredenciamento(StatusCredenciamento.PENDENTE);
+				filtroVisitante.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+				facesUtil.setFlashParameter("filtroVisitanteDash", filtroVisitante);
+				return "pretty:ListarVisitante";
+				
+			case TOTAL_CREDENCIAMENTO_CONFERENCIA_PENDENTE:
+				filtroVisitante.setFaseCredenciamento(FaseCredenciamento.CONFERENCIA);
+				filtroVisitante.setSituacaoCredenciamento(StatusCredenciamento.PENDENTE);
+				filtroVisitante.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+				facesUtil.setFlashParameter("filtroVisitanteDash", filtroVisitante);
+				return "pretty:ListarVisitante";
+				
+			case TOTAL_CREDENCIAMENTO_ANALISE_PENDENTE:
+				filtroVisitante.setFaseCredenciamento(FaseCredenciamento.ANALISE);
+				filtroVisitante.setSituacaoCredenciamento(StatusCredenciamento.PENDENTE);
+				filtroVisitante.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+				facesUtil.setFlashParameter("filtroVisitanteDash", filtroVisitante);
+				return "pretty:ListarVisitante";
+				
+			case TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE:
+				filtroVisitante.setFaseCredenciamento(FaseCredenciamento.APROVACAO);
+				filtroVisitante.setSituacaoCredenciamento(StatusCredenciamento.PENDENTE);
+				filtroVisitante.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+				facesUtil.setFlashParameter("filtroVisitanteDash", filtroVisitante);
+				return "pretty:ListarVisitante";
+				
 		}
 		
 		facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
@@ -269,4 +344,30 @@ public class DashboardBean {
 	public Long getTemporariosNoSistemaVenceHoje() {
 		return temporariosNoSistemaVenceHoje;
 	}
+	
+	public Long getSolicitacaoVisitaPendente() {
+		return solicitacaoVisitaPendente;
+	}
+
+	public Long getTotalCredenciamentoRecebimentoPendente() {
+		return totalCredenciamentoRecebimentoPendente;
+	}
+
+	public Long getTotalCredenciamentoChecagemPendente() {
+		return totalCredenciamentoChecagemPendente;
+	}
+
+	public Long getTotalCredenciamentoConferenciaPendente() {
+		return totalCredenciamentoConferenciaPendente;
+	}
+
+	public Long getTotalCredenciamentoAnalisePendente() {
+		return totalCredenciamentoAnalisePendente;
+	}
+
+	public Long getTotalCredenciamentoAprovacaoPendente() {
+		return totalCredenciamentoAprovacaoPendente;
+	}
+	
+	
 }

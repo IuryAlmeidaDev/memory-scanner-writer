@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FichaVisitanteRecuperando" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.6934217901613435"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nomeUnidade" class="java.lang.String"/>
+	<field name="nome" class="java.lang.String"/>
+	<field name="nomeSocial" class="java.lang.String"/>
+	<field name="nomeMae" class="java.lang.String"/>
+	<field name="dataNascimento" class="java.util.Date"/>
+	<field name="condicaoAtual" class="java.lang.String"/>
+	<field name="imagemFrente.arquivo" class="java.lang.Object"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="280" splitType="Prevent">
+			<image>
+				<reportElement x="10" y="41" width="168" height="180" uuid="e58bf95e-d065-4d88-b1da-09d1dab43504"/>
+				<imageExpression><![CDATA[new ByteArrayInputStream((byte[])$F{imagemFrente.arquivo})]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Opaque" x="185" y="10" width="365" height="20" backcolor="#CCCCCC" uuid="da84beed-d7a3-4aa8-914e-684247fe3153"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[DADOS PESSOAIS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="41" width="100" height="20" uuid="108e33dd-2a4b-4ffc-8468-3873016e6872"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidade:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="290" y="139" width="260" height="20" uuid="95a5e992-9c49-49f4-97ef-0cf80f443b47"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{condicaoAtual}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="290" y="41" width="260" height="20" uuid="aeef6100-0cab-4430-94de-4cfb02b3c16f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nomeUnidade}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="185" y="120" width="100" height="20" uuid="f12ae3d4-8e14-4cb7-9d68-e37504076c13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nascimento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="101" width="100" height="20" uuid="6bc7cd40-b9de-4066-a171-556ee351fee3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome da Mãe:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="81" width="100" height="20" uuid="8973b569-84e7-4146-be38-9790c39d1ab2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Social:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="10" y="10" width="168" height="20" backcolor="#CCCCCC" uuid="a40f140d-f498-43f7-b70c-318e6c09c936"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[FOTO RECUPERANDO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="290" y="61" width="260" height="20" uuid="22e08c04-1062-476f-b4c8-0bc63858c1c5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="185" y="139" width="100" height="20" uuid="97101824-4f8d-402e-9417-364c242fb98c"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Condição Atual:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="61" width="100" height="20" uuid="06a45dc5-f2a5-4b62-9c8c-3179b402a8df"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="290" y="120" width="260" height="20" uuid="43d1c18e-2364-457e-9b12-b8aac0a2e07a"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{dataNascimento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="290" y="81" width="260" height="20" uuid="373b78dd-a9de-48db-a138-3dde1be16d14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeSocial}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="290" y="101" width="260" height="20" uuid="878544af-2fbc-4c03-b7c6-6852de9e7604"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeMae}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Prevent"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Prevent"/>
+	</detail>
+</jasperReport>

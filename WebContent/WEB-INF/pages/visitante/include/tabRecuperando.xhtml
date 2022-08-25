@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components">
+
+    <h4>Recuperando / Grau de Parentesco</h4>
+
+    <div class="ui-g">
+
+        <ui:repeat value="#{visitanteBean.visitante.credenciamentos}" var="vRecuperando">
+            <div class="ui-g-12" style="border: 1px solid #cccccc">
+                <div class="ui-g">
+                    <div class="ui-g-2">
+                        <p:outputLabel value="Recuperando:"/>
+                    </div>
+                    <div class="ui-g-10">
+                        <h:outputText value="#{vRecuperando.recuperando.pessoa.nome}"/>
+                    </div>
+
+                    <div class="ui-g-2">
+                        <p:outputLabel value="Visitante:"/>
+                    </div>
+                    <div class="ui-g-10">
+                        <h:outputText value="#{vRecuperando.visitante.pessoa.nome}"/>
+                    </div>
+
+                    <div class="ui-g-2">
+                        <p:outputLabel value="Grau de Parentesco:"/>
+                    </div>
+                    <div class="ui-g-10">
+                        <h:outputText value="#{vRecuperando.parente.parentesco.descricao}"/>
+                    </div>
+
+                </div>
+
+            </div>
+        </ui:repeat>
+
+    </div>
+</ui:composition>

@@ -4,7 +4,9 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
-	template="/WEB-INF/pages/_templates/principal.xhtml">
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/WEB-INF/pages/_templates/principal.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 	<ui:define name="footer">
 		<h:outputScript library="js" name="selectOneMenuFilter.js" />
@@ -227,20 +229,161 @@
 						</p:button>
 				</p:tab>
 				
-				<p:tab title="Parâmetros" rendered="#{securityUtil.possuiPermissao('VisualizarParametrosUnidade')}">
+				<p:tab title="Parâmetros"
+					rendered="#{securityUtil.possuiPermissao('VisualizarParametrosUnidade')}">
 					<p:panel>
-						<sgp:formCheckbox labelValue="Biometria obrigatória" value="#{unidadePrisionalBean.unidade.biometriaObrigatoria}" 
+						<sgp:formCheckbox labelValue="Biometria obrigatória"
+							value="#{unidadePrisionalBean.unidade.biometriaObrigatoria}"
 							disabled="#{unidadePrisionalBean.isVisualizacao}" />
-							
-						<br/><br/>
-						
-						<p:commandButton value="Salvar" action="#{unidadePrisionalBean.salvar()}" update="@form" icon="ui-icon-disk" 
-							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}"/>
-						<p:button outcome="pretty:ListarUnidade" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+
+						<br />
+					</p:panel>
+					<br />
+
+					<p:panel id="ativarModuloVisitante">
+						<sgp:formCheckbox labelValue="Ativar Módulo Visitantes"
+							value="#{unidadePrisionalBean.unidade.ativaModuloVisitante}"
+							disabled="#{unidadePrisionalBean.isVisualizacao}">
+							<p:ajax event="change"
+								listener="#{unidadePrisionalBean.atualizarParametrosUnidade()}"
+								process="unidadeForm:tabView:moduloVisitante, unidadeForm:tabView:ativarModuloVisitante"
+								update="unidadeForm:tabView:moduloVisitante" />
+						</sgp:formCheckbox>
+
+						<br />
+					</p:panel>
+
+					<br />
+					<p:panel id="moduloVisitante" header="Módulo Visitantes">
+						<div class="ui-g">
+							<div class="ui-lg-12 ui-md-12">
+								<p:outputLabel value="Fases do Credenciamento" />
+							</div>
+
+							<ui:repeat value="#{unidadePrisionalBean.parametrosVisitante}"
+								var="parametroVisitante">
+								<div class="ui-lg-4 ui-md-6">
+									<sgp:formCheckbox
+										labelValue="#{parametroVisitante.nome.id}. #{parametroVisitante.nome.nome}"
+										value="#{parametroVisitante.valueValidar}"
+										disabled="#{unidadePrisionalBean.isVisualizacao
+                                                      	or !unidadePrisionalBean.unidade.ativaModuloVisitante
+                                                      	or (parametroVisitante.nome eq 'RECEBIMENTO_DOCUMENTACAO' or parametroVisitante.nome eq 'APROVACAO_CADASTRO')}"
+										labelPosition="right"
+										styleFormLabelColumn="width: 300px; margin-left: 10px" />
+								</div>
+							</ui:repeat>
+						</div>
+
+						<br />
+					</p:panel>
+
+					<br />
+					<br />
+					<p:commandButton value="Salvar"
+						action="#{unidadePrisionalBean.salvar()}" update="@form"
+						icon="ui-icon-disk"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}" />
+					<p:button outcome="pretty:ListarUnidade" value="Voltar"
+						icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+					<br />
+				</p:tab>
+
+				<p:tab title="Gerenciar Visitas"
+					rendered="#{(securityUtil.possuiPermissao('VisualizarParametrosUnidade') and unidadePrisionalBean.unidade.ativaModuloVisitante == true)}">
+					<pe:importEnum
+						type="br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada"
+						var="tipoEntr" allSuffix="ALL_ENUM_VALUES" />
+					<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.SgpStatus"
+						var="_status" allSuffix="ALL_ENUM_VALUES" />
+					<p:panel id="gerenciarVisitas">
+						<p:commandButton icon="ui-icon-plus" value="Adicionar"
+							immediate="true" oncomplete="PF('dialogParametroVisita').show()"
+							update=":formParametroVisita" process="@this"
+							action="#{unidadePrisionalBean.abrirDialogAdicionarParametroVisita}"
+							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}" />
+						<br />
+						<br />
+						<p:dataTable id="parametrosVisita" var="p"
+							emptyMessage="Nenhum parâmetro adicionado."
+							value="#{unidadePrisionalBean.parametrosVisita}" rows="5"
+							paginator="true" paginatorAlwaysVisible="false"
+							paginatorPosition="bottom" sortBy="#{p.id}">
+							<p:column headerText="Tipo Entrada">
+								<h:outputText value="#{p.tipoEntrada.descricao}" />
+							</p:column>
+							<p:column headerText="Dia">
+								<h:outputText value="#{p.dias()}" />
+							</p:column>
+							<p:column headerText="Hora Início">
+								<h:outputText value="#{p.horaEntrada()}" />
+							</p:column>
+							<p:column headerText="Hora Fim">
+								<h:outputText value="#{p.horaSaida()}" />
+							</p:column>
+							<p:column headerText="Intervalo">
+								<h:outputText value="#{p.intervalo}" />
+							</p:column>
+							<p:column headerText="Qtd. Sala">
+								<h:outputText value="#{p.quantidadeSala}" />
+							</p:column>
+							<p:column headerText="Situação">
+								<h:outputText value="#{p.status.descricao}" />
+							</p:column>
+							<p:column width="220">
+								<center>
+									<p:commandButton title="Visualizar" icon="ui-icon-document"
+										immediate="true" outcome="pretty:VisualizarUnidade"
+										oncomplete="PF('dialogParametroVisita').show()"
+										action="#{unidadePrisionalBean.abrirDialogVisualizarParametroVisita(p)}"
+										update=":formParametroVisita"
+										rendered="#{securityUtil.possuiPermissao('VisualizarUnidade')}">
+									</p:commandButton>
+
+									<p:commandButton title="Alterar" icon="ui-icon-pencil"
+										immediate="true"
+										oncomplete="PF('dialogParametroVisita').show()"
+										action="#{unidadePrisionalBean.abrirDialogAlterarParametroVisita(p)}"
+										update=":formParametroVisita"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}" />
+
+									<p:commandButton
+										action="#{unidadePrisionalBean.excluirParametroVisita(p)}"
+										immediate="true" icon="ui-icon-trash" title="Excluir"
+										update="parametrosVisita"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}">
+										<p:confirm header="Confirmação"
+											message="Deseja excluir o parâmetro?" icon="ui-icon-alert" />
+									</p:commandButton>
+
+									<p:commandButton title="Bloquear" icon="ui-icon-locked"
+										immediate="true"
+										oncomplete="PF('dialogParametroVisitaBloqueio').show()"
+										action="#{unidadePrisionalBean.abrirDialogBloquearParametroVisita(p)}"
+										update=":formParametroVisitaBloqueio"
+										disabled="#{p.status eq 'I'}"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}" />
+								</center>
+							</p:column>
+						</p:dataTable>
+						<p:confirmDialog global="true">
+							<p:commandButton value="Sim" type="button"
+								styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							<p:commandButton value="Não" type="button"
+								styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+						</p:confirmDialog>
+						<br />
+						<br />
+						<p:button outcome="pretty:ListarUnidade" value="Voltar"
+							icon="ui-icon-arrowreturnthick-1-w">
 							<f:param name="list" value="1" />
 						</p:button>
-						<br/>
+						<br />
 					</p:panel>
+					<br />
+					<br />
 				</p:tab>
 			</p:tabView>
 		</h:form>
@@ -353,5 +496,265 @@
 				</p:panel>
 			</h:form>
 		</p:dialog>		
+		<p:dialog id="dialogParametroVisita" header="Gerenciar Entrada/Saída" 
+		dynamic="true"  closable="true" width="1300" height="700"
+			showEffect="fade" widgetVar="dialogParametroVisita" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+			<h:form prependId="false" id="formParametroVisita">
+						<p:panel>
+						
+								<sgp:formSelectOneMenu display="text" requiredMessage="*"
+									id="tipoEntrada" labelValue="Tipo Entrada" itemValue="#{item}"
+									temSelecione="true"
+									value="#{unidadePrisionalBean.parametroVisita.tipoEntrada}"
+									itemsValue="#{comboHelperBean.tipoEntrada}"
+									itemLabel="#{item.descricao}"
+									converter="SimpleEntityConverter"
+									disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}" />
+								<br/><br/>
+								<table style="width:100%">
+								  <tr>
+								  	<th>
+								  		<sgp:formOutputLabel labelValue="Dia"/>
+								  	</th>
+								    <th>
+										<sgp:formCheckbox
+											labelValue="Dom"
+											value="#{unidadePrisionalBean.parametroVisita.domingo}"
+											labelPosition="right"
+											disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+											/>
+								    </th>
+								    <th>
+										<sgp:formCheckbox
+											labelValue="Seg"
+											value="#{unidadePrisionalBean.parametroVisita.segunda}"
+											labelPosition="right"
+											disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+											 />
+									</th>
+								    <th>
+										<sgp:formCheckbox
+											labelValue="Ter"
+											value="#{unidadePrisionalBean.parametroVisita.terca}"
+											labelPosition="right"
+											disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+											 />
+								    </th>
+								    <th>
+										<sgp:formCheckbox
+											labelValue="Qua"
+											value="#{unidadePrisionalBean.parametroVisita.quarta}"
+											labelPosition="right"
+											disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+											 />
+								    </th>
+								    <th>
+										<sgp:formCheckbox
+											labelValue="Qui"
+											value="#{unidadePrisionalBean.parametroVisita.quinta}"
+											labelPosition="right"
+											disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+											/>
+								    </th>
+								    <th>
+										<sgp:formCheckbox
+											labelValue="Sex"
+											value="#{unidadePrisionalBean.parametroVisita.sexta}"
+											labelPosition="right"
+											disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+											/>
+								    </th>
+								    <th>
+										<sgp:formCheckbox
+											labelValue="Sáb"
+											value="#{unidadePrisionalBean.parametroVisita.sabado}"
+											labelPosition="right"
+											disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+											 />
+								    </th>
+								  </tr>
+								</table>
+								<div class="ui-g">
+                				<sgp:formInputMask labelValue="Hora Início" mask="99:99" maxlength="5"
+                                   value="#{unidadePrisionalBean.parametroVisita.horaEntrada}"
+                                   validationRequired="false"
+                                   display="text" styleFormLabelColumn="width: 100px"
+                                   converter="HoraConverter"
+                                   disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+                                    />
+                				<sgp:formInputMask labelValue="Hora Fim" mask="99:99" maxlength="5"
+                                   value="#{unidadePrisionalBean.parametroVisita.horaSaida}"
+                                   validationRequired="false"
+                                   display="text" styleFormLabelColumn="width: 100px"
+                                   converter="HoraConverter"
+                                   disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+                                    />
+                                </div>
+								<sgp:formSelectOneMenu display="text" requiredMessage="*"
+									id="intervalo" labelValue="Intervalo" itemValue="#{item}"
+									temSelecione="true"
+									value="#{unidadePrisionalBean.parametroVisita.intervalo}"
+									disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+									 >
+									<f:selectItem itemLabel="10 Min" itemValue="10" />
+        							<f:selectItem itemLabel="20 Min" itemValue="20" />
+        							<f:selectItem itemLabel="30 Min" itemValue="30" />
+									<f:selectItem itemLabel="40 Min" itemValue="40" />
+        							<f:selectItem itemLabel="50 Min" itemValue="50" />
+        							<f:selectItem itemLabel="60 Min" itemValue="60" />
+								</sgp:formSelectOneMenu>
+									 
+								<sgp:formInputText id="qtdSala" labelValue="Qtd Sala"
+									value="#{unidadePrisionalBean.parametroVisita.quantidadeSala}"
+									styleFormLabelColumn="width: 100px"  maxlength="3"
+									disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}" 
+									/>
+								<sgp:formOutputText 
+									labelValue="Estruturas"
+									styleFormLabelColumn="width: 100px" />
+								<p:commandButton
+										style="margin-top: -5px; margin-left: 20px;"
+										icon="ui-icon ui-icon-search"
+										title="Selecionar Estrutura"
+										immediate="true"
+										actionListener="#{unidadePrisionalBean.abrirDialogEstrutura}"
+										disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}"
+										>
+									<p:ajax event="dialogReturn" listener="#{unidadePrisionalBean.associarEstrutura}" update="parametrosVisitaEstr" />
+								</p:commandButton>
+								<br/>
+								<br/>
+								<p:dataTable id="parametrosVisitaEstr" var="e" emptyMessage="Nenhuma estrutura adicionada." value="#{unidadePrisionalBean.parametroVisita.estruturas}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{p.id}">
+									<p:column headerText="ID" width="90">
+										<h:outputText value="#{e.estrutura.id}" />
+									</p:column>
+									<p:column headerText="Nome Estrutura">
+										<h:outputText value="#{e.estrutura.nome}" />
+									</p:column>
+									<p:column headerText="É cela?">
+										<center>
+											<h:outputText value="Sim" rendered="#{e.estrutura.cela}"/>
+											<h:outputText value="Não" rendered="#{!e.estrutura.cela}" />
+										</center>
+									</p:column>
+									<p:column width="120">
+										<center>
+											<p:commandButton title="Visualizar" icon="ui-icon-document"
+												immediate="true" outcome="pretty:VisualizarUnidade"
+												oncomplete="PF('dialogEstruturaFilhos').show()"
+												action="#{unidadePrisionalBean.abrirDialogEstruturaFilhos(e)}"
+												rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}"
+												disabled="#{e.estrutura.cela}" update="dialogEstruturaFilhos">
+											</p:commandButton>
+											<p:commandButton action="#{unidadePrisionalBean.excluirParametroVisitaEstrutura(e)}" immediate="true" icon="ui-icon-trash" title="Excluir" update="parametrosVisitaEstr"
+												rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}"
+												disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}">
+										 		<p:confirm header="Confirmação" message="Deseja excluir a estrutura?" icon="ui-icon-alert"/>
+											</p:commandButton>
+										</center>
+									</p:column>
+								</p:dataTable>
+								<sgp:formSelectOneMenu display="text" requiredMessage="*"
+									id="situacao" labelValue="Situação" itemValue="#{item}"
+									value="#{unidadePrisionalBean.parametroVisita.status}"
+									itemsValue="#{comboHelperBean.statusSgp}"
+									itemLabel="#{item.descricao}" converter="SimpleEntityConverter"
+									disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}" />
+								<br/>
+								<br/>
+								<p:commandButton 
+									title="Salvar" 
+									value="Salvar"  
+									update="@form :unidadeForm:tabView:gerenciarVisitas" action="#{unidadePrisionalBean.incluirParametroVisita()}"
+									disabled="#{unidadePrisionalBean.visualizacaoParametroVisita == true}" />
+								<p:commandButton 
+									value="Fechar" 
+									onclick="PF('dialogParametroVisita').hide()" 
+									process="@this" />
+						</p:panel>
+			</h:form>
+		</p:dialog>		
+		<p:dialog id="dialogParametroVisitaBloqueio" header="Bloquear Entrada e Saída" 
+			dynamic="true"  closable="true" width="1200" height="700"
+			showEffect="fade" widgetVar="dialogParametroVisitaBloqueio" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+			<h:form prependId="false" id="formParametroVisitaBloqueio">
+						<p:panel id="dtVisitas2" >
+							<sgp:formInputText id="descricao" labelValue="Descrição"
+								value="#{unidadePrisionalBean.bloqueio.descricao}"
+								validationRequired="true"
+								requiredMessage="Descrição do bloqueio obrigatório!"
+								size="30" display="text" maxlength="35" />
+							<sgp:formCalendar 
+								labelValue="Data/Hora Inicio" 
+								value="#{unidadePrisionalBean.bloqueio.dataInicio}" 
+								display="text" 
+								validationRequired="true" 
+								pattern="dd/MM/yyyy HH:mm"/>
+							<sgp:formCalendar 
+								labelValue="Data/Hora Fim" 
+								value="#{unidadePrisionalBean.bloqueio.dataFim}" 
+								display="text" 
+								validationRequired="true" 
+								pattern="dd/MM/yyyy HH:mm"/>
+							<br />
+							<br />
+							<p:commandButton title="Adicionar" value="Adicionar"  update="@form" action="#{unidadePrisionalBean.incluirParametroVisitaBloqueio()}" />
+							<br />
+							<br />
+							<p:panel>
+								<p:dataTable id="parametrosVisitaBloqueio" var="b" emptyMessage="Nenhum bloqueio adicionado." value="#{unidadePrisionalBean.parametroVisita.bloqueios}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{p.id}">
+									<p:column headerText="Código" width="90">
+										<h:outputText value="#{b.id}" />
+									</p:column>
+									<p:column headerText="Descrição">
+										<h:outputText value="#{b.descricao}" />
+									</p:column>
+									<p:column headerText="Data Início" width="120">
+										<h:outputText value="#{b.dataInicio}" >
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Data Fim" width="120">
+										<h:outputText value="#{b.dataFim}" >
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Açoes" width="70">
+										<p:commandButton 
+											action="#{unidadePrisionalBean.excluirParametroVisitaBloqueio(b)}" 
+											immediate="true" 
+											icon="ui-icon-trash" 
+											title="Excluir"
+											update="parametrosVisitaBloqueio">
+									 		<p:confirm header="Confirmação" message="Deseja excluir o bloqueio?" icon="ui-icon-alert"/>
+										</p:commandButton>
+									</p:column>
+								
+								</p:dataTable>
+								<p:commandButton value="Fechar" onclick="PF('dialogParametroVisitaBloqueio').hide()" process="@this" />
+							</p:panel>
+						</p:panel>
+			</h:form>
+		</p:dialog>
+		<p:dialog id="dialogEstruturaFilhos" header="Estrutura Filhos" 
+			dynamic="true"  closable="true" width="1200" height="700"
+			showEffect="fade" widgetVar="dialogEstruturaFilhos" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+			<h:form prependId="false" id="formDialogEstruturaFilhos">
+								<p:dataTable id="EstrFilho" var="e" emptyMessage="Nenhuma estrutura adicionada." value="#{unidadePrisionalBean.estruturaFilhos}" rows="20" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{p.id}">
+									<p:column headerText="ID" width="90">
+										<h:outputText value="#{e.id}" />
+									</p:column>
+									<p:column headerText="Nome Estrutura">
+										<h:outputText value="#{e.nome}" />
+									</p:column>
+									<p:column headerText="É cela?">
+										<center>
+											<h:outputText value="Sim" rendered="#{e.cela}"/>
+											<h:outputText value="Não" rendered="#{!e.cela}" />
+										</center>
+									</p:column>
+								</p:dataTable>
+			</h:form>
+		</p:dialog>
     </ui:define>
 </ui:composition>

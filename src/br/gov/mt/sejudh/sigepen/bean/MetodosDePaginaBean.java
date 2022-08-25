@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.SortOrder;
@@ -57,8 +58,10 @@ public abstract class MetodosDePaginaBean {
 		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("alterar")) acao = AcaoDeTela.ALTERAR;
 		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("visualizar")) acao = AcaoDeTela.VISUALIZAR;
 		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("iniciar")) acao = AcaoDeTela.INICIAR;
+		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("concluir")) acao = AcaoDeTela.CONCLUIR;
 		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("finalizar")) acao = AcaoDeTela.FINALIZAR;
 		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("receber")) acao = AcaoDeTela.RECEBER;
+		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("credenciar")) acao = AcaoDeTela.CREDENCIAR;
 		else acao = AcaoDeTela.LISTAR;
 		
 		return acao;
@@ -83,12 +86,17 @@ public abstract class MetodosDePaginaBean {
 			case INICIAR:
 				this.setTituloPagina("Iniciar");
 				break;
+
+			case CONCLUIR:
+				this.setTituloPagina("Concluir");
+				break;
 				
 			case FINALIZAR:
 				this.setTituloPagina("Finalizar");
 				break;
 				
 			default:
+			    this.setTituloPagina(StringUtils.capitalize(acao.toString().toLowerCase()));
 				break;
 		}
 	}
@@ -130,7 +138,7 @@ public abstract class MetodosDePaginaBean {
 		return false;
 	}
 	
-	protected void configuraPaginacao(int rowCount, int first, int pageSize, String sortField, SortOrder sortOrder, Object filtro) throws NoSuchMethodException, SecurityException, NumberFormatException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void configuraPaginacao(int rowCount, int first, int pageSize, String sortField, SortOrder sortOrder, Object filtro) throws NoSuchMethodException, SecurityException, NumberFormatException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		DataTable dt = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent("registrosForm:dataTable");
 		
 		if (first >= rowCount) {

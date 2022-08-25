@@ -23,17 +23,37 @@
 					validationRequired="true"
 					converter="SimpleEntityConverter"
 					temSelecione="true" 
-					disabled="#{associarDocumentoBean.documento.id>0}"/>
+					disabled="#{associarDocumentoBean.documento.id>0}">
+					<p:ajax event="change" update="@form" listener="#{associarDocumentoBean.tipoDocumentoChanged}" />
+				</sgp:formSelectOneMenu>
+				
+				
 				 	
 				<sgp:formInputText 
 					id="numero"
 					labelValue="Número"
-					validationRequired="true"
+					validationRequired="#{!associarDocumentoBean.cpf}"
 					value="#{associarDocumentoBean.documento.numero}"
 					size="30"
 					display="text"					
-					maxlength="20"
-					disabled="#{associarDocumentoBean.documento.id>0}"/>			
+					maxlength="50"
+					disabled="#{associarDocumentoBean.documento.id>0}"
+					rendered="#{!associarDocumentoBean.cpf}"
+					/>			
+
+                <sgp:formInputMask 
+                	labelValue="Número" 
+                	mask="999.999.999-99" 
+                	maxlength="11"
+                    value="#{associarDocumentoBean.documento.numero}"
+                    validationRequired="#{associarDocumentoBean.cpf}" 
+                    converter="CpfConverter"
+                    disabled="#{associarDocumentoBean.documento.id>0}"
+                    display="text" 
+                    validatorId="CpfValidator"
+                    size="30"
+                    rendered="#{associarDocumentoBean.cpf}"  
+                    />
 				
 				<sgp:formCalendar 
 					labelValue="Emissão" 

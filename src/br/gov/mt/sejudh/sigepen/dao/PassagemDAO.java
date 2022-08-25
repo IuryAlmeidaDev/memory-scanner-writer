@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -70,6 +71,7 @@ public class PassagemDAO {
 			Hibernate.initialize(r.getPessoa());
 			Hibernate.initialize(r.getPessoa().getBiometria());
 			Hibernate.initialize(r.getPassagens());
+			Hibernate.initialize(r.getFotoFrenteAtual());
 			
 			for (Passagem p : r.getPassagens()) {
 				Hibernate.initialize(p.getLotacao());
@@ -120,5 +122,57 @@ public class PassagemDAO {
 		} catch(NoResultException e){
 			return null;
 		}
+	}
+
+	public Optional<Passagem> buscaPassagemPorIdPessoa(Long id) {
+		try{
+			String jpql = "select p from Passagem p WHERE p.recuperando.pessoa.id = :id Order By p desc";
+			TypedQuery<Passagem> query = em.createQuery(jpql, Passagem.class).setParameter("id", id).setMaxResults(1);
+
+			return Optional.of(query.getSingleResult());
+		}catch(NoResultException ex) {
+			return Optional.empty();
+		}
+	}
+
+	public boolean buscarPrimeiraPassagem(long idRecuperando) {
+		try{
+			String jpql="select p from Passagem p where p.recuperando.id = :id";
+			TypedQuery<Passagem> query = em.createQuery(jpql, Passagem.class);
+			query.setParameter("id", idRecuperando);
+			List<Passagem> passagens = query.getResultList();
+			for(Passagem p : passagens) {
+				return false;
+			}
+			return true;
+		} catch(NoResultException e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public Passagem buscaPassagemPorId(long idPassagem) {
+		try{
+			String jpql="select p from Passagem p where p.id = :id";
+			TypedQuery<Passagem> query = em.createQuery(jpql, Passagem.class);
+			query.setParameter("id", idPassagem);			
+			Passagem p = query.getSingleResult();
+			Hibernate.initialize(p.getLotacao());
+			Hibernate.initialize(p.getFoto());
+			Hibernate.initialize(p.getRecuperando());
+			Hibernate.initialize(p.getRecuperando().getPessoa());
+			Hibernate.initialize(p.getEstabelecimentoDestino());
+			return p;
+		} catch(NoResultException e){
+			return null;
+		}
+	}
+
+	public Passagem salvar(Passagem passagem) {
+		if(passagem.getId() > 0)
+			return this.em.merge(passagem);
+		else
+			this.em.persist(passagem);
+		return passagem;
 	}
 }

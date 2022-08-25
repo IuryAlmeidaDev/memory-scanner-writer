@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListaDocumentosVisitante" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isTitleNewPage="true" uuid="78c4cf4f-be57-44aa-82c0-b3b1cbf7a8ab">
+	<property name="ireport.zoom" value="1.948717100000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dataValidade" class="java.util.Date" isForPrompting="false"/>
+	<field name="faseCredenciamento.descricao" class="java.lang.String"/>
+	<field name="credencialDocumentos" class="java.util.Collection"/>
+	<field name="credencialCertidoes" class="java.util.Collection"/>
+	<field name="dataRecebimento" class="java.util.Date"/>
+	<field name="dataDespacho" class="java.util.Date"/>
+	<field name="statusCredenciamento.descricao" class="java.lang.String"/>
+	<field name="usuarioAprovacao.login" class="java.lang.String"/>
+	<field name="dataAprovacao" class="java.util.Date"/>
+	<field name="dataValidade" class="java.util.Date"/>
+	<field name="observacao" class="java.lang.String"/>
+	<field name="faseCredenciamento.id" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band splitType="Prevent"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Prevent"/>
+	</columnHeader>
+	<detail>
+		<band height="122" splitType="Prevent">
+			<textField>
+				<reportElement x="0" y="10" width="551" height="20" uuid="3e38ec7e-5d86-4de1-a350-6365e78c6ce1"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{faseCredenciamento.descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="481" y="42" width="60" height="20" uuid="6af3f80f-e262-4b37-b4dc-a6c7b5c2db34">
+					<printWhenExpression><![CDATA[$F{dataDespacho} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{dataDespacho}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="-2" y="33" width="553" height="1" uuid="a81e1967-5476-4f66-94de-5757bb17b30a"/>
+			</line>
+			<staticText>
+				<reportElement x="351" y="42" width="130" height="20" uuid="165acfe8-fcb3-439d-b37c-d6f2fc98ab80">
+					<printWhenExpression><![CDATA[$F{dataDespacho} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data do Despacho:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-2" y="62" width="130" height="20" uuid="1c5bcea4-05ac-4bad-8792-2a71c91c8e2b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situação Credenciamento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-2" y="42" width="130" height="20" uuid="59c11247-d536-46fb-9208-ce98974c20f4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data do Recebimento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-2" y="82" width="130" height="20" uuid="06ea2adf-02e6-4bb8-b544-3a83ccc943ae"/>
+				<textElement verticalAlignment="Top">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observação:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="351" y="62" width="130" height="20" uuid="0849277d-2367-4757-aba0-1c2719403235">
+					<printWhenExpression><![CDATA[$F{faseCredenciamento.id} == 5]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data de Validade:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="128" y="42" width="123" height="20" uuid="668b1964-1262-4287-9a4b-2f3f1cbff401">
+					<printWhenExpression><![CDATA[$F{dataRecebimento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{dataRecebimento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="481" y="62" width="60" height="20" uuid="6a24cdaa-b575-4964-bc15-d00ba7c7d086">
+					<printWhenExpression><![CDATA[$F{faseCredenciamento.id} == 5]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{dataValidade}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="128" y="62" width="123" height="20" uuid="07ea813c-d5e1-41d9-867d-0e71a877c72b"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{statusCredenciamento.descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement stretchType="RelativeToBandHeight" x="128" y="82" width="413" height="40" uuid="01c3a7e1-101f-4108-b1a7-4eaa67276024">
+					<printWhenExpression><![CDATA[$F{observacao} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{observacao}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="4" width="553" height="1" uuid="e179d0d1-25bc-40bb-a110-846f2e99be00"/>
+			</line>
+		</band>
+		<band height="40">
+			<subreport runToBottom="false">
+				<reportElement x="0" y="0" width="553" height="40" uuid="05c08c7d-b625-4066-a4ff-878f84330732"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{credencialDocumentos})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ListarDocumentosCredenciamento.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="40">
+			<subreport runToBottom="false">
+				<reportElement x="0" y="0" width="553" height="40" uuid="2a5fd368-a251-4ac0-ba6c-d7d4e0040a87"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{credencialCertidoes})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ListarCertidoesCredenciamento.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

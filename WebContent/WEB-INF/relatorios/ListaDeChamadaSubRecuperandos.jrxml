@@ -67,8 +67,8 @@
 	</variable>
 	<pageHeader>
 		<band height="16" splitType="Prevent">
-			<textField>
-				<reportElement x="0" y="0" width="175" height="16" uuid="5f58a33b-8266-4b65-82d3-d918334cbb40"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="555" height="16" uuid="5f58a33b-8266-4b65-82d3-d918334cbb40"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>

@@ -62,6 +62,11 @@
 		<param-name>primefaces.FONT_AWESOME</param-name>
 		<param-value>true</param-value>
 	</context-param>
+
+    <mime-mapping>
+        <extension>woff2</extension>
+        <mime-type>application/x-font-woff2</mime-type>
+    </mime-mapping>
 	
 	<context-param>
 		<param-name>primefaces.THEME</param-name>
@@ -110,6 +115,10 @@
 	<mime-mapping>  
 	    <extension>woff</extension>  
 	    <mime-type>application/x-font-woff</mime-type>  
+	</mime-mapping>
+	<mime-mapping>  
+	    <extension>woff2</extension>  
+	    <mime-type>application/x-font-woff2</mime-type>  
 	</mime-mapping>
 	<mime-mapping>
 		<extension>swf</extension>

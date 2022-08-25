@@ -17,6 +17,7 @@
 	<cc:attribute name="maxlength" default="999999999" />
 	<cc:attribute name="size" />
 	<cc:attribute name="validationRequired" required="false" default="false" type="java.lang.Boolean" />
+	<cc:attribute name="readonly" required="false" default="false" type="java.lang.Boolean" />
 	<cc:attribute name="value" required="false" />
 	<cc:attribute name="disabled" required="false" />
 	<cc:attribute name="style" required="false" />
@@ -47,6 +48,7 @@
 			<p:inputText id="input" size="#{cc.attrs.size}" 			    
 				maxlength="#{cc.attrs.maxlength}" value="#{cc.attrs.value}"
 				required="#{cc.attrs.validationRequired}"
+                readonly="#{cc.attrs.readonly}"
 				label="#{cc.attrs.labelValue}"
 				disabled="#{cc.attrs.disabled}"
 				style="#{cc.attrs.style}"

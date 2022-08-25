@@ -96,7 +96,7 @@ connect by prior e1.id = e1.estruturapai_id]]>
 	</pageHeader>
 	<columnHeader>
 		<band height="22">
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="5" y="0" width="545" height="20" uuid="a7f76529-7fcf-4828-bf85-e5050ab8fe53"/>
 				<textElement textAlignment="Center">
 					<font size="11" isBold="true"/>

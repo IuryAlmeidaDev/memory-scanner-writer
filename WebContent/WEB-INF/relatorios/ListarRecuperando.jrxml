@@ -20,6 +20,7 @@
 	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="GAMB_NULL_DS" class="net.sf.jasperreports.engine.JREmptyDataSource" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -28,9 +29,9 @@
 	<field name="nome" class="java.lang.String"/>
 	<field name="nomeMae" class="java.lang.String"/>
 	<field name="siglaUnidade" class="java.lang.String"/>
-	<field name="condicaoAtual.descricao" class="java.lang.String"/>
+	<field name="condicaoAtual" class="java.lang.String"/>
 	<field name="regime" class="java.lang.String"/>
-	<field name="lotacaoAtualNomeEstrutura" class="java.lang.String"/>
+	<field name="estrutura.nomeCompleto" class="java.lang.String"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{id}]]></variableExpression>
 	</variable>
@@ -44,6 +45,7 @@
 				<subreportParameter name="NOME_DO_RELATORIO">
 					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
 				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{GAMB_NULL_DS}]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
 			</subreport>
 		</band>
@@ -221,7 +223,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{condicaoAtual.descricao}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{condicaoAtual}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="239" y="0" width="190" height="15" uuid="6b7892a2-b1ba-483c-a790-6690b84adfcd"/>
@@ -252,7 +254,7 @@
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{lotacaoAtualNomeEstrutura}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{estrutura.nomeCompleto}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -269,6 +271,7 @@
 				<subreportParameter name="TOTAL_PAGINAS">
 					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
 				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{GAMB_NULL_DS}]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
 			</subreport>
 			<textField>

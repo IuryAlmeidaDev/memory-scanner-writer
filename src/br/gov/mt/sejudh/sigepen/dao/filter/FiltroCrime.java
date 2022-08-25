@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 public class FiltroCrime extends FiltroConsulta {
@@ -35,6 +36,19 @@ public class FiltroCrime extends FiltroConsulta {
 		
 		if(this.getArtigo()!= null && !this.getArtigo().equalsIgnoreCase("")){
 			getCriteria().add(Restrictions.eq("numArtigo", this.getArtigo()));
+		}
+	}
+	
+	@Override
+	public void configurarOrdenacao() {
+		super.configurarOrdenacao();
+		
+		if (this.getOrdenacao() == null) {
+			getCriteria().addOrder(Order.asc("idLegislacao"));
+			getCriteria().addOrder(Order.asc("numArtigo"));
+			getCriteria().addOrder(Order.asc("numParagrafo"));
+			getCriteria().addOrder(Order.asc("numInciso"));
+			getCriteria().addOrder(Order.asc("numAlinea"));
 		}
 	}
 }

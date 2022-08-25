@@ -1,0 +1,1733 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h:form id="formUnificarRecuperando" prependId="false">
+			<p:growl id="growl" sticky="true" showDetail="true" />
+
+			<p:wizard flowListener="#{unificarRecuperandoBean.onFlowProcess}" style="margin-top: 4px;"
+				nextLabel="Avançar" backLabel="Voltar" >
+				<p:tab id="recuperando" title="Recuperando" titleStyle="font-size:100%;">
+					<p:panel >
+						<p:messages />
+
+						<p:selectOneRadio id="customRadioMatricula"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idSelecionado}"
+							layout="custom" disabled="true">
+							<f:selectItem itemLabel="Matrícula Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Matrícula Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioNomeNomeMaeDataNascimento"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idNomeNomeMaeDataNascimento}"
+							layout="custom" required="true" requiredMessage=" O campo Nome, Nome da Mãe e Data de Nascimento é obrigatório.">
+							<f:selectItem itemLabel="NomeNomeMaeDataNascimento Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="NomeNomeMaeDataNascimento Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioSexo"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idSexo}"
+							layout="custom" required="true" requiredMessage=" O campo Sexo é obrigatório.">
+							<f:selectItem itemLabel="Sexo Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Sexo Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioNacionalidade"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idNacionalidade}"
+							layout="custom" required="true" requiredMessage=" O campo Nacionalidade é obrigatório.">
+							<f:selectItem itemLabel="Nacionalidade Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Nacionalidade Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioNaturalidade"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idNaturalidade}"
+							layout="custom" required="true" requiredMessage=" O campo Naturalidade é obrigatório.">
+							<f:selectItem itemLabel="Naturalidade Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Naturalidade Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioSinalTatuagem"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idSinalTatuagem}"
+							layout="custom" required="true" requiredMessage=" O campo Sinal/Tatuagem é obrigatório.">
+							<f:selectItem itemLabel="Sinal/Tatuagem Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Sinal/Tatuagem Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioAltura"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idAltura}"
+							layout="custom" required="true" requiredMessage=" O campo Altura é obrigatório.">
+							<f:selectItem itemLabel="Altura Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Altura Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioPeso"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idPeso}"
+							layout="custom" required="true" requiredMessage=" O campo Peso é obrigatório.">
+							<f:selectItem itemLabel="Peso Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Peso Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioTipoSanguineo"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idTipoSanguineo}"
+							layout="custom" required="true" requiredMessage=" O campo Tipo Sanguíneo é obrigatório.">
+							<f:selectItem itemLabel="Tipo Sanguineo Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Tipo Sanguineo Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioRaca"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idRaca}"
+							layout="custom" required="true" requiredMessage=" O campo Raça é obrigatório.">
+							<f:selectItem itemLabel="Raça Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Raça Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioCorOlhos"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idCorOlhos}"
+							layout="custom"  required="true" requiredMessage=" O campo Cor dos Olhos é obrigatório.">
+							<f:selectItem itemLabel="Cor Olhos Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Cor Olhos Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioCorCabelos"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idCorCabelo}"
+							layout="custom" required="true" requiredMessage=" O campo Cor dos Cabelos é obrigatório.">
+							<f:selectItem itemLabel="Cor Cabelo Recuperando 1"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+							<f:selectItem itemLabel="Cor Cabelo Recuperando 2"
+								itemValue="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+						</p:selectOneRadio>
+
+						<p:panelGrid columns="2" layout="tabular" styleClass=""
+							 style="width:100%;" columnClasses="ui-g-6, ui-g-6" >
+							 
+							 <h:panelGroup>
+																
+								<p:dataGrid id="dgFoto1" layout="tabular" 
+									columns="1" rows="1" style="width: 188px;margin: auto;margin-bottom: 20px;margin-top: 10px;"
+									value="#{unificarRecuperandoBean.recuperandoSelecionado1.imagemFrente}"
+									var="img1">
+									<p:graphicImage value="#{imageHandlerBean.getImagem(img1)}"
+										cache="false" width="180" height="240">
+											<f:param name="hashId" value="#{img1.id}" />
+									</p:graphicImage>
+								</p:dataGrid>
+														
+								<p:panelGrid columns="2" styleClass="ui-noborder" columnClasses="ui-g-novpad, ui-g-novpad">
+								
+									<p:radioButton id="matriculaRecuperandoSelecionado1" 
+										for="customRadioMatricula" itemIndex="0" disabled="false" />
+									<sgp:formOutputLabel labelValue="Matrícula" 
+										value="#{unificarRecuperandoBean.recuperandoSelecionado1.id}" />
+										
+									<p:radioButton
+										id="nomeNomeMaeDataNascimentoRecuperandoSelecionado1"
+										for="customRadioNomeNomeMaeDataNascimento" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Nome"
+										value="#{unificarRecuperandoBean.recuperandoSelecionado1.nome}" />
+									<h:outputLabel value="" />
+									<sgp:formOutputLabel labelValue="Nome da Mãe"
+										value="#{unificarRecuperandoBean.recuperandoSelecionado1.nomeMae}" />
+									<h:outputLabel value="" />
+									<sgp:formOutputLabel labelValue="Dt. Nascimento"
+										value="#{unificarRecuperandoBean.recuperandoSelecionado1.dataNascimento}" 
+										converterData="true"/>
+										
+									<p:radioButton id="sexoRecuperandoSelecionado1"
+										for="customRadioSexo" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Sexo"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.sexo.descricao}" />
+										
+									<p:radioButton id="nacionalidadeRecuperandoSelecionado1"
+										for="customRadioNacionalidade" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Nacionalidade"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.nacionalidade.descricao}" />
+										
+									<p:radioButton id="naturalidadeRecuperandoSelecionado1"
+										for="customRadioNaturalidade" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Naturalidade" rendered="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.naturalidade != null}"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.naturalidade.nome}" />
+									<sgp:formOutputLabel labelValue="Naturalidade" rendered="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.pais != null}"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.pais.nome}" />
+										
+									<p:radioButton id="sinalTatuagemRecuperandoSelecionado1"
+										for="customRadioSinalTatuagem" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Sinal/Tatuagem"
+										rendered="#{unificarRecuperandoBean.recuperandoSelecionado1.temTatuagem}"
+										value="SIM" />
+									<sgp:formOutputLabel labelValue="Sinal/Tatuagem"
+										rendered="#{!unificarRecuperandoBean.recuperandoSelecionado1.temTatuagem}"
+										value="NÃO" />
+										
+									<p:radioButton id="alturaRecuperandoSelecionado1"
+										for="customRadioAltura" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Altura"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.recuperando.altura}" />
+										
+									<p:radioButton id="pesoRecuperandoSelecionado1"
+										for="customRadioPeso" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Peso"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.recuperando.peso}" />
+										
+									<p:radioButton id="tipoSanguineoRecuperandoSelecionado1"
+										for="customRadioTipoSanguineo" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Tipo Sanguíneo"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.recuperando.tipoSanguineo.descricao}" />
+										
+									<p:radioButton id="racaRecuperandoSelecionado1"
+										for="customRadioRaca" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Raça"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.recuperando.raca.descricao}" />
+										
+									<p:radioButton id="corOlhosRecuperandoSelecionado1"
+										for="customRadioCorOlhos" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Cor dos Olhos"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.recuperando.corOlho.descricao}" />
+										
+									<p:radioButton id="corCabelosRecuperandoSelecionado1"
+										for="customRadioCorCabelos" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Cor dos Cabelos"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado1.recuperando.corCabelo.descricao}" />
+									
+								</p:panelGrid>
+							
+							</h:panelGroup>
+							
+							<h:panelGroup>
+							
+								<p:dataGrid id="dgFoto2" layout="tabular" 
+									columns="1" rows="1" style="width: 188px;margin: auto;margin-bottom: 20px;margin-top: 10px;"
+									value="#{unificarRecuperandoBean.recuperandoSelecionado2.imagemFrente}"
+									var="img2">
+									<p:graphicImage value="#{imageHandlerBean.getImagem(img2)}"
+										cache="false" width="180" height="240">
+											<f:param name="hashId" value="#{img2.id}" />
+									</p:graphicImage>
+								</p:dataGrid>
+							
+								<p:panelGrid columns="2" styleClass="ui-noborder" columnClasses="ui-g-novpad, ui-g-novpad">
+									<p:radioButton id="matriculaRecuperandoSelecionado2"
+										for="customRadioMatricula" itemIndex="1" disabled="false" />
+									<sgp:formOutputLabel labelValue="Matrícula"
+										value="#{unificarRecuperandoBean.recuperandoSelecionado2.id}" />
+										
+									<p:radioButton
+										id="nomeNomeMaeDataNascimentoRecuperandoSelecionado2"
+										for="customRadioNomeNomeMaeDataNascimento" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Nome"
+										value="#{unificarRecuperandoBean.recuperandoSelecionado2.nome}" />
+									<h:outputLabel value="" />
+									<sgp:formOutputLabel labelValue="Nome da Mãe"
+										value="#{unificarRecuperandoBean.recuperandoSelecionado2.nomeMae}" />
+									<h:outputLabel value="" />
+									<sgp:formOutputLabel labelValue="Dt. Nascimento"
+										value="#{unificarRecuperandoBean.recuperandoSelecionado2.dataNascimento}" 
+										converterData="true"/>
+										
+									<p:radioButton id="sexoRecuperandoSelecionado2"
+										for="customRadioSexo" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Sexo"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.sexo.descricao}" />
+										
+									<p:radioButton id="nacionalidadeRecuperandoSelecionado2"
+										for="customRadioNacionalidade" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Nacionalidade"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.nacionalidade.descricao}" />
+										
+									<p:radioButton id="naturalidadeRecuperandoSelecionado2"
+										for="customRadioNaturalidade" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Naturalidade" rendered="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.naturalidade != null}"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.naturalidade.nome}" />
+									<sgp:formOutputLabel labelValue="Naturalidade" rendered="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.pais != null}"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.pais.nome}" />
+										
+									<p:radioButton id="sinalTatuagemRecuperandoSelecionado2"
+										for="customRadioSinalTatuagem" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Sinal/Tatuagem"
+										rendered="#{unificarRecuperandoBean.recuperandoSelecionado2.temTatuagem}"
+										value="SIM" />
+									<sgp:formOutputLabel labelValue="Sinal/Tatuagem"
+										rendered="#{!unificarRecuperandoBean.recuperandoSelecionado2.temTatuagem}"
+										value="NÃO" />
+										
+									<p:radioButton id="alturaRecuperandoSelecionado2"
+										for="customRadioAltura" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Altura"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.recuperando.altura}" />
+										
+									<p:radioButton id="pesoRecuperandoSelecionado2"
+										for="customRadioPeso" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Peso"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.recuperando.peso}" />
+										
+									<p:radioButton id="tipoSanguineoRecuperandoSelecionado2"
+										for="customRadioTipoSanguineo" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Tipo Sanguíneo"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.recuperando.tipoSanguineo.descricao}" />
+										
+									<p:radioButton id="racaRecuperandoSelecionado2"
+										for="customRadioRaca" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Raça"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.recuperando.raca.descricao}" />
+										
+									<p:radioButton id="corOlhosRecuperandoSelecionado2"
+										for="customRadioCorOlhos" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Cor dos Olhos"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.recuperando.corOlho.descricao}" />
+										
+									<p:radioButton id="corCabelosRecuperandoSelecionado2"
+										for="customRadioCorCabelos" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Cor dos Cabelos"
+										value="#{unificarRecuperandoBean.pessoaRecuperandoSelecionado2.recuperando.corCabelo.descricao}" />
+								</p:panelGrid>
+								
+							</h:panelGroup>
+
+						</p:panelGrid>
+
+
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="passagens" title="Passagens" titleStyle="font-size:100%;">
+					<p:panel>
+						<p:messages />
+						
+						<p:panelGrid columns="2" style="width:100%;" layout="grid" columnClasses="ui-g-border-right ui-g-nohpad, ui-g-border-left ui-g-nohpad">
+
+							<p:dataGrid id="dgFoto1Passagens" layout="tabular"
+								style="width: 188px;margin: auto;margin-top: 10px;" columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.imagemFrente}"
+								var="img1">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img1)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img1.id}" />
+								</p:graphicImage>
+							</p:dataGrid>					
+							
+							<p:dataGrid id="dgFoto2Passagens" layout="tabular"
+								style="width: 188px;margin: auto;margin-top: 10px;" columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.imagemFrente}"
+								var="img2">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img2)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img2.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+								
+							
+							<p:panel style="border:none;">
+								<h4>Passagens no sistema prisional</h4>
+
+								<p:outputLabel
+									value="Total de passagens: #{unificarRecuperandoBean.recuperando1.passagens.size()}" />
+
+								<p:dataTable id="dataTableRec1" var="pass"
+									value="#{unificarRecuperandoBean.recuperando1.passagens}"
+									rows="10" paginator="true" paginatorPosition="bottom"
+									lazy="true" sortBy="#{pass.id}"
+									emptyMessage="Nenhum registro encontrado."
+									paginatorAlwaysVisible="false">
+
+									<p:column headerText="Procedência" style="font-size:12px;">
+										<h:outputText style="font-size:11px;"
+											value="#{pass.passagemProcedencia.procedencia.nome}" />
+									</p:column>
+
+									<p:column headerText="Data de Entrada" width="120" style="font-size:12px;">
+										<h:outputText value="#{pass.dataEntrada}" style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Data de Saída" width="110" style="font-size:12px;">
+										<h:outputText value="#{pass.dataSaida}" style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Lotação" width="85" style="font-size:12px;">
+										<center>
+											<p:commandButton title="Lotação" icon="ui-icon-document"
+												action="#{unificarRecuperandoBean.visualizarLotacao(pass)}"
+												oncomplete="PF('visualizarPassagem').show()"
+												update="passagemForm" process="@this" />
+										</center>
+									</p:column>
+								</p:dataTable>
+								<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
+									actionListener="#{unificarRecuperandoBean.imprimirExtratoRecuperando(unificarRecuperandoBean.recuperando1)}"
+									process="@this" />
+										
+							</p:panel>
+							
+							<p:panel style="border:none;">
+								<h4>Passagens no sistema prisional</h4>
+
+								<p:outputLabel
+									value="Total de passagens: #{unificarRecuperandoBean.recuperando2.passagens.size()}" />
+
+								<p:dataTable id="dataTableRec2" var="pass"
+									value="#{unificarRecuperandoBean.recuperando2.passagens}"
+									rows="10" paginator="true" paginatorPosition="bottom"
+									lazy="true" sortBy="#{pass.id}"
+									emptyMessage="Nenhum registro encontrado."
+									paginatorAlwaysVisible="false">
+
+									<p:column headerText="Procedência" style="font-size:12px;">
+										<h:outputText style="font-size:11px;"
+											value="#{pass.passagemProcedencia.procedencia.nome}" />
+									</p:column>
+
+									<p:column headerText="Data de Entrada" width="120" style="font-size:12px;">
+										<h:outputText value="#{pass.dataEntrada}" style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Data de Saída" width="110" style="font-size:12px;">
+										<h:outputText value="#{pass.dataSaida}" style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Lotação" width="85" style="font-size:12px;">
+										<center>
+											<p:commandButton title="Lotação" icon="ui-icon-document"
+												action="#{unificarRecuperandoBean.visualizarLotacao(pass)}"
+												oncomplete="PF('visualizarPassagem').show()"
+												update="passagemForm" process="@this" />
+										</center>
+									</p:column>
+								</p:dataTable>
+								<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
+									actionListener="#{unificarRecuperandoBean.imprimirExtratoRecuperando(unificarRecuperandoBean.recuperando2)}"
+									process="@this" />
+
+							</p:panel>
+							
+							<p:panel style="border:none;">
+								<h4>Processos</h4>
+								<p:dataTable id="processosRec1" var="processo"
+									widgetVar="processos"
+									value="#{unificarRecuperandoBean.recuperando1.processos}"
+									rows="10" paginator="true" paginatorPosition="bottom"
+									lazy="true" sortBy="#{processo.id}"
+									emptyMessage="Nenhum registro encontrado."
+									paginatorAlwaysVisible="false">
+									<p:column headerText="Nº Processo" style="font-size:12px;">
+										<h:outputText id="procNumRec1" value="#{processo.numeroProcesso}" style="font-size:11px;"/>
+										<p:tooltip for="procNumRec1" value="#{processo.numeroProcesso}" trackMouse="true"/>
+									</p:column>
+									<p:column headerText="Regime Atual" style="font-size:12px;">
+										<h:outputText value="#{processo.regimeAtual.descricao}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Condição Atual" style="font-size:12px;">
+										<h:outputText value="#{processo.condicaoAtual.descricao}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Sit. Processo" style="font-size:12px;">
+										<h:outputText value="#{processo.statusProcesso.descricao}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Ações" width="80" style="font-size:12px;">
+										<center>
+											<p:commandButton title="Visualizar" icon="ui-icon-document"
+												action="#{unificarRecuperandoBean.abrirDialogProcesso(processo, true)}"
+												process="@this" />
+										</center>
+									</p:column>
+								</p:dataTable>
+
+							</p:panel>
+													
+							<p:panel style="border:none;">
+								<h4>Processos</h4>
+								<p:dataTable id="processosRec2" var="processo"
+									widgetVar="processos"
+									value="#{unificarRecuperandoBean.recuperando2.processos}"
+									rows="10" paginator="true" paginatorPosition="bottom"
+									lazy="true" sortBy="#{processo.id}"
+									emptyMessage="Nenhum registro encontrado."
+									paginatorAlwaysVisible="false">
+									<p:column headerText="Nº Processo" style="font-size:12px;">
+										<h:outputText id="procNumRec2" value="#{processo.numeroProcesso}" style="font-size:11px;"/>
+										<p:tooltip for="procNumRec2" value="#{processo.numeroProcesso}" trackMouse="true"/>
+									</p:column>
+									<p:column headerText="Regime Atual" style="font-size:12px;">
+										<h:outputText value="#{processo.regimeAtual.descricao}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Condição Atual" style="font-size:12px;">
+										<h:outputText value="#{processo.condicaoAtual.descricao}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Sit. Processo" style="font-size:12px;">
+										<h:outputText value="#{processo.statusProcesso.descricao}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Ações" width="80" style="font-size:12px;">
+										<center>
+											<p:commandButton title="Visualizar" icon="ui-icon-document"
+												action="#{unificarRecuperandoBean.abrirDialogProcesso(processo, true)}"
+												process="@this" />
+										</center>
+									</p:column>
+								</p:dataTable>
+
+							</p:panel>
+
+						</p:panelGrid>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="informacoesComplementares" titleStyle="font-size:100%;"
+					title="Informações Complementares">
+					<p:panel>
+						<p:messages />
+						<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-border-right ui-g-nohpad, ui-g-border-left ui-g-nohpad">
+
+							<p:dataGrid id="dgFoto1InfoComplementar" layout="tabular"
+								style="width: 188px;margin: auto;margin-top: 10px;" columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.imagemFrente}"
+								var="img1">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img1)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img1.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						
+							<p:dataGrid id="dgFoto2InfoComplementar" layout="tabular"
+								style="width: 188px;margin: auto;margin-top: 10px;" columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.imagemFrente}"
+								var="img2">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img2)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img2.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+							
+
+							<p:panel style="border:none;">
+								<h4>Alcunhas</h4>
+								<p:dataTable id="alcunhasRec1" var="alcunha"
+									emptyMessage="Nenhuma alcunha adicionada."
+									value="#{unificarRecuperandoBean.recuperando1.alcunhas}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{alcunha.principal}"
+									sortOrder="descending">
+									<p:column headerText="Alcunha" style="font-size:12px;">
+										<h:outputText value="#{alcunha.nome}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Principal" width="100" style="font-size:12px;">
+										<h:outputText value="#{alcunha.principal? 'sim' : 'não'}" style="font-size:11px;"/>
+									</p:column>
+								</p:dataTable>
+
+							</p:panel>
+									
+									
+							<p:panel style="border:none;">
+								<h4>Alcunhas</h4>
+								<p:dataTable id="alcunhasRec2" var="alcunha"
+									emptyMessage="Nenhuma alcunha adicionada."
+									value="#{unificarRecuperandoBean.recuperando2.alcunhas}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{alcunha.principal}"
+									sortOrder="descending">
+									<p:column headerText="Alcunha" style="font-size:12px;">
+										<h:outputText value="#{alcunha.nome}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Principal" width="100" style="font-size:12px;">
+										<h:outputText value="#{alcunha.principal? 'sim' : 'não'}" style="font-size:11px;"/>
+									</p:column>
+								</p:dataTable>
+								
+							</p:panel>
+									
+																
+							<p:panel style="border:none;">
+								<h4>Outros Nomes</h4>
+								<p:dataTable id="outrosNomesRec1" var="outroNome"
+									emptyMessage="Nenhuma nome adicionado."
+									value="#{unificarRecuperandoBean.recuperando1.outrosNomes}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{outroNome.nome}">
+									<p:column headerText="Nome" style="font-size:12px;">
+										<h:outputText value="#{outroNome.nome}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Nome da Mãe" style="font-size:12px;">
+										<h:outputText value="#{outroNome.nomeMae}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Dt. Nascimento" style="font-size:12px;"
+										sortBy="#{outroNome.dataNascimento}" width="140">
+										<h:outputText value="#{outroNome.dataNascimento}" style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+									
+							<p:panel style="border:none;">
+								<h4>Outros Nomes</h4>
+								<p:dataTable id="outrosNomesRec2" var="outroNome"
+									emptyMessage="Nenhuma nome adicionado."
+									value="#{unificarRecuperandoBean.recuperando2.outrosNomes}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{outroNome.nome}">
+									<p:column headerText="Nome" style="font-size:12px;">
+										<h:outputText value="#{outroNome.nome}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Nome da Mãe" style="font-size:12px;">
+										<h:outputText value="#{outroNome.nomeMae}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Dt. Nascimento" style="font-size:12px;"
+										sortBy="#{outroNome.dataNascimento}" width="140">
+										<h:outputText value="#{outroNome.dataNascimento}" style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+													
+									
+							<p:panel style="border:none;">
+								<h4>Documentos</h4>
+								<p:dataTable id="documentosRec1" var="doc"
+									emptyMessage="Nenhum documento adicionado."
+									value="#{unificarRecuperandoBean.documentosRecuperando1}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{doc.id}">
+									<p:column headerText="Tipo" style="font-size:12px;">
+										<h:outputText id="docTipoRec1" value="#{doc.tipoDocumento.descricao}" style="font-size:11px;"/>
+										<p:tooltip for="docTipoRec1" value="#{doc.tipoDocumento.descricao}" trackMouse="true"/>
+									</p:column>
+									<p:column headerText="Número" style="font-size:12px;">
+										<h:outputText id="docNumRec1" value="#{doc.numero}" style="font-size:11px;"/>
+										<p:tooltip for="docNumRec1" value="#{doc.numero}" trackMouse="true"/>
+									</p:column>
+									<p:column headerText="Descrição" style="font-size:12px;">
+										<h:outputText id="docDescRec1" value="#{doc.descricao}" style="font-size:11px;"/>
+										<p:tooltip for="docDescRec1" value="#{doc.descricao}" trackMouse="true"/>
+									</p:column>
+									<p:column headerText="Emissão" width="84" style="font-size:12px;">
+										<h:outputText value="#{doc.dataEmissao}" style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Validade" width="84" style="font-size:12px;">
+										<h:outputText value="#{doc.dataValidade}" style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Principal" width="66" style="font-size:12px;">
+										<h:outputText value="#{doc.pessoa.id>0 ? 'sim' : 'não'}" style="font-size:11px;"/>
+									</p:column>
+
+								</p:dataTable>
+							</p:panel>
+									
+							<p:panel style="border:none;">
+								<h4>Documentos</h4>
+								<p:dataTable id="documentosRec2" var="doc" 
+									emptyMessage="Nenhum documento adicionado."
+									value="#{unificarRecuperandoBean.documentosRecuperando2}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{doc.id}">
+									<p:column headerText="Tipo" style="font-size:12px;">
+										<h:outputText id="docTipoRec2" value="#{doc.tipoDocumento.descricao}" style="font-size:11px;"/>
+										<p:tooltip for="docTipoRec2" value="#{doc.tipoDocumento.descricao}" trackMouse="true"/>
+									</p:column>
+									<p:column headerText="Número" style="font-size:12px;">
+										<h:outputText id="docNumRec2" value="#{doc.numero}" style="font-size:11px;"/>
+										<p:tooltip for="docNumRec2" value="#{doc.numero}" trackMouse="true"/>
+									</p:column>
+									<p:column headerText="Descrição" style="font-size:12px;">
+										<h:outputText id="docDescRec2" value="#{doc.descricao}" style="font-size:11px;"/>
+										<p:tooltip for="docDescRec2" value="#{doc.descricao}" trackMouse="true"/>
+									</p:column>
+									<p:column headerText="Emissão" width="84" style="font-size:12px;">
+										<h:outputText value="#{doc.dataEmissao}" style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Validade" width="84" style="font-size:12px;">
+										<h:outputText value="#{doc.dataValidade}" style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Principal" width="66" style="font-size:12px;">
+										<h:outputText value="#{doc.pessoa.id>0 ? 'sim' : 'não'}" style="font-size:11px;"/>
+									</p:column>
+
+								</p:dataTable>
+							</p:panel>
+									
+									
+							<p:panel style="border:none;">
+								<h4>Endereços</h4>
+
+								<p:dataTable id="enderecosRec1" var="endereco" 
+									emptyMessage="Nenhum endereço adicionado."
+									value="#{unificarRecuperandoBean.recuperando1.pessoa.enderecos}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{endereco.id}">
+									<p:column headerText="Logradouro" style="font-size:12px;">
+										<h:outputText id="endLogrRec1" value="#{endereco.logradouro}" style="font-size:11px;"/>
+										<p:tooltip for="endLogrRec1" value="#{endereco.logradouro}" trackMouse="true"/>
+									</p:column>
+									<p:column headerText="Nº" width="80" style="font-size:12px;">
+										<h:outputText value="#{endereco.numero}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Compl." width="80" style="font-size:12px;">
+										<h:outputText value="#{endereco.complemento}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Bairro" style="font-size:12px;">
+										<h:outputText value="#{endereco.bairro}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Cidade" style="font-size:12px;">
+										<h:outputText value="#{endereco.cidade.nome}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="UF" width="45" style="font-size:12px;">
+										<h:outputText value="#{endereco.cidade.estado.uf}" style="font-size:11px;"/>
+									</p:column>
+
+								</p:dataTable>
+							</p:panel>
+									
+							<p:panel style="border:none;">
+								<h4>Endereços</h4>
+
+								<p:dataTable id="enderecosRec2" var="endereco"
+									emptyMessage="Nenhum endereço adicionado."
+									value="#{unificarRecuperandoBean.recuperando2.pessoa.enderecos}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{endereco.id}">
+									<p:column headerText="Logradouro" style="font-size:12px;">
+										<h:outputText id="endLogrRec2" value="#{endereco.logradouro}" style="font-size:11px;"/>
+										<p:tooltip for="endLogrRec2" value="#{endereco.logradouro}" trackMouse="true"/>
+									</p:column>
+									<p:column headerText="Nº" width="80" style="font-size:12px;">
+										<h:outputText value="#{endereco.numero}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Compl." width="80" style="font-size:12px;">
+										<h:outputText value="#{endereco.complemento}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Bairro" style="font-size:12px;">
+										<h:outputText value="#{endereco.bairro}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Cidade" style="font-size:12px;">
+										<h:outputText value="#{endereco.cidade.nome}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="UF" width="45" style="font-size:12px;">
+										<h:outputText value="#{endereco.cidade.estado.uf}" style="font-size:11px;"/>
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+										
+									
+							<p:panel style="border:none;">
+								<h4>Contatos</h4>
+
+								<p:dataTable id="contatosRec1" var="contato"
+									emptyMessage="Nenhum contato adicionado."
+									value="#{unificarRecuperandoBean.recuperando1.pessoa.contatos}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{contato.id}">
+									<p:column headerText="Nome" style="font-size:12px;">
+										<h:outputText value="#{contato.nome}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Tipo" width="70" style="font-size:12px;">
+										<h:outputText value="#{contato.tipoContato.descricao}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Valor" width="120" style="font-size:12px;">
+										<h:outputText value="#{contato.valor}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Observação" style="font-size:12px;">
+										<h:outputText value="#{contato.observacao}" style="font-size:11px;"/>
+									</p:column>
+
+								</p:dataTable>
+
+							</p:panel>
+									
+									
+							<p:panel style="border:none;">
+								<h4>Contatos</h4>
+
+								<p:dataTable id="contatosRec2" var="contato"
+									emptyMessage="Nenhum contato adicionado."
+									value="#{unificarRecuperandoBean.recuperando2.pessoa.contatos}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{contato.id}">
+									<p:column headerText="Nome" style="font-size:12px;">
+										<h:outputText value="#{contato.nome}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Tipo" width="70" style="font-size:12px;">
+										<h:outputText value="#{contato.tipoContato.descricao}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Valor" width="120" style="font-size:12px;">
+										<h:outputText value="#{contato.valor}" style="font-size:11px;"/>
+									</p:column>
+									<p:column headerText="Observação" style="font-size:12px;">
+										<h:outputText value="#{contato.observacao}" style="font-size:11px;"/>
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+								
+						</p:panelGrid>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="fotos" title="Fotos" titleStyle="font-size:100%;">
+					<p:panel>
+						<p:messages />
+						<p:panelGrid columns="2" style="width:100%;" layout="grid" columnClasses="ui-g-border-right ui-g-nohpad, ui-g-border-left ui-g-nohpad">
+						
+						<p:panel header="Histórico de Fotos" style="border:none;">
+							<p:dataGrid id="dataGridFotosRec1" layout="grid" columns="2" styleClass="ui-datagrid-no-border"
+								rows="3" lazy="true" paginatorAlwaysVisible="false"
+								paginator="true" paginatorPosition="bottom"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								value="#{unificarRecuperandoBean.recuperando1.fotos}"
+								var="foto" emptyMessage="Nenhuma foto adicionada.">
+								<p:panel header="#{foto.tipo.descricao}"
+									style="text-align: center; width: 220px;">
+									<p:dataGrid id="dgFoto" layout="tabular"
+										style="width: 188px;" columns="1" rows="1" value="#{foto}"
+										var="f">
+										<p:graphicImage
+											value="#{imageHandlerBean.getImagem(f.imagem)}"
+											onclick="PF('dlgExibeFoto#{f.imagem.id}').show();"
+											cache="false" width="180" height="240">
+											<f:param name="hashId" value="#{f.imagem.id}" />
+										</p:graphicImage>
+									</p:dataGrid>
+
+									<p:dialog header="#{foto.tipo.descricao}"
+										widgetVar="dlgExibeFoto#{foto.imagem.id}" resizable="false"
+										closeOnEscape="true" modal="true" draggable="false">
+										<p:graphicImage
+											value="#{imageHandlerBean.getImagem(foto.imagem)}"
+											cache="false">
+											<f:param name="hashId" value="#{foto.imagem.id}" />
+										</p:graphicImage>
+									</p:dialog>
+								</p:panel>
+							</p:dataGrid>
+						</p:panel>
+						
+						<p:panel header="Histórico de Fotos" style="border:none;">
+							<p:dataGrid id="dataGridFotosRec2" layout="grid" columns="2" styleClass="ui-datagrid-no-border"
+								rows="3" lazy="true" paginatorAlwaysVisible="false"
+								paginator="true" paginatorPosition="bottom"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								value="#{unificarRecuperandoBean.recuperando2.fotos}"
+								var="foto" emptyMessage="Nenhuma foto adicionada.">
+								<p:panel header="#{foto.tipo.descricao}"
+									style="text-align: center; width: 220px;">
+									<p:dataGrid id="dgFoto" layout="tabular"
+										style="width: 188px;" columns="1" rows="1" value="#{foto}"
+										var="f">
+										<p:graphicImage
+											value="#{imageHandlerBean.getImagem(f.imagem)}"
+											onclick="PF('dlgExibeFoto#{f.imagem.id}').show();"
+											cache="false" width="180" height="240">
+											<f:param name="hashId" value="#{f.imagem.id}" />
+										</p:graphicImage>
+									</p:dataGrid>
+
+									<p:dialog header="#{foto.tipo.descricao}"
+										widgetVar="dlgExibeFoto#{foto.imagem.id}" resizable="false"
+										closeOnEscape="true" modal="true" draggable="false">
+										<p:graphicImage
+											value="#{imageHandlerBean.getImagem(foto.imagem)}"
+											cache="false">
+											<f:param name="hashId" value="#{foto.imagem.id}" />
+										</p:graphicImage>
+									</p:dialog>
+								</p:panel>
+							</p:dataGrid>
+						</p:panel>	
+
+						</p:panelGrid>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="particularidades" title="Particularidades" titleStyle="font-size:100%;">
+					<p:panel>
+						<p:messages />
+						<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-border-right ui-g-nohpad, ui-g-border-left ui-g-nohpad">
+							<p:dataGrid id="dgFoto1Particularidades" layout="tabular"
+								style="width: 188px;margin: auto;margin-top: 10px;" columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.imagemFrente}"
+								var="img1">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img1)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img1.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+									
+							<p:dataGrid id="dgFoto2Particularidades" layout="tabular"
+								style="width: 188px;margin: auto;margin-top: 10px;" columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.imagemFrente}"
+								var="img2">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img2)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img2.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+							
+							<p:dataGrid id="dataGridPartRec1" layout="grid" columns="2"
+								rows="3" lazy="true" paginatorAlwaysVisible="false" styleClass="ui-datagrid-no-border"
+								paginator="true" paginatorPosition="bottom"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								value="#{unificarRecuperandoBean.recuperando1.particularidades}"
+								var="part" emptyMessage="Nenhuma particularidade adicionada.">
+								<p:panel header="#{part.id} - #{part.tipo.descricao}"
+									style="text-align: center; width: 220px;">
+									<p:outputLabel
+										value="#{part.orientacao.descricao} / #{part.regiao.descricao}" />
+									<p:dataGrid layout="tabular" style="width: 188px;"
+										columns="1" rows="1" value="#{part}"
+										emptyMessage="Nenhuma particularidade associada." var="p">
+										<p:graphicImage
+											value="#{imageHandlerBean.getImagem(p.imagem)}"
+											onclick="PF('dlgExibeFoto#{p.imagem.id}').show();"
+											cache="false" width="180" height="240">
+											<f:param name="hashId" value="#{p.imagem.id}" />
+										</p:graphicImage>
+									</p:dataGrid>
+									<p:dialog
+										header="#{part.orientacao.descricao} / #{part.regiao.descricao}"
+										widgetVar="dlgExibeFoto#{part.imagem.id}" resizable="false"
+										closeOnEscape="true" modal="true" draggable="false">
+										<p:graphicImage
+											value="#{imageHandlerBean.getImagem(part.imagem)}"
+											cache="false">
+											<f:param name="hashId" value="#{part.imagem.id}" />
+										</p:graphicImage>
+									</p:dialog>
+								</p:panel>
+							</p:dataGrid>
+									
+							<p:dataGrid id="dataGridPart" layout="grid" columns="2"
+								rows="3" lazy="true" paginatorAlwaysVisible="false" styleClass="ui-datagrid-no-border"
+								paginator="true" paginatorPosition="bottom"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								value="#{unificarRecuperandoBean.recuperando2.particularidades}"
+								var="part" emptyMessage="Nenhuma particularidade adicionada.">
+								<p:panel header="#{part.id} - #{part.tipo.descricao}"
+									style="text-align: center; width: 220px;">
+									<p:outputLabel
+										value="#{part.orientacao.descricao} / #{part.regiao.descricao}" />
+									<p:dataGrid layout="tabular" style="width: 188px;"
+										columns="1" rows="1" value="#{part}"
+										emptyMessage="Nenhuma particularidade associada." var="p">
+										<p:graphicImage
+											value="#{imageHandlerBean.getImagem(p.imagem)}"
+											onclick="PF('dlgExibeFoto#{p.imagem.id}').show();"
+											cache="false" width="180" height="240">
+											<f:param name="hashId" value="#{p.imagem.id}" />
+										</p:graphicImage>
+									</p:dataGrid>
+									<p:dialog
+										header="#{part.orientacao.descricao} / #{part.regiao.descricao}"
+										widgetVar="dlgExibeFoto#{part.imagem.id}" resizable="false"
+										closeOnEscape="true" modal="true" draggable="false">
+										<p:graphicImage
+											value="#{imageHandlerBean.getImagem(part.imagem)}"
+											cache="false">
+											<f:param name="hashId" value="#{part.imagem.id}" />
+										</p:graphicImage>
+									</p:dialog>
+								</p:panel>
+							</p:dataGrid>
+						</p:panelGrid>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="vidaSocial" title="Vida Social" titleStyle="font-size:100%;">
+					<p:panel>
+						<p:messages />
+
+						<p:selectOneRadio id="customRadioOrientacaoSexual"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idOrientacaoSexual}"
+							layout="custom"  required="true" requiredMessage="O campo Orientação Sexual é obrigatório.">
+							<f:selectItem itemLabel="OrientacaoSexual 1"
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
+							<f:selectItem itemLabel="OrientacaoSexual 2"
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioIdentidadeGenero"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idIdentidadeDeGenero}"
+							layout="custom">
+							<f:selectItem itemLabel="IdentidadeGenero 1"
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
+							<f:selectItem itemLabel="IdentidadeGenero 2"
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioNomeSocial"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idNomeSocial}"
+							layout="custom">
+							<f:selectItem itemLabel="NomeSocial 1"
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
+							<f:selectItem itemLabel="NomeSocial 2"
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioEstadoCivil"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idEstadoCivil}"
+							layout="custom" required="true" requiredMessage="O campo Estado Civíl é obrigatório.">
+							<f:selectItem itemLabel="EstadoCivil 1"
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
+							<f:selectItem itemLabel="EstadoCivil 2"
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioEscolaridade"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idEscolaridade}"
+							layout="custom" required="true" requiredMessage="O campo Escolaridade é obrigatório.">
+							<f:selectItem itemLabel="Escolaridade 1"
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
+							<f:selectItem itemLabel="Escolaridade 2"
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioProfissao"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idProfissao}"
+							layout="custom" required="true" requiredMessage="O campo Profissão é obrigatório.">
+							<f:selectItem itemLabel="Profissao 1"
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
+							<f:selectItem itemLabel="Profissao 2"
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioReligiao"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idReligiao}"
+							layout="custom" required="true" requiredMessage="O campo Religião é obrigatório." >
+							<f:selectItem itemLabel="Religiao 1"
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
+							<f:selectItem itemLabel="Religiao 2"
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
+						</p:selectOneRadio>
+
+						<p:selectOneRadio id="customRadioPne"
+							value="#{unificarRecuperandoBean.dadosRecuperandoUnificacaoDTO.idPne}"
+							layout="custom" required="true" requiredMessage="O campo PNE é obrigatório.">
+							<f:selectItem itemLabel="PNE 1"
+								itemValue="#{unificarRecuperandoBean.recuperando1.id}" />
+							<f:selectItem itemLabel="PNE 2"
+								itemValue="#{unificarRecuperandoBean.recuperando2.id}" />
+						</p:selectOneRadio>
+
+						<p:panelGrid columns="2" layout="tabular"
+							 style="width:100%;" columnClasses="ui-g-6, ui-g-6" >
+							 
+							 <h:panelGroup>
+							 
+							 	<p:dataGrid id="dgFoto1VidaSocial" layout="tabular"
+									style="width: 188px;margin: auto;margin-bottom: 20px;margin-top: 10px;" columns="1" rows="1"
+									value="#{unificarRecuperandoBean.recuperandoSelecionado1.imagemFrente}"
+									var="img1">
+									<p:graphicImage value="#{imageHandlerBean.getImagem(img1)}"
+										cache="false" width="180" height="240">
+										<f:param name="hashId" value="#{img1.id}" />
+									</p:graphicImage>
+								</p:dataGrid>
+							 	
+							 	<p:panelGrid columns="2" styleClass="ui-noborder" columnClasses="ui-g-novpad, ui-g-novpad">
+							 		
+							 		<p:radioButton id="orientacaoSexualRecuperandoSelecionado1"
+										for="customRadioOrientacaoSexual" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Orientação Sexual"
+										value="#{unificarRecuperandoBean.recuperando1.orientacaoSexual.descricao}" />
+										
+									<p:radioButton id="identidadeGeneroRecuperandoSelecionado1"
+										for="customRadioIdentidadeGenero" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Identidade de Gênero"
+										value="#{unificarRecuperandoBean.recuperando1.identidadeDeGenero.descricao}" />
+										
+									<p:radioButton id="nomeSocialRecuperandoSelecionado1"
+										for="customRadioNomeSocial" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Nome Social"
+										value="#{unificarRecuperandoBean.recuperando1.pessoa.nomeSocial}" />
+										
+									<p:radioButton id="estadoCivilRecuperandoSelecionado1"
+										for="customRadioEstadoCivil" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Estado Civíl"
+										value="#{unificarRecuperandoBean.recuperando1.estadoCivil.descricao}" />
+										
+									<p:radioButton id="escolaridadeRecuperandoSelecionado1"
+										for="customRadioEscolaridade" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Escolaridade"
+										value="#{unificarRecuperandoBean.recuperando1.escolaridade.descricao}" />
+										
+									<p:radioButton id="profissaoRecuperandoSelecionado1"
+										for="customRadioProfissao" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Profissão"
+										value="#{unificarRecuperandoBean.recuperando1.profissao}" />
+										
+									<p:radioButton id="religiaoRecuperandoSelecionado1"
+										for="customRadioReligiao" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="Religião"
+										value="#{unificarRecuperandoBean.recuperando1.religiao.descricao}" />
+										
+									<p:radioButton id="pneRecuperandoSelecionado1"
+										for="customRadioPne" itemIndex="0" />
+									<sgp:formOutputLabel labelValue="PNE"
+										value="#{unificarRecuperandoBean.recuperando1.pne.descricao}" />
+							 	
+							 	</p:panelGrid>
+							 </h:panelGroup>
+							 
+							 <h:panelGroup>
+							 
+							 	<p:dataGrid id="dgFoto2VidaSocial" layout="tabular"
+									style="width: 188px;margin: auto;margin-bottom: 20px;margin-top: 10px;" columns="1" rows="1"
+									value="#{unificarRecuperandoBean.recuperandoSelecionado2.imagemFrente}"
+									var="img2">
+									<p:graphicImage value="#{imageHandlerBean.getImagem(img2)}"
+										cache="false" width="180" height="240">
+										<f:param name="hashId" value="#{img2.id}" />
+									</p:graphicImage>
+								</p:dataGrid>
+							 
+							 	<p:panelGrid columns="2" styleClass="ui-noborder" columnClasses="ui-g-novpad, ui-g-novpad">
+							 	
+							 		<p:radioButton id="orientacaoSexualRecuperandoSelecionado2"
+										for="customRadioOrientacaoSexual" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Orientação Sexual"
+										value="#{unificarRecuperandoBean.recuperando2.orientacaoSexual.descricao}" />
+							 		
+							 		<p:radioButton id="identidadeGeneroRecuperandoSelecionado2"
+										for="customRadioIdentidadeGenero" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Identidade de Gênero"
+										value="#{unificarRecuperandoBean.recuperando2.identidadeDeGenero.descricao}" />
+										
+									<p:radioButton id="nomeSocialRecuperandoSelecionado2"
+										for="customRadioNomeSocial" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Nome Social"
+										value="#{unificarRecuperandoBean.recuperando2.pessoa.nomeSocial}" />
+										
+									<p:radioButton id="estadoCivilRecuperandoSelecionado2"
+										for="customRadioEstadoCivil" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Estado Civíl"
+										value="#{unificarRecuperandoBean.recuperando2.estadoCivil.descricao}" />
+										
+									<p:radioButton id="escolaridadeRecuperandoSelecionado2"
+										for="customRadioEscolaridade" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Escolaridade"
+										value="#{unificarRecuperandoBean.recuperando2.escolaridade.descricao}" />
+										
+									<p:radioButton id="profissaoRecuperandoSelecionado2"
+										for="customRadioProfissao" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Profissão"
+										value="#{unificarRecuperandoBean.recuperando2.profissao}" />
+										
+									<p:radioButton id="religiaoRecuperandoSelecionado2"
+										for="customRadioReligiao" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="Religião"
+										value="#{unificarRecuperandoBean.recuperando2.religiao.descricao}" />
+										
+									<p:radioButton id="pneRecuperandoSelecionado2"
+										for="customRadioPne" itemIndex="1" />
+									<sgp:formOutputLabel labelValue="PNE"
+										value="#{unificarRecuperandoBean.recuperando2.pne.descricao}" />
+							 	
+							 	</p:panelGrid>
+							 </h:panelGroup>
+							 
+						</p:panelGrid>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="parentes" title="Parentes" titleStyle="font-size:100%;">
+					<p:panel>
+						<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-border-right, ui-g-border-left">
+						
+							<p:dataGrid id="dgFoto1Parentes" layout="tabular"
+								style="width: 188px;margin:auto;" columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado1.imagemFrente}"
+								var="img1">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img1)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img1.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+							
+							<p:dataGrid id="dgFoto2Parentes" layout="tabular"
+								style="width: 188px;margin:auto;" columns="1" rows="1"
+								value="#{unificarRecuperandoBean.recuperandoSelecionado2.imagemFrente}"
+								var="img2">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img2)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img2.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+							
+							<p:dataTable id="parentesDataTable1" var="parente"
+								emptyMessage="Nenhum parente adicionado."
+								value="#{unificarRecuperandoBean.recuperando1.parentes}"
+								rows="5" paginator="true" paginatorAlwaysVisible="false"
+								paginatorPosition="bottom" sortBy="#{parente.status.descricao}">
+								<p:column headerText="Nome" style="font-size:12px;">
+									<h:outputText value="#{parente.nome}" style="font-size:11px;"/>
+								</p:column>
+								<p:column headerText="Parentesco" width="105" style="font-size:12px;">
+									<h:outputText value="#{parente.parentesco.descricao}" style="font-size:11px;"/>
+								</p:column>
+								<p:column headerText="Data de Nascimento" width="105" style="font-size:12px;">
+									<h:outputText value="#{parente.dataNascimento}" style="font-size:11px;">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Situação" width="100" style="font-size:12px;"
+									sortBy="#{cargo.status}">
+									<h:outputText value="#{parente.status.descricao}" style="font-size:11px;"/>
+								</p:column>
+							</p:dataTable>
+							
+							<p:dataTable id="parentesDataTable2" var="parente"
+								emptyMessage="Nenhum parente adicionado."
+								value="#{unificarRecuperandoBean.recuperando2.parentes}"
+								rows="5" paginator="true" paginatorAlwaysVisible="false"
+								paginatorPosition="bottom" sortBy="#{parente.status.descricao}">
+								<p:column headerText="Nome" style="font-size:12px;">
+									<h:outputText value="#{parente.nome}" style="font-size:11px;"/>
+								</p:column>
+								<p:column headerText="Parentesco" width="105" style="font-size:12px;">
+									<h:outputText value="#{parente.parentesco.descricao}" style="font-size:11px;"/>
+								</p:column>
+								<p:column headerText="Data de Nascimento" width="105" style="font-size:12px;">
+									<h:outputText value="#{parente.dataNascimento}" style="font-size:11px;">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Situação" width="100" style="font-size:12px;"
+									sortBy="#{cargo.status}">
+									<h:outputText value="#{parente.status.descricao}" style="font-size:11px;"/>
+								</p:column>
+							</p:dataTable>
+
+							
+						</p:panelGrid>
+					</p:panel>
+				</p:tab>
+				
+				<p:tab id="finalizarUnificacao" title="Finalizar Unificação"
+					titleStyle="font-size:100%;">
+					<p:panel>
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-border-right, ui-g-border-left">
+
+							<p:panel header="Recuperanto Ativo" style="border:none;">
+								<p:dataGrid id="dgFotoUnificado" layout="tabular" columns="1"
+									rows="1"
+									style="width: 188px;margin: 20px;margin-bottom: 20px;margin-top: 10px;"
+									value="#{unificarRecuperandoBean.imagemFrente}"
+									var="img1">
+									<p:graphicImage value="#{imageHandlerBean.getImagem(img1)}"
+										cache="false" width="180" height="240">
+										<f:param name="hashId" value="#{img1.id}" />
+									</p:graphicImage>
+								</p:dataGrid>
+							</p:panel>
+
+							<p:panel header="Dados Pessoais" style="border:none;">
+								<div class="ui-g">
+									<div class="ui-g-8">
+										<h:outputLabel value="Matricula:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{unificarRecuperandoBean.unificado.id}" />
+										<div>
+											<h:outputLabel value="Nome:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.pessoa.nome}" />
+										</div>
+
+										<div>
+											<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.pessoa.nomeMae}" />
+										</div>
+										<div>
+											<h:outputLabel value="Data Nascimento:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.pessoa.dataNascimento}">
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+											</h:outputLabel>
+										</div>
+										<div>
+											<h:outputLabel value="Sexo:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.pessoa.sexo.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Naturalidade:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.pessoa.naturalidade.nome}" />
+										</div>
+										<div>
+										<h:outputLabel value="Sinal/Tatuagem" style="width: 150px;" />
+											<h:outputLabel labelValue="Sinal/Tatuagem"
+												rendered="#{unificarRecuperandoBean.unificado.temSinalOuTatuagem}"
+												value="SIM" />
+											<h:outputLabel labelValue="Sinal/Tatuagem"
+												rendered="#{!unificarRecuperandoBean.unificado.temSinalOuTatuagem}"
+												value="NÃO" />
+										</div>
+										<div>
+											<h:outputLabel value="Altura:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.altura}" />
+										</div>
+										<div>
+											<h:outputLabel value="Peso:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.peso}" />
+										</div>
+										<div>
+											<h:outputLabel value="Tipo Sanguiineo:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.tipoSanguineo.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Raça:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.raca.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Cor dos Olhos:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.corOlho.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Cor dos Cabelos:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.corCabelo.descricao}" />
+										</div>
+									</div>
+								</div>
+							</p:panel>
+						</p:panelGrid>
+
+
+								<h4>Passagens</h4>
+								<p:dataTable id="dataTableUni" var="pass"
+									value="#{unificarRecuperandoBean.unificado.passagens}"
+									rows="10" paginator="true" paginatorPosition="bottom"
+									lazy="true" sortBy="#{pass.id}"
+									emptyMessage="Nenhum registro encontrado."
+									paginatorAlwaysVisible="false">
+
+									<p:column headerText="Procedência" style="font-size:12px;">
+										<h:outputText style="font-size:11px;"
+											value="#{pass.passagemProcedencia.procedencia.nome}" />
+									</p:column>
+
+									<p:column headerText="Data de Entrada" width="120"
+										style="font-size:12px;">
+										<h:outputText value="#{pass.dataEntrada}"
+											style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Data de Saída" width="110"
+										style="font-size:12px;">
+										<h:outputText value="#{pass.dataSaida}"
+											style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Lotação" width="85"
+										style="font-size:12px;">
+										<center>
+											<p:commandButton title="Lotação" icon="ui-icon-document"
+												action="#{unificarRecuperandoBean.visualizarLotacao(pass)}"
+												oncomplete="PF('visualizarPassagem').show()"
+												update="passagemForm" process="@this" />
+										</center>
+									</p:column>
+								</p:dataTable>
+								
+								<h4>Processos</h4>
+								<p:dataTable id="processosRec10" var="processo"
+									widgetVar="processos"
+									value="#{unificarRecuperandoBean.unificado.processos}"
+									rows="10" paginator="true" paginatorPosition="bottom"
+									lazy="true" sortBy="#{processo.id}"
+									emptyMessage="Nenhum registro encontrado."
+									paginatorAlwaysVisible="false">
+									<p:column headerText="Nº Processo" style="font-size:12px;">
+										<h:outputText id="procNumRec1"
+											value="#{processo.numeroProcesso}" style="font-size:11px;" />
+										<p:tooltip for="procNumRec1"
+											value="#{processo.numeroProcesso}" trackMouse="true" />
+									</p:column>
+									<p:column headerText="Regime Atual" style="font-size:12px;">
+										<h:outputText value="#{processo.regimeAtual.descricao}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Condição Atual" style="font-size:12px;">
+										<h:outputText value="#{processo.condicaoAtual.descricao}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Sit. Processo" style="font-size:12px;">
+										<h:outputText value="#{processo.statusProcesso.descricao}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Ações" width="80" style="font-size:12px;">
+										<center>
+											<p:commandButton title="Visualizar" icon="ui-icon-document"
+												action="#{unificarRecuperandoBean.abrirDialogProcesso(processo, true)}"
+												process="@this" />
+										</center>
+									</p:column>
+								</p:dataTable>
+								
+								<h4>Alcunhas</h4>
+								<p:dataTable id="alcunhasRec10" var="alcunha"
+									emptyMessage="Nenhuma alcunha adicionada."
+									value="#{unificarRecuperandoBean.unificado.alcunhas}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{alcunha.principal}"
+									sortOrder="descending">
+									<p:column headerText="Alcunha" style="font-size:12px;">
+										<h:outputText value="#{alcunha.nome}" style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Principal" width="100"
+										style="font-size:12px;">
+										<h:outputText value="#{alcunha.principal? 'sim' : 'não'}"
+											style="font-size:11px;" />
+									</p:column>
+								</p:dataTable>
+
+								<h4>Outros Nomes</h4>
+								<p:dataTable id="outrosNomesRec10" var="outroNome"
+									emptyMessage="Nenhuma nome adicionado."
+									value="#{unificarRecuperandoBean.unificado.outrosNomes}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{outroNome.nome}">
+									<p:column headerText="Nome" style="font-size:12px;">
+										<h:outputText value="#{outroNome.nome}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Nome da Mãe" style="font-size:12px;">
+										<h:outputText value="#{outroNome.nomeMae}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Dt. Nascimento" style="font-size:12px;"
+										sortBy="#{outroNome.dataNascimento}" width="140">
+										<h:outputText value="#{outroNome.dataNascimento}"
+											style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+
+								<h4>Documentos</h4>
+								<p:dataTable id="documentosRec10" var="doc"
+									emptyMessage="Nenhum documento adicionado."
+									value="#{unificarRecuperandoBean.unificado.pessoa.documentos}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{doc.id}">
+									<p:column headerText="Tipo" style="font-size:12px;">
+										<h:outputText id="docTipoRec1"
+											value="#{doc.tipoDocumento.descricao}"
+											style="font-size:11px;" />
+										<p:tooltip for="docTipoRec1"
+											value="#{doc.tipoDocumento.descricao}" trackMouse="true" />
+									</p:column>
+									<p:column headerText="Número" style="font-size:12px;">
+										<h:outputText id="docNumRec1" value="#{doc.numero}"
+											style="font-size:11px;" />
+										<p:tooltip for="docNumRec1" value="#{doc.numero}"
+											trackMouse="true" />
+									</p:column>
+									<p:column headerText="Descrição" style="font-size:12px;">
+										<h:outputText id="docDescRec1" value="#{doc.descricao}"
+											style="font-size:11px;" />
+										<p:tooltip for="docDescRec1" value="#{doc.descricao}"
+											trackMouse="true" />
+									</p:column>
+									<p:column headerText="Emissão" width="84"
+										style="font-size:12px;">
+										<h:outputText value="#{doc.dataEmissao}"
+											style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Validade" width="84"
+										style="font-size:12px;">
+										<h:outputText value="#{doc.dataValidade}"
+											style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Principal" width="66"
+										style="font-size:12px;">
+										<h:outputText value="#{doc.pessoa.id>0 ? 'sim' : 'não'}"
+											style="font-size:11px;" />
+									</p:column>
+								</p:dataTable>
+
+								<h4>Endereços</h4>
+								<p:dataTable id="enderecosRec10" var="endereco"
+									emptyMessage="Nenhum endereço adicionado."
+									value="#{unificarRecuperandoBean.unificado.pessoa.enderecos}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{endereco.id}">
+									<p:column headerText="Logradouro" style="font-size:12px;">
+										<h:outputText id="endLogrRec1" value="#{endereco.logradouro}"
+											style="font-size:11px;" />
+										<p:tooltip for="endLogrRec1" value="#{endereco.logradouro}"
+											trackMouse="true" />
+									</p:column>
+									<p:column headerText="Nº" width="80" style="font-size:12px;">
+										<h:outputText value="#{endereco.numero}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Compl." width="80"
+										style="font-size:12px;">
+										<h:outputText value="#{endereco.complemento}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Bairro" style="font-size:12px;">
+										<h:outputText value="#{endereco.bairro}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Cidade" style="font-size:12px;">
+										<h:outputText value="#{endereco.cidade.nome}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="UF" width="45" style="font-size:12px;">
+										<h:outputText value="#{endereco.cidade.estado.uf}"
+											style="font-size:11px;" />
+									</p:column>
+								</p:dataTable>
+
+								<h4>Contatos</h4>
+								<p:dataTable id="contatosRec10" var="contato"
+									emptyMessage="Nenhum contato adicionado."
+									value="#{unificarRecuperandoBean.unificado.pessoa.contatos}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{contato.id}">
+									<p:column headerText="Nome" style="font-size:12px;">
+										<h:outputText value="#{contato.nome}" style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Tipo" width="70" style="font-size:12px;">
+										<h:outputText value="#{contato.tipoContato.descricao}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Valor" width="120"
+										style="font-size:12px;">
+										<h:outputText value="#{contato.valor}" style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Observação" style="font-size:12px;">
+										<h:outputText value="#{contato.observacao}"
+											style="font-size:11px;" />
+									</p:column>
+								</p:dataTable>
+
+								<h4>Parentes</h4>
+								<p:dataTable id="parentesDataTable10" var="parente"
+									emptyMessage="Nenhum parente adicionado."
+									value="#{unificarRecuperandoBean.unificado.parentes}"
+									rows="5" paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom" sortBy="#{parente.status.descricao}">
+									<p:column headerText="Nome" style="font-size:12px;">
+										<h:outputText value="#{parente.nome}" style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Parentesco" width="105"
+										style="font-size:12px;">
+										<h:outputText value="#{parente.parentesco.descricao}"
+											style="font-size:11px;" />
+									</p:column>
+									<p:column headerText="Data de Nascimento" width="105"
+										style="font-size:12px;">
+										<h:outputText value="#{parente.dataNascimento}"
+											style="font-size:11px;">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Situação" width="100"
+										style="font-size:12px;" sortBy="#{cargo.status}">
+										<h:outputText value="#{parente.status.descricao}"
+											style="font-size:11px;" />
+									</p:column>
+								</p:dataTable>
+
+								<p:panel header="Vida Social" style="border:none;">
+									<div class="ui-g">
+										<div class="ui-g-8">
+											<h:outputLabel value="Orientação Sexual:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{unificarRecuperandoBean.unificado.orientacaoSexual.descricao}" />
+											<div>
+												<h:outputLabel value="Identidade de Genero:" style="width: 150px;" />
+												<h:outputLabel
+													value="#{unificarRecuperandoBean.unificado.identidadeDeGenero.descricao}" />
+											</div>
+											<div>
+												<h:outputLabel value="Nome Social:" style="width: 150px;" />
+												<h:outputLabel
+													value="#{unificarRecuperandoBean.unificado.pessoa.nomeSocial}" />
+											</div>
+											<div>
+												<h:outputLabel value="Escolaridade:" style="width: 150px;" />
+												<h:outputLabel
+													value="#{unificarRecuperandoBean.unificado.escolaridade.descricao}">
+												</h:outputLabel>
+											</div>
+											<div>
+												<h:outputLabel value="Profissão:" style="width: 150px;" />
+												<h:outputLabel
+													value="#{unificarRecuperandoBean.unificado.profissao}" />
+											</div>
+											<div>
+												<h:outputLabel value="Religião:" style="width: 150px;" />
+												<h:outputLabel
+													value="#{unificarRecuperandoBean.unificado.religiao.descricao}" />
+											</div>
+											<div>
+												<h:outputLabel value="PNE:" style="width: 150px;" />
+												<h:outputLabel
+													value="#{unificarRecuperandoBean.unificado.pne.descricao}" />
+											</div>
+										</div>
+									</div>
+								</p:panel>
+
+					</p:panel>
+					<p:commandButton value="Confirmar"
+						style="position: absolute;right: 15px;margin-top: 3px;"
+						action="#{unificarRecuperandoBean.salvarUnificacao}"
+						update="growl" process="@this" />
+				</p:tab>
+				
+			</p:wizard>
+			
+		</h:form>
+		
+				
+		<p:dialog id="dialogPassagem" header="Passagem" showEffect="fade"
+			widgetVar="visualizarPassagem" modal="true" draggable="false"
+			resizable="false" closeOnEscape="true">
+			<h:form id="passagemForm">
+				<p:panel>
+					<div class="row">
+						<div class="col-md-8">
+							<sgp:formOutputLabel labelValue="Data da Prisão"
+								value="#{unificarRecuperandoBean.passagemSelecionada.dataPrisao}"
+								converterData="true" />
+							<sgp:formOutputLabel labelValue="Data da Entrada"
+								value="#{unificarRecuperandoBean.passagemSelecionada.dataEntrada}"
+								converterDataHora="true" />
+							<sgp:formOutputLabel labelValue="Procedência"
+								value="#{unificarRecuperandoBean.passagemSelecionada.passagemProcedencia.procedencia.nome}" />
+
+							<p:panel header="Desligamento"
+								rendered="#{unificarRecuperandoBean.passagemSelecionada.dataSaida != null}">
+								<sgp:formOutputLabel labelValue="Número do Documento"
+									value="#{unificarRecuperandoBean.passagemSelecionada.numeroDocumento}" />
+								<sgp:formOutputLabel labelValue="Data da Saída"
+									value="#{unificarRecuperandoBean.passagemSelecionada.dataSaida}"
+									converterDataHora="true" />
+								<sgp:formOutputLabel labelValue="Motivo"
+									value="#{unificarRecuperandoBean.passagemSelecionada.tipoDesligamento.descricao}" />
+								<p:row
+									rendered="#{unificarRecuperandoBean.passagemSelecionada.estabelecimentoDestino != null}">
+									<sgp:formOutputLabel labelValue="Estabelecimento"
+										value="#{unificarRecuperandoBean.passagemSelecionada.estabelecimentoDestino.nome}" />
+								</p:row>
+								<sgp:formOutputLabel labelValue="Observação"
+									value="#{unificarRecuperandoBean.passagemSelecionada.obsDesligamento}" />
+							</p:panel>
+						</div>
+
+						<div class="col-md-4">
+							<p:dataGrid layout="tabular"
+								style="margin-left: 8px; width: 188px" columns="1" rows="1"
+								value="#{unificarRecuperandoBean.passagemSelecionada.foto}"
+								emptyMessage="Sem foto de frente." var="f">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}"
+									cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{f.imagem.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</div>
+					</div>
+
+					<br />
+
+					<p:dataTable id="lotacoes" var="lotacao"
+						value="#{unificarRecuperandoBean.passagemSelecionada.lotacao}"
+						rows="10" paginator="true" paginatorPosition="bottom"
+						sortBy="#{lotacao.id}" emptyMessage="Nenhum registro encontrado."
+						paginatorAlwaysVisible="false">
+
+						<p:column headerText="Origem">
+							<h:outputText value="#{lotacao.tipoTransito.descricao}" />
+						</p:column>
+						<p:column headerText="Estrutura">
+							<h:outputText value="#{lotacao.estrutura.nomeCompleto}" />
+						</p:column>
+
+						<p:column headerText="Entrada">
+							<h:outputText value="#{lotacao.dataEntrada}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Saída">
+							<h:outputText value="#{lotacao.dataSaida}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+							</h:outputText>
+						</p:column>
+
+					</p:dataTable>
+
+					<br />
+					<p:commandButton value="Fechar"
+						onclick="PF('visualizarPassagem').hide()" />
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+
+	</ui:define>
+</ui:composition>

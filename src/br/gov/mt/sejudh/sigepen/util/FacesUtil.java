@@ -81,6 +81,10 @@ public class FacesUtil implements Serializable{
    	public Object getFlashParameter(String name) {
 		return FacesContext.getCurrentInstance().getExternalContext().getFlash().get(name);
 	}
+   	
+   	public Map<String, String> getParameters() {
+   		return getFacesContext().getExternalContext().getRequestParameterMap();
+   	}
 
 	public void setFlashParameter(String name, Object value) {
 		FacesContext.getCurrentInstance().getExternalContext().getFlash().put(name, value);

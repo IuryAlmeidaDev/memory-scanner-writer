@@ -117,7 +117,7 @@
 					<pen lineWidth="0.0"/>
 				</graphicElement>
 			</rectangle>
-			<textField isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="88" height="15" uuid="06e96a91-cdb1-4c0c-bee7-5cc504051b17"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>

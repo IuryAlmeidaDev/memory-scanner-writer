@@ -22,6 +22,16 @@ public class EstadoCivil implements Serializable{
 	@Column(name="DESCRICAO", columnDefinition="nvarchar2")
 	private String descricao;
 
+	public EstadoCivil() {
+		super();
+	}
+	
+	public EstadoCivil(long id, String descricao) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+	}
+
 	public long getId() {
 		return id;
 	}

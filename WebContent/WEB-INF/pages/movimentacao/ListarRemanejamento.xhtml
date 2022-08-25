@@ -55,6 +55,7 @@
 				<br />
 				<br />
 				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{remanejamentoBean.imprimir()}"/>
 			</p:panel>
 		</h:form>	
 
@@ -95,7 +96,7 @@
 						<h:outputText value="#{rem.status.descricao}" />
 					</p:column>
 
-					<p:column headerText="Ações" width="90">
+					<p:column headerText="Ações" width="120">
 						<center>
 						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarRemanejamento" rendered="#{securityUtil.possuiPermissao('VisualizarRemanejamento')}">
 							<f:param name="id" value="#{rem.id}" />
@@ -103,6 +104,7 @@
 						<p:commandButton title="Finalizar" icon="fa fa-share"  action="#{remanejamentoBean.finalizarRemanejamento(rem)}" 
 							rendered="#{securityUtil.possuiPermissao('FinalizarRemanejamento') and rem.status.descricao.equalsIgnoreCase('Em Andamento')}"
 								oncomplete="PF('finalizarRemanejamento').show()"  update="finalizarForm" process="@this" />	
+						<p:commandButton title="Imprimir" icon="fa fa-print" actionListener="#{remanejamentoBean.imprimirRegistro(rem)}" />
 						</center>
 					</p:column>
 					

@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="conteudo">
+		
+		<h3>Parametros do Sistema</h3>
+			<h:form id="formParametro">
+				<p:commandButton icon="ui-icon" immediate="true" value="Cadastrar" actionListener="#{parametroBean.configurarParametro}" oncomplete="PF('dlg').show();"
+					update=":formDlg" />
+				
+				<br/><br/>
+				
+				<p:dataGrid id="dataGrid" layout="grid" columns="3" rows="0" value="#{parametroBean.params}" var="p">
+					<p:panel header="#{p.nome}">
+						<h:outputText value="#{p.valor}" />
+						
+						<div style="text-align: right">
+							<p:commandButton icon="ui-icon-pencil" actionListener="#{parametroBean.configurarParametro}" oncomplete="PF('dlg').show();"
+							update=":formDlg">
+								<f:attribute name="parametro" value="#{p}" />
+							</p:commandButton>
+							
+							<p:commandButton icon="ui-icon-trash" actionListener="#{parametroBean.excluir(p)}" update=":formParametro:dataGrid :mensagens" />
+						</div>							
+					</p:panel>
+				</p:dataGrid>
+			</h:form>
+			
+			<h:form id="formDlg">
+				<p:dialog dynamic="true" modal="true" id="dialog" closeOnEscape="true" closable="true" width="350" height="150" widgetVar="dlg" resizable="false" draggable="false" header="Parametro">
+					<sgp:formInputText 
+						id="nomeParametro"
+						labelValue="Nome"
+						value="#{parametroBean.param.nome}"
+						validationRequired="true"
+						maxlength="80"
+						display="text" />
+					
+					<sgp:formInputText
+						id="valorParametro"
+						labelValue="Valor"
+						value="#{parametroBean.param.valor}"
+						validationRequired="true"
+						display="text" 
+						maxlength="80"
+						permiteCaracterEspecial="true" />
+						
+ 					<br/><br/><br/><br/>
+ 					<div style="text-align: center">
+ 						<p:commandButton value="Salvar" actionListener="#{parametroBean.salvar}" oncomplete="PF('dlg').hide();" update=":formDlg :formParametro:dataGrid :mensagens" />
+ 						<p:commandButton value="Fechar" onclick="PF('dlg').hide()"/>
+ 					</div>
+				</p:dialog>
+			</h:form>
+	</ui:define>
+</ui:composition>

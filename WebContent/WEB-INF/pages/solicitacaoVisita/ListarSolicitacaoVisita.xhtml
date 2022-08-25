@@ -1,0 +1,122 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+
+	<ui:define name="footer">
+        <h:outputScript library="js" name="selectOneMenuFilter.js"/>
+    </ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Solicitação de Visita</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarSolicitacaoVisita" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarSolicitacaoVisita')}" />
+		</h:form>
+
+        <h:form id="meuFormulario">
+            <p:panel>
+                <p:outputLabel value="Consulta"/>
+
+                <sgp:formInputText id="pesquisar" labelValue="Nome do Visitante"
+                                   value="#{solicitacaoVisitaBean.filtro.nome}" maxlength="80"
+                                   styleFormLabelColumn="width:135px"/>
+
+                <sgp:formInputMask id="cpf" labelValue="CPF" mask="999.999.999-99" maxlength="11"
+                                   value="#{solicitacaoVisitaBean.filtro.cpf}"
+                                   converter="CpfConverter"
+                                   display="text" styleFormLabelColumn="width: 135px"
+                                   validatorId="CpfValidator" />
+
+                <sgp:formInputText id="recuperando" labelValue="Recuperando"
+                                   value="#{solicitacaoVisitaBean.filtro.recuperando}" maxlength="80"
+                                   styleFormLabelColumn="width:135px"/>
+
+				<sgp:formSelectOneMenu
+						styleFormLabelColumn="width:135px"
+						labelValue="Unidade Prisional"
+						value="#{solicitacaoVisitaBean.filtro.unidadePrisional}"
+						itemsValue="#{solicitacaoVisitaBean.getUnidades()}"
+						filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+						itemValue="#{item}"
+						itemLabel="#{item.nome}"
+						style="width: 200px;"
+						temSelecione="true"
+						converter="SimpleEntityConverter"
+						display="text"
+						rendered="#{securityUtil.possuiPermissao('ListarSolicitacaoVisitaTodasUnidades')}"
+				/>
+
+                <sgp:formSelectOneMenu
+                        styleFormLabelColumn="width:135px"
+                        id="status" labelValue="Situação"
+                        value="#{solicitacaoVisitaBean.filtro.status}"
+                        itemsValue="#{comboHelperBean.sgpStatusAlternativo}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        temSelecione="true"/>
+
+                <br/>
+                <br/>
+                <p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"/>
+                <p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{solicitacaoVisitaBean.imprimir()}"/>
+            </p:panel>
+        </h:form>
+
+        <h:form id="registrosForm">
+				<p:dataTable id="dataTable" var="solicitacaoVisita" value="#{solicitacaoVisitaBean.lazyDataModel}" rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{solicitacaoVisita.id}"
+                             emptyMessage="Nenhum registro encontrado." sortOrder="DESCENDING">
+
+					<p:column headerText="Código" width="100" sortBy="#{solicitacaoVisita.id}">
+						<h:outputText value="#{solicitacaoVisita.id}" />
+					</p:column>
+
+                    <p:column headerText="Nome" width="100" sortBy="#{solicitacaoVisita.pessoaSolicitacao.nome}">
+                        <h:outputText value="#{solicitacaoVisita.nomeSolicitante}" />
+                    </p:column>
+
+                    <p:column headerText="Recuperando" width="100" sortBy="#{solicitacaoVisita.nomeRecuperando}">
+                        <h:outputText value="#{solicitacaoVisita.nomeRecuperando}" />
+                    </p:column>
+
+                    <p:column headerText="Grau de Parentesco" width="100" sortBy="#{solicitacaoVisita.parentesco.descricao}">
+                        <h:outputText value="#{solicitacaoVisita.parentesco}" />
+                    </p:column>
+
+                    <p:column headerText="Situação" width="100" sortBy="#{solicitacaoVisita.status}">
+                        <h:outputText value="#{solicitacaoVisita.status.descricao}" />
+                    </p:column>
+
+					<p:column headerText="Ações" width="120" >
+						<center>
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarSolicitacaoVisita" rendered="#{securityUtil.possuiPermissao('VisualizarSolicitacaoVisita')}">
+								<f:param name="id" value="#{solicitacaoVisita.id}" />
+							</p:button>
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarSolicitacaoVisita"
+									  rendered="#{securityUtil.possuiPermissao('AlterarSolicitacaoVisita')}"
+							    	  disabled="#{solicitacaoVisita.status eq 'A' or solicitacaoVisita.status eq 'I'}">
+								<f:param name="id" value="#{solicitacaoVisita.id}" />
+							</p:button>
+							<p:commandButton action="#{solicitacaoVisitaBean.excluir(solicitacaoVisita)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirSolicitacaoVisita')}">
+								 <p:confirm header="Confirmação" message="Deseja excluir a Solicitação de Visita?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+					<f:facet name="footer">
+						Total de registros: #{solicitacaoVisitaBean.lazyDataModel.rowCount}
+					</f:facet>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -58,8 +58,10 @@
 								<f:selectItem itemLabel="Não" itemValue="false" />
 						</sgp:formSelectOneMenu>
 							
-						<sgp:formSelectOneMenu id="esfera" labelValue="Esfera" value="#{estabelecimentoBean.filtro.esfera}" display="text" 
-							temSelecione="true" itemsValue="#{comboHelperBean.esfera}" itemValue="#{item}" itemLabel="#{item.descricao}" />
+						<sgp:formSelectOneMenu id="esfera" labelValue="Esfera" value="#{estabelecimentoBean.filtro.esfera}" display="text" temSelecione="true">
+							<f:selectItem itemLabel="Estadual" itemValue="ESTADUAL" />
+							<f:selectItem itemLabel="Federal" itemValue="FEDERAL" />
+						</sgp:formSelectOneMenu>
 							
 						<sgp:formSelectOneMenu 
 								id="status" labelValue="Status"

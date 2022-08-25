@@ -117,6 +117,7 @@ public class EstruturaDAO {
 				+ " start with e.estruturapai_id is null"
 				+ " and e.unidadeprisional_id = :idUnidade"
 				+ " connect by prior e.id = e.estruturapai_id"
+				+ " and e.situacao <> 0"
 				+ " order siblings by e.id", EstruturaDto.class);
 		query.setParameter("idUnidade", idUnidade);
 		return query.getResultList();

@@ -7,8 +7,13 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.QueryHint;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.annotations.QueryHints;
+
+import br.gov.mt.sejudh.sigepen.enumerator.SgpStatus;
+import br.gov.mt.sejudh.sigepen.model.Certidao;
 import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
 import br.gov.mt.sejudh.sigepen.model.Estado;
@@ -24,9 +29,11 @@ import br.gov.mt.sejudh.sigepen.model.Regime;
 import br.gov.mt.sejudh.sigepen.model.Religiao;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
+import br.gov.mt.sejudh.sigepen.model.TipoImpedimento;
 import br.gov.mt.sejudh.sigepen.model.TipoSanguineo;
 import br.gov.mt.sejudh.sigepen.model.TipoServidor;
 import br.gov.mt.sejudh.sigepen.model.TipoUnidade;
+import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 
 @RequestScoped
@@ -204,9 +211,36 @@ public class ComboDAO {
 		try {
 			String jpql="select new br.gov.mt.sejudh.sigepen.model.UnidadePrisional(u.id, u.nome) from UnidadePrisional u ";
 			TypedQuery<UnidadePrisional> query = entityManager.createQuery(jpql, UnidadePrisional.class);			
+			query.setHint(QueryHints.READ_ONLY, true);
 			return query.getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}
 	}
+
+    public List<TipoVisita> listarTipoVisitas() {
+        TypedQuery<TipoVisita> query = entityManager
+                .createQuery("select f from TipoVisita f order by f.descricao asc", TipoVisita.class);
+        return query.getResultList();
+    }
+
+    public List<Certidao> listarCertidoes() {
+        TypedQuery<Certidao> query = entityManager.createQuery(
+                "select f from Certidao f where f.status = :status order by f.descricao asc",
+                Certidao.class
+        );
+        query.setParameter("status", SgpStatus.A);
+
+        return query.getResultList();
+    }
+
+    public List<TipoImpedimento> listarTipoImpedimentos() {
+        TypedQuery<TipoImpedimento> query = entityManager.createQuery(
+                "select f from TipoImpedimento f where f.status = :status order by f.descricao asc",
+                TipoImpedimento.class
+        );
+        query.setParameter("status", SgpStatus.A);
+
+        return query.getResultList();
+    }
 }

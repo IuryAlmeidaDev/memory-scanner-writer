@@ -20,19 +20,22 @@
 	<cc:attribute name="requiredMessage" required="false"/>
 	<cc:attribute name="validatorId" required="false"/>
 	<cc:attribute name="styleFormLabelColumn" required="false"/>
+    <cc:attribute name="labelPosition" required="false" default="left" type="java.lang.String"/>
 </cc:interface>
 
 <cc:implementation>
 
 	<div class="form-block">
-		<div class="form-label-column" style="#{cc.attrs.styleFormLabelColumn}">
-			<h:outputLabel for="input" value="#{cc.attrs.labelValue}:" />
-		</div>
+        <c:if test="#{cc.attrs.labelPosition.equals('left')}">
+            <div class="form-label-column" style="#{cc.attrs.styleFormLabelColumn}">
+                <h:outputLabel for="input" value="#{cc.attrs.labelValue}:" />
+            </div>
 
-		<div class="form-required-column">
-			<ui:fragment rendered="#{cc.attrs.validationRequired}">*</ui:fragment>
-			<p:spacer width="15px" rendered="#{!cc.attrs.validationRequired}" />
-		</div>
+            <div class="form-required-column">
+                <ui:fragment rendered="#{cc.attrs.validationRequired}">*</ui:fragment>
+                <p:spacer width="15px" rendered="#{!cc.attrs.validationRequired}" />
+            </div>
+        </c:if>
 
 		<div class="form-input-column">
 			<p:selectBooleanCheckbox id="input" value="#{cc.attrs.value}" disabled="#{cc.attrs.disabled}" required="#{cc.attrs.validationRequired}">
@@ -43,6 +46,17 @@
 					
 			</p:selectBooleanCheckbox>
 		</div>
+
+        <c:if test="#{cc.attrs.labelPosition.equals('right')}">
+            <div class="form-label-column" style="#{cc.attrs.styleFormLabelColumn}; margin-left: 10px">
+                <h:outputLabel for="input" value="#{cc.attrs.labelValue}" />
+            </div>
+
+            <div class="form-required-column">
+                <ui:fragment rendered="#{cc.attrs.validationRequired}">*</ui:fragment>
+                <p:spacer width="15px" rendered="#{!cc.attrs.validationRequired}" />
+            </div>
+        </c:if>
 
 		<div class="form-error-column">
 			<p:message for="input">

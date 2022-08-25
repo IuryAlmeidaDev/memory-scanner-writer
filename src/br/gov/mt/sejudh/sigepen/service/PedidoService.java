@@ -15,6 +15,7 @@ import br.gov.mt.sejudh.sigepen.dao.MovimentacaoInternaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoDAO;
 import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.dao.TransferenciaDAO;
+import br.gov.mt.sejudh.sigepen.dao.VisitanteDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.MovimentacaoPassos;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
@@ -53,6 +54,9 @@ public class PedidoService {
 
 	@Inject
 	private RecuperandoService recuperandoService;
+	
+	@Inject
+	private VisitanteDAO visitanteDao;
 
 	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(PedidoTransito pedido) {		
@@ -164,9 +168,8 @@ public class PedidoService {
 		
 	}
 	
-	//falta implementar o recebimento da transferencia
 	@Interceptors(EJBExcInterceptor.class)
-	public void finalizarPedidoTransferencia(PedidoTransito pedido) throws ValidacaoException {
+	public void finalizarPedidoTransferencia(PedidoTransito pedido) throws Exception {
 		// validar data fim maior que data inicio
 		Date dataFim = new Date();
 		if (pedido.getRecuperando().getPassagemAtual().getLotacaoAtual().getDataEntrada().after(dataFim)) {
@@ -188,6 +191,8 @@ public class PedidoService {
 		}
 		transfDao.salvar(pedido.getTransferencia());
 		
+		//Inativar Credenciamentos vinculados a este recuperando
+		visitanteDao.inativarCredenciamentosVinculadosAoRecuperando(pedido.getRecuperando());
 	}
 	
 	public void expirarPedidosTransito(){
@@ -370,5 +375,9 @@ public class PedidoService {
 		if (count > 0) {
 			throw new ValidacaoException("Recuperando já possui um pedido do tipo movimentação interna em aberto para o mesmo destino.");
 		}
+	}
+	
+	public List<PedidoTransito> buscarPedidosDoRecuperando(long recuperandoId) {
+		return this.dao.buscarPedidosDoRecuperando(recuperandoId); 
 	}
 }

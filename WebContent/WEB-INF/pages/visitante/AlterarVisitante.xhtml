@@ -1,0 +1,789 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>#{visitanteBean.tituloPagina} Visitante</h3>
+
+		<h:panelGroup id="alterarVisitante">
+			<p:panel>
+				<div class="ui-g">
+					<p:panel header="Informações do Visitante" style="width: 100%;"
+						rendered="#{visitanteBean.visitante.responsavel eq null or (visitanteBean.mostrarPanelVisitante == true) and  (visitanteBean.mostrarPanelResponsavel == false)}">
+						<h:form id="formInformacoesVisitante">
+							<div class="ui-g">
+								<div class="ui-g-8">
+									<h:outputLabel value="Código:" style="width: 150px;" />
+									<h:outputLabel value="#{visitanteBean.visitante.id}" />
+									<div>
+										<h:outputLabel value="Nome:" style="width: 150px;" />
+										<h:outputLabel value="#{visitanteBean.visitante.pessoa.nome}" />
+									</div>
+									<div>
+										<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pessoa.nomeMae}" />
+									</div>
+									<div>
+										<h:outputLabel value="Dt. Nascimento:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pessoa.dataNascimento}"
+											converterData="true">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputLabel>
+									</div>
+									<div>
+										<h:outputLabel value="Nome do Pai:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pessoa.nomePai}" />
+									</div>
+									<div>
+										<h:outputLabel value="Emancipado:" rendered="#{visitanteBean.visitante.responsavel.emancipado == 'N'}" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.emancipado.descricao}" rendered="#{visitanteBean.visitante.responsavel.emancipado == 'N'}" />
+									</div>
+									<div>
+										<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pessoa.nacionalidade.descricao}" />
+									</div>
+									<div>
+										<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pessoa.pais.nome}" />
+									</div>
+
+									<div>
+										<h:outputLabel value="Estado:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pessoa.naturalidade.estado.nome}" />
+									</div>
+									<div>
+										<h:outputLabel value="Cidade:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pessoa.naturalidade.nome}" />
+									</div>
+									<div>
+										<h:outputLabel value="Sexo:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pessoa.sexo.descricao}" />
+									</div>
+									<div>
+										<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.identidadeDeGenero.descricao}" />
+									</div>
+									<div>
+										<h:outputLabel value="Nome Social:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pessoa.nomeSocial}" />
+									</div>
+									<div>
+										<h:outputLabel value="PNE:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pne.descricao}" />
+									</div>
+									<div>
+										<h:outputLabel value="Permanente:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pnePermanente.descricao}" />
+									</div>
+									<div>
+										<h:outputLabel value="Profissão:" style="width: 150px;"
+											rendered="#{visitanteBean.visitante.pessoa.recuperando.profissao ne null}" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.pessoa.recuperando.profissao}" />
+									</div>
+								</div>
+								<div class="ui-g-4">
+									<p:dataGrid layout="tabular"
+										style="width: 188px; margin-left: -30px;" columns="1" rows="1"
+										value="#{visitanteBean.visitante.fotoFrenteAtual}"
+										emptyMessage="Sem foto de frente." var="f">
+										<p:graphicImage
+											value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false"
+											width="180" height="240">
+											<f:param name="hashId" value="#{f.imagem.id}" />
+										</p:graphicImage>
+									</p:dataGrid>
+								</div>
+							</div>
+						</h:form>
+					</p:panel>
+
+
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-border-right, ui-g-border-left"
+						style="width: 100%;"
+						rendered="#{visitanteBean.visitante.responsavel ne null and visitanteBean.mostrarPanelResponsavel == true}">
+						<p:panel header="Informações do Visitante"
+							style="border:none; width: 100%;">
+							<h:form>
+								<div class="ui-g">
+									<div class="ui-g-8">
+										<h:outputLabel value="Código:" style="width: 150px;" />
+										<h:outputLabel value="#{visitanteBean.visitante.id}" />
+										<div>
+											<h:outputLabel value="Nome:" style="width: 150px;" />
+											<h:outputLabel value="#{visitanteBean.visitante.pessoa.nome}" />
+										</div>
+										<div>
+											<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pessoa.nomeMae}" />
+										</div>
+										<div>
+											<h:outputLabel value="Dt. Nascimento:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pessoa.dataNascimento}"
+												converterData="true">
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+											</h:outputLabel>
+										</div>
+										<div>
+											<h:outputLabel value="Nome do Pai:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pessoa.nomePai}" />
+										</div>
+										<div>
+											<h:outputLabel value="Emancipado:" style="width: 150px;" rendered="#{visitanteBean.visitante.emancipado == 'N'}" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.emancipado.descricao}" rendered="#{visitanteBean.visitante.emancipado == 'N'}" />
+										</div>
+										<div>
+											<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pessoa.nacionalidade.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pessoa.pais.nome}" />
+										</div>
+
+										<div>
+											<h:outputLabel value="Estado:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pessoa.naturalidade.estado.nome}" />
+										</div>
+										<div>
+											<h:outputLabel value="Cidade:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pessoa.naturalidade.nome}" />
+										</div>
+										<div>
+											<h:outputLabel value="Sexo:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pessoa.sexo.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.identidadeDeGenero.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Nome Social:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pessoa.nomeSocial}" />
+										</div>
+										<div>
+											<h:outputLabel value="PNE:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pne.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Permanente:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pnePermanente.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Profissão:" style="width: 150px;"
+												rendered="#{visitanteBean.visitante.pessoa.recuperando.profissao ne null}" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.pessoa.recuperando.profissao}" />
+										</div>
+									</div>
+									<div class="ui-g-4">
+										<p:dataGrid layout="tabular"
+											style="width: 188px; margin-left: -30px;" columns="1"
+											rows="1" value="#{visitanteBean.visitante.fotoFrenteAtual}"
+											emptyMessage="Sem foto de frente." var="f">
+											<p:graphicImage
+												value="#{imageHandlerBean.getImagem(f.imagem)}"
+												cache="false" width="180" height="240">
+												<f:param name="hashId" value="#{f.imagem.id}" />
+											</p:graphicImage>
+										</p:dataGrid>
+									</div>
+								</div>
+							</h:form>
+						</p:panel>
+
+						<p:panel header="Visitante Responsável"
+							style="border:none; width: 100%;"
+							rendered="#{visitanteBean.visitante.responsavel ne null and visitanteBean.mostrarPanelResponsavel == true}">
+							<h:form>
+								<div class="ui-g">
+									<div class="ui-g-8">
+										<h:outputLabel value="Nome:" style="width: 150px;" />
+										<h:outputLabel
+											value="#{visitanteBean.visitante.responsavel.pessoa.nome}" />
+										<div>
+											<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pessoa.nomeMae}" />
+										</div>
+										<div>
+											<h:outputLabel value="Dt. Nascimento:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pessoa.dataNascimento}"
+												converterData="true">
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+											</h:outputLabel>
+										</div>
+										<div>
+											<h:outputLabel value="Nome do Pai:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pessoa.nomePai}" />
+										</div>
+										<div>
+											<h:outputLabel value="Emancipado:" style="width: 150px;" rendered="#{visitanteBean.visitante.responsavel.emancipado == 'N'}" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.emancipado.descricao}" rendered="#{visitanteBean.visitante.responsavel.emancipado == 'N'}" />
+										</div>
+										<div>
+											<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pessoa.nacionalidade.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pessoa.pais.nome}" />
+										</div>
+										<div>
+											<h:outputLabel value="Estado:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pessoa.naturalidade.estado.nome}" />
+										</div>
+										<div>
+											<h:outputLabel value="Cidade:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pessoa.naturalidade.nome}" />
+										</div>
+										<div>
+											<h:outputLabel value="Sexo:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pessoa.sexo.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.identidadeDeGenero.descricao}"
+												rendered="#{visitanteBean.visitante.identidadeDeGenero ne null}" />
+										</div>
+										<div>
+											<h:outputLabel value="Nome Social:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pessoa.nomeSocial}" />
+										</div>
+										<div>
+											<h:outputLabel value="PNE:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pne.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Permanente:" style="width: 150px;" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pnePermanente.descricao}" />
+										</div>
+										<div>
+											<h:outputLabel value="Profissão:" style="width: 150px;"
+												rendered="#{visitanteBean.visitante.pessoa.recuperando.profissao ne null}" />
+											<h:outputLabel
+												value="#{visitanteBean.visitante.responsavel.pessoa.recuperando.profissao}" />
+										</div>
+									</div>
+									<div class="ui-g-4">
+										<p:dataGrid layout="tabular"
+											style="width: 188px; margin-left: -30px" columns="1" rows="1"
+											value="#{visitanteBean.visitante.responsavel.fotoFrenteAtual}"
+											emptyMessage="Sem foto de frente." var="f">
+											<p:graphicImage
+												value="#{imageHandlerBean.getImagem(f.imagem)}"
+												cache="false" width="180" height="240">
+												<f:param name="hashId" value="#{f.imagem.id}" />
+											</p:graphicImage>
+										</p:dataGrid>
+									</div>
+								</div>
+							</h:form>
+						</p:panel>
+					</p:panelGrid>
+
+
+					<div class="ui-g-12">
+						<p:tabView activeIndex="0" id="tabView">
+							<p:tab title="Visitante">
+								<p:panel 
+									columnClasses="ui-g-border-right, ui-g-border-left"
+									style="width: 100%;">
+										<div class="ui-g">
+											<div class="ui-g-8">
+												<p:button title="Editar dados do Visitante"
+													icon="ui-icon-pencil"
+													outcome="pretty:AlterarPessoaVisitante"
+													rendered="#{not visitanteBean.isVisualizacao and securityUtil.possuiPermissao('AlterarPessoaVisitante')}">
+													<f:param name="id" value="#{visitanteBean.visitante.id}" />
+												</p:button>
+											</div>
+												<div class="ui-g-8">
+													<div>
+														<h:outputLabel value="Nome:" style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.nome}" />
+													</div>
+													<div>
+														<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.nomeMae}" />
+													</div>
+													<div>
+														<h:outputLabel value="Dt. Nascimento:"
+															style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.dataNascimento}"
+															converterData="true">
+															<f:convertDateTime pattern="dd/MM/yyyy" />
+														</h:outputLabel>
+													</div>
+													<div>
+														<h:outputLabel value="Nome do Pai:" style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.nomePai}" />
+													</div>
+													<div>
+														<h:outputLabel value="Emancipado:" style="width: 150px;" rendered="#{visitanteBean.visitante.emancipado == 'N'}" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.emancipado.descricao}" rendered="#{visitanteBean.visitante.emancipado == 'N'}" />
+													</div>
+													<div>
+														<h:outputLabel value="Nacionalidade:"
+															style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.nacionalidade.descricao}" />
+													</div>
+													<div>
+														<h:outputLabel value="Pais de Origem:"
+															style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.pais.nome}" />
+													</div>
+
+													<div>
+														<h:outputLabel value="Estado:" style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.naturalidade.estado.nome}" />
+													</div>
+													<div>
+														<h:outputLabel value="Cidade:" style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.naturalidade.nome}" />
+													</div>
+													<div>
+														<h:outputLabel value="Sexo:" style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.sexo.descricao}" />
+													</div>
+													<div>
+														<h:outputLabel value="Ident. Gênero:"
+															style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.identidadeDeGenero.descricao}" />
+													</div>
+													<div>
+														<h:outputLabel value="Nome Social:" style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.nomeSocial}" />
+													</div>
+													<div>
+														<h:outputLabel value="PNE:" style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pne.descricao}" />
+													</div>
+													<div>
+														<h:outputLabel value="Permanente:" style="width: 150px;" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pnePermanente.descricao}" />
+													</div>
+													<div>
+														<h:outputLabel value="Profissão:" style="width: 150px;"
+															rendered="#{visitanteBean.visitante.pessoa.recuperando.profissao ne null}" />
+														<h:outputLabel
+															value="#{visitanteBean.visitante.pessoa.recuperando.profissao}" />
+													</div>
+												</div>
+												  <div class="ui-g-4">
+                            					    <div class="ui-g">
+												<h:panelGroup id="biometriaCapturada">
+													<pe:importEnum
+														type="br.gov.mt.sejudh.sigepen.enumerator.BiometriaTipoDedo"
+														var="TipoDedo" allSuffix="ALL_ENUM_VALUES" />
+													<p:panelGrid
+														rendered="#{visitanteBean.visitante.pessoa.biometria.dedos.size() gt 0 or visitanteBean.visitante.pessoa.biometria.id gt 0 or true}"
+														style="border-width:1px; border-style:solid; margin-bottom: 15px">
+														<f:facet name="header">
+															<p:row>
+																<p:column colspan="3">
+																	<h:outputText value="Biometria capturada em: " />
+																	<h:outputText
+																		value="#{visitanteBean.visitante.pessoa.biometria.dataCaptura}">
+																		<f:convertDateTime pattern="dd/MM/yyyy" />
+																	</h:outputText>
+																</p:column>
+															</p:row>
+															<p:row>
+																<p:column colspan="1" />
+																<p:column colspan="1">Esquerda</p:column>
+																<p:column colspan="1">Direita</p:column>
+															</p:row>
+														</f:facet>
+														<p:row>
+															<p:column style="font-weight: bold;">Polegar</p:column>
+															<p:column style="text-align: center" rowspan="1">
+																<p:graphicImage id="bioPE"
+																	name="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_ESQUERDO) ? 'green.png' : 'red.png')}"
+																	library="icons" />
+																<p:overlayPanel for="bioPE" my="right bottom"
+																	at="left top" showEvent="mouseover"
+																	hideEvent="mouseout" appendToBody="true"
+																	rendered="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_ESQUERDO))}">
+																	<p:dataGrid layout="tabular" style="width: 188px"
+																		columns="1" rows="1"
+																		value="#{visitanteBean.visitante.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.POLEGAR_ESQUERDO)}"
+																		var="f">
+																		<p:graphicImage
+																			value="#{imageHandlerBean.getImagem(f)}"
+																			cache="false" width="180" height="240">
+																			<f:param name="hashId" value="#{f.id}" />
+																		</p:graphicImage>
+																	</p:dataGrid>
+																</p:overlayPanel>
+															</p:column>
+															<p:column style="text-align: center">
+																<p:graphicImage id="bioPD"
+																	name="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_DIREITO) ? 'green.png' : 'red.png')}"
+																	library="icons" />
+																<p:overlayPanel for="bioPD" my="right bottom"
+																	at="left top" showEvent="mouseover"
+																	hideEvent="mouseout" appendToBody="true"
+																	rendered="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.POLEGAR_DIREITO))}">
+																	<p:dataGrid layout="tabular" style="width: 188px"
+																		columns="1" rows="1"
+																		value="#{visitanteBean.visitante.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.POLEGAR_DIREITO)}"
+																		var="f">
+																		<p:graphicImage
+																			value="#{imageHandlerBean.getImagem(f)}"
+																			cache="false" width="180" height="240">
+																			<f:param name="hashId" value="#{f.id}" />
+																		</p:graphicImage>
+																	</p:dataGrid>
+																</p:overlayPanel>
+															</p:column>
+														</p:row>
+
+														<p:row>
+															<p:column style="font-weight: bold;">Indicador</p:column>
+															<p:column style="text-align: center" rowspan="1">
+																<p:graphicImage id="bioIE"
+																	name="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_ESQUERDO) ? 'green.png' : 'red.png')}"
+																	library="icons" />
+																<p:overlayPanel for="bioIE" my="right bottom"
+																	at="left top" showEvent="mouseover"
+																	hideEvent="mouseout" appendToBody="true"
+																	rendered="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_ESQUERDO))}">
+																	<p:dataGrid layout="tabular" style="width: 188px"
+																		columns="1" rows="1"
+																		value="#{visitanteBean.visitante.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.INDICADOR_ESQUERDO)}"
+																		var="f">
+																		<p:graphicImage
+																			value="#{imageHandlerBean.getImagem(f)}"
+																			cache="false" width="180" height="240">
+																			<f:param name="hashId" value="#{f.id}" />
+																		</p:graphicImage>
+																	</p:dataGrid>
+																</p:overlayPanel>
+															</p:column>
+															<p:column style="text-align: center">
+																<p:graphicImage id="bioID"
+																	name="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_DIREITO) ? 'green.png' : 'red.png')}"
+																	library="icons" />
+																<p:overlayPanel for="bioID" my="right bottom"
+																	at="left top" showEvent="mouseover"
+																	hideEvent="mouseout" appendToBody="true"
+																	rendered="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.INDICADOR_DIREITO))}">
+																	<p:dataGrid layout="tabular" style="width: 188px"
+																		columns="1" rows="1"
+																		value="#{visitanteBean.visitante.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.INDICADOR_DIREITO)}"
+																		var="f">
+																		<p:graphicImage
+																			value="#{imageHandlerBean.getImagem(f)}"
+																			cache="false" width="180" height="240">
+																			<f:param name="hashId" value="#{f.id}" />
+																		</p:graphicImage>
+																	</p:dataGrid>
+																</p:overlayPanel>
+															</p:column>
+														</p:row>
+
+														<p:row>
+															<p:column style="font-weight: bold;">Médio</p:column>
+															<p:column style="text-align: center" rowspan="1">
+																<p:graphicImage id="bioME"
+																	name="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_ESQUERDO) ? 'green.png' : 'red.png')}"
+																	library="icons" />
+																<p:overlayPanel for="bioME" my="right bottom"
+																	at="left top" showEvent="mouseover"
+																	hideEvent="mouseout" appendToBody="true"
+																	rendered="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_ESQUERDO))}">
+																	<p:dataGrid layout="tabular" style="width: 188px"
+																		columns="1" rows="1"
+																		value="#{visitanteBean.visitante.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MEDIO_ESQUERDO)}"
+																		var="f">
+																		<p:graphicImage
+																			value="#{imageHandlerBean.getImagem(f)}"
+																			cache="false" width="180" height="240">
+																			<f:param name="hashId" value="#{f.id}" />
+																		</p:graphicImage>
+																	</p:dataGrid>
+																</p:overlayPanel>
+															</p:column>
+															<p:column style="text-align: center">
+																<p:graphicImage id="bioMD"
+																	name="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_DIREITO) ? 'green.png' : 'red.png')}"
+																	library="icons" />
+																<p:overlayPanel for="bioMD" my="right bottom"
+																	at="left top" showEvent="mouseover"
+																	hideEvent="mouseout" appendToBody="true"
+																	rendered="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.MEDIO_DIREITO))}">
+																	<p:dataGrid layout="tabular" style="width: 188px"
+																		columns="1" rows="1"
+																		value="#{visitanteBean.visitante.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MEDIO_DIREITO)}"
+																		var="f">
+																		<p:graphicImage
+																			value="#{imageHandlerBean.getImagem(f)}"
+																			cache="false" width="180" height="240">
+																			<f:param name="hashId" value="#{f.id}" />
+																		</p:graphicImage>
+																	</p:dataGrid>
+																</p:overlayPanel>
+															</p:column>
+														</p:row>
+
+														<p:row>
+															<p:column style="font-weight: bold;">Anelar</p:column>
+															<p:column style="text-align: center" rowspan="1">
+																<p:graphicImage id="bioAE"
+																	name="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_ESQUERDO) ? 'green.png' : 'red.png')}"
+																	library="icons" />
+																<p:overlayPanel for="bioAE" my="right bottom"
+																	at="left top" showEvent="mouseover"
+																	hideEvent="mouseout" appendToBody="true"
+																	rendered="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_ESQUERDO))}">
+																	<p:dataGrid layout="tabular" style="width: 188px"
+																		columns="1" rows="1"
+																		value="#{visitanteBean.visitante.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.ANELAR_ESQUERDO)}"
+																		var="f">
+																		<p:graphicImage
+																			value="#{imageHandlerBean.getImagem(f)}"
+																			cache="false" width="180" height="240">
+																			<f:param name="hashId" value="#{f.id}" />
+																		</p:graphicImage>
+																	</p:dataGrid>
+																</p:overlayPanel>
+															</p:column>
+															<p:column style="text-align: center">
+																<p:graphicImage id="bioAD"
+																	name="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_DIREITO) ? 'green.png' : 'red.png')}"
+																	library="icons" />
+																<p:overlayPanel for="bioAD" my="right bottom"
+																	at="left top" showEvent="mouseover"
+																	hideEvent="mouseout" appendToBody="true"
+																	rendered="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.ANELAR_DIREITO))}">
+																	<p:dataGrid layout="tabular" style="width: 188px"
+																		columns="1" rows="1"
+																		value="#{visitanteBean.visitante.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.ANELAR_DIREITO)}"
+																		var="f">
+																		<p:graphicImage
+																			value="#{imageHandlerBean.getImagem(f)}"
+																			cache="false" width="180" height="240">
+																			<f:param name="hashId" value="#{f.id}" />
+																		</p:graphicImage>
+																	</p:dataGrid>
+																</p:overlayPanel>
+															</p:column>
+														</p:row>
+
+														<p:row>
+															<p:column style="font-weight: bold;">Mínimo</p:column>
+															<p:column style="text-align: center" rowspan="1">
+																<p:graphicImage id="bioMIE"
+																	name="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_ESQUERDO) ? 'green.png' : 'red.png')}"
+																	library="icons" />
+																<p:overlayPanel for="bioMIE" my="right bottom"
+																	at="left top" showEvent="mouseover"
+																	hideEvent="mouseout" appendToBody="true"
+																	rendered="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_ESQUERDO))}">
+																	<p:dataGrid layout="tabular" style="width: 188px"
+																		columns="1" rows="1"
+																		value="#{visitanteBean.visitante.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MINIMO_ESQUERDO)}"
+																		var="f">
+																		<p:graphicImage
+																			value="#{imageHandlerBean.getImagem(f)}"
+																			cache="false" width="180" height="240">
+																			<f:param name="hashId" value="#{f.id}" />
+																		</p:graphicImage>
+																	</p:dataGrid>
+																</p:overlayPanel>
+															</p:column>
+															<p:column style="text-align: center">
+																<p:graphicImage id="bioMID"
+																	name="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_DIREITO) ? 'green.png' : 'red.png')}"
+																	library="icons" />
+																<p:overlayPanel for="bioMID" my="right bottom"
+																	at="left top" showEvent="mouseover"
+																	hideEvent="mouseout" appendToBody="true"
+																	rendered="#{(visitanteBean.visitante.pessoa.biometria.isDedoCapturado(TipoDedo.MINIMO_DIREITO))}">
+																	<p:dataGrid layout="tabular" style="width: 188px"
+																		columns="1" rows="1"
+																		value="#{visitanteBean.visitante.pessoa.biometria.getImagemBiometriaPorPosicao(TipoDedo.MINIMO_DIREITO)}"
+																		var="f">
+																		<p:graphicImage
+																			value="#{imageHandlerBean.getImagem(f)}"
+																			cache="false" width="180" height="240">
+																			<f:param name="hashId" value="#{f.id}" />
+																		</p:graphicImage>
+																	</p:dataGrid>
+																</p:overlayPanel>
+															</p:column>
+														</p:row>
+													</p:panelGrid>
+												</h:panelGroup>
+
+												<p:panel header="Autorização de cadastro sem biometria"
+													id="autorizadorBiometria"
+													rendered="#{visitanteBean.visitante.autorizacaoCadastroSemBiometria != null}">
+													<sgp:formOutputLabel labelValue="Autorizador"
+														value="#{visitanteBean.visitante.autorizacaoCadastroSemBiometria.usuario.servidor.nome}" />
+													<sgp:formOutputLabel labelValue="Observação"
+														value="#{visitanteBean.visitante.autorizacaoCadastroSemBiometria.observacao}" />
+													<sgp:formOutputLabel labelValue="Data"
+														value="#{visitanteBean.visitante.autorizacaoCadastroSemBiometria.dataAutorizacao}"
+														converterData="true" />
+												</p:panel>
+												
+									</div>
+									</div>
+									</div>
+								</p:panel>
+								<br />
+								<p:panel
+									footer=" Cadastrado por: #{visitanteBean.visitante.autorRegistro.usuario} em 
+						      #{visitanteBean.visitante.autorRegistro.data} | Última alteração: #{visitanteBean.visitante.autorUltimaAlteracao.usuario} em #{visitanteBean.visitante.autorUltimaAlteracao.data}"
+									style="border:none">
+								</p:panel>
+							</p:tab>
+
+							<p:tab title="Credenciamento">
+								<ui:include src="include/tabCredenciamento.xhtml" />
+							</p:tab>
+							<p:tab title="Informações Complementares">
+								<ui:include src="include/tabInfoComplementares.xhtml" />
+							</p:tab>
+
+							<p:tab title="Fotos">
+								<ui:include src="include/tabFotos.xhtml" />
+							</p:tab>
+							<p:tab title="Impedimentos">
+								<ui:include src="include/tabImpedimentos.xhtml" />
+							</p:tab>
+						</p:tabView>
+					</div>
+
+					<div class="ui-g-12 ui-g-nopad">
+						<h:panelGroup styleClass="ui-g" id="panelBotoes">
+							<div class="ui-g-2">
+								<p:button value="Voltar" icon="ui-icon-arrowreturnthick-1-w"
+									outcome="pretty:ListarVisitante" style="width: 100%" >
+									<f:param name="list" value="1"/>
+								</p:button>
+							</div>
+							<h:panelGroup styleClass="ui-g-2" rendered="true">
+								<p:commandButton value="Salvar" icon="ui-icon-disk"
+									style="width: 100%"
+									rendered="#{not visitanteBean.isVisualizacao}"
+									process="alterarVisitante"
+									action="#{visitanteBean.redirectCredenciamento()}" />
+							</h:panelGroup>
+						</h:panelGroup>
+					</div>
+				</div>
+			</p:panel>
+		</h:panelGroup>
+
+		<p:confirmDialog global="true">
+			<p:commandButton value="Sim" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="Não" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+
+		<p:dialog id="confirmObrigatorioDocumento" header="Atenção!"
+			showEffect="fade" widgetVar="confirmObrigatorioDocumento"
+			modal="true" draggable="false" resizable="false" closeOnEscape="true">
+
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<i class="fa fa-exclamation-triangle"></i> Documento obrigatório!
+				</div>
+				<ui:repeat value="#{visitanteBean.documentosDescricao}" var="doc">
+					<div class="ui-g-12">#{doc}</div>
+				</ui:repeat>
+			</div>
+
+			<f:facet name="footer">
+				<p:commandButton value="OK" type="button"
+					styleClass="ui-confirmdialog-yes"
+					onclick="PF('confirmObrigatorioDocumento').hide();" />
+			</f:facet>
+		</p:dialog>
+
+		<p:dialog id="confirmObrigatorioCertidao" header="Atenção!"
+			showEffect="fade" widgetVar="confirmObrigatorioCertidao" modal="true"
+			draggable="false" resizable="false" closeOnEscape="true">
+
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<i class="fa fa-exclamation-triangle"></i> Certidão obrigatório!
+				</div>
+				<ui:repeat value="#{visitanteBean.certidoesDescricao}" var="cert">
+					<div class="ui-g-12">#{cert}</div>
+				</ui:repeat>
+			</div>
+
+			<f:facet name="footer">
+				<p:commandButton value="OK" type="button"
+					styleClass="ui-confirmdialog-yes"
+					onclick="PF('confirmObrigatorioCertidao').hide();" />
+			</f:facet>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

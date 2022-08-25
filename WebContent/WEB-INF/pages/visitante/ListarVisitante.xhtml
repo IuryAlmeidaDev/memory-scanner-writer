@@ -1,0 +1,329 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                template="/WEB-INF/pages/_templates/principal.xhtml"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="footer">
+		<ui:include src="/WEB-INF/pages/_script/biometriaVisitanteConfig.xhtml" />
+		<h:outputScript library="js" name="biometriaCore.js?ver=#{biometriaUtilBean.getBiometriaJsVersao('core')}" />
+		<h:outputScript library="js" name="biometriaCliente.js?ver=#{biometriaUtilBean.getBiometriaJsVersao('cliente')}" />
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+    <ui:define name="conteudo">
+        <sgp:validarAcesso/>
+
+        <h3>Visitante</h3>
+
+        <h:form prependId="false" id="frmInit">
+            <p:commandButton value="Cadastrar" id="btnCadastrar" onclick="cadastrar(#{visitanteBean.verificarSeBiometriaEhObrigatoria()}); return false;" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarVisitante')}"/>
+            <p:commandButton value="Pesquisa Biométrica" id="btnBio" styleClass="botaoBiometrico" onclick="pesquisar(false); return false;" icon="ui-icon-bio" />
+
+			<p:confirmDialog widgetVar="confirmaCadastro" header="Aviso" message="Nenhum registro encontrado, deseja cadastrar?">
+				<p:commandButton value="Sim" type="button" onclick="PF('confirmaCadastro').hide(); executarCadastro();" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" onclick="PF('confirmaCadastro').hide();" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			
+            <p:remoteCommand name="executarCadastro" action="#{visitanteBean.executarCadastro}" ajax="false" />
+        	<p:remoteCommand name="retornoBiometria" actionListener="#{visitanteBean.retornoOperacaoBiometrica()}" update=":registrosForm" />
+			<h:inputHidden value="#{visitanteBean.usuarioEstaCadastrando}" id="usuarioEstaCadastrando" />
+			<br/><br/>
+        </h:form>
+
+        <h:form id="meuFormulario">
+            <p:panel>
+                <p:outputLabel value="Consulta"/>
+
+                <sgp:formInputText id="pesquisar" labelValue="Nome do Visitante" value="#{visitanteBean.filtro.nome}"
+                                   maxlength="80" styleFormLabelColumn="width:180px" style="width: 200px;"/>
+
+				<ui:remove>
+				<sgp:formCheckbox
+					labelValue="Utilizar Pesquisa Fonética" 
+					value="#{visitanteBean.filtro.isPesquisaFonetica}"
+					styleFormLabelColumn="width:180px"
+					style="width: 200px;" />
+				</ui:remove>
+                <sgp:formInputText id="pesquisaNomeMae" labelValue="Nome da Mãe" value="#{visitanteBean.filtro.nomeMae}"
+                                   maxlength="80" styleFormLabelColumn="width:180px" style="width: 200px;"/>
+                                   
+                <sgp:formInputText id="cpf" labelValue="CPF" value="#{visitanteBean.filtro.cpf}" maxlength="80"
+                                   styleFormLabelColumn="width:180px" style="width: 200px;"/>
+
+                <sgp:formInputText id="recuperando" labelValue="Recuperando" value="#{visitanteBean.filtro.recuperando}"
+                                   maxlength="80" styleFormLabelColumn="width:180px" style="width: 200px;"/>
+
+                <sgp:formSelectOneMenu
+                        styleFormLabelColumn="width:180px"
+                        id="status" labelValue="Situação"
+                        value="#{visitanteBean.filtro.status}"
+                        itemsValue="#{comboHelperBean.statusVisitantes}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        style="width: 200px;"
+                        temSelecione="true"/>
+
+                <sgp:formSelectOneMenu
+                        styleFormLabelColumn="width:180px"
+                        labelValue="Unidade Prisional"
+                        value="#{visitanteBean.filtro.unidadePrisional}"
+                        itemsValue="#{visitanteBean.unidades}"
+                        itemValue="#{item}"
+                        filter="true"  filterMatchMode="custom" filterFunction="removeAcento"
+                        itemLabel="#{item.nome}"
+                        style="width: 280px;"
+                        temSelecione="true"
+                        converter="SimpleEntityConverter"
+                        display="text"
+                />
+
+                <sgp:formSelectOneMenu
+                        styleFormLabelColumn="width:180px"
+                        id="faseCredenciamento" labelValue="Fase Credenciamento"
+                        value="#{visitanteBean.filtro.faseCredenciamento}"
+                        itemsValue="#{visitanteBean.fasesCredenciamento}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        style="width: 250px;"
+                        temSelecione="true"/>
+
+                <sgp:formSelectOneMenu
+                        styleFormLabelColumn="width:180px"
+                        id="situacaoCredenciamento" labelValue="Situação Credenciamento"
+                        value="#{visitanteBean.filtro.situacaoCredenciamento}"
+                        itemsValue="#{comboHelperBean.filtroSituacaoCredenciamento}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        style="width: 200px;"
+                        temSelecione="true"/>
+                        
+                <br/>
+                <br/>
+                <p:commandButton value="Pesquisar" update=":registrosForm" actionListener="#{visitanteBean.pesquisar()}"
+                                 process="@form" icon="ui-icon-search"/>
+                <p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{visitanteBean.imprimir()}"
+                                 process="@this"/>
+            </p:panel>
+        </h:form>
+
+        <h:form id="registrosForm">
+        	<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamento" var="_tipo" allSuffix="ALL_ENUM_VALUES" />
+        	<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante" var="_status" allSuffix="ALL_ENUM_VALUES" />
+        	<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada" var="tipoEntr" allSuffix="ALL_ENUM_VALUES" />
+        	
+            <p:dataTable id="dataTable" var="visitante" value="#{visitanteBean.lazyDataModel}" rows="10"
+                         paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{visitante.id}"
+                         emptyMessage="Nenhum registro encontrado." sortOrder="DESCENDING"
+                         selectionMode="single" selection="#{visitanteBean.visitanteSelecionado}">
+                         
+                <p:ajax event="rowDblselect" update="formVisitDetalhes" oncomplete="PF('visitDetalhes').show()" />
+
+                <p:column headerText="" width="70" style="text-align: center;">
+                    <h:panelGroup rendered="#{visitante.statusCor() eq 3}">
+                        <h:outputLabel class="fa fa-exclamation-circle"
+                                       style="color: red;"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{visitante.statusCor() eq 2}">
+                        <h:outputLabel class="fa fa-info-circle"
+                                       style="color: #fd8d04;" title="#{visitante.faseAtualCredenciamento.descricao}"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{visitante.statusCor() eq 1}">
+                        <h:outputLabel class="fa fa-check-circle"
+                                       style="color: green;" title="#{visitante.faseAtualCredenciamento.descricao}"/>
+                    </h:panelGroup>
+                </p:column>
+
+                <p:column headerText="Código" sortBy="#{visitante.id}" width="100">
+                    <h:outputText value="#{visitante.id}"/>
+                </p:column>
+
+                <p:column headerText="Nome" sortBy="#{visitante.nome}" width="25%">
+                    <h:outputText value="#{visitante.nome}"/>
+                </p:column>
+
+                <p:column headerText="Data Cadastro" sortBy="#{visitante.dataHoraCadastro}" width="20%"
+                          style="text-align: center;">
+                    <h:outputText value="#{visitante.dataHoraCadastro}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Situação" sortBy="#{visitante.status}" width="15%">
+                    <h:outputText value="#{visitante.status.descricao} "/>
+                    <h:outputText value="- Fim: " rendered="#{visitante.fimImpedimento ne null}" />
+                    <h:outputText value="#{visitante.fimImpedimento}"
+                                  rendered="#{visitante.fimImpedimento ne null}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Ações" width="220">
+                    <center>
+                        <p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarVisitante"
+                                  rendered="#{securityUtil.possuiPermissao('VisualizarVisitante') and visitante.id > 0}">
+                            <f:param name="id" value="#{visitante.id}"/>
+                        </p:button>
+
+                        <p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarVisitante"  disabled="#{visitanteBean.bloqueiaAlterarVisitante(visitante.status)}"
+                                  rendered="#{securityUtil.possuiPermissao('AlterarPessoaVisitante') or (securityUtil.possuiPermissao('AlterarVisitante') and ((visitante.credenciamentosAtivos eq 0 or visitante.statusCor() eq 1) or (visitante.faseAtual eq 5 and visitante.situacaoAtual eq 2)) and visitante.id > 0)}">
+                            <f:param name="id" value="#{visitante.id}"/>
+                        </p:button>
+
+						<p:commandButton title="Novo Credenciamento" icon="fa fa-male" action="#{visitanteBean.novoCredenciamento(visitante)}"
+                        	disabled="#{visitante.status eq 'M'}"
+                            rendered="#{securityUtil.possuiPermissao('CadastrarCredenciamento') and visitante.id > 0 and visitanteBean.getVisitantePreso(visitante.id) eq false}"/>
+
+                        <p:button title="Credenciar Visitante" icon="fa fa-newspaper-o"
+                                  outcome="pretty:ListarCredenciamentoVisitante" disabled="#{visitante.status eq 'M' or visitante.status eq 'I'}"
+                                  rendered="#{securityUtil.possuiPermissao('ListarCredenciamentoVisitante') and visitante.status ne 'I' and visitante.id > 0}">
+                            <f:param name="id" value="#{visitante.id}"/>
+                        </p:button>
+
+                        <p:commandButton title="Imprimir Visitante" icon="fa fa-print"
+                                         actionListener="#{visitanteBean.imprimir(visitante)}" process="@this"
+                                         rendered="#{securityUtil.possuiPermissao('VisualizarVisitante') and visitante.id > 0}"/>
+
+                        <p:commandButton title="Reativar Visitante" icon="ui-icon-arrowreturnthick-1-w"
+                                         rendered="#{visitante.status eq 'I' and securityUtil.possuiPermissao('AlterarVisitante') and visitante.id > 0 and 1 == 0}"
+                                         action="#{visitanteBean.reativarVisitante(visitante)}" process="@this"
+                                         update="@form :registrosForm :mensagens"/>
+
+                        <p:commandButton action="#{visitanteBean.excluir(visitante)}" icon="ui-icon-trash"
+                                         title="Excluir" update="@form :registrosForm :mensagens"
+                                         rendered="#{securityUtil.possuiPermissao('ExcluirVisitante') and visitante.id > 0}">
+                            <p:confirm header="Confirmação" message="Deseja excluir o Visitante?" icon="ui-icon-alert"/>
+                        </p:commandButton>
+                        
+                        
+                        <p:commandButton action="#{visitanteBean.tornarVisitante(visitante)}" icon="fa fa-male"
+                                         title="Tornar recuperando em visitante" update="@form :registrosForm :mensagens"
+                                         rendered="#{securityUtil.possuiPermissao('VisualizarVisitante') and visitante.id eq 0}"
+                                         disabled="#{visitante.idRecuperando > 0 and (visitante.tipoDesligamento == null or visitante.tipoDesligamento == _tipo.FUGA or visitante.tipoDesligamento == _tipo.OBITO or visitanteBean.saidaSeisMeses(visitante.dataSaida))}" 
+                                         outcome="pretty:CadastrarCredenciamento">
+                                         <f:param name="id" value="#{visitante.id}"/>
+						</p:commandButton>
+                        
+                    </center>
+                </p:column>
+                <f:facet name="footer">
+                    Total de registros: #{visitanteBean.lazyDataModel.rowCount}
+
+                    <p:dialog id="dialogRecuperandosFotos" header="Atenção: Visitante já foi recuperando"
+                              widgetVar="dialogRecuperandosFotos" modal="true" resizable="false">
+                        <h:form id="formDlgRecupFotos">
+                            <p:dataGrid id="dgFotosRecup" layout="grid" columns="1" rows="2"
+                                        paginatorAlwaysVisible="false" paginator="true"
+                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                        value="#{visitanteBean.exRecuperandos}" var="r" paginatorPosition="bottom">
+                                <p:dataGrid id="dgFoto" layout="grid" columns="1" rows="1" value="#{r.imagemAtual}"
+                                            var="i">
+                                    <p:panelGrid>
+                                        <p:row style="border: 0px;">
+                                            <p:column style="border: 0px; width: 188px">
+                                                <p:graphicImage value="#{imageHandlerBean.getImagem(i)}" cache="false"
+                                                                width="180" height="240">
+                                                    <f:param name="hashId" value="#{i.id}"/>
+                                                </p:graphicImage>
+                                            </p:column>
+
+                                            <p:column style="border: 0px; vertical-align: text-top;">
+                                                <sgp:formOutputLabel labelValue="Nome" value="#{r.pessoa.nome}"
+                                                                     id="nomeRecupFoto"/>
+                                                <sgp:formOutputLabel labelValue="Nome da Mãe"
+                                                                     value="#{r.pessoa.nomeMae}"/>
+                                                <sgp:formOutputLabel labelValue="Data Nascimento"
+                                                                     value="#{r.pessoa.dataNascimento}"
+                                                                     converterData="true"/>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:dataGrid>
+                            </p:dataGrid>
+
+                            <br/>
+                            <p:row>
+                                <p:outputLabel style="color: red;"
+                                               value="Visitante já foi recuperando a menos de 6 meses! Não permitido o cadastro."/>
+                            </p:row>
+                            <br/><br/>
+                        </h:form>
+                    </p:dialog>
+                </f:facet>
+            </p:dataTable>
+
+            <p:remoteCommand name="executarCadastro" action="#{visitanteBean.executarCadastro}" ajax="false"/>
+
+            <p:confirmDialog global="true">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+            </p:confirmDialog>
+
+            <p:confirmDialog widgetVar="confirmaCadastro" header="Aviso"
+                             message="Nenhum registro encontrado, deseja cadastrar?">
+                <p:commandButton value="Sim" type="button" onclick="PF('confirmaCadastro').hide(); executarCadastro();"
+                                 styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                <p:commandButton value="Não" type="button" onclick="PF('confirmaCadastro').hide();"
+                                 styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+            </p:confirmDialog>
+        </h:form>
+        
+		<p:dialog id="dialogVisitanteDetalhes" header="Detalhes do Visitante" widgetVar="visitDetalhes" modal="true" closeOnEscape="true" showEffect="fade" hideEffect="fade" resizable="false" height="350px" width="820px">
+			<h:form id="formVisitDetalhes">
+			
+				<p:remoteCommand name="limparSelection" action="#{visitanteBean.limparSelection}" ajax="false"/>
+				
+				<h:panelGroup rendered="#{visitanteBean.visitanteDetalhe == null}">
+					<p:outputLabel>Nenhuma informação.</p:outputLabel>
+				</h:panelGroup>
+				
+				<h:panelGroup rendered="#{visitanteBean.visitanteDetalhe != null}">
+					<div class="row">
+						<div class="col-md-8">
+						
+							<sgp:formOutputLabel
+								labelValue="Nome"
+								value="#{visitanteBean.visitanteDetalhe.pessoa.nome}"/>
+								
+							<sgp:formOutputLabel
+								labelValue="Data de Nascimento"
+								value="#{visitanteBean.visitanteDetalhe.pessoa.dataNascimento}"
+								converterData="true"/>
+								
+							<sgp:formOutputLabel
+								labelValue="Nome da Mãe"
+								value="#{visitanteBean.visitanteDetalhe.pessoa.nomeMae}"/>
+								
+							<sgp:formOutputLabel
+								labelValue="Nome Social"
+								value="#{visitanteBean.visitanteDetalhe.pessoa.nomeSocial}" />
+								
+						</div>
+						
+						<div class="col-md-4" align="right">
+							<p:dataGrid id="dgFoto" layout="tabular" style="width: 188px;" columns="1" rows="1" value="#{visitanteBean.visitanteDetalhe.fotoFrenteAtual.imagem}" var="img">
+								<p:graphicImage value="#{imageHandlerBean.getImagem(img)}" cache="false" width="180" height="240">
+									<f:param name="hashId" value="#{img.id}" />
+								</p:graphicImage>
+							</p:dataGrid>
+						</div>
+					</div>
+
+					<br/>
+				
+					<br/>
+					
+					<div align="center">
+						<p:commandButton value="Fechar" type="button" onclick="PF('visitDetalhes').hide(); limparSelectionTeste();"
+	                                 styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+					</div>
+					
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+        
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/pages/_templates/dialog.xhtml"
+                xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+    <ui:define name="head">
+        <title>Visitante</title>
+    </ui:define>
+
+    <ui:define name="conteudo">
+        <p:panel>
+            <h:form id="registrosForm">
+                <sgp:formInputText display="text" id="nomePessoa" labelValue="Nome"
+                                   value="#{associarResponsavelBean.filtro.nome}"
+                                   size="40" maxlength="80" styleFormLabelColumn="width: 150px"/>
+
+                <sgp:formInputText display="text" id="cpf" labelValue="CPF"
+                                   value="#{associarResponsavelBean.filtro.cpf}"
+                                   size="40" maxlength="80" styleFormLabelColumn="width: 150px"/>
+
+                <sgp:formCalendar display="text" labelValue="Data de Nascimento"
+                                  value="#{associarResponsavelBean.filtro.dataNascimento}"
+                                  dataMaxima="#{comboHelperBean.maxDate}" styleFormLabelColumn="width: 150px"/>
+
+                <br/>
+                <br/>
+                <p:commandButton value="Pesquisar" update="@form, dataTable" process="@form" icon="ui-icon-search"/>
+                <br/>
+                <br/>
+
+                <p:dataTable id="dataTable" var="visitante" value="#{associarResponsavelBean.lazyDataModel}" rows="5" paginator="true"
+                             paginatorPosition="bottom" lazy="true" sortBy="#{visitante.id}" sortOrder="descending"
+                             emptyMessage="Nenhum registro encontrado.">
+
+                    <p:column headerText="ID" width="60" sortBy="#{visitante.id}">
+                        <h:outputText value="#{visitante.id}" />
+                    </p:column>
+
+                    <p:column headerText="Nome" sortBy="#{visitante.pessoa.nome}">
+                        <h:outputText value="#{visitante.pessoa.nome}" />
+                    </p:column>
+
+                    <p:column headerText="CPF" rendered="true" sortBy="#{visitante.doc.numero}">
+                      <center>
+                        <h:outputText value="#{visitante.pessoa.cpf}" />
+                      </center>
+                    </p:column>
+
+                    <p:column headerText="Data de Nascimento" sortBy="#{visitante.pessoa.dataNascimento}">
+                        <h:outputText value="#{visitante.pessoa.dataNascimento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Ações" width="60" >
+                        <center>
+                            <p:commandButton title="Selecionar" icon="ui-icon-check"
+                                             actionListener="#{associarResponsavelBean.selecionarRecuperando(visitante)}"/>
+                        </center>
+                    </p:column>
+
+                </p:dataTable>
+            </h:form>
+        </p:panel>
+
+
+    </ui:define>
+</ui:composition>

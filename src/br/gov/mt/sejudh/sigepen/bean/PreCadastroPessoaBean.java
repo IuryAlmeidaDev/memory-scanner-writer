@@ -136,7 +136,8 @@ public class PreCadastroPessoaBean extends MetodosDePaginaBean {
 
 	private void inicializarVariaveis() {
 		if(!this.pessoaEhEstrangeira()) {
-			this.estado = this.pessoa.getNaturalidade().getEstado();
+			if(this.pessoa.getNaturalidade() != null)
+				this.estado = this.pessoa.getNaturalidade().getEstado();
 			this.cidades = comboService.listarCidade(this.estado);
 		}
 	}

@@ -19,13 +19,37 @@
 				<p:menuitem value="Pessoa" outcome="pretty:ListarPessoa" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarPessoa')}" />	
 				<p:menuitem value="Estabelecimento" outcome="pretty:ListarEstabelecimento" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarEstabelecimento')}"/>
 				<p:menuitem value="Unidade Prisional" outcome="pretty:ListarUnidade" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarUnidade')}"/>	
+				<p:menuitem value="Tipo Visita" outcome="pretty:ListarTipoVisita" icon="fa fa-users" rendered="#{securityUtil.possuiPermissao('ListarTipoVisita')}"/>
+				<p:menuitem value="Tipo Impedimento" outcome="pretty:ListarTipoImpedimento" icon="fa fa-ban" rendered="#{securityUtil.possuiPermissao('ListarTipoImpedimento')}"/>
+				<p:menuitem value="Certidão" outcome="pretty:ListarCertidao" icon="fa fa-archive" rendered="#{securityUtil.possuiPermissao('ListarCertidao')}"/>
+			 	<p:menuitem value="Tipo Falta Disciplinar" outcome="pretty:ListarTipoFaltaDisciplinar" icon="fa fa-cog" rendered="#{securityUtil.possuiPermissao('ListarTipoFaltaDisciplinar')}" />
 			</p:submenu>
 			
 			<p:submenu label="Recuperando" rendered="#{securityUtil.exibeCategoriaMenu('Recuperando')}">
 				<p:menuitem value="Entrada" outcome="pretty:ListarRecuperando" icon="fa fa-male" rendered="#{securityUtil.possuiPermissao('ListarRecuperando')}" />
+				
+				<ui:remove>
 				<p:menuitem value="Relatório Infopen" outcome="pretty:RelatorioInfopen" icon="fa fa-file-pdf-o" rendered="#{securityUtil.possuiPermissao('ImprimirRelatorioInfopen')}"/>
+				</ui:remove>
+				
+				<p:menuitem value="Falta Disciplinar" outcome="pretty:ListarFaltaDisciplinar" icon="fa fa-unlock-alt" rendered="#{securityUtil.possuiPermissao('ListarFaltaDisciplinar')}" />
+				<ui:remove>
+					<p:menuitem value="Unificar Recuperando" outcome="pretty:ListarUnificarRecuperando" icon="fa fa-users" rendered="#{securityUtil.possuiPermissao('UnificarRecuperando')}"/>
+				</ui:remove>
 			</p:submenu>
 			
+			<p:submenu label="Relatórios" rendered="#{securityUtil.exibeCategoriaMenu('Relatorio')}">
+				<p:menuitem value="Relatórios" outcome="pretty:Relatorio" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('Relatorio')}"/>
+			</p:submenu>
+
+			<p:submenu label="Visita" rendered="#{securityUtil.exibeCategoriaMenu('Visitantes') and securityUtil.getUnidadeSelecionada().ativaModuloVisitante}">
+				<p:menuitem value="Visitante" outcome="pretty:ListarVisitante" icon="fa fa-child" rendered="#{securityUtil.possuiPermissao('ListarVisitante')}"/>
+				<p:menuitem value="Solicitar Visita" outcome="pretty:ListarSolicitacaoVisita" icon="fa fa-ticket" rendered="#{securityUtil.possuiPermissao('ListarSolicitacaoVisita')}"/>
+				<p:menuitem value="Impedimento" outcome="pretty:ListarImpedimento" icon="fa fa-lock" rendered="#{securityUtil.possuiPermissao('ListarImpedimento')}"/>
+				<p:menuitem value="Entrada e Saída" outcome="pretty:ListarEntradaSaida" icon="fa fa-exchange" rendered="#{securityUtil.possuiPermissao('ListarEntradaSaida')}"/>
+				<p:menuitem value="Consultar Visitas" outcome="pretty:ConsultarListaVisitas" icon="fa fa-search" rendered="#{securityUtil.possuiPermissao('ConsultarListaVisitas')}"/>
+			</p:submenu>
+
 			<p:submenu label="Movimentações" rendered="#{securityUtil.exibeCategoriaMenu('Movimentacoes')}">
 				<p:menuitem value="Pedido de Trânsito" outcome="pretty:ListarPedidoTransito" icon="fa fa-file" rendered="#{securityUtil.possuiPermissao('ListarPedidoTransito')}"/>
 				<p:menuitem value="Movimentação Interna" outcome="pretty:ListarMovimentacaoInterna" icon="fa fa-retweet" rendered="#{securityUtil.possuiPermissao('ListarMovimentacaoInterna')}"/>
@@ -48,7 +72,9 @@
 			<p:submenu label="Usuário">
 				<p:menuitem value="Alterar Senha" outcome="pretty:AlterarSenha" icon="ui-icon-gear"/>
 				<p:menuitem value="Alterar Unidade" outcome="pretty:SelecionarUnidade" icon="ui-icon-gear"/>
-				<p:menuitem value="Instaladores Bio" outcome="pretty:Instaladores" icon="ui-icon-disk"/>
+				<ui:remove>
+					<p:menuitem value="Instaladores Bio" outcome="pretty:Instaladores" icon="ui-icon-disk"/>
+				</ui:remove>
 				<p:menuitem value="Sair" action="#{loginBean.logout()}" icon="ui-icon-power" />
 			</p:submenu>
 			

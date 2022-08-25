@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -206,6 +207,19 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 
 	public void salvar() {
 		try {
+			if (processo.getCondicaoAtual().equals(Condicao.CONDENADO) && 
+				 (processo.getAno() == null || processo.getMes() == null || processo.getDia() == null || processo.getAno() + processo.getMes() + processo.getDia() <= 0)) {
+				throw new ValidacaoException("Insira valores válidos no tempo de condenação!");
+			}
+			
+			if (processo.getDia() != null && processo.getDia() > 31) {
+				throw new ValidacaoException("Não é permitido inserir quantidade maior que 31 dias.");
+			}
+			
+			if (processo.getMes() != null && processo.getMes() > 12) {
+				throw new ValidacaoException("Não é permitido inserir quantidade maior que 12 meses.");
+			}
+			
 			if (processo.getProcessosRegimeCondicao().isEmpty()){
 				throw new ValidacaoException("Insira ao menos um Regime e Condição no Processo!");
 			}
@@ -218,11 +232,13 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 				throw new ValidacaoException("Insira ao menos um Crime ATIVO!");	
 			}			
 			
-			if (this.processoRegimeCondicoes.getCondicao() == Condicao.CONDENADO) {
+			if (this.processo.getCondicaoAtual() == Condicao.CONDENADO) {
 				this.processo.setStatusProcesso(StatusProcesso.EM_EXECUCAO);
 			} else {
 				this.processo.setStatusProcesso(StatusProcesso.EM_ANDAMENTO);
 			}
+			
+			validarTempoCondenacao(false);
 
 			if (isPassagem != null && isPassagem) {
 				facesUtil.fecharPaginaDialog(this.processo);
@@ -266,6 +282,26 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 		}
 	}
 	
+	private void validarTempoCondenacao(boolean isAssociarDoc) throws ValidacaoException {
+		boolean tempoVazio = (this.processo.getAno() == null || this.processo.getMes() == null || this.processo.getDia() == null);
+		boolean isCondenado = false;
+		boolean isProcessoCondenado = (this.processo.getCondicaoAtual() != null) ? processo.getCondicaoAtual().equals(Condicao.CONDENADO) : false;
+		String msg = "Favor preencher o tempo total da condenação.";
+		
+		if (isAssociarDoc) {
+			isCondenado = this.processoRegimeCondicoes.getCondicao().equals(Condicao.CONDENADO);
+
+			if (isCondenado && tempoVazio && !isProcessoCondenado) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", msg);
+				RequestContext.getCurrentInstance().update("formPassCrime:anoMesDia");
+			}
+		} else {
+			if (isProcessoCondenado && tempoVazio) {
+				throw new ValidacaoException(msg);
+			}
+		}
+	}
+	
 	public void associarRegimeCondicao() {
 		try {
 			
@@ -291,6 +327,8 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 				throw new ValidacaoException("É obrigatório associar um estabelecimento.");
 			}
 			
+			validarTempoCondenacao(true);
+			
 			this.processo.getProcessosRegimeCondicao().add(this.processoRegimeCondicoes);
 			RequestContext.getCurrentInstance().execute("PF('dialogRegimeCondicaoProcesso').hide()");
 			
@@ -309,6 +347,24 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 		this.processo.getProcessosRegimeCondicao().remove(regimeCondicao);
 		processoService.configurarModalidadeProcesso(this.processo);
 		configuraFiltroDocumentos();
+		validarTempoDeCondenacao();
+	}
+	
+	private void validarTempoDeCondenacao() {
+		List<ProcessoRegimeCondicao> documentos = this.processo.getProcessosRegimeCondicao().stream().filter(p-> p.getCondicao().equals(Condicao.CONDENADO)).collect(Collectors.toList());
+		
+		if (documentos.size() <= 0) {
+			this.processo.setAno(null);
+			this.processo.setMes(null);
+			this.processo.setDia(null);
+		}
+		
+		if (this.processo.getProcessosRegimeCondicao().size() == 0) {
+			this.processo.setRegimeAtual(null);
+			this.processo.setCondicaoAtual(null);
+		}
+		
+		RequestContext.getCurrentInstance().update("formPassCrime:anoMesDia");
 	}
 	
 	public Boolean exibeAlterarDocumento(ProcessoRegimeCondicao prc) {

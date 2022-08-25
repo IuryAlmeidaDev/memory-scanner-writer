@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,14 @@ public class RelatorioUtil {
 		}
 		
 		return arquivo;
+	}
+
+	public static <T> Arquivo gerarRelatorio(T valor, Relatorio relatorio) throws JRException {
+		return gerarRelatorio(Arrays.asList(valor), relatorio, new HashMap<String, Object>());
+	}
+	
+	public static <T> Arquivo gerarRelatorio(T valor, Relatorio relatorio, Map<String, Object> parameters) throws JRException {
+		return gerarRelatorio(Arrays.asList(valor), relatorio, parameters);
 	}
 	
 	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio, Map<String, Object> parameters) throws JRException {

@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.hibernate.Hibernate;
+
 import br.gov.mt.sejudh.sigepen.model.HistoricoRecuperando;
 
 
@@ -41,7 +43,17 @@ public class HistoricoRecuperandoDAO {
 		String jpql="select h from HistoricoRecuperando h where h.recuperando.id = :id ORDER BY h.dataRegistro ASC";
 		Query query = entityManager.createQuery(jpql, HistoricoRecuperando.class);
 		query.setParameter("id", recuperandoId);
-		return (List<HistoricoRecuperando>) query.getResultList();
+		List<HistoricoRecuperando> lista = query.getResultList();
+		for(HistoricoRecuperando h : lista) {
+			Hibernate.initialize(h.getRecuperando());
+		}
+		return lista;
+	}
+	
+	public HistoricoRecuperando buscarHistoricoPorId(long id) {
+		HistoricoRecuperando h = this.entityManager.find(HistoricoRecuperando.class, id);
+		Hibernate.initialize(h.getRecuperando());
+		return h;
 	}
 	
 }

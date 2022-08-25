@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FichaVisitante" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.6934217901613435"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="722"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="TEM_PAGINACAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="processos" class="java.util.Collection">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="recuperando" class="java.lang.Object"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="visitante.nome" class="java.lang.String"/>
+	<field name="visitante.nomeMae" class="java.lang.String"/>
+	<field name="visitante.nomeSocial" class="java.lang.String"/>
+	<field name="visitante.dataNascimento" class="java.util.Date"/>
+	<field name="visitante.nomePai" class="java.lang.String"/>
+	<field name="tipoVisita.descricao" class="java.lang.String"/>
+	<field name="visitante.imagemAtual.arquivo" class="java.lang.Object"/>
+	<field name="recuperando" class="java.util.Collection"/>
+	<field name="documentos" class="java.util.Collection"/>
+	<field name="certidoes" class="java.util.Collection"/>
+	<field name="enderecos" class="java.util.Collection"/>
+	<field name="contatos" class="java.util.Collection"/>
+	<field name="credenciamentos" class="java.util.Collection"/>
+	<field name="visitante.dataValidade" class="java.util.Date"/>
+	<field name="visitante.grauParentesco" class="java.lang.String"/>
+	<field name="dataValidade" class="java.util.Date"/>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="360" splitType="Immediate">
+			<line>
+				<reportElement x="0" y="63" width="555" height="1" forecolor="#666666" uuid="d90cd059-bf76-44cb-b072-d2eadcb83641"/>
+			</line>
+			<staticText>
+				<reportElement x="260" y="7" width="290" height="20" uuid="3b47395a-312f-4297-89c8-3f3294819538"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SIGEPEN - Sistema de Gestão Penitenciária de Mato Grosso]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" isUsingCache="false" evaluationTime="Report">
+				<reportElement x="-16" y="-20" width="245" height="97" uuid="6ca3f86c-9205-4d04-979e-ff74b082e364"/>
+				<imageExpression><![CDATA["imagens/sesp.png"]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<reportElement x="245" y="26" width="305" height="46" uuid="027493f4-862f-40e5-aa62-b165905a1525"/>
+				<textElement textAlignment="Right" markup="html">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Unidade: </b>" + $P{UNIDADE_LOGADA}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="10" y="158" width="168" height="180" uuid="df68f670-36b4-4a95-b557-acdbcd1098b7"/>
+				<imageExpression><![CDATA[new ByteArrayInputStream((byte[])$F{visitante.imagemAtual.arquivo})]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="0" y="69" width="553" height="20" uuid="91d36cbe-e313-4a2b-883b-d5846391b092"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROCESSO DE EMISSÃO DE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="10" y="124" width="168" height="20" backcolor="#CCCCCC" uuid="1f2262e4-88e0-43ac-9b2a-08344af1c924"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[FOTO VISITANTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="185" y="124" width="365" height="20" backcolor="#CCCCCC" uuid="8912259f-d018-4d12-826a-5b7c74f442c2"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[DADOS PESSOAIS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="155" width="100" height="20" uuid="5b7451b6-cb05-424a-affe-4a42ce5e4d11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="175" width="100" height="20" uuid="767bd054-3c1b-42c1-8748-1a84ed77a783"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Visita:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="195" width="100" height="20" uuid="fd87ea85-8b54-4302-ac9a-3651f3c479fa"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grau de Parentesco:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="215" width="100" height="20" uuid="82c4aba1-65b2-4fde-819b-8dee63a22875"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Social:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="235" width="100" height="20" uuid="84d4278c-6b46-4afb-b9df-a397c4ee5c37"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome da Mãe:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="255" width="100" height="20" uuid="160ea2f8-7888-4a10-9336-7df4a2b4c505"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome do Pai:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="275" width="100" height="20" uuid="d172e6e7-d882-49e1-8336-53354c1e8200"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nascimento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="295" width="100" height="20" uuid="8d4ee875-8e2f-4b87-b901-d624cf7b9155">
+					<printWhenExpression><![CDATA[$F{visitante.dataValidade} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data de Validade:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="290" y="155" width="260" height="20" uuid="429d8373-0a2e-4259-bee4-2e32d1ad9a8f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{visitante.nome}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="290" y="175" width="260" height="20" uuid="6a2d3ff0-0f12-4e9a-9699-76f5e90d1c70"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoVisita.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="290" y="195" width="260" height="20" uuid="fa1043ac-a7d7-48cc-8dc0-74cf9db64eda"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{visitante.grauParentesco}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="290" y="215" width="260" height="20" uuid="4b05e34e-f4fb-49ef-a50b-5ee25753b978"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{visitante.nomeSocial}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="290" y="235" width="260" height="20" uuid="986643eb-f913-4a48-87ca-b7aac417c805"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{visitante.nomeMae}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="290" y="255" width="260" height="20" uuid="f5f163ec-907a-4649-9288-2534f542412b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{visitante.nomePai}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="290" y="275" width="260" height="20" uuid="5df7a38f-e5e6-4746-a5a3-feff641a12aa"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{visitante.dataNascimento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="89" width="553" height="20" uuid="d27472c4-34f5-4fa2-b595-775c3a7933ed"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CARTEIRA INDIVIDUAL DO VISITANTE - CIV]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="290" y="295" width="260" height="20" uuid="9557d7ea-210e-4c96-8596-c2d79363713f">
+					<printWhenExpression><![CDATA[$F{visitante.dataValidade} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{visitante.dataValidade}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="50">
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="0" width="555" height="37" uuid="88857c2d-a094-44ad-b45e-e2c066b367a8"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{recuperando})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["FichaVisitanteRecuperando.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="50">
+			<subreport runToBottom="false">
+				<reportElement x="0" y="0" width="553" height="40" uuid="f558a828-aaba-434b-bc66-b052eabd4b04"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{documentos})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ListarDocumentosVisitante.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="50">
+			<subreport>
+				<reportElement x="0" y="0" width="553" height="40" uuid="173a4151-36dc-4e10-90c1-f91325a1284f"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{certidoes})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ListarCertidoesVisitante.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="50">
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="0" width="555" height="37" uuid="819ec888-b37f-4b25-8556-20e1cb3d743e"/>
+				<subreportParameter name="NOME_DO_RELATORIO"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{enderecos})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ListarEnderecoVisitante.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="50">
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="0" width="555" height="37" uuid="b660f889-9689-459b-b20c-75dc062b607d"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{contatos})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ListarContatoVisitante.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="50">
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="0" width="555" height="37" isPrintInFirstWholeBand="true" uuid="329b5438-81a7-40ba-beb8-e60371c3dee0"/>
+				<subreportParameter name="dataValidade">
+					<subreportParameterExpression><![CDATA[$F{dataValidade}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{credenciamentos})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ListarCredenciamentoVisitante.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="51" splitType="Stretch">
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
+				<subreportParameter name="PAGINA">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EMISSOR">
+					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_PAGINAS">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="435" y="13" width="80" height="20" uuid="21949555-196a-4d34-89dd-e4b9f2f2f2af">
+					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="13" width="40" height="20" uuid="18471924-0526-4b68-acd6-512add5df44e">
+					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

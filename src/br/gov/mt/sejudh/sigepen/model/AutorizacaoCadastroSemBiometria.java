@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,7 +16,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 
@@ -47,6 +47,14 @@ public class AutorizacaoCadastroSemBiometria implements Serializable {
 	@OneToOne
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "RECUPERANDO_ID")
+	private Recuperando recuperando;
+	
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "VISITANTE_ID")
+	private Visitante visitante;
 
 	public Long getId() {
 		return id;
@@ -78,5 +86,21 @@ public class AutorizacaoCadastroSemBiometria implements Serializable {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public Recuperando getRecuperando() {
+		return recuperando;
+	}
+
+	public void setRecuperando(Recuperando recuperando) {
+		this.recuperando = recuperando;
+	}
+
+	public Visitante getVisitante() {
+		return visitante;
+	}
+
+	public void setVisitante(Visitante visitante) {
+		this.visitante = visitante;
 	}
 }
