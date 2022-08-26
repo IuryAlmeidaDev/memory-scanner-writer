@@ -942,7 +942,9 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
 	}
 
 	public boolean ehGestante() {
-		return this.gestante.equals(SimNao.S);
+		if(this != null && this.gestante != null)
+			return SimNao.S.equals(this.gestante);
+		return false;
     }
 
     public SimNao getGestante() {
