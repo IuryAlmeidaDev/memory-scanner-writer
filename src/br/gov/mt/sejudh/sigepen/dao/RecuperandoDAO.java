@@ -586,7 +586,7 @@ public class RecuperandoDAO {
 	public void expirarGestante(Date dataExpirar) {
 		String jpql="update Recuperando r set r.gestante = :gestante where r.gestante = true and r.inicioGestacao is not null and r.inicioGestacao < :dataExpirar";
 		Query query = em.createQuery(jpql);
-		query.setParameter("gestante", false);
+		query.setParameter("gestante", SimNao.S);
 		query.setParameter("dataExpirar", dataExpirar);
 		query.executeUpdate();
 	}

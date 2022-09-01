@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -448,38 +449,60 @@ public class VisitanteService extends BaseService<Visitante, Long> {
     	return certidoesDescricao.size() > 0;
     }
     
+    //Obrigatório ter adicionado pelo menos um documento com foto
     public boolean validarDocumentosObrigatorios(List<String> documentosDescricao, TipoVisita tipoVisita, Visitante visitante) {
     	List<TipoVisitaDocumento> documentosObrigatorios = tipoVisita.getTipoVisitaDocumento();
     	List<VisitanteDocumento> documentosDoVisitante = visitante.getVisitanteDocumentos();
+
+    	//Docs com Foto
+    	List<String> docsObrigatoriosComFoto = documentosObrigatorios.stream().filter(d -> d.getTipoDocumento().getPossuiFoto()).map(m -> m.getTipoDocumento().getDescricao()).collect(Collectors.toList());
+        List<String> docsDoVisitanteComFoto = documentosDoVisitante.stream().filter(d -> d.getDocumento().getTipoDocumento().getPossuiFoto()).map(m -> m.getDocumento().getTipoDocumento().getDescricao()).collect(Collectors.toList());
+ 
+        boolean anyMatch = docsObrigatoriosComFoto.stream().anyMatch(e -> docsDoVisitanteComFoto.contains(e));
+        
+        if (!anyMatch) {
+        	documentosDescricao.add("Adicione pelo menos um dos seguintes documentos: " + String.join(", ", docsObrigatoriosComFoto));
+        }
     	
-    	documentosObrigatorios.stream().forEach(d -> {
+    	//Docs sem Foto
+        List<String> docs = new ArrayList<String>();
+        
+    	documentosObrigatorios.stream().filter(d -> !d.getTipoDocumento().getPossuiFoto()).forEach(d -> {
     		Optional<VisitanteDocumento> optVisitanteDoc = null;
     		
     		switch (d.getTipoObrigatoriedade()) {
 				case EMANCIPADO:
 					if (visitante.getEmancipado() != null && visitante.getEmancipado().equals(SimNao.S)) {
-						optVisitanteDoc = documentosDoVisitante.stream().filter(v -> v.getDocumento().getTipoDocumento().equals(d.getTipoDocumento())).findFirst();
+						optVisitanteDoc = documentosDoVisitante.stream().filter(v -> v.getDocumento().getTipoDocumento().equals(d.getTipoDocumento()) && 
+												!v.getDocumento().getTipoDocumento().getPossuiFoto()).findFirst();
 					}
 					break;
 				case MAIOR_IDADE:
 					if (!visitante.getPessoa().getMenorIdade()) {
-						optVisitanteDoc = documentosDoVisitante.stream().filter(v -> v.getDocumento().getTipoDocumento().equals(d.getTipoDocumento())).findFirst();
+						optVisitanteDoc = documentosDoVisitante.stream().filter(v -> v.getDocumento().getTipoDocumento().equals(d.getTipoDocumento()) && 
+								!v.getDocumento().getTipoDocumento().getPossuiFoto()).findFirst();
 					}
 					break;
 				case MENOR_IDADE:
 					if (visitante.getPessoa().getMenorIdade()) {
-						optVisitanteDoc = documentosDoVisitante.stream().filter(v -> v.getDocumento().getTipoDocumento().equals(d.getTipoDocumento())).findFirst();
+						optVisitanteDoc = documentosDoVisitante.stream().filter(v -> v.getDocumento().getTipoDocumento().equals(d.getTipoDocumento()) && 
+								!v.getDocumento().getTipoDocumento().getPossuiFoto()).findFirst();
 					}
 					break;
 				case TODOS:
-					optVisitanteDoc = documentosDoVisitante.stream().filter(v -> v.getDocumento().getTipoDocumento().equals(d.getTipoDocumento())).findFirst();
+					optVisitanteDoc = documentosDoVisitante.stream().filter(v -> v.getDocumento().getTipoDocumento().equals(d.getTipoDocumento()) && 
+							!v.getDocumento().getTipoDocumento().getPossuiFoto()).findFirst();
 					break;
     		}
     		
 			if (optVisitanteDoc != null && !optVisitanteDoc.isPresent()) {
-				documentosDescricao.add(d.getTipoDocumento().getDescricao());
+				docs.add(d.getTipoDocumento().getDescricao());
 			}
     	});
+    	
+    	if (docs.size() > 0) {
+    		documentosDescricao.add("Adicione o(s) seguinte(s) documento(s): " + String.join(", ", docs));
+    	}
     	
     	return documentosDescricao.size() > 0;
     }

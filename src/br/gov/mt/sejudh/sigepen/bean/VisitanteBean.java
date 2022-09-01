@@ -932,7 +932,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
         if (event.getOldStep().equals("tabDocumentos") && event.getNewStep().equals("tabDados")) {
         	if(this.visitante.getId() != null)
         		this.visitante = this.service.buscarPorId(this.visitante.getId());
-        	this.clickVoltar = true;
+        	//this.clickVoltar = true;
         }
         if (event.getOldStep().equals("tabDados") && event.getNewStep().isEmpty()) {
             if (PrettyContext.getCurrentInstance().getCurrentMapping().getId().equals(mappingPessoa)) {

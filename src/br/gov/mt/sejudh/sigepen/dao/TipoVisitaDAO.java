@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.Query;
 
 import org.hibernate.Hibernate;
 
@@ -26,4 +27,13 @@ public class TipoVisitaDAO extends BaseDAO<TipoVisita, Long> {
         Hibernate.initialize(tipoVisita.getTipoVisitaCertidao());
         return tipoVisita;
     }
+
+	public boolean tipoVisitaEstaVinculada(TipoVisita tipoVisita) {
+		Query query = em.createQuery("select count(c) from Credenciamento c, TipoVisita t "
+				+ "where c.tipoVisita.id = t.id "
+				+ "and c.id = :id ");
+		query.setParameter("id", tipoVisita.getId());
+		long resultado = (Long) query.getSingleResult();
+		return (resultado > 0);
+	}
 }
