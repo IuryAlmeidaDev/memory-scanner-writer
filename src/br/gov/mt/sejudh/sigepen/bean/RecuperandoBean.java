@@ -46,7 +46,6 @@ import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.enumerator.BiometriaTipoDedo;
 import br.gov.mt.sejudh.sigepen.enumerator.OrientacaoParticularidade;
 import br.gov.mt.sejudh.sigepen.enumerator.RegiaoParticularidade;
-import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
@@ -1387,16 +1386,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	public void incluirParente() {
 		
 		try {
-			Calendar c = Calendar.getInstance();
-			c.add(Calendar.MONTH, 4);
-			c.set(Calendar.HOUR_OF_DAY, 00);
-			c.set(Calendar.SECOND, 00);
-			c.set(Calendar.MINUTE, 00);
-			c.set(Calendar.MILLISECOND, 00);
-
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	
-			if (service.habilitaAlteracaoParente(this.recuperando) || service.habilitaAdicionarParente(this.recuperando)) {
+			if (service.habilitaAlteracaoParente(this.recuperando)) {
 
 				if (this.parente != null) {
 					if (this.parenteAux == null) {
@@ -1444,6 +1434,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					RequestContext.getCurrentInstance().update("tabView:formParente:parentes");
 				}
 			} else {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 				throw new ValidacaoException("Alterações só serão permitidas a partir de " + sdf.format(this.recuperando.getAlteracaoParentes()));
 			}
 		} catch (ValidacaoException e) {
@@ -1691,10 +1682,6 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public boolean alterarParentes() {
 		return service.habilitaAlteracaoParente(this.recuperando);
-	}
-
-	public boolean adicionarParentes() {
-		return service.habilitaAdicionarParente(this.recuperando);
 	}
 
 	public Foto getFotoDoFormulario() {

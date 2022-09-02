@@ -1350,7 +1350,7 @@
 				<p:panel header="Parentes">
 							
 					<p:commandButton title="Adicionar" icon="ui-icon-plus" value="Adicionar" action="#{recuperandoBean.adicionarParente()}" oncomplete="PF('novoParente').show()"  update=":formParente" process="@this" 
-						rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and (recuperandoBean.alterarParentes() or recuperandoBean.adicionarParentes())}" />
+						rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}" />
 					
 					<sgp:formOutputLabel labelValue="Data da próxima alteração" value="#{recuperandoBean.recuperando.alteracaoParentes}" converterData="true"/>	
 					
@@ -1377,9 +1377,9 @@
 						<p:column width="90">
 							<center>
 								<p:commandButton title="Alterar Parente" icon="ui-icon-pencil" action="#{recuperandoBean.alterarParente(parente)}" oncomplete="PF('novoParente').show()"  update=":formParente" process="@this" 
-									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and (recuperandoBean.alterarParentes() or recuperandoBean.adicionarParentes())}"/>							
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}"/>							
 								<p:commandButton action="#{recuperandoBean.excluirParente(parente)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":tabView:formParente:parentes :mensagens"
-									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and (recuperandoBean.alterarParentes() or recuperandoBean.adicionarParentes())}">
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}">
 							 		<p:confirm header="Confirmação" message="Deseja excluir este Parente?" icon="ui-icon-alert" />
 								</p:commandButton>							
 							</center>
@@ -1542,7 +1542,7 @@
 					<br/>	
 					<br/>			
 				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" action="#{recuperandoBean.incluirParente()}" 
-					rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and (recuperandoBean.alterarParentes() or recuperandoBean.adicionarParentes())}"/>
+					rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}"/>
 			 		
 				<p:commandButton value="Fechar" onclick="PF('novoParente').hide()" process="@this"/>
 				
