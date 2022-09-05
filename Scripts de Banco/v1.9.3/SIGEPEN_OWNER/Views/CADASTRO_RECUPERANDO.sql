@@ -33,7 +33,7 @@ SELECT X."ID",X."TEM_TATUAGEM",X."STATUS",X."TEM_FOTO_TATUAGEM",X."TEM_FOTO_FREN
            AND RR.PROFISSAO IS NOT NULL
            AND RR.RELIGIAO_ID IS NOT NULL
            AND (RR.PNE = 0 OR (RR.PNE > 0 AND RR.RECEBE_BENEFICIO IS NOT NULL))
-           AND ((trunc((trunc(sysdate) - PE.DATA_NASCIMENTO) / 365) >= 60 AND RR.APOSENTADO IS NOT NULL) OR (trunc((trunc(sysdate) - PE.DATA_NASCIMENTO) / 365) < 60 ))
+           AND ((floor((trunc(sysdate) - PE.DATA_NASCIMENTO) / 365.25) >= 60 AND RR.APOSENTADO IS NOT NULL) OR (floor((trunc(sysdate) - PE.DATA_NASCIMENTO) / 365.25) < 60 ))
            AND (
            (PE.SEXO = 'M') OR (PE.SEXO = 'F'
            AND (RR.GESTANTE = 0 OR (RR.GESTANTE = 1 AND RR.INICIO_GESTACAO IS NOT NULL ))
