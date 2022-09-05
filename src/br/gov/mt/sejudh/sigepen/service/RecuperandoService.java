@@ -398,19 +398,9 @@ public class RecuperandoService {
 		}
 		
 		Calendar cHoje = Calendar.getInstance();
-		Date hoje = cHoje.getTime();
-		
-		if (recuperando.getAlteracaoParentes().before(hoje) || recuperando.getAlteracaoParentes().equals(hoje)) {
-			return true;
-		}
-
 		Calendar dataAlteracao = Calendar.getInstance();
 		dataAlteracao.setTime(recuperando.getAlteracaoParentes());
-		dataAlteracao.add(Calendar.MONTH, -4);
-		
-		System.out.println(dataAlteracao.getTime().toLocaleString());
-		System.out.println(cHoje.getTime().toLocaleString());
-		
+
 		if (dataAlteracao.compareTo(cHoje) == 0 || dataAlteracao.compareTo(cHoje) < 0) {
 			return true;
 		}
