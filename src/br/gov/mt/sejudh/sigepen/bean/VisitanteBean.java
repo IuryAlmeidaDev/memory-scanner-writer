@@ -879,7 +879,9 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			if(this.visitante != null && this.visitante.getPessoa() != null && this.visitante.getPessoa().getBiometria() != null && this.visitante.getPessoa().getId() > 0) {
 				bioService.salvarBiometriaNServer(this.visitante.getPessoa());
 				this.pessoaService.salvarPessoaVisitante(this.visitante.getPessoa());
-				buscarVisitante(this.visitante.getId());
+				
+				if (this.visitante.getId() != null)
+					buscarVisitante(this.visitante.getId());
 			} 
 			
 			facesUtil.exibirMensagemInfo("Biometria capturada!", false);

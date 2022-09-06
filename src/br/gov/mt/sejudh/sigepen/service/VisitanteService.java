@@ -262,7 +262,7 @@ public class VisitanteService extends BaseService<Visitante, Long> {
         LocalDate dataAtual = LocalDate.now();
         LocalDate dataSaida = paramDataSaida.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         Period intervalo = Period.between(dataSaida, dataAtual);
-        int meses = intervalo.getMonths();
+        long meses = intervalo.toTotalMonths();
 
         if (meses < 6) {
             return true;
