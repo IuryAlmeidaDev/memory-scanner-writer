@@ -940,6 +940,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
                 return event.getOldStep();
             }
             this.voltarCadastroTipoVisita();
+            RequestContext.getCurrentInstance().update("panelTipoVisita");
             return event.getOldStep();
         }
 

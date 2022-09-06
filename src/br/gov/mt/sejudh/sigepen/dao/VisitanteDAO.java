@@ -210,31 +210,35 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 		String update = "SELECT v.id FROM Visitante v where v.responsavel.id = :id";
 		Query query = em.createQuery(update);
         query.setParameter("id", visitanteResponsavel.getId());
-        List<Long> idsVisitantes = query.getResultList();
+		List<Long> idsVisitantes = query.getResultList();
         
-        update = "SELECT c.id FROM Credenciamento c WHERE c.visitante.id IN :ids";
-		query = em.createQuery(update);
-        query.setParameter("ids", idsVisitantes);
-        List<Long> idsCredenciamentos = query.getResultList();
-        
-        update = "UPDATE Visitante v SET v.status = :inativo WHERE v.id in :ids";        
-        query = em.createQuery(update);
-        query.setParameter("inativo", StatusVisitante.I);
-        query.setParameter("ids", idsVisitantes);        
-        query.executeUpdate();
-        
-        update = "UPDATE Credenciamento c SET c.statusCredenciamento = :inativo WHERE c.id in :ids";
-        query = em.createQuery(update);
-        query.setParameter("inativo", StatusCredenciamento.INATIVO.getId());
-        query.setParameter("ids", idsCredenciamentos);
-        query.executeUpdate();
-        
-        update = "UPDATE FaseDoCredenciamento f SET f.statusCredenciamento = :inativo WHERE f.faseCredenciamento = :fase AND f.credenciamento.id in :creds";
-        query = em.createQuery(update);
-        query.setParameter("inativo", StatusCredenciamento.INATIVO);
-        query.setParameter("fase", FaseCredenciamento.APROVACAO);
-        query.setParameter("creds", idsCredenciamentos);
-        query.executeUpdate();
+		if (idsVisitantes != null && idsVisitantes.size() > 0) {
+	        update = "SELECT c.id FROM Credenciamento c WHERE c.visitante.id IN :ids";
+			query = em.createQuery(update);
+	        query.setParameter("ids", idsVisitantes);
+	        List<Long> idsCredenciamentos = query.getResultList();
+	        
+	        if (idsCredenciamentos != null && idsCredenciamentos.size() > 0) {
+		        update = "UPDATE Visitante v SET v.status = :inativo WHERE v.id in :ids";        
+		        query = em.createQuery(update);
+		        query.setParameter("inativo", StatusVisitante.I);
+		        query.setParameter("ids", idsVisitantes);        
+		        query.executeUpdate();
+		        
+		        update = "UPDATE Credenciamento c SET c.statusCredenciamento = :inativo WHERE c.id in :ids";
+		        query = em.createQuery(update);
+		        query.setParameter("inativo", StatusCredenciamento.INATIVO.getId());
+		        query.setParameter("ids", idsCredenciamentos);
+		        query.executeUpdate();
+		        
+		        update = "UPDATE FaseDoCredenciamento f SET f.statusCredenciamento = :inativo WHERE f.faseCredenciamento = :fase AND f.credenciamento.id in :creds";
+		        query = em.createQuery(update);
+		        query.setParameter("inativo", StatusCredenciamento.INATIVO);
+		        query.setParameter("fase", FaseCredenciamento.APROVACAO);
+		        query.setParameter("creds", idsCredenciamentos);
+		        query.executeUpdate();
+	        }
+		}
 	}
 	
 	public Visitante removeDocumentosDuplicados(Visitante visitante) throws ValidacaoException {
