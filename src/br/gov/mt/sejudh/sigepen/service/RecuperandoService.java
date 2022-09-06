@@ -399,9 +399,19 @@ public class RecuperandoService {
 		
 		Calendar cHoje = Calendar.getInstance();
 		Calendar dataAlteracao = Calendar.getInstance();
+		Calendar dataAlteracaoFoiHoje = Calendar.getInstance();
+		
+		cHoje.set(Calendar.HOUR_OF_DAY, 0);
+		cHoje.set(Calendar.MINUTE, 0);
+		cHoje.set(Calendar.SECOND, 0);
+		cHoje.set(Calendar.MILLISECOND, 0);
+		
 		dataAlteracao.setTime(recuperando.getAlteracaoParentes());
+		dataAlteracaoFoiHoje.setTime(recuperando.getAlteracaoParentes());
+		dataAlteracaoFoiHoje.add(Calendar.MONTH, -4);
 
-		if (dataAlteracao.compareTo(cHoje) == 0 || dataAlteracao.compareTo(cHoje) < 0) {
+		if (dataAlteracao.compareTo(cHoje) == 0 || dataAlteracao.compareTo(cHoje) < 0 || 
+				dataAlteracaoFoiHoje.compareTo(cHoje) == 0) {
 			return true;
 		}
 		

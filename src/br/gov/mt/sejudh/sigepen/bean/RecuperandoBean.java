@@ -1431,7 +1431,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					}
 					this.recuperando = service.buscarRecuperandoPorId(recuperando.getId(), false);
 					RequestContext.getCurrentInstance().execute("PF('novoParente').hide()");
-					RequestContext.getCurrentInstance().update("tabView:formParente:parentes");
+					RequestContext.getCurrentInstance().update("tabView:formParente");
 				}
 			} else {
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
