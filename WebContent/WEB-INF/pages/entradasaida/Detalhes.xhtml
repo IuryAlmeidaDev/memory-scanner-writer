@@ -664,12 +664,6 @@
 						rendered="#{entradaSaidaBean.acao == 'FINALIZAR'}"
 						actionListener="#{entradaSaidaBean.finalizacaoVisita}"
 						 />
-
-					<p:commandButton value="#{entradaSaidaBean.autorizacoesVisita}" process="@this" id="btnAutorizacaoEntradaSaida"
-						icon="ui-icon-bio" action="${entradaSaidaBean.abrirDlgAutorizar}" update=":formAutCadBio"
-						style="width: 300px;"
-						rendered="#{entradaSaidaBean.mostrarAutorizar}">
-					</p:commandButton>
 					
 					<p:commandButton value="Validação Biométrica" id="btnValidacaoBio" styleClass="botaoBiometrico" onclick="capturar(); return false;" icon="ui-icon-bio" rendered="#{false}"/>
 					<p:remoteCommand name="retornoBiometria" actionListener="#{entradaSaidaBean.retornoOperacaoBiometrica()}" />

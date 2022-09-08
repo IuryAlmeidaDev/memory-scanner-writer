@@ -135,8 +135,6 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	
 	private String autorizarSemBiometria;
 	
-	private Boolean mostrarAutorizar = false;
-	
 	@Inject
     private SecurityUtil securityUtil;
 
@@ -641,7 +639,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 			} else if(!this.pesquisaBiometrica && this.usuarioPossuiLeitorBiometricoAtivo && this.entrada.getVisitante().getPessoa().getBiometria() != null && this.entrada.getVisitante().getPessoa().getBiometria().getTemplate() != null) {
 				RequestContext.getCurrentInstance().execute("capturar();");
 			} else {
-				this.abrirDlgAutorizar();
+				this.abrirDlgAutorizar(Acao.INICIAR);
 			}
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
@@ -654,7 +652,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		} else if(!this.pesquisaBiometrica && this.usuarioPossuiLeitorBiometricoAtivo && this.entrada.getVisitante().getPessoa().getBiometria() != null && this.entrada.getVisitante().getPessoa().getBiometria().getTemplate() != null) {
 			RequestContext.getCurrentInstance().execute("capturar();");
 		} else {
-			this.abrirDlgAutorizar();
+			this.abrirDlgAutorizar(Acao.FINALIZAR);
 		}
 	}
 	
@@ -875,36 +873,6 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	public void fecharDialogMotivoEntradaSaida() {
 		RequestContext.getCurrentInstance().execute("PF('dlgMotivoObs').hide()");
 		validaExibicaoMotivo();
-	}
-	
-	public void visualizar(EntradaSaida e) {
-		LoggerUtil.logInfo(Acao.VISUALIZAR, e, log);
-        List<Long> ids = new ArrayList<Long>();
-        ids.add(e.getVisitante().getPessoa().getId());
-        this.visualizacao = true;
-        this.pesquisaBiometrica = false;
-        this.mostrarAutorizar = false;
-	}
-
-	public void alterar(EntradaSaida e) {
-		LoggerUtil.logInfo(Acao.ALTERAR, e, log);
-        List<Long> ids = new ArrayList<Long>();
-        ids.add(e.getVisitante().getPessoa().getId());
-        this.visualizacao = false;
-        this.pesquisaBiometrica = false;
-        this.mostrarAutorizar = false;
-	}
-
-	public void detalhes(EntradaSaida e) {
-		LoggerUtil.logInfo(Acao.VISUALIZAR, e, log);
-        List<Long> ids = new ArrayList<Long>();
-        ids.add(e.getVisitante().getPessoa().getId());
-        this.visualizacao = false;
-        this.pesquisaBiometrica = false;
-        this.mostrarAutorizar = true;
-	}
-
-	public void cancelar(Visitante e) {
 	}
 	
 	public boolean isVisualizacao() {
@@ -1133,20 +1101,12 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		this.autorizarSemBiometria = autorizarSemBiometria;
 	}
 
-	public Boolean getMostrarAutorizar() {
-		return false;
-	}
-
-	public void setMostrarAutorizar(Boolean mostrarAutorizar) {
-		this.mostrarAutorizar = mostrarAutorizar;
-	}
-
-	public void abrirDlgAutorizar() {
-		if(this.entrada.getAutorizacaoValidacaoSemBiometria() == null && !securityUtil.possuiPermissao("AutorizarEntradaVisitanteSemBiometria")) {
+	public void abrirDlgAutorizar(Acao acao) {
+		if(acao.equals(Acao.INICIAR) && this.entrada.getAutorizacaoValidacaoSemBiometria().stream().filter(a -> a.getTipoAutorizacaoValidacaoSemBio().equals(TipoAutorizacaoValidacaoSemBio.ENTRADA_VISITANTE)).count() == 0  && !securityUtil.possuiPermissao("AutorizarEntradaVisitanteSemBiometria")) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Entrada não permitida! Usuário não autorizado para efetuar entrada!");
 			return;
 		}
-		if(this.entrada.getAutorizacaoValidacaoSemBiometria() == null && !securityUtil.possuiPermissao("AutorizarSaidaVisitanteSemBiomatria")) {
+		if(acao.equals(Acao.FINALIZAR) && this.entrada.getAutorizacaoValidacaoSemBiometria().stream().filter(a -> a.getTipoAutorizacaoValidacaoSemBio().equals(TipoAutorizacaoValidacaoSemBio.SAIDA_VISITANTE)).count() == 0 && !securityUtil.possuiPermissao("AutorizarSaidaVisitanteSemBiomatria")) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Saída não permitida! Usuário não autorizado para efetuar saída!");
 			return;
 		}
@@ -1259,10 +1219,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		        	this.mostrarPanelResponsavel = true;		        	
 		        }
   			 
-    			this.mostrarPanelVisitante = true;
-    			
-    			this.mostrarAutorizar = "FINALIZAR".equals(this.acao) || (!this.pesquisaBiometrica && this.entrada.getDataSaida() == null);
-    			
+    			this.mostrarPanelVisitante = true;    			
     			this.innerSelecaoStatusVisita();
     		} catch (Exception e) {
     			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Erro ao pesquisar por biometria: " + e.getMessage());
@@ -1311,8 +1268,6 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
         }
 		 
 		this.mostrarPanelVisitante = true;
-		
-		this.mostrarAutorizar = "FINALIZAR".equals(this.acao) || (!this.pesquisaBiometrica && this.entrada.getDataSaida() == null);
 	}
 	
 	public void buttonIniciarVisita(Long id) {
