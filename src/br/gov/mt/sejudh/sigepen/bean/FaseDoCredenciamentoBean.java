@@ -303,6 +303,13 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
     }
 
     private void isVerificaPermissaoEtapaCredenciamento() throws ValidacaoException {
+    	if (getAcaoDeTela().equals(AcaoDeTela.VISUALIZAR)) {
+    		if (!SecurityUtils.getSubject().isPermitted("VisualizarFasesCredenciamento"))
+    			throw new ValidacaoException("Usuário sem permissão para visualizar fases.");
+    		else
+    			return;
+    	}
+    	
         boolean permitted = SecurityUtils.getSubject().isPermitted(this.faseDoCredenciamento.getFaseCredenciamento().getPermissao());
         if (!permitted) {
             throw new ValidacaoException("Usuário sem permissão de acesso a etapa de ".
