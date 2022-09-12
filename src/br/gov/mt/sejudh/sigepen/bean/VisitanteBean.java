@@ -751,7 +751,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 		for(Credenciamento x : this.visitante.getCredenciamentos()) {
 			if(x.getId() != null && x.getTipoVisita().getTipoEntrada().getId().equals(this.tipoVisita.getTipoEntrada().getId()) && x.getRecuperando() != null && this.recuperandoSelecionado != null && x.getRecuperando().getId() == this.recuperandoSelecionado.getId()
-					&& !StatusCredenciamento.INATIVO.getId().equals(x.getStatusCredenciamento())) {
+					&& !StatusCredenciamento.INATIVO.getId().equals(x.getStatusCredenciamento()) && 
+					!StatusCredenciamento.NAO_APROVADO.getId().equals(x.getStatusCredenciamento())) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Visitante já credenciado ao recuperando selecionado!" );
 				return;
 			}
