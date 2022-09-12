@@ -49,12 +49,12 @@ public class DashboardBean {
 	private Long temporariosNoSistemaVencido;
 	private Long temporariosNoSistemaVenceHoje;
 	
-	private List<Long> listaTemporariosNaUnidadeAVencer;
-	private List<Long> listaTemporariosNaUnidadeVencido;
-	private List<Long> listaTemporariosNaUnidadeVenceHoje;
-	private List<Long> listaTemporariosNoSistemaAVencer;
-	private List<Long> listaTemporariosNoSistemaVencido;
-	private List<Long> listaTemporariosNoSistemaVenceHoje;
+	private List<Long> listaTemporariosNaUnidadeAVencer = new ArrayList<Long>();
+	private List<Long> listaTemporariosNaUnidadeVencido = new ArrayList<Long>();
+	private List<Long> listaTemporariosNaUnidadeVenceHoje = new ArrayList<Long>();
+	private List<Long> listaTemporariosNoSistemaAVencer = new ArrayList<Long>();
+	private List<Long> listaTemporariosNoSistemaVencido = new ArrayList<Long>();
+	private List<Long> listaTemporariosNoSistemaVenceHoje = new ArrayList<Long>();
 	
 	private Long solicitacaoVisitaPendente;
 	private Long totalCredenciamentoRecebimentoPendente;
