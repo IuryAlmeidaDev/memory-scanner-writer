@@ -397,21 +397,25 @@ public class RecuperandoService {
 			return true;
 		}
 		
-		Calendar cHoje = Calendar.getInstance();
+		Calendar dataAtual = Calendar.getInstance();
+		Calendar dataAlteracaoRecuperando = Calendar.getInstance();
 		Calendar dataAlteracao = Calendar.getInstance();
-		Calendar dataAlteracaoFoiHoje = Calendar.getInstance();
+		Calendar dataAlteracao72Horas = Calendar.getInstance();
 		
-		cHoje.set(Calendar.HOUR_OF_DAY, 0);
-		cHoje.set(Calendar.MINUTE, 0);
-		cHoje.set(Calendar.SECOND, 0);
-		cHoje.set(Calendar.MILLISECOND, 0);
-		
-		dataAlteracao.setTime(recuperando.getAlteracaoParentes());
-		dataAlteracaoFoiHoje.setTime(recuperando.getAlteracaoParentes());
-		dataAlteracaoFoiHoje.add(Calendar.MONTH, -4);
+		dataAtual.set(Calendar.HOUR_OF_DAY, 0);
+		dataAtual.set(Calendar.MINUTE, 0);
+		dataAtual.set(Calendar.SECOND, 0);
+		dataAtual.set(Calendar.MILLISECOND, 0);
 
-		if (dataAlteracao.compareTo(cHoje) == 0 || dataAlteracao.compareTo(cHoje) < 0 || 
-				dataAlteracaoFoiHoje.compareTo(cHoje) == 0) {
+		dataAlteracaoRecuperando.setTime(recuperando.getAlteracaoParentes());
+		dataAlteracao.setTime(recuperando.getAlteracaoParentes());
+		dataAlteracao.add(Calendar.MONTH, -4);
+		
+		dataAlteracao72Horas.setTime(dataAlteracao.getTime());
+		dataAlteracao72Horas.add(Calendar.HOUR, 72);
+
+		if (dataAlteracaoRecuperando.compareTo(dataAtual) == 0 || dataAlteracaoRecuperando.compareTo(dataAtual) < 0 || 
+				dataAlteracao.compareTo(dataAtual) == 0 || dataAtual.compareTo(dataAlteracao72Horas) < 0 || dataAtual.compareTo(dataAlteracao72Horas) == 0) {
 			return true;
 		}
 		
