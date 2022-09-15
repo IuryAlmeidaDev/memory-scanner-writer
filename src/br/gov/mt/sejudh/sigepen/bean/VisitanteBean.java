@@ -609,7 +609,11 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
     public void selecionarTipoVisita() {
         this.credenciamentos.clear();
-        limparVisitante();
+        
+        if (!this.tornarVisitante && (this.visitante.getId() == null || this.visitante.getId() == 0)) { 
+        	limparVisitante();
+        }
+        
         this.credenciamentoAtual = null;
         this.recuperandoSelecionado = null;
     }
@@ -628,7 +632,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
     }
 
 	public void selecionarRecuperando(Parente parente, boolean isRenovacao) {
-		if(parente != null && AcaoDeTela.CADASTRAR.equals(this.getAcaoDeTela()) && this.visitante.getId() == null) {
+		if(parente != null && AcaoDeTela.CADASTRAR.equals(this.getAcaoDeTela()) && this.visitante.getId() == null && !this.tornarVisitante) {
 			 this.visitante.setCredenciamentos(new ArrayList<>());
 			 this.visitante.getPessoa().setNome(parente.getNome());
 			 this.visitante.getPessoa().setDataNascimento(parente.getDataNascimento());
