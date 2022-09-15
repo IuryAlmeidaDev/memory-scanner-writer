@@ -68,7 +68,7 @@
 	 </target>	
 
 	<target name="compilar" depends="limpar, replace">
-		<javac destdir="${build.dir}/${classes.dir}" srcdir="src" includeantruntime="false">
+		<javac destdir="${build.dir}/${classes.dir}" srcdir="src" includeantruntime="false" debug="true" >
 				<classpath refid="compilar.classpath" />
 			</javac>
 			
@@ -181,6 +181,10 @@
 		<property name="userDsn" value="UID=sigepen_user_tes;" />
 		<property name="passDsn" value="PWD=sigepentes;" />
 		<property name="dsn" value="DSN=TESTE;" />
+		
+		<propertyfile file="${basedir}/WebContent/resources/versao.properties">
+			<entry key="build" default="0" type="int" operation="+"/>
+		</propertyfile>
 	</target>
 	
 	<target name="-replace-homologacao" if="isHomologacao">

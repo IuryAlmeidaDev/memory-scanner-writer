@@ -14,7 +14,7 @@
 	<h:outputStylesheet value="/resources/css/bootstrap.css.map" />
 	<h:outputStylesheet value="/resources/css/bootstrap-theme.css.map" />
 
-	<title>SIGEPEN - Sistema de Gestão Penitenciária do Estado de Mato Grosso</title>
+	<title>SIGEPEN - Sistema de Gestão Penitenciária do Estado de Mato Grosso [#{versionBean.versao}.#{versionBean.build}]</title>
 	<link rel="icon" type="image/png" href="#{resource['images/favicon.png']}"/>
 	
 	<ui:insert name="head" />
@@ -58,7 +58,7 @@
 					#{securityUtil.getNomeUsuario()}
 					<p:commandButton action="#{loginBean.logout()}" icon="fa fa-power-off" title="Sair"/>
 					<br/>
-					<p:clock pattern="dd/MM/yyyy - HH:mm:ss" mode="server"/>
+					<p:clock pattern="dd/MM/yyyy - HH:mm:ss" mode="server"/><b>v#{versionBean.versao}.#{versionBean.build}</b>
 				</div>
 			</div>
 		</div>

@@ -15,7 +15,7 @@
 	<h:outputStylesheet value="/resources/css/bootstrap-theme.css.map" />
 	<h:outputStylesheet library="css" name="bootstrap-theme.min.css" />
 
-	<title>SIGEPEN - Sistema de Gestão Penitenciária do Estado de Mato Grosso</title>
+	<title>SIGEPEN - Sistema de Gestão Penitenciária do Estado de Mato Grosso - [#{versionBean.versao}.#{versionBean.build}]</title>
 	<link rel="icon" type="image/png" href="#{resource['images/favicon.png']}"/>
 	
 	<style type="text/css">
@@ -66,6 +66,8 @@
 		                		SESP - Secretaria de Estado de Segurança Pública de Mato Grosso
 								<br/>
 		                		Desenvolvido pela STI - Superintendência de Tecnologia da Informação
+		                		<br/>
+		                		Versão: #{versionBean.versao}.#{versionBean.build}
 		                	</p>
 		                    
 		                </div>
