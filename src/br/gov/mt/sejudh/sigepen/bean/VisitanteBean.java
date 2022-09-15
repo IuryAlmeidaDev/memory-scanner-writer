@@ -359,7 +359,15 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
         logDeAcesso(log, this.visitante);
     }
-
+	private void limparVisitante() {
+		this.visitante = new Visitante();
+		this.visitante.setPessoa(new Pessoa());
+		this.visitante.getPessoa().setDocumentos(new ArrayList<>());
+		this.visitante.getPessoa().setEnderecos(new ArrayList<>());
+		this.visitante.getPessoa().setContatos(new ArrayList<>());
+		this.visitante.setCertidoes(new ArrayList<>());
+	}
+	
 	private void iniciarDadosCadastrar() {
 		VwVisitante visit = (VwVisitante) facesUtil.getObjetoSessao("tornarVisitante");
 		this.salvarFasesAuto = false;
@@ -368,12 +376,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		this.setTornarVisitante(false);
 		this.credenciamentos = new ArrayList<>();
 		if (visit == null) {
-			this.visitante = new Visitante();
-			this.visitante.setPessoa(new Pessoa());
-			this.visitante.getPessoa().setDocumentos(new ArrayList<>());
-			this.visitante.getPessoa().setEnderecos(new ArrayList<>());
-			this.visitante.getPessoa().setContatos(new ArrayList<>());
-			this.visitante.setCertidoes(new ArrayList<>());
+			limparVisitante();
 		} else {
 
 			this.visitante = this.buscarRecuperandoVisitante(visit.getPessoa());
@@ -605,9 +608,10 @@ public class VisitanteBean extends MetodosDePaginaBean {
     }
 
     public void selecionarTipoVisita() {
-        if (this.tipoVisita.getObrigatorioRecuperando() == SimNao.N) {
-            this.credenciamentos.clear();
-        }
+        this.credenciamentos.clear();
+        limparVisitante();
+        this.credenciamentoAtual = null;
+        this.recuperandoSelecionado = null;
     }
 
     public void selecionarEmancipado() {

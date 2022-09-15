@@ -1352,7 +1352,7 @@
 					<p:commandButton title="Adicionar" icon="ui-icon-plus" value="Adicionar" action="#{recuperandoBean.adicionarParente()}" oncomplete="PF('novoParente').show()"  update=":formParente" process="@this" 
 						rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and recuperandoBean.alterarParentes()}" />
 					
-					<sgp:formOutputLabel labelValue="Data da próxima alteração" value="#{recuperandoBean.recuperando.alteracaoParentes}" converterData="true"/>	
+					<sgp:formOutputLabel labelValue="Data da próxima alteração" value="#{recuperandoBean.recuperando.alteracaoParentes}" converterData="true" rendered="#{!recuperandoBean.alterarParentes()}"/>
 					
 					
 					<p:dataTable id="parentes" var="parente" emptyMessage="Nenhum parente adicionado." value="#{recuperandoBean.recuperando.parentes}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{parente.status.descricao}">
