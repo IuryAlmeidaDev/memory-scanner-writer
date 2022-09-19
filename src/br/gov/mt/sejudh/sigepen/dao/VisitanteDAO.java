@@ -383,10 +383,11 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 				" INNER JOIN " + Sigepen.SEJUDH_SCHEMA + ".PARENTE PR ON PR.ID = VR.ID_PARENTE " + 
 				" AND PR.PARENTESCO_ID = 5" + 
 				" AND VR.ID_RECUPERANDO = :recuperando" +
-				" AND VR.CODG_SITUACAO_CREDENCIAL <> " + StatusCredenciamento.INATIVO.getId();
+				" AND VR.CODG_SITUACAO_CREDENCIAL NOT IN :status";
 		
 		Query query = em.createNativeQuery(jpql);
 		query.setParameter("recuperando", _recuperando.getId());
+		query.setParameter("status", Arrays.asList(StatusCredenciamento.INATIVO.getId(), StatusCredenciamento.NAO_APROVADO.getId()));
 		Integer iRecuperando = Integer.parseInt(query.getSingleResult().toString());
 		
 		if(_visitante.getId() != null) {
@@ -394,10 +395,11 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 					" INNER JOIN " + Sigepen.SEJUDH_SCHEMA + ".PARENTE PR ON PR.ID = VR.ID_PARENTE " + 
 					" AND PR.PARENTESCO_ID = 5" + 
 					" AND VR.ID_VISITANTE = :visitante" +
-					" AND VR.CODG_SITUACAO_CREDENCIAL <> " + StatusCredenciamento.INATIVO.getId();
+					" AND VR.CODG_SITUACAO_CREDENCIAL NOT IN :status";
 			
 			query = em.createNativeQuery(jpql);
 			query.setParameter("visitante", _visitante.getId());
+			query.setParameter("status", Arrays.asList(StatusCredenciamento.INATIVO.getId(), StatusCredenciamento.NAO_APROVADO.getId()));
 			iVisitante = Integer.parseInt(query.getSingleResult().toString());
 		}
 		if(iRecuperando > 0)

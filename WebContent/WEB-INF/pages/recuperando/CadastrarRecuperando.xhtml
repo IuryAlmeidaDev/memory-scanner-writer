@@ -1354,7 +1354,7 @@
 					
 					<sgp:formOutputLabel labelValue="Data da próxima alteração" value="#{recuperandoBean.recuperando.alteracaoParentes}" converterData="true" rendered="#{!recuperandoBean.alterarParentes()}"/>
 					
-					
+					<br/>
 					<p:dataTable id="parentes" var="parente" emptyMessage="Nenhum parente adicionado." value="#{recuperandoBean.recuperando.parentes}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{parente.status.descricao}">
 						<p:column headerText="Nome Informado pelo Recuperando">
 							<h:outputText value="#{parente.nome}" />
