@@ -217,9 +217,23 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
         TipoVisita tv = tipoVisitaService.buscarPorId(this.credenciamento.getTipoVisita().getId());
         
         if (this.getAcaoDeTela() !=  AcaoDeTela.VISUALIZAR) {
-		    if (visitanteService.validarDocumentosObrigatorios(new ArrayList<String>(), tv, visitante) || 
-		    		visitanteService.validarCertidoesObrigatorias(new ArrayList<String>(), tv, visitante)) {
-		    	throw new ValidacaoException("Visitante com Documentos e/ou Certidões não fornecidas.");
+        	List<String> documentos = new ArrayList<String>();
+        	List<String> certidoes = new ArrayList<String>();
+        	
+		    if (visitanteService.validarDocumentosObrigatorios(documentos, tv, visitante) || 
+		    		visitanteService.validarCertidoesObrigatorias(certidoes, tv, visitante)) {
+		    	
+		    	String msg = "";
+		    	
+		    	if (documentos.size() > 0) {
+		    		msg = String.join(", ", documentos);
+		    	}
+		    	
+		    	if (certidoes.size() > 0) {
+		    		msg = String.join(", ", certidoes);
+		    	}
+		    	
+		    	throw new ValidacaoException(msg);
 		    }
         }
 

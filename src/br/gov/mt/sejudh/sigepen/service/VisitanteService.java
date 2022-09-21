@@ -417,6 +417,8 @@ public class VisitanteService extends BaseService<Visitante, Long> {
     	List<TipoVisitaCertidao> certidoesObrigatorias = tipoVisita.getTipoVisitaCertidao();
     	List<VisitanteCertidao> certidoesDoVisitante = visitante.getCertidoes();
     	
+    	List<String> certs = new ArrayList<String>();
+    	
     	certidoesObrigatorias.stream().forEach(d -> {
     		Optional<VisitanteCertidao> optVisitanteCert = null;
     		
@@ -441,10 +443,14 @@ public class VisitanteService extends BaseService<Visitante, Long> {
 					break;
     		}
     		
-			if (optVisitanteCert != null && !optVisitanteCert.isPresent() && certidoesDescricao != null) {
-				certidoesDescricao.add(d.getCertidao().getDescricao());
+			if (optVisitanteCert != null && !optVisitanteCert.isPresent()) {
+				certs.add(d.getCertidao().getDescricao());
 			}
     	});
+    	
+    	if (certs.size() > 0) {
+    		certidoesDescricao.add("Adicione a(s) seguinte(s) certidão(ões): " + String.join(", ", certs));
+    	}
     	
     	return certidoesDescricao.size() > 0;
     }
@@ -455,7 +461,7 @@ public class VisitanteService extends BaseService<Visitante, Long> {
     	List<VisitanteDocumento> documentosDoVisitante = visitante.getVisitanteDocumentos();
 
     	//Docs com Foto
-    	List<String> docsObrigatoriosComFoto = documentosObrigatorios.stream().filter(d -> d.getTipoDocumento().getPossuiFoto()).map(m -> m.getTipoDocumento().getDescricao()).collect(Collectors.toList());
+    	List<String> docsObrigatoriosComFoto = documentosObrigatorios.stream().filter(d -> d.getTipoDocumento().getPossuiFoto()).map(m -> m.getTipoDocumento().getDescricao()).distinct().collect(Collectors.toList());
         List<String> docsDoVisitanteComFoto = documentosDoVisitante.stream().filter(d -> d.getDocumento().getTipoDocumento().getPossuiFoto()).map(m -> m.getDocumento().getTipoDocumento().getDescricao()).collect(Collectors.toList());
  
         boolean anyMatch = docsObrigatoriosComFoto.stream().anyMatch(e -> docsDoVisitanteComFoto.contains(e));

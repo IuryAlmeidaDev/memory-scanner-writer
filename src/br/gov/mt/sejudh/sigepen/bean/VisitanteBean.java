@@ -834,6 +834,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
     public void voltarCadastroTipoVisita() {
         this.cadastroTipoVisita = true;
         this.cadastroDadosVisitante = false;
+        this.visitante.getCredenciamentos().remove(this.credenciamentoAtual);
     }
     
 	public void setUsuarioPossuiLeitorBiometricoAtivo() {
