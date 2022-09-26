@@ -136,12 +136,12 @@
 	</target>
 
 	<target name="-replace-treinamento" if="isTreinamento">
-		<property name="schema" value="SIGEPEN_USER_INT" />
-		<property name="schemaAudit" value="SIGEPEN_USER_INT" />
+		<property name="schema" value="SIGEPEN_OWNER_INT" />
+		<property name="schemaAudit" value="SIGEPEN_OWNER_INT" />
 		<property name="dataSource" value="java:/sigepen-int" />
 		<property name="nomeArquivo" value="sigepent" />
-		<property name="persistenceUnit" value="name=&quot;sigepent&quot;" />
-		<property name="jpaUtil" value="unitName = &quot;sigepent&quot;" />
+		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
+		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
 		<property name="portanserver" value="= 25452;" />
 	</target>
@@ -151,8 +151,8 @@
 		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER_TES" />
 		<property name="dataSource" value="java:/sigepen-teste" />
 		<property name="nomeArquivo" value="sigepenteste" />
-		<property name="persistenceUnit" value="name=&quot;sigepenteste&quot;" />
-		<property name="jpaUtil" value="unitName = &quot;sigepenteste&quot;" />
+		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
+		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
 		<property name="portanserver" value="= 25453;" />
 	</target>
@@ -162,8 +162,8 @@
 		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER" />
 		<property name="dataSource" value="java:/sigepen-hom" />
 		<property name="nomeArquivo" value="sigepenh" />
-		<property name="persistenceUnit" value="name=&quot;sigepenh&quot;" />
-		<property name="jpaUtil" value="unitName = &quot;sigepenh&quot;" />
+		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
+		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
 		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
 		<property name="portanserver" value="= 25452;" />
 	</target>

@@ -159,8 +159,8 @@
 	</target>
 	
 	<target name="-replace-treinamento" if="isTreinamento">
-		<property name="schema" value="SIGEPEN_USER_INT" />
-		<property name="schemaAudit" value="SIGEPEN_USER_INT" />
+		<property name="schema" value="SIGEPEN_OWNER_INT" />
+		<property name="schemaAudit" value="SIGEPEN_OWNER_INT" />
 		<property name="dataSource" value="java:/sigepen-int" />
 		<property name="nomeArquivo" value="sigepent" />
 		<property name="persistenceUnit" value="name=&quot;sigepent&quot;" />

@@ -374,10 +374,12 @@ public class RecuperandoDAO {
 			jpql.append("and l.dataSaida is null ");
 			jpql.append("and l.estrutura.id = e.id ");
 			jpql.append("and e.unidadePrisional.id = u.id ");
+		    jpql.append("order by l.id desc ");
 			
 			TypedQuery<Estrutura> query = em.createQuery(jpql.toString(), Estrutura.class);
 			query.setParameter("idRecuperando", recuperando.getId());
-			return query.getSingleResult();
+
+			return query.getResultList().get(0);
 		} catch (NoResultException e) {
 			return null;
 		}
