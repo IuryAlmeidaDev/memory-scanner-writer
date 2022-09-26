@@ -359,7 +359,15 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
         logDeAcesso(log, this.visitante);
     }
-
+	private void limparVisitante() {
+		this.visitante = new Visitante();
+		this.visitante.setPessoa(new Pessoa());
+		this.visitante.getPessoa().setDocumentos(new ArrayList<>());
+		this.visitante.getPessoa().setEnderecos(new ArrayList<>());
+		this.visitante.getPessoa().setContatos(new ArrayList<>());
+		this.visitante.setCertidoes(new ArrayList<>());
+	}
+	
 	private void iniciarDadosCadastrar() {
 		VwVisitante visit = (VwVisitante) facesUtil.getObjetoSessao("tornarVisitante");
 		this.salvarFasesAuto = false;
@@ -368,12 +376,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		this.setTornarVisitante(false);
 		this.credenciamentos = new ArrayList<>();
 		if (visit == null) {
-			this.visitante = new Visitante();
-			this.visitante.setPessoa(new Pessoa());
-			this.visitante.getPessoa().setDocumentos(new ArrayList<>());
-			this.visitante.getPessoa().setEnderecos(new ArrayList<>());
-			this.visitante.getPessoa().setContatos(new ArrayList<>());
-			this.visitante.setCertidoes(new ArrayList<>());
+			limparVisitante();
 		} else {
 
 			this.visitante = this.buscarRecuperandoVisitante(visit.getPessoa());
@@ -605,9 +608,14 @@ public class VisitanteBean extends MetodosDePaginaBean {
     }
 
     public void selecionarTipoVisita() {
-        if (this.tipoVisita.getObrigatorioRecuperando() == SimNao.N) {
-            this.credenciamentos.clear();
+        this.credenciamentos.clear();
+        
+        if (!this.tornarVisitante && (this.visitante.getId() == null || this.visitante.getId() == 0)) { 
+        	limparVisitante();
         }
+        
+        this.credenciamentoAtual = null;
+        this.recuperandoSelecionado = null;
     }
 
     public void selecionarEmancipado() {
@@ -624,7 +632,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
     }
 
 	public void selecionarRecuperando(Parente parente, boolean isRenovacao) {
-		if(parente != null && AcaoDeTela.CADASTRAR.equals(this.getAcaoDeTela()) && this.visitante.getId() == null) {
+		if(parente != null && AcaoDeTela.CADASTRAR.equals(this.getAcaoDeTela()) && this.visitante.getId() == null && !this.tornarVisitante) {
 			 this.visitante.setCredenciamentos(new ArrayList<>());
 			 this.visitante.getPessoa().setNome(parente.getNome());
 			 this.visitante.getPessoa().setDataNascimento(parente.getDataNascimento());
@@ -751,7 +759,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 		for(Credenciamento x : this.visitante.getCredenciamentos()) {
 			if(x.getId() != null && x.getTipoVisita().getTipoEntrada().getId().equals(this.tipoVisita.getTipoEntrada().getId()) && x.getRecuperando() != null && this.recuperandoSelecionado != null && x.getRecuperando().getId() == this.recuperandoSelecionado.getId()
-					&& !StatusCredenciamento.INATIVO.getId().equals(x.getStatusCredenciamento())) {
+					&& !StatusCredenciamento.INATIVO.getId().equals(x.getStatusCredenciamento()) && 
+					!StatusCredenciamento.NAO_APROVADO.getId().equals(x.getStatusCredenciamento())) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Visitante já credenciado ao recuperando selecionado!" );
 				return;
 			}
@@ -825,6 +834,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
     public void voltarCadastroTipoVisita() {
         this.cadastroTipoVisita = true;
         this.cadastroDadosVisitante = false;
+        this.visitante.getCredenciamentos().remove(this.credenciamentoAtual);
     }
     
 	public void setUsuarioPossuiLeitorBiometricoAtivo() {
@@ -879,7 +889,9 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			if(this.visitante != null && this.visitante.getPessoa() != null && this.visitante.getPessoa().getBiometria() != null && this.visitante.getPessoa().getId() > 0) {
 				bioService.salvarBiometriaNServer(this.visitante.getPessoa());
 				this.pessoaService.salvarPessoaVisitante(this.visitante.getPessoa());
-				buscarVisitante(this.visitante.getId());
+				
+				if (this.visitante.getId() != null)
+					buscarVisitante(this.visitante.getId());
 			} 
 			
 			facesUtil.exibirMensagemInfo("Biometria capturada!", false);
@@ -932,7 +944,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
         if (event.getOldStep().equals("tabDocumentos") && event.getNewStep().equals("tabDados")) {
         	if(this.visitante.getId() != null)
         		this.visitante = this.service.buscarPorId(this.visitante.getId());
-        	this.clickVoltar = true;
+        	//this.clickVoltar = true;
         }
         if (event.getOldStep().equals("tabDados") && event.getNewStep().isEmpty()) {
             if (PrettyContext.getCurrentInstance().getCurrentMapping().getId().equals(mappingPessoa)) {
@@ -940,6 +952,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
                 return event.getOldStep();
             }
             this.voltarCadastroTipoVisita();
+            RequestContext.getCurrentInstance().update("panelTipoVisita");
             return event.getOldStep();
         }
 

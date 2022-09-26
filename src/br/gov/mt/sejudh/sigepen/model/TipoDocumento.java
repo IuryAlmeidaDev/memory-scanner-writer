@@ -19,6 +19,9 @@ public class TipoDocumento implements Serializable{
 	@Column(name="ID")
 	private long id;
 	
+	@Column(name = "TEM_FOTO", nullable = false)
+	private Boolean possuiFoto;
+	
 	@Column(name="DESCRICAO", columnDefinition="NVARCHAR2")
 	private String descricao;
 	
@@ -47,6 +50,14 @@ public class TipoDocumento implements Serializable{
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Boolean getPossuiFoto() {
+		return possuiFoto;
+	}
+
+	public void setPossuiFoto(Boolean possuiFoto) {
+		this.possuiFoto = possuiFoto;
 	}
 
 	@Override

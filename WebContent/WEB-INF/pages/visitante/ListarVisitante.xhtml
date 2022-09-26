@@ -108,6 +108,7 @@
                 <p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{visitanteBean.imprimir()}"
                                  process="@this"/>
             </p:panel>
+            <br/>
         </h:form>
 
         <h:form id="registrosForm">
@@ -122,7 +123,7 @@
                          
                 <p:ajax event="rowDblselect" update="formVisitDetalhes" oncomplete="PF('visitDetalhes').show()" />
 
-                <p:column headerText="" width="70" style="text-align: center;">
+                <p:column headerText="" width="20" style="text-align: center;">
                     <h:panelGroup rendered="#{visitante.statusCor() eq 3}">
                         <h:outputLabel class="fa fa-exclamation-circle"
                                        style="color: red;"/>
@@ -169,7 +170,7 @@
                         </p:button>
 
                         <p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarVisitante"  disabled="#{visitanteBean.bloqueiaAlterarVisitante(visitante.status)}"
-                                  rendered="#{securityUtil.possuiPermissao('AlterarPessoaVisitante') or (securityUtil.possuiPermissao('AlterarVisitante') and ((visitante.credenciamentosAtivos eq 0 or visitante.statusCor() eq 1) or (visitante.faseAtual eq 5 and visitante.situacaoAtual eq 2)) and visitante.id > 0)}">
+                                  rendered="#{securityUtil.possuiPermissao('AlterarPessoaVisitante') or securityUtil.possuiPermissao('AlterarVisitante') and visitante.id > 0}">
                             <f:param name="id" value="#{visitante.id}"/>
                         </p:button>
 

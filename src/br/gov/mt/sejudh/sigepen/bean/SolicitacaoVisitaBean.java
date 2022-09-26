@@ -312,7 +312,7 @@ public class SolicitacaoVisitaBean extends MetodosDePaginaBean {
     
     public void imprimir() {
         try {
-        	List<SolicitacaoVisitaDTO> lista = service.buscarSolicitacoesPorFiltro(getFiltro(), false);
+        	List<SolicitacaoVisitaDTO> lista = service.buscarSolicitacoesPorFiltro(getFiltro(), true);
 
             if (lista.size() == 0) {
                 facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");

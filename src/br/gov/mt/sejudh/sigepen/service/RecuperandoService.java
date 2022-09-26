@@ -392,52 +392,35 @@ public class RecuperandoService {
 		return limite < LIMITE_VISITANTE_MAIOR_IDADE;		
 	}
 	
-	public boolean habilitaAlteracaoParente(Recuperando recuperando){
-		Calendar data = Calendar.getInstance();
-		data.add(Calendar.MONTH, 4);
-		data.set(Calendar.HOUR_OF_DAY, 23);
-		data.set(Calendar.SECOND, 59);
-		data.set(Calendar.MINUTE, 59);
-		data.set(Calendar.MILLISECOND, 00);
-
-		if (recuperando.getAlteracaoParentes() == null){		
+	public boolean habilitaAlteracaoParente(Recuperando recuperando) {
+		if (recuperando.getAlteracaoParentes() == null) {
 			return true;
-		}else if(recuperando.getAlteracaoParentes().after(data.getTime())){
-			return true;
-		}else {
-			return false;
-		}
-	}
-	
-	
-	public boolean habilitaAdicionarParente(Recuperando recuperando){
-		Calendar data = Calendar.getInstance();
-		data.add(Calendar.MONTH, 4);
-		data.set(Calendar.HOUR_OF_DAY, 00);
-		data.set(Calendar.SECOND, 00);
-		data.set(Calendar.MINUTE, 00);
-		data.set(Calendar.MILLISECOND, 00);
-
-		Calendar data2 = Calendar.getInstance();
-		if(recuperando != null && recuperando.getDataCadastroParente() != null) {
-			data2.setTime(recuperando.getDataCadastroParente());
-			data2.add(Calendar.DAY_OF_WEEK, 1);
-		}else{
-			data2.setTime(new Date());
-			data2.add(Calendar.DAY_OF_WEEK, -1);
 		}
 		
-		if(data2.getTime().after(new Date())){
+		Calendar dataAtual = Calendar.getInstance();
+		Calendar dataAlteracaoRecuperando = Calendar.getInstance();
+		Calendar dataAlteracao = Calendar.getInstance();
+		Calendar dataAlteracao72Horas = Calendar.getInstance();
+		
+		dataAtual.set(Calendar.HOUR_OF_DAY, 0);
+		dataAtual.set(Calendar.MINUTE, 0);
+		dataAtual.set(Calendar.SECOND, 0);
+		dataAtual.set(Calendar.MILLISECOND, 0);
+
+		dataAlteracaoRecuperando.setTime(recuperando.getAlteracaoParentes());
+		dataAlteracao.setTime(recuperando.getAlteracaoParentes());
+		dataAlteracao.add(Calendar.MONTH, -4);
+		
+		dataAlteracao72Horas.setTime(dataAlteracao.getTime());
+		dataAlteracao72Horas.add(Calendar.HOUR, 72);
+
+		if (dataAlteracaoRecuperando.compareTo(dataAtual) == 0 || dataAlteracaoRecuperando.compareTo(dataAtual) < 0 || 
+				dataAlteracao.compareTo(dataAtual) == 0 || dataAtual.compareTo(dataAlteracao72Horas) < 0 || dataAtual.compareTo(dataAlteracao72Horas) == 0) {
 			return true;
-		}else if (recuperando.getAlteracaoParentes() == null){		
-			return true;
-		}else if(recuperando.getAlteracaoParentes().before(new Date()) || recuperando.getAlteracaoParentes().equals(data.getTime())){
-			return true;
-		}else {
-			return false;
 		}
-	}
-	
+		
+		return false;
+	}	
 	
 	@Interceptors(EJBExcInterceptor.class)
 	public List<Foto> salvarFoto(Foto foto) {

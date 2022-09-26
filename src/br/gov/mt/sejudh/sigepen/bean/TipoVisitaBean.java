@@ -135,6 +135,10 @@ public class TipoVisitaBean extends MetodosDePaginaBean {
         String retorno = null;
 
         try {
+        	if (this.tipoVisita.getTipoVisitaDocumento().stream().filter(d -> d.getTipoDocumento().getPossuiFoto()).count() <= 0) {
+        		throw new ValidacaoException("É necessário adicionar pelo menos um documento com foto.");
+        	}
+        	
             service.salvar(this.tipoVisita);
             facesUtil.exibirMensagemInfo("Tipo Visita " + this.tipoVisita.getDescricao() + " salvo com sucesso!", true);
             retorno = "pretty:ListarTipoVisita";

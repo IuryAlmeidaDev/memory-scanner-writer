@@ -120,8 +120,8 @@
 							<f:param name="idPessoa" value="#{entrada.pessoa.id}" />
 						</p:button>
                         
-                        <p:commandButton title="Detalhes" icon="ui-icon-flag" action="#{entradaSaidaBean.abrirDialogDetalhes(entrada, 'FINALIZAR')}" oncomplete="PF('detalhes').show()" update="formDetalhesVisitante" process="@this"
-                                         rendered="#{entradaSaidaBean.buscarStatusVisita(entrada) == 1}" />
+                        <p:commandButton title="Finalizar" icon="ui-icon-flag" action="#{entradaSaidaBean.abrirDialogDetalhes(entrada, 'FINALIZAR')}" oncomplete="PF('detalhes').show()" update="formDetalhesVisitante" process="@this"
+                                         rendered="#{entradaSaidaBean.buscarStatusVisita(entrada) == 1 and securityUtil.possuiPermissao('FinalizarEntradaSaidaVisitante') }" />
 
                         <p:commandButton title="Cancelar" icon="ui-icon-cancel" action="#{entradaSaidaBean.abrirDialogDetalhes(entrada, 'CANCELAR')}" oncomplete="PF('detalhes').show()" update="formDetalhesVisitante" process="@this"
                                          rendered="#{entradaSaidaBean.buscarStatusVisita(entrada) == 1}" />

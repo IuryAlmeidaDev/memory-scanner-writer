@@ -210,31 +210,35 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 		String update = "SELECT v.id FROM Visitante v where v.responsavel.id = :id";
 		Query query = em.createQuery(update);
         query.setParameter("id", visitanteResponsavel.getId());
-        List<Long> idsVisitantes = query.getResultList();
+		List<Long> idsVisitantes = query.getResultList();
         
-        update = "SELECT c.id FROM Credenciamento c WHERE c.visitante.id IN :ids";
-		query = em.createQuery(update);
-        query.setParameter("ids", idsVisitantes);
-        List<Long> idsCredenciamentos = query.getResultList();
-        
-        update = "UPDATE Visitante v SET v.status = :inativo WHERE v.id in :ids";        
-        query = em.createQuery(update);
-        query.setParameter("inativo", StatusVisitante.I);
-        query.setParameter("ids", idsVisitantes);        
-        query.executeUpdate();
-        
-        update = "UPDATE Credenciamento c SET c.statusCredenciamento = :inativo WHERE c.id in :ids";
-        query = em.createQuery(update);
-        query.setParameter("inativo", StatusCredenciamento.INATIVO.getId());
-        query.setParameter("ids", idsCredenciamentos);
-        query.executeUpdate();
-        
-        update = "UPDATE FaseDoCredenciamento f SET f.statusCredenciamento = :inativo WHERE f.faseCredenciamento = :fase AND f.credenciamento.id in :creds";
-        query = em.createQuery(update);
-        query.setParameter("inativo", StatusCredenciamento.INATIVO);
-        query.setParameter("fase", FaseCredenciamento.APROVACAO);
-        query.setParameter("creds", idsCredenciamentos);
-        query.executeUpdate();
+		if (idsVisitantes != null && idsVisitantes.size() > 0) {
+	        update = "SELECT c.id FROM Credenciamento c WHERE c.visitante.id IN :ids";
+			query = em.createQuery(update);
+	        query.setParameter("ids", idsVisitantes);
+	        List<Long> idsCredenciamentos = query.getResultList();
+	        
+	        if (idsCredenciamentos != null && idsCredenciamentos.size() > 0) {
+		        update = "UPDATE Visitante v SET v.status = :inativo WHERE v.id in :ids";        
+		        query = em.createQuery(update);
+		        query.setParameter("inativo", StatusVisitante.I);
+		        query.setParameter("ids", idsVisitantes);        
+		        query.executeUpdate();
+		        
+		        update = "UPDATE Credenciamento c SET c.statusCredenciamento = :inativo WHERE c.id in :ids";
+		        query = em.createQuery(update);
+		        query.setParameter("inativo", StatusCredenciamento.INATIVO.getId());
+		        query.setParameter("ids", idsCredenciamentos);
+		        query.executeUpdate();
+		        
+		        update = "UPDATE FaseDoCredenciamento f SET f.statusCredenciamento = :inativo WHERE f.faseCredenciamento = :fase AND f.credenciamento.id in :creds";
+		        query = em.createQuery(update);
+		        query.setParameter("inativo", StatusCredenciamento.INATIVO);
+		        query.setParameter("fase", FaseCredenciamento.APROVACAO);
+		        query.setParameter("creds", idsCredenciamentos);
+		        query.executeUpdate();
+	        }
+		}
 	}
 	
 	public Visitante removeDocumentosDuplicados(Visitante visitante) throws ValidacaoException {
@@ -379,10 +383,11 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 				" INNER JOIN " + Sigepen.SEJUDH_SCHEMA + ".PARENTE PR ON PR.ID = VR.ID_PARENTE " + 
 				" AND PR.PARENTESCO_ID = 5" + 
 				" AND VR.ID_RECUPERANDO = :recuperando" +
-				" AND VR.CODG_SITUACAO_CREDENCIAL <> " + StatusCredenciamento.INATIVO.getId();
+				" AND VR.CODG_SITUACAO_CREDENCIAL NOT IN :status";
 		
 		Query query = em.createNativeQuery(jpql);
 		query.setParameter("recuperando", _recuperando.getId());
+		query.setParameter("status", Arrays.asList(StatusCredenciamento.INATIVO.getId(), StatusCredenciamento.NAO_APROVADO.getId()));
 		Integer iRecuperando = Integer.parseInt(query.getSingleResult().toString());
 		
 		if(_visitante.getId() != null) {
@@ -390,10 +395,11 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 					" INNER JOIN " + Sigepen.SEJUDH_SCHEMA + ".PARENTE PR ON PR.ID = VR.ID_PARENTE " + 
 					" AND PR.PARENTESCO_ID = 5" + 
 					" AND VR.ID_VISITANTE = :visitante" +
-					" AND VR.CODG_SITUACAO_CREDENCIAL <> " + StatusCredenciamento.INATIVO.getId();
+					" AND VR.CODG_SITUACAO_CREDENCIAL NOT IN :status";
 			
 			query = em.createNativeQuery(jpql);
 			query.setParameter("visitante", _visitante.getId());
+			query.setParameter("status", Arrays.asList(StatusCredenciamento.INATIVO.getId(), StatusCredenciamento.NAO_APROVADO.getId()));
 			iVisitante = Integer.parseInt(query.getSingleResult().toString());
 		}
 		if(iRecuperando > 0)

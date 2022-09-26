@@ -24,7 +24,6 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroSolicitacaoVisita;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnificarRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
-import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
@@ -375,10 +374,12 @@ public class RecuperandoDAO {
 			jpql.append("and l.dataSaida is null ");
 			jpql.append("and l.estrutura.id = e.id ");
 			jpql.append("and e.unidadePrisional.id = u.id ");
+		    jpql.append("order by l.id desc ");
 			
 			TypedQuery<Estrutura> query = em.createQuery(jpql.toString(), Estrutura.class);
 			query.setParameter("idRecuperando", recuperando.getId());
-			return query.getSingleResult();
+
+			return query.getResultList().get(0);
 		} catch (NoResultException e) {
 			return null;
 		}
@@ -584,18 +585,15 @@ public class RecuperandoDAO {
 	}
 
 	public void expirarGestante(Date dataExpirar) {
-		String jpql="update Recuperando r set r.gestante = :gestante where r.gestante = true and r.inicioGestacao is not null and r.inicioGestacao < :dataExpirar";
+		String jpql="update Recuperando r set r.gestante = 0 where r.gestante = 1 and r.inicioGestacao is not null and r.inicioGestacao < :dataExpirar";
 		Query query = em.createQuery(jpql);
-		query.setParameter("gestante", false);
 		query.setParameter("dataExpirar", dataExpirar);
 		query.executeUpdate();
 	}
 
 	public void expirarLactante(Date dataExpirar) {
-		String jpql="update Recuperando r set r.lactante = :lactante where r.lactante = :ehLactante and r.inicioLactante is not null and r.inicioLactante < :dataExpirar";
+		String jpql="update Recuperando r set r.lactante = 0 where r.lactante = 1 and r.inicioLactante is not null and r.inicioLactante < :dataExpirar";
 		Query query = em.createQuery(jpql);
-		query.setParameter("lactante", SimNao.N);
-		query.setParameter("ehLactante", SimNao.S);
 		query.setParameter("dataExpirar", dataExpirar);
 		query.executeUpdate();
 	}
