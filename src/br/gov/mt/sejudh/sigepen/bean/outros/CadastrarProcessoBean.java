@@ -230,7 +230,20 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 			
 			if (!this.possuiCrimeAtivo(processo.getCrimes())){
 				throw new ValidacaoException("Insira ao menos um Crime ATIVO!");	
-			}			
+			}
+			
+			if (processo.getCondicaoAtual().equals(Condicao.CONDENADO) && 
+					 (processo.getAno() == null || processo.getMes() == null || processo.getDia() == null || processo.getAno() + processo.getMes() + processo.getDia() <= 0)) {
+					throw new ValidacaoException("Insira valores válidos no tempo de condenação!");
+			}
+			
+			if (processo.getDia() != null && processo.getDia() > 31) {
+				throw new ValidacaoException("Não é permitido inserir quantidade maior que 31 dias.");
+			}
+			
+			if (processo.getMes() != null && processo.getMes() > 12) {
+				throw new ValidacaoException("Não é permitido inserir quantidade maior que 12 meses.");
+			}
 			
 			if (this.processo.getCondicaoAtual() == Condicao.CONDENADO) {
 				this.processo.setStatusProcesso(StatusProcesso.EM_EXECUCAO);

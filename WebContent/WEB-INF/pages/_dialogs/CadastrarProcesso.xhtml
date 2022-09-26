@@ -30,7 +30,7 @@
 				<h:panelGroup id="anoMesDia">
 					<p:panel header="Tempo total de condenação" style="width: 450px; margin-top:25px; margin-bottom:20px; padding-bottom:25px" rendered="#{cadastrarProcessoBean.processo.condicaoAtual != null and cadastrarProcessoBean.processo.condicaoAtual.descricao.equalsIgnoreCase('Condenado')}">
 						<p:focus for="formPassCrime:ano:input"/>
-						<sgp:formInputNumber decimalPlaces="0" id="ano" value="#{cadastrarProcessoBean.processo.ano}" labelValue="Anos" size="2" maxlength="3" maxValue="999" mask="999" validationRequired="true" display="text"
+						<sgp:formInputNumber decimalPlaces="0" id="ano" value="#{cadastrarProcessoBean.processo.ano}" labelValue="Anos" size="2" maxlength="3" maxValue="9999" mask="999" validationRequired="true" display="text"
 							disabled="#{cadastrarProcessoBean.isVisualizacao}" requiredMessage="*"
 							rendered="#{cadastrarProcessoBean.processo.condicaoAtual != null}"/>
 				
