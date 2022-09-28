@@ -208,7 +208,7 @@ public class VisitanteService extends BaseService<Visitante, Long> {
     }
 
     public Visitante atribuirStatusVisitantePosCredenciamentoInativar(Visitante visitante) {
-    	return this.visitanteDAO.atribuirStatusVisitantePosCredenciamentoInativar(visitante);
+    	return this.visitanteDAO.calcularStatusAtual(visitante);
     }
 
     public Visitante calcularStatusAtual(Visitante visitante) {

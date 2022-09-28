@@ -776,7 +776,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		this.cadastroTipoVisita = false;
 		if (this.visitante.getPessoa().getId() > 0) {
 			try {
-				this.visitante.setStatus(StatusVisitante.P);
+				this.visitante.setStatus(StatusVisitante.C);
 				
 				this.visitante.setTipoVisita(this.tipoVisita);
 				
@@ -957,13 +957,6 @@ public class VisitanteBean extends MetodosDePaginaBean {
         }
 
         if (event.getOldStep().equals("tabDados") && event.getNewStep().equals("tabDocumentos")) {
-        	if (this.visitante.getId() != null && this.visitante.getId() > 0) {
-//	        	if (verificaVisitanteResponsavelInativo(this.visitante)) {
-//	        		facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ATENÇÃO", "O Visitante Responsável está inativo, favor alterar.");
-//	                return event.getOldStep();
-//	        	}
-        	}
-        	
         	if(this.tornarVisitante)
         		this.salvar(false);
         	if(this.alterarDados || this.clickVoltar)

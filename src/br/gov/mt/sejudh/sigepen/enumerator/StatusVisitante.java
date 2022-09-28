@@ -6,7 +6,7 @@ public enum StatusVisitante {
 	I("Inativo", 1),
 	A("Ativo", 2),
 	P("Pendente", 3),
-    T("Parcialmente Ativo", 4),
+    C("Credenciamento em Andamento", 4),
     M("Impedido", 5);
 
 	private final String descricao;
