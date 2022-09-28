@@ -121,18 +121,9 @@
                          
                 <p:ajax event="rowDblselect" update="formVisitDetalhes" oncomplete="PF('visitDetalhes').show()" />
 
-                <p:column headerText="" width="20" style="text-align: center;">
-                    <h:panelGroup rendered="#{visitante.statusCor() eq 3}">
-                        <h:outputLabel class="fa fa-exclamation-circle"
-                                       style="color: red;"/>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{visitante.statusCor() eq 2}">
-                        <h:outputLabel class="fa fa-info-circle"
-                                       style="color: #fd8d04;"/>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{visitante.statusCor() eq 1}">
-                        <h:outputLabel class="fa fa-check-circle"
-                                       style="color: green;"/>
+                <p:column width="20" style="text-align: center;">
+                	<h:panelGroup>
+                        <h:outputLabel class="#{visitante.colorIconStatus(2)}" style="color: #{visitante.colorIconStatus(1)};"/>
                     </h:panelGroup>
                 </p:column>
 

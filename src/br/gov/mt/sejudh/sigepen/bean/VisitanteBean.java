@@ -711,6 +711,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
             		Optional<Credenciamento> optCredenciamentoMesmaUnidade = credenciamentosDoVisitante.stream().filter(cred ->  cred.getRecuperando() != null 
             				&& cred.getRecuperando().getId() == this.recuperandoSelecionado.getId()
             				&& cred.getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId()).findFirst();
+            		//VERIFICAR QUANDO VAI CONSIDERAR RENOVACAO SÒ DE TIVER CRED INATIVO?
             		
             		boolean isRenovacao = optCredenciamentoMesmaUnidade.isPresent();
             		Credenciamento credenciamento = isRenovacao ? optCredenciamentoMesmaUnidade.get() : optCredenciamento.get();
@@ -985,6 +986,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
             	
             	if (v.isPresent()) {
             		this.credenciamentoAtual.setId(v.get().getId());
+            		//setar id nos this.credenciamentos
             	}
             }
         }
