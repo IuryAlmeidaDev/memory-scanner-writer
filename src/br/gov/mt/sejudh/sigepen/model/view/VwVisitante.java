@@ -113,26 +113,28 @@ public class VwVisitante extends BaseModel<Long> {
 	
 	//1 - Cor, 2 - Classe
 	public String colorIconStatus(int tipo) {
-		String cor = StringUtils.EMPTY;
+		String cor = "#808080";
 		String classe = "fa fa-exclamation-circle";
 		
-		switch (this.status) {
-			case A:
-				cor = "#009900";
-				classe = "fa fa-check-circle";
-				break;
-			case C:
-				cor = "#FFEB00";
-				break;
-			case I:
-				cor = "#FF8000";
-				break;
-			case M:
-				cor = "#FF0000";
-				break;
-			case P:
-				cor = "#808080";
-				break;
+		if (this.status != null) {
+			switch (this.status) {
+				case A:
+					cor = "#009900";
+					classe = "fa fa-check-circle";
+					break;
+				case C:
+					cor = "#FFEB00";
+					break;
+				case I:
+					cor = "#FF8000";
+					break;
+				case M:
+					cor = "#FF0000";
+					break;
+				case P:
+					cor = "#808080";
+					break;
+			}
 		}
 		
 		if (tipo == 1)
