@@ -506,17 +506,24 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 					}
 					
 					boolean lotacaoDisponivel = false;
-					for(Estrutura e : this.getEstruturaDisponivelEntradaSaida(vr.getTipoVisita().getTipoEntrada())) {
-						if(e != null) {
-							lotacaoDisponivel = true;
-						}
-					}
 					
-					if(!lotacaoDisponivel) {
-						result.setObservacao("Lotação do Recuperando não agendada para o dia de visita");
+					List<Estrutura> listEstruturasDisponiveis = this.getEstruturaDisponivelEntradaSaida(vr.getTipoVisita().getTipoEntrada());
+					
+					if (listEstruturasDisponiveis.size() > 0) {
+						for(Estrutura e : listEstruturasDisponiveis) {
+							if(e != null) {
+								lotacaoDisponivel = true;
+							}
+						}
+						
+						if(!lotacaoDisponivel) {
+							result.setObservacao("Lotação do Recuperando não agendada para o dia de visita");
+							result.setStatus(StatusCredenciamentosVisita.INDISPONIVEL);
+						}
+					} else {
+						result.setObservacao("Parâmetro da unidade não cadastrado");
 						result.setStatus(StatusCredenciamentosVisita.INDISPONIVEL);
 					}
-					
 				}
 				
 				for (FaseDoCredenciamento vc : vr.getFasesDoCredenciamento()) {
@@ -535,8 +542,14 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 			}else if(vr.getStatusCredenciamento().equals(StatusCredenciamento.INATIVO.getId())){
 				result.setObservacao("Credenciamento inativo");
 				result.setStatus(StatusCredenciamentosVisita.INDISPONIVEL);
-			} else {
+			} else if(vr.getStatusCredenciamento().equals(StatusCredenciamento.NAO_APROVADO.getId())) {
+				result.setObservacao("Credenciamento não aprovado");
+				result.setStatus(StatusCredenciamentosVisita.INDISPONIVEL);
+			} else if(vr.getStatusCredenciamento().equals(StatusCredenciamento.PENDENTE.getId())) {
 				result.setObservacao("Credenciamento em andamento");
+				result.setStatus(StatusCredenciamentosVisita.INDISPONIVEL);
+			} else {
+				result.setObservacao("Credenciamento não disponível");
 				result.setStatus(StatusCredenciamentosVisita.INDISPONIVEL);
 			}
 		}
