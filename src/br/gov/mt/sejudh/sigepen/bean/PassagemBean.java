@@ -295,6 +295,18 @@ public class PassagemBean extends MetodosDePaginaBean {
 			}
 			
 			if (this.getAcaoDeTela() == AcaoDeTela.ALTERAR) {
+				PassagemLotacao passagemLotacao = this.passagem.getLotacao().stream().filter(l -> l.getTipoTransito().equals(TipoTransito.ENTRADA)).findFirst().get();
+				this.passagem.getLotacao().remove(passagemLotacao);
+				passagemLotacao.setDataEntrada(this.passagem.getDataEntrada());
+				this.passagem.getLotacao().add(passagemLotacao);
+				
+				if (this.passagem.getDataSaida() != null) {
+					PassagemLotacao p = this.passagem.getUltimaLotacao();
+					this.passagem.getLotacao().remove(p);
+					p.setDataSaida(this.passagem.getDataSaida());
+					this.passagem.getLotacao().add(p);
+				}
+				
 				this.passagemService.alterar(this.passagem);
 				
 				LoggerUtil.logInfo(Acao.ALTERAR, this.recuperando, log);

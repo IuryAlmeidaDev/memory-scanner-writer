@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Type;
 
@@ -110,16 +111,39 @@ public class VwVisitante extends BaseModel<Long> {
 	@Column(name = "ID_RECUPERANDO")
     private Long idRecuperando;
 	
-    public Integer statusCor() {
-        if (this.status == null || this.status == StatusVisitante.I || this.status == StatusVisitante.M) {
-            return 3;
-        }
-        if (this.status == StatusVisitante.A
-                && this.ultimaFaseCredenciamento != null && this.ultimaFaseCredenciamento == FaseCredenciamento.APROVACAO) {
-            return 1;
-        }
-        return 2;
-    }
+	//1 - Cor, 2 - Classe
+	public String colorIconStatus(int tipo) {
+		String cor = "#808080";
+		String classe = "fa fa-exclamation-circle";
+		
+		if (this.status != null) {
+			switch (this.status) {
+				case A:
+					cor = "#009900";
+					classe = "fa fa-check-circle";
+					break;
+				case C:
+					cor = "#FFEB00";
+					break;
+				case I:
+					cor = "#FF8000";
+					break;
+				case M:
+					cor = "#FF0000";
+					break;
+				case P:
+					cor = "#808080";
+					break;
+			}
+		}
+		
+		if (tipo == 1)
+			return cor;
+		else if (tipo == 2)
+			return classe;
+		else 
+			return StringUtils.EMPTY;
+	}
 
     public Long getId() {
         return id;

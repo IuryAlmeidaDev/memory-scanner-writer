@@ -478,147 +478,41 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 			visitante.setSituacaoAtual(situacao);
 		else
 			visitante.setSituacaoAtual(StatusCredenciamento.PENDENTE.getId());
-        
-    	StatusVisitante result = StatusVisitante.I;
+
         if (visitante.getCredenciamentos() != null && visitante.getCredenciamentos().size() > 0) {
-
-            boolean existeCredenciamentoAprovado;
-            boolean existeCredenciamentoDiferenteAprovado;
-            boolean naoExisteCredenciamentos;
-            boolean credenciamentosInativos;
-            boolean credenciamentosAtivos;
-            
-            Visitante ovisitante = this.em.find(Visitante.class, id);
-            existeCredenciamentoAprovado = isExisteCredenciamentoAprovado(ovisitante);
-            naoExisteCredenciamentos = isExisteCredencialAprovadaECredencialNulo(ovisitante, existeCredenciamentoAprovado);
-            existeCredenciamentoDiferenteAprovado = isExisteCredenciamentoDiferenteAprovado(ovisitante);
-            credenciamentosInativos = isTodosCredenciamentosInativos(ovisitante);
-            credenciamentosAtivos = isTodosCredenciamentosAtivos(ovisitante);
-
-            if (credenciamentosInativos) {
-            	result = StatusVisitante.I;
-            } else if (credenciamentosAtivos) {
-            	result = StatusVisitante.A;
-            } else if ((existeCredenciamentoAprovado && existeCredenciamentoDiferenteAprovado) ||
-                    (naoExisteCredenciamentos && existeCredenciamentoAprovado)) {
-            	result = StatusVisitante.T;
-            } else {
-            	result = StatusVisitante.P;
-            }
+        	boolean todosCredenciamentosInativosOuNaoAprovados = visitante.getCredenciamentos().stream().allMatch(c -> c.getStatusCredenciamento() == StatusCredenciamento.INATIVO.getId() || c.getStatusCredenciamento() == StatusCredenciamento.NAO_APROVADO.getId());
+        	boolean todosCredenciamentosAprovados = visitante.getCredenciamentos().stream().allMatch(c -> c.getStatusCredenciamento() == StatusCredenciamento.APROVADO.getId());
+        	boolean peloMenosUmCredenciamentoEmAndamento = visitante.getCredenciamentos().stream().anyMatch(c -> c.getStatusCredenciamento() == StatusCredenciamento.PENDENTE.getId());
+        	boolean peloMenosUmCredenciamentoAprovadoENenhumPendente = visitante.getCredenciamentos().stream()
+        																	.anyMatch(c -> c.getStatusCredenciamento() == StatusCredenciamento.APROVADO.getId()) &&
+        																visitante.getCredenciamentos().stream()
+        																	.noneMatch(c -> c.getStatusCredenciamento() == StatusCredenciamento.PENDENTE.getId());
+        	
+        	if (todosCredenciamentosInativosOuNaoAprovados) {
+        		visitante.setStatus(StatusVisitante.I);
+        	} else if (todosCredenciamentosAprovados) {
+        		visitante.setStatus(StatusVisitante.A);
+        	} else if (peloMenosUmCredenciamentoEmAndamento) {
+        		visitante.setStatus(StatusVisitante.C);
+        	} else if (peloMenosUmCredenciamentoAprovadoENenhumPendente) {
+        		visitante.setStatus(StatusVisitante.A);
+        	}
+        } else {
+        	visitante.setStatus(StatusVisitante.P);
         }
-        visitante.setStatus(result);
+
         return visitante;
     }
-    
-    public Visitante calcularStatusAtualInativar(Visitante visitante) {
-    	long id = visitante.getId();
-    	visitante = this.em.find(Visitante.class, id);
-        
-    	StatusVisitante result = StatusVisitante.I;
-        if (visitante.getCredenciamentos() != null && visitante.getCredenciamentos().size() > 0) {
 
-            boolean existeCredenciamentoAprovado;
-            boolean existeCredenciamentoDiferenteAprovado;
-            boolean naoExisteCredenciamentos;
-            boolean credenciamentosInativos;
-            boolean credenciamentosAtivos;
-            
-            //Visitante ovisitante = this.em.find(Visitante.class, id);
-            existeCredenciamentoAprovado = isExisteCredenciamentoAprovado(visitante);
-            naoExisteCredenciamentos = isExisteCredencialAprovadaECredencialNulo(visitante, existeCredenciamentoAprovado);
-            existeCredenciamentoDiferenteAprovado = isExisteCredenciamentoDiferenteAprovado(visitante);
-            credenciamentosInativos = isTodosCredenciamentosInativos(visitante);
-            credenciamentosAtivos = isTodosCredenciamentosAtivos(visitante);
-
-            if (credenciamentosInativos) {
-            	result = StatusVisitante.I;
-            } else if (credenciamentosAtivos) {
-            	result = StatusVisitante.A;
-            } else if ((existeCredenciamentoAprovado && existeCredenciamentoDiferenteAprovado) ||
-                    (naoExisteCredenciamentos && existeCredenciamentoAprovado)) {
-            	result = StatusVisitante.T;
-            } else {
-            	result = StatusVisitante.P;
-            }
-        }
-        visitante.setStatus(result);
-        return visitante;
-    }
-    
     public Visitante atribuirStatusAtual(Visitante visitante) {
     	visitante = calcularStatusAtual(visitante);
         return this.em.merge(visitante);
-    }
-    
-    public Visitante atribuirStatusAtualInativar(Visitante visitante) {
-    	visitante = calcularStatusAtualInativar(visitante);
-        return this.em.merge(visitante);
-    }
-    
-    private boolean isTodosCredenciamentosAtivos(Visitante visitante) {
-        int x = 0;
-        for (Credenciamento rec : visitante.getCredenciamentos()) {
-            if (StatusCredenciamento.APROVADO.getId() == rec.getStatusCredenciamento()) {
-                x++;
-            }
-        }
-
-        if (visitante.getCredenciamentos().size() == x) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean isTodosCredenciamentosInativos(Visitante visitante) {
-        int x = 0;
-        for (Credenciamento rec : visitante.getCredenciamentos()) {
-            if (StatusCredenciamento.INATIVO.getId() == rec.getStatusCredenciamento()) {
-                x++;
-            }
-        }
-
-        if (visitante.getCredenciamentos().size() == x) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean isExisteCredenciamentoDiferenteAprovado(Visitante visitante) {
-        for (Credenciamento rec : visitante.getCredenciamentos()) {
-        	if(StatusCredenciamento.APROVADO.getId() != rec.getStatusCredenciamento())
-        		return true;
-        }
-        return false;
-    }
-
-    private boolean isExisteCredencialAprovadaECredencialNulo(Visitante visitante, boolean isExisteCredenciamentoAprovado) {
-        for (Credenciamento rec : visitante.getCredenciamentos()) {
-            if (rec.getUltimoCredenciamento() == null && isExisteCredenciamentoAprovado) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isExisteCredenciamentoAprovado(Visitante visitante) {
-        for (Credenciamento rec : visitante.getCredenciamentos()) {
-        	if(StatusCredenciamento.APROVADO.getId() == rec.getStatusCredenciamento()) {
-        		return true;
-        	}
-        }
-        return false;
     }
 
     public Visitante atribuirStatusVisitantePosCredenciamento(Visitante visitante) {
     	return this.atribuirStatusAtual(visitante);
    	}
-    
-    public Visitante atribuirStatusVisitantePosCredenciamentoInativar(Visitante visitante) {
-    	return this.atribuirStatusAtualInativar(visitante);
-   	}
-    
+
 	public FaseDoCredenciamento getProximaFaseCredenciamento(Credenciamento cred) {
 		FaseDoCredenciamento vc = cred.getFasesDoCredenciamento().stream()
                 .max(Comparator.comparing(o -> o.getFaseCredenciamento().getId())).orElse(new FaseDoCredenciamento());

@@ -113,8 +113,6 @@
 
         <h:form id="registrosForm">
         	<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamento" var="_tipo" allSuffix="ALL_ENUM_VALUES" />
-        	<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante" var="_status" allSuffix="ALL_ENUM_VALUES" />
-        	<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada" var="tipoEntr" allSuffix="ALL_ENUM_VALUES" />
         	
             <p:dataTable id="dataTable" var="visitante" value="#{visitanteBean.lazyDataModel}" rows="10"
                          paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{visitante.id}"
@@ -123,18 +121,9 @@
                          
                 <p:ajax event="rowDblselect" update="formVisitDetalhes" oncomplete="PF('visitDetalhes').show()" />
 
-                <p:column headerText="" width="20" style="text-align: center;">
-                    <h:panelGroup rendered="#{visitante.statusCor() eq 3}">
-                        <h:outputLabel class="fa fa-exclamation-circle"
-                                       style="color: red;"/>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{visitante.statusCor() eq 2}">
-                        <h:outputLabel class="fa fa-info-circle"
-                                       style="color: #fd8d04;" title="#{visitante.faseAtualCredenciamento.descricao}"/>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{visitante.statusCor() eq 1}">
-                        <h:outputLabel class="fa fa-check-circle"
-                                       style="color: green;" title="#{visitante.faseAtualCredenciamento.descricao}"/>
+                <p:column width="20" style="text-align: center;">
+                	<h:panelGroup>
+                        <h:outputLabel class="#{visitante.colorIconStatus(2)}" style="color: #{visitante.colorIconStatus(1)};"/>
                     </h:panelGroup>
                 </p:column>
 

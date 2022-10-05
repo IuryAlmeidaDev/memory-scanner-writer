@@ -379,7 +379,13 @@ public class RecuperandoDAO {
 			TypedQuery<Estrutura> query = em.createQuery(jpql.toString(), Estrutura.class);
 			query.setParameter("idRecuperando", recuperando.getId());
 
-			return query.getResultList().get(0);
+			List<Estrutura> list = query.getResultList();
+			
+			if (list.size() > 0) {
+				return query.getResultList().get(0);
+			}
+			
+			return null; 
 		} catch (NoResultException e) {
 			return null;
 		}
