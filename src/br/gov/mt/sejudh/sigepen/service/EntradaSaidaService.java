@@ -1,41 +1,22 @@
 package br.gov.mt.sejudh.sigepen.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
-
-import javax.interceptor.Interceptors;
-
-import br.gov.mt.sejudh.sigepen.dao.*;
+import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
+import br.gov.mt.sejudh.sigepen.dao.EntradaSaidaDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEntradaSaida;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEntradaVisitante;
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroSolicitacaoVisita;
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnificarRecuperando;
-import br.gov.mt.sejudh.sigepen.enumerator.*;
+import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
-import br.gov.mt.sejudh.sigepen.model.*;
-import br.gov.mt.sejudh.sigepen.model.dto.DadosRecuperandoUnificacaoDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO.PassagemExtratoDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
-import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
-import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
+import br.gov.mt.sejudh.sigepen.model.EntradaSaida;
+import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
+import br.gov.mt.sejudh.sigepen.model.Visitante;
+import br.gov.mt.sejudh.sigepen.model.dto.EntradaSaidaDTO;
 
 @Stateless
 public class EntradaSaidaService {
@@ -64,6 +45,20 @@ public class EntradaSaidaService {
 
 	public Visitante buscarVisitantePorPessoa(FiltroEntradaSaida filtro) {
 		return this.dao.buscarVisitantePorPessoa(filtro);
+	}
+	
+	public EntradaSaidaDTO salvar(EntradaSaidaDTO entrada) throws Exception {
+		EntradaSaida e = dao.buscarPorId(entrada.getId());
+		
+		if (!e.getSituacao().equals(SituacaoVisita.EM_ANDAMENTO)) 
+			throw new ValidacaoException("Esta visita não está mais em andamento.");
+		
+		e.setDataSaida(entrada.getDataSaida());
+		e.setSituacao(entrada.getSituacao());
+		
+		salvar(e);
+		
+		return entrada;
 	}
 
 	public EntradaSaida salvar(EntradaSaida entrada) {

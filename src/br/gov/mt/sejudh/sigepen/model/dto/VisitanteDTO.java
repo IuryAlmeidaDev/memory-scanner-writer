@@ -2,10 +2,12 @@ package br.gov.mt.sejudh.sigepen.model.dto;
 
 import java.util.Date;
 
+import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.model.Imagem;
 
 public class VisitanteDTO {
-	private long id;
+	private Long id;
 	private String nome;
 	private String cpf;
 	private Date dataNascimento;
@@ -15,12 +17,88 @@ public class VisitanteDTO {
 	private Imagem imagemAtual;
 	private Date dataValidade;
 	private String grauParentesco;
+	private String nacionalidade;
+	private String pais;
+	private String estado;
+	private String cidade;
+	private Sexo sexo;
+	private String identidadeDeGenero;
+	private SimNao pne;
+	private SimNao pnePermanente;
+	private SimNao emancipado;
+	private VisitanteDTO responsavel;
 
-	public long getId() {
+	public VisitanteDTO() {
+		super();
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	public String getCidade() {
+		return cidade;
+	}
+
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
+	}
+
+	public Sexo getSexo() {
+		return sexo;
+	}
+
+	public void setSexo(Sexo sexo) {
+		this.sexo = sexo;
+	}
+
+	public String getIdentidadeDeGenero() {
+		return identidadeDeGenero;
+	}
+
+	public void setIdentidadeDeGenero(String identidadeDeGenero) {
+		this.identidadeDeGenero = identidadeDeGenero;
+	}
+
+	public SimNao getPne() {
+		return pne;
+	}
+
+	public void setPne(SimNao pne) {
+		this.pne = pne;
+	}
+
+	public SimNao getPneDescricao() {
+		return pnePermanente;
+	}
+
+	public void setPneDescricao(SimNao pnePermanente) {
+		this.pnePermanente = pnePermanente;
+	}
+
+	public String getPais() {
+		return pais;
+	}
+	public void setPais(String pais) {
+		this.pais = pais;
+	}
+	public String getNacionalidade() {
+		return nacionalidade;
+	}
+
+	public void setNacionalidade(String nacionalidade) {
+		this.nacionalidade = nacionalidade;
+	}
+
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -90,7 +168,7 @@ public class VisitanteDTO {
 
 	@Override
 	public String toString() {
-		return "Pessoa [id=" + id + ", nome=" + nome + "]";
+		return "Visitante [id=" + id + ", nome=" + nome + "]";
 	}
 
 	public String getGrauParentesco() {
@@ -99,5 +177,29 @@ public class VisitanteDTO {
 
 	public void setGrauParentesco(String grauParentesco) {
 		this.grauParentesco = grauParentesco;
+	}
+
+	public SimNao getPnePermanente() {
+		return pnePermanente;
+	}
+
+	public void setPnePermanente(SimNao pnePermanente) {
+		this.pnePermanente = pnePermanente;
+	}
+
+	public VisitanteDTO getResponsavel() {
+		return responsavel;
+	}
+
+	public void setResponsavel(VisitanteDTO responsavel) {
+		this.responsavel = responsavel;
+	}
+
+	public SimNao getEmancipado() {
+		return emancipado;
+	}
+
+	public void setEmancipado(SimNao emancipado) {
+		this.emancipado = emancipado;
 	}
 }

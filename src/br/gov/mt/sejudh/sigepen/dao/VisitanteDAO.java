@@ -16,7 +16,13 @@ import javax.persistence.TypedQuery;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.annotations.QueryHints;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
@@ -29,6 +35,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
+import br.gov.mt.sejudh.sigepen.model.AutorizacaoValidacaoSemBiometria;
 import br.gov.mt.sejudh.sigepen.model.Contato;
 import br.gov.mt.sejudh.sigepen.model.Credenciamento;
 import br.gov.mt.sejudh.sigepen.model.Documento;
@@ -44,6 +51,8 @@ import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
 import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
+import br.gov.mt.sejudh.sigepen.model.dto.AutorizacaoSemBiometriaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
@@ -725,5 +734,73 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
     			this.em.merge(o);
     		} 
         }
+	}
+
+	public VisitanteDTO buscarVisitanteDTO(Long idVisitante) {
+		Criteria crit = em.unwrap(Session.class).createCriteria(Visitante.class);
+		
+		crit
+			.createAlias("pessoa", "pessoa", JoinType.INNER_JOIN)
+			.createAlias("pessoa.nacionalidade", "nacionalidade", JoinType.INNER_JOIN)
+			.createAlias("pessoa.pais", "pais", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("pessoa.naturalidade", "cidade", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("cidade.estado", "estado", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("identidadeDeGenero", "idg", JoinType.LEFT_OUTER_JOIN)
+		;
+				
+		ProjectionList proj = Projections.projectionList();
+				
+        proj.add(Projections.projectionList()
+                .add(Projections.property("id"), "id")
+                .add(Projections.property("pne"), "pne")
+                .add(Projections.property("pnePermanente"), "pnePermanente")
+                .add(Projections.property("emancipado"), "emancipado")
+                .add(Projections.property("pessoa.nome"), "nome")
+                .add(Projections.property("pessoa.sexo"), "sexo")
+                .add(Projections.property("pessoa.nomeMae"), "nomeMae")
+                .add(Projections.property("pessoa.nomePai"), "nomePai")
+                .add(Projections.property("pessoa.nomeSocial"), "nomeSocial")
+                .add(Projections.property("pessoa.dataNascimento"), "dataNascimento")
+                .add(Projections.property("nacionalidade.descricao"), "nacionalidade")
+                .add(Projections.property("cidade.nome"), "cidade")
+                .add(Projections.property("estado.nome"), "estado")
+                .add(Projections.property("idg.descricao"), "identidadeDeGenero")
+        );
+				
+		crit.setProjection(proj);
+		crit.setResultTransformer(new AliasToBeanResultTransformer(VisitanteDTO.class));
+		crit.addQueryHint(QueryHints.READ_ONLY);
+		
+		crit.add(Restrictions.eq("id", idVisitante));
+
+		return (VisitanteDTO) crit.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<AutorizacaoSemBiometriaDTO> buscarAutorizacoesEntradasDTO(Long idEntrada) {
+		Criteria crit = em.unwrap(Session.class).createCriteria(AutorizacaoValidacaoSemBiometria.class);
+		
+		crit
+			.createAlias("usuario", "usuario", JoinType.INNER_JOIN)
+			.createAlias("usuario.servidor", "servidor", JoinType.INNER_JOIN)
+		;
+				
+		ProjectionList proj = Projections.projectionList();
+				
+        proj.add(Projections.projectionList()
+                .add(Projections.property("id"), "id")
+                .add(Projections.property("servidor.nome"), "nomeAutorizador")
+                .add(Projections.property("dataAutorizacao"), "dataAutorizacao")
+                .add(Projections.property("observacao"), "observacao")
+                .add(Projections.property("tipoAutorizacaoValidacaoSemBio"), "tipoAutorizacao")
+        );
+				
+		crit.setProjection(proj);
+		crit.setResultTransformer(new AliasToBeanResultTransformer(AutorizacaoSemBiometriaDTO.class));
+		crit.addQueryHint(QueryHints.READ_ONLY);
+		
+		crit.add(Restrictions.eq("entradaSaida.id", idEntrada));
+
+		return (List<AutorizacaoSemBiometriaDTO>) crit.list();
 	}
 }

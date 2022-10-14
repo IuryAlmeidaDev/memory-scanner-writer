@@ -1,7 +1,6 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,16 +14,12 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.primefaces.model.StreamedContent;
 
 import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
@@ -32,27 +27,24 @@ import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEntradaSaidaRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoAutorizacaoValidacaoSemBio;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
-import br.gov.mt.sejudh.sigepen.model.AutorizacaoValidacaoSemBiometria;
-import br.gov.mt.sejudh.sigepen.model.EntradaSaida;
+import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.EntradaSaidaRecuperando;
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.model.Usuario;
+import br.gov.mt.sejudh.sigepen.model.dto.EntradaSaidaDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.EntradaSaidaRecuperandoService;
 import br.gov.mt.sejudh.sigepen.service.EntradaSaidaService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
-import br.gov.mt.sejudh.sigepen.service.UsuarioService;
+import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
-
 
 @ViewScoped
 @ManagedBean
@@ -71,24 +63,21 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 	
 	private FiltroEntradaSaidaRecuperando filtro;
 	
-	private LazyDataModel<EntradaSaidaRecuperando> entradas;
+	private LazyDataModel<EntradaSaidaDTO> entradas;
 	
 	@Inject
 	private EntradaSaidaRecuperandoService service;
-	
-	@Inject
-    private UsuarioService usuarioService;
 
 	@Inject
     private SecurityUtil securityUtil;
-    
-	@Inject
-	private FileDownloadHandlerBean fileDownload;
 	
 	@Inject
 	private EntradaSaidaService esService;
 	
-	private EntradaSaida entrada;
+	@Inject
+	private VisitanteService visitanteService;
+	
+	private EntradaSaidaDTO entrada;
 	
 	private boolean mostrarPanelVisitante = false;
 	
@@ -97,8 +86,6 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 	private String loginUsuarioAutorizador;
 	private String senhaUsuarioAutorizador;
 	private String observacaoUsuarioAutorizador;
-	
-	private String acao;
 	
 	@Inject
 	private UnidadePrisionalService unidadeService;
@@ -140,11 +127,11 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 	}
 	
 	public void pesquisar() {
-		this.entradas = new LazyDataModel<EntradaSaidaRecuperando>() {
+		this.entradas = new LazyDataModel<EntradaSaidaDTO>() {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public Object getRowKey(EntradaSaidaRecuperando object) {
+			public Object getRowKey(EntradaSaidaDTO object) {
 				if(object != null && object.getId() != null) {
 					return object.getId();
 				}
@@ -152,12 +139,12 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 			}
 
 			@Override
-			public EntradaSaidaRecuperando getRowData(String rowKey) {
+			public EntradaSaidaDTO getRowData(String rowKey) {
 				if (rowKey == null || rowKey.isEmpty()) {
 					return null;
 				}
 
-				for (EntradaSaidaRecuperando rec : entradas) {
+				for (EntradaSaidaDTO rec : entradas) {
 					if (rec.getId().equals(Long.valueOf(rowKey))) {
 						return rec;
 					}
@@ -167,7 +154,7 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 			}
 			
 			@Override
-			public List<EntradaSaidaRecuperando> load(int first, int pageSize,
+			public List<EntradaSaidaDTO> load(int first, int pageSize,
 					String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
 
@@ -179,7 +166,7 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 					e.printStackTrace();
 				}
 
-				List<EntradaSaidaRecuperando> lista = service.buscarEntradasPorFiltro(getFiltro(), false);		
+				List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), false);		
 				return lista;
 			}
 		};
@@ -193,11 +180,11 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 		this.filtro = filtro;
 	}
 
-	public LazyDataModel<EntradaSaidaRecuperando> getEntradas() {
+	public LazyDataModel<EntradaSaidaDTO> getEntradas() {
 		return entradas;
 	}
 
-	public void setEntradas(LazyDataModel<EntradaSaidaRecuperando> entradas) {
+	public void setEntradas(LazyDataModel<EntradaSaidaDTO> entradas) {
 		this.entradas = entradas;
 	}
 	
@@ -220,33 +207,39 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
             LoggerUtil.logErro(e, log);
         }
     }
-
-	public void imprimir() {
-		if(!securityUtil.possuiPermissao("ImprimirListaVisitas")) {
+	
+	public StreamedContent getImpressaoPdf() {
+		if (!securityUtil.possuiPermissao("ImprimirListaVisitas")) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Para realizar a impressão é necessária a permissão!");
-			return;
+			return null;
 		}
 		try {
-			List<EntradaSaidaRecuperando> lista = service.buscarEntradasPorFiltro(getFiltro(), true);
+			List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), true);
 			
 			if (lista.size() == 0) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
-				return;
+				return null;
 			}
+			
 			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("FILTRO", "Campos Utilizados: " + this.filtro.getFiltro());
+			
+			if (StringUtils.isNotBlank(this.filtro.getFiltro())) {
+				parameters.put("FILTRO", "Campos Utilizados: " + this.filtro.getFiltro());
+			}
 
 			ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
 			String cabecalhoFiltro = ctx.getRealPath("WEB-INF" + File.separator + "relatorios" + File.separator + "cabecalhos" + File.separator + "Filtro.jasper");
 			parameters.put("CABECALHO_FILTRO", cabecalhoFiltro);
-			
-			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.ListarEntradaSaida, parameters));
-			RequestContext.getCurrentInstance().execute("download()");
+
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Consultar visitas", log);
+			
+			return RelatorioUtil.downloadPdf(lista, Relatorio.ListarEntradaSaida, parameters);
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir lista de visitas: " + e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Consultar visitas", e, log);
 		}
+		
+		return null;
 	}
 
 	public String buscarSituacao(EntradaSaidaRecuperando e) {
@@ -254,15 +247,18 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 		return e.getEntrada().getDataSaida() != null || e.getEntrada().getDataEntrada().before(di) ? "Finalizada" : "Em Andamento";
 	}
 
-	public void abrirFinalizarVisita(EntradaSaidaRecuperando e) {
-		this.entrada = e.getEntrada();
+	public void abrirFinalizarVisita(EntradaSaidaDTO e) {
+		this.entrada = e;
 	}
 	
-	public void abrirVisualizarVisita(EntradaSaidaRecuperando e) {
-		
-		 this.entrada = e.getEntrada();
-		
-		if(this.entrada.getVisitante().getResponsavel() != null) {
+	public void abrirVisualizarVisita(EntradaSaidaDTO e) {
+		this.entrada = e;
+		this.entrada.setVisitante(visitanteService.buscarVisitanteDTO(e.getIdVisitante(), true));
+		this.entrada.setAutorizacoes(visitanteService.buscarAutorizacoesEntradasDTO(e.getId()));
+
+		if(e.getIdResponsavel() != null) {
+			this.entrada.getVisitante().setResponsavel(visitanteService.buscarVisitanteDTO(e.getIdResponsavel(), true));
+			
 			this.mostrarPanelVisitante = false;
 			this.mostrarPanelResponsavel = true;
 			return;
@@ -274,15 +270,22 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 	
 		
 	public void finalizarVisita() {
-		if (this.entrada.getMotivoFinalizacao().isEmpty()) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro", "Preenchimento do motivo é obrigatório");
-			return;
-		}		
-		LoggerUtil.logInfo(Acao.FINALIZAR, this.entrada, log);
-		this.entrada.setDataSaida(new Date());
-		this.entrada.setSituacao(SituacaoVisita.FINALIZADA);
-		esService.salvar(this.entrada);
-		RequestContext.getCurrentInstance().execute("PF('dialogFinalizarVisita').hide()");
+		try {
+			if (this.entrada.getMotivoFinalizacao().isEmpty()) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro", "Preenchimento do motivo é obrigatório");
+				return;
+			}		
+			LoggerUtil.logInfo(Acao.FINALIZAR, this.entrada, log);
+			this.entrada.setDataSaida(new Date());
+			this.entrada.setSituacao(SituacaoVisita.FINALIZADA);
+			esService.salvar(this.entrada);
+			RequestContext.getCurrentInstance().execute("PF('dialogFinalizarVisita').hide()");
+		} catch (ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", e.getMessage());
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao finalizar visita: " + e.getMessage());
+			LoggerUtil.logErro(Acao.FINALIZAR, "Finalizar visita", e, log);
+		}
 	}
 	
 	public Boolean isMenor(Date nasc){
@@ -294,11 +297,11 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 	}
 	
 	
-	public EntradaSaida getEntrada() {
+	public EntradaSaidaDTO getEntrada() {
 		return entrada;
 	}
 
-	public void setEntrada(EntradaSaida entrada) {
+	public void setEntrada(EntradaSaidaDTO entrada) {
 		this.entrada = entrada;
 	}
 	
@@ -340,90 +343,8 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 
 	public void setObservacaoUsuarioAutorizador(String observacaoUsuarioAutorizador) {
 		this.observacaoUsuarioAutorizador = observacaoUsuarioAutorizador;
-	}
+	}	
 
-	public String autorizarCadastroSemBiometria() {
-		try {
-			AuthenticationInfo authenticationInfo = SecurityUtils.getSecurityManager().authenticate(
-					new UsernamePasswordToken(this.loginUsuarioAutorizador, this.senhaUsuarioAutorizador));
-			SecurityUtils.getSecurityManager().checkPermission(authenticationInfo.getPrincipals(),
-					"AutorizarCadastroSemBiometria");
-			Usuario usuario = usuarioService.buscarUsuarioPorLogin(this.loginUsuarioAutorizador);
-
-			AutorizacaoValidacaoSemBiometria autValid = new AutorizacaoValidacaoSemBiometria();
-			
-			autValid.setObservacao(this.observacaoUsuarioAutorizador);
-			autValid.setUsuario(usuario);
-			autValid.setDataAutorizacao(Sigepen.getDataAtual());
-			autValid.setTipoAutorizacaoValidacaoSemBio(TipoAutorizacaoValidacaoSemBio.SAIDA_VISITANTE);
-			autValid.setEntradaSaida(this.entrada);
-
-			this.loginUsuarioAutorizador = "";
-			this.senhaUsuarioAutorizador = "";
-			this.observacaoUsuarioAutorizador = "";
-
-			RequestContext.getCurrentInstance().execute("PF('dlgAutBio').hide()");
-			LoggerUtil.logInfo(Acao.AUTORIZAR, this.entrada, log);
-			
-			this.entrada.getAutorizacaoValidacaoSemBiometria().add(autValid);
-			
-			if("FINALIZAR".equals(this.acao)) {
-				RequestContext.getCurrentInstance().execute("PF('dialogVisualizarEntradaSaida').hide()");
-				this.entrada.getAutorizacaoValidacaoSemBiometria().add(autValid);
-				finalizarVisitaManual();
-			}else {
-				if(this.entrada.getId() != null && this.entrada.getSituacao().equals(SituacaoVisita.EM_ANDAMENTO)){
-					this.entrada.getAutorizacaoValidacaoSemBiometria().add(autValid);
-					finalizarVisitaManual();
-				}
-						
-			}
-			RequestContext.getCurrentInstance().update("dataTable");
-
-			RequestContext.getCurrentInstance().update("formDialogVisualizarEntradaSaida");
-			
-		} catch (UnauthorizedException e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-					"Usuário informado não possui permissão para autorizar cadastro.");
-		} catch (UnknownAccountException | IncorrectCredentialsException e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Usuário ou senha inválidos.");
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao autorizar cadastro sem biometria.");
-			LoggerUtil.logErro(e, log);
-		}
-
-		return null;
-	}
-	
-	
-	public void abrirDlgAutorizar() {
-		if (!securityUtil.possuiPermissao("AutorizarEntradaVisitanteSemBiometria")) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Entrada não permitida! Usuário não autorizado para efetuar entrada!");
-			return;
-		}
-		
-		if (!securityUtil.possuiPermissao("AutorizarSaidaVisitanteSemBiomatria")) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Saída não permitida! Usuário não autorizado para efetuar saída!");
-			return;
-		}
-		
-		RequestContext.getCurrentInstance().execute("PF('dlgAutBio').show()");
-	}
-	
-	public void finalizarVisitaManual() {
-		LoggerUtil.logInfo(Acao.FINALIZAR, this.entrada, log);
-		this.entrada.setDataSaida(new Date());
-		this.entrada.setSituacao(SituacaoVisita.FINALIZADA);
-		service.salvar(this.entrada);
-		facesUtil.exibirMensagemInfo("Saída do visitante " + this.entrada.getVisitante().getPessoa().getNome() +  " realizada com sucesso!", true);
-		String url = Sigepen.getApplicationName() + "/consultarlistavisitas";
-        try {
-			FacesContext.getCurrentInstance().getExternalContext().redirect(url);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-	}
-	
 	public void selecionarTipoEntrada() {
 		this.filtro.setTipoVisita(null);
 		this.listarTipoVisitas(this.filtro.getTipoEntrada());

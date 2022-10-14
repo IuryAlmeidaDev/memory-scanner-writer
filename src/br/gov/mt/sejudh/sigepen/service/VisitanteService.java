@@ -44,6 +44,8 @@ import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
 import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
 import br.gov.mt.sejudh.sigepen.model.VisitanteFoto;
+import br.gov.mt.sejudh.sigepen.model.dto.AutorizacaoSemBiometriaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
@@ -515,5 +517,18 @@ public class VisitanteService extends BaseService<Visitante, Long> {
 
 	public boolean verificaVisitanteResponsavelPossuiCredenciamento(Visitante visitante, Recuperando recuperando, TipoVisita tipoVisita) {
 		return visitanteDAO.verificaVisitanteResponsavelPossuiCredenciamento(visitante, recuperando, tipoVisita);
+	}
+
+	public VisitanteDTO buscarVisitanteDTO(Long idVisitante, boolean buscarFotoFrente) {
+		VisitanteDTO buscarVisitanteDTO = visitanteDAO.buscarVisitanteDTO(idVisitante);
+		
+		if (buscarFotoFrente)
+			buscarVisitanteDTO.setImagemAtual(visitanteDAO.buscarImagemFrente(idVisitante));
+			
+		return buscarVisitanteDTO;
+	}
+
+	public List<AutorizacaoSemBiometriaDTO> buscarAutorizacoesEntradasDTO(Long idEntrada) {
+		return visitanteDAO.buscarAutorizacoesEntradasDTO(idEntrada);
 	}
 }
