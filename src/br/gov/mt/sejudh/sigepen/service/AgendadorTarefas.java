@@ -35,7 +35,7 @@ public class AgendadorTarefas {
 		}
 	}
 
-	@Schedule(hour = "6", minute = "*", persistent = false)
+	@Schedule(hour = "6", minute = "0", persistent = false)
 	public void inativarVisitantes(){
 		visitanteService.inativarVisitantes();
 	}
