@@ -99,7 +99,6 @@ import br.gov.mt.sejudh.sigepen.service.ComboService;
 import br.gov.mt.sejudh.sigepen.service.ContatoService;
 import br.gov.mt.sejudh.sigepen.service.CredenciamentoService;
 import br.gov.mt.sejudh.sigepen.service.FaseDoCredenciamentoService;
-import br.gov.mt.sejudh.sigepen.service.ImpedimentoService;
 import br.gov.mt.sejudh.sigepen.service.PessoaService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
 import br.gov.mt.sejudh.sigepen.service.SolicitacaoVisitaService;
@@ -248,9 +247,6 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	private boolean salvarFasesAuto = false;
 	private boolean alterarDados = false;
 	private boolean clickVoltar = false;
-
-	@Inject
-	private ImpedimentoService impedimentoService;
 	
 	@Inject
 	private ContatoService contatoService;
@@ -278,7 +274,6 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	
 	@URLAction(onPostback = false)
     public String init() {
-		this.rotinas();
 		this.carregarFasesCredenciamento();
 		this.salvarFasesAuto = false;
 		this.alterarDados = false;
@@ -1938,17 +1933,6 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	
 	public void sincronizar() {
 		this.service.sincronizar();
-	}
-	
-    private void rotinas() {
-		try {
-			impedimentoService.inativarImpedimentosVencidos();
-		} catch (Exception e) {
-		}
-		try {
-			service.inativarVisitantes();
-		} catch (Exception e) {
-		}
 	}
     
 	public Boolean getUsuarioEstaCadastrando() {

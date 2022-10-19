@@ -45,6 +45,8 @@ import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
 import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
 import br.gov.mt.sejudh.sigepen.model.VisitanteFoto;
 import br.gov.mt.sejudh.sigepen.model.dto.AutorizacaoSemBiometriaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.CredenciamentoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -55,13 +57,15 @@ public class VisitanteService extends BaseService<Visitante, Long> {
 	
 	private static final long serialVersionUID = 7230046305068303409L;
 	
-
+	@Inject
     private VisitanteDAO visitanteDAO;
     
 	@Inject
     private PessoaService pessoaService;
+	
 	@Inject
     private CredenciamentoService credenciamentoService;
+	
 	@Inject
     private RecuperandoService recuperandoService;
 
@@ -70,6 +74,7 @@ public class VisitanteService extends BaseService<Visitante, Long> {
 
     @Inject
     private RecuperandoDAO recuperandoDAO;
+    
     private Optional<Passagem> passagemRecuperada;
 
     @Inject
@@ -215,6 +220,67 @@ public class VisitanteService extends BaseService<Visitante, Long> {
 
     public Visitante calcularStatusAtual(Visitante visitante) {
     	return this.visitanteDAO.calcularStatusAtual(visitante);
+    }
+    
+    public void calculaSituacaoVisitante(VisitanteDTO visitante) {
+    	if (visitante.isImpedido()) {
+    		visitante.setStatus(StatusVisitante.M);
+			return;
+    	}
+
+    	FaseCredenciamento fase = FaseCredenciamento.RECEBIMENTO;
+    	StatusCredenciamento situacao = StatusCredenciamento.PENDENTE;
+    	
+        if(visitante.getCredenciamentos() != null && visitante.getCredenciamentos().size() > 0) {
+        	for(CredenciamentoDTO cred : visitante.getCredenciamentos()) {
+        		if(StatusCredenciamento.INATIVO.equals(cred.getStatus()) && (cred.getFases() == null || (cred.getFases() != null && cred.getFases().size() == 0))) {
+        			fase = FaseCredenciamento.RECEBIMENTO;
+        			situacao = StatusCredenciamento.INATIVO;
+        		} else {
+        			FaseDoCredenciamentoDTO faseCredenciamento = credenciamentoService.getProximaFaseCredenciamento(cred);
+        			
+            		cred.setFaseAtual(faseCredenciamento.getFaseCredenciamento().getId());
+            		cred.setStatus(faseCredenciamento.getStatusCredenciamento().getId());
+            		
+    				if(faseCredenciamento.getFaseCredenciamento().getId() < fase.getId()) {
+    					fase = faseCredenciamento.getFaseCredenciamento();
+    					situacao = faseCredenciamento.getStatusCredenciamento(); 
+    				} else if(faseCredenciamento.getFaseCredenciamento().equals(fase)) {
+    					if(faseCredenciamento.getStatusCredenciamento().getId() < situacao.getId())
+    						situacao = faseCredenciamento.getStatusCredenciamento(); 
+    				}  
+        		}
+        	}
+        }
+        
+		visitante.setFaseAtual(fase);
+		
+		if(fase == FaseCredenciamento.APROVACAO || StatusCredenciamento.INATIVO.equals(situacao))
+			visitante.setSituacaoAtual(situacao);
+		else
+			visitante.setSituacaoAtual(StatusCredenciamento.PENDENTE);
+
+        if (visitante.getCredenciamentos() != null && visitante.getCredenciamentos().size() > 0) {
+        	boolean todosCredenciamentosInativosOuNaoAprovados = visitante.getCredenciamentos().stream().allMatch(c -> c.getStatus() == StatusCredenciamento.INATIVO || c.getStatus() == StatusCredenciamento.NAO_APROVADO);
+        	boolean todosCredenciamentosAprovados = visitante.getCredenciamentos().stream().allMatch(c -> c.getStatus() == StatusCredenciamento.APROVADO);
+        	boolean peloMenosUmCredenciamentoEmAndamento = visitante.getCredenciamentos().stream().anyMatch(c -> c.getStatus() == StatusCredenciamento.PENDENTE);
+        	boolean peloMenosUmCredenciamentoAprovadoENenhumPendente = visitante.getCredenciamentos().stream()
+        																	.anyMatch(c -> c.getStatus() == StatusCredenciamento.APROVADO) &&
+        																visitante.getCredenciamentos().stream()
+        																	.noneMatch(c -> c.getStatus() == StatusCredenciamento.PENDENTE);
+        	
+        	if (todosCredenciamentosInativosOuNaoAprovados) {
+        		visitante.setStatus(StatusVisitante.I);
+        	} else if (todosCredenciamentosAprovados) {
+        		visitante.setStatus(StatusVisitante.A);
+        	} else if (peloMenosUmCredenciamentoEmAndamento) {
+        		visitante.setStatus(StatusVisitante.C);
+        	} else if (peloMenosUmCredenciamentoAprovadoENenhumPendente) {
+        		visitante.setStatus(StatusVisitante.A);
+        	}
+        } else {
+        	visitante.setStatus(StatusVisitante.P);
+        }
     }
     
     private void prepararStatusVisitante(Visitante visitante) {

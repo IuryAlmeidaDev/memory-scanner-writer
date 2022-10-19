@@ -21,7 +21,7 @@ public class AgendadorTarefas {
 	@Inject
 	private RecuperandoService recuperandoService;
 	
-	@Schedule(hour = "6", minute = "30")
+	@Schedule(hour = "5", minute = "0", persistent = false)
 	public void expirarPedidosTransito(){
 		 pedidoService.expirarPedidosTransito();
 	}
@@ -35,22 +35,22 @@ public class AgendadorTarefas {
 		}
 	}
 
-	@Schedule(hour ="0", minute = "5", persistent = true)
+	@Schedule(hour = "6", minute = "*", persistent = false)
 	public void inativarVisitantes(){
 		visitanteService.inativarVisitantes();
 	}
 	
-	@Schedule(hour ="0", minute = "10", persistent = true)
-	public void inativarImpedimentos(){
+	@Schedule(hour = "5", minute = "0", persistent = false)
+	public void inativarImpedimentos() throws Exception{
 		impedimentoService.inativarImpedimentosVencidos();
 	}
 	
-	@Schedule(hour = "0", minute = "30")
+	@Schedule(hour = "5", minute = "0", persistent = false)
 	public void expirarGestante(){
 		 recuperandoService.expirarGestante();
 	}
 	
-	@Schedule(hour = "0", minute = "35")
+	@Schedule(hour = "5", minute = "0", persistent = false)
 	public void expirarLactante(){
 		 recuperandoService.expirarLactante();
 	}

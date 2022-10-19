@@ -64,8 +64,17 @@ public class Impedimento extends BaseModel<Long> {
     @Enumerated(EnumType.STRING)
     @Column(name = "STAT_IMPEDIMENTO")
     private SgpStatus status;
+    
+    public Impedimento() {
+    	
+    }
 
-    @Override
+    public Impedimento(Long id) {
+		super();
+		this.id = id;
+	}
+
+	@Override
     public Long getId() {
         return id;
     }

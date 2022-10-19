@@ -1,9 +1,14 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante;
 import br.gov.mt.sejudh.sigepen.model.Imagem;
 
 public class VisitanteDTO {
@@ -27,9 +32,17 @@ public class VisitanteDTO {
 	private SimNao pnePermanente;
 	private SimNao emancipado;
 	private VisitanteDTO responsavel;
-
+	private StatusVisitante status;
+	private FaseCredenciamento faseAtual;
+	private StatusCredenciamento situacaoAtual;
+	
+	private boolean isImpedido = false;
+	
+	private List<CredenciamentoDTO> credenciamentos;
+	
 	public VisitanteDTO() {
 		super();
+		this.setCredenciamentos(new ArrayList<>());
 	}
 
 	public String getEstado() {
@@ -201,5 +214,45 @@ public class VisitanteDTO {
 
 	public void setEmancipado(SimNao emancipado) {
 		this.emancipado = emancipado;
+	}
+
+	public List<CredenciamentoDTO> getCredenciamentos() {
+		return credenciamentos;
+	}
+
+	public void setCredenciamentos(List<CredenciamentoDTO> credenciamentos) {
+		this.credenciamentos = credenciamentos;
+	}
+
+	public StatusVisitante getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusVisitante status) {
+		this.status = status;
+	}
+
+	public FaseCredenciamento getFaseAtual() {
+		return faseAtual;
+	}
+
+	public void setFaseAtual(FaseCredenciamento faseAtual) {
+		this.faseAtual = faseAtual;
+	}
+
+	public StatusCredenciamento getSituacaoAtual() {
+		return situacaoAtual;
+	}
+
+	public void setSituacaoAtual(StatusCredenciamento situacaoAtual) {
+		this.situacaoAtual = situacaoAtual;
+	}
+
+	public boolean isImpedido() {
+		return isImpedido;
+	}
+
+	public void setImpedido(boolean isImpedido) {
+		this.isImpedido = isImpedido;
 	}
 }

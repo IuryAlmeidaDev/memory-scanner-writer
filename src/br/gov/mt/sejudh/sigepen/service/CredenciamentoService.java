@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.service;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -7,10 +8,13 @@ import javax.inject.Inject;
 
 import br.gov.mt.sejudh.sigepen.base.service.BaseService;
 import br.gov.mt.sejudh.sigepen.dao.CredenciamentoDAO;
+import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.model.Credenciamento;
 import br.gov.mt.sejudh.sigepen.model.FaseDoCredenciamento;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
+import br.gov.mt.sejudh.sigepen.model.dto.CredenciamentoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
 
 @Stateless
 public class CredenciamentoService extends BaseService<Credenciamento, Long> {
@@ -18,6 +22,9 @@ public class CredenciamentoService extends BaseService<Credenciamento, Long> {
 	private static final long serialVersionUID = 6611700174660923936L;
 	
     private CredenciamentoDAO credenciamentoDAO;
+	
+	@Inject
+	private ParametroUnidadeService parametroUnidadeService;
 
     @Inject
     public void setCredenciamentoDAO(CredenciamentoDAO credDAO) {
@@ -55,5 +62,27 @@ public class CredenciamentoService extends BaseService<Credenciamento, Long> {
 	
 	public Credenciamento buscarUltimoCredenciamento(Visitante visitante) {
 		return this.credenciamentoDAO.buscarUltimoCredenciamento(visitante);
+	}
+
+	public FaseDoCredenciamentoDTO getProximaFaseCredenciamento(CredenciamentoDTO cred) {
+		FaseDoCredenciamentoDTO fase = cred.getFases().stream()
+                .max(Comparator.comparing(o -> o.getFaseCredenciamento().getId())).orElse(new FaseDoCredenciamentoDTO());
+
+		FaseDoCredenciamentoDTO retorno = new FaseDoCredenciamentoDTO();
+		
+		if(fase.getId() == null) {
+			retorno.setFaseCredenciamento(FaseCredenciamento.RECEBIMENTO);
+			retorno.setStatusCredenciamento(StatusCredenciamento.PENDENTE);
+		} else {
+			retorno.setFaseCredenciamento(parametroUnidadeService.buscarFase(cred, fase));
+			
+			if(FaseCredenciamento.APROVACAO == fase.getFaseCredenciamento()) {
+				retorno.setStatusCredenciamento(fase.getStatusCredenciamento());
+			} else {
+				retorno.setStatusCredenciamento(StatusCredenciamento.PENDENTE);
+			}
+		}
+		
+		return retorno;
 	}
 }
