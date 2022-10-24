@@ -1,22 +1,33 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.annotations.QueryHints;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
@@ -29,6 +40,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
+import br.gov.mt.sejudh.sigepen.model.AutorizacaoValidacaoSemBiometria;
 import br.gov.mt.sejudh.sigepen.model.Contato;
 import br.gov.mt.sejudh.sigepen.model.Credenciamento;
 import br.gov.mt.sejudh.sigepen.model.Documento;
@@ -44,7 +56,11 @@ import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
 import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
+import br.gov.mt.sejudh.sigepen.model.dto.AutorizacaoSemBiometriaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
+import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
@@ -55,6 +71,15 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 
 	@Inject
 	private ParametroUnidadeDAO parametroUnidadeDAO;
+	
+	@Inject
+	private CredenciamentoDAO credenciamentoDAO;
+	
+	@Inject
+	private ImpedimentoDAO impedimentoDAO;
+	
+	@Inject
+	private VisitanteService visitanteService;
 
 	@Override
     public Visitante salvar(Visitante t) {
@@ -410,27 +435,67 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 	}
 	
 	public void inativarVisitantes() {
-    	Date hoje = new Date();
-    	hoje.setHours(0);
-    	hoje.setMinutes(0);
-    	hoje.setSeconds(0);
-        String jpql = "SELECT vc FROM FaseDoCredenciamento vc WHERE vc.faseCredenciamento = :fase AND vc.statusCredenciamento = :status AND vc.credenciamento.dataValidade < :data";
-        Query query = this.em.createQuery(jpql, FaseDoCredenciamento.class);
-        query.setParameter("fase", FaseCredenciamento.APROVACAO);
-        query.setParameter("status", StatusCredenciamento.APROVADO);
-        query.setParameter("data", hoje);
-        List<FaseDoCredenciamento> lista = query.getResultList();
-    	for(FaseDoCredenciamento vc : lista) {
-            vc.setStatusCredenciamento(StatusCredenciamento.INATIVO);
-            this.em.merge(vc);
-            
-            Credenciamento c = vc.getCredenciamento();
-			c.setStatusCredenciamento(StatusCredenciamento.INATIVO.getId());
-			this.em.merge(c);
+		Criteria crit = em.unwrap(Session.class).createCriteria(FaseDoCredenciamento.class);
+		crit.createAlias("credenciamento", "credenciamento", JoinType.INNER_JOIN);
+		crit.createAlias("credenciamento.visitante", "visitante", JoinType.INNER_JOIN);
+				
+		ProjectionList proj = Projections.projectionList();
+				
+        proj.add(Projections.projectionList()
+                .add(Projections.property("id"), "id")
+                .add(Projections.property("credenciamento.id"), "credenciamentoId")
+                .add(Projections.property("visitante.id"), "visitanteId"));
+				
+		crit.setProjection(proj);
+		crit.setResultTransformer(new AliasToBeanResultTransformer(FaseDoCredenciamentoDTO.class));
+		crit.addQueryHint(QueryHints.READ_ONLY);
+		
+		crit.add(Restrictions.eq("faseCredenciamento", FaseCredenciamento.APROVACAO))
+			.add(Restrictions.eq("statusCredenciamento", StatusCredenciamento.APROVADO))
+			.add(Restrictions.lt("credenciamento.dataValidade", java.sql.Date.valueOf(LocalDate.now())));
+
+		@SuppressWarnings("unchecked")
+		List<FaseDoCredenciamentoDTO> credenciamentoParaInativar = (List<FaseDoCredenciamentoDTO>)crit.list();
+		
+		if (credenciamentoParaInativar.size() > 0) {
+			List<Long> idsFases = credenciamentoParaInativar.stream().map(i -> i.getId()).collect(Collectors.toList());
+			List<Long> idsCredenciamentos = credenciamentoParaInativar.stream().map(i -> i.getCredenciamentoId()).collect(Collectors.toList());
+			List<Long> idsVisitantes = credenciamentoParaInativar.stream().map(i -> i.getVisitanteId()).collect(Collectors.toList());
 			
-			Visitante o = this.calcularStatusAtual(c.getVisitante());
-			this.em.merge(o);
-    	} 
+			CriteriaBuilder builder = em.getCriteriaBuilder();
+			CriteriaUpdate<FaseDoCredenciamento> updateFase = builder.createCriteriaUpdate(FaseDoCredenciamento.class);
+			Root<FaseDoCredenciamento> fase = updateFase.from(FaseDoCredenciamento.class);
+			
+			updateFase.set("statusCredenciamento", StatusCredenciamento.INATIVO);
+			updateFase.where(fase.get("id").in(idsFases));
+			
+			CriteriaUpdate<Credenciamento> updateCredenciamento = builder.createCriteriaUpdate(Credenciamento.class);
+			Root<Credenciamento> credenciamento = updateCredenciamento.from(Credenciamento.class);
+			
+			updateCredenciamento.set("statusCredenciamento", StatusCredenciamento.INATIVO.getId());
+			updateCredenciamento.where(credenciamento.get("id").in(idsCredenciamentos));
+			
+			em.createQuery(updateFase).executeUpdate();
+			em.createQuery(updateCredenciamento).executeUpdate();
+
+			CriteriaUpdate<Visitante> updateVisitante = builder.createCriteriaUpdate(Visitante.class);
+			Root<Visitante> visitante = updateVisitante.from(Visitante.class);
+			
+			idsVisitantes.stream().forEach(vId -> {
+				VisitanteDTO visitanteDto = buscarVisitanteDTO(vId);
+				credenciamentoDAO.buscarCredenciamentosEFasesDTO(visitanteDto);
+				//impedimentoDAO.verificarSeVisitanteEstaImpedido(visitanteDto);
+				
+				visitanteService.calculaSituacaoVisitante(visitanteDto);
+
+				updateVisitante.set(visitante.get("situacaoAtual"), visitanteDto.getSituacaoAtual().getId());
+				updateVisitante.set(visitante.get("faseAtual"), visitanteDto.getFaseAtual().getId());
+				updateVisitante.set(visitante.get("status"), visitanteDto.getStatus());
+				updateVisitante.where(builder.equal(visitante.get("id"), visitanteDto.getId()));
+				
+				em.createQuery(updateVisitante).executeUpdate();
+			});
+		}
 	}
 
     public Visitante calcularStatusAtual(Visitante visitante) {
@@ -725,5 +790,73 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
     			this.em.merge(o);
     		} 
         }
+	}
+
+	public VisitanteDTO buscarVisitanteDTO(Long idVisitante) {
+		Criteria crit = em.unwrap(Session.class).createCriteria(Visitante.class);
+		
+		crit
+			.createAlias("pessoa", "pessoa", JoinType.INNER_JOIN)
+			.createAlias("pessoa.nacionalidade", "nacionalidade", JoinType.INNER_JOIN)
+			.createAlias("pessoa.pais", "pais", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("pessoa.naturalidade", "cidade", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("cidade.estado", "estado", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("identidadeDeGenero", "idg", JoinType.LEFT_OUTER_JOIN)
+		;
+				
+		ProjectionList proj = Projections.projectionList();
+				
+        proj.add(Projections.projectionList()
+                .add(Projections.property("id"), "id")
+                .add(Projections.property("pne"), "pne")
+                .add(Projections.property("pnePermanente"), "pnePermanente")
+                .add(Projections.property("emancipado"), "emancipado")
+                .add(Projections.property("pessoa.nome"), "nome")
+                .add(Projections.property("pessoa.sexo"), "sexo")
+                .add(Projections.property("pessoa.nomeMae"), "nomeMae")
+                .add(Projections.property("pessoa.nomePai"), "nomePai")
+                .add(Projections.property("pessoa.nomeSocial"), "nomeSocial")
+                .add(Projections.property("pessoa.dataNascimento"), "dataNascimento")
+                .add(Projections.property("nacionalidade.descricao"), "nacionalidade")
+                .add(Projections.property("cidade.nome"), "cidade")
+                .add(Projections.property("estado.nome"), "estado")
+                .add(Projections.property("idg.descricao"), "identidadeDeGenero")
+        );
+				
+		crit.setProjection(proj);
+		crit.setResultTransformer(new AliasToBeanResultTransformer(VisitanteDTO.class));
+		crit.addQueryHint(QueryHints.READ_ONLY);
+		
+		crit.add(Restrictions.eq("id", idVisitante));
+
+		return (VisitanteDTO) crit.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<AutorizacaoSemBiometriaDTO> buscarAutorizacoesEntradasDTO(Long idEntrada) {
+		Criteria crit = em.unwrap(Session.class).createCriteria(AutorizacaoValidacaoSemBiometria.class);
+		
+		crit
+			.createAlias("usuario", "usuario", JoinType.INNER_JOIN)
+			.createAlias("usuario.servidor", "servidor", JoinType.INNER_JOIN)
+		;
+				
+		ProjectionList proj = Projections.projectionList();
+				
+        proj.add(Projections.projectionList()
+                .add(Projections.property("id"), "id")
+                .add(Projections.property("servidor.nome"), "nomeAutorizador")
+                .add(Projections.property("dataAutorizacao"), "dataAutorizacao")
+                .add(Projections.property("observacao"), "observacao")
+                .add(Projections.property("tipoAutorizacaoValidacaoSemBio"), "tipoAutorizacao")
+        );
+				
+		crit.setProjection(proj);
+		crit.setResultTransformer(new AliasToBeanResultTransformer(AutorizacaoSemBiometriaDTO.class));
+		crit.addQueryHint(QueryHints.READ_ONLY);
+		
+		crit.add(Restrictions.eq("entradaSaida.id", idEntrada));
+
+		return (List<AutorizacaoSemBiometriaDTO>) crit.list();
 	}
 }

@@ -10,11 +10,34 @@ import br.gov.mt.sejudh.sigepen.enumerator.ParametroVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.model.FaseDoCredenciamento;
 import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
+import br.gov.mt.sejudh.sigepen.model.dto.CredenciamentoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
 
 @RequestScoped
 public class ParametroUnidadeDAO extends BaseDAO<ParametroUnidade, Long> {
 
 	private static final long serialVersionUID = 9130817008392967316L;
+	
+	public FaseCredenciamento buscarFase(CredenciamentoDTO credenciamento, FaseDoCredenciamentoDTO faseCred) {
+		
+        List<ParametroUnidade> parametros = this.buscaPorCampo("unidadePrisional.id", credenciamento.getUnidadeId());
+        FaseCredenciamento fase = faseCred.getFaseCredenciamento();
+
+        switch (fase) {
+            case RECEBIMENTO:
+                return this.atribuirFaseRecebimento(fase, parametros);
+            case CHECAGEM:
+                return this.atribuirFaseChecagem(fase, parametros);
+            case CONFERENCIA:
+            	return this.atribuirFaseConferencia(fase, parametros);
+            case ANALISE:
+            	return this.atribuirFaseAnalise(fase);
+            case APROVACAO:
+            	return FaseCredenciamento.APROVACAO;
+            default:
+                return FaseCredenciamento.RECEBIMENTO;
+        }
+	}
 	
 	public FaseCredenciamento buscarFase(FaseDoCredenciamento vc) {
 		

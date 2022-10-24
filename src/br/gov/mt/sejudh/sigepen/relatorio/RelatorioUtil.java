@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.relatorio;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,6 +16,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
+
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 import br.gov.mt.sejudh.sigepen.enumerator.TipoArquivo;
 import br.gov.mt.sejudh.sigepen.model.Arquivo;
@@ -171,4 +175,21 @@ public class RelatorioUtil {
 		return rodapePath;
 	}
 	
+	public static <T> StreamedContent downloadPdf(List<T> valores, Relatorio relatorio, Map<String, Object> parameters) throws Exception {
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        
+        parameters.put("CABECALHO", getCabecalhoPath(ctx, relatorio.getCabecalho()));
+        parameters.put("RODAPE", getRodapePath(ctx, relatorio.getRodape()));
+        parameters.put("UNIDADE_LOGADA", SecurityUtil.getUnidadeSelecionada().getNome());
+        parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
+        
+        if (!parameters.containsKey("NOME_DO_RELATORIO")) {
+            parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
+        }
+        
+        JRDataSource datasource = new JRBeanCollectionDataSource(valores);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(getRelatorioPath(ctx, relatorio), parameters, datasource);
+
+		return new DefaultStreamedContent(new ByteArrayInputStream(JasperExportManager.exportReportToPdf(jasperPrint)), "application/pdf", Relatorio.ListarEntradaSaida.toString()+".pdf", "application/pdf");
+	}
 }

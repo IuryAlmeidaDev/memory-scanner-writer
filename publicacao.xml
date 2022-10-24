@@ -68,7 +68,7 @@
 	 </target>	
 
 	<target name="compilar" depends="limpar, replace">
-		<javac destdir="${build.dir}/${classes.dir}" srcdir="src" includeantruntime="false" debug="true" >
+		<javac destdir="${build.dir}/${classes.dir}" srcdir="src" includeantruntime="false" debug="true" source="1.8" target="1.8">
 				<classpath refid="compilar.classpath" />
 			</javac>
 			

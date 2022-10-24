@@ -22,6 +22,10 @@ public class FaseDoCredenciamentoDTO {
     private Usuario usuarioAprovacao;
     private List<DocumentoDTO> credencialDocumentos = new ArrayList<DocumentoDTO>();
     private List<CertidaoDTO> credencialCertidoes = new ArrayList<CertidaoDTO>();
+    
+    private Long credenciamentoId;
+    private Long visitanteId;
+    
 	public Long getId() {
 		return id;
 	}
@@ -94,7 +98,16 @@ public class FaseDoCredenciamentoDTO {
 	public void setCredencialCertidoes(List<CertidaoDTO> credencialCertidoes) {
 		this.credencialCertidoes = credencialCertidoes;
 	}
-    
-    
-
+	public Long getCredenciamentoId() {
+		return credenciamentoId;
+	}
+	public void setCredenciamentoId(Long credenciamentoId) {
+		this.credenciamentoId = credenciamentoId;
+	}
+	public Long getVisitanteId() {
+		return visitanteId;
+	}
+	public void setVisitanteId(Long visitanteId) {
+		this.visitanteId = visitanteId;
+	}
 }

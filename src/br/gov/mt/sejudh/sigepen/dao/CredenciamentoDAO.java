@@ -9,7 +9,15 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.annotations.QueryHints;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
@@ -25,6 +33,9 @@ import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
 import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
+import br.gov.mt.sejudh.sigepen.model.dto.CredenciamentoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
@@ -416,5 +427,50 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
         query.setParameter("visitante", visitante);
         List<Credenciamento> lista = query.getResultList();
         return lista;
+	}
+
+	public void buscarCredenciamentosEFasesDTO(VisitanteDTO visitanteDto) {
+		Criteria crit = em.unwrap(Session.class).createCriteria(Credenciamento.class);
+		crit.createAlias("visitante", "visitante", JoinType.INNER_JOIN);
+		
+		ProjectionList proj = Projections.projectionList();
+
+        proj.add(Projections.projectionList()
+                .add(Projections.property("id"), "id")
+                .add(Projections.property("statusCredenciamento"), "status")
+                .add(Projections.property("faseCredenciamento"), "faseAtual")
+        );
+				
+		crit.setProjection(proj);
+		crit.setResultTransformer(new AliasToBeanResultTransformer(CredenciamentoDTO.class));
+		crit.addQueryHint(QueryHints.READ_ONLY);		
+		crit.add(Restrictions.eq("visitante.id", visitanteDto.getId()));
+
+		@SuppressWarnings("unchecked")
+		List<CredenciamentoDTO> credenciamentos = crit.list();
+		
+		credenciamentos.forEach(c -> {
+			Criteria critC = em.unwrap(Session.class).createCriteria(FaseDoCredenciamento.class);
+			critC.createAlias("credenciamento", "credenciamento", JoinType.INNER_JOIN);
+			
+			ProjectionList projC = Projections.projectionList();
+	
+			projC.add(Projections.projectionList()
+	                .add(Projections.property("id"), "id")
+	                .add(Projections.property("statusCredenciamento"), "statusCredenciamento")
+	                .add(Projections.property("faseCredenciamento"), "faseCredenciamento")
+	        );
+					
+	        critC.setProjection(projC);
+	        critC.setResultTransformer(new AliasToBeanResultTransformer(FaseDoCredenciamentoDTO.class));
+	        critC.addQueryHint(QueryHints.READ_ONLY);			
+	        critC.add(Restrictions.eq("credenciamento.id", c.getId()));
+	
+			@SuppressWarnings("unchecked")
+			List<FaseDoCredenciamentoDTO> fases = critC.list();
+			c.setFases(fases);
+		});
+		
+		visitanteDto.setCredenciamentos(credenciamentos);
 	}
 }

@@ -7,9 +7,12 @@ import javax.inject.Inject;
 
 import br.gov.mt.sejudh.sigepen.base.service.BaseService;
 import br.gov.mt.sejudh.sigepen.dao.ParametroUnidadeDAO;
+import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
+import br.gov.mt.sejudh.sigepen.model.dto.CredenciamentoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
 
 @Stateless
 public class ParametroUnidadeService extends BaseService<ParametroUnidade, Long> {
@@ -51,4 +54,8 @@ public class ParametroUnidadeService extends BaseService<ParametroUnidade, Long>
             parametroUnidade.setValidar(SimNao.getByBool(parametroVisitante.getValueValidar()));
         }
     }
+
+	public FaseCredenciamento buscarFase(CredenciamentoDTO cred, FaseDoCredenciamentoDTO fase) {
+		return parametroUnidadeDAO.buscarFase(cred, fase);
+	}
 }

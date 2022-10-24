@@ -9,8 +9,8 @@ import br.gov.mt.sejudh.sigepen.dao.EntradaSaidaRecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEntradaSaidaRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
 import br.gov.mt.sejudh.sigepen.model.EntradaSaida;
-import br.gov.mt.sejudh.sigepen.model.EntradaSaidaRecuperando;
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
+import br.gov.mt.sejudh.sigepen.model.dto.EntradaSaidaDTO;
 
 @Stateless
 public class EntradaSaidaRecuperandoService {
@@ -22,7 +22,7 @@ public class EntradaSaidaRecuperandoService {
 		return this.dao.buscarQuantidadeFiltrada(filtro);
 	}
 	
-	public List<EntradaSaidaRecuperando> buscarEntradasPorFiltro(FiltroEntradaSaidaRecuperando filtro, boolean isRelatorio) {
+	public List<EntradaSaidaDTO> buscarEntradasPorFiltro(FiltroEntradaSaidaRecuperando filtro, boolean isRelatorio) {
 		return this.dao.buscarEntradasPorFiltro(filtro, isRelatorio);
 	}
 
