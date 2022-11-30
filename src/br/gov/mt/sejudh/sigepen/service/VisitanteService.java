@@ -534,7 +534,7 @@ public class VisitanteService extends BaseService<Visitante, Long> {
  
         boolean anyMatch = docsObrigatoriosComFoto.stream().anyMatch(e -> docsDoVisitanteComFoto.contains(e));
         
-        if (!anyMatch) {
+        if (!anyMatch && !visitante.getPessoa().getMenorIdade()) {
         	documentosDescricao.add("Adicione pelo menos um dos seguintes documentos: " + String.join(", ", docsObrigatoriosComFoto));
         }
     	
