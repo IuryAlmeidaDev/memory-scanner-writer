@@ -14,6 +14,7 @@ public enum Relatorio {
 	ListarTipoVisita("RELATÓRIO DE TIPO VISITA"),
 	ListarVisitante("LISTA DE VISITANTES", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	ListarUnidadePrisional("RELATÓRIO DE UNIDADES PRISIONAIS"),
+	ListarQuadroVagas("RELATÓRIO DE QUADRO DE VAGAS"),
 	ListarMovimentacaoInterna("RELATÓRIO DE MOVIMENTAÇÃO INTERNA"),
 	RegistroMovimentacaoInterna("MOVIMENTAÇÃO INTERNA"),
 	ListarMovimentacaoExterna("RELATÓRIO DE MOVIMENTAÇÃO EXTERNA"),
