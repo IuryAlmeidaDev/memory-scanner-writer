@@ -1,30 +1,28 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
-import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
-
 public class QuadroVagasDTO {
 
 	private long id;
 	private String sigla;
-	private String municipio;
     private Long capacidadeTotal;
     private Long quantidadeCondenado;
     private Long quantidadeProvisorios;
     private Long totalRecuperando;
     private String deficit;
     private String vagas;
+    private String nomeUnidade;
     
 	 public QuadroVagasDTO() {
 	    	
     }
     
-    public QuadroVagasDTO(Long quantidadeCondenado, Long quantidadeProvisorios, Long totalRecuperando, long id, String sigla) {
+    public QuadroVagasDTO(Long quantidadeCondenado, Long quantidadeProvisorios, Long totalRecuperando, long id, String sigla, String nomeUnidade) {
     	this.quantidadeCondenado = quantidadeCondenado;
     	this.quantidadeProvisorios = quantidadeProvisorios;
     	this.totalRecuperando = totalRecuperando;
     	this.id = id;
     	this.sigla = sigla;
-    	this.municipio = "";
+    	this.nomeUnidade = nomeUnidade;
     }
     
     public QuadroVagasDTO(Long capacidadeTotal, Long id) {
@@ -47,14 +45,6 @@ public class QuadroVagasDTO {
 
 	public void setSigla(String sigla) {
 		this.sigla = sigla;
-	}
-
-	public String getMunicipio() {
-		return municipio;
-	}
-
-	public void setMunicipio(String municipio) {
-		this.municipio = municipio;
 	}
 
 	public Long getCapacidadeTotal() {
@@ -110,6 +100,14 @@ public class QuadroVagasDTO {
 		this.vagas = vagas;
 	}
 	
+	public String getNomeUnidade() {
+		return nomeUnidade;
+	}
+	
+	public void setNomeUnidade(String nomeUnidade) {
+		this.nomeUnidade = nomeUnidade;
+	}
+
 	public void calculoQntDeficit(Long capacidade, Long totalRecperando) {
 		Long calc = capacidade - totalRecperando;
 		this.deficit = String.valueOf(calc < 0 ? calc : "");
@@ -118,6 +116,7 @@ public class QuadroVagasDTO {
 		Long calc = capacidade - totalRecperando;
 		this.vagas = String.valueOf(calc >= 0 ? calc : "");
 	}
+
 
 
 }

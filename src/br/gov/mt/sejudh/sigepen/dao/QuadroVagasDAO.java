@@ -23,7 +23,6 @@ import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
 import br.gov.mt.sejudh.sigepen.model.Acesso;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO;
-import br.gov.mt.sejudh.sigepen.model.view.RecuperandoQuadroVagasView;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
 @RequestScoped
@@ -103,12 +102,12 @@ public class QuadroVagasDAO {
 		String jpql = "SELECT new br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO("
 				+ " SUM(CASE WHEN lr.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END),"
 				+ " SUM(CASE WHEN lr.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END),"
-				+ " COUNT(*), lr.unidadeId, lr.siglaUnidade)"
+				+ " COUNT(*), lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade)"
 				+ " FROM RecuperandoView lr"
 				+ " WHERE lr.regimeId IN(1,2)"
 				+ " AND lr.condicaoAtual IN('CONDENADO', 'PROVISORIO')"
 				+ filtro
-				+ " GROUP BY lr.unidadeId, lr.siglaUnidade"
+				+ " GROUP BY lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade"
 				+ " ORDER BY lr.unidadeId";	
 		
 		Query query = entityManager.createQuery(jpql, QuadroVagasDTO.class);

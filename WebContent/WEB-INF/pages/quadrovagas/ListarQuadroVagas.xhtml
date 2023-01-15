@@ -61,13 +61,16 @@
 				<p:column headerText="Codigo" sortBy="#{unidade.id}" width="120">
 					<h:outputText value="#{unidade.id}" />
 				</p:column>
-				<p:column headerText="Sigla" sortBy="#{unidade.sigla}" width="120">
+				<p:column headerText="Sigla" sortBy="#{unidade.nomeUnidade}">
+					<h:outputText value="#{unidade.nomeUnidade}" />
+				</p:column>
+				<p:column headerText="Sigla" sortBy="#{unidade.sigla}" width="80">
 					<h:outputText value="#{unidade.sigla}" />
 				</p:column>
-				<p:column headerText="Capacidade" sortBy="#{unidade.capacidadeTotal}" width="120">
+				<p:column headerText="Capacidade" sortBy="#{unidade.capacidadeTotal}">
 					<h:outputText value="#{unidade.capacidadeTotal}" />
 				</p:column>
-				<p:column headerText="Condenados" sortBy="#{unidade.quantidadeCondenado}" width="120">
+				<p:column headerText="Condenados" sortBy="#{unidade.quantidadeCondenado}">
 					<h:outputText value="#{unidade.quantidadeCondenado}" />
 				</p:column>
 				<p:column headerText="Provisórios" sortBy="#{unidade.quantidadeProvisorios}">

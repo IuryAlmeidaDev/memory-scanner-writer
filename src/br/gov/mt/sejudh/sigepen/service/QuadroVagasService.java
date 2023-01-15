@@ -15,7 +15,6 @@ import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO;
-import br.gov.mt.sejudh.sigepen.model.view.RecuperandoQuadroVagasView;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
