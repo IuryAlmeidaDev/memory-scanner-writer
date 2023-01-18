@@ -9,6 +9,7 @@ import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.QuadroVagasDAO;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroQuadroVagas;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnidadePrisional;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
@@ -85,9 +86,9 @@ public class QuadroVagasService {
 		return dao.buscaPorFiltro(filtro, isRelatorio);
 	}
 	
-	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroUnidadePrisional filtroUnidadePrisional){
+	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroUnidadePrisional, boolean relatorio){
 		
-		return addCapacidadeTotalUnidade(dao.buscaQuantidadeRecuperados(filtroUnidadePrisional));
+		return addCapacidadeTotalUnidade(dao.buscaQuantidadeRecuperados(filtroUnidadePrisional, false, relatorio));
 	}
 	
 	private List<QuadroVagasDTO> addCapacidadeTotalUnidade(List<QuadroVagasDTO> recuperados){
@@ -107,7 +108,7 @@ public class QuadroVagasService {
 		return quadroVagasNovo;
 	}
 	
-	public int quantidadeFiltrados(FiltroUnidadePrisional filtro){
+	public int quantidadeFiltrados(FiltroQuadroVagas filtro){
 		return dao.quantidadeFiltrados(filtro);
 	}	
 	

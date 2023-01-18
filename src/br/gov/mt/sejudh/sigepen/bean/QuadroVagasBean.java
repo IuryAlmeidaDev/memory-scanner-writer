@@ -23,24 +23,20 @@ import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroQuadroVagas;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnidadePrisional;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
-import br.gov.mt.sejudh.sigepen.enumerator.ParametroVisitante;
-import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Contato;
-import br.gov.mt.sejudh.sigepen.model.Endereco;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
 import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
 import br.gov.mt.sejudh.sigepen.model.ParametroVisitaBloqueio;
 import br.gov.mt.sejudh.sigepen.model.ParametroVisitaEstrutura;
-import br.gov.mt.sejudh.sigepen.model.Servidor;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.ContatoService;
@@ -65,7 +61,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 })
 public class QuadroVagasBean extends MetodosDePaginaBean {
 
-	private FiltroUnidadePrisional filtro;
+	private FiltroQuadroVagas filtro;
 	
 	private Boolean disabledAbaEstrutura;
 
@@ -135,12 +131,12 @@ public class QuadroVagasBean extends MetodosDePaginaBean {
 			}
 		}
 		if (!security.possuiPermissao("ListarTodosQuadroVagas")) {
-			this.setFiltro(new FiltroUnidadePrisional());
+			this.setFiltro(new FiltroQuadroVagas());
 			this.filtro.setId(SecurityUtil.getUnidadeSelecionada().getId());
 			
-			super.carregarFiltroPaginacao(FiltroUnidadePrisional.class, this, getFiltro());
+			super.carregarFiltroPaginacao(FiltroQuadroVagas.class, this, getFiltro());
 		} else {
-			super.carregarFiltroPaginacao(FiltroUnidadePrisional.class, this);
+			super.carregarFiltroPaginacao(FiltroQuadroVagas.class, this);
 		}
 	}
 	
@@ -178,7 +174,7 @@ public class QuadroVagasBean extends MetodosDePaginaBean {
 				default:
 					break;
 			}
-            this.carregarParametrosVisitante();
+            //this.carregarParametrosVisitante();
 		} catch (Exception e){
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(e, log);
@@ -208,39 +204,6 @@ public class QuadroVagasBean extends MetodosDePaginaBean {
 		
 		return true;
 	}
-	
-	public String salvar() {
-		String retorno = null;
-		
-		try {
-		    parametroUnidadeService.salvarParametrosVisitanteUnidade(this.parametrosVisitante, this.unidade);
-		    quadroVagasService.salvar(this.unidade);
-			alterarUnidadeSessao();
-			facesUtil.exibirMensagemInfo("Unidade Prisional " + this.unidade.getNome() + " salva com Sucesso!", true);
-			retorno = "pretty:ListarUnidade";			
-			LoggerUtil.logInfo(Acao.SALVAR, unidade, log);
-		} catch(ValidacaoException e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
-		} catch(Exception e){
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao salvar unidade prisional (" + this.unidade.getNome() + "): " + e.getMessage());
-			LoggerUtil.logErro(Acao.SALVAR, unidade, e, log);	
-		}
-
-		return retorno;
-	}
-	
-	public boolean possuiServidorLotado() {
-		boolean possuiServidorLotado = false;
-		
-		try {
-			possuiServidorLotado = quadroVagasService.possuiServidorLotado(this.unidade.getId());
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao validar servidor lotado: " + e.getMessage());
-			LoggerUtil.logErro(e, log);
-		}
-		
-		return possuiServidorLotado;
-	}
 
 	public void pesquisar() {
 		this.unidades = new LazyDataModel<QuadroVagasDTO>() {
@@ -255,123 +218,14 @@ public class QuadroVagasBean extends MetodosDePaginaBean {
 					e.printStackTrace();
 				}
 
-				return quadroVagasService.buscaQuantidadeRecuperados(getFiltro());
+				return quadroVagasService.buscaQuantidadeRecuperados(getFiltro(), false);
 			}
 		};
 	}
 	
-	public Boolean possuiServidor() {
-		return (this.unidade.getResponsavel() != null);
-	}
-	
-	public void associarServidor(SelectEvent event) {
-		ServidorDTO s = (ServidorDTO) event.getObject();	
-		
-		try {
-			if (s == null) {
-				return;
-			}
-			
-			Servidor servidor = servidorService.buscarServidorSimplesPorId(s.getId());
-			
-			if (servidor == null) {
-				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Servidor não encontrado.");
-				return;
-			}
-				
-			this.unidade.setResponsavel(servidor);
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao associar servidor na unidade: " + e.getMessage());
-			LoggerUtil.logErro(Acao.ASSOCIAR, s, e, log);
-		}
-	}
-	
-	public void abrirDialogServidor(ActionEvent event) {
-		facesUtil.setObjetoSessao("unidadeLotacao", this.unidade);
-		facesUtil.exibirPaginaDialog("pretty:AssociarServidor");
-	}
-
-	public void abrirDialogContato(ActionEvent event) {
-		this.contato = null;
-		facesUtil.exibirPaginaDialog("pretty:AssociarContato");
-	}	
-	
-	public void abrirDialogAlterarContato(Contato contato) {
-		this.contato = contato;
-		facesUtil.setObjetoSessao("contato", contato);		
-		facesUtil.exibirPaginaDialog("pretty:AssociarContato");
-		LoggerUtil.logInfo(Acao.ALTERAR, contato, log);
-	}
-	
-	public void abrirDialogEndereco(ActionEvent event) {
-		facesUtil.setObjetoSessao("endereco", this.unidade.getEndereco());
-		facesUtil.exibirPaginaDialog("pretty:AssociarEndereco");
-	}
-	
-	public void incluirEndereco(SelectEvent event) {
-		Endereco endereco = (Endereco) event.getObject();
-		
-		try {
-			if (endereco != null) {
-				endereco.setUnidadePrisional(this.unidade);
-				this.unidade.setEndereco(endereco);
-				
-				if (this.unidade.getId() > 0) {	
-					enderecoService.salvarEndereco(endereco);
-				}
-			}
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao incluir endereço na unidade: " + e.getMessage());
-			LoggerUtil.logErro(Acao.ADICIONAR, endereco, e, log);
-		}
-	}
-	
-	public void incluirContato(SelectEvent event) {
-		Contato contato = (Contato) event.getObject();
-		
-		try {
-			if (contato != null) {			
-				if (this.contato != null) {
-					unidade.getContatos().remove(this.contato);
-					unidade.getContatos().add(contato);
-				} else {
-					contato.setUnidadePrisional(this.unidade);
-					unidade.getContatos().add(contato);
-				}
-				
-				if (this.unidade.getId()>0) {
-					contatoService.salvarContato(contato);
-					LoggerUtil.logInfo(Acao.SALVAR, contato, log);
-				}else {
-					LoggerUtil.logInfo(Acao.ADICIONAR, contato, log);	
-				}
-			}
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao incluir contato na unidade: " + e.getMessage());
-			LoggerUtil.logErro(Acao.ADICIONAR, contato, e, log);
-		}
-	}
-	
-	public void excluirContato(Contato contato) {
-		try {
-			this.unidade.getContatos().remove(contato);
-			
-			if (this.unidade.getId()>0) {
-				contatoService.excluirContato(contato);
-				LoggerUtil.logInfo(Acao.EXCLUIR, contato, log);
-			}else {
-				LoggerUtil.logInfo(Acao.REMOVER, contato, log);
-			}
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir contato da unidade: " + e.getMessage());
-			LoggerUtil.logErro(Acao.ASSOCIAR, contato, e, log);
-		}
-	}
-	
 	public void imprimir() {
 		try {
-			//List<QuadroVagasDTO> lista = quadroVagasService.buscarPorFiltro(filtro, true);
-			List<QuadroVagasDTO> lista = quadroVagasService.buscaQuantidadeRecuperados(filtro);
+			List<QuadroVagasDTO> lista = quadroVagasService.buscaQuantidadeRecuperados(filtro, true);
 			
 			if (lista.size() == 0) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
@@ -386,80 +240,13 @@ public class QuadroVagasBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Quadro Vagas", e, log);
 		}
 	}
+
 	
-	public Boolean verificarSeBiometriaEhObrigatoria() {
-		return quadroVagasService.verificarSeBiometriaEhObrigatoria(this.unidade.getId());
-	}
-
-
-    private void carregarParametrosVisitante() {
-        this.parametrosVisitante = new ArrayList<>();
-
-        for (ParametroVisitante parametroVisitante : ParametroVisitante.values()) {
-            ParametroUnidade parametroUnidade = new ParametroUnidade();
-            parametroUnidade.setNome(parametroVisitante);
-
-            this.parametrosVisitante.add(parametroUnidade);
-        }
-
-        if (this.unidade != null && this.unidade.getId() > 0) {
-            this.carregarParametrosVisitanteUnidade();
-        }
-    }
-
-    private void carregarParametrosVisitanteUnidade() {
-	    try {
-	    	List<ParametroUnidade> parametroUnidades = parametroUnidadeService.listarPorUnidade(this.unidade);
-            this.unidade.setParametrosUnidade(parametroUnidades);
-            this.unidade.setAtivaModuloVisitante(this.unidade.getParametrosUnidade().size() > 0 && parametroUnidades.stream().anyMatch(parametroUnidade -> parametroUnidade.getValidar() == SimNao.S));
-            for (ParametroUnidade parametroUnidade : this.unidade.getParametrosUnidade()) {
-                this.parametrosVisitante.stream().filter(x -> x.getNome() == parametroUnidade.getNome()).findFirst().ifPresent(
-                        param -> param.setValueValidar(parametroUnidade.getValidar() == SimNao.S)
-                );
-            }
-        } catch (Exception e) {
-            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro buscar lista de parametros: " + e.getMessage());
-            LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Parametros", e, log);
-        }
-    }
-
-    public void atualizarParametrosUnidade(){
-		if (this.unidade.getAtivaModuloVisitante()) {
-			for (ParametroUnidade parametroUnidade : this.parametrosVisitante) {
-				if (parametroUnidade.getNome() == ParametroVisitante.RECEBIMENTO_DOCUMENTACAO || parametroUnidade.getNome() == ParametroVisitante.APROVACAO_CADASTRO){
-					parametroUnidade.setValidar(SimNao.S);
-					parametroUnidade.setValueValidar(true);
-				}
-			}
-		} else {
-			for (ParametroUnidade parametroUnidade : this.parametrosVisitante) {
-				parametroUnidade.setValidar(SimNao.N);
-				parametroUnidade.setValueValidar(false);
-			}
-		}
-	}
-
-	public void selecionarEstruturaChamada(QuadroVagasDTO unidade) {
-		facesUtil.setObjetoSessao("unidade", unidade);
-		facesUtil.setObjetoSessao("tipo_relatorio", "unidade");
-	}
-
-	public void selecionarEstruturaChamada(Estrutura estrutura) {
-		facesUtil.setObjetoSessao("estrutura", estrutura);
-		facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
-	}
-
-	private void alterarUnidadeSessao() {
-		if (getUnidade().getId() == SecurityUtil.getUnidadeSelecionada().getId()) {
-			SecurityUtil.setUnidadeSelecionada(getUnidade());
-		}
-	}
-	
-	public FiltroUnidadePrisional getFiltro() {
+	public FiltroQuadroVagas getFiltro() {
 		return filtro;
 	}
 
-	public void setFiltro(FiltroUnidadePrisional filtro) {
+	public void setFiltro(FiltroQuadroVagas filtro) {
 		this.filtro = filtro;
 	}
 

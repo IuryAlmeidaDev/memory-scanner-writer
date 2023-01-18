@@ -16,6 +16,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroQuadroVagas;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnidadePrisional;
 import br.gov.mt.sejudh.sigepen.enumerator.ParametroVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
@@ -23,6 +24,8 @@ import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
 import br.gov.mt.sejudh.sigepen.model.Acesso;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
+import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
 @RequestScoped
@@ -94,8 +97,17 @@ public class QuadroVagasDAO {
 		return quadro;
 	}
 	
+//	@SuppressWarnings("unchecked")
+//	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtro, boolean isRelatorio) {
+//		Criteria criteria = filtro.criarCriteriaParaBusca(RecuperandoView.class, entityManager, isRelatorio);
+//		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+//		criteria.setResultTransformer(new AliasToBeanResultTransformer(QuadroVagasDTO.class));
+//		return criteria.list();
+//	}
+	
+	
 	@SuppressWarnings("unchecked")
-	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroUnidadePrisional filtroUnidadePrisional) {
+	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroUnidadePrisional, boolean isCount, boolean relatorio) {
 		
 		String filtro = montarFiltro(filtroUnidadePrisional);
 		
@@ -109,16 +121,25 @@ public class QuadroVagasDAO {
 				+ filtro
 				+ " GROUP BY lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade"
 				+ " ORDER BY lr.unidadeId";	
-		
 		Query query = entityManager.createQuery(jpql, QuadroVagasDTO.class);
-
+		//query.setParameter(jpql, query);
+		
+		if(!isCount && !relatorio) {
+			query.setFirstResult(filtroUnidadePrisional.getPaginacaoIndex());
+			query.setMaxResults(filtroUnidadePrisional.getQuantidadeRegistros());
+		}
+		
 		return query.getResultList();
 	}
 	
-	private String montarFiltro(FiltroUnidadePrisional filtroUnidadePrisional) {
+	private String montarFiltro(FiltroQuadroVagas filtroUnidadePrisional) {
 		String filtro = " ";
-		filtro = filtroUnidadePrisional.getSigla() != null && !filtroUnidadePrisional.getSigla().isEmpty() ? " AND lr.siglaUnidade = '" + filtroUnidadePrisional.getSigla() + "'" : "";
-		//filtro = filtroUnidadePrisional.getId() > 0  ? " AND lr.unidadeId = " + filtroUnidadePrisional.getId() : "";
+		if(filtroUnidadePrisional.getSigla() != null && !filtroUnidadePrisional.getSigla().isEmpty()) {
+			filtro = " AND upper(lr.siglaUnidade) = '" + filtroUnidadePrisional.getSigla().toUpperCase() + "'";
+		}
+		if(filtroUnidadePrisional.getNome() != null && !filtroUnidadePrisional.getNome().isEmpty()) {			
+			filtro = " AND upper(lr.nomeUnidade) = '" + filtroUnidadePrisional.getNome().toUpperCase() + "'";
+		}
 		
 		return filtro;
 	}
@@ -129,11 +150,9 @@ public class QuadroVagasDAO {
 		query.setParameter("unidadeId", unidadePrisional.getId());
 		return (long) query.getSingleResult();
 	}
-	
-	public int quantidadeFiltrados(FiltroUnidadePrisional filtro) {
-		Criteria criteria = filtro.criarCriteriaParaQuantidade(UnidadePrisional.class, entityManager);		
-	    criteria.setProjection(Projections.rowCount());		
-		return ((Number) criteria.uniqueResult()).intValue();
+		
+	public int quantidadeFiltrados(FiltroQuadroVagas filtro) {	
+		return buscaQuantidadeRecuperados(filtro,true, false).size();
 	}
 	
 	public boolean jaExisteUnidadePrisionalComMesmoNome(UnidadePrisional unidadePrisional) {
