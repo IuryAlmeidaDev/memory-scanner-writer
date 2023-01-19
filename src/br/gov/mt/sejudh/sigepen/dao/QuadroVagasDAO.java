@@ -72,7 +72,7 @@ public class QuadroVagasDAO {
 				+ " COUNT(*), lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade)"
 				+ " FROM RecuperandoView lr"
 				+ " WHERE lr.regimeId IN(1,2)"
-				+ " AND lr.condicaoAtual IN('CONDENADO', 'PROVISORIO')"
+				+ " AND lr.condicaoAtual IN('CONDENADO', 'PROVISORIO') AND lr.status = 1"
 				+ filtro
 				+ " GROUP BY lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade"
 				+ " ORDER BY lr.unidadeId";	
