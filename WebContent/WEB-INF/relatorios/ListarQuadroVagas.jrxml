@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarQuadoVagas" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.693421790161336"/>
-	<property name="ireport.x" value="136"/>
-	<property name="ireport.y" value="85"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
 	</parameter>
@@ -32,6 +32,7 @@
 	<field name="sigla" class="java.lang.String"/>
 	<field name="nomeUnidade" class="java.lang.String"/>
 	<field name="vagas" class="java.lang.String"/>
+	<field name="situacaoUnidade" class="java.lang.String"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{id}]]></variableExpression>
 	</variable>
@@ -286,6 +287,16 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{vagas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="505" y="0" width="50" height="15" uuid="d1aa3f67-c4b6-47c7-928e-13156300750d"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{situacaoUnidade}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

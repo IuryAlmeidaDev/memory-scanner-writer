@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
+import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
+
 public class QuadroVagasDTO {
 
 	private long id;
@@ -11,18 +13,20 @@ public class QuadroVagasDTO {
     private String deficit;
     private String vagas;
     private String nomeUnidade;
-    
+    //private SituacaoUnidade situacaoUnidade;
+    private SituacaoUnidade situacaoUnidade;
 	 public QuadroVagasDTO() {
 	    	
     }
     
-    public QuadroVagasDTO(Long quantidadeCondenado, Long quantidadeProvisorios, Long totalRecuperando, long id, String sigla, String nomeUnidade) {
+    public QuadroVagasDTO(Long quantidadeCondenado, Long quantidadeProvisorios, Long totalRecuperando, long id, String sigla, String nomeUnidade, SituacaoUnidade situacaoUnidade) {
     	this.quantidadeCondenado = quantidadeCondenado;
     	this.quantidadeProvisorios = quantidadeProvisorios;
     	this.totalRecuperando = totalRecuperando;
     	this.id = id;
     	this.sigla = sigla;
     	this.nomeUnidade = nomeUnidade;
+    	this.situacaoUnidade = situacaoUnidade;
     }
     
     public QuadroVagasDTO(Long capacidadeTotal, Long id) {
@@ -115,6 +119,14 @@ public class QuadroVagasDTO {
 	public void calculoQntVagas(Long capacidade, Long totalRecperando) {
 		Long calc = capacidade - totalRecperando;
 		this.vagas = String.valueOf(calc >= 0 ? calc : "");
+	}
+
+	public String getSituacaoUnidade() {
+		return situacaoUnidade.getDescricao();
+	}
+
+	public void setSituacaoUnidade(SituacaoUnidade situacaoUnidade) {
+		this.situacaoUnidade = situacaoUnidade;
 	}
 
 

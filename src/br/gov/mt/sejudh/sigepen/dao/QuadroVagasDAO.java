@@ -61,38 +61,67 @@ public class QuadroVagasDAO {
 		return quadro;
 	}
 	
+//	@SuppressWarnings("unchecked")
+//	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroUnidadePrisional, boolean isCount, boolean relatorio) {
+//		
+//		String filtro = montarFiltro(filtroUnidadePrisional);
+//		
+//		String jpql = "SELECT new br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO("
+//				+ " SUM(CASE WHEN lr.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END),"
+//				+ " SUM(CASE WHEN lr.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END),"
+//				+ " COUNT(*), lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade)"
+//				+ " FROM RecuperandoView lr"
+//				+ " WHERE lr.regimeId IN(1,2)"
+//				+ " AND lr.condicaoAtual IN('CONDENADO', 'PROVISORIO') AND lr.status = 1"
+//				+ filtro
+//				+ " GROUP BY lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade"
+//				+ " ORDER BY lr.unidadeId";	
+//		Query query = entityManager.createQuery(jpql, QuadroVagasDTO.class);
+//		
+//		if(!isCount && !relatorio) {
+//			query.setFirstResult(filtroUnidadePrisional.getPaginacaoIndex());
+//			query.setMaxResults(filtroUnidadePrisional.getQuantidadeRegistros());
+//		}
+//		
+//		return query.getResultList();
+//	}
+	
 	@SuppressWarnings("unchecked")
-	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroUnidadePrisional, boolean isCount, boolean relatorio) {
+	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroQuadroVagas, boolean isCount, boolean relatorio) {
 		
-		String filtro = montarFiltro(filtroUnidadePrisional);
+		String filtro = montarFiltro(filtroQuadroVagas);
 		
 		String jpql = "SELECT new br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO("
-				+ " SUM(CASE WHEN lr.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END),"
-				+ " SUM(CASE WHEN lr.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END),"
-				+ " COUNT(*), lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade)"
-				+ " FROM RecuperandoView lr"
-				+ " WHERE lr.regimeId IN(1,2)"
-				+ " AND lr.condicaoAtual IN('CONDENADO', 'PROVISORIO') AND lr.status = 1"
+				+ " SUM(CASE WHEN r.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END),"
+				+ " SUM(CASE WHEN r.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END),"
+				+ " COUNT(*), up.id, up.sigla, up.nome, e.situacaoUnidade)"
+				+ " FROM PassagemLotacao pl"
+				+ " INNER JOIN pl.passagem p"
+				+ " INNER JOIN pl.estrutura e"
+				+ " INNER JOIN e.unidadePrisional up"
+				+ " INNER JOIN p.recuperando r"
+				+ " WHERE pl.dataSaida IS NULL AND e.cela = 1"
+				+ " AND r.condicaoAtual IN('CONDENADO', 'PROVISORIO')"
 				+ filtro
-				+ " GROUP BY lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade"
-				+ " ORDER BY lr.unidadeId";	
+				+ " GROUP BY up.estrutura.id, up.id, up.nome, e.situacaoUnidade, up.sigla"
+				+ " ORDER BY up.id";	
 		Query query = entityManager.createQuery(jpql, QuadroVagasDTO.class);
 		
 		if(!isCount && !relatorio) {
-			query.setFirstResult(filtroUnidadePrisional.getPaginacaoIndex());
-			query.setMaxResults(filtroUnidadePrisional.getQuantidadeRegistros());
+			query.setFirstResult(filtroQuadroVagas.getPaginacaoIndex());
+			query.setMaxResults(filtroQuadroVagas.getQuantidadeRegistros());
 		}
 		
 		return query.getResultList();
 	}
 	
-	private String montarFiltro(FiltroQuadroVagas filtroUnidadePrisional) {
+	private String montarFiltro(FiltroQuadroVagas filtroQuadroVagas) {
 		String filtro = " ";
-		if(filtroUnidadePrisional.getSigla() != null && !filtroUnidadePrisional.getSigla().isEmpty()) {
-			filtro = " AND upper(lr.siglaUnidade) = '" + filtroUnidadePrisional.getSigla().toUpperCase() + "'";
+		if(filtroQuadroVagas.getSigla() != null && !filtroQuadroVagas.getSigla().isEmpty()) {
+			filtro = " AND upper(up.sigla) = '" + filtroQuadroVagas.getSigla().toUpperCase() + "'";
 		}
-		if(filtroUnidadePrisional.getNome() != null && !filtroUnidadePrisional.getNome().isEmpty()) {			
-			filtro = " AND upper(lr.nomeUnidade) = '" + filtroUnidadePrisional.getNome().toUpperCase() + "'";
+		if(filtroQuadroVagas.getNome() != null && !filtroQuadroVagas.getNome().isEmpty()) {			
+			filtro = " AND upper(up.nome) = '" + filtroQuadroVagas.getNome().toUpperCase() + "'";
 		}
 		
 		return filtro;

@@ -39,9 +39,9 @@ public class QuadroVagasService {
 		return dao.buscaPorFiltro(filtro, isRelatorio);
 	}
 	
-	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroUnidadePrisional, boolean relatorio){
+	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroQuadroVagas, boolean relatorio){
 		
-		return addCapacidadeTotalUnidade(dao.buscaQuantidadeRecuperados(filtroUnidadePrisional, false, relatorio));
+		return addCapacidadeTotalUnidade(dao.buscaQuantidadeRecuperados(filtroQuadroVagas, false, relatorio));
 	}
 	
 	private List<QuadroVagasDTO> addCapacidadeTotalUnidade(List<QuadroVagasDTO> recuperados){
