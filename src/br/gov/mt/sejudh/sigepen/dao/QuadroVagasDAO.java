@@ -90,6 +90,7 @@ public class QuadroVagasDAO {
 	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroQuadroVagas, boolean isCount, boolean relatorio) {
 		
 		String filtro = montarFiltro(filtroQuadroVagas);
+		String joinEnderecoCidade = montarJoinEnderecoCidade(filtroQuadroVagas.getCidade());
 		
 		String jpql = "SELECT new br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO("
 				+ " SUM(CASE WHEN r.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END),"
@@ -100,6 +101,7 @@ public class QuadroVagasDAO {
 				+ " INNER JOIN pl.estrutura e"
 				+ " INNER JOIN e.unidadePrisional up"
 				+ " INNER JOIN p.recuperando r"
+				+ joinEnderecoCidade
 				+ " WHERE pl.dataSaida IS NULL AND e.cela = 1"
 				+ " AND r.condicaoAtual IN('CONDENADO', 'PROVISORIO')"
 				+ filtro
@@ -118,13 +120,26 @@ public class QuadroVagasDAO {
 	private String montarFiltro(FiltroQuadroVagas filtroQuadroVagas) {
 		String filtro = " ";
 		if(filtroQuadroVagas.getSigla() != null && !filtroQuadroVagas.getSigla().isEmpty()) {
-			filtro = " AND upper(up.sigla) = '" + filtroQuadroVagas.getSigla().toUpperCase() + "'";
+			filtro = " AND upper(up.sigla) LIKE('%" + filtroQuadroVagas.getSigla().toUpperCase() + "%')";
 		}
 		if(filtroQuadroVagas.getNome() != null && !filtroQuadroVagas.getNome().isEmpty()) {			
-			filtro = " AND upper(up.nome) = '" + filtroQuadroVagas.getNome().toUpperCase() + "'";
+			filtro = " AND upper(up.nome) LIKE('%" + filtroQuadroVagas.getNome().toUpperCase() + "%')";
+		}
+		
+		if(filtroQuadroVagas.getCidade() != null && !filtroQuadroVagas.getCidade().isEmpty()) {
+			filtro = " AND upper(up.nome) LIKE('%" + filtroQuadroVagas.getCidade().toUpperCase() + "%')";
 		}
 		
 		return filtro;
+	}
+	
+	private String montarJoinEnderecoCidade(String filtroCidade) {
+		String joinEnderecoCidade = " ";
+		if(filtroCidade != null && !filtroCidade.isEmpty()) {
+			joinEnderecoCidade = " INNER JOIN up.endereco en INNER JOIN en.cidade en";
+		}
+		
+		return joinEnderecoCidade;
 	}
 	
 	

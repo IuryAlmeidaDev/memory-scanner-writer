@@ -14,6 +14,7 @@ public class FiltroQuadroVagas extends FiltroConsulta{
 	private long id;
 	private String nome;
 	private String sigla;
+	private String cidade;
 
 	
 	public long getId() {
@@ -38,6 +39,14 @@ public class FiltroQuadroVagas extends FiltroConsulta{
 
 	public void setSigla(String sigla) {
 		this.sigla = Sigepen.formatarEspacos(sigla);
+	}
+	
+	public String getCidade() {
+		return cidade;
+	}
+	
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
 	}
 	
 	@Override
