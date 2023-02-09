@@ -42,14 +42,17 @@
 		<h:form id="registrosForm">
 			<p:dataTable id="dataTable" var="unidade" value="#{quadroVagasBean.unidades}" emptyMessage="Nenhum registro encontrado."
 				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{unidade.id}">
-				<p:column headerText="Codigo" sortBy="#{unidade.id}" width="120">
+				<p:column headerText="Codigo" sortBy="#{unidade.id}" width="80">
 					<h:outputText value="#{unidade.id}" />
 				</p:column>
-				<p:column headerText="Sigla" sortBy="#{unidade.nomeUnidade}">
+				<p:column headerText="Unidade" sortBy="#{unidade.nomeUnidade}" width="400">
 					<h:outputText value="#{unidade.nomeUnidade}" />
 				</p:column>
 				<p:column headerText="Sigla" sortBy="#{unidade.sigla}" width="80">
 					<h:outputText value="#{unidade.sigla}" />
+				</p:column>
+				<p:column headerText="Cidade" sortBy="#{unidade.cidade}">
+					<h:outputText value="#{unidade.cidade}" />
 				</p:column>
 				<p:column headerText="Capacidade" sortBy="#{unidade.capacidadeTotal}">
 					<h:outputText value="#{unidade.capacidadeTotal}" />
@@ -68,25 +71,7 @@
 				</p:column>
 				<p:column headerText="Vagas" sortBy="#{unidade.vagas}">
 					<h:outputText value="#{unidade.vagas}" />
-				</p:column>
-				
-				<!-- 
-				<p:column headerText="Ações" style="width:150px;">
-					<center>
-						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarUnidade" rendered="#{securityUtil.possuiPermissao('VisualizarUnidade')}">
-							<f:param name="id" value="#{unidade.id}" />
-						</p:button>
-						<p:button title="Editar" icon="ui-icon-pencil" outcome="pretty:AlterarUnidade" rendered="#{securityUtil.possuiPermissao('AlterarUnidade')}">
-							<f:param name="id" value="#{unidade.id}" />
-						</p:button>
-						<p:commandButton title="Histórico de Situações" icon="ui-icon-clock" action="#{estruturaBean.listarPorUnidade(unidade)}"
-							 oncomplete="PF('listarSituacaoEstruturaUnidade').show()" update=":listarSituacoes" process="@this"/>
-						<p:commandButton title="Imprimir Lista de Chamada" icon="fa fa-print" oncomplete="PF('dlgListaDeChamada').show()"
-							 update=":formListaChamadas" actionListener="#{quadroVagasBean.selecionarEstruturaChamada(unidade)}"/>
-					</center>
-				</p:column>
-				-->
-				
+				</p:column>				
 				<f:facet name="footer">
 					Total de registros: #{quadroVagasBean.unidades.rowCount}
 				</f:facet>

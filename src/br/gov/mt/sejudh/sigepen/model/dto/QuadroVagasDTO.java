@@ -13,13 +13,14 @@ public class QuadroVagasDTO {
     private String deficit;
     private String vagas;
     private String nomeUnidade;
-    //private SituacaoUnidade situacaoUnidade;
     private SituacaoUnidade situacaoUnidade;
+    private String cidade;
 	 public QuadroVagasDTO() {
 	    	
     }
     
-    public QuadroVagasDTO(Long quantidadeCondenado, Long quantidadeProvisorios, Long totalRecuperando, long id, String sigla, String nomeUnidade, SituacaoUnidade situacaoUnidade) {
+    public QuadroVagasDTO(Long quantidadeCondenado, Long quantidadeProvisorios, Long totalRecuperando, long id, String sigla, String nomeUnidade,
+    		SituacaoUnidade situacaoUnidade, String cidade) {
     	this.quantidadeCondenado = quantidadeCondenado;
     	this.quantidadeProvisorios = quantidadeProvisorios;
     	this.totalRecuperando = totalRecuperando;
@@ -27,6 +28,7 @@ public class QuadroVagasDTO {
     	this.sigla = sigla;
     	this.nomeUnidade = nomeUnidade;
     	this.situacaoUnidade = situacaoUnidade;
+    	this.cidade = cidade;
     }
     
     public QuadroVagasDTO(Long capacidadeTotal, Long id) {
@@ -129,6 +131,12 @@ public class QuadroVagasDTO {
 		this.situacaoUnidade = situacaoUnidade;
 	}
 
-
+	public String getCidade() {
+		return this.cidade;
+	}
+	
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
+	}
 
 }

@@ -61,52 +61,28 @@ public class QuadroVagasDAO {
 		return quadro;
 	}
 	
-//	@SuppressWarnings("unchecked")
-//	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroUnidadePrisional, boolean isCount, boolean relatorio) {
-//		
-//		String filtro = montarFiltro(filtroUnidadePrisional);
-//		
-//		String jpql = "SELECT new br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO("
-//				+ " SUM(CASE WHEN lr.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END),"
-//				+ " SUM(CASE WHEN lr.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END),"
-//				+ " COUNT(*), lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade)"
-//				+ " FROM RecuperandoView lr"
-//				+ " WHERE lr.regimeId IN(1,2)"
-//				+ " AND lr.condicaoAtual IN('CONDENADO', 'PROVISORIO') AND lr.status = 1"
-//				+ filtro
-//				+ " GROUP BY lr.unidadeId, lr.siglaUnidade, lr.nomeUnidade"
-//				+ " ORDER BY lr.unidadeId";	
-//		Query query = entityManager.createQuery(jpql, QuadroVagasDTO.class);
-//		
-//		if(!isCount && !relatorio) {
-//			query.setFirstResult(filtroUnidadePrisional.getPaginacaoIndex());
-//			query.setMaxResults(filtroUnidadePrisional.getQuantidadeRegistros());
-//		}
-//		
-//		return query.getResultList();
-//	}
-	
 	@SuppressWarnings("unchecked")
 	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroQuadroVagas, boolean isCount, boolean relatorio) {
 		
 		String filtro = montarFiltro(filtroQuadroVagas);
-		String joinEnderecoCidade = montarJoinEnderecoCidade(filtroQuadroVagas.getCidade());
+		String orderBy = montarGroupBy(filtroQuadroVagas);
 		
 		String jpql = "SELECT new br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO("
 				+ " SUM(CASE WHEN r.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END),"
 				+ " SUM(CASE WHEN r.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END),"
-				+ " COUNT(*), up.id, up.sigla, up.nome, e.situacaoUnidade)"
+				+ " COUNT(*), up.id, up.sigla, up.nome, e.situacaoUnidade, c.nome)"
 				+ " FROM PassagemLotacao pl"
 				+ " INNER JOIN pl.passagem p"
 				+ " INNER JOIN pl.estrutura e"
 				+ " INNER JOIN e.unidadePrisional up"
 				+ " INNER JOIN p.recuperando r"
-				+ joinEnderecoCidade
+				+ " INNER JOIN up.endereco en"
+				+ " INNER JOIN en.cidade c"
 				+ " WHERE pl.dataSaida IS NULL AND e.cela = 1"
 				+ " AND r.condicaoAtual IN('CONDENADO', 'PROVISORIO')"
 				+ filtro
-				+ " GROUP BY up.estrutura.id, up.id, up.nome, e.situacaoUnidade, up.sigla"
-				+ " ORDER BY up.id";	
+				+ " GROUP BY up.estrutura.id, up.id, up.nome, e.situacaoUnidade, up.sigla, c.nome"
+				+  " ORDER BY up.id";	
 		Query query = entityManager.createQuery(jpql, QuadroVagasDTO.class);
 		
 		if(!isCount && !relatorio) {
@@ -115,6 +91,17 @@ public class QuadroVagasDAO {
 		}
 		
 		return query.getResultList();
+	}
+	
+	private String montarGroupBy(FiltroQuadroVagas filtroQuadroVagas) {
+		String orderBy = " ORDER BY up.id";
+		String ordenador = " ASC";
+//		orderBy = filtroQuadroVagas.getOrdenacao().getPropertyName();
+		if(filtroQuadroVagas.getOrdenacao() != null && !filtroQuadroVagas.getOrdenacao().getPropertyName().isEmpty()){
+			orderBy = filtroQuadroVagas.getOrdenacao().getPropertyName();
+			
+		}
+		return orderBy;
 	}
 	
 	private String montarFiltro(FiltroQuadroVagas filtroQuadroVagas) {
@@ -132,16 +119,6 @@ public class QuadroVagasDAO {
 		
 		return filtro;
 	}
-	
-	private String montarJoinEnderecoCidade(String filtroCidade) {
-		String joinEnderecoCidade = " ";
-		if(filtroCidade != null && !filtroCidade.isEmpty()) {
-			joinEnderecoCidade = " INNER JOIN up.endereco en INNER JOIN en.cidade en";
-		}
-		
-		return joinEnderecoCidade;
-	}
-	
 	
 	public int quantidadeFiltrados(FiltroQuadroVagas filtro) {	
 		return buscaQuantidadeRecuperados(filtro,true, false).size();
