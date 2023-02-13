@@ -33,6 +33,7 @@
 	<field name="nomeUnidade" class="java.lang.String"/>
 	<field name="vagas" class="java.lang.String"/>
 	<field name="situacaoUnidade" class="java.lang.String"/>
+	<field name="cidade" class="java.lang.String"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{id}]]></variableExpression>
 	</variable>
@@ -85,7 +86,7 @@
 				<text><![CDATA[Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="255" y="0" width="50" height="20" forecolor="#FF0000" uuid="754db02d-a7a0-4bdf-b137-be7c11707c86"/>
+				<reportElement x="305" y="0" width="50" height="20" forecolor="#FF0000" uuid="754db02d-a7a0-4bdf-b137-be7c11707c86"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -98,7 +99,7 @@
 				<text><![CDATA[Qtd.Condenados]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="305" y="0" width="50" height="20" forecolor="#FF0000" uuid="ec35917e-dbd2-4b58-9faf-16efd446b546"/>
+				<reportElement x="355" y="0" width="50" height="20" forecolor="#FF0000" uuid="ec35917e-dbd2-4b58-9faf-16efd446b546"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -111,7 +112,7 @@
 				<text><![CDATA[Qtd. Provisório]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="205" y="0" width="50" height="20" forecolor="#FF0000" uuid="ff809d33-030c-41f5-9454-24b56522ba5b"/>
+				<reportElement x="255" y="0" width="50" height="20" forecolor="#FF0000" uuid="ff809d33-030c-41f5-9454-24b56522ba5b"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -135,7 +136,7 @@
 				<text><![CDATA[Sigla]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="405" y="0" width="50" height="20" forecolor="#FF0000" uuid="835093d0-e508-48ef-a762-52fd9ecc9181"/>
+				<reportElement x="455" y="0" width="50" height="20" forecolor="#FF0000" uuid="835093d0-e508-48ef-a762-52fd9ecc9181"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -148,7 +149,7 @@
 				<text><![CDATA[Déficit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="455" y="0" width="50" height="20" forecolor="#FF0000" uuid="cfa9e54e-2c7a-41a3-8ec8-03387f953434"/>
+				<reportElement x="505" y="0" width="50" height="20" forecolor="#FF0000" uuid="cfa9e54e-2c7a-41a3-8ec8-03387f953434"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -161,20 +162,7 @@
 				<text><![CDATA[Vagas]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="505" y="0" width="50" height="20" uuid="8283400a-ae7f-4fc6-bd10-188742b95036"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Situação]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="355" y="0" width="50" height="20" uuid="db5d01ac-52bf-4ff3-bfe3-9299d3eec026"/>
+				<reportElement x="405" y="0" width="50" height="20" uuid="db5d01ac-52bf-4ff3-bfe3-9299d3eec026"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -185,6 +173,13 @@
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Quant. Atual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="205" y="0" width="50" height="20" uuid="7c309114-bb30-475b-aee0-4c67b1b1c934"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cidade]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -219,7 +214,7 @@
 				<textFieldExpression><![CDATA[$F{nomeUnidade}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="255" y="0" width="50" height="15" forecolor="#FF0000" uuid="c471052e-4d00-49a2-ad5f-94163b24f731"/>
+				<reportElement stretchType="RelativeToBandHeight" x="305" y="0" width="50" height="15" forecolor="#FF0000" uuid="c471052e-4d00-49a2-ad5f-94163b24f731"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -229,7 +224,7 @@
 				<textFieldExpression><![CDATA[$F{quantidadeCondenado}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="305" y="0" width="50" height="15" forecolor="#FF0000" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
+				<reportElement stretchType="RelativeToBandHeight" x="355" y="0" width="50" height="15" forecolor="#FF0000" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -239,7 +234,7 @@
 				<textFieldExpression><![CDATA[$F{quantidadeProvisorios}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="205" y="0" width="50" height="15" forecolor="#FF0000" uuid="bb0e6c45-7623-4a89-a408-e41438cade23"/>
+				<reportElement stretchType="RelativeToBandHeight" x="255" y="0" width="50" height="15" forecolor="#FF0000" uuid="bb0e6c45-7623-4a89-a408-e41438cade23"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -259,7 +254,7 @@
 				<textFieldExpression><![CDATA[$F{sigla}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="355" y="0" width="50" height="15" uuid="41151535-ec28-4a17-b657-39c7bbcd4dde"/>
+				<reportElement stretchType="RelativeToBandHeight" x="405" y="0" width="50" height="15" uuid="41151535-ec28-4a17-b657-39c7bbcd4dde"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -269,7 +264,7 @@
 				<textFieldExpression><![CDATA[$F{totalRecuperando}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="405" y="0" width="50" height="15" forecolor="#FF0000" uuid="51940744-2141-44ef-961a-979285ea0c11"/>
+				<reportElement stretchType="RelativeToBandHeight" x="455" y="0" width="50" height="15" forecolor="#FF0000" uuid="51940744-2141-44ef-961a-979285ea0c11"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -279,7 +274,7 @@
 				<textFieldExpression><![CDATA[$F{deficit}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="455" y="0" width="50" height="15" forecolor="#FF0000" uuid="5dfc5dc2-abc9-4770-9d74-48aedb777de2"/>
+				<reportElement stretchType="RelativeToBandHeight" x="505" y="0" width="50" height="15" forecolor="#FF0000" uuid="5dfc5dc2-abc9-4770-9d74-48aedb777de2"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -288,15 +283,15 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{vagas}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="505" y="0" width="50" height="15" uuid="d1aa3f67-c4b6-47c7-928e-13156300750d"/>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="205" y="1" width="50" height="15" uuid="c75bd94e-130f-4fc6-97ad-290c4d7b2989"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{situacaoUnidade}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cidade}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

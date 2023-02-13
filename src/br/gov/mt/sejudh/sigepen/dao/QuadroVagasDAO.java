@@ -1,6 +1,11 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -68,9 +73,9 @@ public class QuadroVagasDAO {
 		String orderBy = montarGroupBy(filtroQuadroVagas);
 		
 		String jpql = "SELECT new br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO("
-				+ " SUM(CASE WHEN r.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END),"
-				+ " SUM(CASE WHEN r.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END),"
-				+ " COUNT(*), up.id, up.sigla, up.nome, e.situacaoUnidade, c.nome)"
+				+ " SUM(CASE WHEN r.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END) as quantidadeCondenado,"
+				+ " SUM(CASE WHEN r.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END) as quantidadeProvisorios,"
+				+ " COUNT(*) as capacidadeTotal, up.id as id, up.sigla as sigla, up.nome as nomeUnidade, e.situacaoUnidade, c.nome as cidade)"
 				+ " FROM PassagemLotacao pl"
 				+ " INNER JOIN pl.passagem p"
 				+ " INNER JOIN pl.estrutura e"
@@ -81,8 +86,8 @@ public class QuadroVagasDAO {
 				+ " WHERE pl.dataSaida IS NULL AND e.cela = 1"
 				+ " AND r.condicaoAtual IN('CONDENADO', 'PROVISORIO')"
 				+ filtro
-				+ " GROUP BY up.estrutura.id, up.id, up.nome, e.situacaoUnidade, up.sigla, c.nome"
-				+  " ORDER BY up.id";	
+				+ " GROUP BY up.estrutura.id, up.id, up.nome, e.situacaoUnidade, up.sigla, c.nome "
+				+  orderBy;	
 		Query query = entityManager.createQuery(jpql, QuadroVagasDTO.class);
 		
 		if(!isCount && !relatorio) {
@@ -94,14 +99,17 @@ public class QuadroVagasDAO {
 	}
 	
 	private String montarGroupBy(FiltroQuadroVagas filtroQuadroVagas) {
-		String orderBy = " ORDER BY up.id";
-		String ordenador = " ASC";
-//		orderBy = filtroQuadroVagas.getOrdenacao().getPropertyName();
+		Set<String> noFiltro = new HashSet<>(Arrays.asList("vagas", "deficit", "totalRecuperando"));
+		String ordenador = " asc";
+		String orderBy = " ORDER BY id";
 		if(filtroQuadroVagas.getOrdenacao() != null && !filtroQuadroVagas.getOrdenacao().getPropertyName().isEmpty()){
-			orderBy = filtroQuadroVagas.getOrdenacao().getPropertyName();
-			
+			if(!noFiltro.contains(filtroQuadroVagas.getOrdenacao().getPropertyName())) {				
+				orderBy = "ORDER BY " + filtroQuadroVagas.getOrdenacao().getPropertyName();
+				ordenador = filtroQuadroVagas.isAscendente() ? " asc" : " desc";
+			}
+						
 		}
-		return orderBy;
+		return orderBy + ordenador;
 	}
 	
 	private String montarFiltro(FiltroQuadroVagas filtroQuadroVagas) {
