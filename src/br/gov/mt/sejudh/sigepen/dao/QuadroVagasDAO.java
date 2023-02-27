@@ -122,7 +122,7 @@ public class QuadroVagasDAO {
 		}
 		
 		if(filtroQuadroVagas.getCidade() != null && !filtroQuadroVagas.getCidade().isEmpty()) {
-			filtro = " AND upper(up.nome) LIKE('%" + filtroQuadroVagas.getCidade().toUpperCase() + "%')";
+			filtro = " AND upper(c.nome) LIKE('%" + filtroQuadroVagas.getCidade().toUpperCase() + "%')";
 		}
 		
 		return filtro;
