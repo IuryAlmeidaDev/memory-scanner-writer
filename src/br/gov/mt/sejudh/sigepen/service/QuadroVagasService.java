@@ -10,6 +10,7 @@ import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.QuadroVagasDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroQuadroVagas;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnidadePrisional;
+import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO;
 
@@ -41,10 +42,43 @@ public class QuadroVagasService {
 	
 	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroQuadroVagas, boolean relatorio){
 		
-		return addCapacidadeTotalUnidade(dao.buscaQuantidadeRecuperados(filtroQuadroVagas, false, relatorio));
+		return addCapacidadeTotalUnidade(dao.buscaQuantidadeRecuperados(filtroQuadroVagas, false, relatorio), relatorio);
 	}
 	
-	private List<QuadroVagasDTO> addCapacidadeTotalUnidade(List<QuadroVagasDTO> recuperados){
+	private List<QuadroVagasDTO> countAllTotais(List<QuadroVagasDTO> listaQuadroVagas){
+		QuadroVagasDTO countTotais = new QuadroVagasDTO(0L, 0L, 0L,0L, "", "TOTAIS", SituacaoUnidade.ATIVO , "");
+		countTotais.setCapacidadeTotal(0L);
+		countTotais.setVagas("0");
+		countTotais.setDeficit("0");
+		for(QuadroVagasDTO quadroVaga :  listaQuadroVagas) {
+			if(quadroVaga.getCapacidadeTotal() != null) {
+				countTotais.setCapacidadeTotal(countTotais.getCapacidadeTotal() + quadroVaga.getCapacidadeTotal());				
+			}
+			
+			if(quadroVaga.getQuantidadeCondenado() != null) {								
+				countTotais.setQuantidadeCondenado(countTotais.getQuantidadeCondenado() + quadroVaga.getQuantidadeCondenado());
+			}
+			
+			if(quadroVaga.getQuantidadeProvisorios() != null) {								
+				countTotais.setQuantidadeProvisorios(countTotais.getQuantidadeProvisorios() + quadroVaga.getQuantidadeProvisorios());
+			}
+			if(quadroVaga.getTotalRecuperando() != null) {								
+				countTotais.setTotalRecuperando(countTotais.getTotalRecuperando() + quadroVaga.getTotalRecuperando());
+			}
+			if(quadroVaga.getVagas() != null || !quadroVaga.getVagas().isEmpty()) {				
+				long soma = Long.parseLong(countTotais.getVagas()) +  Long.parseLong(quadroVaga.getVagas() == "" ? "0" : quadroVaga.getVagas());
+				countTotais.setVagas(String.valueOf(soma));
+			}
+			if(quadroVaga.getDeficit() != null || !quadroVaga.getDeficit().isEmpty()) {				
+				long soma = Long.parseLong(countTotais.getDeficit()) +  Long.parseLong(quadroVaga.getDeficit() == "" ? "0" : quadroVaga.getDeficit());
+				countTotais.setDeficit(String.valueOf(soma));
+			}
+		}
+		listaQuadroVagas.add(countTotais);
+		return listaQuadroVagas;
+	}
+	
+	private List<QuadroVagasDTO> addCapacidadeTotalUnidade(List<QuadroVagasDTO> recuperados, boolean relatorio){
 		List<QuadroVagasDTO> quadroVagas = dao.buscaCapacidadeTotalUnidade();
 		List<QuadroVagasDTO> quadroVagasNovo = new ArrayList<>();
 		
@@ -58,7 +92,10 @@ public class QuadroVagasService {
 				}
 			}
 		}
-		return quadroVagasNovo;
+		if(relatorio) {			
+			return countAllTotais(quadroVagasNovo);
+		}
+		return quadroVagasNovo;		
 	}
 	
 	public int quantidadeFiltrados(FiltroQuadroVagas filtro){

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarQuadoVagas" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarQuadoVagas" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.693421790161336"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="232"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="UNIDADE_LOGADA" class="java.lang.String">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="EMISSOR" class="java.lang.String"/>
 	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
@@ -15,7 +12,7 @@
 		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
 	</parameter>
 	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadraoSemUnidadeLogada.jasper"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
@@ -37,13 +34,11 @@
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{id}]]></variableExpression>
 	</variable>
+	<variable name="variable1" class="java.lang.String"/>
 	<pageHeader>
 		<band height="106" splitType="Stretch">
 			<subreport isUsingCache="false">
-				<reportElement positionType="Float" x="0" y="0" width="555" height="106" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
-				<subreportParameter name="UNIDADE_LOGADA">
-					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
-				</subreportParameter>
+				<reportElement positionType="Float" x="0" y="0" width="802" height="106" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
 				<subreportParameter name="NOME_DO_RELATORIO">
 					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -67,7 +62,7 @@
 				<text><![CDATA[Cod.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="28" y="0" width="140" height="20" uuid="9fe98fe7-089b-40a6-8904-fe1f1aedb134"/>
+				<reportElement x="28" y="0" width="297" height="20" uuid="9fe98fe7-089b-40a6-8904-fe1f1aedb134"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -80,7 +75,7 @@
 				<text><![CDATA[Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="305" y="0" width="50" height="20" uuid="754db02d-a7a0-4bdf-b137-be7c11707c86"/>
+				<reportElement x="552" y="0" width="50" height="20" uuid="754db02d-a7a0-4bdf-b137-be7c11707c86"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -93,7 +88,7 @@
 				<text><![CDATA[Cond.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="355" y="0" width="50" height="20" uuid="ec35917e-dbd2-4b58-9faf-16efd446b546"/>
+				<reportElement x="602" y="0" width="50" height="20" uuid="ec35917e-dbd2-4b58-9faf-16efd446b546"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -106,7 +101,7 @@
 				<text><![CDATA[Prov.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="255" y="0" width="50" height="20" uuid="ff809d33-030c-41f5-9454-24b56522ba5b"/>
+				<reportElement x="502" y="0" width="50" height="20" uuid="ff809d33-030c-41f5-9454-24b56522ba5b"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -119,7 +114,7 @@
 				<text><![CDATA[Capac.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="168" y="0" width="37" height="20" uuid="e2a1111b-e48a-4f06-8671-44bd68c622fc"/>
+				<reportElement x="325" y="0" width="47" height="20" uuid="e2a1111b-e48a-4f06-8671-44bd68c622fc"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -133,7 +128,7 @@
 				<text><![CDATA[Sigla]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="455" y="0" width="50" height="20" uuid="835093d0-e508-48ef-a762-52fd9ecc9181"/>
+				<reportElement x="702" y="0" width="50" height="20" uuid="835093d0-e508-48ef-a762-52fd9ecc9181"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -146,7 +141,7 @@
 				<text><![CDATA[Déficit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="505" y="0" width="50" height="20" uuid="cfa9e54e-2c7a-41a3-8ec8-03387f953434"/>
+				<reportElement x="752" y="0" width="50" height="20" uuid="cfa9e54e-2c7a-41a3-8ec8-03387f953434"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -159,7 +154,7 @@
 				<text><![CDATA[Vagas]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="405" y="0" width="50" height="20" uuid="db5d01ac-52bf-4ff3-bfe3-9299d3eec026"/>
+				<reportElement x="652" y="0" width="50" height="20" uuid="db5d01ac-52bf-4ff3-bfe3-9299d3eec026"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -172,7 +167,7 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="205" y="0" width="50" height="20" uuid="90d5ba84-d852-49f3-b3cd-afcc404ee7f2"/>
+				<reportElement x="372" y="0" width="130" height="20" uuid="90d5ba84-d852-49f3-b3cd-afcc404ee7f2"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -190,7 +185,7 @@
 	<detail>
 		<band height="16" splitType="Stretch">
 			<rectangle>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="15" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="15" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
 					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -208,7 +203,7 @@
 				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="28" y="0" width="140" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
+				<reportElement stretchType="RelativeToBandHeight" x="28" y="0" width="297" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -218,7 +213,7 @@
 				<textFieldExpression><![CDATA[$F{nomeUnidade}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="305" y="0" width="50" height="15" uuid="c471052e-4d00-49a2-ad5f-94163b24f731"/>
+				<reportElement stretchType="RelativeToBandHeight" x="552" y="0" width="51" height="15" uuid="c471052e-4d00-49a2-ad5f-94163b24f731"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -228,7 +223,7 @@
 				<textFieldExpression><![CDATA[$F{quantidadeCondenado}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="355" y="0" width="50" height="15" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
+				<reportElement stretchType="RelativeToBandHeight" x="603" y="0" width="50" height="15" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -238,7 +233,7 @@
 				<textFieldExpression><![CDATA[$F{quantidadeProvisorios}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="255" y="0" width="50" height="15" uuid="bb0e6c45-7623-4a89-a408-e41438cade23"/>
+				<reportElement stretchType="RelativeToBandHeight" x="502" y="0" width="50" height="15" uuid="bb0e6c45-7623-4a89-a408-e41438cade23"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -248,7 +243,7 @@
 				<textFieldExpression><![CDATA[$F{capacidadeTotal}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="168" y="0" width="37" height="15" uuid="9db2c90b-16e2-4e64-87d4-7d08bbb01af8"/>
+				<reportElement stretchType="RelativeToBandHeight" x="325" y="0" width="47" height="15" uuid="9db2c90b-16e2-4e64-87d4-7d08bbb01af8"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -258,7 +253,7 @@
 				<textFieldExpression><![CDATA[$F{sigla}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="405" y="0" width="50" height="15" uuid="41151535-ec28-4a17-b657-39c7bbcd4dde"/>
+				<reportElement stretchType="RelativeToBandHeight" x="653" y="0" width="50" height="15" uuid="41151535-ec28-4a17-b657-39c7bbcd4dde"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -268,7 +263,7 @@
 				<textFieldExpression><![CDATA[$F{totalRecuperando}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="455" y="0" width="50" height="15" uuid="51940744-2141-44ef-961a-979285ea0c11"/>
+				<reportElement stretchType="RelativeToBandHeight" x="702" y="0" width="50" height="15" uuid="51940744-2141-44ef-961a-979285ea0c11"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -278,7 +273,7 @@
 				<textFieldExpression><![CDATA[$F{deficit}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="505" y="0" width="50" height="15" uuid="5dfc5dc2-abc9-4770-9d74-48aedb777de2"/>
+				<reportElement stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15" uuid="5dfc5dc2-abc9-4770-9d74-48aedb777de2"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -288,7 +283,7 @@
 				<textFieldExpression><![CDATA[$F{vagas}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="205" y="0" width="50" height="15" uuid="c75bd94e-130f-4fc6-97ad-290c4d7b2989"/>
+				<reportElement stretchType="RelativeToBandHeight" x="372" y="0" width="130" height="15" uuid="c75bd94e-130f-4fc6-97ad-290c4d7b2989"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -302,7 +297,7 @@
 	<pageFooter>
 		<band height="51" splitType="Stretch">
 			<subreport isUsingCache="false" runToBottom="true">
-				<reportElement positionType="Float" x="0" y="0" width="555" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
+				<reportElement positionType="Float" x="0" y="0" width="802" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
 				<subreportParameter name="PAGINA">
 					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -315,14 +310,14 @@
 				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
 			</subreport>
 			<textField>
-				<reportElement x="435" y="13" width="80" height="20" uuid="21949555-196a-4d34-89dd-e4b9f2f2f2af">
+				<reportElement x="653" y="13" width="104" height="20" uuid="21949555-196a-4d34-89dd-e4b9f2f2f2af">
 					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="515" y="13" width="40" height="20" uuid="18471924-0526-4b68-acd6-512add5df44e">
+				<reportElement x="757" y="13" width="45" height="20" uuid="18471924-0526-4b68-acd6-512add5df44e">
 					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
@@ -332,7 +327,7 @@
 	<summary>
 		<band height="29">
 			<textField>
-				<reportElement x="313" y="9" width="242" height="20" uuid="329dd6ad-3e24-40d8-b898-61a1f721896c"/>
+				<reportElement x="560" y="9" width="242" height="20" uuid="329dd6ad-3e24-40d8-b898-61a1f721896c"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
