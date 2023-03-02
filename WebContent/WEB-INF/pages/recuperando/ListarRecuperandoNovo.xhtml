@@ -190,7 +190,7 @@
 							<f:param name="id" value="#{rec.id}" />
 						</p:button>
 						<p:commandButton title="Imprimir" icon="fa fa-print" actionListener="#{recuperandoBean.imprimirRegistro(rec)}" rendered="#{rec.id != null}"/>
-						<p:commandButton title="Atestados" icon="fa fa-file-text-o" rendered="#{rec.id != null}" disabled="#{!rec.possuiAtestadoUnidade}" actionListener="#{recuperandoBean.abrirDialogAtestados(rec)}"/>
+						<p:commandButton title="Atestados" icon="fa fa-file-text-o" rendered="#{(securityUtil.possuiPermissao('ImprimirAtestado')) and rec.id != null}" disabled="#{!rec.possuiAtestadoUnidade}" actionListener="#{recuperandoBean.abrirDialogAtestados(rec)}"/>
 						<p:commandButton title="Tornar Recuperando" actionListener="#{recuperandoBean.tornarRecuperando(rec)}" icon="fa fa-arrow-right" rendered="#{securityUtil.possuiPermissao('CadastrarNovaPassagem') and rec.id == null}" />
 					</center>
 				</p:column>
