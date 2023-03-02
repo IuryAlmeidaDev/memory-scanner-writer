@@ -46,10 +46,14 @@ public class QuadroVagasService {
 	}
 	
 	private List<QuadroVagasDTO> countAllTotais(List<QuadroVagasDTO> listaQuadroVagas){
-		QuadroVagasDTO countTotais = new QuadroVagasDTO(0L, 0L, 0L,0L, "", "TOTAIS", SituacaoUnidade.ATIVO , "");
+		QuadroVagasDTO countTotais = new QuadroVagasDTO(0L, 0L, 0L,0L, "", "total", SituacaoUnidade.ATIVO , "");
+		QuadroVagasDTO vazio = new QuadroVagasDTO(0L, 0L, 0L,0L, "", "", SituacaoUnidade.ATIVO , "");
 		countTotais.setCapacidadeTotal(0L);
 		countTotais.setVagas("0");
 		countTotais.setDeficit("0");
+		vazio.setCapacidadeTotal(0L);
+		vazio.setVagas("0");
+		vazio.setDeficit("0");
 		for(QuadroVagasDTO quadroVaga :  listaQuadroVagas) {
 			if(quadroVaga.getCapacidadeTotal() != null) {
 				countTotais.setCapacidadeTotal(countTotais.getCapacidadeTotal() + quadroVaga.getCapacidadeTotal());				
@@ -74,6 +78,7 @@ public class QuadroVagasService {
 				countTotais.setDeficit(String.valueOf(soma));
 			}
 		}
+		listaQuadroVagas.add(vazio);
 		listaQuadroVagas.add(countTotais);
 		return listaQuadroVagas;
 	}

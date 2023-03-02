@@ -155,6 +155,9 @@ public class RelatorioUtil {
 			case PADRAO_SEM_UNIDADE_LOGADA:
 				cabecalhoPath = cabecalhoPath + File.separator + "CabecalhoPadraoSemUnidadeLogada.jasper";
 				break;
+			case PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA:
+				cabecalhoPath = cabecalhoPath + File.separator + "CabecalhoPadraoPaisagemSemUnidadeLogada.jasper";
+				break;
 		}
 		
 		return cabecalhoPath;

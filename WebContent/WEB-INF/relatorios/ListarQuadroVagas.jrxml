@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarQuadoVagas" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
-	<property name="ireport.zoom" value="1.693421790161336"/>
-	<property name="ireport.x" value="232"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="37"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
@@ -12,10 +12,10 @@
 		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
 	</parameter>
 	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadraoSemUnidadeLogada.jasper"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadraoPaisagemSemUnidadeLogada.jasper"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadraoPaisagem.jasper"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[]]>
@@ -200,7 +200,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{id} != 0) ? ($F{id}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="28" y="0" width="297" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
@@ -220,7 +220,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{quantidadeCondenado}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{quantidadeCondenado} != 0) ? ($F{quantidadeCondenado}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="603" y="0" width="50" height="15" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
@@ -230,7 +230,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{quantidadeProvisorios}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{quantidadeProvisorios} != 0) ? ($F{quantidadeProvisorios}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="502" y="0" width="50" height="15" uuid="bb0e6c45-7623-4a89-a408-e41438cade23"/>
@@ -240,7 +240,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{capacidadeTotal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{capacidadeTotal} != 0) ? ($F{capacidadeTotal}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="325" y="0" width="47" height="15" uuid="9db2c90b-16e2-4e64-87d4-7d08bbb01af8"/>
@@ -260,7 +260,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{totalRecuperando}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(!$F{nomeUnidade}.equals("")) ? ($F{totalRecuperando}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="702" y="0" width="50" height="15" uuid="51940744-2141-44ef-961a-979285ea0c11"/>
@@ -270,18 +270,18 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{deficit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(!$F{nomeUnidade}.equals("")) ? ($F{deficit}) : ("")]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15" uuid="5dfc5dc2-abc9-4770-9d74-48aedb777de2"/>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15" uuid="3fe2121c-de51-4fef-af85-0421818e3895"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{vagas}]]></textFieldExpression>
-			</textField>
+				<text><![CDATA[(!$F{nomeUnidade}.equals()) ? ($F{vagas}) : ()]]></text>
+			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="372" y="0" width="130" height="15" uuid="c75bd94e-130f-4fc6-97ad-290c4d7b2989"/>
 				<box>
@@ -331,7 +331,7 @@
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Total de registros: " + $V{id_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Total de registros: " + ($V{id_1} - 2)]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
