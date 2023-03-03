@@ -156,7 +156,7 @@ public class SigepenRealm extends JdbcRealm {
 			resultSet = statement.executeQuery();
 			
 			if (!resultSet.next()) {
-				throw new AuthenticationException("Acesso expirado, contate o administrador do sistema.");
+				throw new AuthenticationException("Acesso expirado. Envie e-mail corporativo ou pessoal para sigepen@sesp.mt.gov.br e aguarde!");
 			}
 			
 			return new UsuarioSenhaSalt(password, salt);
