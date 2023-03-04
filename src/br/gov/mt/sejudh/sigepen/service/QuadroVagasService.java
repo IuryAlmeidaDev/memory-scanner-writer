@@ -46,7 +46,7 @@ public class QuadroVagasService {
 	}
 	
 	private List<QuadroVagasDTO> countAllTotais(List<QuadroVagasDTO> listaQuadroVagas){
-		QuadroVagasDTO countTotais = new QuadroVagasDTO(0L, 0L, 0L,0L, "", "total", SituacaoUnidade.ATIVO , "");
+		QuadroVagasDTO countTotais = new QuadroVagasDTO(0L, 0L, 0L,0L, "", "TOTAL", SituacaoUnidade.ATIVO , "");
 		QuadroVagasDTO vazio = new QuadroVagasDTO(0L, 0L, 0L,0L, "", "", SituacaoUnidade.ATIVO , "");
 		countTotais.setCapacidadeTotal(0L);
 		countTotais.setVagas("0");
