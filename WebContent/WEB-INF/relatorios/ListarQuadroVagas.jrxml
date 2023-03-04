@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarQuadoVagas" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="37"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<style name="style1">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{nomeUnidade} == "TOTAL"]]></conditionExpression>
+			<style forecolor="#000000" fontSize="14" isBold="true"/>
+		</conditionalStyle>
+	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
 	</parameter>
@@ -185,7 +191,7 @@
 	<detail>
 		<band height="16" splitType="Stretch">
 			<rectangle>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="15" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="15" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
 					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -203,7 +209,7 @@
 				<textFieldExpression><![CDATA[($F{id} != 0) ? ($F{id}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="28" y="0" width="297" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="28" y="0" width="297" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -213,7 +219,7 @@
 				<textFieldExpression><![CDATA[$F{nomeUnidade}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="552" y="0" width="51" height="15" uuid="c471052e-4d00-49a2-ad5f-94163b24f731"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="552" y="0" width="51" height="15" uuid="c471052e-4d00-49a2-ad5f-94163b24f731"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -223,7 +229,7 @@
 				<textFieldExpression><![CDATA[($F{quantidadeCondenado} != 0) ? ($F{quantidadeCondenado}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="603" y="0" width="50" height="15" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="603" y="0" width="50" height="15" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -233,7 +239,7 @@
 				<textFieldExpression><![CDATA[($F{quantidadeProvisorios} != 0) ? ($F{quantidadeProvisorios}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="502" y="0" width="50" height="15" uuid="bb0e6c45-7623-4a89-a408-e41438cade23"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="502" y="0" width="50" height="15" uuid="bb0e6c45-7623-4a89-a408-e41438cade23"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -253,7 +259,7 @@
 				<textFieldExpression><![CDATA[$F{sigla}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="653" y="0" width="50" height="15" uuid="41151535-ec28-4a17-b657-39c7bbcd4dde"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="653" y="0" width="50" height="15" uuid="41151535-ec28-4a17-b657-39c7bbcd4dde"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -263,7 +269,7 @@
 				<textFieldExpression><![CDATA[(!$F{nomeUnidade}.equals("")) ? ($F{totalRecuperando}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="702" y="0" width="50" height="15" uuid="51940744-2141-44ef-961a-979285ea0c11"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="702" y="0" width="50" height="15" uuid="51940744-2141-44ef-961a-979285ea0c11"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -273,7 +279,7 @@
 				<textFieldExpression><![CDATA[(!$F{nomeUnidade}.equals("")) ? ($F{deficit}) : ("")]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15" uuid="3fe2121c-de51-4fef-af85-0421818e3895"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15" uuid="3fe2121c-de51-4fef-af85-0421818e3895"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
