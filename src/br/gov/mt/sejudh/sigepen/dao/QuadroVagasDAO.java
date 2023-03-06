@@ -1,7 +1,5 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -115,17 +113,21 @@ public class QuadroVagasDAO {
 	private String montarFiltro(FiltroQuadroVagas filtroQuadroVagas) {
 		String filtro = " ";
 		if(filtroQuadroVagas.getSigla() != null && !filtroQuadroVagas.getSigla().isEmpty()) {
-			filtro = " AND upper(up.sigla) LIKE('%" + filtroQuadroVagas.getSigla().toUpperCase() + "%')";
+			filtro += consultaLikeIgnoraAcentos("up.sigla",filtroQuadroVagas.getSigla());
 		}
-		if(filtroQuadroVagas.getNome() != null && !filtroQuadroVagas.getNome().isEmpty()) {			
-			filtro = " AND upper(up.nome) LIKE('%" + filtroQuadroVagas.getNome().toUpperCase() + "%')";
+		if(filtroQuadroVagas.getNome() != null && !filtroQuadroVagas.getNome().isEmpty()) {
+			filtro += consultaLikeIgnoraAcentos("up.nome",filtroQuadroVagas.getNome());
 		}
 		
 		if(filtroQuadroVagas.getCidade() != null && !filtroQuadroVagas.getCidade().isEmpty()) {
-			filtro = " AND upper(c.nome) LIKE('%" + filtroQuadroVagas.getCidade().toUpperCase() + "%')";
+			filtro += consultaLikeIgnoraAcentos("c.nome",filtroQuadroVagas.getCidade());
 		}
 		
 		return filtro;
+	}
+	
+	private String consultaLikeIgnoraAcentos(String coluna, String param) {
+		return " AND translate(lower("+ coluna +"), 'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') LIKE translate('%" + param.toLowerCase() + "%', 'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc')";
 	}
 	
 	public int quantidadeFiltrados(FiltroQuadroVagas filtro) {	

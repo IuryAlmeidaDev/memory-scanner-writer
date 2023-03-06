@@ -6,7 +6,7 @@
 	<style name="style1">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$F{nomeUnidade} == "TOTAL"]]></conditionExpression>
-			<style forecolor="#000000" fontSize="14" isBold="true"/>
+			<style mode="Opaque" forecolor="#FFFFFF" backcolor="#003333" fill="Solid" fontName="SansSerif" fontSize="18" isBold="true" isUnderline="false"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -199,7 +199,7 @@
 				</graphicElement>
 			</rectangle>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="28" height="15" uuid="06e96a91-cdb1-4c0c-bee7-5cc504051b17"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="0" y="0" width="28" height="15" uuid="06e96a91-cdb1-4c0c-bee7-5cc504051b17"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -249,7 +249,7 @@
 				<textFieldExpression><![CDATA[($F{capacidadeTotal} != 0) ? ($F{capacidadeTotal}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="325" y="0" width="47" height="15" uuid="9db2c90b-16e2-4e64-87d4-7d08bbb01af8"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="325" y="0" width="47" height="15" uuid="9db2c90b-16e2-4e64-87d4-7d08bbb01af8"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -278,18 +278,20 @@
 				</textElement>
 				<textFieldExpression><![CDATA[(!$F{nomeUnidade}.equals("")) ? ($F{deficit}) : ("")]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement style="style1" stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15" uuid="3fe2121c-de51-4fef-af85-0421818e3895"/>
+			<textField>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15" uuid="81c03dad-19ac-44d0-b580-319806891fca"/>
 				<box>
+					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<text><![CDATA[(!$F{nomeUnidade}.equals()) ? ($F{vagas}) : ()]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[(!$F{nomeUnidade}.equals("")) ? ($F{vagas}) : ("")]]></textFieldExpression>
+			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="372" y="0" width="130" height="15" uuid="c75bd94e-130f-4fc6-97ad-290c4d7b2989"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="372" y="0" width="130" height="15" uuid="c75bd94e-130f-4fc6-97ad-290c4d7b2989"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
