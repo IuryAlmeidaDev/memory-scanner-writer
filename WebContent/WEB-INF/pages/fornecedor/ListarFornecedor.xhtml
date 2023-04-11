@@ -1,0 +1,19 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>Fornecedor</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarFornecedor" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarFornecedor')}"/>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

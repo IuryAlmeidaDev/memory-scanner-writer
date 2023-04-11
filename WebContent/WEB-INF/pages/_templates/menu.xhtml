@@ -71,7 +71,7 @@
 			
 			<p:submenu label="Usuário">
 				<p:menuitem value="Alterar Senha" outcome="pretty:AlterarSenha" icon="ui-icon-gear"/>
-				<p:menuitem value="Alterar Unidade" outcome="pretty:SelecionarUnidade" icon="ui-icon-gear"/>
+				<p:menuitem value="Alterar Unidade" outcome="pretty:" icon="ui-icon-gear"/>
 				<ui:remove>
 					<p:menuitem value="Instaladores Bio" outcome="pretty:Instaladores" icon="ui-icon-disk"/>
 				</ui:remove>
@@ -82,6 +82,9 @@
                 <p:menuitem value="Parametros" outcome="pretty:Parametro" />
                 <p:menuitem value="NServer" outcome="pretty:NServer" />
             </p:submenu>
+             <p:submenu label="Mapa Alimentação" rendered="#{securityUtil.exibeCategoriaMenu('MapaAlimentacao')}">
+				<p:menuitem value="Fornecedor" outcome="pretty:ListarFornecedor" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarFornecedor')}"/>
+			</p:submenu>			
 		</p:panelMenu>
 	</h:form>
 </h:body>

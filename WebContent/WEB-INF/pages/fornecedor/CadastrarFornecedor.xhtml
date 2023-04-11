@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/WEB-INF/pages/_templates/principal.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+		
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3>#{unidadePrisionalBean.tituloPagina} Fornecedor</h3>
+		
+		<p:panel id="cabecalho" rendered="#{unidadePrisionalBean.unidade.id>0}" footer="Cadastrado por: #{unidadePrisionalBean.unidade.autorRegistro.usuario} em #{unidadePrisionalBean.unidade.autorRegistro.data} | Alterado por: #{unidadePrisionalBean.unidade.autorUltimaAlteracao.usuario} em #{unidadePrisionalBean.unidade.autorUltimaAlteracao.data}" >
+			<h:form id="formCabecalho">
+					<p:column>
+						<sgp:formOutputLabel labelValue="Unidade" value="#{unidadePrisionalBean.unidade.nome}"/>
+						<sgp:formOutputLabel labelValue="Sigla" value="#{unidadePrisionalBean.unidade.sigla}"/>
+						<sgp:formOutputLabel labelValue="Instituição" value="#{unidadePrisionalBean.unidade.tipoUnidade.descricao}"/>
+					</p:column>
+				</h:form>
+		</p:panel>	
+			
+		<h:form id="FornecedorForm">
+			<p:tabView id="tabView" effect="fade" effectDuration="fast" widgetVar="aba" dynamic="true">
+				<p:tab title="Fornecedor" id="tab">	
+					<p:panel>
+						<h:form id="formFornecedor">
+														
+							<sgp:formInputMask
+								value="#{unidadePrisionalBean.unidade.cnpj}"
+								labelValue="CNPJ"
+								mask="99.999.999/9999-99"
+								validatorId="CnpjValidator"
+								validationRequired="false"
+								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								converter="convertCnpj"
+								maxlength="14"
+								display="text"/>
+							
+							<sgp:formInputText 
+								id="razaoSocial"
+								labelValue="Razão Social"
+								value="#{unidadePrisionalBean.unidade.razaoSocial}"
+								validationRequired="true"
+								maxlength="80"
+								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								display="text"/>
+								
+							<sgp:formInputText 
+								id="nomeFantasia"
+								labelValue="Nome Fantasia"
+								value="#{unidadePrisionalBean.unidade.nomeFantasia}"
+								validationRequired="true"
+								maxlength="80"
+								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								display="text"/>
+								
+							<sgp:formInputText 
+								id="endereco"
+								labelValue="Endereço"
+								value="#{unidadePrisionalBean.unidade.endereco}"
+								validationRequired="true"
+								maxlength="500"
+								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								display="text"/>
+								
+							<sgp:formInputText 
+								id="telefone"
+								labelValue="Telefone"
+								value="#{unidadePrisionalBean.unidade.telefone}"
+								validationRequired="true"
+								maxlength="14"
+								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								display="text"/>
+								<br/><br/>
+						</h:form>
+					</p:panel>
+						<br/>
+						<br/>					
+											
+					<p:commandButton value="Salvar" action="#{unidadePrisionalBean.salvar()}"	update="@form" icon="ui-icon-disk" 
+						rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}" />
+					<p:button outcome="pretty:ListarUnidade" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+				</p:tab>
+			</p:tabView>
+		</h:form>
+    </ui:define>
+</ui:composition>
