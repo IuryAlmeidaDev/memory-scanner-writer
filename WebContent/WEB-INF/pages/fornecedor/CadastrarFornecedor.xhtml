@@ -15,14 +15,14 @@
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 		
-		<h3>#{unidadePrisionalBean.tituloPagina} Fornecedor</h3>
+		<h3>#{fornecedorBean.tituloPagina} Fornecedor</h3>
 		
-		<p:panel id="cabecalho" rendered="#{unidadePrisionalBean.unidade.id>0}" footer="Cadastrado por: #{unidadePrisionalBean.unidade.autorRegistro.usuario} em #{unidadePrisionalBean.unidade.autorRegistro.data} | Alterado por: #{unidadePrisionalBean.unidade.autorUltimaAlteracao.usuario} em #{unidadePrisionalBean.unidade.autorUltimaAlteracao.data}" >
+		<p:panel id="cabecalho" rendered="#{fornecedorBean.fornecedor.id>0}" >
 			<h:form id="formCabecalho">
 					<p:column>
-						<sgp:formOutputLabel labelValue="Unidade" value="#{unidadePrisionalBean.unidade.nome}"/>
-						<sgp:formOutputLabel labelValue="Sigla" value="#{unidadePrisionalBean.unidade.sigla}"/>
-						<sgp:formOutputLabel labelValue="Instituição" value="#{unidadePrisionalBean.unidade.tipoUnidade.descricao}"/>
+						<sgp:formOutputLabel labelValue="CNPJ" value="#{fornecedorBean.fornecedor.cnpj}"/>
+						<sgp:formOutputLabel labelValue="Nome Fantasia" value="#{fornecedorBean.fornecedor.nomeFantasia}"/>
+						<sgp:formOutputLabel labelValue="Razão Social" value="#{fornecedorBean.fornecedor.razaoSocial}"/>
 					</p:column>
 				</h:form>
 		</p:panel>	
@@ -34,12 +34,12 @@
 						<h:form id="formFornecedor">
 														
 							<sgp:formInputMask
-								value="#{unidadePrisionalBean.unidade.cnpj}"
+								value="#{fornecedorBean.fornecedor.cnpj}"
 								labelValue="CNPJ"
 								mask="99.999.999/9999-99"
 								validatorId="CnpjValidator"
 								validationRequired="false"
-								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								disabled="#{fornecedorBean.isVisualizacao}"
 								converter="convertCnpj"
 								maxlength="14"
 								display="text"/>
@@ -47,47 +47,88 @@
 							<sgp:formInputText 
 								id="razaoSocial"
 								labelValue="Razão Social"
-								value="#{unidadePrisionalBean.unidade.razaoSocial}"
+								value="#{fornecedorBean.fornecedor.razaoSocial}"
 								validationRequired="true"
-								maxlength="80"
-								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								maxlength="150"
+								disabled="#{fornecedorBean.isVisualizacao}"
 								display="text"/>
 								
 							<sgp:formInputText 
 								id="nomeFantasia"
 								labelValue="Nome Fantasia"
-								value="#{unidadePrisionalBean.unidade.nomeFantasia}"
+								value="#{fornecedorBean.fornecedor.nomeFantasia}"
 								validationRequired="true"
-								maxlength="80"
-								disabled="#{unidadePrisionalBean.isVisualizacao}"
+								maxlength="150"
+								disabled="#{fornecedorBean.isVisualizacao}"
 								display="text"/>
 								
-							<sgp:formInputText 
-								id="endereco"
-								labelValue="Endereço"
-								value="#{unidadePrisionalBean.unidade.endereco}"
-								validationRequired="true"
-								maxlength="500"
-								disabled="#{unidadePrisionalBean.isVisualizacao}"
-								display="text"/>
-								
-							<sgp:formInputText 
-								id="telefone"
-								labelValue="Telefone"
-								value="#{unidadePrisionalBean.unidade.telefone}"
-								validationRequired="true"
-								maxlength="14"
-								disabled="#{unidadePrisionalBean.isVisualizacao}"
-								display="text"/>
+							
 								<br/><br/>
 						</h:form>
 					</p:panel>
+						<br/><br/>		
+						<p:panel header="Endereço" id="enderecos">
+						<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" actionListener="#{fornecedorBean.abrirDialogEndereco}"
+							rendered="#{(securityUtil.possuiPermissao('Cadastrarfornecedor') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('Alterarfornecedor') and !fornecedorBean.isVisualizacao)}">
+							<p:ajax event="dialogReturn" listener="#{fornecedorBean.incluirEndereco}" update="enderecos"/>
+						</p:commandButton>						
+						
 						<br/>
-						<br/>					
+						<sgp:formOutputLabel labelValue="Logradouro" value="#{fornecedorBean.fornecedor.endereco.logradouro}" />
+						<sgp:formOutputLabel labelValue="Número" value="#{fornecedorBean.fornecedor.endereco.numero}" />
+						<sgp:formOutputLabel labelValue="Complemento" value="#{fornecedorBean.fornecedor.endereco.complemento}" />
+						<sgp:formOutputLabel labelValue="Bairro" value="#{fornecedorBean.fornecedor.endereco.bairro}" />
+						<sgp:formOutputLabel labelValue="CEP" value="#{fornecedorBean.fornecedor.endereco.cep}" />
+						<sgp:formOutputLabel labelValue="Cidade" value="#{fornecedorBean.fornecedor.endereco.cidade.nome}" />
+						<sgp:formOutputLabel labelValue="Estado" value="#{fornecedorBean.fornecedor.endereco.cidade.estado.nome}" />
+						
+					</p:panel>
+					<br/><br/>						
+					<p:panel header="Contatos">
+						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{fornecedorBean.abrirDialogContato}" 
+							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !fornecedorBean.isVisualizacao)}">
+							<p:ajax event="dialogReturn" listener="#{fornecedorBean.incluirContato}" update="contatos"/>
+						</p:commandButton>
+					
+				<br/>
+				<br/>
+				
+				<p:dataTable id="contatos" var="contato" emptyMessage="Nenhum contato adicionado." value="#{fornecedorBean.fornecedor.contatos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{contato.id}">
+					<p:column headerText="Nome">
+						<h:outputText value="#{contato.nome}" />
+					</p:column>
+					<p:column headerText="Tipo" width="100">
+						<h:outputText value="#{contato.tipoContato.descricao}"/>
+					</p:column>
+					<p:column headerText="Valor" width="120">
+						<h:outputText value="#{contato.valor}" />
+					</p:column>
+					<p:column headerText="Observação">
+						<h:outputText value="#{contato.observacao}" />
+					</p:column>
+					<p:column width="90">
+						<center>
+							<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{fornecedorBean.abrirDialogAlterarContato(contato)}" 
+								rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !fornecedorBean.isVisualizacao)}">
+								<p:ajax event="dialogReturn" listener="#{fornecedorBean.incluirContato}" update="contatos"/>
+							</p:commandButton>
+							<p:commandButton action="#{fornecedorBean.excluirContato(contato)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":FornecedorForm:tabView:contatos :mensagens"
+								rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !fornecedorBean.isVisualizacao)}">
+						 		<p:confirm header="Confirmação" message="Deseja excluir o contato?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</center>
+					</p:column>
+				</p:dataTable>
+				
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
 											
-					<p:commandButton value="Salvar" action="#{unidadePrisionalBean.salvar()}"	update="@form" icon="ui-icon-disk" 
-						rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}" />
-					<p:button outcome="pretty:ListarUnidade" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+					<p:commandButton value="Salvar" action="#{fornecedorBean.salvar()}"	update="@form" icon="ui-icon-disk" 
+						rendered="#{(securityUtil.possuiPermissao('Cadastrarfornecedor') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('Alterarfornecedor') and !fornecedorBean.isVisualizacao)}" />
+					<p:button outcome="pretty:ListarFornecedor" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
 						<f:param name="list" value="1" />
 					</p:button>
 				</p:tab>

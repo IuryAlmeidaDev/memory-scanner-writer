@@ -14,7 +14,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -68,6 +67,10 @@ public class Endereco implements Serializable {
 	
 	@Column(name="COMPLEMENTO", length = 250)
 	private String complemento;	
+	
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "FORNECEDOR_ID")
+	private Fornecedor fornecedor;
 	
 	public Endereco() {
 	}	
@@ -165,6 +168,14 @@ public class Endereco implements Serializable {
 		this.pessoa = pessoa;
 	}
 
+	public Fornecedor getFornecedor() {
+		return this.fornecedor;
+	}
+	
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
