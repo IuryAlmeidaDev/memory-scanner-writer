@@ -41,7 +41,7 @@ public class FornecedorDTO {
 
 	@Override
 	public String toString() {
-		return "Unidade Prisional [id=" + id + ", nome=" + nomeFantasia + "]";
+		return "Fornecedor [id=" + id + ", nome = " + nomeFantasia + "]";
 	}
 
 

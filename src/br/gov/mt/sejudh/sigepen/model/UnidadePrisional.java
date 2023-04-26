@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -76,6 +77,9 @@ public class UnidadePrisional implements Serializable {
     @NotFound(action = NotFoundAction.IGNORE)
 	@OneToMany(mappedBy = "unidadePrisional", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ParametroUnidade> parametrosUnidade;
+    
+    @ManyToOne(fetch=FetchType.LAZY)
+    private Contrato contrato;
 
 	@Transient
 	private AutoriaRegistro autorRegistro;
@@ -228,6 +232,14 @@ public class UnidadePrisional implements Serializable {
 
     public void setParametrosUnidade(List<ParametroUnidade> parametrosUnidade) {
         this.parametrosUnidade = parametrosUnidade;
+    }
+    
+    public Contrato getContrato() {
+    	return this.contrato;
+    }
+    
+    public void setContrato(Contrato contrato) {
+    	this.contrato = contrato;
     }
 
     @Override
