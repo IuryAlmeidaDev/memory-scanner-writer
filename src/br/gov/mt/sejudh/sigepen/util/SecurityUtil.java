@@ -112,7 +112,8 @@ public class SecurityUtil implements Serializable {
 				resultado = this.possuiPermissao("Relatorio");
 				break;
 			case "mapaalimentacao":
-				resultado = this.possuiPermissao("ListarFornecedor");
+				resultado = this.possuiPermissao("ListarFornecedor")
+				|| this.possuiPermissao("ListarContrato");
 				break;
 		}
 		

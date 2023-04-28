@@ -1,19 +1,21 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
-import org.hibernate.criterion.MatchMode;
+import java.util.Date;
+
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 
-import br.gov.mt.sejudh.sigepen.util.RestrictionsSigepen;
+import br.gov.mt.sejudh.sigepen.model.Fornecedor;
 
 public class FiltroContrato extends FiltroConsulta{
 
 	private static final long serialVersionUID = 1L;
-	private long id;	
-	private String razaoSocial;
-	private String nomeFantasia;
-	private String cnpj;
+	private long id;
+	private Long numContrato;
+	private Date vigenciaContrato;
+	private Fornecedor fornecedor;	
 
 	public long getId() {
 		return id;
@@ -23,55 +25,54 @@ public class FiltroContrato extends FiltroConsulta{
 		this.id = id;
 	}
 	
-	public String getNomeFantasia() {
-		return nomeFantasia;
+	public Long getNumContrato() {
+		return this.numContrato;
 	}
 	
-	public void setNomeFantasia(String nomeFantasia) {
-		this.nomeFantasia = nomeFantasia;
+	public void setNumContrato(Long numContrato) {
+		this.numContrato = numContrato;
 	}
 	
-	public String getRazaoSocial() {
-		return razaoSocial;
+	public Date getVigenciaContrato() {
+		return this.vigenciaContrato;
 	}
 	
-	public void setRazaoSocial(String razaoSocial) {
-		this.razaoSocial = razaoSocial;
-	}
-
-	public String getCnpj() {
-		return cnpj;
+	public void setVigenciaContrato(Date vigenciaContrato) {
+		this.vigenciaContrato = vigenciaContrato;
 	}
 	
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
+	public Fornecedor getFornecedor() {
+		return this.fornecedor;
+	}
+	
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
 	}
 
 	@Override
 	public void configurarFiltros() {
+		getCriteria()
+		.createAlias("unidade", "unidade", JoinType.LEFT_OUTER_JOIN);
 		
 		Projection proj = Projections.projectionList()
 				.add(Projections.property("id").as("id")) 
-				.add(Projections.property("razaoSocial").as("razaoSocial"))
-				.add(Projections.property("nomeFantasia").as("nomeFantasia"))
-				.add(Projections.property("cnpj").as("cnpj"));
+				.add(Projections.property("numContrato").as("numContrato"))
+				.add(Projections.property("unidade.id").as("idcontrato"))
+				.add(Projections.property("vigenciaContrato").as("vigenciaContrato"));
 		getCriteria().setProjection(proj);
 
 		if(this.getId() > 0){
 			getCriteria().add(Restrictions.eq("id", this.getId()));
 		}
 		
-		if(this.getNomeFantasia() !=null && !this.getNomeFantasia().equalsIgnoreCase("")){
-			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nomeFantasia", this.getNomeFantasia(), MatchMode.ANYWHERE));
+		if(this.getNumContrato() !=null){
+			getCriteria().add(Restrictions.eq("numContrato", this.getNumContrato()));
 		}
 		
-		if(this.getRazaoSocial() !=null && !this.getRazaoSocial().equalsIgnoreCase("")){
-			getCriteria().add(Restrictions.ilike("razaoSocial", this.getRazaoSocial(), MatchMode.ANYWHERE));
+		if(this.getVigenciaContrato() !=null){
+			getCriteria().add(Restrictions.eq("vigenciaContrato", this.getVigenciaContrato()));
 		}
 		
-		if(this.getCnpj() !=null && !this.getCnpj().equalsIgnoreCase("")){
-			getCriteria().add(Restrictions.ilike("cnpj", this.getCnpj(), MatchMode.ANYWHERE));
-		}
 	}
 
 }

@@ -35,7 +35,7 @@ public class Fornecedor implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FORNECEDOR_GENERATOR")
 	@Column(name = "ID")
 	private long id;
-	
+
 	@Column(name = "RAZAO_SOCIAL", length = 150, nullable = false)
 	private String razaoSocial;
 
@@ -44,19 +44,18 @@ public class Fornecedor implements Serializable {
 
 	@Column(name = "CNPJ", length = 14)
 	private String cnpj;
-	
-	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="fornecedor", fetch = FetchType.LAZY)
+
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "fornecedor", fetch = FetchType.LAZY)
 	private Endereco endereco;
-	
-	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="fornecedor", fetch = FetchType.LAZY)
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "fornecedor", fetch = FetchType.LAZY)
 	@NotFound(action = NotFoundAction.IGNORE)
-	private List<Contato> contatos; 
-	
-	@OneToOne(fetch=FetchType.LAZY)
+	private List<Contato> contatos;
+
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CONTRATO_ID")
 	private Contrato contrato;
-	
-	
+
 	public Fornecedor() {
 		this.contatos = new ArrayList<Contato>();
 	}
@@ -69,7 +68,7 @@ public class Fornecedor implements Serializable {
 		this.cnpj = cnpj;
 	}
 
-	public Fornecedor (Long id) {
+	public Fornecedor(Long id) {
 		this.id = id;
 	}
 
@@ -103,25 +102,25 @@ public class Fornecedor implements Serializable {
 
 	public void setCnpj(String cnpj) {
 		this.cnpj = cnpj;
-	}	
-	
+	}
+
 	public Endereco getEndereco() {
 		return this.endereco;
 	}
-	
+
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
 	}
-	
+
 	public List<Contato> getContatos() {
 		return this.contatos;
 	}
-	
+
 	public void setContatos(List<Contato> contatos) {
 		this.contatos = contatos;
 	}
-	
-    @Override
+
+	@Override
 	public String toString() {
 		return "Fornecedor [id=" + id + ", nome=" + nomeFantasia + "]";
 	}

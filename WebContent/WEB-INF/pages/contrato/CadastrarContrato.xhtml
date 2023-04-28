@@ -20,9 +20,8 @@
 		<p:panel id="cabecalho" rendered="#{contratoBean.contrato.id>0}" >
 			<h:form id="formCabecalho">
 					<p:column>
-						<sgp:formOutputLabel labelValue="CNPJ" value="#{contratoBean.contrato.cnpj}"/>
-						<sgp:formOutputLabel labelValue="Nome Fantasia" value="#{contratoBean.contrato.nomeFantasia}"/>
-						<sgp:formOutputLabel labelValue="Razão Social" value="#{contratoBean.contrato.razaoSocial}"/>
+						<sgp:formOutputLabel labelValue="Numero do contrato" value="#{contratoBean.contrato.numContrato}"/>
+						<sgp:formOutputLabel labelValue="Fornecedor" value="#{contratoBean.contrato.fornecedor.nomeFantasia}"/>
 					</p:column>
 				</h:form>
 		</p:panel>	
@@ -32,100 +31,30 @@
 				<p:tab title="Contrato" id="tab">	
 					<p:panel>
 						<h:form id="formContrato">
-														
-							<sgp:formInputMask
-								value="#{contratoBean.contrato.cnpj}"
-								labelValue="CNPJ"
-								mask="99.999.999/9999-99"
-								validatorId="CnpjValidator"
-								validationRequired="false"
-								disabled="#{contratoBean.isVisualizacao}"
-								converter="convertCnpj"
-								maxlength="14"
-								display="text"/>
-							
+						
 							<sgp:formInputText 
-								id="razaoSocial"
-								labelValue="Razão Social"
-								value="#{contratoBean.contrato.razaoSocial}"
+								id="numContrato"
+								labelValue="Numero do contrato"
+								value="#{contratoBean.contrato.numContrato}"
 								validationRequired="true"
 								maxlength="150"
 								disabled="#{contratoBean.isVisualizacao}"
 								display="text"/>
 								
 							<sgp:formInputText 
-								id="nomeFantasia"
-								labelValue="Nome Fantasia"
-								value="#{contratoBean.contrato.nomeFantasia}"
+								id="Fornecedor"
+								labelValue="Fornecedor"
+								value="#{contratoBean.contrato.fornecedor.nomeFantasia}"
 								validationRequired="true"
 								maxlength="150"
 								disabled="#{contratoBean.isVisualizacao}"
-								display="text"/>
-								
+								display="text"/>						
 							
 								<br/><br/>
 						</h:form>
 					</p:panel>
-						<br/><br/>		
-						<p:panel header="Endereço" id="enderecos">
-						<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" actionListener="#{contratoBean.abrirDialogEndereco}"
-							rendered="#{(securityUtil.possuiPermissao('Cadastrarcontrato') and !contratoBean.isVisualizacao) or (securityUtil.possuiPermissao('Alterarcontrato') and !contratoBean.isVisualizacao)}">
-							<p:ajax event="dialogReturn" listener="#{contratoBean.incluirEndereco}" update="enderecos"/>
-						</p:commandButton>						
-						
-						<br/>
-						<sgp:formOutputLabel labelValue="Logradouro" value="#{contratoBean.contrato.endereco.logradouro}" />
-						<sgp:formOutputLabel labelValue="Número" value="#{contratoBean.contrato.endereco.numero}" />
-						<sgp:formOutputLabel labelValue="Complemento" value="#{contratoBean.contrato.endereco.complemento}" />
-						<sgp:formOutputLabel labelValue="Bairro" value="#{contratoBean.contrato.endereco.bairro}" />
-						<sgp:formOutputLabel labelValue="CEP" value="#{contratoBean.contrato.endereco.cep}" />
-						<sgp:formOutputLabel labelValue="Cidade" value="#{contratoBean.contrato.endereco.cidade.nome}" />
-						<sgp:formOutputLabel labelValue="Estado" value="#{contratoBean.contrato.endereco.cidade.estado.nome}" />
-						
-					</p:panel>
-					<br/><br/>						
-					<p:panel header="Contatos">
-						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{contratoBean.abrirDialogContato}" 
-							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !contratoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !contratoBean.isVisualizacao)}">
-							<p:ajax event="dialogReturn" listener="#{contratoBean.incluirContato}" update="contatos"/>
-						</p:commandButton>
 					
-				<br/>
-				<br/>
-				
-				<p:dataTable id="contatos" var="contato" emptyMessage="Nenhum contato adicionado." value="#{contratoBean.contrato.contatos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{contato.id}">
-					<p:column headerText="Nome">
-						<h:outputText value="#{contato.nome}" />
-					</p:column>
-					<p:column headerText="Tipo" width="100">
-						<h:outputText value="#{contato.tipoContato.descricao}"/>
-					</p:column>
-					<p:column headerText="Valor" width="120">
-						<h:outputText value="#{contato.valor}" />
-					</p:column>
-					<p:column headerText="Observação">
-						<h:outputText value="#{contato.observacao}" />
-					</p:column>
-					<p:column width="90">
-						<center>
-							<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{contratoBean.abrirDialogAlterarContato(contato)}" 
-								rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !contratoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !contratoBean.isVisualizacao)}">
-								<p:ajax event="dialogReturn" listener="#{contratoBean.incluirContato}" update="contatos"/>
-							</p:commandButton>
-							<p:commandButton action="#{contratoBean.excluirContato(contato)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":ContratoForm:tabView:contatos :mensagens"
-								rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !contratoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !contratoBean.isVisualizacao)}">
-						 		<p:confirm header="Confirmação" message="Deseja excluir o contato?" icon="ui-icon-alert" />
-							</p:commandButton>
-						</center>
-					</p:column>
-				</p:dataTable>
-				
-				<p:confirmDialog global="true">
-					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-				</p:confirmDialog>
-			</p:panel>
-											
+					<br/><br/>				
 					<p:commandButton value="Salvar" action="#{contratoBean.salvar()}"	update="@form" icon="ui-icon-disk" 
 						rendered="#{(securityUtil.possuiPermissao('CadastrarContrato') and !contratoBean.isVisualizacao) or (securityUtil.possuiPermissao('Alterarcontrato') and !contratoBean.isVisualizacao)}" />
 					<p:button outcome="pretty:ListarContrato" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">

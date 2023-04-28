@@ -35,57 +35,56 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ManagedBean
 @ViewScoped
 @URLMappings(mappings = {
-@URLMapping(id = "ListarContrato", pattern = "/contrato", viewId = "/WEB-INF/pages/contrato/ListarContrato.xhtml")
-,@URLMapping(id = "CadastrarContrato", pattern = "/contrato/cadastrar", viewId = "/WEB-INF/pages/contrato/CadastrarContrato.xhtml")
-,@URLMapping(id = "AlterarContrato", pattern = "/contrato/alterar/#{id}", viewId = "/WEB-INF/pages/contrato/CadastrarContrato.xhtml")
-,@URLMapping(id = "VisualizarContrato", pattern = "/contrato/visualizar/#{id}", viewId = "/WEB-INF/pages/contrato/CadastrarContrato.xhtml")
-})
+		@URLMapping(id = "ListarContrato", pattern = "/contrato", viewId = "/WEB-INF/pages/contrato/ListarContrato.xhtml"),
+		@URLMapping(id = "CadastrarContrato", pattern = "/contrato/cadastrar", viewId = "/WEB-INF/pages/contrato/CadastrarContrato.xhtml"),
+		@URLMapping(id = "AlterarContrato", pattern = "/contrato/alterar/#{id}", viewId = "/WEB-INF/pages/contrato/CadastrarContrato.xhtml"),
+		@URLMapping(id = "VisualizarContrato", pattern = "/contrato/visualizar/#{id}", viewId = "/WEB-INF/pages/contrato/CadastrarContrato.xhtml") })
 public class ContratoBean extends MetodosDePaginaBean {
-	
+
 	private FiltroContrato filtro;
-	
+
 	private Contrato contrato;
-	
+
 	private LazyDataModel<ContratoDTO> contratos;
-	
+
 	@Inject
 	private ContratoService contratoService;
 
 	@Inject
 	private FacesUtil facesUtil;
-	
+
 	@Inject
 	private Logger log;
-	
+
 	@Inject
 	private SecurityUtil security;
-	
+
 	private Long contratoSelecionada;
-	
+
 	public Contrato getcontrato() {
 		return contrato;
 	}
 
 	public void setcontrato(Contrato contrato) {
 		this.contrato = contrato;
-	}	
-	
+	}
+
 	public Long getcontratoSelecionada() {
 		return this.contratoSelecionada;
 	}
-	
+
 	public void setcontratoSelecionada(Long contratoSelecionada) {
 		this.contratoSelecionada = contratoSelecionada;
 	}
-	
-	public LazyDataModel<ContratoDTO> getContratoes() {
+
+	public LazyDataModel<ContratoDTO> getContratos() {
 		return contratos;
 	}
 
 	public void setContratos(LazyDataModel<ContratoDTO> contratos) {
 		this.contratos = contratos;
 	}
-	
+
 	public FiltroContrato getFiltro() {
 		return filtro;
 	}
@@ -97,78 +96,79 @@ public class ContratoBean extends MetodosDePaginaBean {
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
 		if (getAcaoDeTela().equals(AcaoDeTela.ALTERAR) || getAcaoDeTela().equals(AcaoDeTela.VISUALIZAR)) {
-			if(facesUtil.getQueryParameter("id") != null) {
+			if (facesUtil.getQueryParameter("id") != null) {
 				this.contratoSelecionada = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
 			}
 		}
 		if (!security.possuiPermissao("ListarTodasUnidades")) {
 			this.setFiltro(new FiltroContrato());
 			this.filtro.setId(SecurityUtil.getUnidadeSelecionada().getId());
-			
+
 			super.carregarFiltroPaginacao(FiltroContrato.class, this, getFiltro());
 		} else {
 			super.carregarFiltroPaginacao(FiltroContrato.class, this);
 		}
 	}
-	
-	@URLAction(onPostback=false)
+
+	@URLAction(onPostback = false)
 	public String init() {
 		try {
 			switch (this.getAcaoDeTela()) {
-				case CADASTRAR:
-					this.contrato = new Contrato();
-					break;					
-				case VISUALIZAR:
-				case ALTERAR:
-					
-					long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
-					
-					if (!buscarUnidade(id)) {
-						facesUtil.exibirMensagemErro("Contrato não encontrada.", true);
-						return "pretty:ListarContrato";
-					}
-				
-					logDeAcesso(log, this.contrato);
-					
-					break;
-					
-				case LISTAR:
-					pesquisar();
-					logDeAcesso(log, "Contrato");
-					break;
-					
-				default:
-					break;
+			case CADASTRAR:
+				this.contrato = new Contrato();
+				break;
+			case VISUALIZAR:
+			case ALTERAR:
+
+				long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
+
+				if (!buscarUnidade(id)) {
+					facesUtil.exibirMensagemErro("Contrato não encontrada.", true);
+					return "pretty:ListarContrato";
+				}
+
+				logDeAcesso(log, this.contrato);
+
+				break;
+
+			case LISTAR:
+				pesquisar();
+				logDeAcesso(log, "Contrato");
+				break;
+
+			default:
+				break;
 			}
-		} catch (Exception e){
+		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(e, log);
 		}
-		
+
 		return null;
 	}
-	
+
 	private boolean buscarUnidade(long id) {
 		if (id <= 0) {
 			return false;
 		}
-		
+
 		this.contrato = contratoService.buscaPorId(id);
-		
+
 		if (this.contrato == null) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public void pesquisar() {
 		this.contratos = new LazyDataModel<ContratoDTO>() {
 			private static final long serialVersionUID = 1L;
-			
-			public List<ContratoDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters){
+
+			public List<ContratoDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
+					Map<String, Object> filters) {
 				setRowCount(contratoService.quantidadeFiltrados(getFiltro()));
-				
+
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
@@ -182,27 +182,28 @@ public class ContratoBean extends MetodosDePaginaBean {
 
 	public String salvar() {
 		String retorno = null;
-		
+
 		try {
 			contratoService.salvar(this.contrato);
 			facesUtil.exibirMensagemInfo("contrato " + this.contrato.getNumContrato() + " salva com Sucesso!", true);
-			retorno = "pretty:ListarContrato";			
+			retorno = "pretty:ListarContrato";
 			LoggerUtil.logInfo(Acao.SALVAR, contrato, log);
-		} catch(ValidacaoException e) {
+		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
-		} catch(Exception e){
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao salvar contrato (" + this.contrato.getNumContrato() + "): " + e.getMessage());
-			LoggerUtil.logErro(Acao.SALVAR, contrato, e, log);	
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao salvar contrato (" + this.contrato.getNumContrato() + "): " + e.getMessage());
+			LoggerUtil.logErro(Acao.SALVAR, contrato, e, log);
 		}
 
 		return retorno;
 	}
-	
+
 	public void abrirDialogEndereco(ActionEvent event) {
 //		facesUtil.setObjetoSessao("endereco", this.contrato.getEndereco());
 		facesUtil.exibirPaginaDialog("pretty:AssociarEndereco");
 	}
-	
+
 	public void incluirEndereco(SelectEvent event) {
 //		Endereco endereco = (Endereco) event.getObject();
 //		
@@ -220,7 +221,7 @@ public class ContratoBean extends MetodosDePaginaBean {
 //			LoggerUtil.logErro(Acao.ADICIONAR, endereco, e, log);
 //		}
 	}
-	
+
 	public void excluirContato(Contato contato) {
 //		try {
 //			this.contrato.getContatos().remove(contato);
@@ -236,19 +237,19 @@ public class ContratoBean extends MetodosDePaginaBean {
 //			LoggerUtil.logErro(Acao.ASSOCIAR, contato, e, log);
 //		}
 	}
-	
+
 	public void abrirDialogContato(ActionEvent event) {
 //		this.contato = null;
 //		facesUtil.exibirPaginaDialog("pretty:AssociarContato");
-	}	
-	
+	}
+
 	public void abrirDialogAlterarContato(Contato contato) {
 //		this.contato = contato;
 //		facesUtil.setObjetoSessao("contato", contato);		
 //		facesUtil.exibirPaginaDialog("pretty:AssociarContato");
 //		LoggerUtil.logInfo(Acao.ALTERAR, contato, log);
 	}
-	
+
 	public void incluirContato(SelectEvent event) {
 //		Contato contato = (Contato) event.getObject();
 //		
@@ -274,5 +275,5 @@ public class ContratoBean extends MetodosDePaginaBean {
 //			LoggerUtil.logErro(Acao.ADICIONAR, contato, e, log);
 //		}
 	}
-	
+
 }

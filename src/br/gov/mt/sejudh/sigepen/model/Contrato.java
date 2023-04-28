@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -43,9 +44,10 @@ public class Contrato implements Serializable {
 
 	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="contrato", fetch = FetchType.LAZY)
 	private Fornecedor fornecedor;	
-	
-	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="contrato", fetch = FetchType.LAZY)
+
 	@NotFound(action = NotFoundAction.IGNORE)
+	@OneToMany
+	@JoinTable(name = "CONTRATO")
 	private List<UnidadePrisional> unidades; 	
 	
 	public Contrato() {
@@ -84,6 +86,14 @@ public class Contrato implements Serializable {
 	
 	public void setVigenciaContrato(Date vigenciaContrato) {
 		this.vigenciaContrato = vigenciaContrato;
+	}
+	
+	public Fornecedor getFornecedor() {
+		return this.fornecedor;
+	}
+	
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
 	}
 	
 	public List<UnidadePrisional> getUnidades(){

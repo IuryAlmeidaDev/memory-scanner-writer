@@ -84,6 +84,7 @@
             </p:submenu>
              <p:submenu label="Mapa Alimentação" rendered="#{securityUtil.exibeCategoriaMenu('MapaAlimentacao')}">
 				<p:menuitem value="Fornecedor" outcome="pretty:ListarFornecedor" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarFornecedor')}"/>
+				<p:menuitem value="Contrato" outcome="pretty:ListarContrato" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarContrato')}"/>
 			</p:submenu>			
 		</p:panelMenu>
 	</h:form>
