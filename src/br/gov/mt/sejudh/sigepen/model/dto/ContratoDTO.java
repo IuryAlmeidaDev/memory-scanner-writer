@@ -2,14 +2,13 @@ package br.gov.mt.sejudh.sigepen.model.dto;
 
 import java.util.Date;
 
-import br.gov.mt.sejudh.sigepen.model.Fornecedor;
-
 public class ContratoDTO {
 
 	private long id;
 	private Long numContrato;
 	private Date vigenciaContrato;
-	private Fornecedor fornecedor;
+	private String cnpjFornecedor;
+	private String unidade;
 
 	public long getId() {
 		return id;
@@ -35,14 +34,22 @@ public class ContratoDTO {
 		this.vigenciaContrato = vigenciaContrato;
 	}
 
-	public Fornecedor getFornecedor() {
-		return this.fornecedor;
+	public String getCnpjFornecedor() {
+		return this.cnpjFornecedor;
+	}
+	public void setCnpjFornecedor(String cnpjFornecedor) {
+		this.cnpjFornecedor = cnpjFornecedor;
 	}
 	
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
+	public String getUnidade() {
+		return this.unidade;
 	}
 	
+	public void setUnidade(String unidade) {
+		this.unidade = unidade;
+	}
+	
+		
 	@Override
 	public String toString() {
 		return "Contrato [id=" + id + ", numero Contrato = " + numContrato + "]";

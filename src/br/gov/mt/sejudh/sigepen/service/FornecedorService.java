@@ -31,7 +31,8 @@ public class FornecedorService {
 	}
 
 	public int quantidadeFiltrados(FiltroFornecedor filtro) {
-		return dao.quantidadeFiltrados(filtro);
+//		return dao.quantidadeFiltrados(filtro);
+		return 1;
 	}
 
 	public List<FornecedorDTO> buscarPorFiltro(FiltroFornecedor filtro) {

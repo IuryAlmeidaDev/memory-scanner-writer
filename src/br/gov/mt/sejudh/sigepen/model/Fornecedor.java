@@ -52,8 +52,8 @@ public class Fornecedor implements Serializable {
 	@NotFound(action = NotFoundAction.IGNORE)
 	private List<Contato> contatos;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CONTRATO_ID")
+	@OneToOne(fetch = FetchType.LAZY, mappedBy="fornecedor")
+	@JoinColumn(name = "FORNECEDOR_ID")
 	private Contrato contrato;
 
 	public Fornecedor() {

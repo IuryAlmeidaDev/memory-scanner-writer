@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,15 +12,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
@@ -42,13 +43,15 @@ public class Contrato implements Serializable {
 	@Column(name = "VIGENCIA_CONTRATO")
 	private Date vigenciaContrato;
 
-	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true, mappedBy="contrato", fetch = FetchType.LAZY)
+	@OneToOne(cascade=CascadeType.ALL, orphanRemoval=true, fetch = FetchType.LAZY)
 	private Fornecedor fornecedor;	
 
-	@NotFound(action = NotFoundAction.IGNORE)
-	@OneToMany
-	@JoinTable(name = "CONTRATO")
-	private List<UnidadePrisional> unidades; 	
+	@ManyToMany
+	@JoinTable(name = "CONTRATO_UNIDADE_PRISIONAL", schema = Sigepen.SEJUDH_SCHEMA,
+	   joinColumns = @JoinColumn(name = "CONTRATO_ID"), 
+	   inverseJoinColumns = @JoinColumn(name = "UNIDADE_PRISIONAL_ID"))
+	@Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
+	private List<UnidadePrisional> unidades = new ArrayList<UnidadePrisional>(); 	
 	
 	public Contrato() {
 	}

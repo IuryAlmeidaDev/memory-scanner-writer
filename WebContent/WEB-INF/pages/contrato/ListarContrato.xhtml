@@ -28,15 +28,15 @@
 				<p:column headerText="Virgência do contrato" sortBy="#{contrato.vigenciaContrato}" width="150">
 					<h:outputText value="#{contrato.vigenciaContrato}" />
 				</p:column>
-				<p:column headerText="Fornecedor" sortBy="#{contrato.fornecedor.cnpj}">
-					<h:outputText value="#{contrato.fornecedor.cnpj}" />
+				<p:column headerText="Fornecedor" sortBy="#{contrato.cnpjFornecedor}">
+					<h:outputText value="#{contrato.cnpjFornecedor}" />
 				</p:column>
 				<p:column headerText="Ações" style="width:150px;">
 					<center>
-						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:Visualizarcontrato" rendered="#{securityUtil.possuiPermissao('VisualizarContrato')}">
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarContrato" rendered="#{securityUtil.possuiPermissao('VisualizarContrato')}">
 							<f:param name="id" value="#{contrato.id}" />
 						</p:button>
-						<p:button title="Editar" icon="ui-icon-pencil" outcome="pretty:Alterarcontrato" rendered="#{securityUtil.possuiPermissao('AlterarContrato')}">
+						<p:button title="Editar" icon="ui-icon-pencil" outcome="pretty:AlterarContrato" rendered="#{securityUtil.possuiPermissao('AlterarContrato')}">
 							<f:param name="id" value="#{contrato.id}" />
 						</p:button>
 					</center>

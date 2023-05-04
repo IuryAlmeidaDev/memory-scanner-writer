@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -91,6 +92,9 @@ public class UnidadePrisional implements Serializable {
 
 	@OneToMany(mappedBy = "unidade", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ParametroVisita> parametrosVisita;
+	
+	@ManyToMany(mappedBy = "unidades")
+	private List<Contrato> contratos;
 	
 	public UnidadePrisional() {
 		this.contatos = new ArrayList<Contato>();
@@ -241,6 +245,14 @@ public class UnidadePrisional implements Serializable {
 
 	public void setBiometriaObrigatoria(Boolean biometriaObrigatoria) {
 		this.biometriaObrigatoria = biometriaObrigatoria;
+	}
+	
+	public List<Contrato> getContratos(){
+		return this.contratos;
+	}
+	
+	public void setContratos(List<Contrato> contratos) {
+		this.contratos = contratos;
 	}
 
 	@Override

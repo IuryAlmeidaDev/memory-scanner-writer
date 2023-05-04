@@ -33,14 +33,18 @@ public class ContratoDAO {
 
 	public Contrato buscaPorId(Long id) {
 
-		String jpql = "select f from Contrato f join fetch f.endereco join fetch f.contatos where f.id = :id";
+		String jpql = "select f from Contrato f"
+//				+ " join fetch CONTRATO_UNIDADE_PRISIONAL cup f.ID"
+//				+ " join fetch cup."
+//				+ " join fetch f.FORNECEDOR"
+				+ " where f.id = :id";
 		Query query = entityManager.createQuery(jpql, Contrato.class);
 		query.setParameter("id", id);
-		Contrato fornecedor = (Contrato) query.getSingleResult();
+		Contrato contrato = (Contrato) query.getSingleResult();
 //		Hibernate.initialize(fornecedor.getEndereco());
 //		Hibernate.initialize(fornecedor.getContatos());
 
-		return fornecedor;
+		return contrato;
 	}
 
 	public int quantidadeFiltrados(FiltroContrato filtro) {
