@@ -73,7 +73,7 @@ public class FaltaDisciplinar implements Serializable{
 	private String padDescricao;
 
 	@Temporal(TemporalType.DATE)
-	@Column(name = "DATA_SITUACAO_EM_ANDAMENTO_FALTA")
+	@Column(name = "DATA_SIT_EM_ANDAMENTO_FALTA")
 	private Date dataSituacaoEmAndamento;
 	// FIM - DAdos do PAD da Falta Disciplinar
 

@@ -30,7 +30,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
 @Entity
-@Table(name = "SGP_PESSOA_SOLICITACAO_VISITA", schema = Sigepen.SEJUDH_SCHEMA)
+@Table(name = "SGP_PES_SOLICITA_VISITA", schema = Sigepen.SEJUDH_SCHEMA)
 public class PessoaSolicitacaoVisita implements Serializable, PersistentAttributeInterceptable {
 
     private static final long serialVersionUID = -2036826051154304793L;
