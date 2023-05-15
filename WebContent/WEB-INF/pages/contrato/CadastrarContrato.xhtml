@@ -48,7 +48,21 @@
 								validationRequired="true"
 								maxlength="150"
 								disabled="#{contratoBean.isVisualizacao}"
-								display="text"/>						
+								display="text"/>	
+								
+							<sgp:formCalendar display="text" requiredMessage="*" labelValue="Virgencia do contrato"
+								value="#{contratoBean.contrato.vigenciaContrato}" dataMaxima="#{comboHelperBean.maxDate}"
+								validationRequired="true" disabled="#{pessoaBean.isVisualizacao}" />	
+								
+							<sgp:formSelectOneMenu 
+								id="unidadePrisional" labelValue="Unidade Prisional"
+								value="#{contratoBean.contrato.unidade}"
+								itemsValue="#{contratoBean.unidadesPrisionais}" 
+								itemValue="#{item}"
+								itemLabel="#{item.nome}" 
+								temSelecione="true"
+								filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+								converter="SimpleEntityConverter"/>				
 							
 								<br/><br/>
 						</h:form>

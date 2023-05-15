@@ -25,6 +25,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Contato;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.ContratoDTO;
 import br.gov.mt.sejudh.sigepen.service.ContratoService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
@@ -60,6 +61,8 @@ public class ContratoBean extends MetodosDePaginaBean {
 	private SecurityUtil security;
 
 	private Long contratoSelecionada;
+	
+	private List<UnidadePrisional> unidadesPrisionais;
 
 	public Contrato getcontrato() {
 		return contrato;
