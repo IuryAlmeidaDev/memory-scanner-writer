@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroQuadroVagas;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
 
 public class QuadroVagasDTO {
@@ -15,6 +16,7 @@ public class QuadroVagasDTO {
     private String nomeUnidade;
     private SituacaoUnidade situacaoUnidade;
     private String cidade;
+    private FiltroQuadroVagas filtroQuadroVagas;
 	 public QuadroVagasDTO() {
 	    	
     }
@@ -60,7 +62,15 @@ public class QuadroVagasDTO {
 	public void setCapacidadeTotal(Long capacidadeTotal) {
 		this.capacidadeTotal = capacidadeTotal;
 	}
-
+	
+	public FiltroQuadroVagas getFiltroQuadroVagas() {
+		return this.filtroQuadroVagas;
+	}
+	
+	public void setFiltroQuadroVagas(FiltroQuadroVagas filtroQuadroVagas) {
+		this.filtroQuadroVagas = filtroQuadroVagas;
+	}
+	
 	@Override
 	public String toString() {
 		return "Unidade Prisional [id=" + id + ", nome=" + sigla + "]";

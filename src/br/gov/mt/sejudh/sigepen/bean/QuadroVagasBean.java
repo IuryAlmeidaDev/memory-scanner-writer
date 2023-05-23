@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -182,7 +183,11 @@ public class QuadroVagasBean extends MetodosDePaginaBean {
 				return;
 			}
 			
-			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.ListarQuadroVagas));
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			
+			parameters.put("FILTRO", "Campos Utilizados: " + this.getFiltro().montarParametroFiltro());
+			
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.ListarQuadroVagas, parameters));
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Quadro Vagas", log);
 		} catch (Exception e) {

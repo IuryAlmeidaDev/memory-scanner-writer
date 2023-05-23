@@ -73,4 +73,18 @@ public class FiltroQuadroVagas extends FiltroConsulta{
 		}
 	}
 
+	public String montarParametroFiltro() {
+		String filtro = "";
+		if(nome != null && !nome.equals("")) {
+			filtro += "UNIDADE: " + nome;
+		}
+		if(sigla != null && !sigla.equals("")) {
+			filtro += " SIGLA: " + sigla;
+		}
+		if(cidade != null && !cidade.equals("")) {
+			filtro += " CIDADE: " + cidade;
+		}
+		return filtro;
+	}
+
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarQuadoVagas" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.6105100000000012"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="style1">
@@ -23,6 +23,10 @@
 	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadraoPaisagem.jasper"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="FILTRO" class="java.lang.String"/>
+	<parameter name="CABECALHO_FILTRO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\Filtro.jasper"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -37,6 +41,7 @@
 	<field name="vagas" class="java.lang.String"/>
 	<field name="situacaoUnidade" class="java.lang.String"/>
 	<field name="cidade" class="java.lang.String"/>
+	<field name="filtroQuadroVagas" class="java.lang.String"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{id}]]></variableExpression>
 	</variable>
@@ -44,11 +49,18 @@
 	<pageHeader>
 		<band height="106" splitType="Stretch">
 			<subreport isUsingCache="false">
-				<reportElement positionType="Float" x="0" y="0" width="802" height="106" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
+				<reportElement positionType="Float" x="0" y="0" width="802" height="80" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
 				<subreportParameter name="NOME_DO_RELATORIO">
 					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="80" width="802" height="26" uuid="484cb881-c5f1-4fba-9852-064a2f227bd2"/>
+				<subreportParameter name="FILTRO">
+					<subreportParameterExpression><![CDATA[$P{FILTRO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{CABECALHO_FILTRO}]]></subreportExpression>
 			</subreport>
 		</band>
 	</pageHeader>

@@ -41,8 +41,10 @@ public class QuadroVagasService {
 	}
 	
 	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroQuadroVagas, boolean relatorio){
-		
-		return addCapacidadeTotalUnidade(dao.buscaQuantidadeRecuperados(filtroQuadroVagas, false, relatorio), relatorio);
+		List<QuadroVagasDTO> quadroVagasDTOs = addCapacidadeTotalUnidade(dao.buscaQuantidadeRecuperados(filtroQuadroVagas, false, relatorio), relatorio);
+		quadroVagasDTOs.forEach
+		(x -> x.setFiltroQuadroVagas(filtroQuadroVagas));
+		return quadroVagasDTOs;
 	}
 	
 	private List<QuadroVagasDTO> countAllTotais(List<QuadroVagasDTO> listaQuadroVagas){
