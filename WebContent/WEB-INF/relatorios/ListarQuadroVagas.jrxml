@@ -27,6 +27,7 @@
 	<parameter name="CABECALHO_FILTRO" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["cabecalhos\\Filtro.jasper"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -47,27 +48,42 @@
 	</variable>
 	<variable name="variable1" class="java.lang.String"/>
 	<pageHeader>
-		<band height="106" splitType="Stretch">
+		<band height="129" splitType="Stretch">
 			<subreport isUsingCache="false">
-				<reportElement positionType="Float" x="0" y="0" width="802" height="80" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
+				<reportElement positionType="Float" x="0" y="0" width="802" height="97" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
 				<subreportParameter name="NOME_DO_RELATORIO">
 					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="false">
-				<reportElement x="0" y="80" width="802" height="26" uuid="484cb881-c5f1-4fba-9852-064a2f227bd2"/>
+				<reportElement x="0" y="97" width="802" height="19" uuid="484cb881-c5f1-4fba-9852-064a2f227bd2"/>
 				<subreportParameter name="FILTRO">
 					<subreportParameterExpression><![CDATA[$P{FILTRO}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportExpression><![CDATA[$P{CABECALHO_FILTRO}]]></subreportExpression>
 			</subreport>
+			<textField>
+				<reportElement x="0" y="116" width="802" height="13" uuid="77ff7a55-2565-4240-b6cb-a336ae3b183b"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Unidade Prisional: " + $P{UNIDADE_LOGADA}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band height="20">
+			<rectangle>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="20" backcolor="#CCCCCC" uuid="d6bfff2a-60de-4be3-aa30-ae6da6cda36a">
+					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
 			<staticText>
-				<reportElement x="0" y="0" width="28" height="20" uuid="c80566fb-9879-401c-8c6c-25d6b5377068"/>
+				<reportElement mode="Transparent" x="0" y="0" width="29" height="20" uuid="c80566fb-9879-401c-8c6c-25d6b5377068"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -80,7 +96,7 @@
 				<text><![CDATA[Cod.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="28" y="0" width="297" height="20" uuid="9fe98fe7-089b-40a6-8904-fe1f1aedb134"/>
+				<reportElement mode="Transparent" x="29" y="0" width="297" height="20" uuid="9fe98fe7-089b-40a6-8904-fe1f1aedb134"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -130,20 +146,6 @@
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Capac.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="325" y="0" width="47" height="20" uuid="e2a1111b-e48a-4f06-8671-44bd68c622fc"/>
-				<box>
-					<pen lineWidth="0.75"/>
-					<topPen lineWidth="0.75"/>
-					<leftPen lineWidth="0.75"/>
-					<bottomPen lineWidth="0.75"/>
-					<rightPen lineWidth="0.75"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Sigla]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="702" y="0" width="50" height="20" uuid="835093d0-e508-48ef-a762-52fd9ecc9181"/>
@@ -198,10 +200,24 @@
 				</textElement>
 				<text><![CDATA[Cidade]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="326" y="0" width="46" height="20" uuid="e2a1111b-e48a-4f06-8671-44bd68c622fc"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sigla]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="16" splitType="Stretch">
+		<band height="15" splitType="Stretch">
 			<rectangle>
 				<reportElement style="style1" stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="15" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
 					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
@@ -211,9 +227,12 @@
 				</graphicElement>
 			</rectangle>
 			<textField>
-				<reportElement style="style1" stretchType="RelativeToBandHeight" x="0" y="0" width="28" height="15" uuid="06e96a91-cdb1-4c0c-bee7-5cc504051b17"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="0" y="0" width="29" height="15" uuid="06e96a91-cdb1-4c0c-bee7-5cc504051b17"/>
 				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
@@ -221,39 +240,39 @@
 				<textFieldExpression><![CDATA[($F{id} != 0) ? ($F{id}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement style="style1" stretchType="RelativeToBandHeight" x="28" y="0" width="297" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" mode="Transparent" x="29" y="0" width="297" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
 				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nomeUnidade}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="style1" stretchType="RelativeToBandHeight" x="552" y="0" width="51" height="15" uuid="c471052e-4d00-49a2-ad5f-94163b24f731"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="552" y="0" width="50" height="15" uuid="c471052e-4d00-49a2-ad5f-94163b24f731"/>
 				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{quantidadeCondenado} != 0) ? ($F{quantidadeCondenado}) : ("")]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="style1" stretchType="RelativeToBandHeight" x="603" y="0" width="50" height="15" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
-				<box>
-					<bottomPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[($F{quantidadeProvisorios} != 0) ? ($F{quantidadeProvisorios}) : ("")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="style1" stretchType="RelativeToBandHeight" x="502" y="0" width="50" height="15" uuid="bb0e6c45-7623-4a89-a408-e41438cade23"/>
 				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
@@ -271,9 +290,12 @@
 				<textFieldExpression><![CDATA[$F{sigla}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="style1" stretchType="RelativeToBandHeight" x="653" y="0" width="50" height="15" uuid="41151535-ec28-4a17-b657-39c7bbcd4dde"/>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="652" y="0" width="50" height="15" uuid="41151535-ec28-4a17-b657-39c7bbcd4dde"/>
 				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
@@ -283,7 +305,10 @@
 			<textField>
 				<reportElement style="style1" stretchType="RelativeToBandHeight" x="702" y="0" width="50" height="15" uuid="51940744-2141-44ef-961a-979285ea0c11"/>
 				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
@@ -305,30 +330,33 @@
 			<textField isBlankWhenNull="true">
 				<reportElement style="style1" stretchType="RelativeToBandHeight" x="372" y="0" width="130" height="15" uuid="c75bd94e-130f-4fc6-97ad-290c4d7b2989"/>
 				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cidade}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement style="style1" stretchType="RelativeToBandHeight" x="602" y="0" width="50" height="15" uuid="5c2ee470-b322-45ab-ab04-9af5b65d017f"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{quantidadeProvisorios} != 0) ? ($F{quantidadeProvisorios}) : ("")]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>
 		<band height="51" splitType="Stretch">
-			<subreport isUsingCache="false" runToBottom="true">
-				<reportElement positionType="Float" x="0" y="0" width="802" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
-				<subreportParameter name="PAGINA">
-					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="EMISSOR">
-					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="TOTAL_PAGINAS">
-					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
-			</subreport>
 			<textField>
 				<reportElement x="653" y="13" width="104" height="20" uuid="21949555-196a-4d34-89dd-e4b9f2f2f2af">
 					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
@@ -342,6 +370,19 @@
 				</reportElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement positionType="Float" x="0" y="0" width="802" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
+				<subreportParameter name="PAGINA">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EMISSOR">
+					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_PAGINAS">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
+			</subreport>
 		</band>
 	</pageFooter>
 	<summary>
