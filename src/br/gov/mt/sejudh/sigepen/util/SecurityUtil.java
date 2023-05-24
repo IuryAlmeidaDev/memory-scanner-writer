@@ -74,7 +74,8 @@ public class SecurityUtil implements Serializable {
 								this.possuiPermissao("ListarTipoVisita") || 
 								this.possuiPermissao("ListarTipoImpedimento") ||
 								this.possuiPermissao("ListarCertidao") ||
-								this.possuiPermissao("ListarTipoFaltaDisciplinar");
+								this.possuiPermissao("ListarTipoFaltaDisciplinar") ||
+								this.possuiPermissao("ListarQuadroVagas");
 				break;
 
 			case "controledeacesso":
