@@ -41,14 +41,15 @@
 								disabled="#{contratoBean.isVisualizacao}"
 								display="text"/>
 								
-							<sgp:formInputText 
-								id="Fornecedor"
-								labelValue="Fornecedor"
-								value="#{contratoBean.contrato.fornecedor.nomeFantasia}"
-								validationRequired="true"
-								maxlength="150"
-								disabled="#{contratoBean.isVisualizacao}"
-								display="text"/>	
+								<sgp:formSelectOneMenu 
+								id="Fornecedor" labelValue="Fornecedor"	
+								value="#{contratoBean.contrato.fornecedor}"							
+								itemsValue="#{contratoBean.fornecedores}" 
+								itemValue="#{item}"
+								itemLabel="#{item.nomeFantasia}" 
+								temSelecione="true"
+								filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+								converter="SimpleEntityConverter"/>		
 								
 							<sgp:formCalendar display="text" requiredMessage="*" labelValue="Virgencia do contrato"
 								value="#{contratoBean.contrato.vigenciaContrato}" dataMaxima="#{comboHelperBean.maxDate}"
@@ -56,7 +57,7 @@
 								
 							<sgp:formSelectOneMenu 
 								id="unidadePrisional" labelValue="Unidade Prisional"
-								value="#{contratoBean.contrato.unidade}"
+								
 								itemsValue="#{contratoBean.unidadesPrisionais}" 
 								itemValue="#{item}"
 								itemLabel="#{item.nome}" 

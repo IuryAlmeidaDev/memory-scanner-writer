@@ -26,7 +26,6 @@ public class FornecedorService {
 
 	public Fornecedor buscaPorId(long id) {
 		Fornecedor fornecedor = dao.buscaPorId(id);
-		
 		return fornecedor;
 	}
 
@@ -38,5 +37,10 @@ public class FornecedorService {
 	public List<FornecedorDTO> buscarPorFiltro(FiltroFornecedor filtro) {
 		return dao.buscaPorFiltro(filtro);
 	}
+	
+	public List<Fornecedor> listar(){
+		return dao.listar();
+	}
+	
 	
 }

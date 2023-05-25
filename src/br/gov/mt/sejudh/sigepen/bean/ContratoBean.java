@@ -25,9 +25,12 @@ import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Contato;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
+import br.gov.mt.sejudh.sigepen.model.Fornecedor;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.ContratoDTO;
 import br.gov.mt.sejudh.sigepen.service.ContratoService;
+import br.gov.mt.sejudh.sigepen.service.FornecedorService;
+import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -50,6 +53,9 @@ public class ContratoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private ContratoService contratoService;
+	
+	@Inject
+	private FornecedorService fornecedorService;
 
 	@Inject
 	private FacesUtil facesUtil;
@@ -63,6 +69,11 @@ public class ContratoBean extends MetodosDePaginaBean {
 	private Long contratoSelecionada;
 	
 	private List<UnidadePrisional> unidadesPrisionais;
+	
+	private List<Fornecedor> fornecedores;
+	
+	@Inject
+	private UnidadePrisionalService unidadeService;
 
 	public Contrato getcontrato() {
 		return contrato;
@@ -95,6 +106,26 @@ public class ContratoBean extends MetodosDePaginaBean {
 	public void setFiltro(FiltroContrato filtro) {
 		this.filtro = filtro;
 	}
+	
+	public List<UnidadePrisional> getUnidadesPrisionais() {
+		return unidadesPrisionais;
+	}
+
+	public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
+		this.unidadesPrisionais = unidadesPrisionais;
+	}
+	
+	public List<Fornecedor> getFornecedores() {
+		return fornecedores;
+	}
+
+	public void setFornecedores(List<Fornecedor> fornecedores) {
+		this.fornecedores = fornecedores;
+	}
+	
+	public FornecedorService getFornecedorService() {
+		return fornecedorService;
+	}
 
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
@@ -118,7 +149,10 @@ public class ContratoBean extends MetodosDePaginaBean {
 		try {
 			switch (this.getAcaoDeTela()) {
 			case CADASTRAR:
+				this.setUnidadesPrisionais(unidadeService.listarUnidadesNaoInativas());
+				this.fornecedores = fornecedorService.listar();
 				this.contrato = new Contrato();
+				this.contrato.setFornecedor(new Fornecedor());
 				break;
 			case VISUALIZAR:
 			case ALTERAR:

@@ -57,4 +57,12 @@ public class FornecedorDAO {
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(FornecedorDTO.class));
 		return criteria.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Fornecedor> listar() {
+		String jpql="select f from Fornecedor f";
+		Query query = entityManager.createQuery(jpql, Fornecedor.class);
+		
+		return query.getResultList();
+	}
 }
