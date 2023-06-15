@@ -17,7 +17,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
 @Entity
-@Table(name = "SGP_PARAMETRO_VISITA_ESTRUTURA", schema = Sigepen.SEJUDH_SCHEMA)
+@Table(name = "SGP_PARAM_VISITA_ESTRUTURA", schema = Sigepen.SEJUDH_SCHEMA)
 public class ParametroVisitaEstrutura  extends BaseModel<Long> {
 
 	private static final long serialVersionUID = -1203679757730469017L;
