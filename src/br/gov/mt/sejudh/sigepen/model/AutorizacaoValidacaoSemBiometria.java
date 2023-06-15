@@ -27,7 +27,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited 
 @Entity
-@Table(name = "AUT_VALIDACAO_SEM_BIO", schema = Sigepen.SEJUDH_SCHEMA)
+@Table(name = "AUTORIZACAO_VALID_SEM_BIO", schema = Sigepen.SEJUDH_SCHEMA)
 public class AutorizacaoValidacaoSemBiometria implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -30,14 +30,14 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
 @Entity
-@Table(name = "SGP_PES_SOLICITA_VISITA", schema = Sigepen.SEJUDH_SCHEMA)
+@Table(name = "SGP_PESSOA_SOLICIT_VISITA", schema = Sigepen.SEJUDH_SCHEMA)
 public class PessoaSolicitacaoVisita implements Serializable, PersistentAttributeInterceptable {
 
     private static final long serialVersionUID = -2036826051154304793L;
 
-    @SequenceGenerator(name = "SEQ_SGP_PESSOA_SOLICITACAO_VISITA_GENERATOR", sequenceName = "SEQ_SGP_PESSOA_SOLICITACAO_VISITA", initialValue = 1,  allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
+    @SequenceGenerator(name = "SEQ_SGP_PESSOA_SOLICIT_VISITA_GENERATOR", sequenceName = "SEQ_SGP_PESSOA_SOLICIT_VISITA", initialValue = 1,  allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SGP_PESSOA_SOLICITACAO_VISITA_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SGP_PESSOA_SOLICIT_VISITA_GENERATOR")
     @Column(name = "ID")
     private long id;
 

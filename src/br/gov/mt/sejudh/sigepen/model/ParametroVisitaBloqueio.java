@@ -32,7 +32,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
 @Entity
-@Table(name = "SGP_PAR_VISITA_BLOQUEIO", schema = Sigepen.SEJUDH_SCHEMA)
+@Table(name = "SGP_PARAM_VISITA_BLOQUEIO", schema = Sigepen.SEJUDH_SCHEMA)
 public class ParametroVisitaBloqueio extends BaseModel<Long> {
 
 	private static final long serialVersionUID = -709898524753237423L;
