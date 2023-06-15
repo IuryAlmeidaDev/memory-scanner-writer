@@ -64,7 +64,7 @@ public class ParametroVisitaDAO {
 		try {
 			StringBuilder jpql = new StringBuilder();
 			jpql.append("SELECT TO_NUMBER(COUNT(P.ID)) FROM " + Sigepen.SEJUDH_SCHEMA + ".SGP_PARAMETRO_VISITA P ");
-			jpql.append(" INNER JOIN " + Sigepen.SEJUDH_SCHEMA + ".SGP_PARAMETRO_VISITA_ESTRUTURA PE  ");
+			jpql.append(" INNER JOIN " + Sigepen.SEJUDH_SCHEMA + ".SGP_PARAM_VISITA_ESTRUTURA PE  ");
 			jpql.append(" ON P.ID = PE.ID_PARAMETRO_VISITA ");
 			jpql.append(" WHERE P.ID_UNIDADE_PRISIONAL = :unidade ");
 			if(parametro.getHoraEntrada() != null && parametro.getHoraEntrada().length() == 4)
@@ -108,7 +108,7 @@ public class ParametroVisitaDAO {
 		try {
 			StringBuilder jpql = new StringBuilder();
 			jpql.append("SELECT TO_NUMBER(COUNT(P.ID)) FROM " + Sigepen.SEJUDH_SCHEMA + ".SGP_PARAMETRO_VISITA P ");
-			jpql.append(" INNER JOIN " + Sigepen.SEJUDH_SCHEMA + ".SGP_PARAMETRO_VISITA_ESTRUTURA PE  ");
+			jpql.append(" INNER JOIN " + Sigepen.SEJUDH_SCHEMA + ".SGP_PARAM_VISITA_ESTRUTURA PE  ");
 			jpql.append(" ON P.ID = PE.ID_PARAMETRO_VISITA ");
 			jpql.append(" WHERE P.ID_UNIDADE_PRISIONAL = :unidade");
 			if(parametro.getHoraEntrada() != null && parametro.getHoraEntrada().length() == 4)

@@ -18,7 +18,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
 @Entity
-@Table(name = "SGP_ENTRADA_SAIDA_RECUPERANDO", schema = Sigepen.SEJUDH_SCHEMA)
+@Table(name = "SGP_ENTRADA_SAIDA_RECUP", schema = Sigepen.SEJUDH_SCHEMA)
 public class EntradaSaidaRecuperando extends BaseModel<Long> {
 
 	private static final long serialVersionUID = 863475178001620366L;
