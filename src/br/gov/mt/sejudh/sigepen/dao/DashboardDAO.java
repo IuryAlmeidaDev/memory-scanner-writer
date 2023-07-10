@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -181,16 +182,30 @@ public class DashboardDAO {
 	}
 
 	public Long solicitacaoVisitaPendente(long unidadeId) {
-		String jpql = "select count(distinct sl.id) from SolicitacaoVisita sl"
-				+ " where sl.status = :stat and sl.unidadePrisional.id = :unidadeId";
+		Date dataLimite = calculaDataLimiteMaiorDeIdade();
+		
+		String jpql = "SELECT COUNT(DISTINCT sl.id) FROM SolicitacaoVisita sl "
+				+ "JOIN sl.pessoaSolicitacao psv "
+				+ "WHERE sl.status = :stat AND sl.unidadePrisional.id = :unidadeId "
+				+ "AND psv.dataNascimento <= :dataLimite";
+
 		Query query = em.createQuery(jpql);
 		query.setParameter("stat", SgpStatusAlternativo.P);
 		query.setParameter("unidadeId", unidadeId);
+		query.setParameter("dataLimite", dataLimite);
+
 		try {
 			return (Long) query.getSingleResult();
 		} catch (NoResultException e) {
 			return Long.valueOf(0);
 		}
+	}
+
+	private Date calculaDataLimiteMaiorDeIdade() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.YEAR, -18);
+		
+		return calendar.getTime();
 	}
 
 	private Long totalCredenciamentoPendente(long unidadeId, FaseCredenciamento fase, StatusCredenciamento situacao) {
