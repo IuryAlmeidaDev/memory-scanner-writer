@@ -109,6 +109,7 @@ import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.service.VwVisitanteService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
+import br.gov.mt.sejudh.sigepen.util.ModelUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
@@ -184,7 +185,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
     @Inject
     private FileDownloadHandlerBean fileDownload;
-
+    
+    
     private List<Credenciamento> credenciamentos;
     private Recuperando recuperandoSelecionado;
     private Credenciamento credenciamentoAtual;
@@ -698,6 +700,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
             	service.buscarRecuperandosDoVisitante(this.visitante);
             	List<Credenciamento> credenciamentosDoVisitante = this.visitante.getCredenciamentos();
             	
+            	System.out.print("Visitante getStatus " +  this.visitante.getStatus());
+            	      	
             	Optional<Credenciamento> optCredenciamento = credenciamentosDoVisitante.stream().filter(re ->  re.getRecuperando() != null && re.getRecuperando().getId() == this.recuperandoSelecionado.getId()).findFirst();
             	
             	if (!optCredenciamento.isPresent()) {
@@ -711,6 +715,14 @@ public class VisitanteBean extends MetodosDePaginaBean {
             		boolean isRenovacao = optCredenciamentoMesmaUnidade.isPresent();
             		Credenciamento credenciamento = isRenovacao ? optCredenciamentoMesmaUnidade.get() : optCredenciamento.get();
             		Optional<Parente> optParent = parentes.stream().filter(p -> p.getId() == credenciamento.getParente().getId()).findFirst();
+            		
+            		if (!ModelUtil.isMenorDeIdade(this.visitante.getPessoa().getDataNascimento()) && 
+            				credenciamento.getParente().getStatus() == SgpStatusAlternativo.P) {
+            				
+                			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", "O visitante não está ATIVO no Rol de parentes no recuperando selecionado" );
+                            return;
+                    	}
+            		
             		
             		if (optParent.isPresent()) {           			
             			selecionarRecuperando(optParent.get(), isRenovacao);
