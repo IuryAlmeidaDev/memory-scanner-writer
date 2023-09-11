@@ -735,17 +735,15 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 		});
 	}
 
-	public boolean verificaVisitanteResponsavelPossuiCredenciamento(Visitante visitante, Recuperando recuperando, TipoVisita tipoVisita) {
+	public boolean verificaVisitanteResponsavelPossuiCredenciamento(Visitante visitante, Recuperando recuperando) {
 		Query query = em.createQuery("Select count(vr.id) from Visitante v, Visitante vr, Credenciamento c"
 				+ " where vr.id = v.responsavel.id"
 				+ " and v.id = :visitanteId"
 				+ " and c.visitante.id = vr.id"
 				+ " and c.recuperando.id = :recuperandoId"
-				+ " and c.tipoVisita.id = :tipoVisitaId"
 				+ " and c.statusCredenciamento in :status");
 		query.setParameter("visitanteId", visitante.getId());
 		query.setParameter("recuperandoId", recuperando.getId());
-		query.setParameter("tipoVisitaId", tipoVisita.getId());
 		query.setParameter("status", Arrays.asList(
 											StatusCredenciamento.PENDENTE.getId(), 
 											StatusCredenciamento.IRREGULAR.getId(),

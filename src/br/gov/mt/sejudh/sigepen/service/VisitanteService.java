@@ -581,8 +581,8 @@ public class VisitanteService extends BaseService<Visitante, Long> {
     	return documentosDescricao.size() > 0;
     }
 
-	public boolean verificaVisitanteResponsavelPossuiCredenciamento(Visitante visitante, Recuperando recuperando, TipoVisita tipoVisita) {
-		return visitanteDAO.verificaVisitanteResponsavelPossuiCredenciamento(visitante, recuperando, tipoVisita);
+	public boolean verificaVisitanteResponsavelPossuiCredenciamento(Visitante visitante, Recuperando recuperando) {
+		return visitanteDAO.verificaVisitanteResponsavelPossuiCredenciamento(visitante, recuperando);
 	}
 
 	public VisitanteDTO buscarVisitanteDTO(Long idVisitante, boolean buscarFotoFrente) {
