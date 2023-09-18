@@ -192,7 +192,7 @@ public class PedidoService {
 		transfDao.salvar(pedido.getTransferencia());
 		
 		//Inativar Credenciamentos vinculados a este recuperando
-		visitanteDao.inativarCredenciamentosVinculadosAoRecuperando(pedido.getRecuperando());
+		//visitanteDao.inativarCredenciamentosVinculadosAoRecuperando(pedido.getRecuperando());
 	}
 	
 	public void expirarPedidosTransito(){
