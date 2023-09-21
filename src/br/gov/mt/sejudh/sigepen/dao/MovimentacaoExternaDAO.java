@@ -9,6 +9,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
@@ -47,6 +48,7 @@ public class MovimentacaoExternaDAO {
 	@SuppressWarnings("unchecked")
 	public List<MovimentacaoExterna> buscaPorFiltro(FiltroMovimentacaoExterna filtro, boolean isBuscaRelatorio) {
 		Criteria criteria = filtro.criarCriteriaParaBusca(MovimentacaoExterna.class, entityManager, isBuscaRelatorio);	
+		criteria.setFetchMode("pedidos", FetchMode.JOIN);
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return criteria.list();
 	}	

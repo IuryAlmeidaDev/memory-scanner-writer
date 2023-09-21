@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
@@ -53,6 +54,7 @@ public class TransferenciaDAO {
 	@SuppressWarnings("unchecked")
 	public List<Transferencia> buscaPorFiltro(FiltroTransferencia filtro, boolean isBuscaRelatorio) {
 		Criteria criteria = filtro.criarCriteriaParaBusca(Transferencia.class, entityManager, isBuscaRelatorio);	
+		criteria.setFetchMode("pedidos", FetchMode.JOIN);
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return criteria.list();
 	}	
