@@ -102,7 +102,8 @@
 							<p:button title="Finalizar" icon="fa fa-flag" outcome="pretty:FinalizarTransferencia" rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia') and (mov.status.descricao.equalsIgnoreCase('Em andamento') or mov.status.descricao.equalsIgnoreCase('Finalizado Parcial') or mov.status.descricao.equalsIgnoreCase('Aguardando Finalizar'))}">
 								<f:param name="id" value="#{mov.id}"/>
 							</p:button>
-							<p:commandButton title="Cancelar" icon="ui-icon-cancel"  action="#{transferenciaBean.cancelarTransferencia(mov)}" rendered="#{securityUtil.possuiPermissao('CancelarTransferencia') and (mov.status.descricao.equalsIgnoreCase('Pendente') or mov.status.descricao.equalsIgnoreCase('Em Andamento'))}"
+							<p:commandButton title="Cancelar" icon="ui-icon-cancel"  action="#{transferenciaBean.cancelarTransferencia(mov)}" 
+							rendered="#{securityUtil.possuiPermissao('CancelarTransferencia') and not mov.pedidos.stream().anyMatch(pedido -> !pedido.status.descricao.equalsIgnoreCase('Em Andamento')) and (mov.status.descricao.equalsIgnoreCase('Pendente') or mov.status.descricao.equalsIgnoreCase('Em Andamento'))}"
 								oncomplete="PF('cancelarTransferencia').show()"  update="cancelarForm" process="@this" />							
 							<p:commandButton action="#{transferenciaBean.excluir(mov)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirTransferencia') and mov.status.descricao.equalsIgnoreCase('Pendente')}">
 								 <p:confirm header="Confirmação" message="Deseja excluir a movimentação?" icon="ui-icon-alert" />
