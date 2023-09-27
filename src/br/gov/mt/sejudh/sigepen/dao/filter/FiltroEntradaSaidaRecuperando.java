@@ -74,7 +74,7 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 		ProjectionList proj = Projections.projectionList();
 		
         proj.add(Projections.projectionList()
-                .add(Projections.property("id").as("id"))
+                .add(Projections.property("entrada.id").as("id"))
                 .add(Projections.property("tipo_visita.descricao").as("tipoVisita"))
                 .add(Projections.property("pessoa_visitante.nome").as("nomeVisitante"))
                 .add(Projections.property("visitante.id").as("idVisitante"))
