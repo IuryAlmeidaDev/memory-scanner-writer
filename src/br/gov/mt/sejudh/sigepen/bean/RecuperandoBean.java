@@ -51,6 +51,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDeficiencia;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Alcunha;
@@ -1371,6 +1372,13 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		try {
 
 			if (this.recuperando.getId() > 0) {
+				boolean isParente = parente.getCredenciamentos().size() > 0 && parente.getCredenciamentos().get(0)
+						.getVisitante().getTipoVisita().getTipoEntrada() == TipoEntrada.FAMILIA;
+				if (isParente) {
+					String mensagem = "Operação não permitida! Visitante já cadastrado no módulo de visita, favor inativar o parente no Rol.";
+					facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", mensagem);
+					return;
+				}
 				service.excluirParente(parente);
 				LoggerUtil.logInfo(Acao.EXCLUIR, parente, log);
 			}
