@@ -104,7 +104,7 @@
 								<f:param name="id" value="#{mov.id}" />
 							</p:button>
 							<p:commandButton title="Cancelar" icon="ui-icon-cancel"  action="#{movimentacaoExternaBean.cancelarMovimentacao(mov)}" oncomplete="PF('cancelarMovimentacao').show()"  update="cancelarForm" process="@this"
-								rendered="#{securityUtil.possuiPermissao('CancelarMovimentacaoExterna') and (mov.status.descricao.equalsIgnoreCase('Pendente') or mov.status.descricao.equalsIgnoreCase('Em Andamento'))}" />							
+								rendered="#{securityUtil.possuiPermissao('CancelarMovimentacaoExterna') and not mov.pedidos.stream().anyMatch(pedido -> !pedido.status.descricao.equalsIgnoreCase('Em Andamento')) and (mov.status.descricao.equalsIgnoreCase('Pendente') or mov.status.descricao.equalsIgnoreCase('Em Andamento'))}" />							
 							<p:commandButton action="#{movimentacaoExternaBean.excluir(mov)}"	icon="ui-icon-trash" title="Excluir" update="@form :registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirMovimentacaoExterna') and mov.status.descricao.equalsIgnoreCase('Pendente')}">
 								 <p:confirm header="Confirmação" message="Deseja excluir a movimentação?" icon="ui-icon-alert" />
 							</p:commandButton>
