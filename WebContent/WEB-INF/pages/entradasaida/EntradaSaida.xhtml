@@ -651,8 +651,8 @@
 	                        <p:column headerText="Recuperando">
 	                            <h:outputText rendered="#{cred ne null}" value="#{cred.recuperando.pessoa.nome}" />
 	                        </p:column>
-	                        <p:column headerText="Unidade">
-	                            <h:outputText value="#{cred.unidadePrisional.nome}" />
+	                        <p:column headerText="Lotação Atual do Recuperando">
+	                            <h:outputText value="#{cred.recuperando.unidadeAtual}" />
 	                        </p:column>
 	                        <p:column headerText="Situação">
 	                        	<h:outputText value="#{cred != null ? cred.statusVisita.status.descricao : _stvisita.DISPONIVEL}"/>
