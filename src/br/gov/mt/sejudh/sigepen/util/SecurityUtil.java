@@ -59,6 +59,11 @@ public class SecurityUtil implements Serializable {
 		return SecurityUtils.getSubject().hasRole(perfil);
 	}
 	
+	public boolean isAtivarModuloVisitantes() {
+		UnidadePrisional unidade = (UnidadePrisional) SecurityUtils.getSubject().getSession().getAttribute("unidadeSelecionada");
+		return unidade.getAtivaModuloVisitante();
+	}
+
 	public boolean possuiPermissao(String permissao) {
 		if(permissao == Dashboard.SOLICITACAO_VISITA_PENDENTE.getDescricao() && !this.isAtivarModuloVisitantes()) {
 			return false;

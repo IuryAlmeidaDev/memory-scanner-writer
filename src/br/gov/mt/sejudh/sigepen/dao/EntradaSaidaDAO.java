@@ -32,6 +32,7 @@ import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
 import br.gov.mt.sejudh.sigepen.model.ParametroVisitaBloqueio;
 import br.gov.mt.sejudh.sigepen.model.ParametroVisitaEstrutura;
 import br.gov.mt.sejudh.sigepen.model.Passagem;
+import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -249,6 +250,10 @@ public class EntradaSaidaDAO {
 		    		Hibernate.initialize(vr.getRecuperando().getPassagens());
 		    		for(Passagem p : vr.getRecuperando().getPassagens()) {
 		    			Hibernate.initialize(p.getLotacao());
+		    			for(PassagemLotacao l : p.getLotacao()) {
+			    			Hibernate.initialize(l.getEstrutura());
+			    			Hibernate.initialize(l.getEstrutura().getUnidadePrisional());
+		    			}
 		    		}
 	    		}
 	    	}
@@ -336,6 +341,22 @@ public class EntradaSaidaDAO {
 			Visitante v = visitantes.get(0);
 			Hibernate.initialize(v.getPessoa());
 			Hibernate.initialize(v.getIdentidadeDeGenero());
+			Hibernate.initialize(v.getCredenciamentos());			
+			for(Credenciamento vr : v.getCredenciamentos()) {
+	    		Hibernate.initialize(vr.getFasesDoCredenciamento());
+	    		if(vr.getRecuperando() != null) {
+		    		Hibernate.initialize(vr.getRecuperando().getFaltas());
+		    		Hibernate.initialize(vr.getRecuperando().getPassagens());
+		    		for(Passagem p : vr.getRecuperando().getPassagens()) {
+		    			Hibernate.initialize(p.getLotacao());
+		    			for(PassagemLotacao l : p.getLotacao()) {
+			    			Hibernate.initialize(l.getEstrutura());
+			    			Hibernate.initialize(l.getEstrutura().getUnidadePrisional());
+		    			}
+		    		}
+	    		}
+        	}
+			
 			if(v.getPessoa() != null) {
 				Hibernate.initialize(v.getPessoa().getBiometria());
 				if(v.getPessoa().getBiometria() != null) {
@@ -346,6 +367,7 @@ public class EntradaSaidaDAO {
 		}
 		return null;
 	}
+
 	
 	public int buscarQuantidadeFiltrada(FiltroEntradaVisitante filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(Visitante.class, em);
@@ -396,6 +418,10 @@ public class EntradaSaidaDAO {
 			    		Hibernate.initialize(vr.getRecuperando().getPassagens());
 			    		for(Passagem p : vr.getRecuperando().getPassagens()) {
 			    			Hibernate.initialize(p.getLotacao());
+			    			for(PassagemLotacao l : p.getLotacao()) {
+				    			Hibernate.initialize(l.getEstrutura());
+				    			Hibernate.initialize(l.getEstrutura().getUnidadePrisional());
+			    			}
 			    		}
 		    		}
 	        	}
