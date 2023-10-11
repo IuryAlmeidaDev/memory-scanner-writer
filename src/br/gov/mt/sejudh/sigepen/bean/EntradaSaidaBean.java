@@ -652,7 +652,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 			} else if(!this.pesquisaBiometrica && this.usuarioPossuiLeitorBiometricoAtivo && this.entrada.getVisitante().getPessoa().getBiometria() != null && this.entrada.getVisitante().getPessoa().getBiometria().getTemplate() != null) {
 				RequestContext.getCurrentInstance().execute("capturar();");
 			} else {
-				this.abrirDlgAutorizar(Acao.INICIAR);
+				RequestContext.getCurrentInstance().execute("PF('dlgAutBio').show()");
 			}
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
@@ -665,7 +665,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		} else if(!this.pesquisaBiometrica && this.usuarioPossuiLeitorBiometricoAtivo && this.entrada.getVisitante().getPessoa().getBiometria() != null && this.entrada.getVisitante().getPessoa().getBiometria().getTemplate() != null) {
 			RequestContext.getCurrentInstance().execute("capturar();");
 		} else {
-			this.abrirDlgAutorizar(Acao.FINALIZAR);
+			RequestContext.getCurrentInstance().execute("PF('dlgAutBio').show()");
 		}
 	}
 	
@@ -791,7 +791,8 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 						}
 					}
 				}else {
-					if (vr.getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId()) {
+					if (vr.getRecuperando().getPassagemAtual().getLotacaoAtual().getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId()) {
+						vr.getRecuperando().setUnidadeAtual(SecurityUtil.getUnidadeSelecionada().getNome());
 						if (this.getFiltro().getStatusCredenciamento() == null) {
 							this.credenciamentos.add(vr);
 						} else {
@@ -962,7 +963,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 			RequestContext.getCurrentInstance().update("formInformacoesVisitante");
 		} catch (UnauthorizedException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-					"Usuário informado não possui permissão para autorizar cadastro.");
+					"Usuário informado não possui permissão para  realizar a autorização de Entrada/Saída sem Biometria.");
 		} catch (UnknownAccountException | IncorrectCredentialsException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Usuário ou senha inválidos.");
 		} catch (Exception e) {
