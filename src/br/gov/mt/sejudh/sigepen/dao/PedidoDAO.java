@@ -202,6 +202,13 @@ public class PedidoDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<PedidoTransito> buscarPedidosPorTransferencia(final long transferenciaId) {
+		Query query = entityManager.createQuery("select p from PedidoTransito p where p.transferencia.id = :transferenciaId");
+		query.setParameter("transferenciaId", transferenciaId);		
+		return query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<PedidoTransito> buscarPedidosDoRecuperando(long recuperandoId) {
 		Query query = entityManager.createQuery("select p from PedidoTransito p where p.recuperando.id = :recuperandoId");
 		query.setParameter("recuperandoId", recuperandoId);
