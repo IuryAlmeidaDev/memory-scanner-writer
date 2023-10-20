@@ -564,7 +564,7 @@ public class RecuperandoService {
 		PassagemExtratoDTO passagemDto = extrato.new PassagemExtratoDTO(p);
 		List<PedidoTransitoDTO> pedidos = buscarMovimentacoes(p);
 		
-		passagemDto.criarMovimentacoes(pedidos);
+		passagemDto.criarMovimentacoes(pedidos, pedidoService);
 		
 		extrato.getPassagens().add(passagemDto);
 		

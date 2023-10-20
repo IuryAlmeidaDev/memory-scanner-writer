@@ -16,6 +16,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroTransferencia;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Transferencia;
@@ -100,4 +101,22 @@ public class TransferenciaDAO {
 	}	
 		
 	}
+	
+	
+	public boolean isTranferenciaEmAndamento(final long transferenciaId) {
+		try {
+			;
+			String jpql = "select COUNT(t) from Transferencia t " + "where t.id = :transferenciaId "
+					+ "AND t.status = :status";
+			
+			Query query = entityManager.createQuery(jpql);
+			query.setParameter("transferenciaId", transferenciaId);
+			query.setParameter("status", StatusMovimentacao.EM_ANDAMENTO);
+			long quantidade = (Long) query.getSingleResult();
+			return quantidade > 0;
+		} catch (NoResultException e) {
+			return false;
+		}
+	}	
+	
 }
