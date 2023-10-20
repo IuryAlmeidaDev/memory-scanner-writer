@@ -64,7 +64,9 @@ public class TransferenciaService {
 		
 		dao.salvar(transferencia);
 		
-		for (PedidoTransito pedido : transferencia.getPedidos()){
+		final List<PedidoTransito> listaPedidos = daoPedido.buscarPedidosPorTransferencia(transferencia.getId());
+		
+		for (PedidoTransito pedido : listaPedidos){
 			pedido.setStatus(StatusPedido.EM_ANDAMENTO);
 			pedido.setDataInicio(transferencia.getDataInicio());
 			
@@ -135,5 +137,9 @@ public class TransferenciaService {
 		transferencia.setStatus(StatusMovimentacao.FINALIZADO);
 		transferencia.setDataConclusao(new Date());		
 		dao.salvar(transferencia);
+	}
+	
+	public boolean isTranferenciaEmAndamento(final long transferenciaId){
+		return dao.isTranferenciaEmAndamento(transferenciaId);
 	}
 }

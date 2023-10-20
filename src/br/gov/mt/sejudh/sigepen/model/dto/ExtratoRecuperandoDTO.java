@@ -11,7 +11,9 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.model.HistoricoRecuperando;
 import br.gov.mt.sejudh.sigepen.model.Passagem;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
+import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
+import br.gov.mt.sejudh.sigepen.service.PedidoService;
 
 public class ExtratoRecuperandoDTO {
 
@@ -142,9 +144,10 @@ public class ExtratoRecuperandoDTO {
 			}
 		}
 
-		public void criarMovimentacoes(List<PedidoTransitoDTO> pedidos) {
+		public void criarMovimentacoes(List<PedidoTransitoDTO> pedidos, PedidoService pedidoService) {
 			for (PedidoTransitoDTO pedidoTransitoDTO : pedidos) {
-				MovimentacaoExtratoDTO movimentacao = new MovimentacaoExtratoDTO(pedidoTransitoDTO);
+				PedidoTransito pedido = pedidoService.buscaPedidoPorId(pedidoTransitoDTO.getId());
+				MovimentacaoExtratoDTO movimentacao = new MovimentacaoExtratoDTO(pedidoTransitoDTO, pedido);
 				movimentacoes.add(movimentacao);
 			}
 
@@ -231,6 +234,39 @@ public class ExtratoRecuperandoDTO {
 		Date dataTermino;
 		String observacao;
 
+		public MovimentacaoExtratoDTO(PedidoTransitoDTO pedidoTransitoDTO, PedidoTransito pedido) {
+			this.tipoTransito = pedidoTransitoDTO.getTipoTransito();
+			
+			switch(pedidoTransitoDTO.getTipoTransito()) {
+				case INTERNA:
+					this.dataInicio = pedido.getMovimentacaoInterna().getDataInicio();
+					this.dataTermino = pedido.getMovimentacaoInterna().getDataConclusao();
+					this.estrutura = pedidoTransitoDTO.getEstruturaDestinoNomeCompletoComUnidade();
+					break;
+					
+				case EXTERNA:
+					this.dataInicio = pedido.getMovimentacaoExterna().getDataInicio();
+					this.dataTermino = pedido.getMovimentacaoExterna().getDataConclusao();
+					this.estrutura = pedidoTransitoDTO.getEstabelecimentoNome();
+					break;
+					
+				case TRANSFERENCIA:
+					this.dataInicio = pedido.getTransferencia().getDataInicio();
+					this.dataTermino = pedido.getTransferencia().getDataConclusao();
+					this.estrutura = pedidoTransitoDTO.getNomeUnidadeDestino();
+					break;
+					
+				case REMANEJAMENTO:
+					this.estrutura = pedidoTransitoDTO.getNomeUnidadeDestino();
+					break;
+					
+				default:
+					break;
+			}
+
+			this.observacao = pedidoTransitoDTO.getObservacao();
+		}
+		
 		public MovimentacaoExtratoDTO(PedidoTransitoDTO pedidoTransitoDTO) {
 			this.tipoTransito = pedidoTransitoDTO.getTipoTransito();
 			this.dataInicio = pedidoTransitoDTO.getDataPrevista();

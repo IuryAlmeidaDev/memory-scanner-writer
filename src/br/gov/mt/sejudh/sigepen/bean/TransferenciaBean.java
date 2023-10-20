@@ -210,7 +210,11 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 		try {			
 			if (this.transferencia.getPedidos().isEmpty()) {
 				throw new ValidacaoException("É necessário adicionar um pedido!");
-			}			
+			}
+			
+			if(service.isTranferenciaEmAndamento(transferencia.getId())) {				
+				throw new ValidacaoException("A Trânsferencia já está em andamento!");
+			}
 			
 			for (PedidoTransito ped : this.transferencia.getPedidos()){
 
@@ -225,6 +229,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 				if(ped.getStatus() != StatusPedido.AUTORIZADO && this.transferencia.getId() != ped.getTransferencia().getId()){
 					throw new ValidacaoException("Pedido "+ped.getId() +" não pode ser vinculado, remova o pedido!");
 				}
+				
 			}			
 			
 			service.salvar(this.transferencia);
@@ -502,7 +507,11 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 			
 			if(serviceRecuperando.lotacaoAtual(pedido.getRecuperando()).getUnidadePrisional().getId() != pedido.getUnidadeOrigem().getId()){
 				throw new ValidacaoException("Recuperando lotado em outra unidade, remova o pedido!");
-			}			
+			}
+			
+			if(service.isTranferenciaEmAndamento(transferencia.getId())) {				
+				throw new ValidacaoException("A Trânsferencia já está em andamento!");
+			}
 
 			validarRecuperandoBiometria(pedido.getRecuperando());
 
