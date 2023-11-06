@@ -46,11 +46,6 @@ public class SecurityUtil implements Serializable {
 		SecurityUtils.getSubject().getSession().setAttribute("unidadeSelecionada", unidade);
 	}
 	
-	public boolean isAtivarModuloVisitantes() {
-		UnidadePrisional unidade = (UnidadePrisional) SecurityUtils.getSubject().getSession().getAttribute("unidadeSelecionada");
-		return unidade.getAtivaModuloVisitante();
-	}
-	
 	public boolean isAutenticado() {
 		return SecurityUtils.getSubject().isAuthenticated();
 	}
