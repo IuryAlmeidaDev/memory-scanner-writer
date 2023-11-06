@@ -791,8 +791,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 						}
 					}
 				}else {
-					if (vr.getRecuperando().getPassagemAtual().getLotacaoAtual().getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId()) {
-						vr.getRecuperando().setUnidadeAtual(SecurityUtil.getUnidadeSelecionada().getNome());
+					if (vr.getRecuperando().getPassagemAtual().getLotacaoAtual()!= null && vr.getRecuperando().getPassagemAtual().getLotacaoAtual().getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId()) {
 						if (this.getFiltro().getStatusCredenciamento() == null) {
 							this.credenciamentos.add(vr);
 						} else {
