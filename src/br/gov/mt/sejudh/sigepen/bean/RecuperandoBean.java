@@ -44,6 +44,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.enumerator.BiometriaTipoDedo;
+import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.OrientacaoParticularidade;
 import br.gov.mt.sejudh.sigepen.enumerator.RegiaoParticularidade;
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
@@ -112,6 +113,8 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 		@URLMapping(id = "RelatorioInfopen", pattern = "/recuperando/infopen", viewId = "/WEB-INF/pages/recuperando/RelatorioInfopen.xhtml")
 })
 public class RecuperandoBean extends MetodosDePaginaBean {
+
+	private static final int REU_SOLTO = 4;
 
 	private Boolean usuarioEstaCadastrando = false;
 	
@@ -804,12 +807,15 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			this.recuperando.getProcessos().remove(processo);
 			this.processo = this.processoService.salvar(processo);
 
+			this.determinarCondicaoAtual();
 			LoggerUtil.logInfo(Acao.FINALIZAR, processo, log);
 
 			this.recuperando.getProcessos().add(processo);
 			RequestContext.getCurrentInstance().update("tabView:formPassagem");
 			RequestContext.getCurrentInstance().update("mensagens");
+			RequestContext.getCurrentInstance().update("formCabecalho");
 			RequestContext.getCurrentInstance().execute("PF('dialogFinalizarProcesso').hide()");
+
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao salvar processo." + e.getMessage());
 			LoggerUtil.logErro(Acao.SALVAR, processo, e, log);
@@ -1978,4 +1984,28 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		
 		return false;
 	}
-}
+	
+	public void determinarCondicaoAtual() {
+
+		final List<Processo> listaProcessos = processoService.processosPorRecuperando(recuperando.getId());
+
+		listaProcessos.forEach(processo -> {
+			if (processo != null 
+					&& processo.getRegimeAtual() != null 
+					&& processo.getCondicaoAtual() != null
+					&& processo.getStatusProcesso() != null) {
+
+				if (processo.getCondicaoAtual() == Condicao.CONDENADO
+						&& processo.getStatusProcesso() == StatusProcesso.FINALIZADO
+						&& processo.getRegimeAtual().getId() == REU_SOLTO) {
+
+					this.recuperando.setCondicaoAtual(Condicao.PROVISORIO);
+					try {
+						this.service.salvar(recuperando);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+	}}
