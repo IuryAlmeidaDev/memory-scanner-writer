@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.service;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -39,5 +41,9 @@ public class ProcessoService {
 	
 	public Processo buscaProcessoPorId(Processo processo){
 		return dao.buscaProcessoPorId(processo);
+	}
+	
+	public List<Processo> processosPorRecuperando(final long idRecuperando) {
+		return dao.processosPorRecuperando(idRecuperando);
 	}
 }

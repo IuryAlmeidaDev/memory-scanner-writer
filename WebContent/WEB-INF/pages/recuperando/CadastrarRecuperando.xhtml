@@ -415,7 +415,8 @@
 							
 								<p:commandButton title="Visualizar" icon="ui-icon-document" action="#{recuperandoBean.abrirDialogProcesso(processo, true)}" immediate="true"/>
 								<p:commandButton title="Finalizar Processo" icon="ui-icon-check" action="#{recuperandoBean.processoSelecionado(processo)}" oncomplete="PF('dialogFinalizarProcesso').show()" update=":formDialogFinalizarProcesso :tabView:formPassagem" process="@form" 
-									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and securityUtil.possuiPermissao('FinalizarProcessoRecuperando') and !recuperandoBean.isVisualizacao and processo.dataFinalizado == null}"/>
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and securityUtil.possuiPermissao('FinalizarProcessoRecuperando') and !recuperandoBean.isVisualizacao and processo.dataFinalizado == null and processo.getRegimeAtual().getDescricao().equals('Réu Solto')
+                and processo.getCondicaoAtual().getDescricao().equals('Condenado')}"/>
 							</center>
 						</p:column>
 					</p:dataTable>
@@ -1617,13 +1618,13 @@
     			
 		</p:dialog>
 		
-		<p:dialog id="dialogFinalizarProcesso" header="Finalizar Processo" showEffect="fade" widgetVar="dialogFinalizarProcesso" modal="true"
+		<p:dialog id="dialogFinalizarProcesso" header="Finalizar Processo (Término da Pena – Executivo de Pena)" showEffect="fade" widgetVar="dialogFinalizarProcesso" modal="true"
     			draggable="false" resizable="false" closeOnEscape="true" focus=":formDialogFinalizarProcesso:numeroProcesso">
     		<h:form id="formDialogFinalizarProcesso">
     			<sgp:formOutputText id="numeroProcesso" labelValue="Nº Processo" value="#{recuperandoBean.processo.numeroProcesso}"/>
     			
     			<sgp:formCalendar
-    				labelValue="Data de Finalizado"
+    				labelValue="Data do Término da Pena"
 					value="#{recuperandoBean.processo.dataFinalizado}"
 					display="text"
 					validationRequired="true" />
