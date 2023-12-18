@@ -1,0 +1,12 @@
+-------------------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_HORARIO_REFEICAO
+-------------------------------------------------------
+
+CREATE SEQUENCE SEQ_HORARIO_REFEICAO
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_HORARIO_REFEICAO TO SIGEPEN_USER_DES;

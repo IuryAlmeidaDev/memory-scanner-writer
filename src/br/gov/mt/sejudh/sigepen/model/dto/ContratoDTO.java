@@ -2,14 +2,18 @@ package br.gov.mt.sejudh.sigepen.model.dto;
 
 import java.util.Date;
 
+import br.gov.mt.sejudh.sigepen.enumerator.Status;
+
 public class ContratoDTO {
 
 	private long id;
-	private Long numContrato;
-	private Date vigenciaContrato;
+	private String numContrato;
+	private Date vigenciaContratoInicio;
+	private Date vigenciaContratoFim;
 	private String cnpjFornecedor;
-	private String unidade;
-
+	private String nomeFornecedor;
+	private Status status;
+	
 	public long getId() {
 		return id;
 	}
@@ -18,20 +22,28 @@ public class ContratoDTO {
 		this.id = id;
 	}
 
-	public Long getNumContrato() {
+	public String getNumContrato() {
 		return this.numContrato;
 	}
 
-	public void setNumContrato(Long numContrato) {
+	public void setNumContrato(String numContrato) {
 		this.numContrato = numContrato;
 	}
 
-	public Date getVigenciaContrato() {
-		return this.vigenciaContrato;
+	public Date getVigenciaContratoInicio() {
+		return this.vigenciaContratoInicio;
 	}
 
-	public void setVigenciaContrato(Date vigenciaContrato) {
-		this.vigenciaContrato = vigenciaContrato;
+	public void setVigenciaContratoInicio(Date vigenciaContratoInicio) {
+		this.vigenciaContratoInicio = vigenciaContratoInicio;
+	}
+	
+	public Date getVigenciaContratoFim() {
+		return this.vigenciaContratoFim;
+	}
+
+	public void setVigenciaContratoFim(Date vigenciaContratoFim) {
+		this.vigenciaContratoFim = vigenciaContratoFim;
 	}
 
 	public String getCnpjFornecedor() {
@@ -41,15 +53,20 @@ public class ContratoDTO {
 		this.cnpjFornecedor = cnpjFornecedor;
 	}
 	
-	public String getUnidade() {
-		return this.unidade;
+	public String getNomeFornecedor() {
+		return this.nomeFornecedor;
+	}
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
 	}
 	
-	public void setUnidade(String unidade) {
-		this.unidade = unidade;
+	public String getStatus() {
+		return this.status.getDescricao();
+	}
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 	
-		
 	@Override
 	public String toString() {
 		return "Contrato [id=" + id + ", numero Contrato = " + numContrato + "]";

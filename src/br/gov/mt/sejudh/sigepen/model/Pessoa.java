@@ -197,8 +197,8 @@ public class Pessoa implements Serializable, PersistentAttributeInterceptable {
     public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
-
-    public Cidade getNaturalidade() {
+   
+	public Cidade getNaturalidade() {
         return naturalidade;
     }
 
@@ -286,7 +286,7 @@ public class Pessoa implements Serializable, PersistentAttributeInterceptable {
         }
     }
 
-    @Override
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -348,6 +348,7 @@ public class Pessoa implements Serializable, PersistentAttributeInterceptable {
     public Boolean getMenorIdade() {
     	return ModelUtil.isMenorDeIdade(this.dataNascimento);
 	}
+    
     
     public String getCPF() {
     	if(this.documentos.size() > 0) {

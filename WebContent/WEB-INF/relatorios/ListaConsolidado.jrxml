@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListaConsolidado" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.6105100000000012"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="TEM_PAGINACAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadraoPaisagemSemUnidadeLogada.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadraoPaisagem.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FILTRO" class="java.lang.String"/>
+	<parameter name="CABECALHO_FILTRO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\Filtro.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String"/>
+	<parameter name="CONSOLIDADO_MES" class="java.util.List"/>
+	<parameter name="GAMB_NULL_DS" class="net.sf.jasperreports.engine.JREmptyDataSource" isForPrompting="false"/>
+	<parameter name="PARAMETROS" class="java.util.List"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count"/>
+	<variable name="variable1" class="java.lang.String"/>
+	<pageHeader>
+		<band height="71" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="802" height="70" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
+				<subreportParameter name="UNIDADE_LOGADA">
+					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{GAMB_NULL_DS}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="16"/>
+	</columnHeader>
+	<detail>
+		<band height="135">
+			<subreport>
+				<reportElement x="0" y="0" width="802" height="135" uuid="b56f0c73-9af3-4f4f-81ab-f8e93f6a8a32"/>
+				<subreportParameter name="FILTRO"/>
+				<subreportParameter name="UNIDADE_LOGADA"/>
+				<subreportParameter name="CABECALHO_FILTRO"/>
+				<subreportParameter name="NUMERO_CONTRATO"/>
+				<subreportParameter name="TOTAL_CAFE_ESPECIAL"/>
+				<subreportParameter name="CABECALHO"/>
+				<subreportParameter name="EMISSOR"/>
+				<subreportParameter name="VIGENCIA_CONTRATO"/>
+				<subreportParameter name="TOTAL_VALOR_CAFE"/>
+				<subreportParameter name="TOTAL_CAFE"/>
+				<subreportParameter name="RODAPE"/>
+				<subreportParameter name="TEM_PAGINACAO"/>
+				<subreportParameter name="TOTAL_ALMOCO_ESPECIAL"/>
+				<subreportParameter name="TOTAL_JANTA"/>
+				<subreportParameter name="NOME_DO_RELATORIO"/>
+				<subreportParameter name="FORNECEDOR"/>
+				<subreportParameter name="MES"/>
+				<subreportParameter name="TOTAL_VALOR_JANTA"/>
+				<subreportParameter name="TOTAL_VALOR_CAFE_ESPECIAL"/>
+				<subreportParameter name="GAMB_NULL_DS"/>
+				<subreportParameter name="TOTAL_VALOR_ALMOCO"/>
+				<subreportParameter name="UNIDADE"/>
+				<subreportParameter name="TOTAL_ALMOCO"/>
+				<subreportParameter name="VALOR_REFEICAO"/>
+				<subreportParameter name="PARAMETROS">
+					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="TOTAL_VALOR_JANTA_ESPECIAL"/>
+				<subreportParameter name="TOTAL_VALOR_ALMOCO_ESPECIAL"/>
+				<subreportParameter name="TOTAL_JANTA_ESPECIAL"/>
+				<subreportExpression><![CDATA["ConsolidadoMensal2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

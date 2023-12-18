@@ -36,9 +36,11 @@ import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
 import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
+import br.gov.mt.sejudh.sigepen.model.VisitanteResponsavel;
 import br.gov.mt.sejudh.sigepen.service.CredenciamentoService;
 import br.gov.mt.sejudh.sigepen.service.FaseDoCredenciamentoService;
 import br.gov.mt.sejudh.sigepen.service.TipoVisitaService;
+import br.gov.mt.sejudh.sigepen.service.VisitanteResponsavelService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
@@ -75,6 +77,9 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
     @Inject
     private Logger log;
     
+    @Inject
+    private VisitanteResponsavelService visitanteResponsavelService;
+    
     private Integer telaOrigem;
     
     private String AcaoDefault = "CREDENCIAMENTO";
@@ -89,6 +94,8 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
 
 	@Inject
     private SecurityUtil securityUtil;
+	
+	private List<Visitante> visitantesResponsaveis = new ArrayList<>();
 
     @URLAction(onPostback = false)
     public String init() {
@@ -200,7 +207,20 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
 
         this.visitante = visitanteService.buscarPorId(this.credenciamento.getVisitante().getId(), true);
         
-        if(this.visitante.getResponsavel() != null) {
+        
+        List<VisitanteResponsavel> listaResponsaveis = visitanteResponsavelService.buscarListaVisitantesReponsaveis(this.visitante);
+        
+        if(!listaResponsaveis.isEmpty()) {
+        	for(VisitanteResponsavel vr : listaResponsaveis) {
+        		Visitante v = new Visitante();
+        		v = visitanteService.buscarPorId(vr.getVisitanteResponsavel().getId());
+        		this.visitantesResponsaveis.add(v);
+        	}
+        	
+        	this.visitante.setVisitantesReponsaveis(this.visitantesResponsaveis);
+        }
+        
+        if(!this.visitantesResponsaveis.isEmpty()) {
         	this.mostrarPanelVisitante = false;
         	this.mostrarPanelResponsavel = true;
         }
@@ -479,5 +499,17 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
 
 	public void setCredenciamento(Credenciamento credenciamento) {
 		this.credenciamento = credenciamento;
-	}     
+	}
+
+	public List<Visitante> getVisitantesResponsaveis() {
+		return visitantesResponsaveis;
+	}
+
+	public void setVisitantesResponsaveis(List<Visitante> visitantesResponsaveis) {
+		this.visitantesResponsaveis = visitantesResponsaveis;
+	}
+
+
+
+	
 }

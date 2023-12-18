@@ -24,7 +24,7 @@
 
 			<h:form id="formInformacoesVisitante">
 				<h:inputHidden value="#{entradaSaidaBean.visitanteTemBiometria}" id="visitanteTemBiometria" />		
-				<p:panel id="panelVisitante" style="width: 100%;" rendered="#{entradaSaidaBean.entrada.visitante.responsavel eq null and entradaSaidaBean.mostrarPanelVisitante == true}">
+				<p:panel id="panelVisitante" style="width: 100%;" rendered="#{empty entradaSaidaBean.entrada.visitante.visitantesReponsaveis and entradaSaidaBean.mostrarPanelVisitante == true}">
 					<div class="ui-g">
 						<div class="ui-g-8">
 							<div>
@@ -122,7 +122,7 @@
 		
 				<br />
 					
-				<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-border-right, ui-g-border-left" style="width: 100%;" rendered="#{entradaSaidaBean.entrada.visitante.responsavel ne null and entradaSaidaBean.mostrarPanelResponsavel == true}">
+				<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-border-right, ui-g-border-left" style="width: 100%;" rendered="#{not empty entradaSaidaBean.entrada.visitante.visitantesReponsaveis and entradaSaidaBean.mostrarPanelResponsavel == true}">
 				<p:panel header="Informações do Visitante" id="panelVisitanteCopia" style="border:none; width: 100%;">
 					<div class="ui-g">
 						<div class="ui-g-8">
@@ -219,79 +219,82 @@
 					</div>
 				</p:panel>
 				
-				<p:panel header="Visitante Responsável" id="panelResponsavelCopia" rendered="#{entradaSaidaBean.entrada.visitante.responsavel ne null and entradaSaidaBean.mostrarPanelResponsavel == true}" style="border:none; width: 100%;" >
+				<ui:repeat value="#{entradaSaidaBean.entrada.visitante.visitantesReponsaveis}" var="responsavel">
+				<p:panel header="Visitante Responsável" id="panelResponsavelCopia" rendered="#{not empty entradaSaidaBean.entrada.visitante.visitantesReponsaveis and entradaSaidaBean.mostrarPanelResponsavel == true}" style="border:none; width: 100%;" >
 					<div class="ui-g">
 						<div class="ui-g-8">
 						<h:outputLabel value="Nome:" style="width: 150px;" />
-							<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pessoa.nome}" />
+							<h:outputLabel value="#{responsavel.pessoa.nome}" />
 							<div>
 								<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
-								<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pessoa.nomeMae}" />
+								<h:outputLabel value="#{responsavel.pessoa.nomeMae}" />
 							</div>
 							<div>
 								<h:outputLabel value="Nome do Pai:" style="width: 150px;" />
-								<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pessoa.nomePai}" />
+								<h:outputLabel value="#{responsavel.pessoa.nomePai}" />
 							</div>
 							<div>
 								<h:outputLabel value="Nascimento:" style="width: 150px;" />
-								<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pessoa.dataNascimento}">
+								<h:outputLabel value="#{responsavel.pessoa.dataNascimento}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputLabel>
 							</div>
 							<div>
-								<h:outputLabel value="Emancipado:" style="width: 150px;"  rendered="#{entradaSaidaBean.isMenor(entradaSaidaBean.entrada.visitante.responsavel.pessoa.dataNascimento)}"/>
-								<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.emancipado.descricao}"  rendered="#{entradaSaidaBean.isMenor(entradaSaidaBean.entrada.visitante.responsavel.pessoa.dataNascimento)}"/>
+								<h:outputLabel value="Emancipado:" style="width: 150px;"  rendered="#{entradaSaidaBean.isMenor(responsavel.pessoa.dataNascimento)}"/>
+								<h:outputLabel value="#{responsavel.emancipado.descricao}"  rendered="#{entradaSaidaBean.isMenor(responsavel.pessoa.dataNascimento)}"/>
 							</div>
 							<div>
 								<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
 								<h:outputLabel
-									value="#{entradaSaidaBean.entrada.visitante.pessoa.nacionalidade.descricao}"/>
+									value="#{pessoa.nacionalidade.descricao}"/>
 							</div>
 							<div>
 								<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
-								<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pessoa.pais.nome}"/>
+								<h:outputLabel value="#{responsavel.pessoa.pais.nome}"/>
 							</div>
 							<div>
 								<h:outputLabel value="Estado:" style="width: 150px;" />
-								<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pessoa.naturalidade.estado.nome}"/>
+								<h:outputLabel value="#{responsavel.pessoa.naturalidade.estado.nome}"/>
 							</div>
 							<div>
 								<h:outputLabel value="Cidade:" style="width: 150px;" />
-								<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pessoa.naturalidade.nome}"/>
+								<h:outputLabel value="#{responsavel.pessoa.naturalidade.nome}"/>
 							</div>
 							<div>
 								<h:outputLabel value="Sexo:" style="width: 150px;" />
-								<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pessoa.sexo.descricao}"	/>
+								<h:outputLabel value="#{responsavel.pessoa.sexo.descricao}"	/>
 							</div>
 							<div>
 								<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
-								<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.identidadeDeGenero.descricao}"/>
+								<h:outputLabel value="#{responsavel.identidadeDeGenero.descricao}"/>
 							</div>
 							<div>
 								<h:outputLabel value="Nome Social:" style="width: 150px;" />
-								<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pessoa.nomeSocial}" />
+								<h:outputLabel value="#{responsavel.pessoa.nomeSocial}" />
 							</div>
 							<div>
 								<div>
 									<h:outputLabel value="PNE:" style="width: 150px;" />
-									<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pne.descricao}"/>
+									<h:outputLabel value="#{responsavel.pne.descricao}"/>
 								</div>
 								<div>
 									<h:panelGroup>
 										<h:outputLabel value="Permanente:" style="width: 150px;" />
-										<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.responsavel.pnePermanente.descricao}" />
+										<h:outputLabel value="#{responsavel.pnePermanente.descricao}" />
 									</h:panelGroup>
 								</div>
+							
 							</div>
 							<div>
 								<h:outputLabel value="Situação Visita:" style="width: 150px;" />
-								<h:outputLabel  value="#{entradaSaidaBean.verificarVisitaResponsavel() ? 'Ausente' : 'Em visita'}"/>
+								<h:outputLabel  value="#{entradaSaidaBean.verificarVisitaResponsavel(responsavel.id) ? 'Ausente' : 'Em visita'}"/>
 							</div>
+
 						</div>
 						<div class="ui-g-4">
 							<p:dataGrid layout="tabular" style="width: 188px; margin-left: -15px;" columns="1"
 								rows="1"
-								value="#{entradaSaidaBean.entrada.visitante.responsavel.fotoFrenteAtual}"
+								value="#{responsavel.fotoFrenteAtual}"
 								emptyMessage="Sem foto de frente." var="f">
 								<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}"
 									cache="false" width="180" height="240">
@@ -301,8 +304,39 @@
 						</div>
 					</div>
 				</p:panel>
+				</ui:repeat>
 				</p:panelGrid>
 				<br />
+				
+				<h:panelGroup id="teste">
+			  <p:panel id="responsaveis" rendered="#{not empty entradaSaidaBean.entrada.visitante.visitantesReponsaveis}" style="border:none; width: 100%;">
+			   <div class="ui-g">
+			   		 <p:dataTable id="tableResponsaveis" var="responsavel" value="#{entradaSaidaBean.entrada.visitante.visitantesReponsaveis}"
+	                                 emptyMessage="Nenhum registro encontrado." paginator="true" rows="5" paginatorPosition="bottom">
+ 	                        <p:column headerText="" width="35"> 
+	                            <p:selectBooleanCheckbox 
+	                            	value="#{responsavel.selecionado}"
+	                            	title="#{responsavel.id}">
+	                            	<p:ajax listener="#{entradaSaidaBean.clickResponsavel}" update="formInformacoesVisitante:tableResponsaveis" />
+	                            </p:selectBooleanCheckbox>
+	                        </p:column>
+	                        <p:column headerText="Nome Responsável">
+	                            <h:outputText value="#{responsavel.pessoa.nome}" />
+	                        </p:column>
+	                        <p:column headerText="Data de Nascimento">
+	                          <h:outputLabel value="#{responsavel.pessoa.dataNascimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputLabel>
+	                        </p:column>
+	                        <p:column headerText="Situação Visita">
+	                        	<h:outputLabel  value="#{entradaSaidaBean.verificarVisitaResponsavel(responsavel.id) ? 'Ausente' : 'Em visita'}"/>
+	                        </p:column>
+	                 </p:dataTable>
+			   </div>
+			  </p:panel>
+			  
+			  <br />
+				</h:panelGroup>
 		
 				<h:panelGroup id="panelCancelar" rendered="#{entradaSaidaBean.acao == 'CANCELAR'}">
 					<div class="ui-g-12">
@@ -664,6 +698,10 @@
 	                </div>
 				</h:panelGroup>
 				
+				<br />
+				
+
+				
 				<center>
 					<p:commandButton value="Salvar" 
 						rendered="#{entradaSaidaBean.mostrarSalvar()}"
@@ -709,6 +747,23 @@
 
 						<p:commandButton value="Salvar" disabled="#{entradaSaidaBean.acao.equals('VISUALIZAR')}" actionListener="#{entradaSaidaBean.fecharDialogMotivoEntradaSaida}" icon="ui-icon-disk" update=":formInformacoesVisitante:tableCredenciamentos, :formMotivoObservacao, :formInformacoesVisitante:panelMotivoES"  />
 				</h:form>
+			</p:dialog>
+			
+			<p:dialog id="dlgAvisoResponsaveis" dynamic="true" header="Aviso Responsável" showEffect="fade"
+					widgetVar="dlgAvisoResponsavel" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+					<div>
+					<h3>Ola,</h3>
+					<br/>
+					<h4>
+					Caro(a) usuário(a),
+					Informamos que, de acordo com a política de segurança da unidade prisional, o "visitante Responsável" só poderá sair com o mesmo "Visitante Menor de idade" que ele entrou.
+					A saída de ambos deverá ser de forma simultânea.
+					Além disso, é importante ressaltar que os visitantes menores de idade só poderão ser vinculados a um único "visitante responsável" durante o período de visitação. Caso haja necessidade de troca, é necessário realizar o procedimento de desvinculação antes de vincular a outra pessoa.
+					Agradecemos a compreensão e colaboração de todos para garantir a segurança e organização da unidade prisional.
+					<br/>
+					</h4>
+					</div>
+
 			</p:dialog>
 
 			<h:form id="formAutCadBio" prependId="false">

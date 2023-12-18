@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                template="/WEB-INF/pages/_templates/principal.xhtml">
+
+    <ui:define name="conteudo">
+        <sgp:validarAcesso/>
+
+        <h3>#{alimentoBean.tituloPagina} Alimento</h3>
+        <h:form>
+            <p:panel footer="Cadastrado por: #{alimentoBean.alimento.autorRegistro.usuario} em #{alimentoBean.alimento.autorRegistro.data} | Última alteração: #{alimentoBean.alimento.autorUltimaAlteracao.usuario} em #{alimentoBean.alimento.autorUltimaAlteracao.data}">
+
+                <sgp:formInputText
+                        id="nomeAlimento"
+                        labelValue="Descrição"
+                        value="#{alimentoBean.alimento.descricao}"
+                        validationRequired="true"
+                        disabled="#{alimentoBean.isVisualizacao}"
+                        display="text" size="40"
+                        maxlength="80"/>
+
+                <sgp:formSelectOneMenu
+                        id="status"
+                        labelValue="Status"
+                        value="#{alimentoBean.alimento.status}"
+                        itemsValue="#{comboHelperBean.status}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        disabled="#{alimentoBean.isVisualizacao}"
+                        display="text"/>
+
+                <br/>
+                <br/>
+
+                <p:commandButton value="Salvar" action="#{alimentoBean.salvar()}" update="@form"
+                                 icon="ui-icon-disk"
+                                 rendered="#{(securityUtil.possuiPermissao('CadastrarAlimento') and !alimentoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarAlimento') and !alimentoBean.isVisualizacao)}"/>
+                <p:button outcome="pretty:ListarAlimento" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+                    <f:param name="list" value="1"/>
+                </p:button>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

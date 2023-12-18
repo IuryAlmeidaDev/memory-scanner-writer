@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -84,12 +85,36 @@ public class UnidadePrisionalService {
 		return dao.buscaPorFiltro(filtro, isRelatorio);
 	}
 	
+	public List<UnidadePrisionalDTO> buscarPorFiltroUnidadesComContratosAtivos(FiltroUnidadePrisional filtro, boolean isRelatorio){
+		List<UnidadePrisionalDTO> unidades = new ArrayList<>();
+		filtro.setPaginacaoIndex(999);
+		List<UnidadePrisionalDTO> unidadesPorFiltro = this.buscarPorFiltro(filtro, isRelatorio);
+		List<UnidadePrisional> unidadesContrato = this.listarUnidadesComContratosAtivo();
+		unidadesPorFiltro.forEach(unidadeFiltro -> {
+			unidadesContrato.forEach(unidadeContrato -> {
+				if(unidadeFiltro.getId() == unidadeContrato.getId()) {
+					unidades.add(unidadeFiltro);
+				}
+			});
+		});
+		return unidades;
+	}
+	
+	
 	public int quantidadeFiltrados(FiltroUnidadePrisional filtro){
 		return dao.quantidadeFiltrados(filtro);
 	}	
 	
 	public List<UnidadePrisional> listarUnidadesNaoInativas(){
 		return dao.listarUnidadesNaoInativas();
+	}
+	
+	public List<UnidadePrisional> listarUnidadesComContratosAtivo(){
+		return dao.listarUnidadesComContratosAtivo();
+	}
+	
+	public List<UnidadePrisional> listarUnidadesNaoInativasAndEstrutura(){
+		return dao.listarUnidadesNaoInativasAndEstrutura();
 	}
 	
 	public Long quantidadeAtual(Long id){

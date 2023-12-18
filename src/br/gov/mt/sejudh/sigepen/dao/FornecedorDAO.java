@@ -19,37 +19,39 @@ import br.gov.mt.sejudh.sigepen.model.dto.FornecedorDTO;
 
 @RequestScoped
 public class FornecedorDAO {
-	
+
 	@Inject
 	private EntityManager entityManager;
 
 	public Fornecedor salvar(Fornecedor fornecedor) {
-		if(fornecedor.getId()>0){
+		if (fornecedor.getId() > 0) {
 			entityManager.merge(fornecedor);
-		}else{			
-			entityManager.persist(fornecedor);	
+		} else {
+			entityManager.persist(fornecedor);
 		}
 		return fornecedor;
 	}
-	
+
 	public Fornecedor buscaPorId(Long id) {
-		
-		String jpql="select f from Fornecedor f join fetch f.endereco join fetch f.contatos where f.id = :id";
+
+		String jpql = "select f from Fornecedor f where f.id = :id";
 		Query query = entityManager.createQuery(jpql, Fornecedor.class);
 		query.setParameter("id", id);
 		Fornecedor fornecedor = (Fornecedor) query.getSingleResult();
 		Hibernate.initialize(fornecedor.getEndereco());
 		Hibernate.initialize(fornecedor.getContatos());
-		
+		Hibernate.initialize(fornecedor.getJustificativa());
+		//Hibernate.initialize(fornecedor.getJustificativa().getArquivoJustificativa());
+
 		return fornecedor;
 	}
-	
+
 	public int quantidadeFiltrados(FiltroFornecedor filtro) {
-		Criteria criteria = filtro.criarCriteriaParaQuantidade(Fornecedor.class, entityManager);		
-	    criteria.setProjection(Projections.rowCount());		
-		return ((Number) criteria.uniqueResult()).intValue();
+		Criteria criteria = filtro.criarCriteriaParaQuantidade(Fornecedor.class, entityManager);
+        criteria.setProjection(Projections.countDistinct("id"));
+        return ((Number) criteria.uniqueResult()).intValue();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<FornecedorDTO> buscaPorFiltro(FiltroFornecedor filtro) {
 		Criteria criteria = filtro.criarCriteriaParaBusca(Fornecedor.class, entityManager);
@@ -57,12 +59,20 @@ public class FornecedorDAO {
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(FornecedorDTO.class));
 		return criteria.list();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<Fornecedor> listar() {
-		String jpql="select f from Fornecedor f";
+		String jpql = "select f from Fornecedor f";
 		Query query = entityManager.createQuery(jpql, Fornecedor.class);
-		
+
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Fornecedor> listarAtivo() {
+		String jpql = "select f from Fornecedor f where f.status = 1";
+		Query query = entityManager.createQuery(jpql, Fornecedor.class);
+
 		return query.getResultList();
 	}
 }

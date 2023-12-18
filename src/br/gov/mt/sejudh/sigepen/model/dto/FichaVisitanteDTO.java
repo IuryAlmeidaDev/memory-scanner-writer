@@ -5,11 +5,13 @@ import java.util.Date;
 import java.util.List;
 
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
+import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 
 public class FichaVisitanteDTO {
 	private TipoVisita tipoVisita;
 	private VisitanteDTO visitante;
+	private Visitante visitanteEntity;
 	private List<RecuperandoView> recuperando = new ArrayList<RecuperandoView>();
 	private List<DocumentoDTO> documentos = new ArrayList<DocumentoDTO>();
 	private List<EnderecoDTO> enderecos = new ArrayList<EnderecoDTO>();
@@ -72,4 +74,14 @@ public class FichaVisitanteDTO {
 	public void setDataValidade(Date dataValidade) {
 		this.dataValidade = dataValidade;
 	}
+	public Visitante getVisitanteEntity() {
+		return visitanteEntity;
+	}
+	public void setVisitanteEntity(Visitante visitanteEntity) {
+		this.visitanteEntity = visitanteEntity;
+	}
+	
+	
+	
+	
 }

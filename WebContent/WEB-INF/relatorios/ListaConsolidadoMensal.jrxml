@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarConsolidadoMensal" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.6105100000000012"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="TEM_PAGINACAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadraoPaisagemSemUnidadeLogada.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadraoPaisagem.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FILTRO" class="java.lang.String"/>
+	<parameter name="CABECALHO_FILTRO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\Filtro.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String"/>
+	<parameter name="CONSOLIDADO_MES" class="java.util.List"/>
+	<parameter name="GAMB_NULL_DS" class="net.sf.jasperreports.engine.JREmptyDataSource" isForPrompting="false"/>
+	<parameter name="ANO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nomeUnidade" class="java.lang.String"/>
+	<field name="virgenciaContartoInicio" class="java.util.Date"/>
+	<field name="virgenciaContartoFim" class="java.util.Date"/>
+	<field name="numeroContrato" class="java.lang.String"/>
+	<field name="nomeFornecedor" class="java.lang.String"/>
+	<field name="mesReferencia" class="java.lang.String"/>
+	<field name="valorRefeicao" class="java.lang.String"/>
+	<field name="totalCafe" class="java.lang.Integer"/>
+	<field name="totalAlmoco" class="java.lang.Integer"/>
+	<field name="totalJanta" class="java.lang.Integer"/>
+	<field name="totalCafeEspecial" class="java.lang.Integer"/>
+	<field name="totalAlmocoEspecial" class="java.lang.Integer"/>
+	<field name="totalJantaEspecial" class="java.lang.Integer"/>
+	<field name="totalValorCafe" class="java.lang.Double"/>
+	<field name="totalValorAlmoco" class="java.lang.Double"/>
+	<field name="totalValorJanta" class="java.lang.Double"/>
+	<field name="totalValorCafeEspecial" class="java.lang.Double"/>
+	<field name="totalValorAlmocoEspecial" class="java.lang.Double"/>
+	<field name="totalValorJantaEspecial" class="java.lang.Double"/>
+	<field name="consolidadoRecuperandoDTOs" class="java.util.List"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count"/>
+	<variable name="variable1" class="java.lang.String"/>
+	<pageHeader>
+		<band height="71" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="802" height="70" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
+				<subreportParameter name="UNIDADE_LOGADA">
+					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{GAMB_NULL_DS}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="8"/>
+	</columnHeader>
+	<detail>
+		<band height="72">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="165" y="24" width="55" height="17" uuid="744cc3bc-47a1-4563-993b-440b77d21983"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{virgenciaContartoInicio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="41" width="394" height="14" uuid="f3f34de1-fd55-4217-a763-e037cd86ae6c"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nº do Contrato: " + $F{numeroContrato}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="408" y="41" width="394" height="14" uuid="f8bc7e05-53f1-40cf-a59e-0ac12292fb5c"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Fornecedor: " + $F{nomeFornecedor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="517" y="19" width="284" height="14" uuid="57034f68-54a4-4e34-a02a-9c70b6e8e2ea"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Referente ao mês: " + $F{mesReferencia} + "/" + $P{ANO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="58" width="802" height="14" uuid="a71d318c-6385-40d7-af84-0030c93fa3ce"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Valor Refeição: " + $F{valorRefeicao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="5" width="394" height="14" uuid="e9e2ea94-c1ac-43bb-a8cd-ccb063f4b065"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Unidade Prisional: " + $F{nomeUnidade}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="24" width="165" height="17" uuid="7a134ad1-c318-41c4-a97e-27493115ec7d"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vigência da Unidade no Contrato: ]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="231" y="24" width="94" height="17" uuid="b3eb81a2-85a8-41ab-a4d7-8dc4e8251e2a"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{virgenciaContartoFim}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="220" y="24" width="11" height="17" uuid="3aa3dade-13ed-4104-8768-222be23bb0fd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+		</band>
+		<band height="116">
+			<subreport>
+				<reportElement x="0" y="0" width="802" height="116" uuid="b56f0c73-9af3-4f4f-81ab-f8e93f6a8a32"/>
+				<subreportParameter name="UNIDADE_LOGADA"/>
+				<subreportParameter name="FILTRO"/>
+				<subreportParameter name="NUMERO_CONTRATO"/>
+				<subreportParameter name="CABECALHO_FILTRO"/>
+				<subreportParameter name="CABECALHO"/>
+				<subreportParameter name="TOTAL_CAFE_ESPECIAL">
+					<subreportParameterExpression><![CDATA[$F{totalCafeEspecial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EMISSOR"/>
+				<subreportParameter name="VIGENCIA_CONTRATO"/>
+				<subreportParameter name="TOTAL_CAFE">
+					<subreportParameterExpression><![CDATA[$F{totalCafe}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_VALOR_CAFE">
+					<subreportParameterExpression><![CDATA[$F{totalValorCafe}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RODAPE"/>
+				<subreportParameter name="TEM_PAGINACAO"/>
+				<subreportParameter name="TOTAL_ALMOCO_ESPECIAL">
+					<subreportParameterExpression><![CDATA[$F{totalAlmocoEspecial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_JANTA">
+					<subreportParameterExpression><![CDATA[$F{totalJanta}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO"/>
+				<subreportParameter name="FORNECEDOR"/>
+				<subreportParameter name="TOTAL_VALOR_JANTA">
+					<subreportParameterExpression><![CDATA[$F{totalValorJanta}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="MES"/>
+				<subreportParameter name="TOTAL_VALOR_CAFE_ESPECIAL">
+					<subreportParameterExpression><![CDATA[$F{totalValorCafeEspecial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_VALOR_ALMOCO">
+					<subreportParameterExpression><![CDATA[$F{totalValorAlmoco}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_ALMOCO">
+					<subreportParameterExpression><![CDATA[$F{totalAlmoco}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="UNIDADE"/>
+				<subreportParameter name="VALOR_REFEICAO"/>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="TOTAL_VALOR_JANTA_ESPECIAL">
+					<subreportParameterExpression><![CDATA[$F{totalValorJantaEspecial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_VALOR_ALMOCO_ESPECIAL">
+					<subreportParameterExpression><![CDATA[$F{totalValorAlmocoEspecial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_JANTA_ESPECIAL">
+					<subreportParameterExpression><![CDATA[$F{totalJantaEspecial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{consolidadoRecuperandoDTOs})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["ConsolidadoMensal2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="31" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -24,6 +25,7 @@ import br.gov.mt.sejudh.sigepen.model.Acesso;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
 public class UnidadePrisionalDAO {
@@ -103,6 +105,37 @@ public class UnidadePrisionalDAO {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UnidadePrisional> listarUnidadesComContratosAtivo(){
+		
+		try {
+			StringBuilder jpql = new StringBuilder(
+					"select DISTINCT u.id, u.nome, e.ID as estruturaId FROM " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c ");
+			jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO_UNIDADE_PRISIONAL cup ON cup.CONTRATO_ID = c.ID ");
+			jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".UNIDADE_PRISIONAL u ON cup.UNIDADE_PRISIONAL_ID = u.ID ");
+			jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".ESTRUTURA e ON e.UNIDADEPRISIONAL_ID = u.ID AND ESTRUTURAPAI_ID IS null ");
+			Query query = entityManager.createNativeQuery(jpql.toString());
+			
+			return (List<UnidadePrisional>) query.getResultList().stream()
+					.map(row -> new UnidadePrisional((Object[]) row)).collect(Collectors.toList());
+		} catch (NoResultException e) {
+			return null;
+		}		
+	}
+	
+	public List<UnidadePrisional> listarUnidadesNaoInativasAndEstrutura(){
+		try {
+			String jpql="select new br.gov.mt.sejudh.sigepen.model.UnidadePrisional(u.id, u.nome, e) from UnidadePrisional u INNER JOIN u.estrutura e where u.estrutura.situacaoUnidade <> :situacao";
+			TypedQuery<UnidadePrisional> query = entityManager.createQuery(jpql, UnidadePrisional.class);
+			query.setParameter("situacao", SituacaoUnidade.INATIVO);
+			
+			return query.getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
 
 	public Long quantidadeAtual(Long id) {
 		String jpql="SELECT count(pl.id) FROM PassagemLotacao as pl INNER JOIN pl.estrutura as est_ WHERE est_.unidadePrisional.id = :id AND pl.dataSaida IS NULL";

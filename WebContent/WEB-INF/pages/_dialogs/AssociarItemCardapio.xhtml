@@ -1,0 +1,56 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title> Item Cardápio </title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="itemForm">
+			<p:panel>
+				<sgp:formSelectOneMenu display="text" temSelecione="true" id="tipo"
+                   labelValue="Alimento" itemValue="#{item}" itemLabel="#{item.descricao}"
+                   itemsValue="#{associarItemCardapioBean.alimentos}"
+                   value="#{associarItemCardapioBean.itemCardapio.alimento}"
+                   validationRequired="true" 
+                   converter="SimpleEntityConverter"/>
+                   
+                <sgp:formInputMask
+                	id="mgMasc"
+					labelValue="Mg Masculino"
+					validationRequired="true"
+					value="#{associarItemCardapioBean.itemCardapio.mg_masc}"
+					mask="999?"
+					maxlength="80"/>
+				
+				<sgp:formInputMask
+					id="mgFem"
+					labelValue="Mg Feminino"
+					validationRequired="true"
+					value="#{associarItemCardapioBean.itemCardapio.mg_fem}"
+					mask="999?"
+					maxlength="80"/>
+					
+				<sgp:formSelectOneMenu 
+					id="status" labelValue="Status"
+					value="#{associarItemCardapioBean.itemCardapio.status}"
+					itemsValue="#{comboHelperBean.status}" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					display="text" />
+					
+				<br/> <br/>
+				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form" action="#{associarItemCardapioBean.incluirItemCardapio()}" />
+				<p:commandButton value="Fechar" icon="ui-icon-close" immediate="true" actionListener="#{associarItemCardapioBean.fecharDialog}" />
+				
+				<br/>
+			</p:panel>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

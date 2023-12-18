@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>Gerar Pedido</h3>
+		
+		<h:form id="meuFormulario">
+			<p:panel>
+                <p:outputLabel value="Consulta"/>
+                
+               	<sgp:formCalendar labelValue="Data Inicio" 
+					value="#{gerarPedidoBean.filtroPedido.dataInicio}" display="text"
+					validationRequired="true" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 170px">
+					<p:ajax event="dateSelect" />
+					<p:ajax event="change"  />
+				</sgp:formCalendar>
+                
+                 <sgp:formSelectOneMenu 
+                		id="tipoRefeicao" 
+                		validationRequired="true"
+                		labelValue="Tipo de Refeição" 
+                		itemsValue="#{gerarPedidoBean.tiposRefeicao}" 
+                		itemValue="#{item}" 
+                		itemLabel="#{item.descricao}"						
+						value="#{gerarPedidoBean.filtroPedido.tipoRefeicao}" 
+						temSelecione="true"
+						styleFormLabelColumn="min-width:150px !important"
+						converter="SimpleEntityConverter" 
+						display="text"
+				/>
+                
+                <br/> <br/>
+                <p:commandButton value="Pesquisar" update=":unidadeForm" action="#{gerarPedidoBean.montarEstrutura()}" icon="ui-icon-search"/>
+        	</p:panel>
+        </h:form>
+		<h:form id="unidadeForm">
+			<p:tabView id="tabView" effect="fade" effectDuration="fast"
+				widgetVar="aba" dynamic="true">
+				<p:tab title="Estrutura" id="estruturaUnid"
+					disabled="#{unidadePrisionalBean.disabledAbaEstrutura }">
+					<h:form id="arvoreEstrutura">
+						<p:panel header="Estrutura da Unidade" style="margin-bottom:20px">
+							<p:treeTable id="treeTableEstrutura"
+								value="#{gerarPedidoBean.root}" var="est" selectionMode="single">
+								<p:column headerText="Nome">
+									<h:outputText value="#{est.nome}" />
+								</p:column>
+								<p:column headerText="Dieta Padrão">
+									<h:outputText value="#{est.totalDietaPadrao}" />
+								</p:column>
+								<p:column headerText="Dieta Especial">
+									<h:outputText value="#{est.totalDietaEspecial}" />
+								</p:column>
+								<p:column headerText="Ações" style="width:120px;">
+									<center>
+										<p:commandButton title="Imprimir Lista de pedido"
+											icon="fa fa-print"
+											update=":formListaChamadas" process="@this"
+											action="#{gerarPedidoBean.selecionarEstruturaChamada(est,gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}"
+											 
+											/>
+									</center>
+								</p:column>
+							</p:treeTable>
+							<p:confirmDialog global="true">
+								<p:commandButton value="Sim" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+								<p:commandButton value="Não" type="button"
+									styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+							</p:confirmDialog>
+						</p:panel>
+					</h:form>
+					<p:button outcome="pretty:ListarGerarPedido" value="Voltar"
+						icon="ui-icon-arrowreturnthick-1-w">
+						<f:param name="list" value="1" />
+					</p:button>
+				</p:tab>
+
+			</p:tabView>
+		</h:form>
+
+		<p:dialog id="dialogListaDeChamada" header="Pedido"
+			showEffect="fade" widgetVar="dlgListaDeChamada" modal="true"
+			draggable="false" resizable="false" closeOnEscape="true">
+			<h:form prependId="false" id="formListaChamadas">
+				<p:panel>
+					<p:commandButton value="Quantitativo" icon="ui-icon-plus"
+						oncomplete="PF('dlgListaDeChamada').hide()"
+						actionListener="#{gerarPedidoBean.imprimirPedidoUnificado(gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}" />
+				</p:panel>
+				<p:panel>
+					<p:commandButton value="Detalhado" icon="ui-icon-plus"
+						oncomplete="PF('dlgListaDeChamada').hide()"
+						actionListener="#{gerarPedidoBean.imprimirDetalhado(gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}" />
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

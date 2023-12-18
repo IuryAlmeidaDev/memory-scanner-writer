@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PedidoCardapio" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.6500000000000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUB_ESTRUTURA_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[21]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUB_SCHEMA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT NOME_COMPLETO FROM SIGEPEN_OWNER_DES.NOME_COMPLETO_ESTRUTURA nce WHERE ID = 21]]>
+	</queryString>
+	<field name="nome" class="java.lang.String"/>
+	<field name="itens" class="java.util.List"/>
+	<field name="estrutura" class="java.lang.String"/>
+	<field name="especial" class="java.lang.String"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="5" splitType="Prevent"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="7" splitType="Prevent"/>
+	</columnHeader>
+	<detail>
+		<band height="63" splitType="Prevent">
+			<subreport>
+				<reportElement x="0" y="20" width="555" height="43" uuid="e843b9e6-881f-4930-a326-f771e4c6425b"/>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="EMISSOR"/>
+				<subreportParameter name="NOME_DO_RELATORIO"/>
+				<subreportParameter name="CABECALHO"/>
+				<subreportParameter name="RODAPE"/>
+				<subreportParameter name="SUB_ESTRUTURA_ID"/>
+				<subreportParameter name="SUB_SCHEMA"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itens})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["PedidoCardapioItens.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="0" y="0" width="555" height="20" uuid="7229b39b-5f24-4184-9495-eeae2be25ca2"/>
+				<textFieldExpression><![CDATA["Cardapio: " + $F{nome} + "  " +  "Especial: " + $F{especial}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

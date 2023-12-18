@@ -7,7 +7,7 @@
                 xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
 
     <ui:define name="head">
-        <title>Visitante</title>
+        <title>Visitante </title>
     </ui:define>
 
     <ui:define name="conteudo">
@@ -24,6 +24,11 @@
                 <sgp:formCalendar display="text" labelValue="Data de Nascimento"
                                   value="#{associarResponsavelBean.filtro.dataNascimento}"
                                   dataMaxima="#{comboHelperBean.maxDate}" styleFormLabelColumn="width: 150px"/>
+                                  
+               <sgp:formInputText display="text" id="matricula" labelValue="Matricula"
+                   value="#{associarResponsavelBean.filtro.matricula}"
+                   size="40" maxlength="80" styleFormLabelColumn="width: 150px"
+                   rendered="#{associarResponsavelBean.exibirMatricula}"/>
 
                 <br/>
                 <br/>

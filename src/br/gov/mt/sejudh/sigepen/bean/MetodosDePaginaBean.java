@@ -44,7 +44,10 @@ public abstract class MetodosDePaginaBean {
 	}
 
 	public boolean getIsVisualizacao() {
-		return getAcaoDeTela().equals(AcaoDeTela.VISUALIZAR);
+		if(getAcaoDeTela().equals(AcaoDeTela.VISUALIZAR) || getAcaoDeTela().equals(AcaoDeTela.TAB)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean getIsListagem() {
@@ -62,6 +65,7 @@ public abstract class MetodosDePaginaBean {
 		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("finalizar")) acao = AcaoDeTela.FINALIZAR;
 		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("receber")) acao = AcaoDeTela.RECEBER;
 		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("credenciar")) acao = AcaoDeTela.CREDENCIAR;
+		else if (PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("VisualizarHistoricoCredenciamento")) acao = AcaoDeTela.TAB;
 		else acao = AcaoDeTela.LISTAR;
 		
 		return acao;
@@ -91,6 +95,10 @@ public abstract class MetodosDePaginaBean {
 				this.setTituloPagina("Concluir");
 				break;
 				
+			case TAB:
+				this.setTituloPagina("Visualizar");
+				break;
+				
 			case FINALIZAR:
 				this.setTituloPagina("Finalizar");
 				break;
@@ -115,6 +123,10 @@ public abstract class MetodosDePaginaBean {
 				
 			case LISTAR:
 				LoggerUtil.logInfo(Acao.ACESSAR, obj, log);
+				break;
+				
+			case TAB:
+				LoggerUtil.logInfo(Acao.VISUALIZAR, obj, log);
 				break;
 				
 			default:

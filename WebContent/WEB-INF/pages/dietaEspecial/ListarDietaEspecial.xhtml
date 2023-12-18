@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>Dieta Especial</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarDietaEspecial"
+				icon="ui-icon-plus"
+				rendered="#{securityUtil.possuiPermissao('CadastrarContrato')}" />
+		</h:form>
+
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta" />
+
+				<sgp:formInputText id="recuperando" labelValue="Recuperando"
+					value="#{dietaEspecialBean.filtro.recuperando}" maxlength="50"
+					size="57" display="text"
+					styleFormLabelColumn="min-width:140px !important" />
+
+				<sgp:formSelectOneMenu id="unidadePrisional"
+					labelValue="Unidade Prisional" itemValue="#{item}"
+					itemLabel="#{item.nome}"
+					itemsValue="#{dietaEspecialBean.unidadesPrisionais}"
+					value="#{dietaEspecialBean.filtro.unidadePrisional}"
+					converter="SimpleEntityConverter" temSelecione="true" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					styleFormLabelColumn="min-width:140px !important"
+					rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
+
+				<sgp:formSelectOneMenu id="tipoDieta" labelValue="Tipo de Dieta"
+					value="#{dietaEspecialBean.filtro.tipoDieta}"
+					itemsValue="#{dietaEspecialBean.tipoDietas}" itemValue="#{item}"
+					itemLabel="#{item.descricao}" temSelecione="true" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					converter="SimpleEntityConverter"
+					styleFormLabelColumn="min-width:140px !important" />
+
+				<div class="form-block "></div>
+				<p:commandButton value="Pesquisar" update=":registrosForm"
+					process="@form" icon="ui-icon-search" />
+			</p:panel>
+		</h:form>
+
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="dietaEspecial"
+				value="#{dietaEspecialBean.dietasEspeciais}"
+				emptyMessage="Nenhum registro encontrado." rows="10"
+				paginator="true" paginatorPosition="bottom" lazy="true"
+				sortBy="#{dietaEspecial.id}">
+				<p:column headerText="Código" style="width:100px;"
+					sortBy="#{dietaEspecial.id}">
+					<h:outputText value="#{dietaEspecial.id}" />
+				</p:column>
+				<p:column headerText="Recuperando"
+					sortBy="#{dietaEspecial.nomeRecuperando}">
+					<h:outputText value="#{dietaEspecial.nomeRecuperando}" />
+				</p:column>
+				<p:column headerText="Tipo Dieta"
+					sortBy="#{dietaEspecial.tipoDieta}">
+					<h:outputText value="#{dietaEspecial.tipoDieta}" />
+				</p:column>
+				<p:column headerText="Início" sortBy="#{dietaEspecial.inicio}"
+					width="170">
+					<h:outputText value="#{dietaEspecial.inicio}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="fim" sortBy="#{dietaEspecial.fim}" width="170">
+					<h:outputText value="#{dietaEspecial.fim}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Ações" style="width:150px;">
+					<center>
+						<p:button title="Visualizar" icon="ui-icon-document"
+							outcome="pretty:VisualizarDietaEspecial"
+							rendered="#{securityUtil.possuiPermissao('VisualizarContrato')}">
+							<f:param name="id" value="#{dietaEspecial.id}" />
+						</p:button>
+						<p:button title="Editar" icon="ui-icon-pencil"
+							outcome="pretty:AlterarDietaEspecial"
+							rendered="#{securityUtil.possuiPermissao('AlterarContrato')}">
+							<f:param name="id" value="#{dietaEspecial.id}" />
+						</p:button>
+					</center>
+				</p:column>
+
+				<f:facet name="footer">
+					Total de registros: #{dietaEspecialBean.dietasEspeciais.rowCount}
+				</f:facet>
+			</p:dataTable>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+	
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3> Horários Refeição por Unidade </h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarHorarioRefeicao" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarHorarioRefeicao')}"/>
+		</h:form>
+		
+		<h:form id="meuFormulario" rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}">
+			<p:panel>
+                <p:outputLabel value="Consulta"/>
+                
+                <sgp:formSelectOneMenu 
+                		id="unidadePrisional"
+                		labelValue="Unidade Prisional"
+                		itemValue="#{item}" 
+                		itemLabel="#{item.nome}"
+                		itemsValue="#{horarioRefeicaoBean.unidadesPrisionais}"
+                		value="#{horarioRefeicaoBean.filtro.unidadePrisional}" 
+                		converter="SimpleEntityConverter"
+                		temSelecione="true"
+                		filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+                		styleFormLabelColumn="min-width:150px !important"
+				/>
+                
+                <br/> <br/>
+                <p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"/>
+        	</p:panel>
+        </h:form>
+        
+		
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="horario" value="#{horarioRefeicaoBean.horariosRefeicao}" emptyMessage="Nenhum registro encontrado."
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{horario.id}">
+
+				<p:column headerText="Código" style="width:100px;" sortBy="#{horario.id}">
+					<h:outputText value="#{horario.id}" />
+				</p:column>
+				
+				<p:column headerText="Nome Unidade" sortBy="#{horario.nomeUnidade}">
+					<h:outputText value="#{horario.nomeUnidade}" />
+				</p:column>
+				
+				<p:column headerText="Data Inicio" sortBy="#{horario.dataInicio}" width="150">
+                    <h:outputText value="#{horario.dataInicio}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>				
+				<p:column headerText="Ações" style="width:150px;">
+					<center>
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarHorarioRefeicao" rendered="#{securityUtil.possuiPermissao('VisualizarHorarioRefeicao')}">
+							<f:param name="id" value="#{horario.id}" />
+						</p:button>
+						
+						<p:button title="Editar" icon="ui-icon-pencil" outcome="pretty:AlterarHorarioRefeicao" rendered="#{securityUtil.possuiPermissao('AlterarHorarioRefeicao')}">
+							<f:param name="id" value="#{horario.id}" />
+						</p:button>
+					</center>
+				</p:column>
+				
+				<f:facet name="footer">
+					Total de registros: #{horarioRefeicaoBean.horariosRefeicao.rowCount}
+				</f:facet>
+			</p:dataTable>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

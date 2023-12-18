@@ -63,7 +63,7 @@ public class Contato implements Serializable {
 	@Column(name = "NOME", length = 80, nullable = false)
 	private String nome;
 	
-	@Column(name = "OBSERVACAO", length = 250)
+	@Column(name = "OBSERVACAO", length = 250) 
 	private String observacao;
 	
 	public Contato() {

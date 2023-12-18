@@ -118,6 +118,6 @@ public class FiltroUnidadePrisional extends FiltroConsulta{
 		if (this.getSituacaoUnidade() != null) {
 			getCriteria().add(Restrictions.eq("estrutura.situacaoUnidade", this.getSituacaoUnidade()));
 		}
-	}
+	}	
 
 }

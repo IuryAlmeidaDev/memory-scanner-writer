@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>#{horarioRefeicaoBean.tituloPagina} Horário Refeição</h3>
+		<h:form>
+			<p:panel>
+
+				<sgp:formSelectOneMenu id="unidade" labelValue="Unidade Prisional"
+					value="#{horarioRefeicaoBean.unidade}"
+					itemsValue="#{horarioRefeicaoBean.unidadesPrisionais}"
+					itemValue="#{item}" itemLabel="#{item.nome}" temSelecione="true"
+					validationRequired="true" filter="true" filterMatchMode="custom" 
+					disabled="#{horarioRefeicaoBean.isVisualizacao}" 
+					filterFunction="removeAcento" converter="SimpleEntityConverter"
+					styleFormLabelColumn="min-width:120px !important"
+					rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
+
+				<sgp:formCalendar labelValue="Data de Início" display="text"
+					requiredMessage="*" value="#{horarioRefeicaoBean.dataInicio}"
+					validationRequired="true"
+					disabled="#{horarioRefeicaoBean.isVisualizacao}"
+					styleFormLabelColumn="min-width:120px !important" />
+
+				<br />
+				<br />
+
+				<p:panel header="Horários de Refeição">
+					<p:commandButton icon="ui-icon-plus" value="Adicionar"
+						immediate="true"
+						actionListener="#{horarioRefeicaoBean.abrirDialogHorario}"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarHorarioRefeicao') and !horarioRefeicaoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarHorarioRefeicao') and !horarioRefeicaoBean.isVisualizacao)}">
+						<p:ajax event="dialogReturn"
+							listener="#{horarioRefeicaoBean.incluirHorarioRefeicao}"
+							update="refeicoes" />
+					</p:commandButton>
+
+					<br />
+					<br />
+
+					<p:dataTable id="refeicoes" var="horario"
+						emptyMessage="Nenhuma refeição adicionada."
+						value="#{horarioRefeicaoBean.listHorarios}" rows="5"
+						paginator="true" paginatorAlwaysVisible="false"
+						paginatorPosition="bottom" sortBy="#{horario.id}">
+
+						<p:column headerText="Refeição"
+							sortBy="#{horario.tipoRefeicao.descricao}">
+							<h:outputText value="#{horario.tipoRefeicao.descricao}" />
+						</p:column>
+
+						<p:column headerText="Horário" sortBy="#{horario.horario}"
+							width="200">
+							<h:outputText value="#{horario.horarioFormatado()}" />
+						</p:column>
+
+						<p:column headerText="Ações" style="width:150px;"
+							rendered="#{(!horarioRefeicaoBean.isVisualizacao)}">
+							<center>
+								<p:commandButton title="Alterar" icon="ui-icon-pencil"
+									immediate="true"
+									action="#{horarioRefeicaoBean.abrirDialogAlterarHorario(horario)}"
+									rendered="#{(securityUtil.possuiPermissao('AlterarHorarioRefeicao'))}">
+									<p:ajax event="dialogReturn"
+										listener="#{horarioRefeicaoBean.incluirHorarioRefeicao}"
+										update="refeicoes" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+
+					<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:panel>
+
+				<br />
+
+				<p:commandButton value="Salvar"
+					action="#{horarioRefeicaoBean.salvar()}" update="@form"
+					icon="ui-icon-disk"
+					rendered="#{(securityUtil.possuiPermissao('CadastrarHorarioRefeicao') and !horarioRefeicaoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarApostilamento') and !horarioRefeicaoBean.isVisualizacao)}" />
+
+				<p:button outcome="pretty:ListarHorarioRefeicao" value="Voltar"
+					icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1" />
+				</p:button>
+			</p:panel>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

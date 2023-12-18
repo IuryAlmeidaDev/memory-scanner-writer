@@ -278,6 +278,11 @@ public class ComboHelperBean {
         now.add(Calendar.YEAR, -18);
         return now.getTime();
 	}
+	
+	public Date getDateMinima(){
+		Calendar now = Calendar.getInstance();
+        return now.getTime();
+	}
 
 	public Status[] getStatus() {
 		return status;

@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3> Tipos de Dieta </h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarTipoDieta" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarTipoDieta')}"/>
+		</h:form>
+		
+		<h:form id="meuFormulario">
+			<p:panel>
+                <p:outputLabel value="Consulta"/>
+                
+                <sgp:formInputText
+                        id="descricaoConsulta"
+                        labelValue="Descrição"
+                        value="#{tipoDietaBean.filtro.descricao}"
+                        maxlength="12" size="30"
+                        display="text"
+                        styleFormLabelColumn="min-width:150px !important"
+                />
+                
+                <sgp:formSelectOneMenu
+						id="especialConsulta" 
+						labelValue="Dieta Especial"
+						value="#{tipoDietaBean.filtro.dietaEspecial}"
+						styleFormLabelColumn="min-width:150px !important"
+						temSelecione="true"
+						display="text">
+							<f:selectItem itemLabel="Sim" itemValue="true" />
+							<f:selectItem itemLabel="Não" itemValue="false" />
+				</sgp:formSelectOneMenu>
+				
+				<sgp:formSelectOneMenu 
+					styleFormLabelColumn="min-width:150px !important"
+					id="status" labelValue="Status"
+					value="#{tipoDietaBean.filtro.status}"
+					itemsValue="#{comboHelperBean.status}" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					temSelecione="true"
+				/>
+                
+                <br /> <br />
+                <p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"/>
+        	</p:panel>
+        </h:form>
+		
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="tipoDieta" value="#{tipoDietaBean.tiposDieta}" emptyMessage="Nenhum registro encontrado."
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{tipoDieta.id}">
+
+				<p:column headerText="Código" style="width:100px;" sortBy="#{tipoDieta.id}">
+					<h:outputText value="#{tipoDieta.id}" />
+				</p:column>
+				
+				<p:column headerText="Descrição" sortBy="#{tipoDieta.descricao}" width="60%">
+					<h:outputText value="#{tipoDieta.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Especial" sortBy="#{tipoDieta.especial}" width="15%">
+						<h:outputText value="#{tipoDieta.especial ? 'Sim' : 'Não'}" />
+					</p:column>
+				
+				<p:column headerText="Situação" sortBy="#{tipoDieta.status}" width="15%">
+                    <h:outputText value="#{tipoDieta.status.descricao}" />
+                </p:column>
+
+				<p:column headerText="Ações" style="width:150px;">
+					<center>
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarTipoDieta" rendered="#{securityUtil.possuiPermissao('VisualizarTipoDieta')}">
+							<f:param name="id" value="#{tipoDieta.id}" />
+						</p:button>
+						
+						<p:button title="Editar" icon="ui-icon-pencil" outcome="pretty:AlterarTipoDieta" rendered="#{securityUtil.possuiPermissao('AlterarTipoDieta')}">
+							<f:param name="id" value="#{tipoDieta.id}" />
+						</p:button>
+												
+						<p:commandButton action="#{tipoDietaBean.inativar(tipoDieta)}" icon="ui-icon-circle-close" title="Inativar" update="@form :registrosForm :mensagens" 
+							rendered="#{securityUtil.possuiPermissao('AlterarTipoDieta')}" disabled="#{tipoDieta.status.descricao.equalsIgnoreCase('Inativo')}" >
+							 <p:confirm header="Confirmação" message="Deseja inativar o tipo de Dieta? Ao confirmar, todos os recuperando que possuírem essa dieta atribuída também terão a dieta especial inativa" icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+				</p:column>
+				
+				<f:facet name="footer">
+					Total de registros: #{tipoDietaBean.tiposDieta.rowCount}
+				</f:facet>
+			</p:dataTable>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

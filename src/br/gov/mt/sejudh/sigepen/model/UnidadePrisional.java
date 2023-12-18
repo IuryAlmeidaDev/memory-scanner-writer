@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -71,7 +71,7 @@ public class UnidadePrisional implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private TipoUnidade tipoUnidade;
 	
-	@OneToOne(fetch=FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(fetch=FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Estrutura estrutura;
 
     @NotFound(action = NotFoundAction.IGNORE)
@@ -93,18 +93,33 @@ public class UnidadePrisional implements Serializable {
 	@OneToMany(mappedBy = "unidade", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ParametroVisita> parametrosVisita;
 	
-	@ManyToMany(mappedBy = "unidades")
-	private List<Contrato> contratos;
+//	@ManyToMany
+//	private List<Contrato> contratos = new ArrayList<Contrato>();
 	
 	public UnidadePrisional() {
 		this.contatos = new ArrayList<Contato>();
 		this.biometriaObrigatoria = true;
 	}
 
+	public UnidadePrisional(Object[] row) {
+		this.contatos = new ArrayList<Contato>();
+		this.id = ((BigDecimal) row[0]).longValue();
+		this.setNome((String) row[1]);
+		this.estrutura = new Estrutura();
+		this.estrutura.setId(((BigDecimal) row[2]).longValue());
+	}
+	
 	public UnidadePrisional(long id, String nome) {
 		this.contatos = new ArrayList<Contato>();
 		this.id = id;
 		this.setNome(nome);
+	}
+	
+	public UnidadePrisional(long id, String nome, Estrutura estrutura) {
+		this.contatos = new ArrayList<Contato>();
+		this.id = id;
+		this.setNome(nome);
+		this.estrutura = estrutura;
 	}
 
 	public UnidadePrisional (Long id) {
@@ -239,6 +254,14 @@ public class UnidadePrisional implements Serializable {
 		return "Unidade Prisional [id=" + id + ", nome=" + nome + "]";
 	}
 
+//	public List<Contrato> getContratos() {
+//		return this.contratos;
+//	}
+//
+//	public void setContratos(List<Contrato> contratos) {
+//		this.contratos = contratos;
+//	}
+	
 	public Boolean getBiometriaObrigatoria() {
 		return biometriaObrigatoria;
 	}
@@ -246,15 +269,8 @@ public class UnidadePrisional implements Serializable {
 	public void setBiometriaObrigatoria(Boolean biometriaObrigatoria) {
 		this.biometriaObrigatoria = biometriaObrigatoria;
 	}
-	
-	public List<Contrato> getContratos(){
-		return this.contratos;
-	}
-	
-	public void setContratos(List<Contrato> contratos) {
-		this.contratos = contratos;
-	}
 
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
