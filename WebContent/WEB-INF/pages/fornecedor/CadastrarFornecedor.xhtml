@@ -4,135 +4,214 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
-                xmlns:c="http://java.sun.com/jsp/jstl/core"
-	template="/WEB-INF/pages/_templates/principal.xhtml"
-	xmlns:pe="http://primefaces.org/ui/extensions">
+	template="/WEB-INF/pages/_templates/principal.xhtml">
 
 	<ui:define name="footer">
 		<h:outputScript library="js" name="selectOneMenuFilter.js" />
 	</ui:define>
-		
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
-		
+
 		<h3>#{fornecedorBean.tituloPagina} Fornecedor</h3>
-		
-		<p:panel id="cabecalho" rendered="#{fornecedorBean.fornecedor.id>0}" >
+
+		<p:panel id="cabecalho"
+			footer="Cadastrado por: #{fornecedorBean.fornecedor.autorRegistro.usuario} em #{fornecedorBean.fornecedor.autorRegistro.data} | Última alteração: #{fornecedorBean.fornecedor.autorUltimaAlteracao.usuario} em #{fornecedorBean.fornecedor.autorUltimaAlteracao.data}"
+			rendered="#{fornecedorBean.fornecedor.cnpj != null}">
 			<h:form id="formCabecalho">
-					<p:column>
-						<sgp:formOutputLabel labelValue="CNPJ" value="#{fornecedorBean.fornecedor.cnpj}"/>
-						<sgp:formOutputLabel labelValue="Nome Fantasia" value="#{fornecedorBean.fornecedor.nomeFantasia}"/>
-						<sgp:formOutputLabel labelValue="Razão Social" value="#{fornecedorBean.fornecedor.razaoSocial}"/>
-					</p:column>
-				</h:form>
-		</p:panel>	
-			
-		<h:form id="FornecedorForm">
-			<p:tabView id="tabView" effect="fade" effectDuration="fast" widgetVar="aba" dynamic="true">
-				<p:tab title="Fornecedor" id="tab">	
+				<p:column>
+					<sgp:formOutputLabel labelValue="CNPJ"
+						value="#{fornecedorBean.fornecedor.cnpj}" />
+					<sgp:formOutputLabel labelValue="Nome Fantasia"
+						value="#{fornecedorBean.fornecedor.nomeFantasia}" />
+					<sgp:formOutputLabel labelValue="Razão Social"
+						value="#{fornecedorBean.fornecedor.razaoSocial}" />
+				</p:column>
+			</h:form>
+		</p:panel>
+
+		<br />
+
+		<h:form id="formFornecedor">
+			<p:tabView id="tabView" effect="fade" effectDuration="fast"
+				widgetVar="aba" dynamic="true">
+				<p:tab title="Fornecedor" id="tab">
+
 					<p:panel>
-						<h:form id="formFornecedor">
-														
-							<sgp:formInputMask
-								value="#{fornecedorBean.fornecedor.cnpj}"
-								labelValue="CNPJ"
-								mask="99.999.999/9999-99"
-								validatorId="CnpjValidator"
-								validationRequired="false"
-								disabled="#{fornecedorBean.isVisualizacao}"
-								converter="convertCnpj"
-								maxlength="14"
-								display="text"/>
-							
-							<sgp:formInputText 
-								id="razaoSocial"
-								labelValue="Razão Social"
-								value="#{fornecedorBean.fornecedor.razaoSocial}"
+						<sgp:formInputMask value="#{fornecedorBean.fornecedor.cnpj}"
+							labelValue="CNPJ" mask="99.999.999/9999-99"
+							validatorId="CnpjValidator" validationRequired="true"
+							disabled="#{fornecedorBean.isVisualizacao}" size="40"
+							styleFormLabelColumn="min-width:140px" converter="convertCnpj"
+							maxlength="14" display="text" />
+
+						<sgp:formInputMask id="creador" labelValue="Credor FIPLAN"
+							mask="9999999999" size="40"
+							value="#{fornecedorBean.fornecedor.creador}"
+							validationRequired="true" maxlength="10"
+							styleFormLabelColumn="min-width:140px"
+							disabled="#{fornecedorBean.isVisualizacao}" display="text" />
+
+						<sgp:formInputText id="razaoSocial" labelValue="Razão Social"
+							value="#{fornecedorBean.fornecedor.razaoSocial}" size="40"
+							validationRequired="true" maxlength="150"
+							styleFormLabelColumn="min-width:140px"
+							disabled="#{fornecedorBean.isVisualizacao}" display="text" />
+
+						<sgp:formInputText id="nomeFantasia" labelValue="Nome Fantasia"
+							value="#{fornecedorBean.fornecedor.nomeFantasia}" size="40"
+							validationRequired="true" maxlength="150"
+							styleFormLabelColumn="min-width:140px"
+							disabled="#{fornecedorBean.isVisualizacao}" display="text" />
+
+						<sgp:formSelectOneMenu labelValue="Status"
+							value="#{fornecedorBean.fornecedor.status}"
+							itemsValue="#{comboHelperBean.status}" itemValue="#{item}"
+							itemLabel="#{item.descricao}"
+							styleFormLabelColumn="min-width:140px"
+							disabled="#{fornecedorBean.isVisualizacao}" display="text">
+							<p:ajax event="change"
+								update="formFornecedor:tabView:justificativa formFornecedor:tabView:arquivo" />
+						</sgp:formSelectOneMenu>
+
+						<br />
+						<br />
+
+						<h:panelGroup id="justificativa" style="display: flex">
+
+							<sgp:formInputTextarea labelValue="Justificativa"
+								value="#{fornecedorBean.fornecedor.justificativa.descricao}"
 								validationRequired="true"
-								maxlength="150"
-								disabled="#{fornecedorBean.isVisualizacao}"
-								display="text"/>
-								
-							<sgp:formInputText 
-								id="nomeFantasia"
-								labelValue="Nome Fantasia"
-								value="#{fornecedorBean.fornecedor.nomeFantasia}"
-								validationRequired="true"
-								maxlength="150"
-								disabled="#{fornecedorBean.isVisualizacao}"
-								display="text"/>
-								
-							
-								<br/><br/>
-						</h:form>
+								requiredMessage="Justificativa é obrigatória." display="display"
+								maxlength="2000" rows="10" columns="100"
+								styleFormLabelColumn="min-width:140px"
+								rendered="#{fornecedorBean.inativo}" disabled="#{fornecedorBean.isVisualizacao}" />
+						</h:panelGroup>
+
+						<h:panelGroup id="arquivo">
+							<h:form id="formArquivo">
+								<p:fileUpload mode="advanced" skinSimple="true"
+									sizeLimit="700000"
+									invalidSizeMessage="O tamanho máximo permitido é de 700kb."
+									value="#{fornecedorBean.fornecedor.justificativa.arquivoJustificativa}"
+									dragDropSupport="false" allowTypes="/(\.|\/)(pdf)$/"
+									fileUploadListener="#{fornecedorBean.associarArquivoJustificativa}"
+									uploadLabel="Enviar" cancelLabel="Cancelar"
+									label="Adicionar arquivo" auto="false"
+									update="formFornecedor:tabView:arquivo"
+									rendered="#{fornecedorBean.inativo}" disabled="#{fornecedorBean.isVisualizacao}" />
+							</h:form>
+							<sgp:formOutputLabel labelValue="arquivo"
+								rendered="#{fornecedorBean.inativo}"
+								value="#{fornecedorBean.fornecedor.justificativa.arquivoJustificativa.nome}" />
+							<p:commandButton value="Download" icon="pi pi-arrow-down"
+								immediate="true"
+								actionListener="#{fornecedorBean.downloadArquivoJustificativa}"
+								rendered="#{fornecedorBean.inativo and !(fornecedorBean.fornecedor.justificativa.arquivoJustificativa eq null)}" disabled="#{fornecedorBean.isVisualizacao}" />
+						</h:panelGroup>
+
+						<br />
+						<br />
 					</p:panel>
-						<br/><br/>		
-						<p:panel header="Endereço" id="enderecos">
-						<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" actionListener="#{fornecedorBean.abrirDialogEndereco}"
+
+					<p:panel header="Endereço" id="enderecos">
+						<p:commandButton title="Alterar" icon="ui-icon-pencil"
+							immediate="true"
+							actionListener="#{fornecedorBean.abrirDialogEndereco}"
 							rendered="#{(securityUtil.possuiPermissao('Cadastrarfornecedor') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('Alterarfornecedor') and !fornecedorBean.isVisualizacao)}">
-							<p:ajax event="dialogReturn" listener="#{fornecedorBean.incluirEndereco}" update="enderecos"/>
-						</p:commandButton>						
-						
-						<br/>
-						<sgp:formOutputLabel labelValue="Logradouro" value="#{fornecedorBean.fornecedor.endereco.logradouro}" />
-						<sgp:formOutputLabel labelValue="Número" value="#{fornecedorBean.fornecedor.endereco.numero}" />
-						<sgp:formOutputLabel labelValue="Complemento" value="#{fornecedorBean.fornecedor.endereco.complemento}" />
-						<sgp:formOutputLabel labelValue="Bairro" value="#{fornecedorBean.fornecedor.endereco.bairro}" />
-						<sgp:formOutputLabel labelValue="CEP" value="#{fornecedorBean.fornecedor.endereco.cep}" />
-						<sgp:formOutputLabel labelValue="Cidade" value="#{fornecedorBean.fornecedor.endereco.cidade.nome}" />
-						<sgp:formOutputLabel labelValue="Estado" value="#{fornecedorBean.fornecedor.endereco.cidade.estado.nome}" />
-						
-					</p:panel>
-					<br/><br/>						
-					<p:panel header="Contatos">
-						<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{fornecedorBean.abrirDialogContato}" 
-							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !fornecedorBean.isVisualizacao)}">
-							<p:ajax event="dialogReturn" listener="#{fornecedorBean.incluirContato}" update="contatos"/>
+							<p:ajax event="dialogReturn"
+								listener="#{fornecedorBean.incluirEndereco}" update="enderecos" />
 						</p:commandButton>
-					
-				<br/>
-				<br/>
-				
-				<p:dataTable id="contatos" var="contato" emptyMessage="Nenhum contato adicionado." value="#{fornecedorBean.fornecedor.contatos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{contato.id}">
-					<p:column headerText="Nome">
-						<h:outputText value="#{contato.nome}" />
-					</p:column>
-					<p:column headerText="Tipo" width="100">
-						<h:outputText value="#{contato.tipoContato.descricao}"/>
-					</p:column>
-					<p:column headerText="Valor" width="120">
-						<h:outputText value="#{contato.valor}" />
-					</p:column>
-					<p:column headerText="Observação">
-						<h:outputText value="#{contato.observacao}" />
-					</p:column>
-					<p:column width="90">
-						<center>
-							<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{fornecedorBean.abrirDialogAlterarContato(contato)}" 
-								rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !fornecedorBean.isVisualizacao)}">
-								<p:ajax event="dialogReturn" listener="#{fornecedorBean.incluirContato}" update="contatos"/>
-							</p:commandButton>
-							<p:commandButton action="#{fornecedorBean.excluirContato(contato)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":FornecedorForm:tabView:contatos :mensagens"
-								rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !fornecedorBean.isVisualizacao)}">
-						 		<p:confirm header="Confirmação" message="Deseja excluir o contato?" icon="ui-icon-alert" />
-							</p:commandButton>
-						</center>
-					</p:column>
-				</p:dataTable>
-				
-				<p:confirmDialog global="true">
-					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-				</p:confirmDialog>
-			</p:panel>
-											
-					<p:commandButton value="Salvar" action="#{fornecedorBean.salvar()}"	update="@form" icon="ui-icon-disk" 
+
+						<br />
+						<sgp:formOutputLabel labelValue="Logradouro"
+							value="#{fornecedorBean.fornecedor.endereco.logradouro}" />
+						<sgp:formOutputLabel labelValue="Número"
+							value="#{fornecedorBean.fornecedor.endereco.numero}" />
+						<sgp:formOutputLabel labelValue="Complemento"
+							value="#{fornecedorBean.fornecedor.endereco.complemento}" />
+						<sgp:formOutputLabel labelValue="Bairro"
+							value="#{fornecedorBean.fornecedor.endereco.bairro}" />
+						<sgp:formOutputLabel labelValue="CEP"
+							value="#{fornecedorBean.fornecedor.endereco.cep}" />
+						<sgp:formOutputLabel labelValue="Cidade"
+							value="#{fornecedorBean.fornecedor.endereco.cidade.nome}" />
+						<sgp:formOutputLabel labelValue="Estado"
+							value="#{fornecedorBean.fornecedor.endereco.cidade.estado.nome}" />
+
+					</p:panel>
+
+
+					<p:panel header="Contatos">
+						<p:commandButton icon="ui-icon-plus" value="Adicionar"
+							immediate="true"
+							actionListener="#{fornecedorBean.abrirDialogContato}"
+							rendered="#{(securityUtil.possuiPermissao('CadastrarFornecedor') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarFornecedor') and !fornecedorBean.isVisualizacao)}">
+							<p:ajax event="dialogReturn"
+								listener="#{fornecedorBean.incluirContato}" update="contatos" />
+						</p:commandButton>
+
+						<br />
+						<br />
+
+						<p:dataTable id="contatos" var="contato"
+							emptyMessage="Nenhum contato adicionado."
+							value="#{fornecedorBean.fornecedor.contatos}" rows="5"
+							paginator="true" paginatorAlwaysVisible="false"
+							paginatorPosition="bottom" sortBy="#{contato.id}">
+							<p:column headerText="Nome">
+								<h:outputText value="#{contato.nome}" />
+							</p:column>
+							<p:column headerText="Tipo" width="100">
+								<h:outputText value="#{contato.tipoContato.descricao}" />
+							</p:column>
+							<p:column headerText="Valor" width="120">
+								<h:outputText value="#{contato.valor}" />
+							</p:column>
+							<p:column headerText="Observação">
+								<h:outputText value="#{contato.observacao}" />
+							</p:column>
+							<p:column width="90">
+								<center>
+									<p:commandButton title="Alterar" icon="ui-icon-pencil"
+										immediate="true"
+										action="#{fornecedorBean.abrirDialogAlterarContato(contato)}"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !fornecedorBean.isVisualizacao)}">
+										<p:ajax event="dialogReturn"
+											listener="#{fornecedorBean.incluirContato}" update="contatos" />
+									</p:commandButton>
+									<p:commandButton
+										action="#{fornecedorBean.excluirContato(contato)}"
+										immediate="true" icon="ui-icon-trash" title="Excluir"
+										update="formFornecedor:tabView:contatos :mensagens"
+										rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !fornecedorBean.isVisualizacao)}">
+										<p:confirm header="Confirmação"
+											message="Deseja excluir o contato?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+
+						<p:confirmDialog global="true">
+							<p:commandButton value="Sim" type="button"
+								styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							<p:commandButton value="Não" type="button"
+								styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+						</p:confirmDialog>
+					</p:panel>
+
+					<br />
+
+					<p:commandButton value="Salvar" action="#{fornecedorBean.salvar()}"
+						update="@form" icon="ui-icon-disk"
 						rendered="#{(securityUtil.possuiPermissao('Cadastrarfornecedor') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('Alterarfornecedor') and !fornecedorBean.isVisualizacao)}" />
-					<p:button outcome="pretty:ListarFornecedor" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+					<p:button outcome="pretty:ListarFornecedor" value="Voltar"
+						icon="ui-icon-arrowreturnthick-1-w">
 						<f:param name="list" value="1" />
 					</p:button>
 				</p:tab>
 			</p:tabView>
+
 		</h:form>
-    </ui:define>
+	</ui:define>
 </ui:composition>

@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,61 +13,65 @@ import javax.interceptor.Interceptors;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+import br.gov.mt.sejudh.sigepen.dao.CardapioPedidoDTO;
 import br.gov.mt.sejudh.sigepen.dao.EstruturaDAO;
 import br.gov.mt.sejudh.sigepen.dao.ServidorDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
+import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
+import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.PedidoConsultaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.PedidoDetalhadoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.PedidoItemCardapioDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
-
 @Stateless
 public class EstruturaService {
-	
+
 	@Inject
 	private EstruturaDAO dao;
-	
+
 	@Inject
 	private ServidorDAO daoServidor;
-	
-	
-	public EstruturaService(){		
-		}
-	
+
+	public EstruturaService() {
+	}
+
 	@Interceptors(EJBExcInterceptor.class)
 	public Estrutura salvar(Estrutura estrutura) {
-		if(!estrutura.getCela()){
+		if (!estrutura.getCela()) {
 			estrutura.setCapacidade(0);
 		}
-		return dao.salvar(estrutura);	
+		return dao.salvar(estrutura);
 	}
-	
+
 	public void excluir(Estrutura estrutura) {
-		dao.excluir(estrutura);		
+		dao.excluir(estrutura);
 	}
-	
-	public Estrutura buscaPorId(Long id) {		
+
+	public Estrutura buscaPorId(Long id) {
 		return dao.buscaPorId(id);
 	}
-	
-	public Estrutura buscaEstraturaRaizUnidade(Long id) {		
+
+	public Estrutura buscaEstraturaRaizUnidade(Long id) {
 		return dao.buscaEstraturaRaizUnidade(id);
 	}
-	
+
 	public List<EstruturaDto> buscarEstruturasUnidade(Long idUnidade) {
 		return dao.buscarEstruturasUnidade(idUnidade);
 	}
-	
+
 	public Estrutura buscaEstruturaCompletaPorId(Long id) {
 		return dao.buscaEstruturaCompletaPorId(id);
 	}
-	
+
 	public void montarArvoreEstrutura(Estrutura estrutura, TreeNode no) {
 		List<Estrutura> filhos = dao.buscaEstruturaFilho(estrutura);
-		if(filhos.size() > 0){
+		if (filhos.size() > 0) {
 			estrutura.setTemEstruturaFilho(true);
 		}
 		TreeNode pai = new DefaultTreeNode(estrutura, no);
@@ -76,43 +81,94 @@ public class EstruturaService {
 		}
 	}
 
+	public void montarArvoreEstruturaGerarPedido(GerarPedidoEstruturaDTO estrutura, TreeNode no, String dataHora, Long tipoRefeicao) {
+		List<GerarPedidoEstruturaDTO> filhos = dao.buscaEstruturaFilhoGerarPedido(estrutura, dataHora, tipoRefeicao);
+		if (filhos.size() > 0) {
+			estrutura.setTemEstruturaFilho(true);
+		}
+		TreeNode pai = new DefaultTreeNode(estrutura, no);
+		pai.setExpanded(true);
+		for (GerarPedidoEstruturaDTO e : filhos) {
+			montarArvoreEstruturaGerarPedido(e, pai, dataHora, tipoRefeicao);
+		}
+	}
+
 	public int capacidadeTotalEstrutura(DefaultTreeNode no) {
 		Estrutura e = (Estrutura) no.getData();
 		int capTotal = e.getCapacidade();
 		List<TreeNode> filhos = no.getChildren();
 		for (TreeNode filho : filhos) {
-			capTotal += capacidadeTotalEstrutura((DefaultTreeNode)filho);
+			capTotal += capacidadeTotalEstrutura((DefaultTreeNode) filho);
 		}
 		e.setCapacidadeTotal(capTotal);
 		no.setData(e);
-		
+
 		return capTotal;
 	}
-	
+
+	public int capacidadeTotalEstruturaGerarPedido(DefaultTreeNode no) {
+		GerarPedidoEstruturaDTO e = (GerarPedidoEstruturaDTO) no.getData();
+		int dietaPadrao = e.getDietaPadrao().intValue();
+		List<TreeNode> filhos = no.getChildren();
+		for (TreeNode filho : filhos) {
+			dietaPadrao += capacidadeTotalEstruturaGerarPedido((DefaultTreeNode) filho);
+		}
+		e.setCapacidadeTotal(dietaPadrao);
+		no.setData(e);
+
+		return dietaPadrao;
+	}
+
+	public int capacidadeTotalDietaPadrao(DefaultTreeNode no) {
+		GerarPedidoEstruturaDTO e = (GerarPedidoEstruturaDTO) no.getData();
+		int dietaPadrao = e.getDietaPadrao().intValue();
+		List<TreeNode> filhos = no.getChildren();
+		for (TreeNode filho : filhos) {
+			dietaPadrao += capacidadeTotalDietaPadrao((DefaultTreeNode) filho);
+		}
+		e.setTotalDietaPadrao(dietaPadrao);
+		no.setData(e);
+
+		return dietaPadrao;
+	}
+
+	public long capacidadeTotalDietaEspecial(DefaultTreeNode no) {
+		GerarPedidoEstruturaDTO e = (GerarPedidoEstruturaDTO) no.getData();
+		int dietaEspecial = e.getDietaEspecial().intValue();
+		List<TreeNode> filhos = no.getChildren();
+		for (TreeNode filho : filhos) {
+			dietaEspecial += capacidadeTotalDietaEspecial((DefaultTreeNode) filho);
+		}
+		e.setTotalDietaEspecial(dietaEspecial);
+		no.setData(e);
+
+		return dietaEspecial;
+	}
+
 	public long lotacaoTotalEstrutura(DefaultTreeNode no) {
 		Estrutura e = (Estrutura) no.getData();
 		long lotacaoTotal = dao.quantidadeRecuperandosLotados(e);
 		List<TreeNode> filhos = no.getChildren();
 		for (TreeNode filho : filhos) {
-			lotacaoTotal += lotacaoTotalEstrutura((DefaultTreeNode)filho);
-		}		
+			lotacaoTotal += lotacaoTotalEstrutura((DefaultTreeNode) filho);
+		}
 		return lotacaoTotal;
 	}
-	
-	public DefaultTreeNode buscarNo(DefaultTreeNode root, Estrutura estrutura, Estrutura estruturaOrigem){
-		if(estrutura != null){
-			if(estrutura.getId() == estruturaOrigem.getId()){
+
+	public DefaultTreeNode buscarNo(DefaultTreeNode root, Estrutura estrutura, Estrutura estruturaOrigem) {
+		if (estrutura != null) {
+			if (estrutura.getId() == estruturaOrigem.getId()) {
 				return root;
 			}
 		}
 		List<TreeNode> filhos = root.getChildren();
 		for (TreeNode filho : filhos) {
 			Estrutura e = (Estrutura) filho.getData();
-			if(e.getId() == estruturaOrigem.getId()){
+			if (e.getId() == estruturaOrigem.getId()) {
 				return (DefaultTreeNode) filho;
 			} else {
-				DefaultTreeNode no =  buscarNo((DefaultTreeNode)filho, e, estruturaOrigem);
-				if(no != null){
+				DefaultTreeNode no = buscarNo((DefaultTreeNode) filho, e, estruturaOrigem);
+				if (no != null) {
 					return no;
 				}
 			}
@@ -121,61 +177,68 @@ public class EstruturaService {
 	}
 
 	/**
-	 * Situação Estrutura 
+	 * Situação Estrutura
+	 * 
 	 * @param situacaoEstruturaUnidade
-	 * @throws ValidacaoException 
+	 * @throws ValidacaoException
 	 */
-	public void salvarSituacaoEstrutura(SituacaoEstruturaUnidade situacaoEstruturaUnidade,  DefaultTreeNode root) throws ValidacaoException {		
+	public void salvarSituacaoEstrutura(SituacaoEstruturaUnidade situacaoEstruturaUnidade, DefaultTreeNode root)
+			throws ValidacaoException {
 		situacaoEstruturaUnidade.setLoginUsuario((SecurityUtil.getLoginUsuario()));
 		situacaoEstruturaUnidade.setOrigemAlteracao(true);
 		DefaultTreeNode noEstrutura = buscarNo(root, null, situacaoEstruturaUnidade.getEstrutura());
 		Estrutura est = (Estrutura) root.getData();
 		if (situacaoEstruturaUnidade.getSituacao() == SituacaoUnidade.INATIVO) {
-			if(((Estrutura)noEstrutura.getData()).getEstruturaPai() == null && daoServidor.unidadePossuiServidoresLotados(situacaoEstruturaUnidade.getUnidadePrisional())){
+			if (((Estrutura) noEstrutura.getData()).getEstruturaPai() == null
+					&& daoServidor.unidadePossuiServidoresLotados(situacaoEstruturaUnidade.getUnidadePrisional())) {
 				throw new ValidacaoException("Unidade possui servidores lotados, não pode ser Inativada!");
 			}
 			if (lotacaoTotalEstrutura(noEstrutura) > 0) {
 				throw new ValidacaoException("Estrutura possui recuperandos lotados, não pode ser Inativada!");
-			}			
+			}
 		}
-		
+
 		switch (situacaoEstruturaUnidade.getSituacao()) {
-			case INTERDITADO_TOTAL:
-				if(est.getSituacaoUnidade() != SituacaoUnidade.INATIVO){
-					alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, noEstrutura, situacaoEstruturaUnidade.getEstrutura());
-					alterarSituacaoEstruturaPai(situacaoEstruturaUnidade, noEstrutura);
-				}
-				
-			case ATIVO:
-				alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, noEstrutura, situacaoEstruturaUnidade.getEstrutura());
+		case INTERDITADO_TOTAL:
+			if (est.getSituacaoUnidade() != SituacaoUnidade.INATIVO) {
+				alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, noEstrutura,
+						situacaoEstruturaUnidade.getEstrutura());
 				alterarSituacaoEstruturaPai(situacaoEstruturaUnidade, noEstrutura);
-			case INATIVO:
-				alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, noEstrutura, situacaoEstruturaUnidade.getEstrutura());
-				alterarSituacaoEstruturaPai(situacaoEstruturaUnidade, noEstrutura);
-			default:
-				break;
+			}
+
+		case ATIVO:
+			alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, noEstrutura,
+					situacaoEstruturaUnidade.getEstrutura());
+			alterarSituacaoEstruturaPai(situacaoEstruturaUnidade, noEstrutura);
+		case INATIVO:
+			alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, noEstrutura,
+					situacaoEstruturaUnidade.getEstrutura());
+			alterarSituacaoEstruturaPai(situacaoEstruturaUnidade, noEstrutura);
+		default:
+			break;
 		}
-		
-		
+
 	}
-	
+
 	/**
-	 * # INTERDITADO_TOTAL:
-	 * 		Ao modificar situação para "interdito_total", os filhos do nó irão receber interditado_total exceto os filhos inativos.
-	 * 		O nó pai irá receber "interditado_parcial" se tiver um filho ativo ou interditado_parcial, senão, recebe "interditado_total". 
+	 * # INTERDITADO_TOTAL: Ao modificar situação para "interdito_total", os filhos
+	 * do nó irão receber interditado_total exceto os filhos inativos. O nó pai irá
+	 * receber "interditado_parcial" se tiver um filho ativo ou interditado_parcial,
+	 * senão, recebe "interditado_total".
 	 * 
-	 * # INTERDITADO_PARCIAL:
-	 * 		O usuário não poderá alterar alguma estrutura para "interditado_parcial"
-	 * 	
+	 * # INTERDITADO_PARCIAL: O usuário não poderá alterar alguma estrutura para
+	 * "interditado_parcial"
+	 * 
 	 * 
 	 * # ATIVO
-	 * 		
+	 * 
 	 * $ INATIVO
-	 * 		
+	 * 
 	 * @param situacaoEstruturaUnidade
 	 */
 	@Interceptors(EJBExcInterceptor.class)
-	public void alterarSituacaoEstruturasFilhos(SituacaoEstruturaUnidade situacaoEstruturaUnidade, DefaultTreeNode root, Estrutura estrutura){
+	public void alterarSituacaoEstruturasFilhos(SituacaoEstruturaUnidade situacaoEstruturaUnidade, DefaultTreeNode root,
+			Estrutura estrutura) {
 		Estrutura est;
 		SituacaoEstruturaUnidade s;
 		switch (situacaoEstruturaUnidade.getSituacao()) {
@@ -192,18 +255,18 @@ public class EstruturaService {
 			s.setTipoInterdicao(situacaoEstruturaUnidade.getTipoInterdicao());
 			s.setUnidadePrisional(situacaoEstruturaUnidade.getUnidadePrisional());
 			s.setEstrutura(est);
-			if(est.equals(estrutura)){
+			if (est.equals(estrutura)) {
 				situacaoEstruturaUnidade.setOrigemAlteracao(true);
 				dao.salvarSituacaoEstrutura(situacaoEstruturaUnidade);
-			} else{
+			} else {
 				s.setOrigemAlteracao(false);
 				dao.salvarSituacaoEstrutura(s);
 			}
-			for(TreeNode filho : root.getChildren()){
-				alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, (DefaultTreeNode)filho, estrutura);
+			for (TreeNode filho : root.getChildren()) {
+				alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, (DefaultTreeNode) filho, estrutura);
 			}
 			break;
-		
+
 		case ATIVO:
 			est = (Estrutura) root.getData();
 			est.setSituacaoUnidade(SituacaoUnidade.ATIVO);
@@ -217,15 +280,15 @@ public class EstruturaService {
 			s.setTipoInterdicao(situacaoEstruturaUnidade.getTipoInterdicao());
 			s.setUnidadePrisional(situacaoEstruturaUnidade.getUnidadePrisional());
 			s.setEstrutura(est);
-			if(est.equals(estrutura)){
+			if (est.equals(estrutura)) {
 				situacaoEstruturaUnidade.setOrigemAlteracao(true);
 				dao.salvarSituacaoEstrutura(situacaoEstruturaUnidade);
-			} else{
+			} else {
 				s.setOrigemAlteracao(false);
 				dao.salvarSituacaoEstrutura(s);
 			}
-			for(TreeNode filho : root.getChildren()){
-				alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, (DefaultTreeNode)filho, estrutura);
+			for (TreeNode filho : root.getChildren()) {
+				alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, (DefaultTreeNode) filho, estrutura);
 			}
 			break;
 		case INATIVO:
@@ -241,42 +304,42 @@ public class EstruturaService {
 			s.setTipoInterdicao(situacaoEstruturaUnidade.getTipoInterdicao());
 			s.setUnidadePrisional(situacaoEstruturaUnidade.getUnidadePrisional());
 			s.setEstrutura(est);
-			if(est.equals(estrutura)){
+			if (est.equals(estrutura)) {
 				situacaoEstruturaUnidade.setOrigemAlteracao(true);
 				dao.salvarSituacaoEstrutura(situacaoEstruturaUnidade);
-			} else{
+			} else {
 				s.setOrigemAlteracao(false);
 				dao.salvarSituacaoEstrutura(s);
 			}
-			for(TreeNode filho : root.getChildren()){
-				alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, (DefaultTreeNode)filho, estrutura);
+			for (TreeNode filho : root.getChildren()) {
+				alterarSituacaoEstruturasFilhos(situacaoEstruturaUnidade, (DefaultTreeNode) filho, estrutura);
 			}
 			break;
 		default:
 			break;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param situacaoEstruturaUnidade
 	 * @param root
 	 */
 	@Interceptors(EJBExcInterceptor.class)
-	public void alterarSituacaoEstruturaPai(SituacaoEstruturaUnidade situacaoEstruturaUnidade, DefaultTreeNode root){
+	public void alterarSituacaoEstruturaPai(SituacaoEstruturaUnidade situacaoEstruturaUnidade, DefaultTreeNode root) {
 		Estrutura e = (Estrutura) root.getData();
 		Estrutura est;
 		Estrutura estruturaOrigem;
 		DefaultTreeNode noPai;
 		SituacaoEstruturaUnidade s;
-		
-		if(e.getEstruturaPai() != null){
+
+		if (e.getEstruturaPai() != null) {
 			switch (situacaoEstruturaUnidade.getSituacao()) {
 			case INTERDITADO_TOTAL:
 				noPai = (DefaultTreeNode) root.getParent();
 				est = (Estrutura) noPai.getData();
 				estruturaOrigem = (Estrutura) root.getData();
-				
+
 				s = new SituacaoEstruturaUnidade();
 				s.setDataRegistro(situacaoEstruturaUnidade.getDataRegistro());
 				s.setLoginUsuario(situacaoEstruturaUnidade.getLoginUsuario());
@@ -284,31 +347,31 @@ public class EstruturaService {
 				s.setTipoInterdicao(situacaoEstruturaUnidade.getTipoInterdicao());
 				s.setUnidadePrisional(situacaoEstruturaUnidade.getUnidadePrisional());
 				s.setOrigemAlteracao(false);
-				
-				if(estruturaOrigem.getSituacaoUnidade() == SituacaoUnidade.INTERDITADO_PARCIAL){
+
+				if (estruturaOrigem.getSituacaoUnidade() == SituacaoUnidade.INTERDITADO_PARCIAL) {
 					est.setSituacaoUnidade(SituacaoUnidade.INTERDITADO_PARCIAL);
-				} else if(validaFilhoAtivoOuParcial(noPai)){
+				} else if (validaFilhoAtivoOuParcial(noPai)) {
 					est.setSituacaoUnidade(SituacaoUnidade.INTERDITADO_PARCIAL);
-				} else{
+				} else {
 					est.setSituacaoUnidade(SituacaoUnidade.INTERDITADO_TOTAL);
 				}
 				dao.salvar(est);
 				noPai.setData(est);
-				
+
 				s.setSituacao(est.getSituacaoUnidade());
 				s.setEstrutura(est);
 				dao.salvarSituacaoEstrutura(s);
-				
+
 				this.alterarSituacaoEstruturaPai(situacaoEstruturaUnidade, noPai);
 				break;
-				
+
 			default:
 				/**
-				 *  Atende os casos de ATIVO e INATIVO
+				 * Atende os casos de ATIVO e INATIVO
 				 */
 				noPai = (DefaultTreeNode) root.getParent();
 				est = (Estrutura) noPai.getData();
-				
+
 				s = new SituacaoEstruturaUnidade();
 				s.setDataRegistro(situacaoEstruturaUnidade.getDataRegistro());
 				s.setLoginUsuario(situacaoEstruturaUnidade.getLoginUsuario());
@@ -316,56 +379,61 @@ public class EstruturaService {
 				s.setTipoInterdicao(situacaoEstruturaUnidade.getTipoInterdicao());
 				s.setUnidadePrisional(situacaoEstruturaUnidade.getUnidadePrisional());
 				s.setOrigemAlteracao(false);
-				
-				if(validaFilhoAtivoOuInativo(noPai)){
+
+				if (validaFilhoAtivoOuInativo(noPai)) {
 					est.setSituacaoUnidade(SituacaoUnidade.ATIVO);
 				} else {
 					est.setSituacaoUnidade(SituacaoUnidade.INTERDITADO_PARCIAL);
 				}
 				dao.salvar(est);
 				noPai.setData(est);
-				
+
 				s.setSituacao(est.getSituacaoUnidade());
 				s.setEstrutura(est);
 				dao.salvarSituacaoEstrutura(s);
-				
+
 				this.alterarSituacaoEstruturaPai(situacaoEstruturaUnidade, noPai);
 				break;
 			}
 		}
 	}
-	
+
 	/**
-	 * Verifica se se tem pelo menos 1 filho com situação de Ativo ou Inativo.
-	 * Se encontrar 1, retorna verdadeiro, senão falso.
+	 * Verifica se se tem pelo menos 1 filho com situação de Ativo ou Inativo. Se
+	 * encontrar 1, retorna verdadeiro, senão falso.
+	 * 
 	 * @param nó da estruturaUnidade
 	 * @return true or false
 	 */
-	public boolean validaFilhoAtivoOuParcial(DefaultTreeNode no){
-		List<TreeNode> filhos =  no.getChildren();
+	public boolean validaFilhoAtivoOuParcial(DefaultTreeNode no) {
+		List<TreeNode> filhos = no.getChildren();
 		for (TreeNode filho : filhos) {
-			if(((Estrutura)filho.getData()).getSituacaoUnidade() == SituacaoUnidade.ATIVO || ((Estrutura)filho.getData()).getSituacaoUnidade() == SituacaoUnidade.INTERDITADO_PARCIAL){
+			if (((Estrutura) filho.getData()).getSituacaoUnidade() == SituacaoUnidade.ATIVO
+					|| ((Estrutura) filho.getData()).getSituacaoUnidade() == SituacaoUnidade.INTERDITADO_PARCIAL) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * 
-	 * Se encontrar pelo menos um filho diferente de Ativo e Inativo, o retorno será false, caso contrário o retorno será true;  
+	 * Se encontrar pelo menos um filho diferente de Ativo e Inativo, o retorno será
+	 * false, caso contrário o retorno será true;
+	 * 
 	 * @param nó da estruturaUnidade
 	 * @return true or false
 	 */
-	public boolean validaFilhoAtivoOuInativo(DefaultTreeNode no){
-		List<TreeNode> filhos =  no.getChildren();
+	public boolean validaFilhoAtivoOuInativo(DefaultTreeNode no) {
+		List<TreeNode> filhos = no.getChildren();
 		for (TreeNode filho : filhos) {
-			if(((Estrutura)filho.getData()).getSituacaoUnidade() != SituacaoUnidade.ATIVO && ((Estrutura)filho.getData()).getSituacaoUnidade() != SituacaoUnidade.INATIVO){
+			if (((Estrutura) filho.getData()).getSituacaoUnidade() != SituacaoUnidade.ATIVO
+					&& ((Estrutura) filho.getData()).getSituacaoUnidade() != SituacaoUnidade.INATIVO) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -373,12 +441,12 @@ public class EstruturaService {
 		return dao.listarPorUnidade(unidadePrisional);
 	}
 
-	public void buscarEstruturasFilhos(Estrutura estrutura, List<Estrutura> retorno){
+	public void buscarEstruturasFilhos(Estrutura estrutura, List<Estrutura> retorno) {
 		List<Estrutura> filhos = dao.buscaEstruturaFilho(estrutura);
 		for (Estrutura e : filhos) {
-			if(e.getCela()) {
+			if (e.getCela()) {
 				retorno.add(e);
-			}else {
+			} else {
 				retorno.add(e);
 				buscarEstruturasFilhos(e, retorno);
 			}
@@ -388,34 +456,92 @@ public class EstruturaService {
 
 	public void montarArvoreDaUnidade(List<EstruturaDto> estruturas, TreeNode no) {
 		Optional<EstruturaDto> optPai = estruturas.stream().filter(e -> e.getIdEstruturaPai() == null).findFirst();
-		
+
 		if (optPai.isPresent()) {
 			EstruturaDto estruturaPai = optPai.get();
 			TreeNode noPai = new DefaultTreeNode(estruturaPai, no);
-			List<EstruturaDto> estruturasFilho = estruturas.stream().filter(e -> Objects.equals(e.getIdEstruturaPai(), estruturaPai.getId())).collect(Collectors.toList());
-			
-			if (estruturasFilho.size() > 0) { 
+			List<EstruturaDto> estruturasFilho = estruturas.stream()
+					.filter(e -> Objects.equals(e.getIdEstruturaPai(), estruturaPai.getId()))
+					.collect(Collectors.toList());
+
+			if (estruturasFilho.size() > 0) {
 				estruturaPai.setTemEstruturaFilho(true);
 				noPai.setExpanded(true);
 			}
-			
+
 			estruturasFilho.forEach(e -> {
 				montarArvoreDaUnidade(estruturas, e, noPai);
-			});	
+			});
 		}
 	}
-	
+
 	private void montarArvoreDaUnidade(List<EstruturaDto> estruturas, EstruturaDto estruturaPai, TreeNode no) {
 		TreeNode noPai = new DefaultTreeNode(estruturaPai, no);
-		List<EstruturaDto> estruturasFilho = estruturas.stream().filter(e -> Objects.equals(e.getIdEstruturaPai(), estruturaPai.getId())).collect(Collectors.toList());
+		List<EstruturaDto> estruturasFilho = estruturas.stream()
+				.filter(e -> Objects.equals(e.getIdEstruturaPai(), estruturaPai.getId())).collect(Collectors.toList());
 
-		if (estruturasFilho.size() > 0) { 
+		if (estruturasFilho.size() > 0) {
 			estruturaPai.setTemEstruturaFilho(true);
 			noPai.setExpanded(true);
 		}
-		
+
 		estruturasFilho.forEach(e -> {
 			montarArvoreDaUnidade(estruturas, e, noPai);
 		});
 	}
+
+	public PedidoDetalhadoDTO buscaPedidoDetalhado(String data, Long idEstrutura, TipoRefeicao tipoRefeicao) {
+		List<PedidoConsultaDTO> pedidoConsulta = dao.buscaPedidoDetalhado(data, idEstrutura, tipoRefeicao.getId());
+		return montarPedidoDetalhado(pedidoConsulta, idEstrutura, tipoRefeicao, data);
+	}
+
+	private PedidoDetalhadoDTO montarPedidoDetalhado(List<PedidoConsultaDTO> list, Long idEstrutura,
+		TipoRefeicao tipoRefeicao, String data) {
+		CardapioPedidoDTO pedidoCardapio = new CardapioPedidoDTO();
+		PedidoDetalhadoDTO pedidoDetalhado = new PedidoDetalhadoDTO();
+		ArrayList<CardapioPedidoDTO> listaCardapio = new ArrayList<CardapioPedidoDTO>();
+		pedidoDetalhado.setDataPedido(data);
+
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).isEspecial()) {
+				pedidoDetalhado.setQtdEspecial(list.get(i).getQtd().intValue());
+			} else {
+				pedidoDetalhado.setQtdPadrao(list.get(i).getQtd().intValue());
+			}
+			PedidoItemCardapioDTO pedidoItem = new PedidoItemCardapioDTO();
+			pedidoItem.setDescricao(list.get(i).getItem());
+			pedidoItem.setMg_masc(list.get(i).getMg_masc());
+			pedidoItem.setMg_fem(list.get(i).getMg_fem());
+			Double peso = list.get(i).getSexo().equals("M") ? list.get(i).getMg_masc() : list.get(i).getMg_masc();
+			pedidoItem.setQuantidade(Double.valueOf(list.get(i).getQtd()), peso);
+			if ((pedidoCardapio.getNome() == null || list.get(i).getCardapio().equals(pedidoCardapio.getNome()))
+					&& (pedidoCardapio.getEstrutura() == null
+							|| list.get(i).getNomeEstrutura().equals(pedidoCardapio.getEstrutura()))) {
+				pedidoCardapio.setNome(list.get(i).getCardapio());
+				pedidoCardapio.setEstrutura(list.get(i).getNomeEstrutura());
+				pedidoCardapio.getItens().add(pedidoItem);
+				pedidoCardapio.setEspecial(list.get(i).isEspecial());
+			} else {
+				listaCardapio.add(new CardapioPedidoDTO(pedidoCardapio));
+				pedidoCardapio.setEspecial(list.get(i).isEspecial());
+				pedidoCardapio.getItens().clear();
+				pedidoCardapio.setNome(list.get(i).getCardapio());
+				pedidoCardapio.setEstrutura(list.get(i).getNomeEstrutura());
+				pedidoCardapio.getItens().add(pedidoItem);
+			}
+			if ((i + 1) == list.size()) {
+				listaCardapio.add(new CardapioPedidoDTO(pedidoCardapio));
+			}
+		}
+
+		pedidoDetalhado.setCardapio(listaCardapio);
+		pedidoDetalhado.setEstrutura(nomeEstrutura(idEstrutura));
+		pedidoDetalhado.setRefeicao(tipoRefeicao.getDescricao());
+		return pedidoDetalhado;
+	}
+
+	public String nomeEstrutura(Long idEstrutura) {
+		return dao.buscarNomeEstrutura(idEstrutura);
+	}
+
 }

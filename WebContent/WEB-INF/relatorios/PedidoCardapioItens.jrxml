@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PedidoCardapio" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.6500000000000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUB_ESTRUTURA_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[21]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUB_SCHEMA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT NOME_COMPLETO FROM SIGEPEN_OWNER_DES.NOME_COMPLETO_ESTRUTURA nce WHERE ID = 21]]>
+	</queryString>
+	<field name="descricao" class="java.lang.String"/>
+	<field name="quantidade" class="java.lang.Double"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="9" splitType="Prevent"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Prevent">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="252" height="20" backcolor="#CCCCCC" uuid="bb76917d-0e13-4b13-991b-8be04df93cd4"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="181" height="20" uuid="3ee52351-aab7-4b4e-991a-015b113b2dd1"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Item]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="0" width="71" height="20" uuid="cd0b98f8-2c20-4b3f-b21e-8e848dfba9aa"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quantidade]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<textField>
+				<reportElement x="0" y="0" width="181" height="20" uuid="b521ff62-1d68-4756-b11e-fbf7cb2c31c1"/>
+				<box leftPadding="1">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.000;(#,##0.000)">
+				<reportElement x="181" y="0" width="71" height="20" uuid="94000943-7605-4f55-bdb7-4cb163896e03"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

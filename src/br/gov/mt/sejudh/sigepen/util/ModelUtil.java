@@ -15,4 +15,13 @@ public class ModelUtil {
 		LocalDate localDate = Instant.ofEpochMilli(dataNascimento.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();	
 		return (Period.between(localDate, LocalDate.now()).getYears()) < 18;
 	}
+	
+	public static Boolean isUnderSeven(Date dataNascimento){
+		if (dataNascimento == null)
+			return false;
+        
+		LocalDate localDate = Instant.ofEpochMilli(dataNascimento.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();	
+		return (Period.between(localDate, LocalDate.now()).getYears()) < 7;
+	}
+	
 }

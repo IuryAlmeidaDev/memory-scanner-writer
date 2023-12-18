@@ -59,7 +59,7 @@ public class Visitante extends BaseModel<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PESSOA_RESPONSAVEL")
     private Visitante responsavel;
-
+   
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UNIDADE_PRISIONAL")
     private UnidadePrisional unidadePrisional;
@@ -141,10 +141,17 @@ public class Visitante extends BaseModel<Long> {
     
     @Transient
     private Credenciamento cadastro;
-
+    
+    @Transient
+    private List<Visitante> visitantesReponsaveis;
+    
+    @Transient
+ 	private Boolean selecionado;
+    
     public Visitante() {
 		this.faseAtual = FaseCredenciamento.RECEBIMENTO.getId();
 		this.situacaoAtual = StatusCredenciamento.PENDENTE.getId();
+		this.visitantesReponsaveis = new ArrayList<Visitante>();
     }
 
     public Visitante(Long id, Pessoa pessoa, TipoVisita tipoVisita, Date dataHoraCadastro, StatusVisitante status,
@@ -210,8 +217,17 @@ public class Visitante extends BaseModel<Long> {
 
         return this.id;
     }
+    
 
-    public void setIdBio(Long id) {
+    public Boolean getSelecionado() {
+		return selecionado;
+	}
+
+	public void setSelecionado(Boolean selecionado) {
+		this.selecionado = selecionado;
+	}
+
+	public void setIdBio(Long id) {
         this.setId(id);
     }
 
@@ -330,7 +346,15 @@ public class Visitante extends BaseModel<Long> {
         this.faseCredenciamento = faseCredenciamento;
     }
 
-    public List<VisitanteCertidao> getCertidoes() {
+    public List<Visitante> getVisitantesReponsaveis() {
+		return visitantesReponsaveis;
+	}
+
+	public void setVisitantesReponsaveis(List<Visitante> visitantesReponsaveis) {
+		this.visitantesReponsaveis = visitantesReponsaveis;
+	}
+
+	public List<VisitanteCertidao> getCertidoes() {
         if (this.certidoes == null) {
             this.certidoes = new ArrayList<>();
         }

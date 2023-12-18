@@ -1,0 +1,109 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>#{apostilamentoBean.tituloPagina} Apostilamento</h3>
+		<h:form>
+			<p:panel>
+
+				<sgp:formSelectOneMenu id="contrato" labelValue="Nº de Contrato"
+					value="#{apostilamentoBean.apostilamento.contrato}"
+					itemsValue="#{apostilamentoBean.contratos}" itemValue="#{item}"
+					itemLabel="#{item.numContrato}" temSelecione="true"
+					validationRequired="true" filter="true" filterMatchMode="custom"
+					filterFunction="removeAcento" converter="SimpleEntityConverter"
+					disabled="#{apostilamentoBean.isVisualizacao}"
+					styleFormLabelColumn="min-width:120px !important" />
+
+				<sgp:formCalendar labelValue="Data de Início" display="text"
+					requiredMessage="*"
+					value="#{apostilamentoBean.apostilamento.dataInicio}"
+					validationRequired="true"
+					disabled="#{apostilamentoBean.isVisualizacao}"
+					styleFormLabelColumn="min-width:120px !important" />
+
+				<br />
+				<br />
+
+				<p:panel header="Refeições">
+					<p:commandButton icon="ui-icon-plus" value="Adicionar"
+						immediate="true"
+						actionListener="#{apostilamentoBean.abrirDialogRefeicao}"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarRefeicao') and !apostilamentoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarRefeicao') and !apostilamentoBean.isVisualizacao)}">
+						<p:ajax event="dialogReturn"
+							listener="#{apostilamentoBean.incluirRefeicao}"
+							update="refeicoes" />
+					</p:commandButton>
+
+					<br />
+					<br />
+
+					<p:dataTable id="refeicoes" var="refeicao"
+						emptyMessage="Nenhuma refeição adicionada."
+						value="#{apostilamentoBean.apostilamento.refeicoes}" rows="5"
+						paginator="true" paginatorAlwaysVisible="false"
+						paginatorPosition="bottom" sortBy="#{refeicao.id}">
+
+						<p:column headerText="Nome"
+							sortBy="#{refeicao.tipoRefeicao.descricao}">
+							<h:outputText value="#{refeicao.tipoRefeicao.descricao}" />
+						</p:column>
+
+						<p:column headerText="Valor" sortBy="#{refeicao.valor}"
+							width="200">
+							<h:outputText value="#{refeicao.valor}" />
+						</p:column>
+						<p:column headerText="Valor Dieta Especial" width="200">
+							<h:outputText value="#{refeicao.valorEspecial}" />
+						</p:column>
+
+						<p:column headerText="Ações" style="width:150px;"
+							rendered="#{(!apostilamentoBean.isVisualizacao)}">
+							<center>
+								<p:commandButton title="Alterar" icon="ui-icon-pencil"
+									immediate="true"
+									action="#{apostilamentoBean.abrirDialogAlterarRefeicao(refeicao)}"
+									rendered="#{(securityUtil.possuiPermissao('AlterarRefeicao'))}">
+									<p:ajax event="dialogReturn"
+										listener="#{apostilamentoBean.incluirRefeicao}"
+										update="refeicoes" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+
+					<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:panel>
+
+				<br />
+
+				<p:commandButton value="Salvar"
+					action="#{apostilamentoBean.salvar()}" update="@form"
+					icon="ui-icon-disk"
+					rendered="#{(securityUtil.possuiPermissao('CadastrarApostilamento') and !apostilamentoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarApostilamento') and !apostilamentoBean.isVisualizacao)}" />
+
+				<p:button outcome="pretty:ListarApostilamento" value="Voltar"
+					icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1" />
+				</p:button>
+			</p:panel>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

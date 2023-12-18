@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2023-08-08T18:04:56 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FichaVisitante" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.6934217901613435"/>
 	<property name="ireport.x" value="0"/>
@@ -43,6 +45,7 @@
 	<field name="visitante.dataValidade" class="java.util.Date"/>
 	<field name="visitante.grauParentesco" class="java.lang.String"/>
 	<field name="dataValidade" class="java.util.Date"/>
+	<field name="visitante.visitanteResponsavelRelatorio" class="java.util.Collection"/>
 	<pageHeader>
 		<band splitType="Stretch"/>
 	</pageHeader>
@@ -225,6 +228,13 @@
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{visitante.dataValidade}]]></textFieldExpression>
 			</textField>
+		</band>
+		<band height="50">
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="0" width="555" height="37" uuid="adc7fcef-e755-4dda-8495-c24e3282f8a8"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{visitante.visitanteResponsavelRelatorio})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["FichaVisitanteResponsavel.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 		<band height="50">
 			<subreport isUsingCache="false">

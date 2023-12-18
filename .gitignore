@@ -28,10 +28,11 @@ build/*
 *~.nib
 local.properties
 .settings/
-.loadpath
+.loadpath 
 
 # Eclipse Core
 #.project
+.classpath
 
 # External tool builders
 .externalToolBuilders/
@@ -43,7 +44,7 @@ local.properties
 .cproject
 
 # JDT-specific (Eclipse Java Development Tools)
-#.classpath
+.classpath
 
 # PDT-specific
 .buildpath

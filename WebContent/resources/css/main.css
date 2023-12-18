@@ -319,3 +319,7 @@ input, textarea {
 	border-bottom-width: thin;
 	margin-bottom: 10px;
 }
+
+.left-aligned {
+    text-align: left !important;
+}

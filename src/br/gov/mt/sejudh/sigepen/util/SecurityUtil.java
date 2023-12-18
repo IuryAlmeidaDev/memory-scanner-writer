@@ -124,7 +124,15 @@ public class SecurityUtil implements Serializable {
 				break;
 			case "mapaalimentacao":
 				resultado = this.possuiPermissao("ListarFornecedor")
-				|| this.possuiPermissao("ListarContrato");
+				|| this.possuiPermissao("ListarContrato")
+				|| this.possuiPermissao("ListarApostilamento")
+				|| this.possuiPermissao("ListarRefeicao")
+				|| this.possuiPermissao("CadastrarContato")
+				|| this.possuiPermissao("AlterarContato")
+				|| this.possuiPermissao("ListarDietaEspecial")
+				|| this.possuiPermissao("ListarGerarPedido")
+				|| this.possuiPermissao("ListarGerarPedidoEstrutura")
+				|| this.possuiPermissao("ListarMapaConsolidado");
 				break;
 		}
 		

@@ -35,6 +35,7 @@ import br.gov.mt.sejudh.sigepen.model.Passagem;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
+import br.gov.mt.sejudh.sigepen.model.VisitanteResponsavel;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
@@ -46,6 +47,12 @@ public class EntradaSaidaDAO {
 	
 	@Inject
 	private EstruturaDAO estruturaDAO;
+	
+	@Inject
+	private VisitanteDAO visitanteDAO;
+	
+	@Inject
+	private VisitanteResponsavelDAO visitanteResponsavelDAO;
 
 	public int buscarQuantidadeFiltrada(FiltroEntradaSaida filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(EntradaSaida.class, em);
@@ -228,6 +235,25 @@ public class EntradaSaidaDAO {
 	    	if(visitante.getPessoa().getBiometria() != null) {
 	    		Hibernate.initialize(visitante.getPessoa().getBiometria().getDedos());
 	    	}
+	    	
+	    	  List<VisitanteResponsavel> listaResponsaveis = 
+	            		visitanteResponsavelDAO.buscarListaVisitantesReponsaveis(visitante);
+	            
+	            List<Visitante> visitantesResponsaveis = new ArrayList<>();
+	            
+	            if(!listaResponsaveis.isEmpty()) {
+	            	for(VisitanteResponsavel vr : listaResponsaveis) {
+	            		Visitante vi = new Visitante();
+	            		vi = visitanteDAO.buscarPorId(vr.getVisitanteResponsavel().getId());
+	            		visitantesResponsaveis.add(vi);
+	            	}
+	            	
+		            if(!visitantesResponsaveis.isEmpty()) {	
+		            	visitante.setVisitantesReponsaveis(visitantesResponsaveis);
+		            }
+	            }
+	            	
+	            
 	    	Hibernate.initialize(visitante.getResponsavel());
 	    	if(visitante.getResponsavel() != null) {
 	    		Hibernate.initialize(visitante.getResponsavel().getPessoa());
@@ -396,6 +422,25 @@ public class EntradaSaidaDAO {
 	        	if(e.getVisitante().getPessoa().getBiometria() != null) {
 	        		Hibernate.initialize(e.getVisitante().getPessoa().getBiometria().getDedos());
 	        	}
+	        	
+	        	
+	            List<VisitanteResponsavel> listaResponsaveis = 
+	            		visitanteResponsavelDAO.buscarListaVisitantesReponsaveis(v);
+	            
+	            List<Visitante> visitantesResponsaveis = new ArrayList<>();
+	            
+	            if(!listaResponsaveis.isEmpty()) {
+	            	for(VisitanteResponsavel vr : listaResponsaveis) {
+	            		Visitante vi = new Visitante();
+	            		vi = visitanteDAO.buscarPorId(vr.getVisitanteResponsavel().getId());
+	            		visitantesResponsaveis.add(vi);
+	            	}
+	            	
+		            if(!visitantesResponsaveis.isEmpty()) {	
+		            	v.setVisitantesReponsaveis(visitantesResponsaveis);
+		            }
+	            }
+	            	
 	        	Hibernate.initialize(e.getVisitante().getResponsavel());
 	        	if(e.getVisitante().getResponsavel() != null) {
 	        		Hibernate.initialize(e.getVisitante().getResponsavel().getPessoa());
@@ -410,6 +455,7 @@ public class EntradaSaidaDAO {
 	            	}
 	        		
 	        	}
+	             
 	        	Hibernate.initialize(e.getVisitante().getCredenciamentos());
 	        	for(Credenciamento vr : e.getVisitante().getCredenciamentos()) {
 		    		Hibernate.initialize(vr.getFasesDoCredenciamento());

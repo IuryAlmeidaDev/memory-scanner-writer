@@ -48,10 +48,13 @@
                             <sgp:formCalendar
                                     display="text" labelValue="Nascimento"
                                     value="#{visitanteBean.visitante.pessoa.dataNascimento}"
-                                    validationRequired="true" disabled="#{visitanteBean.disableDadosVisitante}"
+                                    validationRequired="true" disabled="#{visitanteBean.disableDadosVisitante}" 
                                     styleFormLabelColumn="width: 160px" style="width: 400px;">
                                 <p:ajax event="dateSelect" listener="#{visitanteBean.selecionarEmancipado()}" update="tabView:emancipado, tabView:panelResponsavel"/>
                                 <p:ajax event="change" listener="#{visitanteBean.selecionarEmancipado()}" update="tabView:emancipado, tabView:panelResponsavel"/>
+                                <p:ajax event="dateSelect" listener="#{visitanteBean.setIsMenorQueSete(visitanteBean.visitante.pessoa.dataNascimento)}"/>
+                                <p:ajax event="change" listener="#{visitanteBean.setIsMenorQueSete(visitanteBean.visitante.pessoa.dataNascimento)}"/>
+                                
                             </sgp:formCalendar>
 
                             <h:panelGroup id="emancipado">
@@ -373,79 +376,102 @@
                         </div>
                         <h:panelGroup styleClass="ui-g-12">
                             <p:commandButton value="Adicionar" actionListener="#{visitanteBean.novoResponsavel()}"
-                                             process="@this" style="width: 150px;"
-                                             disabled="#{not(visitanteBean.visitante.emancipado == 'N' and visitanteBean.exibirEmancipado())}">
+                                             process="@this" style="width: 150px;"                                             
+                                             rendered="#{!visitanteBean.alterarDadosTela}"
+                                             disabled="#{not(visitanteBean.visitante.emancipado == 'N' and visitanteBean.exibirEmancipado())}"
+                                             >
+                                  <p:ajax event="dialogReturn" listener="#{visitanteBean.incluirResponsavel}"
+                                        update="panelResponsavel"/>
+                                             </p:commandButton>
+                                             
+                           <p:commandButton value="Adicionar" actionListener="#{visitanteBean.novoResponsavelEditar()}"
+                                             process="@this" style="width: 150px;"                                             
+                                             rendered="#{visitanteBean.alterarDadosTela}"
+                                             disabled="#{not(visitanteBean.visitante.emancipado == 'N' and visitanteBean.exibirEmancipado())}"
+                                             >
                                 <p:ajax event="dialogReturn" listener="#{visitanteBean.incluirResponsavel}"
                                         update="panelResponsavel"/>
                             </p:commandButton>
-                        </h:panelGroup>
-                        <h:panelGroup styleClass="ui-g-12" rendered="#{visitanteBean.visitante.responsavel ne null and visitanteBean.exibirEmancipado()}">
+                            
+                        </h:panelGroup>                        
+                        <h:panelGroup styleClass="ui-g-12" rendered="#{not empty visitanteBean.visitantesResponsaveis}">
+                         <ui:repeat value="#{visitanteBean.visitantesResponsaveis}" var="responsavel">
        			             <div class="ui-g">
 							    <div class="ui-g-8">
 									<h:outputLabel value="Nome:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.nome}" />						
+									<h:outputLabel value="#{responsavel.pessoa.nome}" />						
 								<div>
 									<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.nomeMae}" />
+									<h:outputLabel value="#{responsavel.pessoa.nomeMae}" />
 								</div>								
 								<div>
 									<h:outputLabel value="Dt. Nascimento:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.dataNascimento}" converterData="true" >
+									<h:outputLabel value="#{responsavel.pessoa.dataNascimento}" converterData="true" >
 									<f:convertDateTime pattern="dd/MM/yyyy"/>
 									</h:outputLabel>									
 								</div>								
 								<div>
 									<h:outputLabel value="Nome do Pai:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.nomePai}"/>
+									<h:outputLabel value="#{responsavel.pessoa.nomePai}"/>
 								</div>							
 								<div>
-									<h:outputLabel value="Emancipado:" style="width: 150px;"  rendered="#{visitanteBean.visitante.responsavel.emancipado == 'N'}" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.emancipado.descricao}" rendered="#{visitanteBean.visitante.responsavel.emancipado == 'N'}"/>
+									<h:outputLabel value="Emancipado:" style="width: 150px;"  rendered="#{responsavel.emancipado == 'N'}" />
+									<h:outputLabel value="#{responsavel.emancipado.descricao}" rendered="#{responsavel.emancipado == 'N'}"/>
 								</div>								
 								<div>
 									<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.nacionalidade.descricao}"/>
+									<h:outputLabel value="#{responsavel.pessoa.nacionalidade.descricao}"/>
 								</div>								
 								<div>
 									<h:outputLabel value="Pais de Origem:" style="width: 150px;"  />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.pais.nome}" />
+									<h:outputLabel value="#{responsavel.pessoa.pais.nome}" />
 								</div>
 								<div>
 									<h:outputLabel value="Estado:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.naturalidade.estado.nome}"/>
+									<h:outputLabel value="#{responsavel.pessoa.naturalidade.estado.nome}"/>
 								</div>								
 								<div>
 									<h:outputLabel value="Cidade:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.naturalidade.nome}"/>
+									<h:outputLabel value="#{responsavel.pessoa.naturalidade.nome}"/>
 								</div>								
 								<div>
 									<h:outputLabel value="Sexo:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.sexo.descricao}"/>
+									<h:outputLabel value="#{responsavel.pessoa.sexo.descricao}"/>
 								</div>								
 								<div>
 									<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.identidadeDeGenero.descricao}" rendered="#{visitanteBean.visitante.identidadeDeGenero ne null}"/>
+									<h:outputLabel value="#{responsavel.identidadeDeGenero.descricao}" rendered="#{identidadeDeGenero ne null}"/>
 								</div>								
 								<div>
 									<h:outputLabel value="Nome Social:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.nomeSocial}"/>
+									<h:outputLabel value="#{responsavel.pessoa.nomeSocial}"/>
 								</div>
 								<div>
 									<h:outputLabel value="PNE:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pne.descricao}"/>
+									<h:outputLabel value="#{responsavel.pne.descricao}"/>
 								</div>
 								<div>
 									<h:outputLabel value="Permanente:" style="width: 150px;" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pnePermanente.descricao}"/>
+									<h:outputLabel value="#{responsavel.pnePermanente.descricao}"/>
+								</div>
+								<div>
+								 <h:panelGroup styleClass="ui-g-12" style="margin-left: -5px;">
+							<p:commandButton  icon="ui-icon-trash" value="Remover" rendered="#{!visitanteBean.alterarDadosTela}" title="Remover Visitante Responsável" action="#{visitanteBean.removerResponsavel(responsavel)}" immediate="true" update="#{p:component('panelResponsavel')}">
+								<p:confirm header="Confirmação" message="Deseja remover o Visitante Responsável?" icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:commandButton  icon="ui-icon-trash" value="Desativar" rendered="#{visitanteBean.alterarDadosTela}" title="Desativar Visitante Responsável" action="#{visitanteBean.desativarVinculoVisitanteResponsavel(visitanteBean.visitante, responsavel)}" immediate="true" update="#{p:component('panelResponsavel')},#{p:component('panelTipoVisita')}">
+								<p:confirm header="Confirmação" message="Deseja desativar o vínculo de Visitante Responsável?" icon="ui-icon-alert" />
+							</p:commandButton>
+                        </h:panelGroup>
 								</div>
 								<div>
 									<h:outputLabel value="Profissão:" style="width: 150px;" rendered="#{visitanteBean.visitante.pessoa.recuperando.profissao ne null}" />
-									<h:outputLabel value="#{visitanteBean.visitante.responsavel.pessoa.recuperando.profissao}"/>
+									<h:outputLabel value="#{responsavel.pessoa.recuperando.profissao}"/>
 								</div>
 								</div>
 									<div class="ui-g-4">
 										<p:dataGrid layout="tabular" style="width: 188px; margin-right: 100px ;  margin-bottom: 100px;" columns="1"
-											rows="1" value="#{visitanteBean.visitante.responsavel.fotoFrenteAtual}"
+											rows="1" value="#{responsavel.fotoFrenteAtual}"
 											emptyMessage="Sem foto de frente." var="f">
 											<p:graphicImage
 												value="#{imageHandlerBean.getImagem(f.imagem)}"
@@ -454,7 +480,8 @@
 											</p:graphicImage>
 										</p:dataGrid>
 									</div>
-                            </div>
+                             </div>
+                            </ui:repeat>
                         </h:panelGroup>
                     </div>
                 </p:panel>
@@ -681,6 +708,7 @@
                 <div class="ui-g-2">
                     <p:commandButton id="btnNext" value="Próximo" icon="fa fa-arrow-right"
                                      style="float: right; width: 100%;" onclick="PF('wizard').next();"/>
+                    
                 </div>
             </h:panelGroup>
         </div>

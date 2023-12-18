@@ -30,7 +30,7 @@ import br.gov.mt.sejudh.sigepen.util.criterion.Restricao;
 public class FiltroRecuperandoView extends FiltroConsulta {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Long id;
 	private Long pessoaId;
 	private String nome;
@@ -41,21 +41,23 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 	private Regime regime;
 	private Condicao condicaoAtual;
 	private Modalidade modalidade;
-	private String  alcunha;
+	private String alcunha;
 	private List<Long> pessoasIds;
 	private String outrosNomes;
 	private String outraMae;
 	private String siglaUnidade;
-	
+
 	private Boolean isCadastroCompleto;
 
 	private Boolean listarTodasUnidades = false;
-	
+
 	private Boolean isBuscarFotoFrente = false;
 	private Boolean isTrazerEstruturaNome = false;
-	
+
 	private Boolean isPesquisaFonetica = false;
-	
+
+	private Boolean isDietaEspecial = false;
+
 	private List<Long> recuperandoIds;
 
 	@Override
@@ -63,130 +65,132 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 		if (this.getId() != null) {
 			getCriteria().add(Restrictions.eq("id", this.getId()));
 		}
-		
+
 		if (this.getIsPesquisaFonetica()) {
-			if (this.getNome()!= null && !this.getNome().equalsIgnoreCase("")) {
+			if (this.getNome() != null && !this.getNome().equalsIgnoreCase("")) {
 				getCriteria().add(Restricao.fonetiza("nome", this.getNome(), MatchModeFonetica.ANYWHERE));
 			}
-			
-			if (this.getNomeMae()!= null && !this.getNomeMae().equalsIgnoreCase("")) {
+
+			if (this.getNomeMae() != null && !this.getNomeMae().equalsIgnoreCase("")) {
 				getCriteria().add(Restricao.fonetiza("nomeMae", this.getNome(), MatchModeFonetica.ANYWHERE));
 			}
 		} else {
-			if (this.getNome()!= null && !this.getNome().equalsIgnoreCase("")) {
+			if (this.getNome() != null && !this.getNome().equalsIgnoreCase("")) {
 				getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nome", this.getNome(), MatchMode.ANYWHERE));
 			}
-			
-			if (this.getNomeMae()!= null && !this.getNomeMae().equalsIgnoreCase("")) {
-				getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nomeMae", this.getNomeMae(), MatchMode.ANYWHERE));
+
+			if (this.getNomeMae() != null && !this.getNomeMae().equalsIgnoreCase("")) {
+				getCriteria()
+						.add(RestrictionsSigepen.ignoraAcentoLike("nomeMae", this.getNomeMae(), MatchMode.ANYWHERE));
 			}
 		}
 
 		if (this.getStatus() != null) {
 			getCriteria().add(Restrictions.eq("status", this.getStatus().getId().toString()));
 		}
-		
+
 		if (this.getCondicaoAtual() != null) {
 			getCriteria().add(Restrictions.eq("condicaoAtual", this.getCondicaoAtual().toString()));
 		}
-		
+
 		if (this.getPericulosidade() != null) {
 			getCriteria().add(Restrictions.eq("periculosidade", this.getPericulosidade().toString()));
 		}
-		
+
 		if (this.getRegime() != null) {
 			getCriteria().add(Restrictions.eq("regimeId", this.getRegime().getId()));
 		}
 
-		if(this.getPessoasIds() != null && this.getPessoasIds().size() > 0) {
+		if (this.getPessoasIds() != null && this.getPessoasIds().size() > 0) {
 			getCriteria().add(Restrictions.in("pessoaId", this.getPessoasIds()));
 		}
-		
+
 		if (this.getUnidade() != null && !this.getListarTodasUnidades()) {
-			getCriteria().add(Restrictions.eq("unidadeId", this.getUnidade().getId()));				
+			getCriteria().add(Restrictions.eq("unidadeId", this.getUnidade().getId()));
 		}
-		
-		if(this.getAlcunha() != null && !this.getAlcunha().equalsIgnoreCase("")){
+
+		if (this.getAlcunha() != null && !this.getAlcunha().equalsIgnoreCase("")) {
 			DetachedCriteria critAlcunha = DetachedCriteria.forClass(Alcunha.class, "a")
 					.add(Restrictions.ilike("a.nome", this.getAlcunha(), MatchMode.ANYWHERE))
 					.setProjection(Projections.property("a.recuperando.id"));
-			
+
 			getCriteria().add(Subqueries.propertyIn("id", critAlcunha));
 		}
-		
+
 		boolean filtroTemOutroNome = this.getOutrosNomes() != null && !this.getOutrosNomes().equalsIgnoreCase("");
 		boolean filtroTemOutraMae = this.getOutraMae() != null && !this.getOutraMae().equalsIgnoreCase("");
-		
-		if(filtroTemOutroNome || filtroTemOutraMae){
+
+		if (filtroTemOutroNome || filtroTemOutraMae) {
 			DetachedCriteria critOutrosNomes = DetachedCriteria.forClass(OutroNome.class, "o");
-					
+
 			if (filtroTemOutroNome) {
-				critOutrosNomes.add(RestrictionsSigepen.ignoraAcentoLike("o.nome", this.getOutrosNomes(), MatchMode.ANYWHERE));
+				critOutrosNomes
+						.add(RestrictionsSigepen.ignoraAcentoLike("o.nome", this.getOutrosNomes(), MatchMode.ANYWHERE));
 			}
-			
+
 			if (filtroTemOutraMae) {
-				critOutrosNomes.add(RestrictionsSigepen.ignoraAcentoLike("o.nomeMae", this.getOutraMae(), MatchMode.ANYWHERE));
+				critOutrosNomes
+						.add(RestrictionsSigepen.ignoraAcentoLike("o.nomeMae", this.getOutraMae(), MatchMode.ANYWHERE));
 			}
-					
+
 			critOutrosNomes.setProjection(Projections.property("o.recuperando.id"));
 			getCriteria().add(Subqueries.propertyIn("id", critOutrosNomes));
 		}
-		
+
 		if (this.getIsCadastroCompleto() != null) {
 			DetachedCriteria critCadastro = DetachedCriteria.forClass(SituacaoCadastroRecuperando.class, "s")
 					.add(Restrictions.eq("s.cadastroCompleto", this.getIsCadastroCompleto()))
 					.setProjection(Projections.property("s.id"));
-			
+
 			getCriteria().add(Subqueries.propertyIn("pessoaId", critCadastro));
 		}
 
-		if (this.getListarTodasUnidades()) {
+		if (this.getListarTodasUnidades() && !this.getIsDietaEspecial()) {
 			DetachedCriteria critUnidade = DetachedCriteria.forClass(UnidadePrisional.class, "u")
 					.createAlias("u.parametrosUnidade", "p", JoinType.INNER_JOIN)
-					.add(Restrictions.eq("p.validar", SimNao.S))
-					.setProjection(Projections.property("u.id"));
-			
+					.add(Restrictions.eq("p.validar", SimNao.S)).setProjection(Projections.property("u.id"));
+
 			getCriteria().add(Subqueries.propertyIn("unidadeId", critUnidade));
 		}
 		
-		if(this.getRecuperandoIds() != null && this.getRecuperandoIds().size() > 0) {
+		if (this.getRecuperandoIds() != null && this.getRecuperandoIds().size() > 0) {
 			getCriteria().add(Restrictions.in("id", this.getRecuperandoIds()));
 		}
 
 		if (this.getModalidade() != null) {
 			DetachedCriteria critModalidade = DetachedCriteria.forClass(ProcessoRegimeCondicao.class, "prc")
-				.add(Restrictions.eq("prc.modalidade", this.getModalidade()))
-				.createAlias("prc.processo", "proc", JoinType.INNER_JOIN)
-				.setProjection(Projections.projectionList()
-						.add(Projections.groupProperty("proc.recuperando.id")));
-			
+					.add(Restrictions.eq("prc.modalidade", this.getModalidade()))
+					.createAlias("prc.processo", "proc", JoinType.INNER_JOIN)
+					.setProjection(Projections.projectionList().add(Projections.groupProperty("proc.recuperando.id")));
+
 			critModalidade.add(Restrictions.eq("proc.modalidade", this.getModalidade()));
 
 			if (this.getModalidade() == Modalidade.TEMPORARIA) {
 				critModalidade.add(Restrictions.ne("prc.regime.id", 4L));
 			}
-			
+
 			getCriteria().add(Subqueries.propertyIn("id", critModalidade));
 		}
-		
+
 		if (this.getIsTrazerEstruturaNome()) {
-            getCriteria().createAlias("estrutura", "e", JoinType.INNER_JOIN)
-            	.add(Restrictions.eqProperty("e.id", "estruturaId"));
+			getCriteria().createAlias("estrutura", "e", JoinType.INNER_JOIN)
+					.add(Restrictions.eqProperty("e.id", "estruturaId"));
 		}
 	}
-	
+
 	@Override
 	public void configurarOrdenacao() {
 		super.configurarOrdenacao();
-		
+
 		if (this.getOrdenacao() != null) {
-			getCriteria().addOrder((this.getOrdenacao().isAscending() ? Order.asc("pessoaId") : Order.desc("pessoaId")));
-			
+			getCriteria()
+					.addOrder((this.getOrdenacao().isAscending() ? Order.asc("pessoaId") : Order.desc("pessoaId")));
+
 			if (this.getPropriedadeOrdenacao().equals("id")) {
-				 if (this.getOrdenacao().isAscending())
-					 this.getOrdenacao().nulls(NullPrecedence.FIRST);
-				 else 
-					 this.getOrdenacao().nulls(NullPrecedence.LAST);
+				if (this.getOrdenacao().isAscending())
+					this.getOrdenacao().nulls(NullPrecedence.FIRST);
+				else
+					this.getOrdenacao().nulls(NullPrecedence.LAST);
 			}
 		}
 	}
@@ -355,7 +359,15 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 		return recuperandoIds;
 	}
 
+	public Boolean getIsDietaEspecial() {
+		return isDietaEspecial;
+	}
+
 	public void setRecuperandoIds(List<Long> recuperandoIds) {
 		this.recuperandoIds = recuperandoIds;
+	}
+
+	public void setIsDietaEspecial(Boolean isDietaEspecial) {
+		this.isDietaEspecial = isDietaEspecial;
 	}
 }

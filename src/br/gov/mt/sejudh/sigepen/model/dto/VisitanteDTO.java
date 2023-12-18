@@ -10,6 +10,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante;
 import br.gov.mt.sejudh.sigepen.model.Imagem;
+import br.gov.mt.sejudh.sigepen.model.Visitante;
 
 public class VisitanteDTO {
 	private Long id;
@@ -32,6 +33,8 @@ public class VisitanteDTO {
 	private SimNao pnePermanente;
 	private SimNao emancipado;
 	private VisitanteDTO responsavel;
+	private List<VisitanteDTO> visitantesReponsaveis;
+	private List<Visitante> visitanteResponsavelRelatorio;
 	private StatusVisitante status;
 	private FaseCredenciamento faseAtual;
 	private StatusCredenciamento situacaoAtual;
@@ -51,6 +54,25 @@ public class VisitanteDTO {
 
 	public void setEstado(String estado) {
 		this.estado = estado;
+	}
+	
+	
+
+	public List<VisitanteDTO> getVisitantesReponsaveis() {
+		return visitantesReponsaveis;
+	}
+
+	public void setVisitantesReponsaveis(List<VisitanteDTO> visitantesReponsaveis) {
+		this.visitantesReponsaveis = visitantesReponsaveis;
+	}
+	
+
+	public List<Visitante> getVisitanteResponsavelRelatorio() {
+		return visitanteResponsavelRelatorio;
+	}
+
+	public void setVisitanteResponsavelRelatorio(List<Visitante> visitanteResponsavelRelatorio) {
+		this.visitanteResponsavelRelatorio = visitanteResponsavelRelatorio;
 	}
 
 	public String getCidade() {

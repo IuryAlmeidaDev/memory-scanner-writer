@@ -16,7 +16,7 @@
 			<p:panel>
 				<div class="ui-g">
 					<p:panel header="Informações do Visitante" style="width: 100%;"
-						rendered="#{visitanteBean.visitante.responsavel eq null or (visitanteBean.mostrarPanelVisitante == true) and  (visitanteBean.mostrarPanelResponsavel == false)}">
+						rendered="#{empty visitanteBean.visitantesResponsaveis or (visitanteBean.mostrarPanelVisitante == true) and  (visitanteBean.mostrarPanelResponsavel == false)}">
 						<h:form id="formInformacoesVisitante">
 							<div class="ui-g">
 								<div class="ui-g-8">
@@ -122,7 +122,7 @@
 					<p:panelGrid columns="2" layout="grid"
 						columnClasses="ui-g-border-right, ui-g-border-left"
 						style="width: 100%;"
-						rendered="#{visitanteBean.visitante.responsavel ne null and visitanteBean.mostrarPanelResponsavel == true}">
+						rendered="#{not empty visitanteBean.visitantesResponsaveis and visitanteBean.mostrarPanelResponsavel == true}">
 						<p:panel header="Informações do Visitante"
 							style="border:none; width: 100%;">
 							<h:form>
@@ -226,24 +226,25 @@
 							</h:form>
 						</p:panel>
 
+						<ui:repeat value="#{visitanteBean.visitantesResponsaveis}" var="responsavel">
 						<p:panel header="Visitante Responsável"
 							style="border:none; width: 100%;"
-							rendered="#{visitanteBean.visitante.responsavel ne null and visitanteBean.mostrarPanelResponsavel == true}">
+							rendered="#{not empty visitanteBean.visitantesResponsaveis}">
 							<h:form>
 								<div class="ui-g">
 									<div class="ui-g-8">
 										<h:outputLabel value="Nome:" style="width: 150px;" />
 										<h:outputLabel
-											value="#{visitanteBean.visitante.responsavel.pessoa.nome}" />
+											value="#{responsavel.pessoa.nome}" />
 										<div>
 											<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pessoa.nomeMae}" />
+												value="#{responsavel.pessoa.nomeMae}" />
 										</div>
 										<div>
 											<h:outputLabel value="Dt. Nascimento:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pessoa.dataNascimento}"
+												value="#{responsavel.pessoa.dataNascimento}"
 												converterData="true">
 												<f:convertDateTime pattern="dd/MM/yyyy" />
 											</h:outputLabel>
@@ -251,70 +252,70 @@
 										<div>
 											<h:outputLabel value="Nome do Pai:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pessoa.nomePai}" />
+												value="#{responsavel.pessoa.nomePai}" />
 										</div>
 										<div>
 											<h:outputLabel value="Emancipado:" style="width: 150px;" rendered="#{visitanteBean.visitante.responsavel.emancipado == 'N'}" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.emancipado.descricao}" rendered="#{visitanteBean.visitante.responsavel.emancipado == 'N'}" />
+												value="#{responsavel.emancipado.descricao}" rendered="#{visitanteBean.visitante.responsavel.emancipado == 'N'}" />
 										</div>
 										<div>
 											<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pessoa.nacionalidade.descricao}" />
+												value="#{responsavel.pessoa.nacionalidade.descricao}" />
 										</div>
 										<div>
 											<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pessoa.pais.nome}" />
+												value="#{responsavel.pessoa.pais.nome}" />
 										</div>
 										<div>
 											<h:outputLabel value="Estado:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pessoa.naturalidade.estado.nome}" />
+												value="#{responsavel.pessoa.naturalidade.estado.nome}" />
 										</div>
 										<div>
 											<h:outputLabel value="Cidade:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pessoa.naturalidade.nome}" />
+												value="#{responsavel.pessoa.naturalidade.nome}" />
 										</div>
 										<div>
 											<h:outputLabel value="Sexo:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pessoa.sexo.descricao}" />
+												value="#{responsavel.pessoa.sexo.descricao}" />
 										</div>
 										<div>
 											<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.identidadeDeGenero.descricao}"
-												rendered="#{visitanteBean.visitante.identidadeDeGenero ne null}" />
+												value="#{responsavel.identidadeDeGenero.descricao}"
+												rendered="#{responsavel.identidadeDeGenero ne null}" />
 										</div>
 										<div>
 											<h:outputLabel value="Nome Social:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pessoa.nomeSocial}" />
+												value="#{responsavel.pessoa.nomeSocial}" />
 										</div>
 										<div>
 											<h:outputLabel value="PNE:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pne.descricao}" />
+												value="#{responsavel.pne.descricao}" />
 										</div>
 										<div>
 											<h:outputLabel value="Permanente:" style="width: 150px;" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pnePermanente.descricao}" />
+												value="#{responsavel.pnePermanente.descricao}" />
 										</div>
 										<div>
 											<h:outputLabel value="Profissão:" style="width: 150px;"
-												rendered="#{visitanteBean.visitante.pessoa.recuperando.profissao ne null}" />
+												rendered="#{responsavel.pessoa.recuperando.profissao ne null}" />
 											<h:outputLabel
-												value="#{visitanteBean.visitante.responsavel.pessoa.recuperando.profissao}" />
+												value="#{responsavel.pessoa.recuperando.profissao}" />
 										</div>
 									</div>
 									<div class="ui-g-4">
 										<p:dataGrid layout="tabular"
 											style="width: 188px; margin-left: -30px" columns="1" rows="1"
-											value="#{visitanteBean.visitante.responsavel.fotoFrenteAtual}"
+											value="#{responsavel.fotoFrenteAtual}"
 											emptyMessage="Sem foto de frente." var="f">
 											<p:graphicImage
 												value="#{imageHandlerBean.getImagem(f.imagem)}"
@@ -326,11 +327,12 @@
 								</div>
 							</h:form>
 						</p:panel>
+						</ui:repeat>
 					</p:panelGrid>
 
 
 					<div class="ui-g-12">
-						<p:tabView activeIndex="0" id="tabView">
+						<p:tabView activeIndex="#{visitanteBean.tabIndex}" id="tabView">
 							<p:tab title="Visitante">
 								<p:panel 
 									columnClasses="ui-g-border-right, ui-g-border-left"

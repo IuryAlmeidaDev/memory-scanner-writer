@@ -169,12 +169,12 @@ public class Sigepen {
 	public static String removerAcentuacao(String texto) {
 		if (texto != null) {
 			texto = texto.toUpperCase();
-			texto = texto.replaceAll("[ÂÀÁÄÃ]","A"); 
+			texto = texto.replaceAll("[ÂÀ�?ÄÃ]","A"); 
 			texto = texto.replaceAll("[ÊÈÉË]","E"); 
-			texto = texto.replaceAll("[ÎÍÌÏ]","I"); 
+			texto = texto.replaceAll("[Î�?Ì�?]","I"); 
 			texto = texto.replaceAll("[ÔÕÒÓÖ]","O"); 
 			texto = texto.replaceAll("[ÛÙÚÜ]","U"); 
-			texto = texto.replaceAll("[Ýÿ]","Y"); 
+			texto = texto.replaceAll("[�?ÿ]","Y"); 
 			texto = texto.replaceAll("Ñ","N"); 
 		}
 		

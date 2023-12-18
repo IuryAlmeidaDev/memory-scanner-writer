@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>Gerar Pedido por Unidades</h3>
+
+		<h:form id="meuFormulario" >
+			<p:panel >
+				<p:outputLabel value="Consulta"/>
+				
+				<sgp:formInputText 
+					labelValue="Unidade" 
+					size="50"
+					value="#{gerarPedidoBean.filtro.nome}" />
+					
+				<sgp:formInputText labelValue="Sigla"
+					value="#{gerarPedidoBean.filtro.sigla}" />
+					
+				<sgp:formSelectOneMenu
+					id="tipoUnidade"
+					itemValue="#{item}"
+					itemsValue="#{comboHelperBean.tipoUnidades}"
+					labelValue="Tipo Instituição"
+					itemLabel="#{item.descricao}"
+					value="#{gerarPedidoBean.filtro.tipoUnidade}"
+					converter="SimpleEntityConverter"
+					temSelecione="true"/>
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+			</p:panel>
+		</h:form>
+
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="unidade" value="#{gerarPedidoBean.unidades}" emptyMessage="Nenhum registro encontrado."
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{unidade.id}">
+				<p:column headerText="Código" style="width:100px;" sortBy="#{unidade.id}">
+					<h:outputText value="#{unidade.id}" />
+				</p:column>
+				<p:column headerText="Nome" sortBy="#{unidade.nome}">
+					<h:outputText value="#{unidade.nome}" />
+				</p:column>
+				<p:column headerText="Sigla" sortBy="#{unidade.sigla}" width="80">
+					<h:outputText value="#{unidade.sigla}" />
+				</p:column>
+				<p:column headerText="Tipo" sortBy="#{unidade.tipo}">
+					<h:outputText value="#{unidade.tipo}" />
+				</p:column>
+				<p:column headerText="Quantidade Atual" sortBy="#{unidade.quantidadeAtual}">
+					<h:outputText value="#{unidade.quantidadeAtual}" />
+				</p:column>
+				<p:column headerText="Município" sortBy="#{unidade.municipio}">
+					<h:outputText value="#{unidade.municipio}" />
+				</p:column>
+				<p:column headerText="Situação" sortBy="#{unidade.situacaoUnidade}" width="120">
+					<h:outputText value="#{unidade.situacaoUnidade}" />
+				</p:column>
+				<p:column headerText="Ações" style="width:150px;">
+					<center>
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarGerarPedido">
+							<f:param name="id" value="#{unidade.id}" />
+						</p:button>						
+					</center>
+				</p:column>
+				
+				<f:facet name="footer">
+					Total de registros: #{gerarPedidoBean.unidades.rowCount}
+				</f:facet>
+			</p:dataTable>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

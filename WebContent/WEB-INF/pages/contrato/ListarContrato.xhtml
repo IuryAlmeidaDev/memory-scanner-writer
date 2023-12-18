@@ -6,50 +6,121 @@
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
 
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
-		
+
 		<h3>Contrato</h3>
 
 		<h:form>
-			<p:button value="Cadastrar" outcome="pretty:CadastrarContrato" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarContrato')}"/>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarContrato"
+				icon="ui-icon-plus"
+				rendered="#{securityUtil.possuiPermissao('CadastrarContrato')}" />
 		</h:form>
-		<br/><br/>
-		
+
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta" />
+
+				<sgp:formInputText id="fornecedor" labelValue="Fornecedor"
+					value="#{contratoBean.filtro.fornecedor}" maxlength="50" size="57"
+					display="text" styleFormLabelColumn="min-width:150px !important" />
+
+				<sgp:formInputText id="cnpj" labelValue="CNPJ"
+					value="#{contratoBean.filtro.cnpj}" maxlength="50" size="57"
+					display="text" styleFormLabelColumn="min-width:150px !important" />
+
+				<sgp:formInputText id="contrato" labelValue="Nº de Contrato"
+					value="#{contratoBean.filtro.numContrato}" maxlength="50" size="57"
+					display="text" styleFormLabelColumn="min-width:150px !important" />
+
+				<sgp:formSelectOneMenu id="unidadePrisional"
+					labelValue="Unidade Prisional" itemValue="#{item}"
+					itemLabel="#{item.nome}"
+					itemsValue="#{contratoBean.unidadesPrisionais}"
+					value="#{contratoBean.filtro.unidadePrisional}"
+					converter="SimpleEntityConverter" temSelecione="true" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					styleFormLabelColumn="min-width:150px !important"
+					rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
+
+				<sgp:formSelectOneMenu id="status" labelValue="Status"
+					value="#{contratoBean.filtro.status}"
+					itemsValue="#{comboHelperBean.status}"
+					styleFormLabelColumn="min-width:150px !important"
+					itemValue="#{item}" itemLabel="#{item.descricao}"
+					temSelecione="true" />
+
+				<div class="form-block "></div>
+				<p:commandButton value="Pesquisar" update=":registrosForm"
+					process="@form" icon="ui-icon-search" />
+			</p:panel>
+		</h:form>
+
 		<h:form id="registrosForm">
-			<p:dataTable id="dataTable" var="contrato" value="#{contratoBean.contratos}" emptyMessage="Nenhum registro encontrado."
-				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{contrato.id}">
-				<p:column headerText="Código" style="width:100px;" sortBy="#{contrato.id}">
+			<p:dataTable id="dataTable" var="contrato"
+				value="#{contratoBean.contratos}"
+				emptyMessage="Nenhum registro encontrado." rows="10"
+				paginator="true" paginatorPosition="bottom" lazy="true"
+				sortBy="#{contrato.id}" reflow="true">
+				<p:column headerText="Código" sortBy="#{contrato.id}" >
 					<h:outputText value="#{contrato.id}" />
 				</p:column>
-				<p:column headerText="Numero do contrato" sortBy="#{contrato.numContrato}">
+				<p:column headerText="Nº de Contrato"
+					sortBy="#{contrato.numContrato}">
 					<h:outputText value="#{contrato.numContrato}" />
 				</p:column>
-				<p:column headerText="Virgência do contrato" sortBy="#{contrato.vigenciaContrato}" width="150">
-					<h:outputText value="#{contrato.vigenciaContrato}" />
+				<p:column headerText="Vigência Início"
+					sortBy="#{contrato.vigenciaContratoInicio}">
+					<h:outputText value="#{contrato.vigenciaContratoInicio}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
 				</p:column>
-				<p:column headerText="Fornecedor" sortBy="#{contrato.cnpjFornecedor}">
+				<p:column headerText="Vigência fim"
+					sortBy="#{contrato.vigenciaContratoFim}">
+					<h:outputText value="#{contrato.vigenciaContratoFim}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Fornecedor"
+					sortBy="#{contrato.nomeFornecedor}">
+					<h:outputText value="#{contrato.nomeFornecedor}" />
+				</p:column>
+				<p:column headerText="CNPJ" sortBy="#{contrato.cnpjFornecedor}" >
 					<h:outputText value="#{contrato.cnpjFornecedor}" />
+				</p:column>
+				<p:column headerText="Status" sortBy="#{contrato.status}" >
+					<h:outputText value="#{contrato.status}" />
 				</p:column>
 				<p:column headerText="Ações" style="width:150px;">
 					<center>
-						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarContrato" rendered="#{securityUtil.possuiPermissao('VisualizarContrato')}">
+						<p:button title="Visualizar" icon="ui-icon-document"
+							outcome="pretty:VisualizarContrato"
+							rendered="#{securityUtil.possuiPermissao('VisualizarContrato')}">
 							<f:param name="id" value="#{contrato.id}" />
 						</p:button>
-						<p:button title="Editar" icon="ui-icon-pencil" outcome="pretty:AlterarContrato" rendered="#{securityUtil.possuiPermissao('AlterarContrato')}">
+						<p:button title="Editar" icon="ui-icon-pencil"
+							outcome="pretty:AlterarContrato"
+							rendered="#{securityUtil.possuiPermissao('AlterarContrato')}">
 							<f:param name="id" value="#{contrato.id}" />
 						</p:button>
 					</center>
 				</p:column>
-				
+
 				<f:facet name="footer">
 					Total de registros: #{contratoBean.contratos.rowCount}
 				</f:facet>
 			</p:dataTable>
 
 			<p:confirmDialog global="true">
-				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 			</p:confirmDialog>
 		</h:form>
 

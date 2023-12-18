@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+		
+		<h3> Alimentos </h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarAlimento" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarAlimento')}"/>
+		</h:form>
+		
+		<h:form id="meuFormulario">
+			<p:panel>
+                <p:outputLabel value="Consulta"/>
+                
+                <sgp:formInputText
+                        id="descricaoConsulta"
+                        labelValue="Descrição"
+                        value="#{alimentoBean.filtro.descricao}"
+                        maxlength="12"
+                        display="text"
+                        size="40"
+                        styleFormLabelColumn="min-width:150px !important"
+                />
+                
+                <sgp:formSelectOneMenu 
+					styleFormLabelColumn="min-width:150px !important"
+					id="status" labelValue="Status"
+					value="#{alimentoBean.filtro.status}"
+					itemsValue="#{comboHelperBean.status}" 
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}" 
+					temSelecione="true"
+				/>
+                
+                <br /> <br />
+                <p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"/>
+        	</p:panel>
+        </h:form>
+        
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="alimento" value="#{alimentoBean.alimentos}" emptyMessage="Nenhum registro encontrado."
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{tipoDieta.id}">
+
+				<p:column headerText="Código" style="width:100px;" sortBy="#{alimento.id}">
+					<h:outputText value="#{alimento.id}" />
+				</p:column>
+				
+				<p:column headerText="Descrição" sortBy="#{talimento.descricao}" width="75%">
+					<h:outputText value="#{alimento.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Situação" sortBy="#{alimento.status}" width="15%">
+                    <h:outputText value="#{alimento.status.descricao}" />
+                </p:column>
+
+				<p:column headerText="Ações" style="width:150px;">
+					<center>
+						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarAlimento" rendered="#{securityUtil.possuiPermissao('VisualizarAlimento')}">
+							<f:param name="id" value="#{alimento.id}" />
+						</p:button>
+						
+						<p:button title="Editar" icon="ui-icon-pencil" outcome="pretty:AlterarAlimento" rendered="#{securityUtil.possuiPermissao('AlterarAlimento')}">
+							<f:param name="id" value="#{alimento.id}" />
+						</p:button>
+						
+						<p:commandButton action="#{alimentoBean.excluir(alimento)}" icon="ui-icon-trash" title="Excluir" rendered="#{securityUtil.possuiPermissao('ExcluirAlimento')}" update="@form :registrosForm :mensagens">
+							 <p:confirm header="Confirmação" message="Deseja excluir o alimento?" icon="ui-icon-alert" />
+						</p:commandButton>
+					</center>
+				</p:column>
+				
+				<f:facet name="footer">
+					Total de registros: #{alimentoBean.alimentos.rowCount}
+				</f:facet>
+			</p:dataTable>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

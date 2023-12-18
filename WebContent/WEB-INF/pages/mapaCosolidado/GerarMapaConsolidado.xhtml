@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>Mapa Consolidado</h3>
+		<h:form id="formCardapio">
+			<p:panel>
+				<sgp:formSelectOneMenu id="unidadePrisional"
+					labelValue="Unidade Prisional" itemValue="#{item}"
+					itemLabel="#{item.nome}"
+					itemsValue="#{mapaConsolidadoBean.unidadesPrisionais}"
+					value="#{mapaConsolidadoBean.unidade}"
+					converter="SimpleEntityConverter" temSelecione="true" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					validationRequired="true" />
+
+				<sgp:formSelectOneMenu id="Mes" labelValue="Mês" itemValue="#{item}"
+					itemsValue="#{mapaConsolidadoBean.meses}"
+					itemLabel="#{item.descricao}" value="#{mapaConsolidadoBean.mes}"
+					validationRequired="true" converter="SimpleEntityConverter"
+					temSelecione="true" display="text" />
+
+				<sgp:formInputMask id="ano" labelValue="Ano" mask="9999"
+					value="#{mapaConsolidadoBean.ano}" validationRequired="true"
+					size="9" display="text" />
+
+				<br />
+				<br />
+
+				<br />
+
+				<p:commandButton value="Gerar" update=":formCardapio"
+					action="#{mapaConsolidadoBean.gerarMapa()}" icon="ui-icon-search" />
+
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

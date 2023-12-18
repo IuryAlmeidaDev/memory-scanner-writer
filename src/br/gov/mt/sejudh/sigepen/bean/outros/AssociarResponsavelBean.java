@@ -8,6 +8,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
+import javax.ws.rs.QueryParam;
 
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
@@ -15,22 +16,30 @@ import org.primefaces.model.SortOrder;
 
 import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import com.ocpsoft.pretty.faces.annotation.URLMappings;
+import com.ocpsoft.pretty.faces.annotation.URLQueryParameter;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVisitanteImpedimento;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @ManagedBean
 @ViewScoped
-@URLMapping(id = "AssociarResponsavel", pattern = "/associar/responsavel", viewId = "/WEB-INF/pages/_dialogs/AssociarResponsavel.xhtml")
+@URLMappings(mappings = {
+		@URLMapping(id = "AssociarResponsavel", pattern = "/associar/responsavel", viewId = "/WEB-INF/pages/_dialogs/AssociarResponsavel.xhtml")
+})
 public class AssociarResponsavelBean extends MetodosDialogBean {
 
     private Visitante visitante;
 
     private FiltroVisitanteImpedimento filtro;
+ 
     private LazyDataModel<Visitante> lazyDataModel;
-
+    
+    private boolean exibirMatricula = false;
+   
     @Inject
     private VisitanteService service;
 
@@ -79,9 +88,23 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
         return lazyDataModel;
     }
     
-	public void pesquisar() {
 
-		this.setFiltro(new FiltroVisitanteImpedimento());
+	public boolean isExibirMatricula() {
+		return exibirMatricula;
+	}
+
+	public void setExibirMatricula(boolean exibirMatricula) {
+		this.exibirMatricula = exibirMatricula;
+	}
+
+	public void pesquisar() {		
+		FiltroVisitanteImpedimento filtro = new FiltroVisitanteImpedimento();
+		Object matriculaObj = facesUtil.getObjetoSessao("matricula", false);
+		if(matriculaObj != null) {
+			filtro.setMatricula(Sigepen.converteStringEmLong(facesUtil.getObjetoSessao("matricula", false).toString()));
+		}
+		this.setFiltro(filtro);
+		
 		this.setLazyDataModel(new LazyDataModel<Visitante>() {
 
 			private static final long serialVersionUID = 1L;
