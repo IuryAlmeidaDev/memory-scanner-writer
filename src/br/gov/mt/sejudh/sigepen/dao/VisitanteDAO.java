@@ -21,6 +21,7 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.annotations.QueryHints;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -29,6 +30,9 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.DateType;
+import org.hibernate.type.LongType;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroConsulta;
@@ -435,28 +439,39 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 	}
 	
 	public void inativarVisitantes() {
-		Criteria crit = em.unwrap(Session.class).createCriteria(FaseDoCredenciamento.class);
-		crit.createAlias("credenciamento", "credenciamento", JoinType.INNER_JOIN);
-		crit.createAlias("credenciamento.visitante", "visitante", JoinType.INNER_JOIN);
-				
-		ProjectionList proj = Projections.projectionList();
-				
-        proj.add(Projections.projectionList()
-                .add(Projections.property("id"), "id")
-                .add(Projections.property("credenciamento.id"), "credenciamentoId")
-                .add(Projections.property("visitante.id"), "visitanteId"));
-				
-		crit.setProjection(proj);
-		crit.setResultTransformer(new AliasToBeanResultTransformer(FaseDoCredenciamentoDTO.class));
-		crit.addQueryHint(QueryHints.READ_ONLY);
 		
-		crit.add(Restrictions.eq("faseCredenciamento", FaseCredenciamento.APROVACAO))
-			.add(Restrictions.eq("statusCredenciamento", StatusCredenciamento.APROVADO))
-			.add(Restrictions.lt("credenciamento.dataValidade", java.sql.Date.valueOf(LocalDate.now())));
+		Session session = em.unwrap(Session.class);
+		
+		String sql = "SELECT "
+				+ "    /*+ org.hibernate.readOnly */ this_.ID_FASE_CREDENCIAMENTO as id, "
+				+ "    this_.ID_CREDENCIAMENTO as credenciamentoId, "
+				+ "    credenciam1_.DATA_VALIDADE as dataValidade, "
+				+ "    visitante2_.ID_VISITANTE as visitanteId, "
+				+ "    this_.CODG_FASE_CREDENCIAL as faseCredenciamento, "
+				+ "    this_.CODG_SITUACAO_CREDENCIAL as statusCredenciamento "
+				+ "FROM "
+				+ "    SIGEPEN_OWNER_DES.SGP_CREDENCIAMENTO_FASE this_ "
+				+ "INNER JOIN "
+				+ "    SIGEPEN_OWNER_DES.SGP_CREDENCIAMENTO credenciam1_ "
+				+ "    ON this_.ID_CREDENCIAMENTO = credenciam1_.ID_CREDENCIAMENTO "
+				+ "INNER JOIN "
+				+ "    SIGEPEN_OWNER_DES.SGP_VISITANTE visitante2_ "
+				+ "    ON credenciam1_.ID_VISITANTE = visitante2_.ID_VISITANTE "
+				+ "WHERE "
+				+ "    credenciam1_.DATA_VALIDADE < SYSDATE "
+				+ "    AND credenciam1_.CODG_FASE_CREDENCIAL = 5 "
+				+ "    AND credenciam1_.CODG_SITUACAO_CREDENCIAL = 6 ";
+	
+		SQLQuery query = session.createSQLQuery(sql);
+		query.addScalar("id", LongType.INSTANCE);
+		query.addScalar("credenciamentoId", LongType.INSTANCE);
+		query.addScalar("dataValidade", DateType.INSTANCE);
+		query.addScalar("visitanteId", LongType.INSTANCE);
+		query.setResultTransformer(Transformers.aliasToBean(FaseDoCredenciamentoDTO.class));
 
 		@SuppressWarnings("unchecked")
-		List<FaseDoCredenciamentoDTO> credenciamentoParaInativar = (List<FaseDoCredenciamentoDTO>)crit.list();
-		
+		List<FaseDoCredenciamentoDTO> credenciamentoParaInativar = query.list();
+
 		if (credenciamentoParaInativar.size() > 0) {
 			List<Long> idsFases = credenciamentoParaInativar.stream().map(i -> i.getId()).collect(Collectors.toList());
 			List<Long> idsCredenciamentos = credenciamentoParaInativar.stream().map(i -> i.getCredenciamentoId()).collect(Collectors.toList());
@@ -478,10 +493,11 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 			em.createQuery(updateFase).executeUpdate();
 			em.createQuery(updateCredenciamento).executeUpdate();
 
-			CriteriaUpdate<Visitante> updateVisitante = builder.createCriteriaUpdate(Visitante.class);
-			Root<Visitante> visitante = updateVisitante.from(Visitante.class);
-			
+		
 			idsVisitantes.stream().forEach(vId -> {
+				CriteriaUpdate<Visitante> updateVisitante = builder.createCriteriaUpdate(Visitante.class);
+				Root<Visitante> visitante = updateVisitante.from(Visitante.class);
+				
 				VisitanteDTO visitanteDto = buscarVisitanteDTO(vId);
 				credenciamentoDAO.buscarCredenciamentosEFasesDTO(visitanteDto);
 				//impedimentoDAO.verificarSeVisitanteEstaImpedido(visitanteDto);
