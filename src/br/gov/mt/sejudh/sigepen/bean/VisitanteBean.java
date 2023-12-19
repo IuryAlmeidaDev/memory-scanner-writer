@@ -90,6 +90,7 @@ import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
 import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
 import br.gov.mt.sejudh.sigepen.model.VisitanteFoto;
+import br.gov.mt.sejudh.sigepen.model.VisitanteResponsavel;
 import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
@@ -105,6 +106,7 @@ import br.gov.mt.sejudh.sigepen.service.SolicitacaoVisitaService;
 import br.gov.mt.sejudh.sigepen.service.TipoVisitaService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.service.UsuarioService;
+import br.gov.mt.sejudh.sigepen.service.VisitanteResponsavelService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.service.VwVisitanteService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
@@ -130,6 +132,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	private Boolean usuarioEstaCadastrando = false;
 	
 	private Boolean usuarioPossuiLeitorBiometricoAtivo = false;
+	
+	private Boolean visitanteMenorQueSete = false;
 
     public static final String mappingRecuperando = "CadastrarCredenciamento";
     public static final String mappingPessoa = "AlterarPessoaVisitante";
@@ -144,11 +148,16 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	private FiltroFaseDoCredenciamento filtroFaseDoCredenciamento;
 
     private Visitante visitante;
+    
+    private List<Visitante> visitantesResponsaveis = new ArrayList<>();
 
     private LazyDataModel<VwVisitante> lazyDataModel;
 
     @Inject
     private VisitanteService service;
+    
+    @Inject
+    private VisitanteResponsavelService visitanteResponsavelService;
 
     @Inject
     private VwVisitanteService vwVisitanteService;
@@ -261,6 +270,18 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	
 	private FaseCredenciamento[] fasesCredenciamento;
 	
+	private String tabIndex = "0";
+	
+	public Boolean isMenorQueSete() {
+		return visitanteMenorQueSete;
+	}
+
+	
+	public void setIsMenorQueSete(Date dataNascimento) {
+		this.visitanteMenorQueSete = ModelUtil.isUnderSeven(dataNascimento);
+	}
+
+	
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
 		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
@@ -314,6 +335,25 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
                     this.iniciarDadosAlterar();
                     break;
+                case TAB:
+                    long idConsulta = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
+                    if (!buscarVisitante(idConsulta)) {
+                        facesUtil.exibirMensagemErro("Visitante não encontrado.", true);
+                        return "pretty:ListarVisitante";
+                    }
+                    
+                	if (!bloqueiaAlterarVisitante(this.visitante.getStatus())) {
+                		 facesUtil.exibirMensagemErro("Operação não permitida.", true);
+                         return "pretty:ListarVisitante";
+                	}
+                	
+                	 String tab = facesUtil.getQueryParameter("tab");
+                	 if(!tab.isEmpty()) {
+                		 this.tabIndex = tab;
+                	 }
+                	 
+                    this.iniciarDadosAlterar();
+                    break;
 
                 case LISTAR:
                     this.pesquisar();
@@ -341,6 +381,15 @@ public class VisitanteBean extends MetodosDePaginaBean {
             this.cadastroTipoVisita = false;
             this.cadastroDadosVisitante = true;
             this.alterarDados = true;
+        }
+        
+        if(!this.visitantesResponsaveis.isEmpty()) {
+        	this.mostrarPanelVisitante = false;
+        	this.mostrarPanelResponsavel = true;
+        }
+        else {
+        	this.mostrarPanelResponsavel = false;
+            this.mostrarPanelVisitante = true;
         }
         
         if(this.visitante.getResponsavel() != null) {
@@ -402,6 +451,20 @@ public class VisitanteBean extends MetodosDePaginaBean {
         }
 
         this.visitante = service.buscarPorId(id, true);
+        
+        List<VisitanteResponsavel> listaResponsaveis = visitanteResponsavelService.buscarListaVisitantesReponsaveis(this.visitante);
+
+        
+        if(!listaResponsaveis.isEmpty()) {
+        	for(VisitanteResponsavel vr : listaResponsaveis) {
+        		Visitante v = new Visitante();
+        		v = service.buscarPorId(vr.getVisitanteResponsavel().getId());
+        		this.visitantesResponsaveis.add(v);
+        	}
+        	
+        	this.visitante.setVisitantesReponsaveis(this.visitantesResponsaveis);
+        }
+
 
         return this.visitante != null;
     }
@@ -411,6 +474,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
             if (!redirecionarAlterar && this.cadastrarBiometria()) {
                 return null;
             }
+            
+            this.visitante.setVisitantesReponsaveis(visitantesResponsaveis);
 
             this.visitante = this.service.incluir(this.visitante, this.recuperandoSelecionado, this.salvarFasesAuto, this.tornarVisitante);
             
@@ -971,7 +1036,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
         		this.salvarDados(this.visitante);
         	if( this.visitante.getPessoa().getMenorIdade() == false)
         		this.visitante.setEmancipado(null);
-            if (this.visitante.getEmancipado() == SimNao.N && this.visitante.getResponsavel() == null) {
+            if (this.visitante.getEmancipado() == SimNao.N && this.visitante.getResponsavel() == null && this.visitantesResponsaveis.isEmpty()) {
                 confirmResponsavelSave();
                 return event.getOldStep();
             }
@@ -1144,9 +1209,23 @@ public class VisitanteBean extends MetodosDePaginaBean {
             return;
         }
         if (this.visitante.getId() == null || !this.visitante.getId().equals(visitante.getId())) {
-            this.visitante.setResponsavel(visitante);
+        	this.visitantesResponsaveis.add(visitante);
         }
     }
+    
+    public void desativarVinculoVisitanteResponsavel(Visitante visitante, Visitante vr) {
+        if (visitante == null) {
+            return;
+        }
+        
+        visitanteResponsavelService.atualizarVisitanteResponsavel(visitante, vr);               
+        this.getVisitantesResponsaveis().remove(vr);
+    }
+    
+    public void confirmRemocaoResponsavel() {
+		RequestContext.getCurrentInstance().execute("PF('confirmResponsavelDialog').show();");
+    }
+
 
     public void confirmResponsavelSave() {
         RequestContext.getCurrentInstance().execute("PF('confirmResponsavelDialog').show();");
@@ -1450,6 +1529,15 @@ public class VisitanteBean extends MetodosDePaginaBean {
     public void setIdVisitante(String idVisitante) {
         this.idVisitante = idVisitante;
     }
+    
+    public List<Visitante> getVisitantesResponsaveis() {
+        return visitantesResponsaveis;
+    }
+    
+    public void setVisitantesResponsaveis(List<Visitante> visitantesResponsaveis) {
+        this.visitantesResponsaveis = visitantesResponsaveis;
+    
+    }                                                                                                                                                                                                   
 
     public void pesquisar() {
         this.getFiltro().setProjetarDados(true);
@@ -1748,6 +1836,10 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 	public void setTornarVisitante(Boolean tornarVisitante) {
 		this.tornarVisitante = tornarVisitante;
+	}
+	
+	public String getTabIndex() {
+		return tabIndex;
 	}
 
 	private Visitante buscarRecuperandoVisitante(Pessoa pessoa) {
