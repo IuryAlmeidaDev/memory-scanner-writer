@@ -125,6 +125,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
         @URLMapping(id = VisitanteBean.mappingPessoa, pattern = "/visitante/alterar/pessoa/#{id}", viewId = "/WEB-INF/pages/visitante/CadastrarVisitante.xhtml"),
         @URLMapping(id = "AlterarVisitante", pattern = "/visitante/alterar/#{id}", viewId = "/WEB-INF/pages/visitante/AlterarVisitante.xhtml"),
         @URLMapping(id = "VisualizarVisitante", pattern = "/visitante/visualizar/#{id}", viewId = "/WEB-INF/pages/visitante/AlterarVisitante.xhtml"),
+        @URLMapping(id = "VisualizarHistoricoCredenciamento", pattern = "/visitante/VisualizarHistoricoCredenciamento/#{id}/#{tab}", viewId = "/WEB-INF/pages/visitante/AlterarVisitante.xhtml"),
         @URLMapping(id = "ListarCredenciamentoVisitante", pattern = "/visitante/credenciar/#{id}", viewId = "/WEB-INF/pages/visitante/CredenciamentosVisitante.xhtml")
 })
 public class VisitanteBean extends MetodosDePaginaBean {
