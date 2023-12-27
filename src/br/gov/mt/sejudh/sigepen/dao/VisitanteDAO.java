@@ -1,7 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -55,7 +54,6 @@ import br.gov.mt.sejudh.sigepen.model.Impedimento;
 import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
 import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
-import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
@@ -64,6 +62,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.AutorizacaoSemBiometriaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
+import br.gov.mt.sejudh.sigepen.service.VisitanteResponsavelService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
@@ -84,13 +83,26 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 	
 	@Inject
 	private VisitanteService visitanteService;
+	
+	@Inject 
+	private VisitanteResponsavelService visitanteResponsavelService;
 
 	@Override
     public Visitante salvar(Visitante t) {
         Visitante visitante = super.salvar(t);
+        
+        
+        if(t.getVisitantesReponsaveis() != null && 
+        		!t.getVisitantesReponsaveis().isEmpty()) {
+        	for(Visitante vr : t.getVisitantesReponsaveis()) {
+        		if(visitanteResponsavelService.buscarVisitanteResponsavelPorIdVisitante(visitante, vr)){
+        		visitanteResponsavelService.salvarVisitanteResponsavel(visitante, vr);
+        		}
+        	}
+        }
+
         initialize(visitante.getPessoa().getDocumentos());
         initialize(visitante.getPessoa().getContatos());
-
         return visitante;
     }
 

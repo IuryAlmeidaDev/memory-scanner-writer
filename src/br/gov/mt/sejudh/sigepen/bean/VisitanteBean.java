@@ -588,6 +588,16 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 		facesUtil.exibirPaginaDialog("pretty:FichaVisitante");
 	}
+	
+	public void imprimirCredenciamentos() {
+        try {
+            this.imprimirRelatorioCredenciamento(this.visitante);
+        } catch (Exception e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir lista de Credenciamentos: " + e.getMessage());
+            LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Credenciamentos", e, log);
+        }    
+     }
+    
 
 	public void imprimir() {
 		try {
@@ -662,6 +672,26 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Visitantes", e, log);
 		}
 	}
+	
+	private void imprimirRelatorioCredenciamento(Visitante visitante) {
+        try {
+            if (visitante.getCredenciamentos().size() == 0) {
+                facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
+                return;
+            }
+            Map<String, Object> params = new HashMap<>();
+			params.put("SUBREPORT_DIR", RelatorioUtil.getSubReportPath(Relatorio.HistoricoCredenciamentos));         
+            
+            fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(visitante, Relatorio.HistoricoCredenciamentos, params));
+            RequestContext.getCurrentInstance().execute("download()");
+            LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Credenciamentos", log);
+        } catch (Exception e) {
+        	System.out.println(e.getCause());
+        	facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir lista de Credenciamentos: " + e);
+            LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Credenciamentos", e, log);
+        }
+    }
+
 
 	public void reativarVisitante(VwVisitante visitante) {
 		try {
