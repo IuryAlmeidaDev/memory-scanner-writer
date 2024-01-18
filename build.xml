@@ -159,13 +159,13 @@
 		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER" />
 		<property name="dataSource" value="java:/sigepen-hom" />
 		<property name="nomeArquivo" value="sigepen" />
-		<property name="persistenceUnit" value="name=&quot;sigepenh&quot;" />
-		<property name="jpaUtil" value="unitName = &quot;sigepenh&quot;" />
-		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepenh&quot;" />
+		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
+		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
+		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
 		<property name="portanserver" value="= 25452;" />
 		<property name="userDsn" value="UID=sigepen_user;" />
 		<property name="passDsn" value="PWD=hgp3)18;" />
-		<property name="dsn" value="DSN=HOMOLOG;" />
+		<property name="dsn" value="DSN=HOMOLOGACAO;" />
 	</target>
 		
 	<target name="-replace-producao" if="isProducao">
