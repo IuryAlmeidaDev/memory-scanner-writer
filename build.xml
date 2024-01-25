@@ -119,6 +119,7 @@
 	
 	<target name="-replace-desenvolvimento" if="isDesenvolvimento">
 		<property name="dataSource" value="java:/sigepen-dev" />
+		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.164.177&quot;" />
 		<property name="ipLicenca" value="172.16.164.120" />
 		
 		<propertyfile file="${basedir}/WebContent/resources/versao.properties">
