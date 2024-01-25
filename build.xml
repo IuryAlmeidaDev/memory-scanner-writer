@@ -14,42 +14,29 @@
 	</path>
 	
 	<target name="reverter" depends="empacotar">
-		<replace file="src/br/gov/mt/sejudh/sigepen/biometrics/BiometriaSDKCliente.java">
-			<replacefilter value="UID=sigepen_user_des;" token="${userDsn}" />
-			<replacefilter value="PWD=sigependes;" token="${passDsn}" />
-			<replacefilter value="DSN=DESENVOLVIMENTO;" token="${dsn}" />
-		</replace>
-				
+        <replace file="src/br/gov/mt/sejudh/sigepen/biometrics/BiometriaSDKCliente.java">
+            <replacefilter value="/local" token="${ipLicenca}" />
+        </replace>
+		
 		<replace file="src/br/gov/mt/sejudh/sigepen/util/Sigepen.java">
-			<replacefilter value="SIGEPEN_OWNER_DES" token="${schema}" />
-			<replacefilter value="SIGEPEN_AUDIT_OWNER_DES" token="${schemaAudit}" />
-			<replacefilter value="SEJUDH_CONTEXT = &quot;sigepen&quot;" token="${context}" />
-			<replacefilter value="= 25452;" token="${portanserver}" />
+			<replacefilter value="IP_NSERVER = &quot;127.0.0.1&quot;" token="${ipnserver}" />
 		</replace>
 		
 		<replace file="WebContent/WEB-INF/shiro.ini">
-			<replacefilter value="SIGEPEN_OWNER_DES" token="${schema}" />
 			<replacefilter value="java:/sigepen-dev" token="${dataSource}" />
 			
 		</replace>
 		
 		<replace file="src/META-INF/persistence.xml">
-			<replacefilter value="SIGEPEN_AUDIT_OWNER_DES" token="${schemaAudit}" />
 			<replacefilter value="java:/sigepen-dev" token="${dataSource}"/>
-			<replacefilter value="name=&quot;sigepen&quot;" token="${persistenceUnit}" />
 		</replace>		
 		
 		<replace file="src/log4j2.xml">
-			<replacefilter value="SIGEPEN_AUDIT_OWNER_DES" token="${schemaAudit}" />
 			<replacefilter value="java:/sigepen-dev" token="${dataSource}" />
 		</replace>
 		
 		<replace file="src/br/gov/mt/sejudh/sigepen/relatorio/RelatorioUtil.java">
 			<replacefilter value="java:/sigepen-dev" token="${dataSource}" />
-		</replace>
-		
-		<replace file="src/br/gov/mt/sejudh/sigepen/util/JPAUtil.java">
-			<replacefilter value="unitName = &quot;sigepen&quot;" token="${jpaUtil}" />
 		</replace>
 
 		<exec executable="cmd.exe"
@@ -59,7 +46,7 @@
 	</target>
 	
 	<target name="empacotar" depends="compilar">
-	  <war destfile="${desktop.dir}/${nomeArquivo}.war" webxml="WebContent/WEB-INF/web.xml">
+	  <war destfile="${desktop.dir}/sigepen.war" webxml="WebContent/WEB-INF/web.xml">
 	  	<classes dir="${build.dir}/classes" />
 	  	<fileset dir="WebContent">
 	  		<exclude name="WEB-INF/classes" />
@@ -90,21 +77,15 @@
 	</target>
 	
 	<target name="replace" depends="-pergunta, -replace-desenvolvimento, -replace-homologacao, -replace-producao">
-		<replace file="src/br/gov/mt/sejudh/sigepen/biometrics/BiometriaSDKCliente.java">
-			<replacefilter token="UID=sigepen_user_des;" value="${userDsn}" />
-			<replacefilter token="PWD=sigependes;" value="${passDsn}"/>
-			<replacefilter token="DSN=DESENVOLVIMENTO;" value="${dsn}" />
-		</replace>
-		
+        <replace file="src/br/gov/mt/sejudh/sigepen/biometrics/BiometriaSDKCliente.java">
+            <replacefilter token="/local" value="${ipLicenca}" />
+        </replace>
+
         <replace file="src/br/gov/mt/sejudh/sigepen/util/Sigepen.java">
-            <replacefilter token="SIGEPEN_OWNER_DES" value="${schema}" />
-            <replacefilter token="SIGEPEN_AUDIT_OWNER_DES" value="${schemaAudit}" />
-            <replacefilter token="SEJUDH_CONTEXT = &quot;sigepen&quot;" value="${context}" />
-            <replacefilter token="= 25452;" value="${portanserver}" />
+        	<replacefilter token="IP_NSERVER = &quot;127.0.0.1&quot;" value="${ipnserver}" />
         </replace>
 
 		<replace file="WebContent/WEB-INF/shiro.ini">
-			<replacefilter token="SIGEPEN_OWNER_DES" value="${schema}" />
 			<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
 		</replace>
 	
@@ -113,72 +94,46 @@
 		</replace>
 		
 		<replace file="src/META-INF/persistence.xml">
-			<replacefilter token="SIGEPEN_AUDIT_OWNER_DES" value="${schemaAudit}" />
 			<replacefilter token="java:/sigepen-dev" value="${dataSource}"/>
-			<replacefilter token="name=&quot;sigepen&quot;" value="${persistenceUnit}" />
 		</replace>
 
-		<replace file="src/br/gov/mt/sejudh/sigepen/util/JPAUtil.java">
-			<replacefilter token="unitName = &quot;sigepen&quot;" value="${jpaUtil}"/>
-		</replace>	
-
 		<replace file="src/log4j2.xml">
-			<replacefilter token="SIGEPEN_AUDIT_OWNER_DES" value="${schemaAudit}" />
 			<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
 		</replace>
 	</target>
 	
 	<target name="-pergunta">
-		<input message="Selecione o servidor" validargs="Desenvolvimento,Homologacao,PRODUCAO" addproperty="ambiente.selecionado" />
+		<input message="Selecione o servidor" validargs="Desenvolvimento,Homologacao,Producao" addproperty="ambiente.selecionado" />
 			<condition property="isDesenvolvimento">
-				<equals arg1="${ambiente.selecionado}" arg2="Desenvolvimento"/>
+				<equals arg1="${ambiente.selecionado}" arg2="Desenvolvimento"/> 
 			</condition>
-
+		
 			<condition property="isHomologacao">
 				<equals arg1="${ambiente.selecionado}" arg2="Homologacao"/> 
 			</condition> 
 			
 			<condition property="isProducao"> 
-				<equals arg1="${ambiente.selecionado}" arg2="PRODUCAO"/> 
+				<equals arg1="${ambiente.selecionado}" arg2="Producao"/> 
 			</condition>
 	</target>
 	
 	<target name="-replace-desenvolvimento" if="isDesenvolvimento">
-		<property name="schema" value="SIGEPEN_OWNER" />
-		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER" />
 		<property name="dataSource" value="java:/sigepen-dev" />
-		<property name="nomeArquivo" value="sigepen" />
-		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
-		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
-		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
-		<property name="portanserver" value="= 25452;" />
+		
+		<propertyfile file="${basedir}/WebContent/resources/versao.properties">
+			<entry key="build" default="0" type="int" operation="+"/>
+		</propertyfile>
 	</target>
-
+	
 	<target name="-replace-homologacao" if="isHomologacao">
-		<property name="schema" value="SIGEPEN_OWNER" />
-		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER" />
 		<property name="dataSource" value="java:/sigepen-hom" />
-		<property name="nomeArquivo" value="sigepen" />
-		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
-		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
-		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
-		<property name="portanserver" value="= 25452;" />
-		<property name="userDsn" value="UID=sigepen_user;" />
-		<property name="passDsn" value="PWD=hgp3)18;" />
-		<property name="dsn" value="DSN=HOMOLOGACAO;" />
+		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.164.177&quot;" />
+		<property name="ipLicenca" value="172.16.164.120" />
 	</target>
 		
 	<target name="-replace-producao" if="isProducao">
-		<property name="schema" value="SIGEPEN_OWNER" />
-		<property name="schemaAudit" value="SIGEPEN_AUDIT_OWNER" />
-		<property name="dataSource" value="java:/sigepen-dev" />
-		<property name="nomeArquivo" value="sigepen" />
-		<property name="persistenceUnit" value="name=&quot;sigepen&quot;" />
-		<property name="jpaUtil" value="unitName = &quot;sigepen&quot;" />
-		<property name="context" value="SEJUDH_CONTEXT = &quot;sigepen&quot;" />
-		<property name="portanserver" value="= 25452;" />
-		<property name="userDsn" value="UID=sigepen_user;" />
-		<property name="passDsn" value="PWD=;" />
-		<property name="dsn" value="DSN=;" />
+		<property name="dataSource" value="java:/sigepen-prod" />
+		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.162.167&quot;" />
+		<property name="ipLicenca" value="172.16.164.120" />
 	</target>
 </project>

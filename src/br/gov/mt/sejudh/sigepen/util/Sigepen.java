@@ -17,8 +17,8 @@ import org.apache.commons.codec.binary.Base64;
 @ApplicationScoped
 public class Sigepen {
 	public static final long SEJUDH_ID = 1;
-	public static final String SEJUDH_SCHEMA = "SIGEPEN_OWNER_DES";
-	public static final String SEJUDH_AUDIT_SCHEMA = "SIGEPEN_AUDIT_OWNER_DES";
+	public static final String SEJUDH_SCHEMA = "SIGEPEN_OWNER";
+	public static final String SEJUDH_AUDIT_SCHEMA = "SIGEPEN_AUDIT_OWNER";
 	public static final String SEJUDH_CONTEXT = "sigepen";
 
 	public static final String APPLICATION_RECUPERANDO_URL = getApplicationName() + "/recuperando";
@@ -161,6 +161,9 @@ public class Sigepen {
 				.replace("https:", "wss:")
 				.replace("http:", "ws:")
 				.replace("sispen.", "wso.")
+				.replace("dev2.", "wso.")
+				.replace("homolog2.", "wso.")
+				.replace("portal2.", "wso.")
 				.concat(":8443/sigepen/biometria");
 		
 		return url;
