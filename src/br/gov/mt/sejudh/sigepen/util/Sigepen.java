@@ -30,7 +30,7 @@ public class Sigepen {
 	
 	public static final String ARQUIVOS_PATH = System.getProperty("jboss.home.dir") + File.separator + "sigepen-arquivos";
 	
-	public static final String IP_NSERVER = "127.0.0.1";
+	public static final String IP_NSERVER = "172.16.162.168";
 	
 	//Porta Homolog 25452
 	//Porta Desenv 25453
