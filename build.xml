@@ -19,7 +19,7 @@
         </replace>
 		
 		<replace file="src/br/gov/mt/sejudh/sigepen/util/Sigepen.java">
-			<replacefilter value="IP_NSERVER = &quot;127.0.0.1&quot;" token="${ipnserver}" />
+			<replacefilter value="IP_NSERVER = &quot;172.16.162.168&quot;" token="${ipnserver}" />
 		</replace>
 		
 		<replace file="WebContent/WEB-INF/shiro.ini">
@@ -119,6 +119,7 @@
 	
 	<target name="-replace-desenvolvimento" if="isDesenvolvimento">
 		<property name="dataSource" value="java:/sigepen-dev" />
+		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.162.168&quot;" />
 		<property name="ipLicenca" value="172.16.164.120" />
 		
 		<propertyfile file="${basedir}/WebContent/resources/versao.properties">
