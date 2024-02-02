@@ -31,8 +31,8 @@ public class VisitanteResponsavel extends BaseModel<Long>{
 	private static final long serialVersionUID = 5093805604761821221L;
 
 	@Id
-    @SequenceGenerator(name = "SIGEPEN_S_VISITANTE_RESPONSAVEL", sequenceName = 	"SIGEPEN_S_VISITANTE_RESPONSAVEL", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SIGEPEN_S_VISITANTE_RESPONSAVEL")
+    @SequenceGenerator(name = "SIGEPEN_S_VISITANTE_RESPOM", sequenceName = 	"SIGEPEN_S_VISITANTE_RESPOM", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SIGEPEN_S_VISITANTE_RESPOM")
     @Column(name = "ID_VISITANTE_RESPONSAVEL")
     private Long id;
 	
