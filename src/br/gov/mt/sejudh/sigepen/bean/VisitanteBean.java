@@ -150,6 +150,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 	private List<Visitante> visitantesResponsaveis = new ArrayList<>();
 
+
 	private LazyDataModel<VwVisitante> lazyDataModel;
 
 	@Inject
@@ -756,10 +757,9 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			return;
 		}
 
-		if (this.visitante.getResponsavel() != null
-				&& !verificaVisitanteResponsavelPossuiCredenciamento(this.visitante, this.recuperandoSelecionado)) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ATENÇÃO",
-					"O responsável do visitante não possui credenciamento aprovado para este recuperando.");
+		
+		if (this.visitante.getResponsavel() != null && !verificaVisitanteResponsavelPossuiCredenciamento(this.visitante, this.recuperandoSelecionado)) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ATENÇÃO", "O responsável do visitante não possui credenciamento aprovado para este recuperando.");
 			return;
 		}
 
@@ -805,10 +805,12 @@ public class VisitanteBean extends MetodosDePaginaBean {
 				return;
 			}
 
+
 			if (TipoEntrada.FAMILIA.equals(this.tipoVisita.getTipoEntrada())) {
 				List<Parente> parentes = this.recuperandoSelecionado.getParentes();
 				service.buscarRecuperandosDoVisitante(this.visitante);
 				List<Credenciamento> credenciamentosDoVisitante = this.visitante.getCredenciamentos();
+
 
 				System.out.print("Visitante getStatus " + this.visitante.getStatus());
 
@@ -2255,6 +2257,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		}
 		return false;
 	}
+
+	
 
 	private boolean verificaVisitanteResponsavelPossuiCredenciamento(Visitante visitante, Recuperando recuperando) {
 		return service.verificaVisitanteResponsavelPossuiCredenciamento(visitante, recuperando);

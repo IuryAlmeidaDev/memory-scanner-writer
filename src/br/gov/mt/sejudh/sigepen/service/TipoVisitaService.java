@@ -36,4 +36,8 @@ public class TipoVisitaService extends BaseService<TipoVisita, Long> {
 	public TipoVisita buscarPorId(Long tipoVisitaId) {
 		return tipoVisitaDAO.buscarPorId(tipoVisitaId);
 	}
+	
+	public TipoVisita buscaPorIdCredenciamento(Long idCredenciamento) {
+		return tipoVisitaDAO.buscarPorIdCredenciamento(idCredenciamento);
+	}
 }

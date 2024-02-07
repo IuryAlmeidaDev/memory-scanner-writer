@@ -62,10 +62,12 @@ import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
 import br.gov.mt.sejudh.sigepen.model.ParametroVisitaEstrutura;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.StatusVisita;
+import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.service.EntradaSaidaService;
 import br.gov.mt.sejudh.sigepen.service.PedidoService;
+import br.gov.mt.sejudh.sigepen.service.TipoVisitaService;
 import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
@@ -104,6 +106,9 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	@Inject
 	VisitanteService visitanteService;
 
+	@Inject
+	TipoVisitaService tipoVisitaService;
+	
 	@Inject
 	PedidoService pedidoService;
 
@@ -492,8 +497,12 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 					}
 					boolean lotacaoDisponivel = false;
 					PassagemLotacao x = vr.getRecuperando().getLotacao();
-					for (Estrutura e : this.getEstruturaDisponivel(vr.getTipoVisita().getTipoEntrada())) {
-						if (e.getId() == x.getEstrutura().getId()) {
+
+					TipoVisita tipoVisita = tipoVisitaService.buscaPorIdCredenciamento(vr.getId());
+					
+					for(Estrutura e : this.getEstruturaDisponivel(tipoVisita.getTipoEntrada())) {
+						if(e.getId() == x.getEstrutura().getId()) {
+
 							lotacaoDisponivel = true;
 						}
 					}
@@ -518,8 +527,9 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 
 					boolean lotacaoDisponivel = false;
 
-					List<Estrutura> listEstruturasDisponiveis = this
-							.getEstruturaDisponivelEntradaSaida(vr.getTipoVisita().getTipoEntrada());
+					TipoVisita tipoVisita = tipoVisitaService.buscaPorIdCredenciamento(vr.getId());
+					List<Estrutura> listEstruturasDisponiveis = this.getEstruturaDisponivelEntradaSaida(tipoVisita.getTipoEntrada());
+					
 
 					if (listEstruturasDisponiveis.size() > 0) {
 						for (Estrutura e : listEstruturasDisponiveis) {
