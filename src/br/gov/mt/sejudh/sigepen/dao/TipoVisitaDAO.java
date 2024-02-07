@@ -36,4 +36,12 @@ public class TipoVisitaDAO extends BaseDAO<TipoVisita, Long> {
 		long resultado = (Long) query.getSingleResult();
 		return (resultado > 0);
 	}
+	
+	public TipoVisita buscarPorIdCredenciamento(long idCredenciamento) {
+	    Query query = em.createQuery("SELECT tv FROM Credenciamento c "
+	            + "JOIN c.tipoVisita tv "
+	            + "WHERE c.id = :idCredenciamento", TipoVisita.class);
+	    query.setParameter("idCredenciamento", idCredenciamento);
+	    return (TipoVisita) query.getSingleResult();
+	}
 }
