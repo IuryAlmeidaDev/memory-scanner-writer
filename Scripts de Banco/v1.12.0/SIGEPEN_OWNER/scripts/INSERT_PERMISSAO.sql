@@ -273,7 +273,7 @@ VALUES(277,'ListarTodosRecuperandos', 'Permite acesso de listar TodosRecuperando
 /**--------- visualizar Visitante -------------------*/
 
 
-INSERT INTO SIGEPEN_OWNER_TES.PERMISSAO
+INSERT INTO PERMISSAO
 (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
 VALUES(278, 'VisualizarHistoricoCredenciamento', 'Permite visualizar um Visitante passando uma Navegacao Especifica.', 8);
 
