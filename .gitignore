@@ -28,10 +28,14 @@ build/*
 *~.nib
 local.properties
 .settings/
-.loadpath
+.loadpath 
 
 # Eclipse Core
 #.project
+
+.classpath
+
+
 
 # External tool builders
 .externalToolBuilders/

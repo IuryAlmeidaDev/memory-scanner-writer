@@ -11,7 +11,7 @@
 	</ui:define>
 	
 	<ui:define name="conteudo">
-		<h:form id="documentoForm">
+		<h:form id="documentoForm"> 
 			<p:panel>
 				<sgp:formSelectOneMenu
 					id="tipo"
@@ -37,7 +37,6 @@
 					size="30"
 					display="text"					
 					maxlength="50"
-					disabled="#{associarDocumentoBean.documento.id>0}"
 					rendered="#{!associarDocumentoBean.cpf}"
 					/>			
 
@@ -48,7 +47,6 @@
                     value="#{associarDocumentoBean.documento.numero}"
                     validationRequired="#{associarDocumentoBean.cpf}" 
                     converter="CpfConverter"
-                    disabled="#{associarDocumentoBean.documento.id>0}"
                     display="text" 
                     validatorId="CpfValidator"
                     size="30"

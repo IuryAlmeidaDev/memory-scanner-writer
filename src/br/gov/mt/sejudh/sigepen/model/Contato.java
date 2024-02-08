@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 
@@ -50,6 +49,10 @@ public class Contato implements Serializable {
 	@JoinColumn(name = "UNIDADE_PRISIONAL_ID")
 	private UnidadePrisional unidadePrisional;
 	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "FORNECEDOR_ID")
+	private Fornecedor fornecedor;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_CONTATO", nullable = false, length = 80)
 	private TipoContato tipoContato;	
@@ -60,7 +63,7 @@ public class Contato implements Serializable {
 	@Column(name = "NOME", length = 80, nullable = false)
 	private String nome;
 	
-	@Column(name = "OBSERVACAO", length = 250)
+	@Column(name = "OBSERVACAO", length = 250) 
 	private String observacao;
 	
 	public Contato() {
@@ -128,6 +131,14 @@ public class Contato implements Serializable {
 
 	public void setUnidadePrisional(UnidadePrisional unidadePrisional) {
 		this.unidadePrisional = unidadePrisional;
+	}
+	
+	public Fornecedor getFornecedor() {
+		return this.fornecedor;
+	}
+	
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
 	}
 
 	@Override

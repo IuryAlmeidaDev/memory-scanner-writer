@@ -23,6 +23,7 @@ import br.gov.mt.sejudh.sigepen.bean.FileDownloadHandlerBean;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.model.Certidao;
 import br.gov.mt.sejudh.sigepen.model.Contato;
 import br.gov.mt.sejudh.sigepen.model.CredencialCertidao;
@@ -36,6 +37,7 @@ import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
 import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
+import br.gov.mt.sejudh.sigepen.model.VisitanteResponsavel;
 import br.gov.mt.sejudh.sigepen.model.dto.CertidaoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.ContatoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.DocumentoDTO;
@@ -48,6 +50,7 @@ import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.CredenciamentoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
+import br.gov.mt.sejudh.sigepen.service.VisitanteResponsavelService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
@@ -66,6 +69,9 @@ public class ImprimirFichaVisitanteBean extends MetodosDialogBean {
 
     @Inject
     private VisitanteService service;
+    
+    @Inject
+    private VisitanteResponsavelService responsavelService;
 
 	@Inject
     private CredenciamentoService credenciamentoService;
@@ -252,6 +258,25 @@ public class ImprimirFichaVisitanteBean extends MetodosDialogBean {
         pessoa_visitante.setNomePai(visitante.getPessoa().getNomePai());
         pessoa_visitante.setDataNascimento(visitante.getPessoa().getDataNascimento());
         pessoa_visitante.setImagemAtual(visitante.getImagemAtual());
+        
+        
+        if(visitante.getEmancipado() != null && visitante.getEmancipado().equals(SimNao.N)) {
+        	  List<VisitanteResponsavel> listaResponsaveis = responsavelService.buscarListaVisitantesReponsaveis(this.visitante);
+
+        	  List<Visitante> visitantesResponsaveis = new ArrayList<>();
+                            
+              if(!listaResponsaveis.isEmpty()) {
+              	for(VisitanteResponsavel vr : listaResponsaveis) {
+              		Visitante v = new Visitante();
+              		v = service.buscarPorId(vr.getVisitanteResponsavel().getId());             		
+              		Hibernate.initialize(v.getImagemAtual());
+              		Hibernate.initialize(v.getPessoa());
+              		visitantesResponsaveis.add(v);
+              	}              	        	
+              	pessoa_visitante.setVisitanteResponsavelRelatorio(visitantesResponsaveis);
+              } 
+        }
+        
 
         Credenciamento vr = credenciamentoService.buscarCredenciamentos(this.getCredenciamento());
     	if(vr.getRecuperando() != null && vr.getParente() != null && vr.getParente().getParentesco() != null && vr.getId() == this.getCredenciamento().getId())
@@ -319,8 +344,7 @@ public class ImprimirFichaVisitanteBean extends MetodosDialogBean {
         	end.setCidade(e.getCidade());
         	ends.add(end);
         }
-        return ends;
-		
+        return ends;		
 	}
 	
 	private List<ContatoDTO> getVisitanteContatos(Visitante visitante){

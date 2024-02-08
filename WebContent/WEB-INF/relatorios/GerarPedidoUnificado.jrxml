@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="GerarPedidoUnificado" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="51"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="TEM_PAGINACAO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID_ESTRUTURA" class="java.lang.Long"/>
+	<parameter name="SCHEMA" class="java.lang.String"/>
+	<parameter name="DATA" class="java.lang.String"/>
+	<parameter name="MENSAGEM" class="java.lang.String"/>
+	<parameter name="PEDIDO_DETALHADO" class="java.util.List"/>
+	<parameter name="MENSAGEM_PEDIDO_DETALHADO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select level nivel,
+       e.id estrutura_id,
+        (case when level > 1 then lpad('>', level*level, ' ') end) || e.nome est_nome,
+        (select sum(nvl(qt.QTD_PADRAO, 0))
+          from (SELECT
+	L.ESTRUTURA_ID, COUNT(PAS.RECUPERANDO_ID) QTD_RECUPERANDOS_ESTRUTURA
+	,SUM(CASE WHEN dr.ID IS null THEN 1 ELSE 0 END) AS QTD_padrao
+	,SUM(CASE WHEN dr.ID IS not null THEN 1 ELSE 0 END) AS QTD_especial
+	FROM $P!{SCHEMA}.PASSAGEM PAS
+	JOIN $P!{SCHEMA}.PASSAGEM_LOTACAO L on l.PASSAGEM_ID = pas.ID
+	LEFT JOIN $P!{SCHEMA}.DIETA_RECUPERANDO dr ON dr.RECUPERANDO_ID = PAS.RECUPERANDO_ID AND dr.STATUS = 1 AND (dr.INICIO < TO_DATE('$P!{DATA}', 'DD/MM/YYYY HH24:MI:SS')) AND (dr.FIM IS NULL OR dr.FIM > TO_DATE('$P!{DATA}', 'DD/MM/YYYY HH24:MI:SS'))
+	WHERE
+	TO_DATE('$P!{DATA}', 'DD/MM/YYYY hh:mi') >= l.DATA_ENTRADA AND (TO_DATE('$P!{DATA}', 'DD/MM/YYYY hh:mi') <= l.DATA_SAIDA OR L.DATA_SAIDA IS NULL)
+	GROUP BY L.ESTRUTURA_ID) qt, $P!{SCHEMA}.estrutura e3
+         where qt.estrutura_id(+) = e3.id
+         start with e3.id = e.id
+        connect by prior e3.id = e3.estruturapai_id) QTD_PADRAO,
+       (select sum(nvl(qt.QTD_ESPECIAL, 0))
+          from (SELECT
+	L.ESTRUTURA_ID, COUNT(PAS.RECUPERANDO_ID) QTD_RECUPERANDOS_ESTRUTURA
+	,SUM(CASE WHEN dr.ID IS null THEN 1 ELSE 0 END) AS QTD_padrao
+	,SUM(CASE WHEN dr.ID IS not null THEN 1 ELSE 0 END) AS QTD_especial
+	FROM $P!{SCHEMA}.PASSAGEM PAS
+	JOIN $P!{SCHEMA}.PASSAGEM_LOTACAO L on l.PASSAGEM_ID = pas.ID
+	LEFT JOIN $P!{SCHEMA}.DIETA_RECUPERANDO dr ON dr.RECUPERANDO_ID = PAS.RECUPERANDO_ID AND dr.STATUS = 1 AND (dr.INICIO < TO_DATE('$P!{DATA}', 'DD/MM/YYYY HH24:MI:SS')) AND (dr.FIM IS NULL	OR dr.FIM > TO_DATE('$P!{DATA}', 'DD/MM/YYYY HH24:MI:SS'))
+	WHERE
+	TO_DATE('$P!{DATA}', 'DD/MM/YYYY hh:mi') >= l.DATA_ENTRADA AND (TO_DATE('$P!{DATA}', 'DD/MM/YYYY hh:mi') <= l.DATA_SAIDA OR L.DATA_SAIDA IS NULL)
+	GROUP BY L.ESTRUTURA_ID) qt, $P!{SCHEMA}.estrutura e3
+         where qt.estrutura_id(+) = e3.id
+         start with e3.id = e.id
+        connect by prior e3.id = e3.estruturapai_id) QTD_ESPECIAL
+  from $P!{SCHEMA}.estrutura e
+ start with e.id = $P{ID_ESTRUTURA}
+connect by prior e.id = e.estruturapai_id
+ order siblings by e.id]]>
+	</queryString>
+	<field name="NIVEL" class="java.math.BigDecimal"/>
+	<field name="ESTRUTURA_ID" class="java.math.BigDecimal"/>
+	<field name="EST_NOME" class="java.lang.String"/>
+	<field name="QTD_PADRAO" class="java.math.BigDecimal"/>
+	<field name="QTD_ESPECIAL" class="java.math.BigDecimal"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count"/>
+	<pageHeader>
+		<band height="82" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="82" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
+				<subreportParameter name="UNIDADE_LOGADA">
+					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="70">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="50" width="555" height="20" backcolor="#CCCCCC" uuid="ad6edec5-1b99-4c80-833c-1c91157ba85b"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="36" y="50" width="269" height="20" uuid="82197071-7bf3-4196-82ca-51cf085c615d"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estrutura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="50" width="100" height="20" uuid="0faad242-48e4-423c-a7d5-0de5943fe946"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dieta Padrão]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="50" width="150" height="20" uuid="1db3a109-d686-45bd-adf1-2569b7c1e45b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dieta Especial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="50" width="36" height="20" uuid="575ecb30-474e-47cf-8d4d-0d2604e817a2"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nível]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="0" width="555" height="50" uuid="d17ec5fd-97d6-4581-8c29-8e76dbc8c33a"/>
+				<textElement textAlignment="Left" markup="none">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MENSAGEM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="20" backcolor="#CCCCCC" uuid="6ca1a361-bcb5-4397-b948-d40962e30172">
+					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="36" y="0" width="269" height="20" uuid="7e4190bc-423d-4fd8-96de-fe3d5cbe66b8"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EST_NOME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="305" y="0" width="100" height="20" uuid="8575e6f4-cf0a-4cd5-a441-f3ba12f24c79"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTD_PADRAO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="405" y="0" width="150" height="20" uuid="f45061d6-4ca7-4866-b140-cc4d2786ca51"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTD_ESPECIAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="36" height="20" uuid="cb422e11-c34f-4701-a7fb-82e2343ab234"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NIVEL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="51" splitType="Stretch">
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="51" uuid="6e9c8afc-ad08-49bb-b43d-f520e104be10"/>
+				<subreportParameter name="PAGINA">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EMISSOR">
+					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_PAGINAS">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="50">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="50" uuid="443bb73b-3d20-4147-ac7a-9fa9f0158917"/>
+				<subreportParameter name="MENSAGEM">
+					<subreportParameterExpression><![CDATA[$P{MENSAGEM_PEDIDO_DETALHADO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{PEDIDO_DETALHADO})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["PedidoDetalhadoUnificado.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="sigepen" basedir="." default="clean">
+	<property name="desktop.dir" value="${user.home}/Desktop" />
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="classes" />
+	<property name="jboss.home" value="C:\wildfly-8.2.1.Final"/>
+	
+	<path id="compilar.classpath">
+		<fileset dir="WebContent/WEB-INF/lib">
+			<include name="*.jar"/>
+		</fileset>
+		
+		<fileset dir="${jboss.home}/modules" includes="**/*.jar" />
+	</path>
+	
+	<target name="reverter" depends="empacotar">
+        <replace file="src/br/gov/mt/sejudh/sigepen/biometrics/BiometriaSDKCliente.java">
+            <replacefilter value="/local" token="${ipLicenca}" />
+        </replace>
+		
+		<replace file="src/br/gov/mt/sejudh/sigepen/util/Sigepen.java">
+			<replacefilter value="IP_NSERVER = &quot;172.16.162.168&quot;" token="${ipnserver}" />
+		</replace>
+		
+		<replace file="WebContent/WEB-INF/shiro.ini">
+			<replacefilter value="java:/sigepen-dev" token="${dataSource}" />
+			
+		</replace>
+		
+		<replace file="src/META-INF/persistence.xml">
+			<replacefilter value="java:/sigepen-dev" token="${dataSource}"/>
+		</replace>		
+		
+		<replace file="src/log4j2.xml">
+			<replacefilter value="java:/sigepen-dev" token="${dataSource}" />
+		</replace>
+		
+		<replace file="src/br/gov/mt/sejudh/sigepen/relatorio/RelatorioUtil.java">
+			<replacefilter value="java:/sigepen-dev" token="${dataSource}" />
+		</replace>
+
+		<exec executable="cmd.exe"
+		      dir="${desktop.dir}">
+		      <arg line="/c explorer ." />
+		</exec>
+	</target>
+	
+	<target name="empacotar" depends="compilar">
+	  <war destfile="${desktop.dir}/sigepen.war" webxml="WebContent/WEB-INF/web.xml">
+	  	<classes dir="${build.dir}/classes" />
+	  	<fileset dir="WebContent">
+	  		<exclude name="WEB-INF/classes" />
+	  	</fileset>
+	  </war>
+	 </target>	
+
+	<target name="compilar" depends="limpar, replace">
+		<javac destdir="${build.dir}/${classes.dir}" srcdir="src" includeantruntime="false" debug="true" source="1.8" target="1.8">
+				<classpath refid="compilar.classpath" />
+			</javac>
+			
+			<copy todir="${build.dir}/${classes.dir}">
+				<fileset dir="src">
+					<include name="**/*.xml"/>
+					<include name="**/*.properties"/>
+				</fileset>
+			</copy>
+	</target>
+	
+	<target name="clean" depends="reverter">
+		<delete dir="build" />
+	</target>
+	
+	<target name="limpar">
+		<delete dir="build" />
+		<mkdir dir="build/classes"/>
+	</target>
+	
+	<target name="replace" depends="-pergunta, -replace-desenvolvimento, -replace-homologacao, -replace-producao">
+        <replace file="src/br/gov/mt/sejudh/sigepen/biometrics/BiometriaSDKCliente.java">
+            <replacefilter token="/local" value="${ipLicenca}" />
+        </replace>
+
+        <replace file="src/br/gov/mt/sejudh/sigepen/util/Sigepen.java">
+        	<replacefilter token="IP_NSERVER = &quot;172.16.162.168&quot;" value="${ipnserver}" />
+        </replace>
+
+		<replace file="WebContent/WEB-INF/shiro.ini">
+			<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
+		</replace>
+	
+		<replace file="src/br/gov/mt/sejudh/sigepen/relatorio/RelatorioUtil.java">
+			<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
+		</replace>
+		
+		<replace file="src/META-INF/persistence.xml">
+			<replacefilter token="java:/sigepen-dev" value="${dataSource}"/>
+		</replace>
+
+		<replace file="src/log4j2.xml">
+			<replacefilter token="java:/sigepen-dev" value="${dataSource}" />
+		</replace>
+	</target>
+	
+	<target name="-pergunta">
+		<input message="Selecione o servidor" validargs="Desenvolvimento,Homologacao,Producao" addproperty="ambiente.selecionado" />
+			<condition property="isDesenvolvimento">
+				<equals arg1="${ambiente.selecionado}" arg2="Desenvolvimento"/> 
+			</condition>
+		
+			<condition property="isHomologacao">
+				<equals arg1="${ambiente.selecionado}" arg2="Homologacao"/> 
+			</condition> 
+			
+			<condition property="isProducao"> 
+				<equals arg1="${ambiente.selecionado}" arg2="Producao"/> 
+			</condition>
+	</target>
+	
+	<target name="-replace-desenvolvimento" if="isDesenvolvimento">
+		<property name="dataSource" value="java:/sigepen-dev" />
+		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.162.168&quot;" />
+		<property name="ipLicenca" value="172.16.164.120" />
+		
+		<propertyfile file="${basedir}/WebContent/resources/versao.properties">
+			<entry key="build" default="0" type="int" operation="+"/>
+		</propertyfile>
+	</target>
+	
+	<target name="-replace-homologacao" if="isHomologacao">
+		<property name="dataSource" value="java:/sigepen-hom" />
+		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.164.177&quot;" />
+		<property name="ipLicenca" value="172.16.164.120" />
+	</target>
+		
+	<target name="-replace-producao" if="isProducao">
+		<property name="dataSource" value="java:/sigepen-prod" />
+		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.162.167&quot;" />
+		<property name="ipLicenca" value="172.16.164.120" />
+	</target>
+</project>

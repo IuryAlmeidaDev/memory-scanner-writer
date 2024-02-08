@@ -24,4 +24,14 @@ public class PermissaoUtil {
             facesUtil.setObjetoSessao("filtroRecuperando", filtroRecuperando);
         }
     }
+    
+    public void filtrarUnidadesComBaseNaPermissaoListarTodasRecuperandos(Boolean dietaEspecial) {
+        if(security.possuiPermissao("ListarTodosRecuperandos")) {
+        	FiltroRecuperandoView filtroRecuperando = new FiltroRecuperandoView();
+            filtroRecuperando.setListarTodasUnidades(true);
+            filtroRecuperando.setIsDietaEspecial(dietaEspecial);
+
+            facesUtil.setObjetoSessao("filtroRecuperando", filtroRecuperando);
+        }
+    }
 }

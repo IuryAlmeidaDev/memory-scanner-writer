@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2023-08-08T21:15:53 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FichaVisitanteRecuperando" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.6934217901613435"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="pessoa.nome" class="java.lang.String"/>
+	<field name="tipoVisita.descricao" class="java.lang.String"/>
+	<field name="pessoa.nomeSocial" class="java.lang.String"/>
+	<field name="pessoa.nomeMae" class="java.lang.String"/>
+	<field name="pessoa.dataNascimento" class="java.util.Date"/>
+	<field name="pessoa.nomePai" class="java.lang.String"/>
+	<field name="imagemAtual.arquivo" class="java.lang.Object"/>
+	<variable name="id_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="3" splitType="Prevent"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Prevent"/>
+	</columnHeader>
+	<detail>
+		<band height="226" splitType="Prevent">
+			<staticText>
+				<reportElement mode="Opaque" x="183" y="12" width="365" height="20" backcolor="#CCCCCC" uuid="da84beed-d7a3-4aa8-914e-684247fe3153"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[DADOS PESSOAIS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="8" y="12" width="168" height="20" backcolor="#CCCCCC" uuid="a40f140d-f498-43f7-b70c-318e6c09c936"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[FOTO RESPONSAVEL]]></text>
+			</staticText>
+			<image>
+				<reportElement x="8" y="46" width="168" height="180" uuid="b53187c9-d997-4c71-9f47-f340e1f0f714"/>
+				<imageExpression><![CDATA[new ByteArrayInputStream((byte[])$F{imagemAtual.arquivo})]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="183" y="43" width="100" height="20" uuid="07f6e9fb-d219-4b1c-ab66-e1739547a31d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="63" width="100" height="20" uuid="e16bb2f0-47a9-45d6-96e2-df6d3f2cbd6c"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Visita:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="88" width="100" height="20" uuid="5fe1d46c-fc88-4539-84cb-1960e3ec171d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Social:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="108" width="100" height="20" uuid="dce9fd75-129c-4fdc-aa11-8d16f533fb75"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome da Mãe:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="128" width="100" height="20" uuid="8574280e-b6e1-4baf-bbd7-5800fd9409c3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome do Pai:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="148" width="100" height="20" uuid="16c3c4bb-3bbb-4e86-85d0-e978f0ecb659"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nascimento:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="288" y="43" width="260" height="20" uuid="ec01b36e-0497-4a30-80f2-bb183833c582"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pessoa.nome}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="288" y="63" width="260" height="20" uuid="17c22739-7c4b-45b3-8010-0d2112bbaefc"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoVisita.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="288" y="88" width="260" height="20" uuid="db862bad-c520-441e-80e6-8f3481c56aed"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pessoa.nomeSocial}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="289" y="108" width="260" height="20" uuid="9f3beaed-c0d9-413c-86f0-751f3ff2171d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pessoa.nomeMae}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="288" y="128" width="260" height="20" uuid="75fe5a11-3ccc-4f0f-9164-48faaa377423"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pessoa.nomePai}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="288" y="148" width="260" height="20" uuid="483541b9-498d-4153-b637-bcf80a5152fe"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{pessoa.dataNascimento}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

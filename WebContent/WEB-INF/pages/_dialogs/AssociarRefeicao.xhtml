@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title> Refeição </title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="refeicaoForm">
+			<p:panel>		
+				<sgp:formSelectOneMenu display="text" temSelecione="true" id="tipo"
+                   labelValue="Tipo" itemValue="#{item}" itemLabel="#{item.descricao}"
+                   itemsValue="#{associarRefeicaoBean.tiposRefeicao}"
+                   value="#{associarRefeicaoBean.refeicao.tipoRefeicao}"
+                   validationRequired="true" 
+                   converter="SimpleEntityConverter"/>
+					
+				<sgp:formInputMask
+					value="#{associarRefeicaoBean.refeicao.valor}"
+					labelValue="Valor"
+					validationRequired="true"
+					size="4"
+					mask="99?.99"
+					maxlength="8"/>
+			
+				<sgp:formInputMask
+					value="#{associarRefeicaoBean.refeicao.valorEspecial}"
+					labelValue="Valor Dieta Especial"
+					validationRequired="true"
+					size="4"
+					mask="99?.99"
+					maxlength="8"/>
+					
+				<br/> <br/>
+				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form" action="#{associarRefeicaoBean.incluirRefeicao()}" />
+				<p:commandButton value="Fechar" icon="ui-icon-close" immediate="true" actionListener="#{associarRefeicaoBean.fecharDialog}" />
+				
+				<br/>
+			</p:panel>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>#{tipoDietaBean.tituloPagina} Tipo de Dieta</h3>
+		<h:form>
+			<p:panel
+				footer="Cadastrado por: #{tipoDietaBean.tipoDieta.autorRegistro.usuario} em #{tipoDietaBean.tipoDieta.autorRegistro.data} | Última alteração: #{tipoDietaBean.tipoDieta.autorUltimaAlteracao.usuario} em #{tipoDietaBean.tipoDieta.autorUltimaAlteracao.data}">
+
+				<sgp:formInputText id="nomeTipoDieta" labelValue="Descrição"
+					value="#{tipoDietaBean.tipoDieta.descricao}"
+					validationRequired="true"
+					disabled="#{tipoDietaBean.isVisualizacao}" display="text" size="30"
+					maxlength="80" />
+
+				<sgp:formSelectOneMenu id="especial" labelValue="Dieta Especial?"
+					value="#{tipoDietaBean.tipoDieta.especial}"
+					validationRequired="true"
+					disabled="#{tipoDietaBean.isVisualizacao}" temSelecione="true"
+					display="text">
+					<f:selectItem itemLabel="Sim" itemValue="true" />
+					<f:selectItem itemLabel="Não" itemValue="false" />
+				</sgp:formSelectOneMenu>
+
+				<sgp:formSelectOneMenu id="status" labelValue="Status"
+					value="#{tipoDietaBean.tipoDieta.status}"
+					itemsValue="#{comboHelperBean.status}" itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					disabled="#{tipoDietaBean.isVisualizacao}" display="text" />
+
+				<br />
+				<br />
+
+				<p:commandButton value="Salvar" action="#{tipoDietaBean.salvar()}"
+					update="@form" icon="ui-icon-disk"
+					rendered="#{(securityUtil.possuiPermissao('CadastrarTipoDieta') and !tipoDietaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarTipoDieta') and !tipoDietaBean.isVisualizacao)}" />
+				<p:button outcome="pretty:ListarTipoDieta" value="Voltar"
+					icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1" />
+				</p:button>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

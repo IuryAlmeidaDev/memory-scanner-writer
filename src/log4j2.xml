@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
   <Appenders>
-    <JDBC name="databaseAppender" tableName="SIGEPEN_AUDIT_OWNER_DES.LOG">
+    <JDBC name="databaseAppender" tableName="SIGEPEN_AUDIT_OWNER.LOG">
       <DataSource jndiName="java:/sigepen-dev" />
-      <Column name="ID" literal="SIGEPEN_AUDIT_OWNER_DES.SEQ_LOG.NEXTVAL" />
+      <Column name="ID" literal="SIGEPEN_AUDIT_OWNER.SEQ_LOG.NEXTVAL" />
       <Column name="DATALOG" isEventTimestamp="true" />
       <Column name="NIVEL" pattern="%level" />
       <Column name="LOGGER" pattern="%logger" />

@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title> Horário Refeição </title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="refeicaoForm">
+			<p:panel>		
+				<sgp:formSelectOneMenu display="text" temSelecione="true" id="tipo"
+                   labelValue="Tipo" itemValue="#{item}" itemLabel="#{item.descricao}"
+                   itemsValue="#{associarHorarioRefeicaoBean.tiposRefeicao}"
+                   value="#{associarHorarioRefeicaoBean.horarioRefeicao.tipoRefeicao}"
+                   validationRequired="true" 
+                   converter="SimpleEntityConverter"/>
+                   
+				<sgp:formCalendar
+                    labelValue="Data de Início" 
+                    display="text" 
+                    requiredMessage="*" 
+                    value="#{associarHorarioRefeicaoBean.horarioRefeicao.dataInicio}" 
+                    validationRequired="true" 
+               	/>
+					
+				<sgp:formInputMask labelValue="Horário da Refeição" mask="99:99" maxlength="5"
+					value="#{associarHorarioRefeicaoBean.horarioRefeicao.horario}"
+					display="text" styleFormLabelColumn="width: 100px"
+					converter="HoraConverter"
+					validationRequired="true" 
+				 />
+					
+				<br/> <br/>
+				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form" action="#{associarHorarioRefeicaoBean.incluirHorarioRefeicao()}" />
+				<p:commandButton value="Fechar" icon="ui-icon-close" immediate="true" actionListener="#{associarHorarioRefeicaoBean.fecharDialog}" />
+				
+				<br/>
+			</p:panel>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

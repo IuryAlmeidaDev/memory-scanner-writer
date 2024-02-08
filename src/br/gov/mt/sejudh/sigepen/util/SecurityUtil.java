@@ -84,7 +84,8 @@ public class SecurityUtil implements Serializable {
 								this.possuiPermissao("ListarTipoVisita") || 
 								this.possuiPermissao("ListarTipoImpedimento") ||
 								this.possuiPermissao("ListarCertidao") ||
-								this.possuiPermissao("ListarTipoFaltaDisciplinar");
+								this.possuiPermissao("ListarTipoFaltaDisciplinar") ||
+								this.possuiPermissao("ListarQuadroVagas");
 				break;
 
 			case "controledeacesso":
@@ -120,6 +121,18 @@ public class SecurityUtil implements Serializable {
                 break;
 			case "relatorio":
 				resultado = this.possuiPermissao("Relatorio");
+				break;
+			case "mapaalimentacao":
+				resultado = this.possuiPermissao("ListarFornecedor")
+				|| this.possuiPermissao("ListarContrato")
+				|| this.possuiPermissao("ListarApostilamento")
+				|| this.possuiPermissao("ListarRefeicao")
+				|| this.possuiPermissao("CadastrarContato")
+				|| this.possuiPermissao("AlterarContato")
+				|| this.possuiPermissao("ListarDietaEspecial")
+				|| this.possuiPermissao("ListarGerarPedido")
+				|| this.possuiPermissao("ListarGerarPedidoEstrutura")
+				|| this.possuiPermissao("ListarMapaConsolidado");
 				break;
 		}
 		

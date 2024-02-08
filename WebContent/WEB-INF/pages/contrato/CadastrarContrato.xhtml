@@ -1,0 +1,219 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>#{contratoBean.tituloPagina} Contrato</h3>
+
+		<p:panel id="cabecalho"
+			footer="Cadastrado por: #{contratoBean.contrato.autorRegistro.usuario} em #{contratoBean.contrato.autorRegistro.data} | Última alteração: #{contratoBean.contrato.autorUltimaAlteracao.usuario} em #{contratoBean.contrato.autorUltimaAlteracao.data}"
+			rendered="#{contratoBean.contrato.numContrato != null}">
+			<h:form id="formCabecalho">
+				<p:column>
+					<sgp:formOutputLabel labelValue="Numero do contrato"
+						value="#{contratoBean.contrato.numContrato}" />
+					<sgp:formOutputLabel labelValue="Fornecedor"
+						value="#{contratoBean.contrato.fornecedor.nomeFantasia}" />
+				</p:column>
+			</h:form>
+		</p:panel>
+
+		<br />
+
+		<h:form id="ContratoForm">
+			<p:panel>
+
+				<sgp:formInputText id="numContrato" labelValue="Número do contrato"
+					value="#{contratoBean.contrato.numContrato}"
+					validationRequired="true" maxlength="150" size="43"
+					styleFormLabelColumn="min-width:140px"
+					disabled="#{contratoBean.isVisualizacao}" display="text" />
+
+				<sgp:formSelectOneMenu id="Fornecedor" labelValue="Fornecedor"
+					value="#{contratoBean.contrato.fornecedor}"
+					itemsValue="#{contratoBean.fornecedores}" itemValue="#{item}"
+					itemLabel="#{item.nomeFantasia}" validationRequired="true"
+					temSelecione="true" styleFormLabelColumn="min-width:140px"
+					disabled="#{contratoBean.isVisualizacao}" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					converter="SimpleEntityConverter" />
+
+				<sgp:formCalendar display="text" requiredMessage="*"
+					labelValue="Inicio da Vigência"
+					value="#{contratoBean.contrato.vigenciaContratoInicio}"
+					validationRequired="true" styleFormLabelColumn="min-width:140px"
+					disabled="#{contratoBean.isVisualizacao}" />
+
+				<sgp:formCalendar display="text" requiredMessage="*"
+					labelValue="Fim da Vigência"
+					value="#{contratoBean.contrato.vigenciaContratoFim}"
+					validationRequired="true" styleFormLabelColumn="min-width:140px"
+					disabled="#{contratoBean.isVisualizacao}" />
+
+				<sgp:formSelectOneMenu labelValue="Status"
+					value="#{contratoBean.contrato.status}"
+					itemsValue="#{comboHelperBean.status}" itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					disabled="#{contratoBean.isVisualizacao}"
+					styleFormLabelColumn="min-width:140px" display="text">
+					<p:ajax event="change"
+						update="ContratoForm:justificativa ContratoForm:arquivo" />
+				</sgp:formSelectOneMenu>
+
+				<br />
+				<br />
+
+				<h:panelGroup id="justificativa" style="display: flex">
+					<sgp:formInputTextarea labelValue="Justificativa"
+						value="#{contratoBean.contrato.justificativa.descricao}"
+						validationRequired="true"
+						requiredMessage="Justificativa é obrigatória." display="display"
+						maxlength="2000" rows="10" columns="100"
+						styleFormLabelColumn="min-width:140px"
+						disabled="#{contratoBean.isVisualizacao}"
+						rendered="#{contratoBean.inativo}" />
+				</h:panelGroup>
+
+				<h:panelGroup id="arquivo">
+					<h:form id="formArquivo">
+						<p:fileUpload mode="advanced" skinSimple="true" sizeLimit="700000"
+							invalidSizeMessage="O tamanho máximo permitido é de 7kb."
+							value="#{contratoBean.contrato.justificativa.arquivoJustificativa}"
+							dragDropSupport="false" allowTypes="/(\.|\/)(pdf)$/"
+							fileUploadListener="#{contratoBean.associarArquivoJustificativa}"
+							uploadLabel="Enviar" cancelLabel="Cancelar"
+							label="Adicionar arquivo" auto="false"
+							update="ContratoForm:formArquivo ContratoForm:arquivo"
+							rendered="#{contratoBean.inativo}" />
+					</h:form>
+					<sgp:formOutputLabel labelValue="arquivo"
+						rendered="#{contratoBean.inativo}"
+						value="#{contratoBean.contrato.justificativa.arquivoJustificativa.nome}" />
+					<p:commandButton value="Download" icon="pi pi-arrow-down"
+						immediate="true"
+						actionListener="#{contratoBean.downloadArquivoJustificativa}"
+						rendered="#{contratoBean.inativo and !(contratoBean.contrato.justificativa.arquivoJustificativa eq null)}" />
+				</h:panelGroup>
+
+				<br />
+				<br />
+
+				<p:panel header="Unidades Prisionais do contrato">
+					<p:commandButton icon="ui-icon-plus" value="Adicionar"
+						immediate="true"
+						actionListener="#{contratoBean.abrirDialogUnidade}"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarHorarioRefeicao') and !contratoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarHorarioRefeicao') and !contratoBean.isVisualizacao)}">
+						<p:ajax event="dialogReturn"
+							listener="#{contratoBean.incluirUnidade}" update="unidades" />
+					</p:commandButton>
+
+					<br />
+					<br />
+
+					<p:dataTable id="unidades" var="unidade"
+						emptyMessage="Nenhuma unidade adicionada."
+						value="#{contratoBean.contrato.unidades}" rows="5"
+						paginator="true" paginatorAlwaysVisible="false"
+						paginatorPosition="bottom" sortBy="#{contrato.id}">
+						<p:column headerText="Nome">
+							<h:outputText value="#{unidade.nome}" />
+						</p:column>
+						<p:column width="90">
+							<center>
+								<p:commandButton
+									action="#{contratoBean.excluirUnidade(unidade)}"
+									immediate="true" icon="ui-icon-trash" title="Excluir"
+									update=":ContratoForm:unidades :mensagens"
+									rendered="#{(securityUtil.possuiPermissao('CadastrarContrato') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('Alterarcontrato') and !fornecedorBean.isVisualizacao)}">
+									<p:confirm header="Confirmação"
+										message="Deseja excluir a unidade" icon="ui-icon-alert" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+
+					<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:panel>
+
+				<br />
+				<br />
+
+				<p:panel header="Horário de Refeição">
+					<p:commandButton icon="ui-icon-plus" value="Adicionar"
+						immediate="true"
+						actionListener="#{contratoBean.abrirDialogHorario}"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarHorarioRefeicao') and !contratoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarHorarioRefeicao') and !contratoBean.isVisualizacao)}">
+						<p:ajax event="dialogReturn"
+							listener="#{contratoBean.incluirHorarioRefeicao}"
+							update="horariosRefeicao" />
+					</p:commandButton>
+
+					<br />
+					<br />
+
+					<p:dataTable id="horariosRefeicao" var="horario"
+						emptyMessage="Nenhum horário adicionada."
+						value="#{contratoBean.contrato.horariosRefeicao}" rows="5"
+						paginator="true" paginatorAlwaysVisible="false"
+						paginatorPosition="bottom" sortBy="#{horario.id}">
+						<p:column headerText="Refeição">
+							<h:outputText value="#{horario.tipoRefeicao.descricao}" />
+						</p:column>
+						<p:column headerText="Horário">
+							<h:outputText value="#{horario.horario()}" />
+						</p:column>
+						<p:column width="90">
+							<center>
+								<p:commandButton title="Alterar" icon="ui-icon-pencil"
+									immediate="true"
+									action="#{contratoBean.abrirDialogAlterarHorario(horario)}"
+									rendered="#{(securityUtil.possuiPermissao('CadastrarHorarioRefeicao') and !fornecedorBean.isVisualizacao)}">
+									<p:ajax event="dialogReturn"
+										listener="#{contratoBean.incluirHorarioRefeicao}"
+										update="horariosRefeicao" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+
+					<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:panel>
+
+				<br />
+				<br />
+
+				<p:commandButton value="Salvar" action="#{contratoBean.salvar()}"
+					update="@form" icon="ui-icon-disk"
+					rendered="#{(securityUtil.possuiPermissao('CadastrarContrato') and !contratoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarContrato') and !contratoBean.isVisualizacao)}" />
+
+				<p:button outcome="pretty:ListarContrato" value="Voltar"
+					icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1" />
+				</p:button>
+
+				<br />
+
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

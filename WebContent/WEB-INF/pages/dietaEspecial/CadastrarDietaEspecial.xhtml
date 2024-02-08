@@ -1,0 +1,116 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/WEB-INF/pages/_templates/principal.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>#{dietaEspecialBean.tituloPagina} Dieta Especial</h3>
+
+		<p:panel id="cabecalho"
+			footer="Cadastrado por: #{dietaEspecialBean.dietaEspecial.autorRegistro.usuario} em #{dietaEspecialBean.dietaEspecial.autorRegistro.data} | Última alteração: #{dietaEspecialBean.dietaEspecial.autorUltimaAlteracao.usuario} em #{dietaEspecialBean.dietaEspecial.autorUltimaAlteracao.data}"
+			rendered="#{dietaEspecialBean.dietaEspecial.tipoDieta != null}">
+			<h:form id="formCabecalho">
+				<p:column>
+					<sgp:formOutputLabel labelValue="Numero da dietaEspecial"
+						value="#{dietaEspecialBean.dietaEspecial.id}" />
+				</p:column>
+			</h:form>
+		</p:panel>
+
+		<h:form id="DietaEspecialForm">
+			<p:panel>
+
+				<sgp:formCalendar display="text" requiredMessage="*"
+					labelValue="Início" pattern="dd/MM/yyyy HH:mm"
+					dataMinima="#{comboHelperBean.getDateMinima()}"
+					value="#{dietaEspecialBean.dietaEspecial.inicio}"
+					validationRequired="true"
+					disabled="#{dietaEspecialBean.isVisualizacao}" />
+
+				<sgp:formCalendar display="text" requiredMessage="*"
+					labelValue="Fim" pattern="dd/MM/yyyy HH:mm"
+					dataMinima="#{comboHelperBean.getDateMinima()}"
+					value="#{dietaEspecialBean.dietaEspecial.fim}"
+					disabled="#{dietaEspecialBean.isVisualizacao}" />
+
+				<sgp:formSelectOneMenu id="tipoDieta" labelValue="Tipo Dieta"
+					validationRequired="true"
+					value="#{dietaEspecialBean.dietaEspecial.tipoDieta}"
+					itemsValue="#{dietaEspecialBean.tipoDietas}" itemValue="#{item}"
+					itemLabel="#{item.descricao}" temSelecione="true"
+					disabled="#{dietaEspecialBean.isVisualizacao}" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					converter="SimpleEntityConverter" />
+
+				<br />
+				<br />
+
+				<p:panel header="Recuperando">
+					<p:commandButton icon="ui-icon-plus" value="Selecionar"
+						immediate="true"
+						actionListener="#{dietaEspecialBean.abrirDialogRecuperando}"
+						rendered="#{!dietaEspecialBean.isVisualizacao}">
+						<p:ajax event="dialogReturn"
+							listener="#{dietaEspecialBean.associarRecuperando}"
+							update="recuperandos" />
+					</p:commandButton>
+
+					<br />
+					<br />
+
+					<p:dataTable id="recuperandos" var="recuperando"
+						emptyMessage="Nenhuma recuperando adicionada."
+						value="#{dietaEspecialBean.recuperandos}" rows="5"
+						paginator="true" paginatorAlwaysVisible="false"
+						paginatorPosition="bottom" sortBy="#{recuperandos.id}">
+						<p:column headerText="Nome">
+							<h:outputText value="#{recuperando.pessoa.nome}" />
+						</p:column>
+						<p:column width="90">
+							<center>
+
+								<p:commandButton
+									action="#{dietaEspecialBean.excluirDietaEspecialBean(recuperando)}"
+									immediate="true" icon="ui-icon-trash" title="Excluir"
+									update="recuperandos :mensagens">
+									<p:confirm header="Confirmação"
+										message="Deseja remover o recuperando" icon="ui-icon-alert" />
+								</p:commandButton>
+							</center>
+						</p:column>
+					</p:dataTable>
+
+					<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:panel>
+
+				<br />
+				<p:commandButton value="Salvar"
+					action="#{dietaEspecialBean.salvar()}" update="@form"
+					icon="ui-icon-disk"
+					rendered="#{(securityUtil.possuiPermissao('CadastrarContrato') and !dietaEspecialBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterardietaEspecial') and !dietaEspecialBean.isVisualizacao)}" />
+
+				<p:button outcome="pretty:ListarDietaEspecial" value="Voltar"
+					icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1" />
+				</p:button>
+
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

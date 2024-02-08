@@ -18,7 +18,8 @@
 				<p:menuitem value="Servidor" outcome="pretty:ListarServidor" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarServidor')}"/>
 				<p:menuitem value="Pessoa" outcome="pretty:ListarPessoa" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarPessoa')}" />	
 				<p:menuitem value="Estabelecimento" outcome="pretty:ListarEstabelecimento" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarEstabelecimento')}"/>
-				<p:menuitem value="Unidade Prisional" outcome="pretty:ListarUnidade" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarUnidade')}"/>	
+				<p:menuitem value="Unidade Prisional" outcome="pretty:ListarUnidade" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarUnidade')}"/>
+				<p:menuitem value="Gestão de vagas" outcome="pretty:ListarQuadroVagas" icon="fa fa-bar-chart" rendered="#{securityUtil.possuiPermissao('ListarQuadroVagas')}"/>	
 				<p:menuitem value="Tipo Visita" outcome="pretty:ListarTipoVisita" icon="fa fa-users" rendered="#{securityUtil.possuiPermissao('ListarTipoVisita')}"/>
 				<p:menuitem value="Tipo Impedimento" outcome="pretty:ListarTipoImpedimento" icon="fa fa-ban" rendered="#{securityUtil.possuiPermissao('ListarTipoImpedimento')}"/>
 				<p:menuitem value="Certidão" outcome="pretty:ListarCertidao" icon="fa fa-archive" rendered="#{securityUtil.possuiPermissao('ListarCertidao')}"/>
@@ -59,6 +60,19 @@
 				<p:menuitem value="Receber Transferência" outcome="pretty:ListarReceberTransferencia"  icon="fa fa-sign-in" rendered="#{securityUtil.possuiPermissao('ListarReceberTransferencia')}"/>
 			</p:submenu>
 			
+			<p:submenu label="Gestão de Alimentação" rendered="#{securityUtil.exibeCategoriaMenu('MapaAlimentacao')}">
+				<p:menuitem value="Gerar Pedido" outcome="pretty:ListarGerarPedido" icon="fa fa-coffee" rendered="#{securityUtil.possuiPermissao('ListarGerarPedido')}"/>
+				<p:menuitem value="Gerar Mapa consolidado" outcome="pretty:ListarMapaConsolidado" icon="fa fa-list-alt" rendered="#{securityUtil.possuiPermissao('ListarMapaConsolidado')}"/>
+				<p:menuitem value="Dieta Especial Recuperando" outcome="pretty:ListarDietaEspecial" icon="fa fa-cutlery" rendered="#{securityUtil.possuiPermissao('ListarDietaEspecial')}"/>
+				<p:menuitem value="Alimentos" outcome="pretty:ListarAlimento" icon="fa fa-apple" rendered="#{securityUtil.possuiPermissao('ListarAlimento')}"/>
+				<p:menuitem value="Tipo Dieta" outcome="pretty:ListarTipoDieta" icon="fa fa-spoon" rendered="#{securityUtil.possuiPermissao('ListarTipoDieta')}"/>
+				<p:menuitem value="Cardápio" outcome="pretty:ListarCardapio" icon="fa fa-book" rendered="#{securityUtil.possuiPermissao('ListarCardapio')}"/>
+				<p:menuitem value="Fornecedor" outcome="pretty:ListarFornecedor" icon="fa fa-building-o" rendered="#{securityUtil.possuiPermissao('ListarFornecedor')}"/>
+				<p:menuitem value="Contrato" outcome="pretty:ListarContrato" icon="fa fa-paste" rendered="#{securityUtil.possuiPermissao('ListarContrato')}"/>
+				<p:menuitem value="Apostilamento" outcome="pretty:ListarApostilamento" icon="fa fa-copy" rendered="#{securityUtil.possuiPermissao('ListarApostilamento')}"/>
+				<p:menuitem value="Horário de Refeição" outcome="pretty:ListarHorarioRefeicao" icon="fa fa-clock-o" rendered="#{securityUtil.possuiPermissao('ListarHorarioRefeicao')}"/>
+			</p:submenu>
+			
 			<p:submenu label="Auditoria" rendered="#{securityUtil.exibeCategoriaMenu('Auditoria')}">
 				<p:menuitem value="Logs" outcome="pretty:ListarLog" icon="fa fa-file-text-o" rendered="#{securityUtil.possuiPermissao('ListarLog')}"/>
 			</p:submenu>
@@ -71,7 +85,7 @@
 			
 			<p:submenu label="Usuário">
 				<p:menuitem value="Alterar Senha" outcome="pretty:AlterarSenha" icon="ui-icon-gear"/>
-				<p:menuitem value="Alterar Unidade" outcome="pretty:SelecionarUnidade" icon="ui-icon-gear"/>
+				<p:menuitem value="Alterar Unidade" outcome="pretty:" icon="ui-icon-gear"/>
 				<ui:remove>
 					<p:menuitem value="Instaladores Bio" outcome="pretty:Instaladores" icon="ui-icon-disk"/>
 				</ui:remove>

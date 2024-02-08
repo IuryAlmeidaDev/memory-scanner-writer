@@ -1,0 +1,121 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>Apostilamentos</h3>
+
+		<h:form>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarApostilamento"
+				icon="ui-icon-plus"
+				rendered="#{securityUtil.possuiPermissao('CadastrarApostilamento')}" />
+		</h:form>
+
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta" />
+
+				<sgp:formInputMask value="#{apostilamentoBean.filtro.cnpj}"
+					labelValue="CNPJ do Fornecedor" mask="99.999.999/9999-99"
+					validatorId="CnpjValidator" styleFormLabelColumn="min-width:150px"
+					converter="convertCnpj" maxlength="14" display="text" />
+
+				<sgp:formSelectOneMenu id="contrato" labelValue="Contrato"
+					value="#{apostilamentoBean.filtro.contrato}"
+					itemsValue="#{apostilamentoBean.contratos}" itemValue="#{item}"
+					itemLabel="#{item.numContrato}" temSelecione="true" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					converter="SimpleEntityConverter"
+					styleFormLabelColumn="min-width:150px !important" />
+
+				<sgp:formSelectOneMenu id="unidadePrisional"
+					labelValue="Unidade Prisional" itemValue="#{item}"
+					itemLabel="#{item.nome}"
+					itemsValue="#{apostilamentoBean.unidadesPrisionais}"
+					value="#{apostilamentoBean.filtro.unidadePrisional}"
+					converter="SimpleEntityConverter" temSelecione="true" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					styleFormLabelColumn="min-width:150px !important"
+					rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
+
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm"
+					process="@form" icon="ui-icon-search" />
+			</p:panel>
+		</h:form>
+
+
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="apostilamento"
+				value="#{apostilamentoBean.apostilamentos}"
+				emptyMessage="Nenhum registro encontrado." rows="10"
+				paginator="true" paginatorPosition="bottom" lazy="true"
+				sortBy="#{apostilamento.id}">
+
+				<p:column headerText="Código" style="width:100px;"
+					sortBy="#{apostilamento.id}">
+					<h:outputText value="#{apostilamento.id}" />
+				</p:column>
+
+				<p:column headerText="Numero do contrato"
+					sortBy="#{apostilamento.numContrato}">
+					<h:outputText value="#{apostilamento.numContrato}" />
+				</p:column>
+
+				<p:column headerText="Data Inicio"
+					sortBy="#{apostilamento.dataInicio}" width="150">
+					<h:outputText value="#{apostilamento.dataInicio}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Data Fim" sortBy="#{apostilamento.dataFim}"
+					width="150">
+					<h:outputText value="#{apostilamento.dataFim}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Ações" style="width:150px;">
+					<center>
+						<p:button title="Visualizar" icon="ui-icon-document"
+							outcome="pretty:VisualizarApostilamento"
+							rendered="#{securityUtil.possuiPermissao('VisualizarApostilamento')}">
+							<f:param name="id" value="#{apostilamento.id}" />
+						</p:button>
+
+						<p:button title="Editar" icon="ui-icon-pencil"
+							outcome="pretty:AlterarApostilamento"
+							rendered="#{securityUtil.possuiPermissao('AlterarApostilamento')}">
+							<f:param name="id" value="#{apostilamento.id}" />
+						</p:button>
+					</center>
+				</p:column>
+
+				<f:facet name="footer">
+					Total de registros: #{apostilamentoBean.apostilamentos.rowCount}
+				</f:facet>
+			</p:dataTable>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</h:form>
+
+	</ui:define>
+</ui:composition>
