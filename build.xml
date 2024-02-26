@@ -129,13 +129,13 @@
 	
 	<target name="-replace-homologacao" if="isHomologacao">
 		<property name="dataSource" value="java:/sigepen-hom" />
-		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.164.177&quot;" />
+		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.162.167&quot;" />
 		<property name="ipLicenca" value="172.16.164.120" />
 	</target>
 		
 	<target name="-replace-producao" if="isProducao">
 		<property name="dataSource" value="java:/sigepen-prod" />
-		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.162.167&quot;" />
+		<property name="ipnserver" value="IP_NSERVER = &quot;172.16.164.177&quot;" />
 		<property name="ipLicenca" value="172.16.164.120" />
 	</target>
 </project>

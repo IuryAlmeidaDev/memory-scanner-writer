@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +14,9 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Entity
 @Table(name="NOME_COMPLETO_ESTRUTURA", schema=Sigepen.SEJUDH_SCHEMA)
-public class EstruturaComplemento {
+public class EstruturaComplemento implements Serializable {
+
+	private static final long serialVersionUID = -1202865000071839914L;
 
 	@Id
 	private Integer id;
