@@ -462,7 +462,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 				+ "    this_.CODG_FASE_CREDENCIAL as faseCredenciamento, "
 				+ "    this_.CODG_SITUACAO_CREDENCIAL as statusCredenciamento "
 				+ "FROM "
-				+ "    SIGEPEN_OWNER_DES.SGP_CREDENCIAMENTO_FASE this_ "
+				+ "    SIGEPEN_OWNER.SGP_CREDENCIAMENTO_FASE this_ "
 				+ "INNER JOIN "
 				+ "    SIGEPEN_OWNER_DES.SGP_CREDENCIAMENTO credenciam1_ "
 				+ "    ON this_.ID_CREDENCIAMENTO = credenciam1_.ID_CREDENCIAMENTO "
