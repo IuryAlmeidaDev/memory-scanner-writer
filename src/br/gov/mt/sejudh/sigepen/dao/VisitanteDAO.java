@@ -31,6 +31,7 @@ import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
@@ -61,6 +62,7 @@ import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
 import br.gov.mt.sejudh.sigepen.model.dto.AutorizacaoSemBiometriaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.VisitanteListaDTO;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import br.gov.mt.sejudh.sigepen.service.VisitanteResponsavelService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
@@ -167,18 +169,123 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
     }
 
     public List<Visitante> listarRelatorio(FiltroVwVisitanteRelatorio filtro) {
-        List<Visitante> list = super.buscaPorFiltro(filtro, true);
+  		Session session = em.unwrap(Session.class);
 
-        for (Visitante visitante : list) {
-        	Hibernate.initialize(visitante.getPessoa());
-            Hibernate.initialize(visitante.getCredenciamentos());
-            Hibernate.initialize(visitante.getPessoa().getDocumentos());
-            for (Credenciamento recuperando : visitante.getCredenciamentos()) {
-                Hibernate.initialize(recuperando.getFasesDoCredenciamento());
-            }
-        }
-        return list;
-    }
+  		StringBuilder sql = new StringBuilder();
+  		sql.append("SELECT  ");
+  		sql.append("    v.ID_VISITANTE             as codigo, ");
+  		sql.append("    pv.NOME                    as visitante, ");
+  		sql.append("    coalesce(tbdoc.NUMERO,'00000000000')  as cpf, ");
+  		sql.append("    v.DATA_HORA_CADASTRO       as dataHoraCadastro, ");
+  		sql.append("    v.STAT_VISITANTE           as situacaoVisitante, ");
+  		sql.append("    tv.DESC_TIPO_VISITA        as visitacao, ");
+  		sql.append("    pr.NOME                    as recuperando, ");
+  		sql.append("    p4.DESCRICAO               as parentesco, ");
+  		sql.append("    up.NOME                    as unidade, ");
+  		sql.append("    max(fc.CODG_SITUACAO_CREDENCIAL) as situacaoCadastro, ");
+  		sql.append("    c.DATA_VALIDADE            as dataValidade ");
+  		sql.append("FROM SIGEPEN_OWNER.SGP_VISITANTE v ");
+  		sql.append("INNER JOIN SIGEPEN_OWNER.PESSOA pv ON pv.ID = v.ID_PESSOA_VISITANTE ");
+  		sql.append(" left join (select d.pessoa_id, d.numero from SIGEPEN_OWNER.documento d where d.tipo_documento_id = 12) tbdoc on tbdoc.pessoa_id = pv.id " );
+  		sql.append("INNER JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO c ON v.ID_VISITANTE = c.ID_VISITANTE ");
+  		sql.append("INNER JOIN SIGEPEN_OWNER.SGP_TIPO_VISITA tv on c.ID_TIPO_VISITA = tv.ID_TIPO_VISITA ");
+  		sql.append("INNER JOIN SIGEPEN_OWNER.RECUPERANDO r ON r.ID = c.ID_RECUPERANDO ");
+  		sql.append("INNER JOIN SIGEPEN_OWNER.PESSOA pr ON pr.ID = r.PESSOA_ID ");
+  		sql.append("INNER JOIN SIGEPEN_OWNER.PARENTE P3 ON  c.ID_PARENTE = P3.ID ");
+  		sql.append("INNER JOIN SIGEPEN_OWNER.PARENTESCO P4 ON P4.ID = P3.PARENTESCO_ID ");
+  		sql.append("INNER JOIN SIGEPEN_OWNER.UNIDADE_PRISIONAL up ON c.ID_UNIDADE_PRISIONAL = up.ID ");
+  		sql.append("LEFT JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO_FASE fc on c.ID_CREDENCIAMENTO = fc.ID_CREDENCIAMENTO ");
+  		sql.append("LEFT JOIN SIGEPEN_OWNER.SGP_IMPEDIMENTO si ON SI.ID_VISITANTE = v.ID_VISITANTE AND SI.STAT_IMPEDIMENTO = 'A' AND SI.DATA_FIM_IMPEDIMENTO >= sysdate ");
+  		sql.append("WHERE 1 = 1 ");
+  		
+
+  		if (filtro.getNome() != null && !filtro.getNome().equals("")) {
+  			sql.append("AND pv.NOME LIKE :nome ");
+  		}
+  		
+  		if(filtro.getNomeMae() != null && !filtro.getNomeMae().equals("")) {
+  			sql.append("AND pv.NOME_MAE LIKE :mae ");
+  		}
+  			
+  		if(filtro.getCpf() != null && !filtro.getCpf().equals("")) {
+  			 sql.append("AND d.NUMERO = :cpf ");
+  		}
+  		
+  		if(filtro.getRecuperando() != null && !filtro.getRecuperando().equals("")) {
+  			sql.append("AND pr.NOME LIKE :recuperando ");
+  		}
+  		
+  		if(filtro.getStatus() != null) {
+  			 sql.append("AND v.STAT_VISITANTE = :status_visitante ");
+  		}
+  		
+  		if(filtro.getUnidadePrisional() != null) {
+  			 sql.append("AND up.ID = :unidade ");
+  		}
+  		if(filtro.getSituacaoCredenciamento() != null) {
+  			 sql.append("AND fc.CODG_SITUACAO_CREDENCIAL = :CODG_SITUACAO_CREDENCIAL ");
+  		}
+  		if(filtro.getFaseCredenciamento() != null) {
+ 			 sql.append("AND fc.CODG_FASE_CREDENCIAL = :CODG_FASE_CREDENCIAL ");
+ 		}
+  		
+  		sql.append("GROUP BY v.ID_VISITANTE, pv.NOME, coalesce(tbdoc.NUMERO,'00000000000'), v.DATA_HORA_CADASTRO, v.STAT_VISITANTE, tv.DESC_TIPO_VISITA, pr.NOME, p4.DESCRICAO, up.NOME, c.DATA_VALIDADE ");
+
+
+  		SQLQuery query = session.createSQLQuery(sql.toString());
+  		query.addScalar("codigo", LongType.INSTANCE);
+  		query.addScalar("visitante");
+  		query.addScalar("cpf");
+  		query.addScalar("dataHoraCadastro", DateType.INSTANCE);
+  		query.addScalar("visitacao");
+  		query.addScalar("recuperando");
+  		query.addScalar("parentesco");
+  		query.addScalar("unidade");
+  		query.addScalar("dataValidade", DateType.INSTANCE);
+  		query.addScalar("situacaoVisitante");
+  		query.addScalar("situacaoCadastro", IntegerType.INSTANCE);
+  		
+
+  		
+  		if (filtro.getNome() != null && !filtro.getNome().equals("")) {
+  			query.setParameter("nome", filtro.getNome());
+  		}
+  		
+  		if(filtro.getNomeMae() != null && !filtro.getNomeMae().equals("")) {
+  			query.setParameter("mae", filtro.getNomeMae());
+  		}
+  			
+  		if(filtro.getCpf() != null && !filtro.getCpf().equals("")) {
+  			query.setParameter("cpf", filtro.getCpf());
+  		}
+  		
+  		if(filtro.getRecuperando() != null && !filtro.getRecuperando().equals("")) {
+  			query.setParameter("recuperando", filtro.getRecuperando());
+  		}
+  		
+  		if(filtro.getStatus() != null) {
+  			query.setParameter("status_visitante", filtro.getStatus().name());
+  		}
+  		
+  		if(filtro.getUnidadePrisional() != null) {
+  			query.setParameter("unidade", filtro.getUnidadePrisional().getId());
+  		}
+  		
+  		if(filtro.getSituacaoCredenciamento() != null) {
+  			query.setParameter("CODG_SITUACAO_CREDENCIAL", filtro.getSituacaoCredenciamento().getId());
+  		}
+  		
+  		if(filtro.getFaseCredenciamento() != null) {
+  			query.setParameter("CODG_FASE_CREDENCIAL", filtro.getFaseCredenciamento().getId());
+  		}
+  		
+  		query.setResultTransformer(Transformers.aliasToBean(VisitanteListaDTO.class));
+
+  		@SuppressWarnings("unchecked")
+  		List<VisitanteListaDTO> credenciamentoParaInativar = query.list();
+  		VisitanteListaDTO v = new VisitanteListaDTO();
+  		return v.toVisita(credenciamentoParaInativar);
+  	}
 
     public Optional<Visitante> buscarPorIdPessoa(Long id) {
         try{
