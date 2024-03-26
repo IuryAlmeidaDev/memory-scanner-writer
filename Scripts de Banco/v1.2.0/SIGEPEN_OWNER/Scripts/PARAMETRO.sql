@@ -1,1 +1,0 @@
-update parametro p set p.valor = '2.1' where p.nome = 'VERSAO_DESKTOP';

@@ -1,1 +1,0 @@
-alter table BIOMETRIA_TEMP add data_coleta TIMESTAMP(6);

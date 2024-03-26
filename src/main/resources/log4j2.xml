@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+  <Appenders>
+    <JDBC name="databaseAppender" tableName="SIGEPEN_AUDIT_OWNER.LOG">
+      <DataSource jndiName="java:/sigepen" />
+      <Column name="ID" literal="SIGEPEN_AUDIT_OWNER.SEQ_LOG.NEXTVAL" />
+      <Column name="DATALOG" isEventTimestamp="true" />
+      <Column name="NIVEL" pattern="%level" />
+      <Column name="LOGGER" pattern="%logger" />
+      <Column name="MESSAGE" pattern="%message"/>
+      <Column name="USUARIO_ID" pattern="%X{loginUser}"/>
+      <Column name="IP_ORIGEM" pattern="%X{ipOrigem}"/>  
+      <Column name="THROWABLE" pattern="%ex{full}" />
+    </JDBC>
+  </Appenders>
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="databaseAppender"/>
+    </Root>
+  </Loggers>
+</Configuration>
