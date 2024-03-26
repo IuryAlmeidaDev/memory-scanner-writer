@@ -1,1 +1,0 @@
-alter table AUD_PROCESSO add modalidade VARCHAR2(80 CHAR);

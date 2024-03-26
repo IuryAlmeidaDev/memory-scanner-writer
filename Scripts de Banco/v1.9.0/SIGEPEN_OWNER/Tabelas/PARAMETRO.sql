@@ -1,1 +1,0 @@
-update parametro set valor = '2.2' where id = 1;

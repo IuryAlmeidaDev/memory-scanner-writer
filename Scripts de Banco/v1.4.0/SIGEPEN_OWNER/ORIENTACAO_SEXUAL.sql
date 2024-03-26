@@ -1,1 +1,0 @@
-delete from orientacao_Sexual o where o.id = 4;

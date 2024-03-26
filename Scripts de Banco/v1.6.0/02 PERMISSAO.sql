@@ -1,1 +1,0 @@
-insert into permissao(id, nome, descricao, funcionalidade_id) values(129, 'ImprimirRelatorioInfopen', 'Permite imprimir relatório estatístico para o Infopen', 7);

@@ -1,1 +1,0 @@
-insert into funcionalidade(id, nome) values (7, 'Relatórios');

@@ -1,1 +1,0 @@
-alter table AUD_SGP_TIPO_VISITA_CERTIDAO modify tipo_obrigatoriedade null;

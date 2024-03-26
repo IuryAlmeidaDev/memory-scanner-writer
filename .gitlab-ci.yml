@@ -1,0 +1,198 @@
+image: docker:stable
+
+services:
+  - docker:dind
+
+include:
+  - project: "sesp/sti/sistemas/source/templates-gitlab-ci"
+    file: gitlab-ci-common.yml
+variables:
+  CONTAINER_IMAGE: $REGISTRY_URL/sesp/$CI_PROJECT_NAME
+  MAVEN_PROFILE: "desenvolvimento"
+  SONAR_URL: "https://homolog2.sesp.mt.gov.br/sonarqube"
+  SONAR_KEY: "sqp_a538e9213322270831976b0f17122ecb77487936"
+  DTRACK_HOST: "https://homolog2.seguranca.local/dtrack"
+  DTRACK_TOKEN: "YY6xcWE73rK0UObCh9WxSxUOsD2Oboab"
+  DTRACK_PROJECT: "b31350be-7bd3-42d3-bbef-df04338bcf7f"
+  WLS_HOST: "wls12c-sesp-d1.seguranca.local:7001"
+  K8S_HANDLE_SECTION: "desenvolvimento"
+
+workflow:
+  rules:
+    # Quando for Branch "master" e Manual ou TAG
+    - if: ( $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "web" ) || $CI_COMMIT_TAG
+      variables:
+        MAVEN_PROFILE: "producao"
+        K8S_HANDLE_SECTION: "producao"
+        DTRACK_PROJECT: "8c5838c0-b441-483a-a050-7346cf155a82"
+
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      when: never
+      
+    - if: $CI_COMMIT_REF_NAME =~ /^release/
+      variables:
+        MAVEN_PROFILE: "homologacao"
+        K8S_HANDLE_SECTION: "homologacao"
+        DTRACK_PROJECT: "51d33e2e-c93e-4e28-935e-19c9990eb527"
+    - when: always
+
+stages:
+  - build
+  - code_check
+  - build_desenv
+  - build_homologa
+  - build_prod
+  - template_k8s
+  - deploy_rancher
+  - reload_rancher
+  - deploy_openshift
+  
+build_maven:
+  stage: build
+  image: maven:3.8.6-jdk-8-slim
+  extends: .setup_maven
+  script:
+    - "mvn clean"
+    - "mvn $MAVEN_CLI_OPTS package -DskipTests=true -B -s settings.xml -P $MAVEN_PROFILE"
+  only:
+    refs:
+      - develop
+      - /^release/[0-9]+(?:.[0-9]+)+$/
+      - tags
+      - main
+      - feat-gitlab-ci
+  cache:
+    - paths:
+        - .m2/repository
+    - key: "$CI_COMMIT_REF_SLUG"
+      paths:
+        - target/
+        
+code_check:
+  stage: code_check
+  image: maven:3.8.6-jdk-8-slim
+  extends: .setup_maven
+  script:
+    - "mvn -s settings.xml -B -ntp cyclonedx:makeBom -P $MAVEN_PROFILE"
+    - "curl -k -s -X POST $DTRACK_HOST/api/v1/bom -H Content-Type:multipart/form-data -H X-API-Key:$DTRACK_TOKEN -F bom=@target/bom.json -F project=$DTRACK_PROJECT"
+  allow_failure: true
+  only:
+    refs:
+      - develop
+      - /^release/[0-9]+(?:.[0-9]+)+$/
+      - tags
+      - main
+  cache:
+    - paths:
+        - .m2/repository
+    - key: "$CI_COMMIT_REF_SLUG"
+      paths:
+        - target/
+        - .sonar/cache
+
+#DESENVOLVIMENTO
+build_desenv:
+  stage: build_desenv
+  extends: .build_image_desenv
+  only:
+    refs:
+      - develop
+      - gitlab-ci-test
+      - feat-gitlab-ci
+  cache:
+    - key: "$CI_COMMIT_REF_SLUG"
+      paths:
+        - target/
+      policy: pull
+
+#HOMOLOGAÇÃO
+build_homologa:
+  stage: build_homologa
+  extends: .build_image_homologa
+  only:
+    refs:
+      - /^release/[0-9]+(?:.[0-9]+)+$/
+  cache:
+  - key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - target/
+    policy: pull
+  environment:
+    name: homologacao
+
+#PRODUÇÃO
+build_prod_manual:
+  stage: build_prod
+  extends: .build_image_producao
+  rules:
+    - if: "$CI_COMMIT_TAG || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+  cache:
+  - key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - target/
+    policy: pull
+  environment:
+    name: producao
+      
+apply_tamplate_k8s:
+  stage: template_k8s
+  extends: .get_git_template_repository_k8s_handle
+  variables:
+    TEMPLATES_DIR: $TEMPLATES_PROJECT_DEFAULT/templates
+    CONFIG_FILE: k8s/config.yaml
+    TEMP_DIR: k8s/k8s-handle
+  script:
+    - k8s-handle render -s $K8S_HANDLE_SECTION
+  artifacts:
+    paths:
+      - k8s/k8s-handle/
+    expire_in: 4 week
+
+#DEPLOY RANCHER DESENVOLVIMENTO
+deploy_rancher_desenv:
+  stage: deploy_rancher
+  extends: .auth_rancher_cli
+  script:
+    - rancher kubectl create -f k8s/k8s-handle/secret.yaml || true
+    - rancher kubectl apply -f k8s/k8s-handle/deployment.yaml
+  only:
+    refs:
+      - develop
+      - gitlab-ci-test
+      - feat-gitlab-ci
+
+#DEPLOY RANCHER HOMOLOGAÇÃO
+deploy_rancher_homloga:
+  stage: deploy_rancher
+  extends: .auth_rancher_cli_homologa
+  script:
+    - ( envsubst < k8s/k8s-handle/secret.yaml | rancher kubectl create -f -) || true
+    - rancher kubectl apply -f k8s/k8s-handle/deployment.yaml
+  only:
+    refs:
+      - /^release/[0-9]+(?:.[0-9]+)+$/
+
+#DEPLOY RANCHER DESENVOLVIMENTO
+reload_rancher_desenv:
+  variables:
+    RANCHER_WORKLOAD: "sigepen-dev:sigepen"
+  stage: reload_rancher
+  extends: .redeploy_rancher_workload
+  needs:
+    - deploy_rancher_desenv
+  only:
+    refs:
+      - develop
+      - feat-gitlab-ci
+
+#DEPLOY RANCHER HOMOLOGACAO
+reload_rancher_homologa:
+  variables:
+    RANCHER_WORKLOAD: "sigepen-hmg:sigepen"
+  stage: reload_rancher
+  extends: .redeploy_rancher_workload_homloga
+  needs:
+    - deploy_rancher_homloga
+  only:
+    refs:
+      - /^release/[0-9]+(?:.[0-9]+)+$/

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.3" name="com.neurotec">
+    <resources>
+        <resource-root path="jna.jar"/>
+        <resource-root path="neurotec-biometrics.jar"/>
+        <resource-root path="neurotec-biometrics-client.jar"/>
+        <resource-root path="neurotec-core.jar"/>
+        <resource-root path="neurotec-devices.jar"/>
+        <resource-root path="neurotec-licensing.jar"/>
+        <resource-root path="neurotec-media.jar"/>
+        <resource-root path="neurotec-media-processing.jar"/>
+        <resource-root path="bin/data"/>
+        <resource-root path="lib/linux_x86_64"/>
+    </resources>
+    <dependencies>
+    </dependencies>
+</module>

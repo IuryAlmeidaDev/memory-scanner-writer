@@ -1,1 +1,0 @@
-update crime c set c.nome_legislacao = trim(chr(10) from c.nome_legislacao) where c.id_legislacao = 18;

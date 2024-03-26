@@ -1,0 +1,518 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:sgp="http://sejudh.mt.gov.br/components"
+                template="/WEB-INF/pages/_templates/principal.xhtml">
+
+    <ui:define name="conteudo">
+        <sgp:validarAcesso/>
+
+        <h3>#{visitanteBean.tituloPagina} Visitante</h3>
+
+        <h:form prependId="false">
+            <p:panel footer="Cadastrado por: #{faseDoCredenciamentoBean.visitante.autorRegistro.usuario} em #{faseDoCredenciamentoBean.visitante.autorRegistro.data} | Última alteração: #{faseDoCredenciamentoBean.visitante.autorUltimaAlteracao.usuario} em #{faseDoCredenciamentoBean.visitante.autorUltimaAlteracao.data}"
+                    header="#{faseDoCredenciamentoBean.faseDoCredenciamento.faseCredenciamento.id} - #{faseDoCredenciamentoBean.faseDoCredenciamento.faseCredenciamento.descricao}"  id="gridRecuperando">
+                <div class="ui-g">
+                		
+                <p:panel header="Informações do Visitante" style="width: 100%;" 
+					rendered="#{faseDoCredenciamentoBean.mostrarPanelResponsavel == false}">
+						<h:form id="formInformacoesVisitante">
+                     <pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada" var="tipoEntrada" allSuffix="ALL_ENUM_VALUES" />
+							<p:row>
+							<p:column>
+						
+							<div class="ui-g">
+								<div class="ui-g-10">
+								<div>
+									<h:outputLabel value="Nome:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.nome}" />
+								</div>							
+								<div>
+									<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.nomeMae}" />
+								</div>								
+								<div>
+									<h:outputLabel value="Dt. Nascimento:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.dataNascimento}" converterData="true" >
+									<f:convertDateTime pattern="dd/MM/yyyy"/>
+									</h:outputLabel>
+								</div>								
+								<div>
+									<h:outputLabel value="Nome do Pai:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.nomePai}"/>
+								</div>							
+								<div>
+									<h:outputLabel value="Emancipado:" style="width: 150px;" rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.responsavel.emancipado == 'N'}" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.emancipado.descricao}" rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.responsavel.emancipado == 'N'}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.nacionalidade.descricao}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.pais.nome}"/>
+								</div>
+								
+								<div>
+									<h:outputLabel value="Estado:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.naturalidade.estado.nome}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Cidade:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.naturalidade.nome}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Sexo:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.sexo.descricao}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Ident. Gênero:" style="width: 150px;"  />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.identidadeDeGenero.descricao}" />
+								</div>								
+								<div>
+									<h:outputLabel value="Nome Social:" style="width: 150px;"  />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.nomeSocial}"/>
+								</div>
+								<div>
+									<h:outputLabel value="PNE:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pne.descricao}"/>
+								</div>
+								<div>
+									<h:outputLabel value="Permanente:" style="width: 150px;"/>
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pnePermanente.descricao}"/>
+								</div>
+								<div>
+									<h:outputLabel value="Profissão:" style="width: 150px;" 
+									rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.profissao ne null and faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.tipoVisita.tipoEntrada.equals(tipoEntrada.ENTRADA_SAIDA)}" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.profissao}"/>
+								</div>
+								</div>
+									<div class="ui-g-2">
+										<center>
+										<p:dataGrid layout="tabular" style="width: 188px;margin-left: -37px;" columns="1"
+											rows="1" value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.fotoFrenteAtual}"
+											emptyMessage="Sem foto de frente." var="f">
+											<p:graphicImage
+												value="#{imageHandlerBean.getImagem(f.imagem)}"
+												cache="false" width="180" height="240">
+												<f:param name="hashId" value="#{f.imagem.id}" />
+											</p:graphicImage>
+										</p:dataGrid>
+										</center>
+									</div>
+								</div>
+								</p:column>
+								</p:row>
+						</h:form>
+					</p:panel>
+                
+                    <div class="ui-g-12">
+                    <p:panelGrid columns="2" layout="grid"  columnClasses="ui-g-border-right, ui-g-border-left" style="width: 100%;" 
+                    rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento ne null and faseDoCredenciamentoBean.mostrarPanelResponsavel == true}">
+					<p:panel header="Informações do Visitante" style="border:none; width: 100%;"	>
+						<h:form>
+							<div class="ui-g">
+								<div class="ui-g-8">
+								<div>
+									<h:outputLabel value="Nome:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.nome}" />
+								</div>							
+								<div>
+									<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.nomeMae}" />
+								</div>								
+								<div>
+									<h:outputLabel value="Dt. Nascimento:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.dataNascimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy"/>
+									</h:outputLabel>
+								</div>								
+								<div>
+									<h:outputLabel value="Nome do Pai:" style="width: 150px;" rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.emancipado == 'N'}" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.nomePai}" rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.emancipado == 'N'}"/>
+								</div>							
+								<div>
+									<h:outputLabel value="Emancipado:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.emancipado.descricao}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.nacionalidade.descricao}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.pais.nome}"/>
+								</div>
+								
+								<div>
+									<h:outputLabel value="Estado:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.naturalidade.estado.nome}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Cidade:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.naturalidade.nome}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Sexo:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.sexo.descricao}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.identidadeDeGenero.descricao}" />
+								</div>								
+								<div>
+									<h:outputLabel value="Nome Social:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pessoa.nomeSocial}"/>
+								</div>
+								<div>
+									<h:outputLabel value="PNE:" style="width: 150px;"/>
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pne.descricao}"/>
+								</div>
+								<div>
+									<h:outputLabel value="Permanente:" style="width: 150px;" />
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.pnePermanente.descricao}"/>
+								</div>
+								<div>
+									<h:outputLabel value="Profissão:" style="width: 150px;"  
+									rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.profissao ne null and faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.tipoVisita.tipoEntrada.equals(tipoEntrada.ENTRADA_SAIDA)}"/>
+									<h:outputLabel value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.profissao}"/>
+								</div>
+								</div>
+									<div class="ui-g-4">
+										<p:dataGrid layout="tabular" style="width: 188px; margin-left: -30px" columns="1"
+											rows="1" value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.fotoFrenteAtual}"
+											emptyMessage="Sem foto de frente." var="f">
+											<p:graphicImage
+												value="#{imageHandlerBean.getImagem(f.imagem)}"
+												cache="false" width="180" height="240">
+												<f:param name="hashId" value="#{f.imagem.id}" />
+											</p:graphicImage>
+										</p:dataGrid>
+									</div>
+								</div>
+						</h:form>
+					</p:panel>
+					
+					<ui:repeat value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.visitantesReponsaveis}" var="responsavel">
+					<p:panel header="Visitante Responsável" style="border:none; width: 100%;" 
+						rendered="#{not empty faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.visitante.visitantesReponsaveis and faseDoCredenciamentoBean.mostrarPanelResponsavel == true }">
+						<h:form>
+						  <div class="ui-g">
+		 					 <div class="ui-g-8">
+									<h:outputLabel value="Nome:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pessoa.nome}" />						
+								<div>
+									<h:outputLabel value="Nome da Mãe:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pessoa.nomeMae}" />
+								</div>								
+								<div>
+									<h:outputLabel value="Dt. Nascimento:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pessoa.dataNascimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy"/>
+									</h:outputLabel>
+								</div>								
+								<div>
+									<h:outputLabel value="Nome do Pai:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pessoa.nomePai}"/>
+								</div>							
+								<div>
+									<h:outputLabel value="Emancipado:" style="width: 150px;"/>
+									<h:outputLabel value="#{responsavel.emancipado.descricao}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Nacionalidade:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pessoa.nacionalidade.descricao}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Pais de Origem:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pessoa.pais.nome}" />
+								</div>
+								<div>
+									<h:outputLabel value="Estado:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pessoa.naturalidade.estado.nome}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Cidade:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pessoa.naturalidade.nome}" rendered="#{visitanteBean.visitante.responsavel.pessoa.naturalidade.nome ne null}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Sexo:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pessoa.sexo.descricao}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Ident. Gênero:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.identidadeDeGenero.descricao}"/>
+								</div>								
+								<div>
+									<h:outputLabel value="Nome Social:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pessoa.nomeSocial}"/>
+								</div>
+								<div>
+									<h:outputLabel value="PNE:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pne.descricao}"/>
+								</div>
+								<div>
+									<h:outputLabel value="Permanente:" style="width: 150px;" />
+									<h:outputLabel value="#{responsavel.pnePermanente.descricao}"/>
+								</div>
+								</div>
+									<div class="ui-g-4">
+										<p:dataGrid layout="tabular" style="width: 188px; margin-left: -30px" columns="1"
+											rows="1" value="#{responsavel.fotoFrenteAtual}"
+											emptyMessage="Sem foto de frente." var="f">
+											<p:graphicImage
+												value="#{imageHandlerBean.getImagem(f.imagem)}"
+												cache="false" width="180" height="240">
+												<f:param name="hashId" value="#{f.imagem.id}" />
+											</p:graphicImage>
+										</p:dataGrid>
+									</div>
+							</div>
+						</h:form>
+					</p:panel>
+					</ui:repeat>						
+					</p:panelGrid>
+                                              
+                           <br />                                           
+                            
+                            <p:panel  style="width: 100%">
+                            <p:row>
+                                <p:column>
+                                    <div class="ui-g">
+                                        <div class="ui-g-10">
+                                            <div class="ui-g">
+                                                <h:panelGroup styleClass="ui-g-2"
+                                                              rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.recuperando ne null}">
+                                                    <p:outputLabel value="Recuperando: "/>
+                                                </h:panelGroup>
+                                                <h:panelGroup styleClass="ui-g-10"
+                                                              rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.recuperando ne null}">
+                                                    <p:outputLabel
+                                                            value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.recuperando.pessoa.nome}"/>
+                                                </h:panelGroup>
+                                                <h:panelGroup styleClass="ui-g-2"
+                                                              rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.recuperando ne null}">
+                                                    <p:outputLabel value="Matrícula: "/>
+                                                </h:panelGroup>
+                                                <h:panelGroup styleClass="ui-g-10"
+                                                              rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.recuperando ne null}">
+                                                    <p:outputLabel
+                                                            value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.recuperando.id}"/>
+                                                </h:panelGroup>
+                                                <h:panelGroup styleClass="ui-g-2">
+                                                    <p:outputLabel value="Unidade Prisional: "/>
+                                                </h:panelGroup>
+                                                <h:panelGroup styleClass="ui-g-10">
+                                                    <p:outputLabel rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.unidadePrisional eq null}"
+                                                                   value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.recuperando.unidadeAtual}"/>
+
+                                                    <p:outputLabel rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.unidadePrisional ne null}"
+                                                            value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.unidadePrisional.nome}"/>
+                                                </h:panelGroup>
+                                                <div class="ui-g-2">
+                                                    <p:outputLabel value="Tipo Visitação: "/>
+                                                </div>
+                                                <div class="ui-g-10">
+                                                    <p:outputLabel
+                                                            value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.tipoVisita.descricao}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-2">
+                                            <center>
+                                                <p:dataGrid layout="tabular" style="width: 188px; margin-left: -20px" columns="1" rows="1"
+                                                            rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.recuperando ne null}"
+                                                            value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.recuperando.fotoFrenteAtual}"
+                                                            emptyMessage="Sem foto de frente." var="f">
+                                                    <p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}"
+                                                                    cache="false" width="180" height="240">
+                                                        <f:param name="hashId" value="#{f.imagem.id}"/>
+                                                    </p:graphicImage>
+                                                </p:dataGrid>
+                                            </center>
+                                        </div>
+                                    </div>
+                                </p:column>
+                            </p:row>
+						</p:panel>
+                    </div>
+
+                    <div class="ui-g-12">
+                        <p:dataTable value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credencialDocumentos}"
+                                     var="vDocumento"
+                                     emptyMessage="Nenhum documento encontrado.">
+
+                            <p:column headerText="Tipo Documento">
+                                <h:outputText value="#{vDocumento.visitanteDocumento.documento.tipoDocumento.descricao}"/>
+                            </p:column>
+
+                            <p:column headerText="Número Documento">
+                                <h:outputText value="#{vDocumento.visitanteDocumento.documento.numero}"/>
+                            </p:column>
+
+                            <p:column headerText="Emissão">
+                                <h:outputText value="#{vDocumento.visitanteDocumento.documento.dataEmissao}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Validado?" style="text-align: center">
+                                <p:selectBooleanCheckbox value="#{vDocumento.valueValidado}" disabled="#{faseDoCredenciamentoBean.isVisualizacao}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+
+                    <div class="ui-g-12">
+                        <p:dataTable value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credencialCertidaos}" var="vCertidao"
+                                     emptyMessage="Nenhuma certidão encontrada.">
+
+                            <p:column headerText="Certidão">
+                                <h:outputText value="#{vCertidao.visitanteCertidao.certidao.descricao}"/>
+                            </p:column>
+
+                            <p:column headerText="Entregue pelo Visitante?">
+                                <h:outputText value="#{vCertidao.visitanteCertidao.entregue.descricao}"/>
+                            </p:column>
+
+                            <p:column headerText="Obrigatório">
+                                <h:outputText value="#{vCertidao.visitanteCertidao.obrigatorio.descricao}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Validado?" style="text-align: center">
+                                <p:selectBooleanCheckbox value="#{vCertidao.valueValidado}" disabled="#{faseDoCredenciamentoBean.isVisualizacao}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+
+                    <div class="ui-g-6">
+                        <sgp:formCalendar display="text" labelValue="Data do Recebimento"
+                                          dataMinima="#{faseDoCredenciamentoBean.faseDoCredenciamento.dataMinima}"
+                                          value="#{faseDoCredenciamentoBean.faseDoCredenciamento.dataRecebimento}"
+                                          styleFormLabelColumn="width:180px;" validationRequired="true"
+                                          disabled="#{faseDoCredenciamentoBean.isVisualizacao}" />
+                    </div>
+
+                    <h:panelGroup id="panelRadioCredenciar" styleClass="ui-g-6">
+                        <p:selectOneRadio id="radioCredenciar" value="#{faseDoCredenciamentoBean.faseDoCredenciamento.credenciamento.isRenovacao}"
+                                          rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.faseCredenciamento == 'RECEBIMENTO'}"
+                                          layout="custom" unselectable="true"
+                                          disabled="true"
+                                          >
+                            <f:selectItem itemValue="false"/>
+                            <f:selectItem itemValue="true"/>
+                        </p:selectOneRadio>
+
+                        <h:panelGroup styleClass="ui-g" rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.faseCredenciamento == 'RECEBIMENTO'}">
+                            <div class="ui-g-3 ui-g-nopad">
+                                <div class="ui-g ">
+                                    <div class="ui-g-4 ">
+                                        <p:radioButton id="novo" for="radioCredenciar" itemIndex="0"
+                                                       style="float: right"/>
+                                    </div>
+                                    <div class="ui-g-8 ">
+                                        <h:outputLabel for="novo" value="Novo Cadastro"
+                                                       style="float: left; padding-top: 3px;"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-2 ui-g-nopad">
+                                <div class="ui-g ">
+                                    <div class="ui-g-4 ">
+                                        <p:radioButton id="renovacao" for="radioCredenciar" itemIndex="1"
+                                                       style="float: right"/>
+                                    </div>
+                                    <div class="ui-g-8 " style="float: left">
+                                        <h:outputLabel for="renovacao" value="Renovação"
+                                                       style="float: left; padding-top: 3px;"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+
+                    </h:panelGroup>
+
+                    <div class="ui-g-6">
+                        <sgp:formCalendar display="text" labelValue="Data do Despacho"
+                                          value="#{faseDoCredenciamentoBean.faseDoCredenciamento.dataDespacho}"
+                                          styleFormLabelColumn="width:180px;" validationRequired="true"
+                                          rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.faseCredenciamento eq 'ANALISE' or faseDoCredenciamentoBean.faseDoCredenciamento.faseCredenciamento eq 'APROVACAO'}"
+                                          disabled="#{faseDoCredenciamentoBean.isVisualizacao}"/>
+                    </div>
+
+                    <div class="ui-g-6">
+                    <h:panelGroup  id="data" >
+                        <sgp:formCalendar display="text" labelValue="Data de Validade visita"
+                                          value="#{faseDoCredenciamentoBean.credenciamento.dataValidade}"
+                                          styleFormLabelColumn="width:180px;" validationRequired="#{faseDoCredenciamentoBean.faseDoCredenciamento.statusCredenciamento eq 'APROVADO'}"                                        
+   										  rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento.faseCredenciamento eq 'APROVACAO' and faseDoCredenciamentoBean.faseDoCredenciamento.statusCredenciamento eq 'APROVADO'}"
+                                          disabled="#{faseDoCredenciamentoBean.isVisualizacao or faseDoCredenciamentoBean.telaOrigem == 2 }"/>
+                         </h:panelGroup>
+                    </div>
+
+                    <div class="ui-g-12">
+                        <sgp:formSelectOneMenu rendered="#{faseDoCredenciamentoBean.faseDoCredenciamento ne null}"
+                                labelValue="Situação Credenciamento" temSelecione="true"
+                                value="#{faseDoCredenciamentoBean.faseDoCredenciamento.statusCredenciamento}"
+                                validationRequired="true" display="text"
+                                itemsValue="#{faseDoCredenciamentoBean.statusCredenciamentos}"
+                                itemValue="#{item}"
+                                styleFormLabelColumn="width:180px;"
+                                itemLabel="#{item.descricao}"
+                                disabled="#{faseDoCredenciamentoBean.isVisualizacao}">
+                            <p:ajax event="change" process="@this" update="observacao data"/>
+                        </sgp:formSelectOneMenu>
+                    </div>
+
+                    <h:panelGroup styleClass="ui-g-12" id="observacao">
+                        <sgp:formInputTextarea labelValue="Observação"
+                                               value="#{faseDoCredenciamentoBean.faseDoCredenciamento.observacao}"
+                                               rows="10"
+                                               columns="50"
+                                               maxlength="250"
+                                               autoResize="true"
+                                               display="text"
+                                               requiredMessage="Observação obrigatória para credenciamento com situação irregular!"
+                                               styleFormLabelColumn="width:180px;"
+                                               validationRequired="#{(faseDoCredenciamentoBean.faseDoCredenciamento.statusCredenciamento eq 'IRREGULAR') or (faseDoCredenciamentoBean.faseDoCredenciamento.statusCredenciamento eq 'NAO_APROVADO')}"
+                                               disabled="#{faseDoCredenciamentoBean.isVisualizacao}"/>
+                    </h:panelGroup>
+
+                    <div class="ui-g-12 "></div>
+                    <div class="ui-g-12 "></div>
+
+                    <div class="ui-g-12 ">
+                        <h:panelGroup styleClass="ui-g" id="panelBotoes">
+                            <div class="ui-g-2">
+                                <p:button value="Voltar" icon="ui-icon-arrowreturnthick-1-w"
+                                          outcome="#{faseDoCredenciamentoBean.getRetornoTela()}"
+                                          style="width: 100%">
+                                    <f:param name="id" value="#{faseDoCredenciamentoBean.visitante.id}"/>
+                                </p:button>
+                            </div>
+                            <div class="ui-g-2">
+                                <p:commandButton value="Salvar" icon="ui-icon-disk" style="width: 100%"
+                                                 update="@form" process="@form" action="#{faseDoCredenciamentoBean.salvar()}"
+                                                 rendered="#{!faseDoCredenciamentoBean.isVisualizacao}"/>
+                            </div>
+                        </h:panelGroup>
+                    </div>
+                </div>
+            </p:panel>
+        </h:form>
+
+        <p:confirmDialog global="true">
+            <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes"
+                             icon="ui-icon-check"/>
+            <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"
+                             icon="ui-icon-close"/>
+        </p:confirmDialog>
+    </ui:define>
+</ui:composition>
