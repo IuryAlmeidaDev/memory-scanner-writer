@@ -1,1 +1,0 @@
-alter table aud_pessoa add nome_social VARCHAR2(80 CHAR);

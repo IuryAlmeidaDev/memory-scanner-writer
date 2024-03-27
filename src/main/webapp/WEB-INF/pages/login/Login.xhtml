@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+<h:head>
+	<h:outputStylesheet library="css" name="main.css" />
+	<h:outputStylesheet library="css" name="normalize.css" />
+
+	<h:outputStylesheet value="/resources/css/bootstrap.css.map" />
+	<h:outputStylesheet library="css" name="bootstrap.min.css" />
+	<h:outputStylesheet value="/resources/css/bootstrap-theme.css.map" />
+	<h:outputStylesheet library="css" name="bootstrap-theme.min.css" />
+
+	<title>SIGEPEN - Sistema de Gestão Penitenciária do Estado de Mato Grosso - [#{versionBean.versao}]</title>
+	<link rel="icon" type="image/png" href="#{resource['images/favicon.png']}"/>
+	
+	<style type="text/css">
+
+		 html, body {
+		  		background: radial-gradient(#777, #222); /* para Browser que não suportam o efeito gradiente */
+			  	background: -webkit-radial-gradient(circle, #777, #222); /* Safari */
+				background: -o-radial-gradient(circle, #777, #222); /* Opera 11.6 to 12.0 */
+				background: -moz-radial-gradient(circle, #777, #222); /* Firefox 3.6 to 15 */
+				background: radial-gradient(circle, #999, #222); /* Standard syntax */
+				height: 100% !important;
+		  	}
+		  
+		  .ui-panel, .ui-panel-content{
+		  	padding: 0px !important;
+		  }
+		</style>
+</h:head>
+
+<h:body>
+	<div class="container" align="center">
+            <div class="row" style="margin-top: 10%;">
+	            <h:form id="formLogin">
+	                <p:panel id="panelLogin" style="width:650px; height:550px;">
+	                	<div class="row" style="background-color:#183664; height:240px; width:650px; border: none; padding:0; margin-top: -1px;">
+		                	<p:graphicImage name="#{(sigepen.getIsProducao() ? 'sigepen-login.png' : 'sigepen-login-h.png')}" library="images" style="padding-top:10px; height:240px;"/>
+	                	</div>
+	                	<br/>
+	                	<br/>
+	                	<div class="row" style="width: 380px; height:160px; margin-top: 8%;">
+		                    <sgp:formInputText id="login" labelValue="Login" maxlength="11" minlength="4"
+		                        value="#{loginBean.usuario}" validationRequired="true" display="text" requiredMessage="*"/>
+		    
+		                    <sgp:formInputPassword id="senha" labelValue="Senha" maxlength="15"
+		                        value="#{loginBean.senha}" validationRequired="true" display="text" requiredMessage="*"/>
+		                        
+		                    <br/>
+		                    <br/>
+		                    <p:commandButton
+		                    id="autenticador"
+		                    action="#{loginBean.login()}"
+		                    value="Login"
+		                    update="@form"
+		                    icon="ui-icon-key"/>
+		                </div>
+		                <div class="row" style="width: 520px;">
+		                	<p>
+		                		SESP - Secretaria de Estado de Segurança Pública de Mato Grosso
+								<br/>
+		                		Desenvolvido pela STI - Superintendência de Tecnologia da Informação
+		                		<br/>
+		                		Versão: #{versionBean.versao}
+		                	</p>
+		                    
+		                </div>
+	                </p:panel>
+	            </h:form>
+            </div>
+    </div>
+</h:body>
+</html>

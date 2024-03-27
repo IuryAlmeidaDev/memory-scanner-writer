@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Application ts="1703802845549" uri="https://sispen.sesp.mt.gov.br/sigepen/arquivos/aplicativo/" launch="br.gov.mt.sejudh.launcher.Launcher">
+    <lib file="concrt140.dll" checksum="3208454740" size="332456" os="win"/>
+    <lib file="controlsfx.jar" checksum="1806948104" size="1416162"/>
+    <lib file="Data/Fingers.ndf" checksum="1558116160" size="5529652"/>
+    <lib file="dll/NSigepenCe.dll" checksum="93232446" size="3571" os="win"/>
+    <lib file="dll/NSigepenCliCe.dll" checksum="1891526565" size="1628" os="win"/>
+    <lib file="dll/NSigepenSer.dll" checksum="3626330317" size="455" os="win"/>
+    <lib file="FScanners/NdmSecuGen/NdmSecuGen.dll" checksum="1694444255" size="43464" os="win"/>
+    <lib file="FScanners/NdmSecuGen/sgfpamx.dll" checksum="1732396975" size="187904" os="win"/>
+    <lib file="FScanners/NdmSecuGen/sgfplib.dll" checksum="862412045" size="187904" os="win"/>
+    <lib file="inference_engine.dll" checksum="3807831672" size="5899000" os="win"/>
+    <lib file="launcher.jar" checksum="3917298934" size="7870"/>
+    <lib file="libiomp5md.dll" checksum="2265487208" size="1677560" os="win"/>
+    <lib file="libmmd.dll" checksum="277237317" size="4271832" os="win"/>
+    <lib file="LiveMedia.dll" checksum="3333887645" size="272896" os="win"/>
+    <lib file="MKLDNNPlugin.dll" checksum="177013915" size="17358072" os="win"/>
+    <lib file="mkl_tiny_omp.dll" checksum="2240635960" size="21924600" os="win"/>
+    <lib file="msvcp100.dll" checksum="1998360915" size="608080" os="win"/>
+    <lib file="msvcp110.dll" checksum="2462684273" size="661456" os="win"/>
+    <lib file="msvcp120.dll" checksum="2720200848" size="660128" os="win"/>
+    <lib file="msvcp140.dll" checksum="3249182306" size="627368" os="win"/>
+    <lib file="msvcp80.dll" checksum="402525278" size="1061376" os="win"/>
+    <lib file="msvcp90.dll" checksum="2863198321" size="856576" os="win"/>
+    <lib file="msvcr100.dll" checksum="2100679198" size="829264" os="win"/>
+    <lib file="msvcr110.dll" checksum="4227985089" size="849360" os="win"/>
+    <lib file="msvcr120.dll" checksum="1743706257" size="963232" os="win"/>
+    <lib file="msvcr80.dll" checksum="2279973631" size="796672" os="win"/>
+    <lib file="msvcr90.dll" checksum="270690906" size="626688" os="win"/>
+    <lib file="NBiometricClient.dll" checksum="1467046122" size="1120200" os="win"/>
+    <lib file="NBiometrics.dll" checksum="2264375292" size="6614472" os="win"/>
+    <lib file="NCore.dll" checksum="3112702244" size="1841096" os="win"/>
+    <lib file="NDevices.dll" checksum="3486293118" size="238024" os="win"/>
+    <lib file="NdmMedia.dll" checksum="1720691769" size="55752" os="win"/>
+    <lib file="NdmVirtual.dll" checksum="1400609142" size="126920" os="win"/>
+    <lib file="Neurotec.Accelerator.Admin.Rest.dll" checksum="39741780" size="436168" os="win"/>
+    <lib file="Neurotec.Biometrics.Client.dll" checksum="708153262" size="43464" os="win"/>
+    <lib file="Neurotec.Biometrics.dll" checksum="1269757874" size="739272" os="win"/>
+    <lib file="Neurotec.Biometrics.Gui.dll" checksum="1091190928" size="160200" os="win"/>
+    <lib file="Neurotec.Devices.dll" checksum="1487761203" size="47048" os="win"/>
+    <lib file="Neurotec.dll" checksum="804781265" size="366024" os="win"/>
+    <lib file="Neurotec.Gui.dll" checksum="745523727" size="183240" os="win"/>
+    <lib file="Neurotec.Licensing.dll" checksum="1915890309" size="34248" os="win"/>
+    <lib file="Neurotec.Media.dll" checksum="1924428013" size="213448" os="win"/>
+    <lib file="Neurotec.Media.Processing.dll" checksum="1227472521" size="28616" os="win"/>
+    <lib file="NLicensing.dll" checksum="1966985409" size="861640" os="win"/>
+    <lib file="NMedia.dll" checksum="372171883" size="1961416" os="win"/>
+    <lib file="NMediaProc.dll" checksum="3851610951" size="775624" os="win"/>
+    <lib file="sigepen-biometria.exe" checksum="553611395" size="17719093"/>
+    <lib file="svml_dispmd.dll" checksum="345573301" size="18838744" os="win"/>
+    <lib file="vccorlib140.dll" checksum="560076967" size="391344" os="win"/>
+    <lib file="vcruntime140.dll" checksum="1540112800" size="87224" os="win"/>
+    <updateText>Updating...</updateText>
+    <updateLabelStyle>-fx-font-weight: bold;</updateLabelStyle>
+    <progressBarStyle>-fx-pref-width: 200;</progressBarStyle>
+    <wrapperStyle>-fx-spacing: 10; -fx-padding: 25;</wrapperStyle>
+    <cacheDir>ALLUSERS/SigepenBioV2</cacheDir>
+    <acceptDowngrade>false</acceptDowngrade>
+    <stopOnUpdateErrors>false</stopOnUpdateErrors>
+    <lingeringUpdateScreen>false</lingeringUpdateScreen>
+</Application>

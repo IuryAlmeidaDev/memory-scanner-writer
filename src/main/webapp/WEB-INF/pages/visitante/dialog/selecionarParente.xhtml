@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sgp="http://sejudh.mt.gov.br/components">
+
+    <p:dialog id="dialog" header="Rol de Parentes" showEffect="fade" widgetVar="selecionarParentesco" modal="true"
+              draggable="false" resizable="false" closeOnEscape="true">
+        <h:form id="formDialog">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <p:dataTable value="#{visitanteBean.recuperandoSelecionado.parentes}" emptyMessage="Recuperando não tem nenhum parente cadastrado."
+                                 var="parente" paginatorAlwaysVisible="false" rows="5" paginator="true"
+                                 paginatorPosition="bottom" lazy="true">
+
+                        <p:column headerText="Nome">
+                            <h:outputText value="#{parente.nome}"/>
+                        </p:column>
+
+                        <p:column headerText="Parentesco">
+                            <h:outputText value="#{parente.parentesco.descricao}"/>
+                        </p:column>
+
+                        <p:column headerText="Situação">
+                            <h:outputText value="#{parente.status.descricao}" />
+                        </p:column>
+
+                        <p:column style="width:100px;">
+                            <center>
+                                <p:commandButton
+                                        title="#{parente.status eq 'I' ? 'Parente Inativo' : 'Selecionar Parentesco'}"
+                                        icon="ui-icon-check"
+                                        actionListener="#{visitanteBean.selecionarRecuperando(parente, false)}"
+                                        disabled="#{visitanteBean.desabilitaSelecao(parente)}"
+                                        update="@form, table, btnTipoVisita">
+                                </p:commandButton>
+                            </center>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </h:form>
+    </p:dialog>
+</ui:composition>

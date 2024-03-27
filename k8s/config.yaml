@@ -1,0 +1,92 @@
+---
+# Para efetuar criação de template no próprio ambinete use :
+#    docker run --rm -v %cd%:/tmp/  2gis/k8s-handle k8s-handle render -s develop
+common:
+    app_name: sigepen
+    app_port: 7001
+    app_path: /sigepen
+    replicas: 1
+    image: "{{ env='CONTAINER_IMAGE_WITH_TAG' }}"
+    config_map_data:
+        LOG_HOST: tcp:log-vlan800-hmg.seguranca.local
+        LOG_PORTA: 5556
+        SWAGGER_ENABLE: "true"
+        REQUEST_LOG: DEBUG
+    templates:
+        - template: secret.yaml.j2
+        - template: deployment.yaml.j2
+    secret_data:
+        DATABASE_USER: user
+    extra_deployment:
+        resources:
+            limits:
+                memory: 4096Mi
+desenvolvimento:
+    namespace: sigepen-dev
+    ingress:
+        hosts:
+            - dev2.seguranca.local
+            - dev2.sesp.mt.gov.br
+    config_map_data:
+        AMBIENTE: desenvolvimento
+        ELASTIC_APM_ENABLED: true
+        ELASTIC_APM_ENVIRONMENT: DEV
+        ELASTIC_APM_SERVER_URL: http://srv-gesis-elastic-apm-01:8200
+        ELASTIC_APM_SERVICE_NAME: sigepen
+        JAVA_OPTS: -Xms512m -Xmx4g -Djava.net.preferIPv4Stack=true
+            -Djboss.modules.system.pkgs=$JBOSS_MODULES_SYSTEM_PKGS
+            -Djava.awt.headless=true
+            -javaagent:/opt/jboss/wildfly/elastic-apm-agent.jar
+        TZ: America/Cuiaba
+    secret_data:
+        DATASOURCE_PASS: SIGEPEN_USER
+        DATASOURCE_URL: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS = (PROTOCOL = TCP)
+            (HOST=cloudmti-rachd0-crs-scan.seguranca.local)(PORT = 1521))
+            (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = PDB_DEV_SIGEPEN)))
+        DATASOURCE_USER: SIGEPEN_USER
+homologacao:
+    namespace: sigepen-hmg
+    ingress:
+        hosts:
+            - homolog2.seguranca.local
+            - homolog2.sesp.mt.gov.br
+    config_map_data:
+        AMBIENTE: homologacao
+        ELASTIC_APM_ENABLED: true
+        ELASTIC_APM_ENVIRONMENT: HMG
+        ELASTIC_APM_SERVER_URL: http://srv-gesis-elastic-apm-01:8200
+        ELASTIC_APM_SERVICE_NAME: sigepen
+        JAVA_OPTS: -Xms512m -Xmx4g -Djava.net.preferIPv4Stack=true
+            -Djboss.modules.system.pkgs=$JBOSS_MODULES_SYSTEM_PKGS
+            -Djava.awt.headless=true
+            -javaagent:/opt/jboss/wildfly/elastic-apm-agent.jar
+        TZ: America/Cuiaba
+    secret_data:
+        DATASOURCE_PASS: MUDE-ME
+        DATASOURCE_URL: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS = (PROTOCOL = TCP)
+            (HOST=cloudmti-rachd0-crs-scan.seguranca.local)(PORT = 1521))
+            (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = PDB_HML_SIGEPEN)))
+        DATASOURCE_USER: SIGEPEN_USER
+producao:
+    namespace: sigepen-prod
+    ingress:
+        hosts:
+            - portal2.seguranca.local
+            - portal2.sesp.mt.gov.br
+    config_map_data:
+        AMBIENTE: producao
+        ELASTIC_APM_ENABLED: true
+        ELASTIC_APM_ENVIRONMENT: PROD
+        ELASTIC_APM_SERVER_URL: http://srv-gesis-elastic-apm-01:8200
+        ELASTIC_APM_SERVICE_NAME: sigepen
+        JAVA_OPTS: -Xms512m -Xmx8g -Djava.net.preferIPv4Stack=true
+            -Djboss.modules.system.pkgs=$JBOSS_MODULES_SYSTEM_PKGS
+            -Djava.awt.headless=true
+            -javaagent:/opt/jboss/wildfly/elastic-apm-agent.jar
+        TZ: America/Cuiaba
+        secret_data:
+            DATASOURCE_PASS: MUDE-ME
+            DATASOURCE_URL: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS = (PROTOCOL = TCP)
+                (HOST=cloudmti-rachd0-crs-scan.seguranca.local)(PORT = 1521))
+                (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = PDB_SIGEPEN)))
+            DATASOURCE_USER: SIGEPEN_USER

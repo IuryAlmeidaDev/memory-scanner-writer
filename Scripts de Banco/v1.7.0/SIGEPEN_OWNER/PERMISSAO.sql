@@ -1,1 +1,0 @@
-insert into permissao(id, nome, descricao, funcionalidade_id) values (130, 'VisualizarPessoaRecuperando', 'Permite visualizar informações da Pessoa em Recuperando', 3);

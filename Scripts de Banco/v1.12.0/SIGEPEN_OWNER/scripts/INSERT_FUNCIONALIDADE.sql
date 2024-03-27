@@ -1,3 +1,0 @@
-INSERT INTO FUNCIONALIDADE
-(ID, NOME)
-VALUES(9,'Mapa Alimentacao');
