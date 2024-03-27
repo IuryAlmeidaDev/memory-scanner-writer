@@ -62,11 +62,11 @@ homologacao:
             -javaagent:/opt/jboss/wildfly/elastic-apm-agent.jar
         TZ: America/Cuiaba
     secret_data:
-        DATASOURCE_PASS: SIGEPEN_USER
+        DATASOURCE_PASS: MUDE-ME
         DATASOURCE_URL: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS = (PROTOCOL = TCP)
             (HOST=cloudmti-rachd0-crs-scan.seguranca.local)(PORT = 1521))
-            (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = PDB_HMG_SIGEPEN)))
-        DATASOURCE_USER: MUDE-ME
+            (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = PDB_HML_SIGEPEN)))
+        DATASOURCE_USER: SIGEPEN_USER
 producao:
     namespace: sigepen-prod
     ingress:
@@ -85,8 +85,8 @@ producao:
             -javaagent:/opt/jboss/wildfly/elastic-apm-agent.jar
         TZ: America/Cuiaba
         secret_data:
-            DATASOURCE_PASS: SIGEPEN_USER
+            DATASOURCE_PASS: MUDE-ME
             DATASOURCE_URL: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS = (PROTOCOL = TCP)
                 (HOST=cloudmti-rachd0-crs-scan.seguranca.local)(PORT = 1521))
-                (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = PDB_PRD_SIGEPEN)))
-            DATASOURCE_USER: MUDE-ME
+                (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = PDB_SIGEPEN)))
+            DATASOURCE_USER: SIGEPEN_USER
