@@ -19,7 +19,7 @@
 	</parameter>
 	<parameter name="SUB_SCHEMA" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select (select listagg(e.nome, ' > ') within group(order by e.id) cela
+		<![CDATA[select distinct(select listagg(e.nome, ' > ') within group(order by e.id) cela
           from $P!{SUB_SCHEMA}.estrutura e
          where e.estruturapai_id is not null
          start with e.id = recup.estrutura_id
