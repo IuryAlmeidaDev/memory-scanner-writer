@@ -113,6 +113,20 @@ public class RecuperandoView {
 	public RecuperandoView() {
 
 	}
+	
+	
+
+	public SituacaoCadastroRecuperando getSituacaoCadastro() {
+		return situacaoCadastro;
+	}
+
+
+
+	public void setSituacaoCadastro(SituacaoCadastroRecuperando situacaoCadastro) {
+		this.situacaoCadastro = situacaoCadastro;
+	}
+
+
 
 	public Long getId() {
 		return id;
@@ -203,13 +217,13 @@ public class RecuperandoView {
 		this.periculosidade = periculosidade;
 	}
 
-	public SituacaoCadastroRecuperando getSituacaoCadastro() {
-		return situacaoCadastro;
-	}
-
-	public void setSituacaoCadastro(SituacaoCadastroRecuperando situacaoCadastro) {
-		this.situacaoCadastro = situacaoCadastro;
-	}
+//	public SituacaoCadastroRecuperando getSituacaoCadastro() {
+//		return situacaoCadastro;
+//	}
+//
+//	public void setSituacaoCadastro(SituacaoCadastroRecuperando situacaoCadastro) {
+//		this.situacaoCadastro = situacaoCadastro;
+//	}
 
 	public Boolean getTaVivo() {
 		return taVivo;

@@ -98,21 +98,24 @@ public class ImprimirFichaVisitanteBean extends MetodosDialogBean {
 				return "pretty:dashboard";
 			}
             this.setVisitante((Visitante) facesUtil.getObjetoSessao("filtroVisitante"));
-    		List<Credenciamento> swaprecuperandos = credenciamentoService.listarCredenciamentoPorVisitante(this.getVisitante());
+//    		List<Credenciamento> swaprecuperandos = credenciamentoService.buscarCredenciamentoEntidadesRelacionadasPorVisitante(this.getVisitante());
     		
-        	for(Credenciamento vr : swaprecuperandos){
-        		Credenciamento vr2 = credenciamentoService.buscarPorId(vr.getId());
-        		Hibernate.initialize(vr2.getFasesDoCredenciamento());
-        		this.getCredenciamentos().add(vr);
-        		RecuperandoView r = new RecuperandoView();
-        		if(vr.getRecuperando() != null) {
-            		r.setId(vr.getRecuperando().getId());
-            		r.setNome(vr.getRecuperando().getPessoa().getNome());
-            		this.getRecuperandos().add(r);
-        		}
-        	}
+//        	for(Credenciamento vr : swaprecuperandos){
+//        		Credenciamento vr2 = credenciamentoService.buscarPorId(vr.getId());
+//        		Hibernate.initialize(vr2.getFasesDoCredenciamento());
+//        		this.getCredenciamentos().add(vr);
+//        		RecuperandoView r = new RecuperandoView();
+//        		if(vr.getRecuperando() != null) {
+//            		r.setId(vr.getRecuperando().getId());
+//            		r.setNome(vr.getRecuperando().getPessoa().getNome());
+//            		this.getRecuperandos().add(r);
+//        		}
+//        	}
 			
 			
+            this.credenciamentos =  credenciamentoService.buscarCredenciamentoEntidadesRelacionadasPorVisitante(this.getVisitante());
+            
+            
 		} catch (Exception e){
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(e, log);

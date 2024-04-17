@@ -89,8 +89,7 @@ public class MovimentacaoInternaDAO {
 
 	public boolean isPedidoFinalizadoOuCancelado(long pedidoId) {
 		try {
-			String jpql = "select COUNT(p) from PedidoTransito p where p.status in (:status) AND p.id = :pedidoId";
-			Query query = entityManager.createQuery(jpql);
+			Query query = entityManager.createQuery("select COUNT(1) from PedidoTransito p where p.status in (:status) AND p.id = :pedidoId");
 			query.setParameter("status", Arrays.asList(StatusPedido.FINALIZADO, StatusPedido.CANCELADO));
 			query.setParameter("pedidoId", pedidoId);
 			long quantidade = (Long) query.getSingleResult();

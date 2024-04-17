@@ -3,9 +3,12 @@ package br.gov.mt.sejudh.sigepen.dao;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroFaltaDisciplinar;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.model.FaltaDisciplinar;
+import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.FaltaDisciplinarDTO;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -84,4 +87,40 @@ public class FaltaDisciplinarDAO {
 		List<FaltaDisciplinar> faltaDisciplinars = query.getResultList();
 		return faltaDisciplinars;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<FaltaDisciplinar> listarFaltaDisciplinarPorRecuperandoId(Long id) {
+		Session session = this.entityManager.unwrap(Session.class);
+
+		 return session.createSQLQuery("select * from sigepen_owner.sgp_falta_disciplinar f where f.id_recuperando = :recuperandoId").addEntity(FaltaDisciplinar.class).setParameter("recuperandoId", id).list();
+	}
+	
+	
+	public PassagemLotacao buscaPassagemLotacaoPorRecuperandoId(Long id) {
+		Session session = this.entityManager.unwrap(Session.class);
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT PASL.* FROM SIGEPEN_OWNER.PASSAGEM PAS                               ");
+		sql.append("INNER JOIN SIGEPEN_OWNER.PASSAGEM_LOTACAO PASL ON PASL.PASSAGEM_ID = PAS.ID ");
+		sql.append("WHERE PAS.RECUPERANDO_ID = :recuperandoId                                   ");
+		sql.append("AND PAS.Data_Saida is null                                                  ");
+		sql.append("and PASL.Data_Saida is null                                                 ");
+		 return (PassagemLotacao) session.createSQLQuery(sql.toString()).addEntity(PassagemLotacao.class).setParameter("recuperandoId", id).uniqueResult();
+	}
+	
+	
+	public UnidadePrisional buscaUnidadePriosionalAtualRecuperandoId(Long id) {
+		Session session = this.entityManager.unwrap(Session.class);
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT UP.* FROM SIGEPEN_OWNER.PASSAGEM PAS                                 ");
+		sql.append("INNER JOIN SIGEPEN_OWNER.PASSAGEM_LOTACAO PASL ON PASL.PASSAGEM_ID = PAS.ID ");
+		sql.append("INNER JOIN SIGEPEN_OWNER.ESTRUTURA E ON E.ID = PASL.ESTRUTURA_ID            ");
+		sql.append("INNER JOIN SIGEPEN_OWNER.UNIDADE_PRISIONAL UP ON UP.ID = E.UNIDADEPRISIONAL_ID     ");
+		sql.append("WHERE PAS.RECUPERANDO_ID = :recuperandoId                                   ");
+		sql.append("AND PAS.Data_Saida is null                                                  ");
+		sql.append("and PASL.Data_Saida is null                                                 ");
+		 return (UnidadePrisional) session.createSQLQuery(sql.toString()).addEntity(UnidadePrisional.class).setParameter("recuperandoId", id).uniqueResult();
+	}
+	
 }

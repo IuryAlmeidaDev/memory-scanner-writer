@@ -7,6 +7,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import br.gov.mt.sejudh.sigepen.model.Biometria;
 import br.gov.mt.sejudh.sigepen.model.BiometriaTemporaria;
 import br.gov.mt.sejudh.sigepen.model.dto.PessoaBiometriaWSDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
@@ -21,6 +22,12 @@ public class BiometriaDAO {
 		BiometriaTemporaria bioTemp = em.find(BiometriaTemporaria.class, id);
 
 		return bioTemp;
+	}
+	
+	public Biometria buscarBiometriaPorId(long id) {
+		Biometria bio = em.find(Biometria.class, id);
+
+		return bio;
 	}
 	
 	public boolean removerBiometriaTemporaria(long id) {

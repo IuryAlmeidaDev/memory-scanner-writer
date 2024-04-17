@@ -68,7 +68,7 @@ public class Estrutura implements Serializable, PersistentAttributeInterceptable
     @ManyToOne(fetch = FetchType.LAZY)
     private UnidadePrisional unidadePrisional;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Estrutura estruturaPai;
 
     @OneToMany(mappedBy="estruturaPai", fetch = FetchType.LAZY)
