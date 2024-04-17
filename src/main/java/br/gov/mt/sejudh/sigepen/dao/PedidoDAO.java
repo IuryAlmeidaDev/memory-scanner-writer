@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -64,6 +65,58 @@ public class PedidoDAO {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(PedidoTransito.class, entityManager);		
 	    criteria.setProjection(Projections.rowCount());		
 		return ((Number) criteria.uniqueResult()).intValue();
+	}
+	
+	public void atualizaPedidosTransitoVinculandoComTransferencia(List<Long> ids , StatusPedido statusPedido, Long idTransferencia) {
+  		Query query = entityManager.createQuery(
+  	            "UPDATE PedidoTransito p SET p.status = :status, p.transferencia.id = :idTransferencia " +
+  	            "WHERE p.id IN :ids"
+  	        );
+  		
+  		 query.setParameter("status", statusPedido);
+         query.setParameter("idTransferencia", idTransferencia);
+         query.setParameter("ids", ids);
+         query.executeUpdate();
+
+	}
+	
+	public void atualizaPedidosParaEmAndamentoTransitoPorTransferenciaId(Long idTransferencia, StatusPedido statusPedido, Date data) {
+  		Query query = entityManager.createQuery(
+  	            "UPDATE PedidoTransito p SET p.status = :status, p.dataInicio = :data " +
+  	            "WHERE p.transferencia.id = :idTransferencia"
+  	        );
+  		
+  		 executaUpdatePedidosTransferencia(idTransferencia, statusPedido, data, query);
+
+	}
+	
+	public void atualizaPedidosParaCanceladoTransitoPorTransferenciaId(Long idTransferencia, StatusPedido statusPedido, Date data) {
+  		Query query = entityManager.createQuery(
+  	            "UPDATE PedidoTransito p SET p.status = :status, p.dataCancelamento = :data " +
+  	            "WHERE p.transferencia.id = :idTransferencia"
+  	        );
+  		
+  		 executaUpdatePedidosTransferencia(idTransferencia, statusPedido, data, query);
+
+	}
+	
+	
+	public void atualizaPedidosParaFinalizadoTransitoPorTransferenciaId(Long idTransferencia, StatusPedido statusPedido, Date data) {
+  		Query query = entityManager.createQuery(
+  	            "UPDATE PedidoTransito p SET p.status = :status, p.dataConclusao = :data " +
+  	            "WHERE p.transferencia.id = :idTransferencia"
+  	        );
+  		
+  		 executaUpdatePedidosTransferencia(idTransferencia, statusPedido, data, query);
+
+	}
+
+	private void executaUpdatePedidosTransferencia(Long idTransferencia, StatusPedido statusPedido, Date data,
+			Query query) {
+		query.setParameter("status", statusPedido);
+         query.setParameter("idTransferencia", idTransferencia);
+         query.setParameter("data", data);
+         query.executeUpdate();
 	}
 	
 	public PedidoTransito buscarPedidoCompletoPorId(long id) {
@@ -151,7 +204,7 @@ public class PedidoDAO {
 	
 	public boolean recuperandoEmMovimentacaoInterna(Recuperando recuperando){
 		try {;
-			String jpql="select COUNT(p) from PedidoTransito p where p.recuperando = :rec AND p.status = :status AND p.tipoTransito = :tipoTransito";
+			String jpql="select COUNT(1) from PedidoTransito p where p.recuperando = :rec AND p.status = :status AND p.tipoTransito = :tipoTransito";
 			 Query query = entityManager.createQuery(jpql);		
 			query.setParameter("rec",recuperando);
 			query.setParameter("status", StatusPedido.EM_ANDAMENTO);
@@ -165,7 +218,7 @@ public class PedidoDAO {
 	
 	public boolean recuperandoEmMovimentacaoExterna(Recuperando recuperando){
 		try {
-			String jpql="select COUNT(p) from PedidoTransito p where p.recuperando = :rec AND p.tipoTransito = :tipoTransito AND (p.status = :status or p.status = :statusSuspenso)";
+			String jpql="select COUNT(1) from PedidoTransito p where p.recuperando = :rec AND p.tipoTransito = :tipoTransito AND (p.status = :status or p.status = :statusSuspenso)";
 			 Query query = entityManager.createQuery(jpql);		
 			query.setParameter("rec",recuperando);
 			query.setParameter("status", StatusPedido.EM_ANDAMENTO);
@@ -180,7 +233,7 @@ public class PedidoDAO {
 	
 	public boolean recuperandoEmTransferencia(Recuperando recuperando){
 		try {
-			String jpql="select COUNT(p) from PedidoTransito p where p.recuperando = :rec and p.status = :status AND p.tipoTransito = :tipoTransito";
+			String jpql="select COUNT(1) from PedidoTransito p where p.recuperando = :rec and p.status = :status AND p.tipoTransito = :tipoTransito";
 			 Query query = entityManager.createQuery(jpql);		
 			query.setParameter("rec",recuperando);
 			query.setParameter("status", StatusPedido.EM_ANDAMENTO);

@@ -63,6 +63,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.AutorizacaoSemBiometriaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.VisitanteListaDTO;
+import br.gov.mt.sejudh.sigepen.model.view.AssociarVisitanteResponsavelView;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import br.gov.mt.sejudh.sigepen.service.VisitanteResponsavelService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
@@ -200,11 +201,11 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
   		
 
   		if (filtro.getNome() != null && !filtro.getNome().equals("")) {
-  			sql.append("AND pv.NOME LIKE :nome ");
+  			sql.append("AND pv.NOME LIKE '%' || :nome || '%' ");
   		}
   		
   		if(filtro.getNomeMae() != null && !filtro.getNomeMae().equals("")) {
-  			sql.append("AND pv.NOME_MAE LIKE :mae ");
+  			sql.append("AND pv.NOME_MAE LIKE '%' || :mae || '%' ");
   		}
   			
   		if(filtro.getCpf() != null && !filtro.getCpf().equals("")) {
@@ -212,7 +213,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
   		}
   		
   		if(filtro.getRecuperando() != null && !filtro.getRecuperando().equals("")) {
-  			sql.append("AND pr.NOME LIKE :recuperando ");
+  			sql.append("AND pr.NOME LIKE '%' || :recuperando || '%' ");
   		}
   		
   		if(filtro.getStatus() != null) {
@@ -562,7 +563,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 		Session session = em.unwrap(Session.class);
 		
 		String sql = "SELECT "
-				+ "    /*+ org.hibernate.readOnly */ this_.ID_FASE_CREDENCIAMENTO as id, "
+				+ "    this_.ID_FASE_CREDENCIAMENTO as id, "
 				+ "    this_.ID_CREDENCIAMENTO as credenciamentoId, "
 				+ "    credenciam1_.DATA_VALIDADE as dataValidade, "
 				+ "    visitante2_.ID_VISITANTE as visitanteId, "
@@ -571,10 +572,10 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 				+ "FROM "
 				+ "    SIGEPEN_OWNER.SGP_CREDENCIAMENTO_FASE this_ "
 				+ "INNER JOIN "
-				+ "    SIGEPEN_OWNER_DES.SGP_CREDENCIAMENTO credenciam1_ "
+				+ "    SIGEPEN_OWNER.SGP_CREDENCIAMENTO credenciam1_ "
 				+ "    ON this_.ID_CREDENCIAMENTO = credenciam1_.ID_CREDENCIAMENTO "
 				+ "INNER JOIN "
-				+ "    SIGEPEN_OWNER_DES.SGP_VISITANTE visitante2_ "
+				+ "    SIGEPEN_OWNER.SGP_VISITANTE visitante2_ "
 				+ "    ON credenciam1_.ID_VISITANTE = visitante2_.ID_VISITANTE "
 				+ "WHERE "
 				+ "    credenciam1_.DATA_VALIDADE < SYSDATE "
@@ -756,6 +757,14 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 			Hibernate.initialize(v.getPessoa().getDocumentos());
 		}
 		return visitantes;
+   }
+    
+    
+    @SuppressWarnings("unchecked")
+	public List<AssociarVisitanteResponsavelView> buscarPorFiltroAssociarResponsavel(FiltroConsulta filtro, boolean isRelatorio) {
+		Criteria criteria = filtro.criarCriteriaParaBusca(AssociarVisitanteResponsavelView.class, em, isRelatorio);
+		
+		return criteria.list();
    }
 
     public Visitante buscarVisitantePorIdPessoa(Long id) {
@@ -992,4 +1001,22 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 
 		return (List<AutorizacaoSemBiometriaDTO>) crit.list();
 	}
+	
+	
+	public int buscaQtdRegistroFiltrado(FiltroConsulta filtro) {
+		 	Criteria criteria = filtro.criarCriteriaParaQuantidade(AssociarVisitanteResponsavelView.class, em);
+	        criteria.setProjection(Projections.countDistinct("id"));
+	        return ((Number) criteria.uniqueResult()).intValue();
+		
+	}
+	
+	
+	public Visitante buscarVisitantePorId(Long id) {
+		Session session = this.em.unwrap(Session.class);
+		
+		 return (Visitante) session.createSQLQuery("SELECT * FROM SIGEPEN_OWNER.SGP_VISITANTE V WHERE V.ID_VISITANTE = :visitanteId").addEntity(Visitante.class).setParameter("visitanteId", id).uniqueResult();
+
+	}
+	
+	
 }

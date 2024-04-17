@@ -32,8 +32,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.OrderBy;
@@ -41,7 +39,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.engine.spi.PersistentAttributeInterceptable;
 import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
 import br.gov.mt.sejudh.sigepen.conversores.EnumCustomConverter;
@@ -71,7 +68,7 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
     @Transient
 	private long versao;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "PESSOA_ID", nullable = false)
     private Pessoa pessoa;
 
@@ -198,18 +195,13 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
     private Long tornarRecuperandoIdVisitante;
     
     @Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "REGIME_ATUAL_ID")
     private Regime regimeAtual;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "CONDICAO_ATUAL")
     private Condicao condicaoAtual;
-
-    @OneToOne(mappedBy="recuperando", fetch = FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
-    @NotAudited
-    private SituacaoCadastroRecuperando situacaoCadastroCompleto2;
 
     @OneToMany(cascade=CascadeType.ALL, mappedBy="recuperando", fetch = FetchType.LAZY)
     @NotFound(action = NotFoundAction.IGNORE)
@@ -794,7 +786,7 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
 
     @Override
     public String toString() {
-        return "Recuperando [id=" + id + ", nome=" + pessoa.getNome() + "]";
+        return "Recuperando [id=" + id + " ] ";
     }
 
     @Override

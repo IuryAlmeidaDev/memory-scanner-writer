@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import br.gov.mt.sejudh.sigepen.model.Escolta;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Servidor;
 import br.gov.mt.sejudh.sigepen.model.Transferencia;
+import br.gov.mt.sejudh.sigepen.model.dto.TransferenciaPedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
 
@@ -36,11 +38,13 @@ public class TransferenciaService {
 	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(Transferencia transferencia) {
 		dao.salvar(transferencia);
-		for(PedidoTransito pedido : transferencia.getPedidos()){
-			  pedido.setStatus(StatusPedido.VINCULADO);
-			  pedido.setTransferencia(transferencia);	
-			  daoPedido.salvar(pedido);
+		List<Long> idsPedidos = new ArrayList<>();
+		
+		for(TransferenciaPedidoTransitoDTO transfPedidoDTO : transferencia.getListTransferenciaPedidoTransitoDTO()){
+			idsPedidos.add(transfPedidoDTO.getNr());
 		  }		
+		
+		this.daoPedido.atualizaPedidosTransitoVinculandoComTransferencia(idsPedidos, StatusPedido.VINCULADO, transferencia.getId());
 	}
 	
 	@Interceptors(EJBExcInterceptor.class)
@@ -62,20 +66,17 @@ public class TransferenciaService {
 		transferencia.setStatus(StatusMovimentacao.EM_ANDAMENTO);
 		transferencia.setDataInicio(new Date());
 		
+		daoPedido.atualizaPedidosParaEmAndamentoTransitoPorTransferenciaId(transferencia.getId(), StatusPedido.EM_ANDAMENTO, transferencia.getDataInicio());
 		dao.salvar(transferencia);
-		
-		final List<PedidoTransito> listaPedidos = daoPedido.buscarPedidosPorTransferencia(transferencia.getId());
-		
-		for (PedidoTransito pedido : listaPedidos){
-			pedido.setStatus(StatusPedido.EM_ANDAMENTO);
-			pedido.setDataInicio(transferencia.getDataInicio());
-			
-			daoPedido.salvar(pedido);
-		}		
+	
 	}
 
 	public List<Transferencia> buscaPorFiltro(FiltroTransferencia filtro, boolean isBuscaRelatorio) {		 
 		return dao.buscaPorFiltro(filtro, isBuscaRelatorio);
+    }	
+	
+	public List<Transferencia> buscaPorFiltroRelatorio(FiltroTransferencia filtro, boolean isBuscaRelatorio) {		 
+		return dao.buscaPorFiltroRelatorio(filtro, isBuscaRelatorio);
     }	
 	
 	public int quantidadeFiltrados(FiltroTransferencia filtro){
@@ -84,6 +85,18 @@ public class TransferenciaService {
 	
 	public Transferencia buscaTransferenciaPorId(long id) {		 
 		Transferencia transferencia = dao.buscaTransfernciaPorId(id);
+		
+		if (transferencia != null) {
+			transferencia.setAutorRegistro(auditDAO.autorRegistro(transferencia, transferencia.getId()));
+			transferencia.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(transferencia, transferencia.getId()));
+		}
+		
+		return transferencia;
+    }
+	
+	
+	public Transferencia buscaTransferenciaImprimirRegistro(long id) {		 
+		Transferencia transferencia = dao.buscaTransfernciaPorIdIniciandoObjetos(id);
 		
 		if (transferencia != null) {
 			transferencia.setAutorRegistro(auditDAO.autorRegistro(transferencia, transferencia.getId()));
@@ -102,6 +115,14 @@ public class TransferenciaService {
 		return false;
 	}
 	
+	public boolean isRecuperandoPossuiPedidoIncluso(List<TransferenciaPedidoTransitoDTO> pedidos, PedidoTransito pedido){
+		for(TransferenciaPedidoTransitoDTO p : pedidos){
+			if(p.getMatricula()== pedido.getRecuperando().getId()){
+				return true;
+			}
+		}
+		return false;
+	}
 	public boolean servidorInclusoEscolta(List<Escolta> escolta, Servidor servidor){
 		for(Escolta e : escolta){
 			if(e.getServidor() != null){
@@ -117,13 +138,11 @@ public class TransferenciaService {
 	@Interceptors(EJBExcInterceptor.class)
 	public void cancelarTransferencia(Transferencia transferencia) throws ValidacaoException {
 		if(transferencia.getStatus() == StatusMovimentacao.PENDENTE || transferencia.getStatus() == StatusMovimentacao.EM_ANDAMENTO){			
-		
-		for(PedidoTransito pedido : transferencia.getPedidos()){
-			pedido.setResultado(transferencia.getResultado());
-			pedido.setStatus(StatusPedido.CANCELADO);
-			pedido.setDataCancelamento(new Date());
-			daoPedido.salvar(pedido);	
-		}
+			
+		transferencia.setStatus(StatusMovimentacao.CANCELADO);
+		transferencia.setDataCancelamento(new Date());		
+	
+		daoPedido.atualizaPedidosParaCanceladoTransitoPorTransferenciaId(transferencia.getId(), StatusPedido.CANCELADO, transferencia.getDataCancelamento());
 		transferencia.setStatus(StatusMovimentacao.CANCELADO);
 		transferencia.setDataCancelamento(new Date());		
 		dao.salvar(transferencia);

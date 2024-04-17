@@ -119,6 +119,10 @@ public class RecuperandoService {
 	@Inject
 	private FacesUtil facesUtil;
 
+	public void buscarListaFaltaDisciplinarPorRecuperandoId (Long id) {
+		
+	}
+	
 	public int buscarQuantidadeFiltrada(FiltroRecuperando filtro) {
 		return dao.buscarQuantidadeFiltrada(filtro);
 	}
