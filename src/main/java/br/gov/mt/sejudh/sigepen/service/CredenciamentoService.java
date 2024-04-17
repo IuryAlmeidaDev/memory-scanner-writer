@@ -36,6 +36,24 @@ public class CredenciamentoService extends BaseService<Credenciamento, Long> {
         return this.credenciamentoDAO.buscarPorVisitante(visitante);
     }
     
+    public List<Credenciamento> buscarCredenciamentoEntidadesRelacionadasPorVisitante(Visitante visitante) {
+        return this.credenciamentoDAO.buscarCredenciamentoEntidadesRelacionadasPorVisitante(visitante);
+    }
+    
+    public Credenciamento listarCredenciamentoVisitante(long id) {
+    	return this.credenciamentoDAO.listarCredenciamentoVisitante(id);
+    }
+    public List<FaseDoCredenciamento> listaFasesDoCredenciamento(Credenciamento credenciamento) {
+        return this.credenciamentoDAO.listaFasesDoCredenciamento(credenciamento);
+    }
+    public List<Credenciamento> buscarPorVisitanteId(Long id) {
+        return this.credenciamentoDAO.buscarPorVisitanteId(id);
+    }
+    
+    public List<Credenciamento> buscarCredenciamentoComFasesPorVisitanteId(Long id) {
+        return this.credenciamentoDAO.buscarCredenciamentoComFasesPorVisitanteId(id);
+    }
+    
     public Credenciamento buscarCredenciamentos(Credenciamento cred) {
     	return this.credenciamentoDAO.buscarCredenciamentos(cred);
     }
@@ -84,5 +102,9 @@ public class CredenciamentoService extends BaseService<Credenciamento, Long> {
 		}
 		
 		return retorno;
+	}
+
+	public Credenciamento buscarCredenciamentoVisitante(Long id) {
+		return this.credenciamentoDAO.buscarCredenciamentoVisitante(id);
 	}
 }

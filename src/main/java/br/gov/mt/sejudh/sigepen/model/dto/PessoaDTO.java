@@ -2,6 +2,9 @@ package br.gov.mt.sejudh.sigepen.model.dto;
 
 import java.util.Date;
 
+import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
+import br.gov.mt.sejudh.sigepen.model.Biometria;
+
 public class PessoaDTO {
 
 	private long id;
@@ -11,6 +14,72 @@ public class PessoaDTO {
 	private String nomeMae;
 	private String nomeSocial;
 	private String nomePai;
+	
+	private String nacionalidadeDescricao;
+	private String paisNome;
+	private String estadoNome;
+	private String naturalidadeNome;
+	
+	private Long biometriaId;
+	public Long getBiometriaId() {
+		return biometriaId;
+	}
+
+	public void setBiometriaId(Long biometriaId) {
+		this.biometriaId = biometriaId;
+	}
+
+	private Biometria biometria;
+
+	public Biometria getBiometria() {
+		return biometria;
+	}
+
+	public void setBiometria(Biometria biometria) {
+		this.biometria = biometria;
+	}
+
+	private Sexo sexo;
+	
+	public Sexo getSexo() {
+		return sexo;
+	}
+
+	public void setSexo(Sexo sexo) {
+		this.sexo = sexo;
+	}
+
+	public String getNacionalidadeDescricao() {
+		return nacionalidadeDescricao;
+	}
+
+	public void setNacionalidadeDescricao(String nacionalidadeDescricao) {
+		this.nacionalidadeDescricao = nacionalidadeDescricao;
+	}
+
+	public String getPaisNome() {
+		return paisNome;
+	}
+
+	public void setPaisNome(String paisNome) {
+		this.paisNome = paisNome;
+	}
+
+	public String getEstadoNome() {
+		return estadoNome;
+	}
+
+	public void setEstadoNome(String estadoNome) {
+		this.estadoNome = estadoNome;
+	}
+
+	public String getNaturalidadeNome() {
+		return naturalidadeNome;
+	}
+
+	public void setNaturalidadeNome(String naturalidadeNome) {
+		this.naturalidadeNome = naturalidadeNome;
+	}
 
 	public long getId() {
 		return id;

@@ -199,7 +199,7 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
             return false;
         }
 
-        this.credenciamento = service.buscarPorId(id, false);
+        this.credenciamento = service.listarCredenciamentoVisitante(id);
 
         if (this.credenciamento == null) {
             return false;
@@ -260,8 +260,8 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
         return true;
     }
 
-    public String salvar() {
-        try {
+    public String salvar() throws ValidacaoException {
+//        try {
         	this.validarDataRecebimento();
         	this.validarDateDespacho();
         	this.validarDataValidade();
@@ -273,6 +273,8 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
             this.faseDoCredenciamento.setDataAprovacao(Calendar.getInstance().getTime());
             
             FaseDoCredenciamento fase = this.faseDoCredenciamentoService.salvar(this.faseDoCredenciamento);
+            Credenciamento credimento = this.service.buscarCredenciamentoVisitante(fase.getId());
+            fase.setCredenciamento(credimento);
             
             if(AcaoDefault.equals(this.getAcaoCredenciamento()) || ("ALTERAR_CREDENCIAMENTO".equals(this.getAcaoCredenciamento()) && fase.getFaseCredenciamento() == FaseCredenciamento.APROVACAO)) {
             	this.visitanteService.atribuirStatusVisitantePosCredenciamento(fase.getCredenciamento().getVisitante());
@@ -284,14 +286,14 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
             LoggerUtil.logInfo(Acao.SALVAR, this.faseDoCredenciamento, log);
             this.exibirMensagemSucesso();
             return "pretty:ListarVisitante";
-        } catch (ValidacaoException e) {
-            facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", e.getMessage());
-        } catch (Exception e) {
-            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "Erro", "Erro ao salvar Visitante (" + this.visitante.getPessoa().getNome() + "): " + e.getMessage());
-            LoggerUtil.logErro(Acao.SALVAR, this.faseDoCredenciamento, e, log);
-        }
+//        } catch (ValidacaoException e) {
+//            facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", e.getMessage());
+//        } catch (Exception e) {
+//            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "Erro", "Erro ao salvar Visitante (" + this.visitante.getPessoa().getNome() + "): " + e.getMessage());
+//            LoggerUtil.logErro(Acao.SALVAR, this.faseDoCredenciamento, e, log);
+//        }
 
-        return "";
+//        return "";
     }
 
 	

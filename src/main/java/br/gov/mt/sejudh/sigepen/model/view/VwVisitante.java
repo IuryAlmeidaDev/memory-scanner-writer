@@ -3,19 +3,7 @@ package br.gov.mt.sejudh.sigepen.model.view;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Immutable;
@@ -41,7 +29,7 @@ public class VwVisitante extends BaseModel<Long> {
 
 	@Id
     @Column(name = "ID_VISITANTE")
-    private Long id;
+    private Long idVisitante;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PESSOA_VISITANTE")
@@ -146,11 +134,11 @@ public class VwVisitante extends BaseModel<Long> {
 	}
 
     public Long getId() {
-        return id;
+        return idVisitante;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.idVisitante = id;
     }
 
     public Pessoa getPessoa() {
@@ -307,6 +295,43 @@ public class VwVisitante extends BaseModel<Long> {
 
 	@Override
     public String toString() {
-		return "Visitante [id=" + id + ", nome=" + pessoa.getNome() + "]";
+		return "Visitante [id=" + idVisitante + "]";
     }
+
+
+	@Transient
+	private Long credenciamentoId;
+
+	@Transient
+	private Long tipoVisitaId;
+
+	@Transient
+	private String statusVisitante;
+
+	public Long getCredenciamentoId() {
+		return credenciamentoId;
+	}
+
+	public void setCredenciamentoId(Long credenciamentoId) {
+		this.credenciamentoId = credenciamentoId;
+	}
+
+	public Long getTipoVisitaId() {
+		return tipoVisitaId;
+	}
+
+	public void setTipoVisitaId(Long tipoVisitaId) {
+		this.tipoVisitaId = tipoVisitaId;
+	}
+
+	public void setStatusVisitante(String statusVisitante) {
+		this.statusVisitante = statusVisitante;
+		setStatus(statusVisitante);
+	}
+
+	public void setStatus(String status) {
+		this.status = StatusVisitante.valueOf(status);
+	}
+
+
 }

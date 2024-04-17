@@ -13,11 +13,12 @@ import br.gov.mt.sejudh.sigepen.dao.FaltaDisciplinarDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroFaltaDisciplinar;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoFaltaDisciplinar;
-import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.FaltaDisciplinar;
 import br.gov.mt.sejudh.sigepen.model.Passagem;
+import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.FaltaDisciplinarDTO;
 
 @Stateless
@@ -289,6 +290,19 @@ public class FaltaDisciplinarService {
 				throw new ValidacaoException("Data início da falta disciplinar maior que data fim!");
 			}
 		}
+	}
+	
+	
+	public PassagemLotacao buscaPassagemLotacaoPorRecuperandoId(Long id) {
+		return dao.buscaPassagemLotacaoPorRecuperandoId(id);
+	}
+	
+	public List<FaltaDisciplinar> listarFaltaDisciplinarPorRecuperandoId(Long id) {
+		return dao.listarFaltaDisciplinarPorRecuperandoId(id);
+	}
+	
+	public UnidadePrisional buscaUnidadePriosionalAtualRecuperandoId(Long id) {
+		return dao.buscaUnidadePriosionalAtualRecuperandoId(id);
 	}
 	
 }

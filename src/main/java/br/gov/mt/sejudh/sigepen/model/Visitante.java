@@ -37,6 +37,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
+import br.gov.mt.sejudh.sigepen.model.dto.PessoaDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
@@ -147,8 +148,9 @@ public class Visitante extends BaseModel<Long> {
     
     @Transient
  	private Boolean selecionado;
-    
-    public Visitante() {
+   
+
+	public Visitante() {
 		this.faseAtual = FaseCredenciamento.RECEBIMENTO.getId();
 		this.situacaoAtual = StatusCredenciamento.PENDENTE.getId();
 		this.visitantesReponsaveis = new ArrayList<Visitante>();
@@ -466,7 +468,7 @@ public class Visitante extends BaseModel<Long> {
 
     @Override
     public String toString() {
-        return "Visitante [id=" + id + ", nome=" + pessoa.getNome() + "]";
+        return "Visitante [id=" + id + " ]";
     }
 
 	public Credenciamento getCadastro() {

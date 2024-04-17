@@ -134,10 +134,9 @@ public class RecuperandoDAO {
             TypedQuery<Recuperando> query = em.createQuery(jpql, Recuperando.class);
             query.setParameter("id", idRecuperando);
             Recuperando r = query.getSingleResult();
-
-            Hibernate.initialize(r.getPessoa());
+            
             Hibernate.initialize(r.getPessoa().getDocumentos());
-
+            
             return r;
 		} catch (NoResultException e) {
 			return null;

@@ -24,6 +24,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.ParametroVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamentosVisita;
 import br.gov.mt.sejudh.sigepen.model.CredencialCertidao;
 import br.gov.mt.sejudh.sigepen.model.CredencialDocumento;
 import br.gov.mt.sejudh.sigepen.model.Credenciamento;
@@ -355,6 +356,14 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
         
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<FaseDoCredenciamento> listaFasesDoCredenciamento(Credenciamento vr) {
+		Session session = this.em.unwrap(Session.class);
+        String sql  = "SELECT * FROM SIGEPEN_OWNER.SGP_CREDENCIAMENTO_FASE CF WHERE CF.ID_CREDENCIAMENTO = :credenciamentoId";
+   
+        return session.createSQLQuery(sql).addEntity(FaseDoCredenciamento.class).setParameter("credenciamentoId", vr.getId()).list();
+	}
+
 	public void atualizarStatusCredenciamento(Credenciamento credenciamento) {
 		Credenciamento vr = this.em.find(Credenciamento.class, credenciamento.getId());
 		FaseDoCredenciamento vc = this.buscarUltimoCredenciamento(credenciamento);
@@ -428,7 +437,64 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
         List<Credenciamento> lista = query.getResultList();
         return lista;
 	}
+	
+	public List<Credenciamento> buscarCredenciamentoEntidadesRelacionadasPorVisitante(Visitante visitante) {
 
+		Session session = this.em.unwrap(Session.class);
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT c FROM Credenciamento c ");
+		sql.append("LEFT JOIN FETCH c.unidadePrisional ");
+		sql.append("LEFT JOIN FETCH c.tipoVisita ");
+		sql.append("LEFT JOIN FETCH c.recuperando ");
+		sql.append("LEFT JOIN FETCH c.recuperando.pessoa "); 
+		sql.append("WHERE c.visitante.id = :visitanteId");
+		
+		return session.createQuery(sql.toString())
+                .setParameter("visitanteId", visitante.getId())
+                .list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Credenciamento> buscarPorVisitanteId(Long visitanteId) {
+		Session session = this.em.unwrap(Session.class);
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT c FROM Credenciamento c ");
+		sql.append("LEFT JOIN FETCH c.unidadePrisional ");
+		sql.append("LEFT JOIN FETCH c.visitante ");
+		sql.append("LEFT JOIN FETCH c.tipoVisita ");
+		sql.append("LEFT JOIN FETCH c.recuperando ");
+		sql.append("LEFT JOIN FETCH c.parente ");
+		sql.append("LEFT JOIN FETCH c.recuperando.pessoa "); 
+		sql.append("WHERE c.visitante.id = :visitanteId");
+		
+		return session.createQuery(sql.toString())
+                .setParameter("visitanteId", visitanteId)
+                .list();
+               
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Credenciamento> buscarCredenciamentoComFasesPorVisitanteId(Long visitanteId) {
+	    Session session = this.em.unwrap(Session.class);
+	    StringBuilder sql = new StringBuilder();
+	    sql.append("SELECT c FROM Credenciamento c ");
+	    sql.append(" JOIN FETCH c.unidadePrisional ");
+	    sql.append(" JOIN FETCH c.visitante ");
+	    sql.append(" JOIN FETCH c.tipoVisita ");
+	    sql.append(" JOIN FETCH c.recuperando ");
+	    sql.append(" JOIN FETCH c.recuperando.pessoa ");
+	    sql.append(" JOIN FETCH c.fasesDoCredenciamento f");
+	    sql.append(" JOIN FETCH f.usuarioAprovacao ");  
+	    sql.append(" WHERE c.visitante.id = :visitanteId");
+	 
+	    List<Credenciamento> credenciamentos = session.createQuery(sql.toString())
+	        .setParameter("visitanteId", visitanteId)
+	        .list();
+	 
+	    return credenciamentos;
+	}
+	
+	
 	public void buscarCredenciamentosEFasesDTO(VisitanteDTO visitanteDto) {
 		Criteria crit = em.unwrap(Session.class).createCriteria(Credenciamento.class);
 		crit.createAlias("visitante", "visitante", JoinType.INNER_JOIN);
@@ -472,5 +538,48 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
 		});
 		
 		visitanteDto.setCredenciamentos(credenciamentos);
+	}
+	
+	
+	public Credenciamento listarCredenciamentoVisitante(long id) {
+		Session session = this.em.unwrap(Session.class);
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT c FROM Credenciamento c ");
+		sql.append("LEFT JOIN FETCH c.unidadePrisional ");
+		sql.append("LEFT JOIN FETCH c.visitante ");
+		sql.append("LEFT JOIN FETCH c.tipoVisita ");
+		sql.append("LEFT JOIN FETCH c.recuperando ");
+		sql.append("LEFT JOIN FETCH c.recuperando.pessoa "); 
+		sql.append("WHERE c.id = :id");
+
+		
+		Credenciamento credenciamento = (Credenciamento) session.createQuery(sql.toString())
+                .setParameter("id", id)
+                .uniqueResult();
+		
+
+        if (credenciamento != null) {
+            Hibernate.initialize(credenciamento.getFasesDoCredenciamento());
+            Optional.ofNullable(credenciamento.getRecuperando()).ifPresent(
+                    recuperando -> Hibernate.initialize(recuperando.getFotos())
+            );
+        }
+		
+		return credenciamento;
+
+	}
+
+	public Credenciamento buscarCredenciamentoVisitante(Long id) {
+		Session session = this.em.unwrap(Session.class);
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT c FROM Credenciamento c ");
+	    sql.append("LEFT JOIN FETCH c.fasesDoCredenciamento f ");
+	    sql.append("LEFT JOIN FETCH c.visitante v ");
+	    sql.append("WHERE f.id = :id");
+
+		return (Credenciamento) session.createQuery(sql.toString())
+                .setParameter("id", id)
+                .uniqueResult();
 	}
 }

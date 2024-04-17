@@ -446,6 +446,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		}
 
 		this.visitante = service.buscarPorId(id, true);
+		this.visitante.setCredenciamentos(this.credenciamentoService.buscarCredenciamentoComFasesPorVisitanteId(id));
 
 		List<VisitanteResponsavel> listaResponsaveis = visitanteResponsavelService
 				.buscarListaVisitantesReponsaveis(this.visitante);
@@ -1673,8 +1674,9 @@ public class VisitanteBean extends MetodosDePaginaBean {
 				return vwVisitanteService.quantidadeVwVisitante(getFiltro());
 			}
 
-			public List<VwVisitante> loadData() {
-				return vwVisitanteService.buscarPorFiltro(getFiltro(), false);
+			public List<VwVisitante> loadData(int first, int pageSize, String sortField, SortOrder sortOrder) {
+				
+				return vwVisitanteService.buscarPorFiltroVW(getFiltro(), false, first, pageSize,  sortField,  sortOrder);
 			}
 
 			@Override
@@ -1690,7 +1692,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					e.printStackTrace();
 				}
 				exRecuperandos = null;
-				List<VwVisitante> visitantes = loadData();
+				List<VwVisitante> visitantes = loadData(first, pageSize,  sortField,  sortOrder);
 
 				if (usuarioEstaCadastrando) {
 					checkVisitanteEhRecuperando(filtro.getPessoasIds().get(0));

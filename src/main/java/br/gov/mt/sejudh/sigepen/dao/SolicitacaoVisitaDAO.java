@@ -113,4 +113,18 @@ public class SolicitacaoVisitaDAO extends BaseDAO<SolicitacaoVisita, Long> {
         }
 	}
 
+	public SolicitacaoVisita buscarSolicitacaoVisitaPorId(long id) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select s from SolicitacaoVisita s  ");
+		sql.append(" left join fetch s.recuperando ");
+		sql.append(" left join fetch s.recuperando.pessoa ");
+		sql.append(" left join fetch s.pessoaSolicitacao ");
+		sql.append(" WHERE s.id = :id ");
+		
+		TypedQuery<SolicitacaoVisita> query = em.createQuery(sql.toString(), SolicitacaoVisita.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
+		
+	}
+
 }

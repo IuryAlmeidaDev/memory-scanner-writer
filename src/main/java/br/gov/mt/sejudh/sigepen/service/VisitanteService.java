@@ -20,6 +20,8 @@ import br.gov.mt.sejudh.sigepen.dao.FaseDoCredenciamentoDAO;
 import br.gov.mt.sejudh.sigepen.dao.ImpedimentoDAO;
 import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.dao.VisitanteDAO;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroAssociarResponsavel;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroConsulta;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVisitanteImpedimento;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVwVisitanteRelatorio;
 import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
@@ -48,6 +50,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.AutorizacaoSemBiometriaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.CredenciamentoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
+import br.gov.mt.sejudh.sigepen.model.view.AssociarVisitanteResponsavelView;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
@@ -438,6 +441,10 @@ public class VisitanteService extends BaseService<Visitante, Long> {
 		return this.visitanteDAO.buscarPorFiltro(filtro, isRelatorio);
     }
 	
+	public List<AssociarVisitanteResponsavelView> buscarPorFiltroAssociarResponsavel(FiltroAssociarResponsavel filtro, boolean isRelatorio) {		 
+		return this.visitanteDAO.buscarPorFiltroAssociarResponsavel(filtro, isRelatorio);
+    }
+	
 	public Visitante buscarVisitantePorIdPessoa(Long id) {
 		return this.visitanteDAO.buscarVisitantePorIdPessoa(id);
 	}
@@ -597,4 +604,13 @@ public class VisitanteService extends BaseService<Visitante, Long> {
 	public List<AutorizacaoSemBiometriaDTO> buscarAutorizacoesEntradasDTO(Long idEntrada) {
 		return visitanteDAO.buscarAutorizacoesEntradasDTO(idEntrada);
 	}
+	
+	public int buscaQtdRegistroFiltrado(FiltroConsulta filtro) {
+		return visitanteDAO.buscaQtdRegistroFiltrado(filtro);
+	}
+	
+	public Visitante buscarVisitantePorId(Long id) {
+		return visitanteDAO.buscarVisitantePorId(id);
+	}
+	
 }

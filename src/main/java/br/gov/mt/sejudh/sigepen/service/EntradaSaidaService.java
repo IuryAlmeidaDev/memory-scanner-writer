@@ -27,6 +27,10 @@ public class EntradaSaidaService {
 	@Inject
 	private AuditoriaDAO auditDao;
 
+	public void buscaTodasAsCelasDaEstruturaId(Long id) {
+		this.dao.buscaTodasAsCelasDaEstruturaId(id);
+	}
+	
 	public int buscarQuantidadeFiltrada(FiltroEntradaSaida filtro) {
 		return this.dao.buscarQuantidadeFiltrada(filtro);
 	}
@@ -89,6 +93,10 @@ public class EntradaSaidaService {
 		return this.dao.buscarBiometriaVisitante(ids);
 	}
 
+	public Visitante buscarPessoaVisitante(List<Long> ids) {
+		return this.dao.buscarPessoaVisitante(ids);
+	}
+	
 	public EntradaSaida buscarAuditoria(EntradaSaida entrada) {
 		if (entrada != null) {
 			entrada.setAutorRegistro(auditDao.autorRegistro(entrada, entrada.getId()));
