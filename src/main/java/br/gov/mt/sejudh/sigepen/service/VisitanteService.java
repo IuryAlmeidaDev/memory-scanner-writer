@@ -95,7 +95,11 @@ public class VisitanteService extends BaseService<Visitante, Long> {
     public Visitante incluir(Visitante visitante, Recuperando recuperando, boolean salvarFasesAuto, boolean tornarVisitante) throws Exception {
     	
     	List<Credenciamento> recs = new ArrayList<Credenciamento>();
-    	recs.addAll(visitante.getCredenciamentos());
+    	if(visitante.getId() == null) {
+        	recs.addAll(visitante.getCredenciamentos());
+    	} else {
+    		recs.addAll(this.credenciamentoService.listarCredenciamentoPorVisitante(visitante));
+    	}
     	
     	visitante.getCredenciamentos().clear();
     	boolean already = false;
