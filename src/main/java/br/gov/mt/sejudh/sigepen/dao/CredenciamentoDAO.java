@@ -478,14 +478,14 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
 	    Session session = this.em.unwrap(Session.class);
 	    StringBuilder sql = new StringBuilder();
 	    sql.append("SELECT c FROM Credenciamento c ");
-	    sql.append(" JOIN FETCH c.unidadePrisional ");
-	    sql.append(" JOIN FETCH c.visitante ");
-	    sql.append(" JOIN FETCH c.tipoVisita ");
-	    sql.append(" JOIN FETCH c.recuperando ");
-	    sql.append(" JOIN FETCH c.recuperando.pessoa ");
-	    sql.append(" JOIN FETCH c.fasesDoCredenciamento f");
-	    sql.append(" JOIN FETCH f.usuarioAprovacao ");  
-	    sql.append(" WHERE c.visitante.id = :visitanteId");
+	    sql.append(" LEFT JOIN FETCH c.unidadePrisional ");
+	    sql.append(" LEFT JOIN FETCH c.visitante ");
+	    sql.append(" LEFT JOIN FETCH c.tipoVisita ");
+	    sql.append(" LEFT JOIN FETCH c.recuperando ");
+	    sql.append(" LEFT JOIN FETCH c.recuperando.pessoa ");
+	    sql.append(" LEFT JOIN FETCH c.fasesDoCredenciamento f ");
+	    sql.append(" LEFT JOIN FETCH f.usuarioAprovacao ");  
+	    sql.append(" WHERE c.visitante.id = :visitanteId ");
 	 
 	    List<Credenciamento> credenciamentos = session.createQuery(sql.toString())
 	        .setParameter("visitanteId", visitanteId)
