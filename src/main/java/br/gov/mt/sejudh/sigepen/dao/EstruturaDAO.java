@@ -13,6 +13,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
@@ -283,4 +284,15 @@ public class EstruturaDAO {
 		query.setParameter("idUnidade", idUnidade);
 		return query.getResultList();
 	}
+
+	public void buscarEstruturasCompleta(Estrutura ed) {
+		if (ed != null && ed.getEstruturaPai() != null) {
+			String jpqlED = "select e from Estrutura e where e.id = :id";
+			TypedQuery<Estrutura> queryD = entityManager.createQuery(jpqlED, Estrutura.class);
+			queryD.setParameter("id", ed.getId());
+			Estrutura estruturaPai = queryD.getSingleResult().getEstruturaPai();
+			ed.setEstruturaPai(estruturaPai);
+			buscarEstruturasCompleta(ed.getEstruturaPai());
+		}
+    }
 }
