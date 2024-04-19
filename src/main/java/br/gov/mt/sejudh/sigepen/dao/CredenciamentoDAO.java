@@ -84,6 +84,13 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
     
 	public Credenciamento buscarCredenciamentos(Credenciamento credenciamento) {
 		Credenciamento vr = this.em.find(Credenciamento.class, credenciamento.getId());
+
+    	Hibernate.initialize(vr.getVisitante());
+    	Hibernate.initialize(vr.getVisitante().getTipoVisita());
+    	Hibernate.initialize(vr.getVisitante().getTipoVisita().getTipoVisitaDocumento());
+    	Hibernate.initialize(vr.getVisitante().getTipoVisita().getTipoVisitaCertidao());
+    	Hibernate.initialize(vr.getParente());
+    	
     	for(FaseDoCredenciamento vc : vr.getFasesDoCredenciamento()){
         	
         	for(CredencialDocumento cd : vc.getCredencialDocumentos()){
@@ -94,10 +101,6 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
         		Hibernate.initialize(cd.getVisitanteCertidao());
         	}
         	
-        	Hibernate.initialize(vr.getVisitante());
-        	Hibernate.initialize(vr.getVisitante().getTipoVisita());
-        	Hibernate.initialize(vr.getVisitante().getTipoVisita().getTipoVisitaDocumento());
-        	Hibernate.initialize(vr.getVisitante().getTipoVisita().getTipoVisitaCertidao());
     	}
     	return vr;
     }
@@ -478,14 +481,14 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
 	    Session session = this.em.unwrap(Session.class);
 	    StringBuilder sql = new StringBuilder();
 	    sql.append("SELECT c FROM Credenciamento c ");
-	    sql.append(" JOIN FETCH c.unidadePrisional ");
-	    sql.append(" JOIN FETCH c.visitante ");
-	    sql.append(" JOIN FETCH c.tipoVisita ");
-	    sql.append(" JOIN FETCH c.recuperando ");
-	    sql.append(" JOIN FETCH c.recuperando.pessoa ");
-	    sql.append(" JOIN FETCH c.fasesDoCredenciamento f");
-	    sql.append(" JOIN FETCH f.usuarioAprovacao ");  
-	    sql.append(" WHERE c.visitante.id = :visitanteId");
+	    sql.append(" LEFT JOIN FETCH c.unidadePrisional ");
+	    sql.append(" LEFT JOIN FETCH c.visitante ");
+	    sql.append(" LEFT JOIN FETCH c.tipoVisita ");
+	    sql.append(" LEFT JOIN FETCH c.recuperando ");
+	    sql.append(" LEFT JOIN FETCH c.recuperando.pessoa ");
+	    sql.append(" LEFT JOIN FETCH c.fasesDoCredenciamento f ");
+	    sql.append(" LEFT JOIN FETCH f.usuarioAprovacao ");  
+	    sql.append(" WHERE c.visitante.id = :visitanteId ");
 	 
 	    List<Credenciamento> credenciamentos = session.createQuery(sql.toString())
 	        .setParameter("visitanteId", visitanteId)
