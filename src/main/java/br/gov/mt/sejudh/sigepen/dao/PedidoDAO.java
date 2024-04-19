@@ -2,7 +2,6 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -11,26 +10,18 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.dto.VisitanteListaDTO;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoDocumentoPedidoTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
-import br.gov.mt.sejudh.sigepen.model.Passagem;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
-import org.hibernate.transform.Transformers;
 
 
 @RequestScoped
