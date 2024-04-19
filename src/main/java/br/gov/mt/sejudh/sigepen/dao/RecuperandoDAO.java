@@ -53,6 +53,9 @@ public class RecuperandoDAO {
 	@Inject
 	private SolicitacaoVisitaDAO solicitacaoVisitaDao;
 
+	@Inject
+	private EstruturaDAO estruturaDAO;
+
 	public int buscarQuantidadeFiltrada(FiltroRecuperandoView filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(RecuperandoView.class, em);
 		criteria.addQueryHint(QueryHints.READ_ONLY);
@@ -378,9 +381,12 @@ public class RecuperandoDAO {
 			TypedQuery<Estrutura> query = em.createQuery(jpql.toString(), Estrutura.class);
 			query.setParameter("idRecuperando", recuperando.getId());
 
+
+
 			List<Estrutura> list = query.getResultList();
-			
+
 			if (list.size() > 0) {
+				list.forEach(estrutura -> estruturaDAO.buscarEstruturasCompleta(estrutura));
 				return query.getResultList().get(0);
 			}
 			
