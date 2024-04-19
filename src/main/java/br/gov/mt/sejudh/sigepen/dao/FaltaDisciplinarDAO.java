@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroFaltaDisciplinar;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.FaltaDisciplinar;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
@@ -27,6 +28,9 @@ public class FaltaDisciplinarDAO {
 	
 	@Inject
 	private EntityManager entityManager;
+
+	@Inject
+	private EstruturaDAO estruturaDAO;
 
 	public EntityManager getEntityManager() {
 		return entityManager;
@@ -64,14 +68,19 @@ public class FaltaDisciplinarDAO {
 	
 	public FaltaDisciplinar buscarFaltaDisciplinarCompletaPorId(long id) {
 		try {
-			String jpql="select p from FaltaDisciplinar p where p.id = :id";
+			String jpql = "SELECT p FROM FaltaDisciplinar p " +
+					"LEFT JOIN FETCH p.estruturaOcorrencia estrutura " +
+					"LEFT JOIN FETCH estrutura.unidadePrisional unidade " +
+					"LEFT JOIN FETCH p.recuperando rec " +
+					"LEFT JOIN rec.pessoa pessoa " +
+					"LEFT JOIN FETCH rec.fotos " +
+					"WHERE p.id = :id";
+
 			TypedQuery<FaltaDisciplinar> query = entityManager.createQuery(jpql, FaltaDisciplinar.class);
 			query.setParameter("id", id);
-			
+
 			FaltaDisciplinar p = query.getSingleResult();
-			Hibernate.initialize(p.getEstruturaOcorrencia());
-			Hibernate.initialize(p.getEstruturaOcorrencia().getUnidadePrisional());
-			Hibernate.initialize(p.getRecuperando().getFotos());
+			estruturaDAO.buscarEstruturasCompleta(p.getEstruturaOcorrencia());
 
 			return p;
 		} catch (NoResultException e) {
