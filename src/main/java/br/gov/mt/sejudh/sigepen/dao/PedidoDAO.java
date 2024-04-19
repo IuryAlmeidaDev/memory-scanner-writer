@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -10,10 +11,15 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.dto.VisitanteListaDTO;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
@@ -22,6 +28,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
+import org.hibernate.transform.Transformers;
 
 
 @RequestScoped
@@ -197,7 +204,8 @@ public class PedidoDAO {
                     "LEFT JOIN p.movimentacaoInterna mi " + // Apenas se o tipo de transito for INTERNA
                     "LEFT JOIN p.movimentacaoExterna me " + // Apenas se o tipo de transito for EXTERNA
                     "LEFT JOIN rec.passagens passagem " + // Apenas se o tipo de transito for EXTERNA ou TRANSFERENCIA
-                    "LEFT JOIN passagem.lotacao l " + // Apenas se o tipo de transito for EXTERNA ou TRANSFERENCIA
+                    "LEFT JOIN passagem.lotacao l " +
+                    "LEFT JOIN FETCH p.transferencia " + // Apenas se o tipo de transito for EXTERNA ou TRANSFERENCIA
                     "WHERE p.id = :id";
 
             TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
