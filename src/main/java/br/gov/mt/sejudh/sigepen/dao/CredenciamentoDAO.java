@@ -84,6 +84,13 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
     
 	public Credenciamento buscarCredenciamentos(Credenciamento credenciamento) {
 		Credenciamento vr = this.em.find(Credenciamento.class, credenciamento.getId());
+
+    	Hibernate.initialize(vr.getVisitante());
+    	Hibernate.initialize(vr.getVisitante().getTipoVisita());
+    	Hibernate.initialize(vr.getVisitante().getTipoVisita().getTipoVisitaDocumento());
+    	Hibernate.initialize(vr.getVisitante().getTipoVisita().getTipoVisitaCertidao());
+    	Hibernate.initialize(vr.getParente());
+    	
     	for(FaseDoCredenciamento vc : vr.getFasesDoCredenciamento()){
         	
         	for(CredencialDocumento cd : vc.getCredencialDocumentos()){
@@ -94,10 +101,6 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
         		Hibernate.initialize(cd.getVisitanteCertidao());
         	}
         	
-        	Hibernate.initialize(vr.getVisitante());
-        	Hibernate.initialize(vr.getVisitante().getTipoVisita());
-        	Hibernate.initialize(vr.getVisitante().getTipoVisita().getTipoVisitaDocumento());
-        	Hibernate.initialize(vr.getVisitante().getTipoVisita().getTipoVisitaCertidao());
     	}
     	return vr;
     }
