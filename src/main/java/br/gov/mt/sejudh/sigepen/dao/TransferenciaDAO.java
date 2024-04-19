@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
+import br.gov.mt.sejudh.sigepen.model.Escolta;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
@@ -101,22 +102,32 @@ public class TransferenciaDAO {
 	
 	public Transferencia buscaTransfernciaPorIdIniciandoObjetos(long id) {
 		try {
-			String jpql="select t from Transferencia t where t.id = :id";
+			String jpql = "SELECT t FROM Transferencia t " +
+					"LEFT JOIN FETCH t.pedidos p " +
+					"LEFT JOIN FETCH t.unidadeOrigem " +
+					"LEFT JOIN FETCH p.unidadeDestino " +
+					"LEFT JOIN FETCH p.recuperando rec " +
+					"LEFT JOIN FETCH rec.pessoa " +
+					"WHERE t.id = :id";
+
 			TypedQuery<Transferencia> query = entityManager.createQuery(jpql, Transferencia.class);
-			query.setParameter("id", id);			
-			
+			query.setParameter("id", id);
+
 			Transferencia t = query.getSingleResult();
-			
-			Hibernate.initialize(t.getPedidos());
-			Hibernate.initialize(t.getEscolta());
-			Hibernate.initialize(t.getUnidadeOrigem());
-			
-			for (PedidoTransito p : t.getPedidos()) {
-				Hibernate.initialize(p.getUnidadeDestino());
+
+			if (t.getEscolta() != null) {
+				String jpqlEscolta = "SELECT e FROM Escolta e " +
+						"LEFT JOIN e.movimentacaoInterna m " +
+						"WHERE m.id = :id";
+				TypedQuery<Escolta> queryEscolta = entityManager.createQuery(jpqlEscolta, Escolta.class);
+				queryEscolta.setParameter("id", t.getId());
+				List<Escolta> escoltas = queryEscolta.getResultList();
+				t.setEscolta(escoltas);
 			}
 
 
-			
+
+
 			return t;
 		} catch (NoResultException e) {
 			return null;
