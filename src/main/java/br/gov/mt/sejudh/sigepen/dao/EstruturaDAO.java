@@ -62,6 +62,7 @@ public class EstruturaDAO {
 		Query query = entityManager.createQuery(jpql, Estrutura.class);
 		query.setParameter("id", id);
 		Estrutura estrutura = (Estrutura) query.getSingleResult();
+		buscarEstruturasCompleta(estrutura);
 		return estrutura;
 	}
 
