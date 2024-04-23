@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.model.dto;
 
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 
+import java.util.Arrays;
 import java.util.Date;
 
 
