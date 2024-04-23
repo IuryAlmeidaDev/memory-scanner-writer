@@ -134,7 +134,7 @@ public class ReceberTransferenciaBean extends MetodosDePaginaBean {
 			return false;
 		}
 		
-		this.pedido = service.buscaPedidoPorId(id);
+		this.pedido = service.buscarPedidoTransferenciaPorId(id);
 		
 		if (this.pedido == null) {
 			return false;

@@ -183,6 +183,31 @@ public class PedidoDAO {
 //        }
 //    }
 
+    public PedidoTransito buscarPedidoTransferenciaPorId(long id) {
+        try {
+
+            String jpql = "SELECT p FROM PedidoTransito p " +
+                    "LEFT JOIN p.unidadeOrigem uOrigem " +
+                    "LEFT JOIN FETCH p.recuperando rec " +
+                    "LEFT JOIN rec.pessoa pessoa " +
+                    "LEFT JOIN FETCH rec.fotos foto " +
+                    "LEFT JOIN FETCH p.estruturaOrigem eo " +
+                    "LEFT JOIN p.transferencia " +
+                    "WHERE p.id = :id";
+
+            TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
+            query.setParameter("id", id);
+
+            PedidoTransito p = query.getSingleResult();
+
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaOrigem());
+
+            return p;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
 
     public PedidoTransito buscarPedidoCompletoPorId(long id) {
         try {
