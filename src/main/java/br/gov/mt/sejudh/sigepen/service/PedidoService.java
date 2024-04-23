@@ -83,6 +83,17 @@ public class PedidoService {
 		return pedidoTransito;
     }
 
+	public PedidoTransito buscarPedidoTransferenciaPorId(long id) {
+		PedidoTransito pedidoTransito = dao.buscarPedidoTransferenciaPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+
 	public PedidoTransito buscaPedidoTransitoPorId(long id) {
 		PedidoTransito pedidoTransito = dao.buscaPedidoTransitoPorId(id);
 
