@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.model.dto;
 
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 
+import java.util.Arrays;
 import java.util.Date;
 
 
@@ -66,8 +67,10 @@ public class TransferenciaPedidoTransitoDTO {
 		this.unidadeDestino = unidadeDestino;
 	}
 	public String getStatus() {
-		StatusMovimentacao movimentacao = StatusMovimentacao.valueOf(status);
-		return movimentacao.getDescricao();
+		return Arrays.stream(StatusMovimentacao.values())
+				.findFirst()
+				.map(StatusMovimentacao::getDescricao)
+				.orElse(status);
 	}
 	public void setStatus(String status) {
 		this.status = status;

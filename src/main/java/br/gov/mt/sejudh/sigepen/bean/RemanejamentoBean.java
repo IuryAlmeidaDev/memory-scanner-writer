@@ -171,7 +171,7 @@ public class RemanejamentoBean extends MetodosDePaginaBean {
 		}
 		
 		try {
-			PedidoTransito pedido = pedService.buscaPedidoPorId(p.getId());
+			PedidoTransito pedido = pedService.buscaPedidoRemanejamentoPorId(p.getId());
 		
 			if (pedido.getRecuperando().getStatus() != StatusRecuperando.ATIVO) {
 				throw new ValidacaoException("Recuperando inativo, remova o pedido!");
