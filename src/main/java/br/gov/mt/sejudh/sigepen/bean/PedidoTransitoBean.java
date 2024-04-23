@@ -161,7 +161,7 @@ public class PedidoTransitoBean extends MetodosDePaginaBean {
 			return false;
 		}
 		
-		this.pedido = service.buscaPedidoPorId(id);
+		this.pedido = service.buscaPedidoTransitoPorId(id);
 		
 		if (this.pedido == null) {
 			return false;

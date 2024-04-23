@@ -198,6 +198,16 @@ public class TransferenciaDAO {
 		} catch (NoResultException e) {
 			return false;
 		}
-	}	
-	
+	}
+
+	public void cancelar(Transferencia transferencia) {
+		Query query = entityManager.createQuery(
+				"UPDATE Transferencia p SET p.status = :status " +
+						"WHERE p.id = :id"
+		);
+
+		query.setParameter("status", transferencia.getStatus());
+		query.setParameter("id", transferencia.getId());
+		query.executeUpdate();
+	}
 }

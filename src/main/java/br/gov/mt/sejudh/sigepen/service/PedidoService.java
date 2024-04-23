@@ -82,6 +82,39 @@ public class PedidoService {
 		
 		return pedidoTransito;
     }
+
+	public PedidoTransito buscaPedidoTransitoPorId(long id) {
+		PedidoTransito pedidoTransito = dao.buscaPedidoTransitoPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+
+	public PedidoTransito buscaPedidoTransitoImpressaoPorId(long id) {
+		PedidoTransito pedidoTransito = dao.buscaPedidoTransitoImpressaoPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+
+	public PedidoTransito buscaPedidoRemanejamentoPorId(long id) {
+		PedidoTransito pedidoTransito = dao.buscaPedidoRemanejamentoPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
 		
 	public int quantidadeFiltrados(FiltroPedTransito filtro){
 		return dao.quantidadeFiltrados(filtro);
@@ -127,9 +160,9 @@ public class PedidoService {
 	public void cancelarPedidoTransferencia(PedidoTransito pedido) {
 		pedido.setStatus(StatusPedido.CANCELADO);
 		pedido.setDataCancelamento(new Date());
-		dao.salvar(pedido);
+		dao.cancelar(pedido);
 		pedido.getTransferencia().setStatus(StatusMovimentacao.FINALIZADO_PARCIAL);
-		transfDao.salvar(pedido.getTransferencia());
+		transfDao.cancelar(pedido.getTransferencia());
 	}
 	
 	@Interceptors(EJBExcInterceptor.class)
