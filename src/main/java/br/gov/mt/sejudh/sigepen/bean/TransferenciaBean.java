@@ -365,6 +365,15 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 	public void cancelarPedido(PedidoTransito pedido) {		
 		this.pedido = pedido;		
 	}
+
+	public void cancelarPedido(TransferenciaPedidoTransitoDTO pedidoDto) {
+		this.pedido = new PedidoTransito();
+		pedido.setId(pedidoDto.getNr());
+
+		Transferencia t = new Transferencia();
+		t.setId(pedidoDto.getIdTransferencia());
+		pedido.setTransferencia(t);
+	}
 	
 	/*
 	 * Cancela um pedido

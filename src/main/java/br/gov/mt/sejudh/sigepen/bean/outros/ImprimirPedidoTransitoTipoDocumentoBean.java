@@ -65,7 +65,7 @@ public class ImprimirPedidoTransitoTipoDocumentoBean extends MetodosDialogBean {
 	
 	public void imprimirRegistro() {
 		try {
-			this.pedido = pedidoService.buscaPedidoPorId(this.pedidoTransito.getId());
+			this.pedido = pedidoService.buscaPedidoTransitoImpressaoPorId(this.pedidoTransito.getId());
 			
 			lista.add(this.pedido);
 			
@@ -81,7 +81,7 @@ public class ImprimirPedidoTransitoTipoDocumentoBean extends MetodosDialogBean {
 	}
 	
 	public void selecionarOficioAutoridade() {
-		this.pedido = pedidoService.buscaPedidoPorId(this.pedidoTransito.getId());
+		this.pedido = pedidoService.buscaPedidoTransitoImpressaoPorId(this.pedidoTransito.getId());
 		
 		if (this.pedido.getTipoDocumentoPedidoTransito() == TipoDocumentoPedidoTransito.OFICIO) {
 			this.imprimirOficioPedidoTransito();

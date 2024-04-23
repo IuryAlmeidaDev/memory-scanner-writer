@@ -197,15 +197,15 @@ public class PedidoDAO {
                     "LEFT JOIN FETCH p.recuperando rec " +
                     "LEFT JOIN rec.pessoa pessoa " +
                     "LEFT JOIN uOrigem.endereco cidade " +
-                    "LEFT JOIN FETCH rec.fotos foto " + // Apenas se o tipo de documento for OFICIO ou AUTORIZACAO
+                    "LEFT JOIN FETCH rec.fotos foto " +
                     "LEFT JOIN FETCH p.estruturaOrigem eo " +
                     "LEFT JOIN FETCH p.estruturaDestino ed " +
-                    "LEFT JOIN FETCH p.estabelecimento e " + // Apenas se o tipo de documento for OFICIO ou AUTORIZACAO
-                    "LEFT JOIN p.movimentacaoInterna mi " + // Apenas se o tipo de transito for INTERNA
-                    "LEFT JOIN p.movimentacaoExterna me " + // Apenas se o tipo de transito for EXTERNA
-                    "LEFT JOIN rec.passagens passagem " + // Apenas se o tipo de transito for EXTERNA ou TRANSFERENCIA
+                    "LEFT JOIN FETCH p.estabelecimento e " +
+                    "LEFT JOIN p.movimentacaoInterna mi " +
+                    "LEFT JOIN p.movimentacaoExterna me " +
+                    "LEFT JOIN FETCH rec.passagens passagem " +
                     "LEFT JOIN passagem.lotacao l " +
-                    "LEFT JOIN FETCH p.transferencia " + // Apenas se o tipo de transito for EXTERNA ou TRANSFERENCIA
+                    "LEFT JOIN p.transferencia " +
                     "WHERE p.id = :id";
 
             TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
@@ -216,8 +216,68 @@ public class PedidoDAO {
             estruturaDAO.buscarEstruturasCompleta(p.getEstruturaDestino());
             estruturaDAO.buscarEstruturasCompleta(p.getEstruturaOrigem());
 
-//            getEstrutura(p.getEstruturaDestino());
-//            getEstrutura(p.getEstruturaOrigem());
+            return p;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public PedidoTransito buscaPedidoTransitoImpressaoPorId(long id) {
+        try {
+
+            String jpql = "SELECT p FROM PedidoTransito p " +
+                    "LEFT JOIN FETCH p.autorizador " +
+                    "LEFT JOIN FETCH p.unidadeOrigem uOrigem " +
+                    "LEFT JOIN FETCH uOrigem.responsavel resp " +
+                    "LEFT JOIN FETCH resp.funcao " +
+                    "LEFT JOIN FETCH p.recuperando rec " +
+                    "LEFT JOIN rec.pessoa pessoa " +
+                    "LEFT JOIN FETCH p.estabelecimento e " +
+                    "LEFT JOIN p.movimentacaoInterna mi " +
+                    "LEFT JOIN p.movimentacaoExterna me " +
+                    "LEFT JOIN rec.passagens passagem " +
+                    "LEFT JOIN passagem.lotacao l " +
+                    "LEFT JOIN FETCH p.estruturaOrigem eo " +
+                    "LEFT JOIN FETCH rec.fotos foto " +
+                    "WHERE p.id = :id";
+
+            TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
+            query.setParameter("id", id);
+
+            PedidoTransito p = query.getSingleResult();
+
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaDestino());
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaOrigem());
+
+            return p;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public PedidoTransito buscaPedidoTransitoPorId(long id) {
+        try {
+
+            String jpql = "SELECT p FROM PedidoTransito p " +
+                    "LEFT JOIN FETCH p.autorizador " +
+                    "LEFT JOIN FETCH p.recuperando rec " +
+                    "LEFT JOIN rec.pessoa pessoa " +
+                    "LEFT JOIN FETCH p.estabelecimento e " +
+                    "LEFT JOIN p.movimentacaoInterna mi " +
+                    "LEFT JOIN p.movimentacaoExterna me " +
+                    "LEFT JOIN rec.passagens passagem " +
+                    "LEFT JOIN passagem.lotacao l " +
+                    "LEFT JOIN FETCH p.estruturaOrigem eo " +
+                    "LEFT JOIN FETCH p.unidadeOrigem uOrigem " +
+                    "LEFT JOIN FETCH p.unidadeDestino uDestino " +
+                    "LEFT JOIN FETCH rec.fotos foto " +
+                    "WHERE p.id = :id";
+
+            TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
+            query.setParameter("id", id);
+
+            PedidoTransito p = query.getSingleResult();
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaOrigem());
 
 
             return p;
@@ -226,7 +286,29 @@ public class PedidoDAO {
         }
     }
 
+    public PedidoTransito buscaPedidoRemanejamentoPorId(long id) {
+        try {
 
+            String jpql = "SELECT p FROM PedidoTransito p " +
+                    "LEFT JOIN FETCH p.unidadeOrigem uOrigem " +
+                    "LEFT JOIN FETCH p.recuperando rec " +
+                    "LEFT JOIN rec.pessoa pessoa " +
+                    "LEFT JOIN FETCH rec.passagens passagem " +
+                    "LEFT JOIN FETCH passagem.lotacao l " +
+                    "WHERE p.id = :id";
+
+            TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
+            query.setParameter("id", id);
+
+            PedidoTransito p = query.getSingleResult();
+
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaDestino());
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaOrigem());
+            return p;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
     public void expirarPedidosTransito(Date dataExpirar) {
         String jpql = "update PedidoTransito p set p.status = :status,  p.dataCancelamento = :data, p.resultado = :resultado where p.dataPrevista < :dataExpirar and (p.status = :solicitado or p.status = :autorizado)";
@@ -324,5 +406,17 @@ public class PedidoDAO {
             Hibernate.initialize(p.getUnidadeDestino());
         }
         return lista;
+    }
+
+    public void cancelar(PedidoTransito pedido) {
+        Query query = entityManager.createQuery(
+                "UPDATE PedidoTransito p SET p.status = :status, p.dataCancelamento = :dataCancelamento " +
+                        "WHERE p.id = :id"
+        );
+
+        query.setParameter("status", pedido.getStatus());
+        query.setParameter("dataCancelamento", pedido.getDataCancelamento());
+        query.setParameter("id", pedido.getId());
+        query.executeUpdate();
     }
 }
