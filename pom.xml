@@ -404,6 +404,8 @@
                             <include>persistence.xml</include>
                             <include>shiro.ini</include>
                             <include>application.properties</include>
+                            <include>META-INF/persistence.xml</include>
+                            
                         </includes>
                     </resource>
                 </resources>
@@ -472,6 +474,7 @@
                             <include>persistence.xml</include>
                             <include>shiro.ini</include>
                             <include>application.properties</include>
+                            <include>META-INF/persistence.xml</include>
                             
                         </includes>
                     </resource>
@@ -556,6 +559,7 @@
                             <include>persistence.xml</include>
                             <include>shiro.ini</include>
                             <include>application.properties</include>
+                            <include>META-INF/persistence.xml</include>
                             
                         </includes>
                     </resource>
@@ -625,7 +629,7 @@
                             <include>persistence.xml</include>
                             <include>shiro.ini</include>
                             <include>application.properties</include>
-                            
+                            <include>META-INF/persistence.xml</include>
                         </includes>
                     </resource>
                 </resources>
