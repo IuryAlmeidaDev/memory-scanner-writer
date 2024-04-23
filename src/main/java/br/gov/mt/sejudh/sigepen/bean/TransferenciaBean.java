@@ -229,7 +229,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 					throw new ValidacaoException("Recuperando lotado em outra unidade, remova o pedido "+ped.getNr()+"!");
 				}
 				
-				if(!ped.getStatus().equalsIgnoreCase(StatusPedido.AUTORIZADO.getDescricao()) && this.transferencia.getId() != ped.getIdTransferencia()){
+				if(ped.getStatus() != StatusPedido.AUTORIZADO && this.transferencia.getId() != ped.getIdTransferencia()){
 					throw new ValidacaoException("Pedido "+ped.getNr() +" não pode ser vinculado, remova o pedido!");
 				}
 				
@@ -291,7 +291,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 					throw new ValidacaoException("Recuperando lotado em outra unidade, remova o pedido "+pedido.getNr()+"!");
 				}
 				
-				if(!pedido.getStatus().equalsIgnoreCase(StatusPedido.AUTORIZADO.getDescricao()) && this.transferencia.getId() != pedido.getIdTransferencia()){
+				if(pedido.getStatus() != StatusPedido.AUTORIZADO && this.transferencia.getId() != pedido.getIdTransferencia()){
 					throw new ValidacaoException("Pedido "+pedido.getNr() +" não pode ser vinculado, remova o pedido!");
 				}				
 			}
@@ -318,8 +318,8 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 		
 		try {
 			for (TransferenciaPedidoTransitoDTO ped : this.transferencia.getListTransferenciaPedidoTransitoDTO()) {				
-				if (!ped.getStatus().equalsIgnoreCase(StatusPedido.CANCELADO.getDescricao()) && 
-					    !ped.getStatus().equalsIgnoreCase(StatusPedido.FINALIZADO.getDescricao())) {
+				if (ped.getStatus() != StatusPedido.CANCELADO && 
+					    ped.getStatus() != StatusPedido.FINALIZADO) {
 					    throw new ValidacaoException("Finalize ou cancele o pedido " + ped.getNr() + "!");
 					}		
 			}			
@@ -548,7 +548,8 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 		dto.setMatricula(pedido.getRecuperando().getId());
 		dto.setNome(pedido.getRecuperando().getPessoa().getNome());
 		dto.setNr(pedido.getId());
-		dto.setStatus(pedido.getStatus().getDescricao());
+		dto.setStatusStr(pedido.getStatus().toString());
+		dto.setStatus(pedido.getStatus());
 		dto.setUnidadeDestino(pedido.getUnidadeDestino().getNome());
 		dto.setIdTransferencia(this.transferencia.getId());
 		dto.setUnidadeOrigem(pedido.getUnidadeOrigem().getNome());

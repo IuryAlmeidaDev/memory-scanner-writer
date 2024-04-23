@@ -1,6 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
-import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -12,6 +12,22 @@ public class TransferenciaPedidoTransitoDTO {
 	private String unidadeOrigem;
 	private Long unidadeOrigemId;
 	
+	private String statusStr;
+	private StatusPedido status;
+	
+	public String getStatusStr() {
+		return statusStr;
+	}
+	public void setStatusStr(String statusStr) {
+		this.statusStr = statusStr;
+	}
+	public StatusPedido getStatus() {
+		return StatusPedido.valueOf(this.statusStr);
+	}
+	
+	public void setStatus(StatusPedido status) {
+		this.status = status;
+	}
 	public Long getIdTransferencia() {
 		return idTransferencia;
 	}
@@ -35,7 +51,8 @@ public class TransferenciaPedidoTransitoDTO {
 	private String nome;
 	private Date dataPrevista;
 	private String unidadeDestino;
-	private String status;
+	
+
 	public Long getNr() {
 		return nr;
 	}
@@ -66,15 +83,7 @@ public class TransferenciaPedidoTransitoDTO {
 	public void setUnidadeDestino(String unidadeDestino) {
 		this.unidadeDestino = unidadeDestino;
 	}
-	public String getStatus() {
-		return Arrays.stream(StatusMovimentacao.values())
-				.findFirst()
-				.map(StatusMovimentacao::getDescricao)
-				.orElse(status);
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
+	
 
 	
 	
