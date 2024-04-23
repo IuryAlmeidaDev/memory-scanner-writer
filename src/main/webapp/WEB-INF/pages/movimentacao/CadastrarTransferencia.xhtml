@@ -74,7 +74,7 @@
 					</p:column>
 				
 					<p:column headerText="Status"  width="120" sortBy="#{pedido.status}">
-						<h:outputText value="#{pedido.status}" />
+						<h:outputText value="#{pedido.status.descricao}" />
 					</p:column>
 				
 				<p:column headerText="Ações"  width="80">
@@ -84,7 +84,7 @@
 							<p:confirm header="Confirmação" message="Deseja excluir o pedido?" icon="ui-icon-alert" />
 						</p:commandButton>						
 						<p:commandButton title="Cancelar" icon="ui-icon-cancel"  action="#{transferenciaBean.cancelarPedido(pedido)}" oncomplete="PF('cancelarPedido').show()"  update="cancelarPedForm" process="@this" 
-							rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia') and pedido.status.equalsIgnoreCase('Em andamento') and transferenciaBean.isFinalizar}"/>
+							rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia') and pedido.status.descricao.equals('Em andamento') and transferenciaBean.isFinalizar}"/>
 					</center>
 				</p:column>
 			</p:dataTable>

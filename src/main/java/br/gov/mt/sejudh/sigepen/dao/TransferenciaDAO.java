@@ -147,7 +147,7 @@ public class TransferenciaDAO {
   		sql.append("       p.nome           as nome,                  ");
   		sql.append("       pt.data_prevista as dataPrevista,          ");
   		sql.append("       upd.nome         as unidadeDestino,        ");
-  		sql.append("       pt.status        as status                 ");
+  		sql.append("       pt.status        as statusStr              ");
   		sql.append(" from sigepen_owner.pedido_transito pt            ");
   		sql.append(" inner join sigepen_owner.unidade_prisional upd on upd.id = pt.unidade_destino_id ");
   		sql.append(" inner join sigepen_owner.recuperando r on r.id = pt.recuperando_id ");
@@ -165,7 +165,7 @@ public class TransferenciaDAO {
   		query.addScalar("nome");
   		query.addScalar("dataPrevista", DateType.INSTANCE);
   		query.addScalar("unidadeDestino");
-  		query.addScalar("status");
+  		query.addScalar("statusStr");
   		query.setResultTransformer(Transformers.aliasToBean(TransferenciaPedidoTransitoDTO.class));
 
 		return  (List<TransferenciaPedidoTransitoDTO>) query.list();
