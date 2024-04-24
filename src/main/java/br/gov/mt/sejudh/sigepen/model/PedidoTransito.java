@@ -92,7 +92,7 @@ public class PedidoTransito implements Serializable{
 	@Column(name = "DATA_DOCUMENTO")
 	private Date dataDocumento;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "FOTO_ID")
 	private Foto foto;
 	
@@ -113,7 +113,7 @@ public class PedidoTransito implements Serializable{
 	private UnidadePrisional unidadeDestino;
 	
 	@Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TIPO_MOVIMENTACAO")
 	private TipoHistorico tipoMovimentacao;
 		

@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.enumerator.*;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -23,12 +24,6 @@ import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroTransferencia;
-import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Escolta;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
@@ -510,7 +505,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 		}
 		
 		try {
-			PedidoTransito pedido = servicePedido.buscaPedidoPorId(p.getId());
+			PedidoTransito pedido = servicePedido.buscarPedidoPorId(p.getId(), TipoMovimentacao.TRANSFERENCIA);
 			
 			if (service.isRecuperandoPossuiPedidoIncluso(this.transferencia.getListTransferenciaPedidoTransitoDTO(), pedido)) {
 				throw new ValidacaoException("Recuperando já possui Pedido adicionado!");
@@ -520,7 +515,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 				throw new ValidacaoException("Recuperando inativo, remova o pedido!");
 			}
 			
-			if(serviceRecuperando.lotacaoAtual(pedido.getRecuperando()).getUnidadePrisional().getId() != pedido.getUnidadeOrigem().getId()){
+			if(serviceRecuperando.PedidoTransitolotacaoAtual(pedido.getRecuperando()).getUnidadePrisional().getId() != pedido.getUnidadeOrigem().getId()){
 				throw new ValidacaoException("Recuperando lotado em outra unidade, remova o pedido!");
 			}
 			
@@ -536,7 +531,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 		} catch(ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
 		} catch(Exception e){
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao adicionar Pedido (" + p.getId() + "): " + e.getMessage());			
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao adicionar Pedido (" + p.getId() + "): " + e.getMessage());
 			LoggerUtil.logErro(Acao.ASSOCIAR, p, e, log);
 		}
 	}
