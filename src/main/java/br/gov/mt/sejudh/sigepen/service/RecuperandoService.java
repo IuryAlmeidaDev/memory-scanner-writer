@@ -466,6 +466,10 @@ public class RecuperandoService {
 		dao.excluirParticularidade(p);
 	}
 	
+	public Estrutura PedidoTransitolotacaoAtual(Recuperando recuperando){		
+		return dao.PedidoTransitolotacaoAtual(recuperando);
+	}
+	
 	public Estrutura lotacaoAtual(Recuperando recuperando){		
 		return dao.lotacaoAtual(recuperando);
 	}
