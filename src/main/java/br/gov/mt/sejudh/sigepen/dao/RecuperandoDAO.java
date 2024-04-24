@@ -396,6 +396,32 @@ public class RecuperandoDAO {
 		}
 	}
 	
+	public Estrutura PedidoTransitolotacaoAtual(Recuperando recuperando) {
+		try {
+			StringBuilder jpql = new StringBuilder();
+			jpql.append("select e ");
+			jpql.append("from Recuperando r, Passagem p, PassagemLotacao l, Estrutura e left join fetch e.unidadePrisional, UnidadePrisional u ");
+			jpql.append("where r.id = :idRecuperando ");
+			jpql.append("and p.recuperando.id = r.id ");
+			jpql.append("and p.dataSaida is null ");
+			jpql.append("and l.passagem.id = p.id ");
+			jpql.append("and l.dataSaida is null ");
+			jpql.append("and l.estrutura.id = e.id ");
+			jpql.append("and e.unidadePrisional.id = u.id ");
+		    jpql.append("order by l.id desc ");
+			
+			TypedQuery<Estrutura> query = em.createQuery(jpql.toString(), Estrutura.class);
+			query.setParameter("idRecuperando", recuperando.getId());
+
+
+
+			return query.getSingleResult();
+
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	
 	public StatusRecuperando statusAtualRecuperando(long id){
 		try {
 			String jpql="select r.status from Recuperando r where r.id = :id";

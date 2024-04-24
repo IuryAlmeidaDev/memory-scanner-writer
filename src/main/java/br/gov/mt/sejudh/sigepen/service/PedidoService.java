@@ -22,6 +22,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoMovimentacao;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
@@ -118,6 +119,17 @@ public class PedidoService {
 
 	public PedidoTransito buscaPedidoRemanejamentoPorId(long id) {
 		PedidoTransito pedidoTransito = dao.buscaPedidoRemanejamentoPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+
+	public PedidoTransito buscarPedidoPorId(long id, TipoMovimentacao tipoMovimentacao) {
+		PedidoTransito pedidoTransito = dao.buscarPedidoPorId(id, tipoMovimentacao);
 
 		if (pedidoTransito != null) {
 			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));

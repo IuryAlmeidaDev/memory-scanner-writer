@@ -171,7 +171,7 @@ public class PassagemDAO {
 			query.setParameter("id", idPassagem);
 
 			Passagem p = query.getSingleResult();
-			estruturaDAO.buscarEstruturasCompleta(p.getLotacaoAtual().getEstrutura());
+			estruturaDAO.buscarEstruturasCompleta(p.getLotacaoAtual() != null ? p.getLotacaoAtual().getEstrutura() : p.getUltimaLotacao().getEstrutura());
 
 			return p;
 		} catch(NoResultException e){
