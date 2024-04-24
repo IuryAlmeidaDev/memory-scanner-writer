@@ -2,7 +2,6 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -11,15 +10,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.dto.VisitanteListaDTO;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoMovimentacao;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
@@ -28,7 +23,6 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
-import org.hibernate.transform.Transformers;
 
 
 @RequestScoped
@@ -126,62 +120,98 @@ public class PedidoDAO {
         query.executeUpdate();
     }
 
-//    public PedidoTransito buscarPedidoCompletoPorId(long id) {
-//        try {
-//            String jpql="select p from PedidoTransito p where p.id = :id";
-//            TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
-//            query.setParameter("id", id);
-//
-//            PedidoTransito p = query.getSingleResult();
-//
-//            Hibernate.initialize(p.getAutorizador());
-//            Hibernate.initialize(p.getUnidadeOrigem());
-//            Hibernate.initialize(p.getUnidadeOrigem().getResponsavel());
-//
-//            if (p.getUnidadeOrigem().getResponsavel() != null) {
-//                Hibernate.initialize(p.getUnidadeOrigem().getResponsavel().getFuncao());
-//            }
-//
-//            if(p.getTipoDocumentoPedidoTransito() == TipoDocumentoPedidoTransito.OFICIO || p.getTipoDocumentoPedidoTransito() == TipoDocumentoPedidoTransito.AUTORIZACAO){
-//                Hibernate.initialize(p.getRecuperando().getFotos());
-//                Hibernate.initialize(p.getEstruturaOrigem());
-//                Hibernate.initialize(p.getEstruturaDestino());
-//                Hibernate.initialize(p.getEstabelecimento());
-//                Hibernate.initialize(p.getResponsavelDestino());
-//                Hibernate.initialize(p.getUnidadeOrigem().getEndereco().getCidade());
-//            }
-//
-//            if(p.getTipoTransito() == TipoTransito.INTERNA){
-//                Hibernate.initialize(p.getEstruturaOrigem());
-//                Hibernate.initialize(p.getEstruturaDestino());
-//                Hibernate.initialize(p.getEstruturaDestino().getEstruturaComplemento());
-//                Hibernate.initialize(p.getMovimentacaoInterna());
-//            }
-//            if(p.getTipoTransito() == TipoTransito.EXTERNA){
-//                Hibernate.initialize(p.getEstabelecimento());
-//                Hibernate.initialize(p.getMovimentacaoExterna());
-//                Hibernate.initialize(p.getRecuperando().getPassagens());
-//
-//                for (Passagem pa : p.getRecuperando().getPassagens()) {
-//                    Hibernate.initialize(pa.getLotacao());
-//                }
-//            }
-//            if(p.getTipoTransito() == TipoTransito.TRANSFERENCIA){
-//                Hibernate.initialize(p.getUnidadeDestino());
-//                Hibernate.initialize(p.getEstruturaDestino());
-//                Hibernate.initialize(p.getTransferencia());
-//                Hibernate.initialize(p.getRecuperando().getPassagens());
-//
-//                for (Passagem pa : p.getRecuperando().getPassagens()) {
-//                    Hibernate.initialize(pa.getLotacao());
-//                }
-//            }
-//
-//            return p;
-//        } catch (NoResultException e) {
-//            return null;
-//        }
-//    }
+    public PedidoTransito buscarPedidoPorId(long id, TipoMovimentacao tipoMovimentacao) {
+        try {
+            StringBuilder jpql = new StringBuilder();
+            jpql.append("SELECT p FROM PedidoTransito p " +
+                    "LEFT JOIN  p.autorizador " +
+                    "LEFT JOIN FETCH p.unidadeOrigem uo " +
+                    "LEFT JOIN  uo.responsavel " +
+                    "LEFT JOIN  uo.responsavel.funcao ");
+            joinTabelas(jpql, tipoMovimentacao);
+
+            jpql.append("WHERE p.id = :id");
+
+            TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql.toString(), PedidoTransito.class);
+            query.setParameter("id", id);
+
+            PedidoTransito p = query.getSingleResult();
+            return p;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    private void joinTabelas(StringBuilder jpql, TipoMovimentacao tipoMovimentacao) {
+        switch (tipoMovimentacao){
+            case TRANSFERENCIA:
+                jpql.append(
+                        "LEFT JOIN FETCH p.unidadeDestino " +
+                        "LEFT JOIN p.estruturaDestino " +
+                        "LEFT JOIN FETCH p.transferencia " +
+                        "LEFT JOIN FETCH p.recuperando r " +
+                        "left join fetch r.pessoa "
+                        
+                		);
+                break;
+            case TRANSITO_EXTERNO:
+                jpql.append(
+                        "LEFT JOIN p.estabelecimento " +
+                        "LEFT JOIN p.movimentacaoExterna " +
+                        "LEFT JOIN p.recuperando r " +
+                        "LEFT JOIN r.passagens " +
+                        "LEFT JOIN r.passagens pa " +
+                        "LEFT JOIN pa.lotacao ");
+                break;
+            case TRANSITO_INTERNO:
+                jpql.append(
+                        "LEFT JOIN p.estruturaOrigem " +
+                        "LEFT JOIN p.estruturaDestino " +
+                        "LEFT JOIN p.estruturaDestino estruturaDestinoComplemento " +
+                        "LEFT JOIN estruturaDestinoComplemento.estruturaComplemento " +
+                        "LEFT JOIN p.movimentacaoInterna ");
+                break;
+            case PEDIDO_TRANSITO:
+                jpql.append(
+                        "LEFT JOIN p.recuperando r " +
+                        "LEFT JOIN r.fotos " +
+                        "LEFT JOIN p.estruturaOrigem " +
+                        "LEFT JOIN p.estruturaDestino " +
+                        "LEFT JOIN p.estabelecimento " +
+                        "LEFT JOIN p.responsavelDestino " +
+                        "LEFT JOIN p.unidadeOrigem uo " +
+                        "LEFT JOIN uo.endereco endereco " +
+                        "LEFT JOIN endereco.cidade ");
+        }
+    }
+
+    public PedidoTransito buscarPedidoTransferenciaPorId(long id) {
+        try {
+
+            String jpql = "SELECT p FROM PedidoTransito p " +
+                    "LEFT JOIN FETCH p.unidadeDestino " +
+                    "LEFT JOIN FETCH p.estruturaDestino " +
+                    "LEFT JOIN FETCH p.transferencia " +
+                    "LEFT JOIN FETCH p.recuperando r " +
+                    "LEFT JOIN FETCH r.passagens pa " +
+                    "LEFT JOIN FETCH pa.lotacao " +
+                    "LEFT JOIN FETCH p.estruturaOrigem " +
+                    "WHERE p.id = :id";
+
+
+            TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
+            query.setParameter("id", id);
+
+            PedidoTransito p = query.getSingleResult();
+
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaOrigem());
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaDestino());
+
+            return p;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
     public PedidoTransito buscarPedidoTransferenciaPorId(long id) {
         try {
