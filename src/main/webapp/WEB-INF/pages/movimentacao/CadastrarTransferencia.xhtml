@@ -84,7 +84,7 @@
 							<p:confirm header="Confirmação" message="Deseja excluir o pedido?" icon="ui-icon-alert" />
 						</p:commandButton>						
 						<p:commandButton title="Cancelar" icon="ui-icon-cancel"  action="#{transferenciaBean.cancelarPedido(pedido)}" oncomplete="PF('cancelarPedido').show()"  update="cancelarPedForm" process="@this" 
-							rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia') and pedido.status.descricao.equals('Em andamento') and transferenciaBean.isFinalizar}"/>
+							rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia') and pedido.statusStr.equals('EM_ANDAMENTO') and transferenciaBean.isFinalizar}"/>
 					</center>
 				</p:column>
 			</p:dataTable>
