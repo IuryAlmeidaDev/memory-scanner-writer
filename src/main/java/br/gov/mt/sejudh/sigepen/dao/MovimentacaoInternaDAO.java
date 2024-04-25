@@ -70,7 +70,8 @@ public class MovimentacaoInternaDAO {
 			String jpql = "SELECT DISTINCT m FROM MovimentacaoInterna m " +
 					"LEFT JOIN FETCH m.pedidos p " +
 					"LEFT JOIN FETCH m.unidadeOrigem " +
-					"LEFT JOIN p.estruturaDestino " +
+					"LEFT JOIN FETCH p.estruturaDestino " +
+					"LEFT JOIN FETCH p.estruturaOrigem " +
 					"LEFT JOIN FETCH p.recuperando rec " +
 					"LEFT JOIN FETCH rec.pessoa " +
 					"LEFT JOIN rec.passagens passagem " +
