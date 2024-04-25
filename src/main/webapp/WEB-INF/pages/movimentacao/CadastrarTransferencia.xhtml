@@ -173,7 +173,7 @@
 					<br/>
 					<br/>
 					<p:commandButton title="Salvar" value="Confirmar" icon="ui-icon-check" update="@form :formTransf" action="#{transferenciaBean.confirmarCancelamentoPedido()}" 
-						rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia')}"/>
+						rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia')}" oncomplete="window.location.reload()"/>
 			 		
 				<p:commandButton value="Fechar" onclick="PF('cancelarPedido').hide()" process="@this"/>
 				
