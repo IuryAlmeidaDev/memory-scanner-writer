@@ -45,4 +45,13 @@ public class ParenteDAO {
             return Optional.empty();
         }
     }
+
+    public Parente buscarParenteVisita(Long id) {
+        String jpql = "SELECT p FROM Parente p " +
+                "LEFT JOIN FETCH p.credenciamentos c " +
+                "WHERE c.id = :id";
+        TypedQuery<Parente> query = entityManager.createQuery(jpql,  Parente.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
+    }
 }
