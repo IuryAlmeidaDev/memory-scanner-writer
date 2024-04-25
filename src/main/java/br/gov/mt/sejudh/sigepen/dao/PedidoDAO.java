@@ -190,12 +190,14 @@ public class PedidoDAO {
 
             String jpql = "SELECT p FROM PedidoTransito p " +
                     "LEFT JOIN FETCH p.unidadeDestino " +
+                    "LEFT JOIN FETCH p.unidadeOrigem " +
                     "LEFT JOIN FETCH p.estruturaDestino " +
                     "LEFT JOIN FETCH p.transferencia " +
                     "LEFT JOIN FETCH p.recuperando r " +
                     "LEFT JOIN FETCH r.passagens pa " +
                     "LEFT JOIN FETCH pa.lotacao " +
                     "LEFT JOIN FETCH p.estruturaOrigem " +
+                    "LEFT JOIN p.foto " +
                     "WHERE p.id = :id";
 
 

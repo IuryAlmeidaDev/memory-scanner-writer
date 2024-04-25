@@ -304,7 +304,7 @@ public class ReceberTransferenciaBean extends MetodosDePaginaBean {
 	
 	public void imprimirRegistro(PedidoTransitoDTO pedidoTransferencia) {
 		try {
-			PedidoTransito pedido = service.buscaPedidoPorId(pedidoTransferencia.getId());
+			PedidoTransito pedido = service.buscarPedidoTransferenciaImpressaoPorId(pedidoTransferencia.getId());
 
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(pedido, Relatorio.RegistroRecebimentoTransferencia));
 			RequestContext.getCurrentInstance().execute("download()");
