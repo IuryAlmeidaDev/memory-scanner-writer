@@ -728,6 +728,8 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 
 	public void abrirDialogBloquearParametroVisita(ParametroVisita p) {
 		this.parametroVisita = p;
+		this.parametroVisita.setEstruturas(this.parametroVisitaService.listarEstruturas(p));
+
 		this.bloqueio = new ParametroVisitaBloqueio();
 		this.bloqueio.setParametroVisita(this.parametroVisita);
 		LoggerUtil.logInfo(Acao.ALTERAR, p, log);
@@ -823,6 +825,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 	
 	public void abrirDialogVisualizarParametroVisita(ParametroVisita p) {
 		this.parametroVisita = p;
+		this.parametroVisita.setEstruturas(this.parametroVisitaService.listarEstruturas(p));
 		this.visualizacaoParametroVisita = true;
 		LoggerUtil.logInfo(Acao.VISUALIZAR, p, log);
 	}
