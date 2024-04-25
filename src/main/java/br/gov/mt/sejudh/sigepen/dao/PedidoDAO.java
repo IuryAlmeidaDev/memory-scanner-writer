@@ -452,4 +452,36 @@ public class PedidoDAO {
         query.setParameter("id", pedido.getId());
         query.executeUpdate();
     }
+    
+    
+    public PedidoTransito buscarPedidoTransferenciaImpressaoPorId(long id) {
+        try {
+
+            String jpql = "SELECT p FROM PedidoTransito p " +
+                    "LEFT JOIN FETCH p.autorizador " +
+                    "LEFT JOIN FETCH p.unidadeDestino " +
+                    "LEFT JOIN FETCH p.unidadeOrigem " +
+                    "LEFT JOIN FETCH p.estruturaDestino " +
+                    "LEFT JOIN FETCH p.transferencia " +
+                    "LEFT JOIN FETCH p.recuperando r " +
+                    "LEFT JOIN FETCH r.passagens pa " +
+                    "LEFT JOIN FETCH pa.lotacao " +
+                    "LEFT JOIN FETCH p.estruturaOrigem " +
+                    "LEFT JOIN p.foto " +
+                    "WHERE p.id = :id";
+
+
+            TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
+            query.setParameter("id", id);
+
+            PedidoTransito p = query.getSingleResult();
+
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaOrigem());
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaDestino());
+
+            return p;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }
