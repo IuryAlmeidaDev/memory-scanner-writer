@@ -20,6 +20,8 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
+import br.gov.mt.sejudh.sigepen.model.Passagem;
+import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
@@ -141,7 +143,35 @@ public class PedidoDAO {
             return null;
         }
     }
+    
+    public PedidoTransito buscarPedidoPorIdComPassagens(long id, TipoMovimentacao tipoMovimentacao) {
+        try {
+            StringBuilder jpql = new StringBuilder();
+            jpql.append("SELECT p FROM PedidoTransito p " +
+                    "LEFT JOIN  p.autorizador " +
+                    "LEFT JOIN FETCH p.unidadeOrigem uo " +
+                    "LEFT JOIN  uo.responsavel " +
+                    "LEFT JOIN  uo.responsavel.funcao ");
+            joinTabelas(jpql, tipoMovimentacao);
 
+            jpql.append("WHERE p.id = :id");
+
+            TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql.toString(), PedidoTransito.class);
+            query.setParameter("id", id);
+
+            PedidoTransito p = query.getSingleResult();
+            Hibernate.initialize(p.getRecuperando());
+            Hibernate.initialize(p.getRecuperando().getPassagens());
+            for(Passagem pl : p.getRecuperando().getPassagens()) {
+            	Hibernate.initialize(pl.getLotacao());
+            }
+            
+            return p;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
     private void joinTabelas(StringBuilder jpql, TipoMovimentacao tipoMovimentacao) {
         switch (tipoMovimentacao){
             case TRANSFERENCIA:
@@ -165,11 +195,11 @@ public class PedidoDAO {
                 break;
             case TRANSITO_INTERNO:
                 jpql.append(
-                        "LEFT JOIN p.estruturaOrigem " +
-                        "LEFT JOIN p.estruturaDestino " +
-                        "LEFT JOIN p.estruturaDestino estruturaDestinoComplemento " +
-                        "LEFT JOIN estruturaDestinoComplemento.estruturaComplemento " +
-                        "LEFT JOIN p.movimentacaoInterna ");
+                        "LEFT JOIN FETCH p.estruturaOrigem " +
+                        "LEFT JOIN FETCH p.estruturaDestino " +
+                        "LEFT JOIN FETCH p.estruturaDestino estruturaDestinoComplemento " +
+                        "LEFT JOIN FETCH estruturaDestinoComplemento.estruturaComplemento " +
+                        "LEFT JOIN FETCH p.movimentacaoInterna ");
                 break;
             case PEDIDO_TRANSITO:
                 jpql.append(
@@ -486,4 +516,22 @@ public class PedidoDAO {
             return null;
         }
     }
+
+	public List<PedidoTransito> buscarPedidosPorMovimentacaoId(long id) {
+		try {
+
+            String jpql = "SELECT p FROM PedidoTransito p " +
+                    "LEFT JOIN FETCH p.autorizador " +
+                    "LEFT JOIN FETCH p.movimentacaoInterna mi " +
+                    "WHERE mi.id = :id";
+
+            TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
+            query.setParameter("id", id);
+
+            List<PedidoTransito> p = query.getResultList();
+            return p;
+        } catch (NoResultException e) {
+            return null;
+        }
+	}
 }

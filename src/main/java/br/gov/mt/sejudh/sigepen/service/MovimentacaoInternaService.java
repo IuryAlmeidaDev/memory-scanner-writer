@@ -138,7 +138,7 @@ public class MovimentacaoInternaService {
 		dao.salvar(movimentacao);
 	}
 	
-	public void validarMovimentacaoInterna(PedidoTransito pedido, MovimentacaoInterna movimentacao, MovimentacaoPassos passoAtual) throws ValidacaoException {
+	public void validarMovimentacaoInterna(PedidoTransito pedido, MovimentacaoInterna movimentacao, MovimentacaoPassos passoAtual, boolean isFinalizarPedido) throws ValidacaoException {
 		if (pedido.getRecuperando().getStatus() != StatusRecuperando.ATIVO) {
 			throw new ValidacaoException("Recuperando inativo, remova o pedido " + pedido.getId() + ".");
 		}
@@ -168,14 +168,17 @@ public class MovimentacaoInternaService {
 				break;
 				
 			case FINALIZAR:
-				if (movimentacao.getStatus() != StatusMovimentacao.FINALIZADO_PARCIAL) {
+				
+				
+				if (isFinalizarPedido && movimentacao.getStatus() != StatusMovimentacao.FINALIZADO_PARCIAL) {
 					validaLotacao(pedido);
 				}
 				
-				if (pedido.getStatus() != StatusPedido.CANCELADO && pedido.getStatus() != StatusPedido.FINALIZADO){
+				if (!isFinalizarPedido && pedido.getStatus() != StatusPedido.CANCELADO && pedido.getStatus() != StatusPedido.FINALIZADO){
 					throw new ValidacaoException("Finalize ou cancele o pedido "+ pedido.getId() + ".");
 				}
 				break;
+			
 				
 			default:
 				break;
