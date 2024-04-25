@@ -95,6 +95,17 @@ public class PedidoService {
 		return pedidoTransito;
     }
 
+	public PedidoTransito buscarPedidoTransferenciaImpressaoPorId(long id) {
+		PedidoTransito pedidoTransito = dao.buscarPedidoTransferenciaImpressaoPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+
 	public PedidoTransito buscaPedidoTransitoPorId(long id) {
 		PedidoTransito pedidoTransito = dao.buscaPedidoTransitoPorId(id);
 
