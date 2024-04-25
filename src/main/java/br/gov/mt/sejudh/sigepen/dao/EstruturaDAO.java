@@ -21,6 +21,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
 import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoConsultaDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import org.hibernate.Hibernate;
 
 @RequestScoped
 public class EstruturaDAO {
@@ -287,13 +288,8 @@ public class EstruturaDAO {
 	}
 
 	public void buscarEstruturasCompleta(Estrutura ed) {
-		if (ed != null && ed.getEstruturaPai() != null) {
-			String jpqlED = "select e from Estrutura e where e.id = :id";
-			TypedQuery<Estrutura> queryD = entityManager.createQuery(jpqlED, Estrutura.class);
-			queryD.setParameter("id", ed.getId());
-			Estrutura estruturaPai = queryD.getSingleResult().getEstruturaPai();
-			ed.setEstruturaPai(estruturaPai);
-			buscarEstruturasCompleta(ed.getEstruturaPai());
+		if(ed != null && ed.getEstruturaComplemento() != null){
+			Hibernate.initialize(ed.getEstruturaComplemento());
 		}
-    }
+	}
 }
