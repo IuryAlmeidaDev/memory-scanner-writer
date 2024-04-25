@@ -72,6 +72,7 @@ public class MovimentacaoExternaDAO {
 			for(PedidoTransito p : m.getPedidos()) {
 				Hibernate.initialize(p.getEstabelecimento());
 				Hibernate.initialize(p.getRecuperando().getPessoa());
+				Hibernate.initialize(p.getTipoMovimentacao());
 			}
 
 
