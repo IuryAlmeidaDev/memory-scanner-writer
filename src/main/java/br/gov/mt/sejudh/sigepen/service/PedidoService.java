@@ -58,6 +58,9 @@ public class PedidoService {
 	
 	@Inject
 	private VisitanteDAO visitanteDao;
+	
+	@Inject
+	private MovimentacaoInternaService movtoInternaService;
 
 	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(PedidoTransito pedido) {		
@@ -149,6 +152,13 @@ public class PedidoService {
 
 		return pedidoTransito;
     }
+	
+	public PedidoTransito buscarPedidoPorIdComPassagens(long id, TipoMovimentacao tipoMovimentacao) {
+		PedidoTransito pedidoTransito = dao.buscarPedidoPorIdComPassagens(id, tipoMovimentacao);
+
+
+		return pedidoTransito;
+    }
 		
 	public int quantidadeFiltrados(FiltroPedTransito filtro){
 		return dao.quantidadeFiltrados(filtro);
@@ -210,6 +220,11 @@ public class PedidoService {
 		if (movIntDao.isPedidoFinalizadoOuCancelado(pedido.getId())) {
 			throw new ValidacaoException("O pedido " + pedido.getId() + " já está finalizado.");
 		}
+		
+		if(pedido.getTipoTransito().equals(TipoTransito.INTERNA)) {
+			movtoInternaService.validarMovimentacaoInterna(pedido, pedido.getMovimentacaoInterna(), MovimentacaoPassos.FINALIZAR, true);
+		}
+
 		
 		pedido.getRecuperando().getPassagemAtual().getLotacaoAtual().setDataSaida(dataFim);
 		PassagemLotacao novaLotacao = new PassagemLotacao(pedido.getRecuperando().getPassagemAtual(), TipoTransito.INTERNA);
@@ -446,5 +461,9 @@ public class PedidoService {
 	
 	public List<PedidoTransito> buscarPedidosDoRecuperando(long recuperandoId) {
 		return this.dao.buscarPedidosDoRecuperando(recuperandoId); 
+	}
+
+	public List<PedidoTransito> buscarPedidosPorMovimentacaoId(long id) {
+		return this.dao.buscarPedidosPorMovimentacaoId(id);
 	}
 }

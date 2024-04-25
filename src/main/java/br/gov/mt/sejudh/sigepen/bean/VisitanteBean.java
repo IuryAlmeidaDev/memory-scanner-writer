@@ -23,6 +23,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.ParenteDAO;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -194,6 +195,9 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
+
+	@Inject
+	private ParenteDAO parenteDAO;
 
 	private List<Credenciamento> credenciamentos;
 	private Recuperando recuperandoSelecionado;
@@ -462,6 +466,12 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		}
 		
 		if(this.visitante != null)this.setIsMenorQueSete(this.visitante.getPessoa().getDataNascimento());
+
+		for (Credenciamento credenciamento : visitante.getCredenciamentos()) {
+			if (credenciamento.getParente() != null){
+				credenciamento.setParente(parenteDAO.buscarParenteVisita(credenciamento.getId()));
+			}
+		}
 
 		return this.visitante != null;
 	}

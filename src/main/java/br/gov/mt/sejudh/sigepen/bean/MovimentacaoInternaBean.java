@@ -28,6 +28,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.enumerator.MovimentacaoPassos;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Escolta;
@@ -201,7 +202,7 @@ public class MovimentacaoInternaBean extends MetodosDePaginaBean {
 			}			
 			
 			for (PedidoTransito ped : this.movimentacao.getPedidos()) {
-				service.validarMovimentacaoInterna(ped, movimentacao, MovimentacaoPassos.SALVAR);
+				service.validarMovimentacaoInterna(ped, movimentacao, MovimentacaoPassos.SALVAR, false);
 			}			
 			
 			service.salvar(this.movimentacao);
@@ -246,7 +247,7 @@ public class MovimentacaoInternaBean extends MetodosDePaginaBean {
 			}
 			
 			for (PedidoTransito pedido: this.movimentacao.getPedidos()) {
-				service.validarMovimentacaoInterna(pedido, this.movimentacao, MovimentacaoPassos.INICIAR);			
+				service.validarMovimentacaoInterna(pedido, this.movimentacao, MovimentacaoPassos.INICIAR, false);			
 			}			
 			
 			service.iniciarMovimentacao(this.movimentacao);
@@ -269,10 +270,12 @@ public class MovimentacaoInternaBean extends MetodosDePaginaBean {
 	public String confirmarFinalizacaoMovimentacao() {
 		String retorno = null;		
 		try {
-			for (PedidoTransito ped : this.movimentacao.getPedidos()) {
-				service.validarMovimentacaoInterna(ped, this.movimentacao, MovimentacaoPassos.FINALIZAR);
-			}
 			
+			 List<PedidoTransito> peds = servicePedido.buscarPedidosPorMovimentacaoId(this.movimentacao.getId());
+			for (PedidoTransito ped : peds) {
+				service.validarMovimentacaoInterna(ped, this.movimentacao, MovimentacaoPassos.FINALIZAR, false);
+			}
+
 			service.finalizarMovimentacao(this.movimentacao);
 			LoggerUtil.logInfo(Acao.FINALIZAR, movimentacao, log);
 			facesUtil.exibirMensagemInfo("Movimentação " + this.movimentacao.getId() + " finalizada com sucesso!", true);
@@ -291,7 +294,8 @@ public class MovimentacaoInternaBean extends MetodosDePaginaBean {
 	 * Prepara um pedido para ser finalizado
 	*/
 	public void finalizarPedido(PedidoTransito pedido) {		
-		this.pedido = pedido;		
+		this.pedido = this.servicePedido.buscarPedidoPorIdComPassagens(pedido.getId(), TipoMovimentacao.TRANSITO_INTERNO);		
+	
 	}
 	
 	/*
@@ -428,7 +432,7 @@ public class MovimentacaoInternaBean extends MetodosDePaginaBean {
 		try {
 			PedidoTransito pedido = servicePedido.buscaPedidoPorId(p.getId());
 			
-			service.validarMovimentacaoInterna(pedido, this.movimentacao, MovimentacaoPassos.ASSOCIAR_PEDIDO);
+			service.validarMovimentacaoInterna(pedido, this.movimentacao, MovimentacaoPassos.ASSOCIAR_PEDIDO, false);
 
 			this.movimentacao.getPedidos().add(pedido);
 		} catch (ValidacaoException e) {  
