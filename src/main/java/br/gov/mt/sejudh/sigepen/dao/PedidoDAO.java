@@ -197,7 +197,7 @@ public class PedidoDAO {
                     "LEFT JOIN FETCH r.passagens pa " +
                     "LEFT JOIN FETCH pa.lotacao " +
                     "LEFT JOIN FETCH p.estruturaOrigem " +
-                    "LEFT JOIN p.foto " +
+                    "LEFT JOIN FETCH p.foto " +
                     "WHERE p.id = :id";
 
 
@@ -469,7 +469,7 @@ public class PedidoDAO {
                     "LEFT JOIN FETCH r.passagens pa " +
                     "LEFT JOIN FETCH pa.lotacao " +
                     "LEFT JOIN FETCH p.estruturaOrigem " +
-                    "LEFT JOIN p.foto " +
+                    "LEFT JOIN FETCH p.foto " +
                     "WHERE p.id = :id";
 
 
