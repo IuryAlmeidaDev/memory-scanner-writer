@@ -345,6 +345,7 @@ public class PedidoDAO {
 
             PedidoTransito p = query.getSingleResult();
             estruturaDAO.buscarEstruturasCompleta(p.getEstruturaOrigem());
+            estruturaDAO.buscarEstruturasCompleta(p.getEstruturaDestino());
 
 
             return p;
