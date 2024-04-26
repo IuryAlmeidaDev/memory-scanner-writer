@@ -115,7 +115,8 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
           sb.append(" NULL                     as idRecuperando, ");
           sb.append(" CTE.tipoVisitaId         as tipoVisitaId, ");
           sb.append(" CTE.faseCredenciamento   as faseCredenciamento, ");
-          sb.append(" CTE.statusCredenciamento as statusCredenciamento ");
+          sb.append(" CTE.statusCredenciamento as statusCredenciamento, ");
+          sb.append(" null					   as tipoDesligamento ");
          
         }
         sb.append("   FROM DADOS_PESSOAS P ");
@@ -150,20 +151,21 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
           sb.append(" null   as dataHoraCadastro, ");
           sb.append(" null   as statusVisitante, ");
           sb.append(" null   as credenciamentoId, ");
-          sb.append(" null   as idRecuperando, ");
+          sb.append(" TBRECUPERANDO.recuperando_id   as idRecuperando, ");
           sb.append(" null   as tipoVisitaId, ");
           sb.append(" null   as faseCredenciamento, ");
-          sb.append(" null   as statusCredenciamento ");
+          sb.append(" null   as statusCredenciamento, ");
+          sb.append(" TBRECUPERANDO.tipo_desligamento as tipoDesligamento ");
         }
         sb.append("   FROM DADOS_PESSOAS P ");
-        sb.append("  INNER JOIN (SELECT RE.PESSOA_ID, PASS.TIPO_DESLIGAMENTO, PASS.DATA_SAIDA ");
+        sb.append("  INNER JOIN (SELECT RE.Id as recuperando_id, RE.PESSOA_ID, PASS.TIPO_DESLIGAMENTO, PASS.DATA_SAIDA ");
         sb.append("                FROM SIGEPEN_OWNER.RECUPERANDO RE ");
         sb.append("                LEFT JOIN (SELECT RECUPERANDO_ID, MAX(ID) MAX_ID ");
         sb.append("                            FROM SIGEPEN_OWNER.PASSAGEM ");
         sb.append("                           GROUP BY RECUPERANDO_ID) P ");
         sb.append("                  ON P.RECUPERANDO_ID = RE.ID ");
         sb.append("                LEFT JOIN SIGEPEN_OWNER.PASSAGEM PASS ");
-        sb.append("                  ON PASS.ID = P.MAX_ID WHERE  SYSDATE >= ADD_MONTHS (PASS.DATA_SAIDA,6) ) TBRECUPERANDO ");
+        sb.append("                  ON PASS.ID = P.MAX_ID  ) TBRECUPERANDO ");
         sb.append("     ON TBRECUPERANDO.PESSOA_ID = P.ID ");
         sb.append("   LEFT JOIN (SELECT D.PESSOA_ID PESSOAID, replace(D.NUMERO,' ','') CPF ");
         sb.append("                FROM SIGEPEN_OWNER.DOCUMENTO D ");
@@ -173,6 +175,7 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         sb.append("     ON TBDOCUMENTO.PESSOAID = P.ID ");
         sb.append("  WHERE NOT EXISTS ");
         sb.append("  (SELECT 1 FROM SIGEPEN_OWNER.RECUPERANDO R WHERE R.PESSOA_ID = P.ID) ");
+        sb.append(" AND NOT EXISTS (SELECT 1 FROM SIGEPEN_OWNER.SGP_VISITANTE VT WHERE VT.ID_PESSOA_VISITANTE = P.ID) ");
 
         
         sb.append(sbFiltros);
