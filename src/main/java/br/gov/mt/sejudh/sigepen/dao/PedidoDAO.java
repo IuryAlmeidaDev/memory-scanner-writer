@@ -300,6 +300,7 @@ public class PedidoDAO {
                     "LEFT JOIN p.movimentacaoInterna mi " +
                     "LEFT JOIN p.movimentacaoExterna me " +
                     "LEFT JOIN rec.passagens passagem " +
+                    "LEFT JOIN FETCH p.tipoMovimentacao " +
                     "LEFT JOIN passagem.lotacao l " +
                     "LEFT JOIN FETCH p.estruturaOrigem eo " +
                     "LEFT JOIN FETCH rec.fotos foto " +
@@ -330,6 +331,7 @@ public class PedidoDAO {
                     "LEFT JOIN FETCH p.estabelecimento e " +
                     "LEFT JOIN p.movimentacaoInterna mi " +
                     "LEFT JOIN p.movimentacaoExterna me " +
+                    "LEFT JOIN FETCH p.tipoMovimentacao " +
                     "LEFT JOIN rec.passagens passagem " +
                     "LEFT JOIN passagem.lotacao l " +
                     "LEFT JOIN FETCH p.estruturaOrigem eo " +
