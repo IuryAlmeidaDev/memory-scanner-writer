@@ -92,7 +92,8 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
     	Hibernate.initialize(vr.getParente());
     	
     	for(FaseDoCredenciamento vc : vr.getFasesDoCredenciamento()){
-        	
+    		Hibernate.initialize(vc.getUsuarioAprovacao());
+
         	for(CredencialDocumento cd : vc.getCredencialDocumentos()){
         		Hibernate.initialize(cd.getVisitanteDocumento());
         	}
