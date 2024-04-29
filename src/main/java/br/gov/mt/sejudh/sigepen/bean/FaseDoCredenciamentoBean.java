@@ -205,7 +205,7 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
             return false;
         }
 
-        this.visitante = visitanteService.buscarPorId(this.credenciamento.getVisitante().getId(), true);
+        this.visitante = visitanteService.buscarVisitante(this.credenciamento.getVisitante().getId(), true);
         
         
         List<VisitanteResponsavel> listaResponsaveis = visitanteResponsavelService.buscarListaVisitantesReponsaveis(this.visitante);
