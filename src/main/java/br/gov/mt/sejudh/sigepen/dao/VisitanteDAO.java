@@ -90,6 +90,9 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 	@Inject 
 	private VisitanteResponsavelService visitanteResponsavelService;
 
+	@Inject
+	private AuditoriaDAO auditoriaDAO;
+
 	@Override
     public Visitante salvar(Visitante t) {
         Visitante visitante = super.salvar(t);
@@ -1016,6 +1019,49 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 		
 		 return (Visitante) session.createSQLQuery("SELECT * FROM SIGEPEN_OWNER.SGP_VISITANTE V WHERE V.ID_VISITANTE = :visitanteId").addEntity(Visitante.class).setParameter("visitanteId", id).uniqueResult();
 
+	}
+
+	public Visitante buscarVisitante(Long id, boolean buscarAuditoria) {
+		String jpql = "SELECT v FROM Visitante v " +
+				"LEFT JOIN FETCH v.fotos " +
+				"LEFT JOIN FETCH v.pessoa p " +
+				"LEFT JOIN FETCH p.nacionalidade " +
+				"LEFT JOIN FETCH p.naturalidade " +
+				"WHERE v.id = :idVisitante";
+
+		TypedQuery<Visitante> query = em.createQuery(jpql, Visitante.class);
+		query.setParameter("idVisitante", id);
+		Visitante v = query.getSingleResult();
+		buscarCertidaoVisitante(v);
+		buscarDocumentosVisitante(v);
+
+		if (buscarAuditoria) {
+			v.setAutorRegistro(this.auditoriaDAO.autorRegistro(v, v.getId()));
+			v.setAutorUltimaAlteracao(this.auditoriaDAO.autorUltimaAlteracao(v, v.getId()));
+		}
+		return v;
+	}
+
+	public void buscarCertidaoVisitante(Visitante visitante) {
+		String jpql = "SELECT v FROM Visitante v " +
+				"LEFT JOIN FETCH v.certidoes " +
+				"WHERE v.id = :idVisitante";
+
+		TypedQuery<Visitante> query = em.createQuery(jpql, Visitante.class);
+		query.setParameter("idVisitante", visitante.getId());
+		Visitante v = query.getSingleResult();
+		visitante.setCredenciamentos(v.getCredenciamentos());
+	}
+
+	public void buscarDocumentosVisitante(Visitante visitante) {
+		String jpql = "SELECT v FROM Visitante v " +
+				"LEFT JOIN FETCH v.visitanteDocumentos " +
+				"WHERE v.id = :idVisitante";
+
+		TypedQuery<Visitante> query = em.createQuery(jpql, Visitante.class);
+		query.setParameter("idVisitante", visitante.getId());
+		Visitante v = query.getSingleResult();
+		visitante.setCredenciamentos(v.getCredenciamentos());
 	}
 	
 	
