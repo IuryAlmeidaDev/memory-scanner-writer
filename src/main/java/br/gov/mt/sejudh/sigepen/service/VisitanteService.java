@@ -476,6 +476,10 @@ public class VisitanteService extends BaseService<Visitante, Long> {
         return this.dao.buscarPorId(id, buscarAuditoria);
     }
 
+	public Visitante buscarVisitante(Long id, boolean buscarAuditoria) {
+        return this.visitanteDAO.buscarVisitante(id, buscarAuditoria);
+    }
+
 	public Imagem buscarImagemFrente(Long visitanteId) {
 		return visitanteDAO.buscarImagemFrente(visitanteId);
 	}
