@@ -23,23 +23,18 @@
 	<parameter name="ID_ESTRUTURA" class="java.lang.Long"/>
 	<parameter name="SCHEMA" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select level nivel,
-       e.id estrutura_id,
-        (case when level > 1 then lpad('>', level*level, ' ') end) || e.nome est_nome,
-       e.capacidade,
-       (select sum(e2.capacidade)
-          from $P!{SCHEMA}.estrutura e2
-         start with e2.id = e.id
-        connect by prior e2.id = e2.estruturapai_id) capacidade_total,
-       (select sum(nvl(qt.qtd_recuperandos_estrutura, 0))
-          from $P!{SCHEMA}.qtd_recuperandos_por_estrutura qt, $P!{SCHEMA}.estrutura e3
-         where qt.estrutura_id(+) = e3.id
-         start with e3.id = e.id
-        connect by prior e3.id = e3.estruturapai_id) qtd_recuperandos
-  from $P!{SCHEMA}.estrutura e
- start with e.id = $P{ID_ESTRUTURA}
-connect by prior e.id = e.estruturapai_id
- order siblings by e.id]]>
+		<![CDATA[
+    SELECT LEVEL AS nivel
+        , a.id AS estrutura_id
+        , LPAD('>', LEVEL * LEVEL, ' ') || a.nome AS est_nome
+        , a.capacidade
+        , $P!{SCHEMA}.retornar_capacidade(a.id) AS capacidade_total
+        , $P!{SCHEMA}.retornar_ocupacao(a.id) AS qtd_recuperandos
+    FROM $P!{SCHEMA}.estrutura a
+    START WITH a.id = $P{ID_ESTRUTURA}
+    CONNECT BY PRIOR a.id = a.estruturapai_id
+    ORDER SIBLINGS BY a.id
+]]>
 	</queryString>
 	<field name="NIVEL" class="java.math.BigDecimal"/>
 	<field name="ESTRUTURA_ID" class="java.math.BigDecimal"/>
