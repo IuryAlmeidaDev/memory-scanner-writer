@@ -391,7 +391,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			this.mostrarPanelVisitante = true;
 		}
 
-		if (this.visitante.getResponsavel() != null) {
+		if (!this.visitantesResponsaveis.isEmpty()) {
 			this.mostrarPanelVisitante = false;
 			this.mostrarPanelResponsavel = true;
 		} else {
