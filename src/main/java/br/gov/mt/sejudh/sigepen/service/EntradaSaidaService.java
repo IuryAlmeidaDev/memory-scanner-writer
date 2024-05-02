@@ -116,6 +116,10 @@ public class EntradaSaidaService {
 	public String validarEntrada(FiltroEntradaSaida f, Long unidade) {
 		return this.dao.validarEntrada(f, unidade);
 	}
+
+	public Long responsavelDeuEntrada(Long id) {
+		return dao.responsavelDeuEntrada(id);
+	}
 }
 
 

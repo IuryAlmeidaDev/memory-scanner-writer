@@ -2,11 +2,13 @@ package br.gov.mt.sejudh.sigepen.dao.filter;
 
 import java.util.Date;
 
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 import br.gov.mt.sejudh.sigepen.util.RestrictionsSigepen;
+import org.hibernate.sql.JoinType;
 
 public class FiltroAssociarResponsavel extends FiltroConsulta{
 	
@@ -15,13 +17,13 @@ public class FiltroAssociarResponsavel extends FiltroConsulta{
 	private String cpf;
 	private Date dataNascimento;
 	
-	private String matricula;
+	private Long matricula;
 	
-	public String getMatricula() {
+	public Long getMatricula() {
 		return matricula;
 	}
 
-	public void setMatricula(String matricula) {
+	public void setMatricula(Long matricula) {
 		this.matricula = matricula;
 	}
 
@@ -62,6 +64,19 @@ public class FiltroAssociarResponsavel extends FiltroConsulta{
 
 			getCriteria().add(Restrictions.like("cpf", this.getCpf(), MatchMode.ANYWHERE));
 		}
+
+		getCriteria()
+				.createAlias("credenciamentos", "cre", JoinType.INNER_JOIN)
+				.createAlias("cre.parente", "p", JoinType.INNER_JOIN);
+
+		getCriteria()
+				.add(Restrictions.eqProperty("id", "cre.visitante.id")) // id_visitante da tabela visitante igual ao idVisitante da tabela credenciamento
+				.add(Restrictions.eqProperty("p.recuperando.id", "cre.recuperando.id")) // id_recuperando da tabela parente igual ao idRecuperando da tabela credenciamento
+				.add(Restrictions.or(
+						Restrictions.isNull("emancipado"),
+						Restrictions.eq("emancipado", SimNao.S)
+				))
+				.add(Restrictions.eq("cre.recuperando.id", matricula));
 		
 	}
 	
