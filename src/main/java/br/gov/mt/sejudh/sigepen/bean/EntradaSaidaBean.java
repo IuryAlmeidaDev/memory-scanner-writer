@@ -1093,14 +1093,19 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	}
 
 	public Boolean verificarVisitaResponsavel(Long visitanteResponsavel) throws ValidacaoException {
-		if (visitanteResponsavel == null) {
+//		if (visitanteResponsavel == null) {
+//			throw new ValidacaoException("É necessário selecionar um Visitante responsável!");
+//		}
+
+		Long entradaResponsavel = service.responsavelDeuEntrada(this.credenciamentos.get(0).getVisitante().getId());
+		if(entradaResponsavel == null){
 			throw new ValidacaoException("É necessário selecionar um Visitante responsável!");
 		}
 
 		FiltroEntradaSaida fr = new FiltroEntradaSaida();
 		fr.setData(new Date());
 		fr.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
-		fr.setResponsavel(visitanteResponsavel);
+		fr.setResponsavel(entradaResponsavel);
 		return service.buscarEntradaResponsavel(fr) == 0;
 	}
 

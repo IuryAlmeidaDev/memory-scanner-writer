@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -100,10 +101,10 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
 //		FiltroVisitanteImpedimento filtro = new FiltroVisitanteImpedimento();
 		FiltroAssociarResponsavel filtro = new FiltroAssociarResponsavel();
 		
-//		Object matriculaObj = facesUtil.getObjetoSessao("matricula", false);
-//		if(matriculaObj != null) {
-//			filtro.setMatricula(Sigepen.converteStringEmLong(facesUtil.getObjetoSessao("matricula", false).toString()));
-//		}
+		Object matriculaObj = facesUtil.getObjetoSessao("matricula", false);
+		if(matriculaObj != null) {
+			filtro.setMatricula(Sigepen.converteStringEmLong(facesUtil.getObjetoSessao("matricula", false).toString()));
+		}
 		this.setFiltroAssociarResp(filtro);
 		
 		this.setLazyDataModel(new LazyDataModel<AssociarVisitanteResponsavelView>() {
