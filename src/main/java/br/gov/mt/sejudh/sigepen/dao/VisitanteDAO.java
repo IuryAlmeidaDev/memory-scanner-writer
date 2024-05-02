@@ -123,7 +123,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
         Visitante visitante = super.buscarPorId(id, buscarAuditoria);
         if (visitante == null) return null;
 
-        this.inicializarColecoes(visitante);
+        this.inicializarColecoesRelatorio(visitante);
 
         return visitante;
     }
@@ -150,6 +150,20 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 		}
 
     private void inicializarColecoes(Visitante visitante) {
+        Hibernate.initialize(visitante.getImpedimentos());
+        Hibernate.initialize(visitante.getCertidoes());
+        Hibernate.initialize(visitante.getVisitanteDocumentos());
+        Hibernate.initialize(visitante.getPessoa().getDocumentos());
+        Hibernate.initialize(visitante.getPessoa().getContatos());
+        Hibernate.initialize(visitante.getPessoa().getEnderecos());
+        Hibernate.initialize(visitante.getPessoa().getBiometria());
+   
+    }
+    
+    private void inicializarColecoesRelatorio(Visitante visitante) {
+    	Hibernate.initialize(visitante.getTipoVisita());
+    	Hibernate.initialize(visitante.getPessoa());
+        Hibernate.initialize(visitante.getFotos());
         Hibernate.initialize(visitante.getImpedimentos());
         Hibernate.initialize(visitante.getCertidoes());
         Hibernate.initialize(visitante.getVisitanteDocumentos());
@@ -183,6 +197,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 //        	visitante.setResponsavel(this.buscarVisitanteDadosPessoa(visitante.getResponsavel().getId()));
 //        }
     }
+
 
     public List<Visitante> listarRelatorio(FiltroVwVisitanteRelatorio filtro) {
   		Session session = em.unwrap(Session.class);
