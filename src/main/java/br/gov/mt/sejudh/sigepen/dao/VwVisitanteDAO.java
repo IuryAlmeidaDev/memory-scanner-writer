@@ -60,26 +60,30 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         Session session = em.unwrap(Session.class);
         StringBuilder sb = new StringBuilder();
         StringBuilder sbFiltros = new StringBuilder();
+        StringBuilder sbFiltrosPessoa = new StringBuilder();
         StringBuilder sbFiltrosCredenciamento = new StringBuilder();
-
+        
+        boolean isFiltrouPessoaDeveBuscarRecuperando = false;
+        
         if(filtro.getPessoasIds() != null && !filtro.getPessoasIds().isEmpty()) {
-        	sbFiltros.append("  AND P.ID IN (");
+        	sbFiltrosPessoa.append("  AND P.ID IN (");
         	for(Long ids: filtro.getPessoasIds()) {
-        		sbFiltros.append(ids.toString() + ","); 
+        		sbFiltrosPessoa.append(ids.toString() + ","); 
         	}
-        	sbFiltros.append(" 0 )");
+        	sbFiltrosPessoa.append(" 0 )");
         }
 
         if (filtro.getNome() != null && !filtro.getNome().isEmpty()) {
-        	sbFiltros.append("  AND P.NOME LIKE '%' || :nome || '%'");
+        	sbFiltrosPessoa.append("  AND P.NOME LIKE '%' || :nome || '%'");
         }
 
         if (filtro.getNomeMae() != null && !filtro.getNomeMae().isEmpty()) {
-        	sbFiltros.append("  AND P.NOME_MAE LIKE '%' || :mae || '%'");
+        	sbFiltrosPessoa.append("  AND P.NOME_MAE LIKE '%' || :mae || '%'");
         }
 
         if (filtro.getCpf() != null && !filtro.getCpf().isEmpty()) {
         	sbFiltros.append("  AND TBDOCUMENTO.CPF LIKE :cpf");
+        	isFiltrouPessoaDeveBuscarRecuperando = true;
         }
 
         if (filtro.getStatus() != null) {
@@ -99,7 +103,8 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         sb.append("     FROM SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE), ");
         sb.append(" DADOS_PESSOAS AS ");
         sb.append("  (SELECT P.ID AS ID, P.NOME AS NOME, P.nome_mae as NOME_MAE ");
-        sb.append("     FROM SIGEPEN_OWNER.PESSOA P) ");
+        sb.append("     FROM SIGEPEN_OWNER.PESSOA P WHERE 1 = 1 " + sbFiltrosPessoa +  " ) ");
+        
         sb.append(" SELECT 	 ");
         if (count) {
             sb.append(" count(p.id) credenciamentosAtivos ");
@@ -116,7 +121,9 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
           sb.append(" CTE.tipoVisitaId         as tipoVisitaId, ");
           sb.append(" CTE.faseCredenciamento   as faseCredenciamento, ");
           sb.append(" CTE.statusCredenciamento as statusCredenciamento, ");
-          sb.append(" null					   as tipoDesligamento ");
+          sb.append(" null					   as tipoDesligamentoRecuperando, ");
+          sb.append(" null					   as dataSaida ");
+
          
         }
         sb.append("   FROM DADOS_PESSOAS P ");
@@ -136,6 +143,9 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         sb.append(sbFiltros);
         sb.append(sbFiltrosCredenciamento);
  
+        if(sbFiltrosPessoa.length() > 0 || isFiltrouPessoaDeveBuscarRecuperando) {
+        	
+        
         sb.append(" ");
         sb.append(" UNION ALL ");
         sb.append(" ");
@@ -155,7 +165,9 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
           sb.append(" null   as tipoVisitaId, ");
           sb.append(" null   as faseCredenciamento, ");
           sb.append(" null   as statusCredenciamento, ");
-          sb.append(" TBRECUPERANDO.tipo_desligamento as tipoDesligamento ");
+          sb.append(" TBRECUPERANDO.tipo_desligamento as tipoDesligamentoRecuperando, ");
+          sb.append(" TBRECUPERANDO.DATA_SAIDA as dataSaida ");
+
         }
         sb.append("   FROM DADOS_PESSOAS P ");
         sb.append("  INNER JOIN (SELECT RE.Id as recuperando_id, RE.PESSOA_ID, PASS.TIPO_DESLIGAMENTO, PASS.DATA_SAIDA ");
@@ -173,13 +185,13 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         sb.append("                  ON TD.ID = D.TIPO_DOCUMENTO_ID ");
         sb.append("               WHERE TD.DESCRICAO = 'CPF' GROUP BY D.PESSOA_ID , replace(D.NUMERO,' ','') ) TBDOCUMENTO ");
         sb.append("     ON TBDOCUMENTO.PESSOAID = P.ID ");
-        sb.append("  WHERE NOT EXISTS ");
-        sb.append("  (SELECT 1 FROM SIGEPEN_OWNER.RECUPERANDO R WHERE R.PESSOA_ID = P.ID) ");
-        sb.append(" AND NOT EXISTS (SELECT 1 FROM SIGEPEN_OWNER.SGP_VISITANTE VT WHERE VT.ID_PESSOA_VISITANTE = P.ID) ");
+        sb.append(" WHERE NOT EXISTS (SELECT 1 FROM SIGEPEN_OWNER.SGP_VISITANTE VT WHERE VT.ID_PESSOA_VISITANTE = P.ID) ");
 
         
         sb.append(sbFiltros);
-
+        
+        }
+        
         StringBuilder sqlFinal = new StringBuilder();
 
         if(!count) {
@@ -191,7 +203,7 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
 
         	}
         } else {
-        	sqlFinal = sb;
+        	sqlFinal.append("SELECT SUM(credenciamentosAtivos) AS credenciamentosAtivos FROM ( " + sb + " ) " );
         }
         
         SQLQuery query = session.createSQLQuery(sqlFinal.toString());
@@ -215,12 +227,16 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
             query.addScalar("tipoVisitaId", LongType.INSTANCE);
             query.addScalar("faseCredenciamento", IntegerType.INSTANCE);
             query.addScalar("statusCredenciamento", IntegerType.INSTANCE);
+            query.addScalar("tipoDesligamentoRecuperando");
+            query.addScalar("dataSaida", DateType.INSTANCE);
         }
 
         addParametros(query,filtro);
 
         query.setResultTransformer(Transformers.aliasToBean(VwVisitante.class));
-        return query.list();
+        List<VwVisitante> visitantes = query.list();
+        
+        return visitantes;
     }
 
     private void addParametros(SQLQuery query, FiltroVwVisitante filtro) {

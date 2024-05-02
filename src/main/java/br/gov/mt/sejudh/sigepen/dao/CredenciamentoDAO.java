@@ -481,7 +481,7 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
 	public List<Credenciamento> buscarCredenciamentoComFasesPorVisitanteId(Long visitanteId) {
 	    Session session = this.em.unwrap(Session.class);
 	    StringBuilder sql = new StringBuilder();
-	    sql.append("SELECT c FROM Credenciamento c ");
+	    sql.append("SELECT DISTINCT c FROM Credenciamento c ");
 	    sql.append(" LEFT JOIN FETCH c.unidadePrisional ");
 	    sql.append(" LEFT JOIN FETCH c.visitante ");
 	    sql.append(" LEFT JOIN FETCH c.tipoVisita ");
