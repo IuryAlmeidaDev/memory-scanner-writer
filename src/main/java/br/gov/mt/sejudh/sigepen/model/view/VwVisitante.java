@@ -268,7 +268,11 @@ public class VwVisitante extends BaseModel<Long> {
 	public void setTipoDesligamento(TipoDesligamento tipoDesligamento) {
 		this.tipoDesligamento = tipoDesligamento;
 	}
-
+	
+	public void setTipoDesligamento(String tipoDesligamento) {
+		this.tipoDesligamento = TipoDesligamento.valueOf(tipoDesligamento);
+	}
+	
 	public Date getDataSaida() {
 		return dataSaida;
 	}
@@ -308,6 +312,9 @@ public class VwVisitante extends BaseModel<Long> {
 	@Transient
 	private String statusVisitante;
 
+	@Transient
+	private String tipoDesligamentoRecuperando;
+	
 	public Long getCredenciamentoId() {
 		return credenciamentoId;
 	}
@@ -330,8 +337,20 @@ public class VwVisitante extends BaseModel<Long> {
 	}
 
 	public void setStatus(String status) {
+		if(status != null)
 		this.status = StatusVisitante.valueOf(status);
 	}
 
+	public String getTipoDesligamentoRecuperando() {
+		return tipoDesligamentoRecuperando;
+	}
+
+	public void setTipoDesligamentoRecuperando(String tipoDesligamentoRecuperando) {
+		this.tipoDesligamentoRecuperando = tipoDesligamentoRecuperando;
+		if(tipoDesligamentoRecuperando != null)
+		this.setTipoDesligamento(TipoDesligamento.valueOf(tipoDesligamentoRecuperando));
+	}
+
+	
 
 }
