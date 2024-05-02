@@ -206,6 +206,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 
 
 
+
     public List<Visitante> listarRelatorio(FiltroVwVisitanteRelatorio filtro) {
   		Session session = em.unwrap(Session.class);
 
