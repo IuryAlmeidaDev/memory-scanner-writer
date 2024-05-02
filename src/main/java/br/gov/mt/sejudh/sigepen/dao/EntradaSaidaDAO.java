@@ -5,53 +5,28 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
+import br.gov.mt.sejudh.sigepen.model.*;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.hibernate.type.DateType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEntradaSaida;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEntradaVisitante;
-import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatus;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
-import br.gov.mt.sejudh.sigepen.model.Biometria;
-import br.gov.mt.sejudh.sigepen.model.BiometriaDedo;
-import br.gov.mt.sejudh.sigepen.model.Cidade;
-import br.gov.mt.sejudh.sigepen.model.Credenciamento;
-import br.gov.mt.sejudh.sigepen.model.EntradaSaida;
-import br.gov.mt.sejudh.sigepen.model.Estado;
-import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
-import br.gov.mt.sejudh.sigepen.model.Pais;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisitaBloqueio;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisitaEstrutura;
-import br.gov.mt.sejudh.sigepen.model.Passagem;
-import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
-import br.gov.mt.sejudh.sigepen.model.Pessoa;
-import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.model.Visitante;
-import br.gov.mt.sejudh.sigepen.model.VisitanteResponsavel;
-import br.gov.mt.sejudh.sigepen.model.dto.PessoaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.VisitanteListaDTO;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
@@ -558,5 +533,21 @@ public class EntradaSaidaDAO {
 				return e.getUnidadePrisional().getNome() + ";" + e.getVisitante().getPessoa().getNome();
 		}
 		return null;
+	}
+
+	public Long responsavelDeuEntrada(Long id) {
+		try {
+			String jpql = "SELECT ea " +
+					"FROM EntradaSaida ea " +
+					"WHERE ea.visitante.id = (SELECT vr.visitanteResponsavel.id FROM VisitanteResponsavel vr WHERE vr.visitante.id = :idVisitante) " +
+					"AND ea.dataSaida IS NULL";
+
+			TypedQuery<EntradaSaida> query = em.createQuery(jpql, EntradaSaida.class);
+			query.setParameter("idVisitante", id);
+			EntradaSaida entradaSaida = query.getSingleResult();
+			return entradaSaida.getVisitante().getId();
+		}catch (Exception e){
+			return null;
+		}
 	}
 }
