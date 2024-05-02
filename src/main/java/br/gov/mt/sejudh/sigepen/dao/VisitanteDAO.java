@@ -166,37 +166,45 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
         Hibernate.initialize(visitante.getFotos());
         Hibernate.initialize(visitante.getImpedimentos());
         Hibernate.initialize(visitante.getCertidoes());
+        Hibernate.initialize(visitante.getCredenciamentos());
+        Hibernate.initialize(visitante.getIdentidadeDeGenero());
+        visitante.getCredenciamentos().forEach(credenciamento -> {
+            Optional.ofNullable(credenciamento.getRecuperando()).ifPresent(
+                    recuperando -> Hibernate.initialize(recuperando.getFotos())
+            );
+            Hibernate.initialize(credenciamento.getFasesDoCredenciamento());
+            Hibernate.initialize(credenciamento.getTipoVisita());
+        });
         Hibernate.initialize(visitante.getVisitanteDocumentos());
-
+        Hibernate.initialize(visitante.getPessoa().getNacionalidade());
+        Hibernate.initialize(visitante.getPessoa().getNaturalidade());
+        Hibernate.initialize(visitante.getPessoa().getPais());
         Hibernate.initialize(visitante.getPessoa().getDocumentos());
-//        if (visitante.getResponsavel() != null) {
-//        	Hibernate.initialize(visitante.getResponsavel().getPessoa());
-//            Hibernate.initialize(visitante.getResponsavel().getFotos());
-//            if(visitante.getResponsavel().getPessoa() != null) {
-//            	Hibernate.initialize(visitante.getResponsavel().getPessoa().getNacionalidade());
-////            	if(visitante.getResponsavel().getPessoa().getNacionalidade() != null) {
-//            		Hibernate.initialize(visitante.getResponsavel().getPessoa().getNacionalidade().getDescricao());
-////            	}
-////                if(visitante.getResponsavel().getPessoa().getPais() != null) {
-//                	Hibernate.initialize(visitante.getResponsavel().getPessoa().getPais().getNome());
-////                }
-//                Hibernate.initialize(visitante.getResponsavel().getPessoa().getNaturalidade());
-//            }
-//            Hibernate.initialize(visitante.getResponsavel().getIdentidadeDeGenero());
-//        }
+        if (visitante.getResponsavel() != null) {
+            Hibernate.initialize(visitante.getResponsavel().getFotos());
+            if(visitante.getResponsavel().getPessoa() != null) {
+            	if(visitante.getResponsavel().getPessoa().getNacionalidade() != null) {
+            		Hibernate.initialize(visitante.getResponsavel().getPessoa().getNacionalidade().getDescricao());
+            	}
+                if(visitante.getResponsavel().getPessoa().getPais() != null) {
+                	Hibernate.initialize(visitante.getResponsavel().getPessoa().getPais().getNome());
+                }
+                Hibernate.initialize(visitante.getResponsavel().getPessoa().getNaturalidade());
+            }
+            Hibernate.initialize(visitante.getResponsavel().getIdentidadeDeGenero());
+        }
         Hibernate.initialize(visitante.getPessoa().getContatos());
         Hibernate.initialize(visitante.getPessoa().getEnderecos());
         Hibernate.initialize(visitante.getPessoa().getBiometria());
-   
-//        if(visitante.getPessoa() != null)
-//        	Hibernate.initialize(visitante.getPessoa().getVisitante());
-        
-        
-//        if(visitante.getResponsavel() != null) {
-//        	Hibernate.initialize(visitante.getResponsavel());
-//        	visitante.setResponsavel(this.buscarVisitanteDadosPessoa(visitante.getResponsavel().getId()));
-//        }
+
+        if (visitante.getPessoa().getBiometria() != null) {
+            Hibernate.initialize(visitante.getPessoa().getBiometria().getDedos());
+        }
+        if(visitante.getPessoa() != null)
+        	Hibernate.initialize(visitante.getPessoa().getVisitante());
     }
+
+
 
 
     public List<Visitante> listarRelatorio(FiltroVwVisitanteRelatorio filtro) {
