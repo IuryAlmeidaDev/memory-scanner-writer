@@ -65,21 +65,20 @@ public class FiltroAssociarResponsavel extends FiltroConsulta{
 			getCriteria().add(Restrictions.like("cpf", this.getCpf(), MatchMode.ANYWHERE));
 		}
 
+
 		getCriteria()
 				.createAlias("credenciamentos", "cre", JoinType.INNER_JOIN)
 				.createAlias("cre.parente", "p", JoinType.INNER_JOIN);
 
-		getCriteria()
-				.add(Restrictions.eqProperty("id", "cre.visitante.id")) // id_visitante da tabela visitante igual ao idVisitante da tabela credenciamento
-				.add(Restrictions.eqProperty("p.recuperando.id", "cre.recuperando.id")) // id_recuperando da tabela parente igual ao idRecuperando da tabela credenciamento
-				.add(Restrictions.or(
-						Restrictions.isNull("emancipado"),
-						Restrictions.eq("emancipado", SimNao.S)
-				))
-				.add(Restrictions.eq("cre.recuperando.id", matricula));
-		
+		if (matricula != null){
+			getCriteria()
+					.add(Restrictions.eqProperty("id", "cre.visitante.id")) // id_visitante da tabela visitante igual ao idVisitante da tabela credenciamento
+					.add(Restrictions.eqProperty("p.recuperando.id", "cre.recuperando.id")) // id_recuperando da tabela parente igual ao idRecuperando da tabela credenciamento
+					.add(Restrictions.or(
+							Restrictions.isNull("emancipado"),
+							Restrictions.eq("emancipado", SimNao.S)
+					))
+					.add(Restrictions.eq("cre.recuperando.id", matricula));
+		}
 	}
-	
-	
-
 }
