@@ -32,7 +32,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
 public class EntradaSaidaDAO {
-	
+
 	@Inject
 	private EntityManager em;
 	
@@ -539,11 +539,15 @@ public class EntradaSaidaDAO {
 		try {
 			String jpql = "SELECT ea " +
 					"FROM EntradaSaida ea " +
-					"WHERE ea.visitante.id = (SELECT vr.visitanteResponsavel.id FROM VisitanteResponsavel vr WHERE vr.visitante.id = :idVisitante) " +
+					"WHERE ea.visitante.id IN " +
+					"(SELECT vr.visitanteResponsavel.id FROM VisitanteResponsavel vr " +
+					"WHERE vr.visitante.id = :idVisitante " +
+					"AND vr.status = 'A') " +
 					"AND ea.dataSaida IS NULL";
 
 			TypedQuery<EntradaSaida> query = em.createQuery(jpql, EntradaSaida.class);
 			query.setParameter("idVisitante", id);
+			query.setMaxResults(1);
 			EntradaSaida entradaSaida = query.getSingleResult();
 			return entradaSaida.getVisitante().getId();
 		}catch (Exception e){
