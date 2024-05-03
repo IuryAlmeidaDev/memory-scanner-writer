@@ -66,7 +66,7 @@ public class Visitante extends BaseModel<Long> {
     private UnidadePrisional unidadePrisional;
 
     @NotAudited
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_IDENTIDADE_GENERO")
     private IdentidadeDeGenero identidadeDeGenero;
 

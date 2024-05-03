@@ -551,7 +551,7 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
 		
 		sql.append("SELECT c FROM Credenciamento c ");
 		sql.append("LEFT JOIN FETCH c.unidadePrisional ");
-		sql.append("LEFT JOIN FETCH c.visitante v");
+		sql.append("LEFT JOIN FETCH c.visitante v ");
 		sql.append("LEFT JOIN FETCH c.tipoVisita ");
 		sql.append("LEFT JOIN FETCH c.recuperando ");
 		sql.append("LEFT JOIN FETCH c.recuperando.pessoa "); 
