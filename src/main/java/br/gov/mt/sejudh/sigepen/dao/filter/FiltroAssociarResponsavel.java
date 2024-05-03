@@ -65,6 +65,7 @@ public class FiltroAssociarResponsavel extends FiltroConsulta{
 			getCriteria().add(Restrictions.like("cpf", this.getCpf(), MatchMode.ANYWHERE));
 		}
 
+
 		getCriteria()
 				.createAlias("credenciamentos", "cre", JoinType.INNER_JOIN)
 				.createAlias("cre.parente", "p", JoinType.INNER_JOIN);
