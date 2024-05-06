@@ -25,6 +25,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.engine.spi.PersistentAttributeInterceptable;
@@ -78,7 +80,7 @@ public class Pessoa implements Serializable, PersistentAttributeInterceptable {
     private Nacionalidade nacionalidade;
 
     @Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="PAIS_ID")
     private Pais pais;
 
