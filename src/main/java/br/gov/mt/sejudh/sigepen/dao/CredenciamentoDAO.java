@@ -29,6 +29,7 @@ import br.gov.mt.sejudh.sigepen.model.CredencialCertidao;
 import br.gov.mt.sejudh.sigepen.model.CredencialDocumento;
 import br.gov.mt.sejudh.sigepen.model.Credenciamento;
 import br.gov.mt.sejudh.sigepen.model.FaseDoCredenciamento;
+import br.gov.mt.sejudh.sigepen.model.IdentidadeDeGenero;
 import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
@@ -575,6 +576,43 @@ public class CredenciamentoDAO extends BaseDAO<Credenciamento, Long> {
 
 	}
 
+	
+	public Credenciamento listarCredenciamentoFaseCredencimaneto(long id) {
+		Session session = this.em.unwrap(Session.class);
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT c FROM Credenciamento c ");
+		sql.append(" LEFT JOIN FETCH c.unidadePrisional ");
+		sql.append(" LEFT JOIN FETCH c.visitante v ");
+		sql.append(" LEFT JOIN FETCH v.pessoa p ");
+		sql.append(" LEFT JOIN FETCH p.pais pp ");
+		sql.append(" LEFT JOIN FETCH c.tipoVisita ");
+		sql.append(" LEFT JOIN FETCH c.recuperando ");
+		sql.append(" LEFT JOIN FETCH c.recuperando.pessoa pr "); 
+		sql.append(" LEFT JOIN FETCH v.identidadeDeGenero ");
+		sql.append(" WHERE c.id = :id");
+
+		
+		Credenciamento credenciamento = (Credenciamento) session.createQuery(sql.toString())
+                .setParameter("id", id)
+                .uniqueResult();
+		
+        if (credenciamento != null) {
+        	Hibernate.initialize(credenciamento.getVisitante().getPessoa().getNacionalidade());
+        	Hibernate.initialize(credenciamento.getVisitante().getFotos());
+        	Hibernate.initialize(credenciamento.getVisitante().getVisitanteDocumentos());
+        	Hibernate.initialize(credenciamento.getVisitante().getCertidoes());
+            Hibernate.initialize(credenciamento.getFasesDoCredenciamento());
+            Optional.ofNullable(credenciamento.getRecuperando()).ifPresent(
+                    recuperando -> Hibernate.initialize(recuperando.getFotos())
+            );
+        }
+		
+		return credenciamento;
+
+	}
+	
+	
 	public Credenciamento buscarCredenciamentoVisitante(Long id) {
 		Session session = this.em.unwrap(Session.class);
 		StringBuilder sql = new StringBuilder();

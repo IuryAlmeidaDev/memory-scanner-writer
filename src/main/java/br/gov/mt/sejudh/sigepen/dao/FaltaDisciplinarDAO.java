@@ -72,7 +72,7 @@ public class FaltaDisciplinarDAO {
 					"LEFT JOIN FETCH p.estruturaOcorrencia estrutura " +
 					"LEFT JOIN FETCH estrutura.unidadePrisional unidade " +
 					"LEFT JOIN FETCH p.recuperando rec " +
-					"LEFT JOIN rec.pessoa pessoa " +
+					"LEFT JOIN FETCH rec.pessoa pessoa " +
 					"LEFT JOIN FETCH rec.fotos " +
 					"WHERE p.id = :id";
 
