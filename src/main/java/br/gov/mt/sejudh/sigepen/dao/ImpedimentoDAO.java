@@ -93,10 +93,10 @@ public class ImpedimentoDAO extends BaseDAO<Impedimento, Long> {
 			
 			em.createQuery(updateImpedimento).executeUpdate();
 
-			CriteriaUpdate<Visitante> updateVisitante = builder.createCriteriaUpdate(Visitante.class);
-			Root<Visitante> visitante = updateVisitante.from(Visitante.class);
-			
 			idsVisitantes.stream().forEach(vId -> {
+				CriteriaUpdate<Visitante> updateVisitante = builder.createCriteriaUpdate(Visitante.class);
+				Root<Visitante> visitante = updateVisitante.from(Visitante.class);
+
 				VisitanteDTO visitanteDto = visitanteDao.buscarVisitanteDTO(vId);
 				credenciamentoDao.buscarCredenciamentosEFasesDTO(visitanteDto);
 				//verificarSeVisitantePossuiImpedimentoAtivo(visitanteDto);
