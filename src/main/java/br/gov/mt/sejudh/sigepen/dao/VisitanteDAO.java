@@ -801,7 +801,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
     @SuppressWarnings("unchecked")
 	public List<AssociarVisitanteResponsavelView> buscarPorFiltroAssociarResponsavel(FiltroConsulta filtro, boolean isRelatorio) {
 		Criteria criteria = filtro.criarCriteriaParaBusca(AssociarVisitanteResponsavelView.class, em, isRelatorio);
-		
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return criteria.list();
    }
 
