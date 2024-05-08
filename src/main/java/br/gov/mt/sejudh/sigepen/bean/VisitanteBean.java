@@ -1369,9 +1369,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 		try {
 			this.visitante = this.service.salvar(visitante);
-			if (this.visitante.getResponsavel() != null) {
-				buscarVisitante(this.visitante.getId());
-			}
+			buscarVisitante(this.visitante.getId());
+			
 		} catch (ValidacaoException e) {
 			e.printStackTrace();
 		}
