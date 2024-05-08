@@ -128,7 +128,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
         return visitante;
     }
     
-	public Visitante buscarVisitanteDadosPessoa(Long id) {
+	public Visitante buscarVisitanteDadosPessoa(Long id, boolean buscarAuditoria) {
 			
 	    	String jpql = "SELECT v FROM Visitante v " +
 	    			" LEFT JOIN FETCH v.tipoVisita " + 
@@ -145,6 +145,12 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 			query.setParameter("idVisitante", id);
 			Visitante v = query.getSingleResult();
 			inicializarColecoes(v);
+			
+			if (buscarAuditoria && v != null) {
+	            v.setAutorRegistro(this.auditoriaDAO.autorRegistro(v, v.getId()));
+	            v.setAutorUltimaAlteracao(this.auditoriaDAO.autorUltimaAlteracao(v, v.getId()));
+	        }
+			
 			return v;
 			
 		}
