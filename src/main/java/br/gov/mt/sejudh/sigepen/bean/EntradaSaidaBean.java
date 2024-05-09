@@ -309,6 +309,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	}
 
 	public void abrirDialogAssociarVisitante(ActionEvent event) {
+		facesUtil.setObjetoSessao("matricula", null);
 		facesUtil.exibirPaginaDialog("pretty:AssociarResponsavel", 400, 1000);
 	}
 

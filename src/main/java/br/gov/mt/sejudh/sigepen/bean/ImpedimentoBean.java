@@ -179,6 +179,7 @@ public class ImpedimentoBean extends MetodosDePaginaBean {
     }
 
     public void abrirDialogVisitante(ActionEvent event) {
+        facesUtil.setObjetoSessao("matricula", null);
         facesUtil.exibirPaginaDialog("pretty:AssociarResponsavel", 400, 1000);
     }
     public void associarVisitante(SelectEvent event) {
