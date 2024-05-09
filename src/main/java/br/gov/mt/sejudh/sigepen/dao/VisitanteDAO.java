@@ -344,7 +344,9 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
     }
 
     public List<Visitante> buscarDependenteVisitanteResponsavel(Visitante visitante) {
-        String jpql = "select v from Visitante v Where v.responsavel.id =:visitante";
+        String jpql = "select v from Visitante v " +
+				"Where v.id in (select vr.visitante.id from VisitanteResponsavel vr where vr.visitanteResponsavel.id =:visitante) " +
+				"and v.emancipado = 'N'";
         Query query = em.createQuery(jpql, Visitante.class).setParameter("visitante", visitante.getId());
         return query.getResultList();
     }

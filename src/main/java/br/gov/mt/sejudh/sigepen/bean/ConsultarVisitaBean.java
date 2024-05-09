@@ -256,8 +256,9 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 		this.entrada.setVisitante(visitanteService.buscarVisitanteDTO(e.getIdVisitante(), true));
 		this.entrada.setAutorizacoes(visitanteService.buscarAutorizacoesEntradasDTO(e.getId()));
 
-		if(e.getIdResponsavel() != null) {
-			this.entrada.getVisitante().setResponsavel(visitanteService.buscarVisitanteDTO(e.getIdResponsavel(), true));
+		Long entradaResponsavel = esService.responsavelDeuEntrada(this.entrada.getIdVisitante());
+		if(entradaResponsavel != null){
+			this.entrada.getVisitante().setResponsavel(visitanteService.buscarVisitanteDTO(entradaResponsavel, true));
 			
 			this.mostrarPanelVisitante = false;
 			this.mostrarPanelResponsavel = true;
