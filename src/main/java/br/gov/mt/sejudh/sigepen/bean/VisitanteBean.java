@@ -449,7 +449,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			return false;
 		}
 
-		this.visitante = service.buscarVisitanteDadosPessoa(id);
+		this.visitante = service.buscarVisitanteDadosPessoa(id, true);
 		this.visitante.setCredenciamentos(this.credenciamentoService.buscarCredenciamentoComFasesPorVisitanteId(id));
 
 		List<VisitanteResponsavel> listaResponsaveis = visitanteResponsavelService
@@ -458,7 +458,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		if (!listaResponsaveis.isEmpty()) {
 			for (VisitanteResponsavel vr : listaResponsaveis) {
 				Visitante v = new Visitante();
-				v = service.buscarVisitanteDadosPessoa(vr.getVisitanteResponsavel().getId());
+				v = service.buscarVisitanteDadosPessoa(vr.getVisitanteResponsavel().getId(), false);
 				this.visitantesResponsaveis.add(v);
 			}
 
@@ -1369,9 +1369,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 		try {
 			this.visitante = this.service.salvar(visitante);
-			if (this.visitante.getResponsavel() != null) {
-				buscarVisitante(this.visitante.getId());
-			}
+			buscarVisitante(this.visitante.getId());
+			
 		} catch (ValidacaoException e) {
 			e.printStackTrace();
 		}

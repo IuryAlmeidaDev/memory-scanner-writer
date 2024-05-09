@@ -128,7 +128,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
         return visitante;
     }
     
-	public Visitante buscarVisitanteDadosPessoa(Long id) {
+	public Visitante buscarVisitanteDadosPessoa(Long id, boolean buscarAuditoria) {
 			
 	    	String jpql = "SELECT v FROM Visitante v " +
 	    			" LEFT JOIN FETCH v.tipoVisita " + 
@@ -145,6 +145,12 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 			query.setParameter("idVisitante", id);
 			Visitante v = query.getSingleResult();
 			inicializarColecoes(v);
+			
+			if (buscarAuditoria && v != null) {
+	            v.setAutorRegistro(this.auditoriaDAO.autorRegistro(v, v.getId()));
+	            v.setAutorUltimaAlteracao(this.auditoriaDAO.autorUltimaAlteracao(v, v.getId()));
+	        }
+			
 			return v;
 			
 		}
@@ -338,7 +344,9 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
     }
 
     public List<Visitante> buscarDependenteVisitanteResponsavel(Visitante visitante) {
-        String jpql = "select v from Visitante v Where v.responsavel.id =:visitante";
+        String jpql = "select v from Visitante v " +
+				"Where v.id in (select vr.visitante.id from VisitanteResponsavel vr where vr.visitanteResponsavel.id =:visitante) " +
+				"and v.emancipado = 'N'";
         Query query = em.createQuery(jpql, Visitante.class).setParameter("visitante", visitante.getId());
         return query.getResultList();
     }
@@ -801,7 +809,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
     @SuppressWarnings("unchecked")
 	public List<AssociarVisitanteResponsavelView> buscarPorFiltroAssociarResponsavel(FiltroConsulta filtro, boolean isRelatorio) {
 		Criteria criteria = filtro.criarCriteriaParaBusca(AssociarVisitanteResponsavelView.class, em, isRelatorio);
-		
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return criteria.list();
    }
 
