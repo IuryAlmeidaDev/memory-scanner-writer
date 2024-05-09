@@ -63,6 +63,7 @@ import br.gov.mt.sejudh.sigepen.model.ParametroVisitaEstrutura;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.StatusVisita;
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.service.EntradaSaidaService;
@@ -810,6 +811,8 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	public void selecaoStatusVisita() {
 		this.credenciamentos = new ArrayList<Credenciamento>();
 		if (this.entrada != null) {
+			UnidadePrisional unidadeSelecionada =  SecurityUtil.getUnidadeSelecionada();
+			
 			for (Credenciamento vr : this.entrada.getVisitante().getCredenciamentos()) {
 				vr.setStatusVisita(buscarStatus(vr));
 				vr.setSelecionado(false);
@@ -821,7 +824,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 					}
 				}
 				if (vr.getUnidadePrisional() == null) {
-					if (vr.getVisitante().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada()
+					if (vr.getVisitante().getUnidadePrisional().getId() == unidadeSelecionada
 							.getId()) {
 						if (this.getFiltro().getStatusCredenciamento() == null) {
 							this.credenciamentos.add(vr);
@@ -833,7 +836,9 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 					}
 
 				}else {
-					if (vr.getRecuperando().getPassagemAtual().getLotacaoAtual()!= null && vr.getRecuperando().getPassagemAtual().getLotacaoAtual().getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId()) {
+//					if (vr.getRecuperando().getPassagemAtual().getLotacaoAtual()!= null && vr.getRecuperando().getPassagemAtual().getLotacaoAtual().getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId()) {
+					UnidadePrisional unidadePrisionalAtual = this.service.buscaUnidadePriosionalAtualRecuperandoId(vr.getRecuperando().getId());
+					if(unidadePrisionalAtual != null && unidadePrisionalAtual.getId() == unidadeSelecionada.getId()) {
 						if (this.getFiltro().getStatusCredenciamento() == null) {
 							this.credenciamentos.add(vr);
 						} else {

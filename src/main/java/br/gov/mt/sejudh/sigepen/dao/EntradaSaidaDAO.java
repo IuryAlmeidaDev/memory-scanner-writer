@@ -491,4 +491,18 @@ public class EntradaSaidaDAO {
 		}
 		return null;
 	}
+
+	public UnidadePrisional buscaUnidadePriosionalAtualRecuperandoId(Long id) {
+		Session session = this.em.unwrap(Session.class);
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT UP.* FROM SIGEPEN_OWNER.PASSAGEM PAS                                 ");
+		sql.append("INNER JOIN SIGEPEN_OWNER.PASSAGEM_LOTACAO PASL ON PASL.PASSAGEM_ID = PAS.ID ");
+		sql.append("INNER JOIN SIGEPEN_OWNER.ESTRUTURA E ON E.ID = PASL.ESTRUTURA_ID            ");
+		sql.append("INNER JOIN SIGEPEN_OWNER.UNIDADE_PRISIONAL UP ON UP.ID = E.UNIDADEPRISIONAL_ID     ");
+		sql.append("WHERE PAS.RECUPERANDO_ID = :recuperandoId                                   ");
+		sql.append("AND PAS.Data_Saida is null                                                  ");
+		sql.append("and PASL.Data_Saida is null                                                 ");
+		 return (UnidadePrisional) session.createSQLQuery(sql.toString()).addEntity(UnidadePrisional.class).setParameter("recuperandoId", id).uniqueResult();
+	}
 }

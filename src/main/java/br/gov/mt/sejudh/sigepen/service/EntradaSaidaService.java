@@ -15,6 +15,7 @@ import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.EntradaSaida;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.dto.EntradaSaidaDTO;
 
@@ -107,6 +108,11 @@ public class EntradaSaidaService {
 
 	public String validarEntrada(FiltroEntradaSaida f, Long unidade) {
 		return this.dao.validarEntrada(f, unidade);
+	}
+	
+
+	public UnidadePrisional buscaUnidadePriosionalAtualRecuperandoId(Long id) {
+		return dao.buscaUnidadePriosionalAtualRecuperandoId(id);
 	}
 }
 
