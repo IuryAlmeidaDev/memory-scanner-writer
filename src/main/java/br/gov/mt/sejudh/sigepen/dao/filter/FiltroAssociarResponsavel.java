@@ -67,8 +67,8 @@ public class FiltroAssociarResponsavel extends FiltroConsulta{
 
 
 		getCriteria()
-				.createAlias("credenciamentos", "cre", JoinType.INNER_JOIN)
-				.createAlias("cre.parente", "p", JoinType.INNER_JOIN);
+				.createAlias("credenciamentos", "cre", JoinType.LEFT_OUTER_JOIN)
+				.createAlias("cre.parente", "p", JoinType.LEFT_OUTER_JOIN);
 
 		if (matricula != null){
 			getCriteria()
