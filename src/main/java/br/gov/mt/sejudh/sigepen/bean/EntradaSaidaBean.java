@@ -857,16 +857,19 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 					}
 
 				}else {
-					UnidadePrisional unidadePrisionalAtual = this.faltaDisciplinarService.buscaUnidadePriosionalAtualRecuperandoId(vr.getRecuperando().getId());
-					if (unidadePrisionalAtual.getId() == unidadeSelecionada.getId()) {
-						if (this.getFiltro().getStatusCredenciamento() == null) {
-							this.credenciamentos.add(vr);
-						} else {
-							if (this.getFiltro().getStatusCredenciamento().equals(buscarStatus(vr).getStatus())) {
+					if (vr.getRecuperando() != null) {
+						UnidadePrisional unidadePrisionalAtual = this.faltaDisciplinarService.buscaUnidadePriosionalAtualRecuperandoId(vr.getRecuperando().getId());
+						if (unidadePrisionalAtual.getId() == unidadeSelecionada.getId()) {
+							if (this.getFiltro().getStatusCredenciamento() == null) {
 								this.credenciamentos.add(vr);
+							} else {
+								if (this.getFiltro().getStatusCredenciamento().equals(buscarStatus(vr).getStatus())) {
+									this.credenciamentos.add(vr);
+								}
 							}
-						}
+						}  
 					}
+					
 				}
 			}
 		}
