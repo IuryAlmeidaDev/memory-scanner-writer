@@ -454,6 +454,7 @@ public class EntradaSaidaDAO {
 		for(Visitante v : visitantes) {
 			Hibernate.initialize(v.getEntradas());
 			for(EntradaSaida e : v.getEntradas()) {
+				Hibernate.initialize(e.getUnidadePrisional());
 				Hibernate.initialize(e.getVisitante().getIdentidadeDeGenero());
 				Hibernate.initialize(e.getVisitante());
 				Hibernate.initialize(e.getRecuperandos());
