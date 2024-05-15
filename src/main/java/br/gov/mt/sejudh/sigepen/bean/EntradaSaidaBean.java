@@ -1288,8 +1288,10 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	public int buscarStatusVisita(Visitante v) {
 		Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
 		Date df = Sigepen.getDataConsultaMenorIgual(new Date());
+		long unidadeIdSelecionada = SecurityUtil.getUnidadeSelecionada().getId();
+				
 		for (EntradaSaida e : v.getEntradas()) {
-			if (e.getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId()
+			if (e.getUnidadePrisional().getId() == unidadeIdSelecionada
 					&& e.getDataEntrada().after(di) && e.getDataEntrada().before(df)) {
 				if (SituacaoVisita.EM_ANDAMENTO.equals(e.getSituacao()))
 					return 1;
