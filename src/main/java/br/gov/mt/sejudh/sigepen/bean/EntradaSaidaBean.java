@@ -868,6 +868,9 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 								}
 							}
 						}  
+					} else {
+						//Visitante é prestador de serviço, não tem recuperando vinculado
+						this.credenciamentos.add(vr);
 					}
 					
 				}
