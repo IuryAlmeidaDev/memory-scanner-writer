@@ -66,11 +66,13 @@ public class FiltroAssociarResponsavel extends FiltroConsulta{
 		}
 
 
-		getCriteria()
-				.createAlias("credenciamentos", "cre", JoinType.LEFT_OUTER_JOIN)
-				.createAlias("cre.parente", "p", JoinType.LEFT_OUTER_JOIN);
+		
 
 		if (matricula != null){
+			getCriteria()
+			.createAlias("credenciamentos", "cre", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("cre.parente", "p", JoinType.LEFT_OUTER_JOIN);
+			
 			getCriteria()
 					.add(Restrictions.eqProperty("id", "cre.visitante.id")) // id_visitante da tabela visitante igual ao idVisitante da tabela credenciamento
 					.add(Restrictions.eqProperty("p.recuperando.id", "cre.recuperando.id")) // id_recuperando da tabela parente igual ao idRecuperando da tabela credenciamento
