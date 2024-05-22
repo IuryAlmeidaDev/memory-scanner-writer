@@ -4,10 +4,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import br.gov.mt.sejudh.sigepen.conversores.EnumCustomConverter;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoAutorizacaoValidacaoSemBio;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Type;
 
+import javax.persistence.*;
+
+@Immutable
+@Entity
 public class EntradaSaidaDTO {
+
+	@Id
 	private Long id;
 	private String tipoVisita;
 	private String nomeVisitante;
@@ -20,6 +29,9 @@ public class EntradaSaidaDTO {
 	private Date dataEntrada;
 	private Date dataSaida;
 	private Date dataCancelamento;
+
+	@Convert(converter = EnumCustomConverter.class, disableConversion=true)
+	@Type(type = "br.gov.mt.sejudh.sigepen.conversores.EnumCustomType")
 	private SituacaoVisita situacao;
 	private String motivoFinalizacao;
 	private String motivoEntrada;
@@ -27,9 +39,11 @@ public class EntradaSaidaDTO {
 	private Long idUnidade;
 	private String nomeUnidade;
 	private String siglaUnidade;
-	
+
+	@Transient
 	private VisitanteDTO visitante;
-	
+
+	@Transient
 	private List<AutorizacaoSemBiometriaDTO> autorizacoes;
 	
 	public AutorizacaoSemBiometriaDTO getAutorizacao(TipoAutorizacaoValidacaoSemBio acao) {
