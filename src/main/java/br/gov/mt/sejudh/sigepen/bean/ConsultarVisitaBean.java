@@ -166,7 +166,7 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 					e.printStackTrace();
 				}
 
-				List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), false);		
+				List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), sortField,sortOrder, first);
 				return lista;
 			}
 		};
@@ -214,8 +214,8 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 			return null;
 		}
 		try {
-			List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), true);
-			
+			List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro());
+
 			if (lista.size() == 0) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
 				return null;
