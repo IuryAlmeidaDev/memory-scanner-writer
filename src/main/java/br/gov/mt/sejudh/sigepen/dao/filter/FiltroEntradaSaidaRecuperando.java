@@ -410,8 +410,24 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 			builder.append("and translate(lower(pessoa_vis.nome),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') like translate(lower(:visitante),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') ");
 		}
 
-		if(this.getSituacao() != null) {
-			builder.append("and esv.situacao = :situacao ");
+		if (this.getSituacao() != null) {
+		    int situacaoCode;
+		    switch (this.getSituacao()) {
+		        case FINALIZADA:
+		            situacaoCode = 2;
+		            break;
+		        case EM_ANDAMENTO:
+		            situacaoCode = 1;
+		            break;
+		        case CANCELADA:
+		            situacaoCode = 3;
+		            break;
+		        default:
+		            situacaoCode = -1; // Valor padrão para situações não tratadas, se necessário.
+		    }
+		    if (situacaoCode != -1) {
+		        builder.append("and esv.situacao = ").append(situacaoCode).append(" ");
+		    }
 		}
 
 		return builder.toString();
@@ -478,9 +494,9 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 			query.setParameter("visitante", getNome());
 		}
 
-		if(this.getSituacao() != null) {
-			query.setParameter("situacao", getSituacao());
-		}
+//		if(this.getSituacao() != null) {
+//			query.setParameter("situacao", getSituacao());
+//		}
 
 		if (first>=0){
 			query.setParameter("rowInicial", first);
