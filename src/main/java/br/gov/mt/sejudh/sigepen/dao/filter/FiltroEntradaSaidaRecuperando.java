@@ -367,39 +367,39 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 
 
 		if (this.getDataInicio() != null) {
-			builder.append("esv.dataEntrada between :di and :df  ");
+			builder.append("and esv.data_entrada between :di and :df  ");
 		}
 
 		if (this.getDataInicio() == null && this.getDataFim() != null) {
-			builder.append("esv.dataEntrada between :di and :df  ");
+			builder.append("and esv.data_entrada between :di and :df  ");
 		}
 
 		if (this.getTipoVisita() != null) {
-			builder.append("tipo_visita.id = :tipoVisita  ");
+			builder.append("and tipo_visita.ID_TIPO_VISITA = :tipoVisita  ");
 		}
 
 		if (this.getTipoEntrada() != null) {
-			builder.append("tipo_visita.tipoEntrada = :tipoEntrada  ");
+			builder.append("and tipo_visita.CODG_TIPO_ENTRADA = :tipoEntrada  ");
 		}
 
 		if (this.getDataNascimento() != null) {
-			builder.append("pessoa_v.dataNascimento > :dataNascimento  ");
+			builder.append("and pessoa_v.DATA_NASCIMENTO > :dataNascimento  ");
 		}
 
 		if (this.getEmancipado() != null) {
-			builder.append("vis.emancipado = :emancipado  ");
+			builder.append("and vis.FLAG_EMANCIPADO = :emancipado  ");
 		}
 
 		if (this.getNacionalidade() != null) {
-			builder.append("pessoa_v.nacionalidade.id = :nascionalidade  ");
+			builder.append("and pessoa_v.nacionalidade_id = :nascionalidade  ");
 		}
 
 		if (this.getPne() != null && SimNao.N.equals(this.getPne())) {
-			builder.append("and(vis.pne is null or vis.pne = :pne ");
+			builder.append("and(vis.FLAG_PNE is null or vis.FLAG_PNE = :pne )");
 		}
 
 		if (this.getPermanente() != null) {
-			builder.append("and vis.pnePermanente = :pnePermanente ");
+			builder.append("and vis.FLAG_PNE_PERMANENTE = :pnePermanente ");
 		}
 
 		if (StringUtils.isNotBlank(this.getNomeRecuperando())) {
@@ -411,7 +411,7 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 		}
 
 		if(this.getSituacao() != null) {
-			builder.append("esv.situacao = :situacao ");
+			builder.append("and esv.situacao = :situacao ");
 		}
 
 		return builder.toString();
