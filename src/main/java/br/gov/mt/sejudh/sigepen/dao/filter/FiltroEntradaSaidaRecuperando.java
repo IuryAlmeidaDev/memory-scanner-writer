@@ -455,7 +455,7 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 		}
 
 		if (this.getEmancipado() != null) {
-			query.setParameter("emancipado", getEmancipado());
+			query.setParameter("emancipado", getEmancipado().getDescricao().equals("Sim") ? "S" : "N");
 		}
 
 		if (this.getNacionalidade() != null) {
@@ -463,11 +463,11 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 		}
 
 		if (this.getPne() != null && SimNao.N.equals(this.getPne())) {
-			query.setParameter("pne", getPne());
+			query.setParameter("pne", getPne().getDescricao().equals("Sim") ? "S" : "N");
 		}
 
 		if (this.getPermanente() != null) {
-			query.setParameter("pnePermanente", getPermanente());
+			query.setParameter("pnePermanente", getPermanente().getDescricao().equals("Sim") ? "S" : "N");
 		}
 
 		if (StringUtils.isNotBlank(this.getNomeRecuperando())) {

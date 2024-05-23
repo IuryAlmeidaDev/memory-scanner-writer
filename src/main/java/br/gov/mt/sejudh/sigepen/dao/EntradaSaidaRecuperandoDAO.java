@@ -75,9 +75,6 @@ public class EntradaSaidaRecuperandoDAO {
 		return query.getResultList();
 	}
 
-	private String configureFiltros() {
-		return null;
-	}
 
 	private String script() {
         return "SELECT " +
