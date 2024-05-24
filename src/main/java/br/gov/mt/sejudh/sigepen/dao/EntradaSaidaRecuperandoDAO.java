@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -75,6 +76,25 @@ public class EntradaSaidaRecuperandoDAO {
 		return query.getResultList();
 	}
 
+	
+	public int buscarEntradasPorFiltroCount(FiltroEntradaSaidaRecuperando filtro, String sortField, SortOrder sortOrder, int first) {
+		StringBuilder jpql = new StringBuilder();
+		jpql.append("SELECT count(*) as id FROM ( ")
+			.append("SELECT row_.*, rownum rownum_ FROM (")
+			.append(script())
+			.append(filtro.configureFiltros())
+			.append("  ) row_ ")
+			.append(") ");
+		
+		Query query = em.createNativeQuery(jpql.toString());
+	    filtro.configureParametos(query, -1);
+	    
+	    BigDecimal result = (BigDecimal) query.getSingleResult();
+	    
+	    return result.intValue();
+		
+		
+	}
 
 	private String script() {
         return "SELECT " +

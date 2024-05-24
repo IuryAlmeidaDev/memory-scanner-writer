@@ -158,8 +158,8 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 					String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
 
-				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
-				
+//				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
+				setRowCount(service.buscarEntradasPorFiltroCount(getFiltro(), sortField,sortOrder, first));
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
@@ -167,6 +167,7 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 				}
 
 				List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), sortField,sortOrder, first);
+				
 				return lista;
 			}
 		};

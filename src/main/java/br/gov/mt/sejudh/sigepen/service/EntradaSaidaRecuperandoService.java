@@ -31,6 +31,10 @@ public class EntradaSaidaRecuperandoService {
 		return this.dao.buscarEntradasPorFiltro(filtro, sortField,sortOrder,first);
 	}
 
+	public int buscarEntradasPorFiltroCount(FiltroEntradaSaidaRecuperando filtro, String sortField, SortOrder sortOrder, int first) {
+		return this.dao.buscarEntradasPorFiltroCount(filtro, sortField,sortOrder,first);
+	}
+	
 	public List<TipoVisita> getTipoVisitas(TipoEntrada te) {
 		return dao.listarTipoVisitas(te);
 	}

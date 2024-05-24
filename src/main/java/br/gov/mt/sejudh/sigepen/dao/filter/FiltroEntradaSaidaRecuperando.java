@@ -358,7 +358,7 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 		StringBuilder builder = new StringBuilder("WHERE (1=1)  ");
 
 		if(this.getPossuiDependente() != null && this.getPossuiDependente()) {
-			builder.append("and resp.id is not null  ");
+		    builder.append("and resp.id_visitante is not null  ");
 		}
 
 		if(this.getUnidade() != null && this.getUnidade().getId() > 0) {
