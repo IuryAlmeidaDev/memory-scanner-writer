@@ -407,7 +407,7 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 		}
 
 		if (StringUtils.isNotBlank(this.getNome())) {
-			builder.append("and translate(lower(pessoa_vis.nome),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') like translate(lower(:visitante),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') ");
+			builder.append("and translate(lower(pessoa_v.nome),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') like translate(lower(:visitante),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') ");
 		}
 
 		if (this.getSituacao() != null) {
@@ -487,11 +487,11 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 		}
 
 		if (StringUtils.isNotBlank(this.getNomeRecuperando())) {
-			query.setParameter("recuperando", getNomeRecuperando());
+			query.setParameter("recuperando", "%" + getNomeRecuperando() + "%");
 		}
 
 		if (StringUtils.isNotBlank(this.getNome())) {
-			query.setParameter("visitante", getNome());
+			query.setParameter("visitante", "%" + getNome() + "%");
 		}
 
 //		if(this.getSituacao() != null) {
