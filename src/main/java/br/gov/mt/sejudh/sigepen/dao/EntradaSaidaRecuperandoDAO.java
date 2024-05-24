@@ -137,12 +137,15 @@ public class EntradaSaidaRecuperandoDAO {
 				"INNER JOIN " +
 				"SIGEPEN_OWNER.SGP_TIPO_VISITA tipo_visita " +
 				"ON cred.ID_TIPO_VISITA = tipo_visita.ID_TIPO_VISITA " +
-				"INNER JOIN " +
-				"SIGEPEN_OWNER.UNIDADE_PRISIONAL up " +
-				"ON cred.ID_UNIDADE_PRISIONAL = up.ID " +
+//				"INNER JOIN " +
+//				"SIGEPEN_OWNER.UNIDADE_PRISIONAL up " +
+//				"ON cred.ID_UNIDADE_PRISIONAL = up.ID " +
 				"INNER JOIN " +
 				"SIGEPEN_OWNER.SGP_ENTRADA_SAIDA esv " +
 				"ON esr.ID_ENTRADA_SAIDA = esv.ID " +
+				"INNER JOIN " +
+				"SIGEPEN_OWNER.UNIDADE_PRISIONAL up " +
+				"ON esv.ID_UNIDADE_PRISIONAL = up.ID " +
 				"INNER JOIN " +
 				"SIGEPEN_OWNER.SGP_VISITANTE vis " +
 				"ON esv.ID_VISITANTE = vis.ID_VISITANTE " +
