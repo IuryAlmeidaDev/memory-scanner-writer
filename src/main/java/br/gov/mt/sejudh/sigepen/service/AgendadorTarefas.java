@@ -36,7 +36,7 @@ public class AgendadorTarefas {
 		}
 	}
 
-	@Schedule(minute = "*/15", hour ="*", persistent = false)
+	//@Schedule(minute = "*/15", hour ="*", persistent = false)
 	public void renovarLicencaBiometria(){
 		try {
 			logger.info("***** INICIADA RENOVAR LICENÇA BIOMETRIA *****");
