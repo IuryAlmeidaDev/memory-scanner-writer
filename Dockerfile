@@ -25,4 +25,10 @@ COPY Resources/standalone.conf /opt/jboss/wildfly/bin/standalone.conf
 COPY --from=apm-agent /usr/agent/elastic-apm-agent.jar /opt/jboss/wildfly/
 COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
 
-CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0"]
+EXPOSE 9990
+
+#CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0"]
+
+RUN /opt/jboss/wildfly/bin/add-user.sh admin GiHbTx29uW --silent
+
+CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
