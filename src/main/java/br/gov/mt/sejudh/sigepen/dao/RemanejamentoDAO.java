@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
+import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
@@ -23,6 +24,9 @@ public class RemanejamentoDAO {
 	
 	@Inject
 	private EntityManager entityManager;
+
+	@Inject
+	private EstruturaDAO estruturaDAO;
 
 	public EntityManager getEntityManager() {
 		return entityManager;
@@ -63,6 +67,7 @@ public class RemanejamentoDAO {
 			String jpql="select r from Remanejamento r "
 					+ "join fetch r.pedido p "
 					+ "join fetch r.unidadeRemanejada ur "
+					+ "join fetch r.estruturaDestino ed "
 					+ "join fetch p.unidadeOrigem u "
 					+ "join fetch p.recuperando rec "
 					+ "join fetch rec.passagens pas "
@@ -73,10 +78,13 @@ public class RemanejamentoDAO {
 			TypedQuery<Remanejamento> query = entityManager.createQuery(jpql, Remanejamento.class);
 			query.setParameter("id", id);			
 			Remanejamento r = query.getSingleResult();
-			
+
+			estruturaDAO.buscarEstruturasCompleta(r.getEstruturaDestino());
+
 			return r;
 		} catch (NoResultException e) {
 			return null;
 		}
 	}
+
 }

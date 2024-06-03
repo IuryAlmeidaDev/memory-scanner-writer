@@ -68,11 +68,11 @@ public class FaseDoCredenciamento extends BaseModel<Long> {
     @Column(name = "DATA_DESPACHO")
     private Date dataDespacho;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CREDENCIAMENTO")
     private Credenciamento credenciamento;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USUARIO_APROVACAO")
     private Usuario usuarioAprovacao;
 

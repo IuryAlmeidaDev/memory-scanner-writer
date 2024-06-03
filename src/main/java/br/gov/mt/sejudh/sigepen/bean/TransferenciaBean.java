@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.enumerator.*;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -23,12 +24,6 @@ import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroTransferencia;
-import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Escolta;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
@@ -37,6 +32,7 @@ import br.gov.mt.sejudh.sigepen.model.Servidor;
 import br.gov.mt.sejudh.sigepen.model.Transferencia;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.TransferenciaPedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.PedidoService;
@@ -208,7 +204,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 		String retorno = null;
 		
 		try {			
-			if (this.transferencia.getPedidos().isEmpty()) {
+			if (this.transferencia.getListTransferenciaPedidoTransitoDTO().isEmpty()) {
 				throw new ValidacaoException("É necessário adicionar um pedido!");
 			}
 			
@@ -216,18 +212,20 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 				throw new ValidacaoException("A Trânsferencia já está em andamento!");
 			}
 			
-			for (PedidoTransito ped : this.transferencia.getPedidos()){
-
-				if (ped.getRecuperando().getStatus() != StatusRecuperando.ATIVO) {
-					throw new ValidacaoException("Recuperando inativo,remova o pedido "+ped.getId()+"!");
+			for (TransferenciaPedidoTransitoDTO ped : this.transferencia.getListTransferenciaPedidoTransitoDTO()){
+				   
+				Recuperando recuperando = this.serviceRecuperando.buscarRecuperandoPorId(ped.getMatricula(), false);
+				 
+				if (recuperando.getStatus() != StatusRecuperando.ATIVO) {
+					throw new ValidacaoException("Recuperando inativo,remova o pedido "+ped.getNr()+"!");
 				}
 				
-				if(serviceRecuperando.lotacaoAtual(ped.getRecuperando()).getUnidadePrisional().getId() != ped.getUnidadeOrigem().getId()){
-					throw new ValidacaoException("Recuperando lotado em outra unidade, remova o pedido "+ped.getId()+"!");
+				if(serviceRecuperando.lotacaoAtual(recuperando).getUnidadePrisional().getId() != ped.getUnidadeOrigemId()){
+					throw new ValidacaoException("Recuperando lotado em outra unidade, remova o pedido "+ped.getNr()+"!");
 				}
 				
-				if(ped.getStatus() != StatusPedido.AUTORIZADO && this.transferencia.getId() != ped.getTransferencia().getId()){
-					throw new ValidacaoException("Pedido "+ped.getId() +" não pode ser vinculado, remova o pedido!");
+				if(ped.getStatus() != StatusPedido.AUTORIZADO && this.transferencia.getId() != ped.getIdTransferencia()){
+					throw new ValidacaoException("Pedido "+ped.getNr() +" não pode ser vinculado, remova o pedido!");
 				}
 				
 			}			
@@ -265,7 +263,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 		String retorno = null;
 		
 		try {			
-			if (this.transferencia.getPedidos().isEmpty()) {
+			if (this.transferencia.getListTransferenciaPedidoTransitoDTO().isEmpty()) {
 				throw new ValidacaoException("É necessário adicionar um pedido!");
 			}			
 			
@@ -273,21 +271,23 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 				throw new ValidacaoException("É necessário adicionar uma escolta!");
 			}			
 			
-			for (PedidoTransito pedido : this.transferencia.getPedidos()) {				
-				if(servicePedido.recuperandoEmMovimentacao(pedido.getRecuperando())){
-					throw new ValidacaoException("Recuperando em movimentação, remova o pedido "+pedido.getId()+"!");
+			for (TransferenciaPedidoTransitoDTO pedido : this.transferencia.getListTransferenciaPedidoTransitoDTO()) {
+				Recuperando recuperando = this.serviceRecuperando.buscarRecuperandoPorId(pedido.getMatricula(), false);
+
+				if(servicePedido.recuperandoEmMovimentacao(recuperando)){
+					throw new ValidacaoException("Recuperando em movimentação, remova o pedido "+pedido.getNr()+"!");
 				}
 
-				if (pedido.getRecuperando().getStatus() != StatusRecuperando.ATIVO) {
-					throw new ValidacaoException("Recuperando inativo,remova o pedido "+pedido.getId()+"!");
+				if (recuperando.getStatus() != StatusRecuperando.ATIVO) {
+					throw new ValidacaoException("Recuperando inativo,remova o pedido "+pedido.getNr()+"!");
 				}
 				
-				if(serviceRecuperando.lotacaoAtual(pedido.getRecuperando()).getUnidadePrisional().getId() != pedido.getUnidadeOrigem().getId()){
-					throw new ValidacaoException("Recuperando lotado em outra unidade, remova o pedido "+pedido.getId()+"!");
+				if(serviceRecuperando.lotacaoAtual(recuperando).getUnidadePrisional().getId() != pedido.getUnidadeOrigemId()){
+					throw new ValidacaoException("Recuperando lotado em outra unidade, remova o pedido "+pedido.getNr()+"!");
 				}
 				
-				if(pedido.getStatus() != StatusPedido.AUTORIZADO && this.transferencia.getId() != pedido.getTransferencia().getId()){
-					throw new ValidacaoException("Pedido "+pedido.getId() +" não pode ser vinculado, remova o pedido!");
+				if(pedido.getStatus() != StatusPedido.AUTORIZADO && this.transferencia.getId() != pedido.getIdTransferencia()){
+					throw new ValidacaoException("Pedido "+pedido.getNr() +" não pode ser vinculado, remova o pedido!");
 				}				
 			}
 			
@@ -312,10 +312,11 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 		String retorno = null;
 		
 		try {
-			for (PedidoTransito ped : this.transferencia.getPedidos()) {				
-				if(ped.getStatus() != StatusPedido.CANCELADO && ped.getStatus() != StatusPedido.FINALIZADO){
-					throw new ValidacaoException("Finalize ou cancele o pedido "+ped.getId()+"!");
-				}			
+			for (TransferenciaPedidoTransitoDTO ped : this.transferencia.getListTransferenciaPedidoTransitoDTO()) {				
+				if (ped.getStatus() != StatusPedido.CANCELADO && 
+					    ped.getStatus() != StatusPedido.FINALIZADO) {
+					    throw new ValidacaoException("Finalize ou cancele o pedido " + ped.getNr() + "!");
+					}		
 			}			
 			
 			service.finalizarTransferencia(this.transferencia);
@@ -358,6 +359,15 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 	*/
 	public void cancelarPedido(PedidoTransito pedido) {		
 		this.pedido = pedido;		
+	}
+
+	public void cancelarPedido(TransferenciaPedidoTransitoDTO pedidoDto) {
+		this.pedido = new PedidoTransito();
+		pedido.setId(pedidoDto.getNr());
+
+		Transferencia t = new Transferencia();
+		t.setId(pedidoDto.getIdTransferencia());
+		pedido.setTransferencia(t);
 	}
 	
 	/*
@@ -421,7 +431,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 	
 	public void imprimir() {
 		try {			
-			List<Transferencia> lista = service.buscaPorFiltro(filtro, true);
+			List<Transferencia> lista = service.buscaPorFiltroRelatorio(filtro, true);
 			
 			if (lista.size() == 0) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
@@ -440,7 +450,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 	public void imprimirRegistro(Transferencia transferencia) {
 		try {
 			List<Transferencia> lista = new ArrayList<Transferencia>();
-			Transferencia transf = service.buscaTransferenciaPorId(transferencia.getId());
+			Transferencia transf = service.buscaTransferenciaImprimirRegistro(transferencia.getId());
 			lista.add(transf);
 			
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.RegistroTransferencia));
@@ -475,9 +485,9 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 				this.recuperandosComBiometriaDesatualizada = new ArrayList<>();
 			}
 			
-			for (PedidoTransito p : this.transferencia.getPedidos()) {
-				if (!this.serviceRecuperando.recuperandoPossuiBiometriaAtualizada(p.getRecuperando().getId())) {
-					this.recuperandosComBiometriaDesatualizada.add(p.getRecuperando());
+			for (TransferenciaPedidoTransitoDTO p : this.transferencia.getListTransferenciaPedidoTransitoDTO()) {
+				if (!this.serviceRecuperando.recuperandoPossuiBiometriaAtualizada(p.getMatricula())) {
+					this.recuperandosComBiometriaDesatualizada.add(this.serviceRecuperando.buscarRecuperandoPorId(p.getMatricula(), false));
 				}
 			}
 			
@@ -495,9 +505,9 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 		}
 		
 		try {
-			PedidoTransito pedido = servicePedido.buscaPedidoPorId(p.getId());
+			PedidoTransito pedido = servicePedido.buscarPedidoPorId(p.getId(), TipoMovimentacao.TRANSFERENCIA);
 			
-			if (service.recuperandoPossuiPedidoIncluso(this.transferencia.getPedidos(), pedido)) {
+			if (service.isRecuperandoPossuiPedidoIncluso(this.transferencia.getListTransferenciaPedidoTransitoDTO(), pedido)) {
 				throw new ValidacaoException("Recuperando já possui Pedido adicionado!");
 			}
 			
@@ -505,7 +515,7 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 				throw new ValidacaoException("Recuperando inativo, remova o pedido!");
 			}
 			
-			if(serviceRecuperando.lotacaoAtual(pedido.getRecuperando()).getUnidadePrisional().getId() != pedido.getUnidadeOrigem().getId()){
+			if(serviceRecuperando.PedidoTransitolotacaoAtual(pedido.getRecuperando()).getUnidadePrisional().getId() != pedido.getUnidadeOrigem().getId()){
 				throw new ValidacaoException("Recuperando lotado em outra unidade, remova o pedido!");
 			}
 			
@@ -515,14 +525,32 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 
 			validarRecuperandoBiometria(pedido.getRecuperando());
 
-		   this.transferencia.getPedidos().add(pedido);		
+//		   this.transferencia.getPedidos().add(pedido);	
+		   this.transferencia.getListTransferenciaPedidoTransitoDTO().add(convertePedidoEmTransferenciaPedidoDTO(pedido));	
 					
 		} catch(ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
 		} catch(Exception e){
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao adicionar Pedido (" + p.getId() + "): " + e.getMessage());			
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao adicionar Pedido (" + p.getId() + "): " + e.getMessage());
 			LoggerUtil.logErro(Acao.ASSOCIAR, p, e, log);
 		}
+	}
+	
+	public TransferenciaPedidoTransitoDTO convertePedidoEmTransferenciaPedidoDTO(PedidoTransito pedido) {
+		
+		TransferenciaPedidoTransitoDTO dto = new TransferenciaPedidoTransitoDTO();
+		dto.setDataPrevista(pedido.getDataPrevista());
+		dto.setMatricula(pedido.getRecuperando().getId());
+		dto.setNome(pedido.getRecuperando().getPessoa().getNome());
+		dto.setNr(pedido.getId());
+		dto.setStatusStr(pedido.getStatus().toString());
+		dto.setStatus(pedido.getStatus());
+		dto.setUnidadeDestino(pedido.getUnidadeDestino().getNome());
+		dto.setIdTransferencia(this.transferencia.getId());
+		dto.setUnidadeOrigem(pedido.getUnidadeOrigem().getNome());
+		dto.setUnidadeOrigemId(pedido.getUnidadeOrigem().getId());
+		
+		return dto;
 	}
 	
 	public void excluirPedido(PedidoTransito pedido) {
@@ -536,6 +564,20 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.EXCLUIR, pedido, e, log);
 		}
 	}	
+	
+	public void excluirPedidoTransferenciaDTO(TransferenciaPedidoTransitoDTO transferenciaPedidoTransitoDTO) {
+		try {
+			this.transferencia.getListTransferenciaPedidoTransitoDTO().remove(transferenciaPedidoTransitoDTO);
+			PedidoTransito pedidoTransito = this.servicePedido.buscaPedidoPorId(transferenciaPedidoTransitoDTO.getNr());
+			pedidoTransito.setStatus(StatusPedido.AUTORIZADO);
+			pedidoTransito.setTransferencia(null);
+			servicePedido.salvar(pedidoTransito);
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir Pedido (" + pedido.getId() + "): " + e.getMessage());
+			LoggerUtil.logErro(Acao.EXCLUIR, pedido, e, log);
+		}
+	}
+	
 	
 	public void abrirDialogServidor(ActionEvent event) {
 		this.escolta = new Escolta();

@@ -22,6 +22,9 @@ import br.gov.mt.sejudh.sigepen.model.Recuperando;
 public class PassagemDAO {
 
 	@Inject
+	private EstruturaDAO estruturaDAO;
+	
+	@Inject
 	private EntityManager em;
 	
 	public Passagem buscaPassagemPorId(Passagem passagem) {
@@ -35,6 +38,9 @@ public class PassagemDAO {
 			Hibernate.initialize(p.getRecuperando());
 			Hibernate.initialize(p.getRecuperando().getPessoa());
 			Hibernate.initialize(p.getEstabelecimentoDestino());
+			
+			p.getLotacao().forEach(lotacao -> estruturaDAO.buscarEstruturasCompleta(lotacao.getEstrutura()));
+			
 			return p;
 		} catch(NoResultException e){
 			return null;
@@ -153,15 +159,20 @@ public class PassagemDAO {
 
 	public Passagem buscaPassagemPorId(long idPassagem) {
 		try{
-			String jpql="select p from Passagem p where p.id = :id";
+			String jpql = "SELECT p FROM Passagem p " +
+					"LEFT JOIN FETCH p.lotacao " +
+					"LEFT JOIN FETCH p.foto " +
+					"LEFT JOIN FETCH p.recuperando rec " +
+					"LEFT JOIN FETCH rec.pessoa " +
+					"LEFT JOIN FETCH p.estabelecimentoDestino " +
+					"WHERE p.id = :id";
+
 			TypedQuery<Passagem> query = em.createQuery(jpql, Passagem.class);
-			query.setParameter("id", idPassagem);			
+			query.setParameter("id", idPassagem);
+
 			Passagem p = query.getSingleResult();
-			Hibernate.initialize(p.getLotacao());
-			Hibernate.initialize(p.getFoto());
-			Hibernate.initialize(p.getRecuperando());
-			Hibernate.initialize(p.getRecuperando().getPessoa());
-			Hibernate.initialize(p.getEstabelecimentoDestino());
+			estruturaDAO.buscarEstruturasCompleta(p.getLotacaoAtual() != null ? p.getLotacaoAtual().getEstrutura() : p.getUltimaLotacao().getEstrutura());
+
 			return p;
 		} catch(NoResultException e){
 			return null;

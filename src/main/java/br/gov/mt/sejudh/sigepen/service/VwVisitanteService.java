@@ -5,6 +5,8 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.primefaces.model.SortOrder;
+
 import br.gov.mt.sejudh.sigepen.base.service.BaseService;
 import br.gov.mt.sejudh.sigepen.dao.VwVisitanteDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVwVisitante;
@@ -35,4 +37,10 @@ public class VwVisitanteService extends BaseService<VwVisitante, Long> {
 	public List<VwVisitante> buscarPorFiltro(FiltroVwVisitante filtro, boolean isBuscaRelatorio) {
 		return vwVisitanteDAO.buscarPorFiltro(filtro, isBuscaRelatorio);
 	}
+	
+	public List<VwVisitante> buscarPorFiltroVW(FiltroVwVisitante filtro, boolean isBuscaRelatorio, int first, int pageSize, String sortField, SortOrder sortOrder) {
+				
+		return vwVisitanteDAO.buscarPorFiltroVW(filtro, isBuscaRelatorio,  first,  pageSize, sortField, sortOrder);
+	}
+	
 }

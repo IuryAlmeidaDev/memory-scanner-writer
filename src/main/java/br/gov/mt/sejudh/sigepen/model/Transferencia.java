@@ -25,6 +25,7 @@ import javax.persistence.Transient;
 import org.hibernate.envers.Audited;
 
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
+import br.gov.mt.sejudh.sigepen.model.dto.TransferenciaPedidoTransitoDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
@@ -76,6 +77,12 @@ public class Transferencia {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	private StatusMovimentacao status;
+	
+	@Transient
+	private TransferenciaPedidoTransitoDTO transferenciaPedidoTransitoDTO;
+	
+	@Transient
+	private List<TransferenciaPedidoTransitoDTO> listTransferenciaPedidoTransitoDTO = new ArrayList<>();
 	
 	@Transient
 	private AutoriaRegistro autorRegistro;
@@ -198,7 +205,25 @@ public class Transferencia {
 	public void setAutorUltimaAlteracao(AutoriaRegistro autorUltimaAlteracao) {
 		this.autorUltimaAlteracao = autorUltimaAlteracao;
 	}
+	
+	public TransferenciaPedidoTransitoDTO getTransferenciaPedidoTransitoDTO() {
+		return transferenciaPedidoTransitoDTO;
+	}
 
+	public void setTransferenciaPedidoTransitoDTO(TransferenciaPedidoTransitoDTO transferenciaPedidoTransitoDTO) {
+		this.transferenciaPedidoTransitoDTO = transferenciaPedidoTransitoDTO;
+	}
+
+
+	public List<TransferenciaPedidoTransitoDTO> getListTransferenciaPedidoTransitoDTO() {
+		return listTransferenciaPedidoTransitoDTO;
+	}
+
+	public void setListTransferenciaPedidoTransitoDTO(
+			List<TransferenciaPedidoTransitoDTO> listTransferenciaPedidoTransitoDTO) {
+		this.listTransferenciaPedidoTransitoDTO = listTransferenciaPedidoTransitoDTO;
+	}
+	
 	@Override
 	public String toString() {
 		return "Transferencia [id=" + id + "]";

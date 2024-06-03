@@ -41,4 +41,9 @@ public class ParametroVisitaService {
 		if(SgpStatus.A == parametro.getStatus() && this.dao.estruturaExistente(parametro, est))
 			throw new ValidacaoException("Cadastro não permitido! já existe cadastro do mesmo tipo ativo com a mesma estrutura e dia!");
 	}
+
+	public List<ParametroVisitaEstrutura> listarEstruturas(ParametroVisita p) {
+		return dao.listarEstruturas(p);
+		
+	}
 }

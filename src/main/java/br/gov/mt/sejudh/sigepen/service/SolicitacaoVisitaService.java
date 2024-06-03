@@ -212,4 +212,8 @@ public class SolicitacaoVisitaService extends BaseService<SolicitacaoVisita, Lon
 	public void excluir(Long id) throws ValidacaoException {
 		solicitacaoDAO.excluir(id);
 	}
+
+	public SolicitacaoVisita buscarSolicitacaoVisitaPorId(long id, boolean b) {
+		return solicitacaoDAO.buscarSolicitacaoVisitaPorId(id);
+	}
 }

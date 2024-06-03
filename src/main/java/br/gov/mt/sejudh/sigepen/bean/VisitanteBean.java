@@ -23,6 +23,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.ParenteDAO;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -194,6 +195,9 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
+
+	@Inject
+	private ParenteDAO parenteDAO;
 
 	private List<Credenciamento> credenciamentos;
 	private Recuperando recuperandoSelecionado;
@@ -387,7 +391,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			this.mostrarPanelVisitante = true;
 		}
 
-		if (this.visitante.getResponsavel() != null) {
+		if (!this.visitantesResponsaveis.isEmpty()) {
 			this.mostrarPanelVisitante = false;
 			this.mostrarPanelResponsavel = true;
 		} else {
@@ -445,7 +449,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			return false;
 		}
 
-		this.visitante = service.buscarPorId(id, true);
+		this.visitante = service.buscarVisitanteDadosPessoa(id, true);
+		this.visitante.setCredenciamentos(this.credenciamentoService.buscarCredenciamentoComFasesPorVisitanteId(id));
 
 		List<VisitanteResponsavel> listaResponsaveis = visitanteResponsavelService
 				.buscarListaVisitantesReponsaveis(this.visitante);
@@ -453,7 +458,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		if (!listaResponsaveis.isEmpty()) {
 			for (VisitanteResponsavel vr : listaResponsaveis) {
 				Visitante v = new Visitante();
-				v = service.buscarPorId(vr.getVisitanteResponsavel().getId());
+				v = service.buscarVisitanteDadosPessoa(vr.getVisitanteResponsavel().getId(), false);
 				this.visitantesResponsaveis.add(v);
 			}
 
@@ -461,6 +466,12 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		}
 		
 		if(this.visitante != null)this.setIsMenorQueSete(this.visitante.getPessoa().getDataNascimento());
+
+		for (Credenciamento credenciamento : visitante.getCredenciamentos()) {
+			if (credenciamento.getParente() != null){
+				credenciamento.setParente(parenteDAO.buscarParenteVisita(credenciamento.getId()));
+			}
+		}
 
 		return this.visitante != null;
 	}
@@ -1358,9 +1369,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 		try {
 			this.visitante = this.service.salvar(visitante);
-			if (this.visitante.getResponsavel() != null) {
-				buscarVisitante(this.visitante.getId());
-			}
+			buscarVisitante(this.visitante.getId());
+			
 		} catch (ValidacaoException e) {
 			e.printStackTrace();
 		}
@@ -1397,9 +1407,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 		try {
 			this.visitante = this.service.salvar(visitante);
-			if (this.visitante.getResponsavel() != null) {
-				buscarVisitante(this.visitante.getId());
-			}
+			buscarVisitante(this.visitante.getId());
+
 		} catch (ValidacaoException e) {
 			e.printStackTrace();
 		}
@@ -1435,9 +1444,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 		try {
 			this.visitante = this.service.salvar(this.visitante);
-			if (this.visitante.getResponsavel() != null) {
-				buscarVisitante(this.visitante.getId());
-			}
+			buscarVisitante(this.visitante.getId());
+
 		} catch (ValidacaoException e) {
 			e.printStackTrace();
 		}
@@ -1673,8 +1681,9 @@ public class VisitanteBean extends MetodosDePaginaBean {
 				return vwVisitanteService.quantidadeVwVisitante(getFiltro());
 			}
 
-			public List<VwVisitante> loadData() {
-				return vwVisitanteService.buscarPorFiltro(getFiltro(), false);
+			public List<VwVisitante> loadData(int first, int pageSize, String sortField, SortOrder sortOrder) {
+				
+				return vwVisitanteService.buscarPorFiltroVW(getFiltro(), false, first, pageSize,  sortField,  sortOrder);
 			}
 
 			@Override
@@ -1690,7 +1699,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					e.printStackTrace();
 				}
 				exRecuperandos = null;
-				List<VwVisitante> visitantes = loadData();
+				List<VwVisitante> visitantes = loadData(first, pageSize,  sortField,  sortOrder);
 
 				if (usuarioEstaCadastrando) {
 					checkVisitanteEhRecuperando(filtro.getPessoasIds().get(0));

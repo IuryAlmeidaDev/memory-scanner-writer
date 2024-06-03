@@ -8,8 +8,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
-import javax.ws.rs.QueryParam;
 
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -17,13 +17,12 @@ import org.primefaces.model.SortOrder;
 import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
-import com.ocpsoft.pretty.faces.annotation.URLQueryParameter;
 
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVisitanteImpedimento;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroAssociarResponsavel;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
+import br.gov.mt.sejudh.sigepen.model.view.AssociarVisitanteResponsavelView;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
-import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @ManagedBean
 @ViewScoped
@@ -34,9 +33,10 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
 
     private Visitante visitante;
 
-    private FiltroVisitanteImpedimento filtro;
+    
+    private FiltroAssociarResponsavel filtroAssociarResp;
  
-    private LazyDataModel<Visitante> lazyDataModel;
+    private LazyDataModel<AssociarVisitanteResponsavelView> lazyDataModel;
     
     private boolean exibirMatricula = false;
    
@@ -59,6 +59,12 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
     public void selecionarRecuperando(Visitante visitante) {
         facesUtil.fecharPaginaDialog(visitante);
     }
+    
+    
+    public void selecionarAssociarResponsavel(AssociarVisitanteResponsavelView associarVisitanteResponsavelView) {
+    	Visitante visitante = this.service.buscarPorId(associarVisitanteResponsavelView.getVisitanteId(), false);
+    	 facesUtil.fecharPaginaDialog(visitante);
+    }
 
     public void incluirContato() {
         facesUtil.fecharPaginaDialog(visitante);
@@ -76,15 +82,9 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
         this.visitante = visitante;
     }
 
-    public FiltroVisitanteImpedimento getFiltro() {
-        return filtro;
-    }
+    
 
-    public void setFiltro(FiltroVisitanteImpedimento filtro) {
-        this.filtro = filtro;
-    }
-
-    public LazyDataModel<Visitante> getLazyDataModel() {
+    public LazyDataModel<AssociarVisitanteResponsavelView> getLazyDataModel() {
         return lazyDataModel;
     }
     
@@ -98,20 +98,22 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
 	}
 
 	public void pesquisar() {		
-		FiltroVisitanteImpedimento filtro = new FiltroVisitanteImpedimento();
+//		FiltroVisitanteImpedimento filtro = new FiltroVisitanteImpedimento();
+		FiltroAssociarResponsavel filtro = new FiltroAssociarResponsavel();
+		
 		Object matriculaObj = facesUtil.getObjetoSessao("matricula", false);
 		if(matriculaObj != null) {
 			filtro.setMatricula(Sigepen.converteStringEmLong(facesUtil.getObjetoSessao("matricula", false).toString()));
 		}
-		this.setFiltro(filtro);
+		this.setFiltroAssociarResp(filtro);
 		
-		this.setLazyDataModel(new LazyDataModel<Visitante>() {
+		this.setLazyDataModel(new LazyDataModel<AssociarVisitanteResponsavelView>() {
 
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public List<Visitante> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {	
-				setRowCount(service.quantidadeFiltrados(getFiltro()));
+			public List<AssociarVisitanteResponsavelView> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {	
+				setRowCount(service.buscaQtdRegistroFiltrado(filtro));
 			
 				if (first >= getRowCount()) {
 					first = 0;                    
@@ -119,14 +121,22 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
 					dt.setFirst(first);
 				}
 			 
-				getFiltro().organizaFiltro(first, pageSize, sortField, sortOrder);
-				return service.buscarPorFiltro(getFiltro(), false); 
+				filtro.organizaFiltro(first, pageSize, sortField, sortOrder);
+				return service.buscarPorFiltroAssociarResponsavel(filtro, false); 
 			}
 		});
 	}
 
-	public void setLazyDataModel(LazyDataModel<Visitante> lazyDataModel) {
+	public void setLazyDataModel(LazyDataModel<AssociarVisitanteResponsavelView> lazyDataModel) {
 		this.lazyDataModel = lazyDataModel;
+	}
+
+	public FiltroAssociarResponsavel getFiltroAssociarResp() {
+		return filtroAssociarResp;
+	}
+
+	public void setFiltroAssociarResp(FiltroAssociarResponsavel filtroAssociarResp) {
+		this.filtroAssociarResp = filtroAssociarResp;
 	}
 	
 }

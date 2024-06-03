@@ -53,6 +53,9 @@ public class RecuperandoDAO {
 	@Inject
 	private SolicitacaoVisitaDAO solicitacaoVisitaDao;
 
+	@Inject
+	private EstruturaDAO estruturaDAO;
+
 	public int buscarQuantidadeFiltrada(FiltroRecuperandoView filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(RecuperandoView.class, em);
 		criteria.addQueryHint(QueryHints.READ_ONLY);
@@ -134,10 +137,9 @@ public class RecuperandoDAO {
             TypedQuery<Recuperando> query = em.createQuery(jpql, Recuperando.class);
             query.setParameter("id", idRecuperando);
             Recuperando r = query.getSingleResult();
-
-            Hibernate.initialize(r.getPessoa());
+            
             Hibernate.initialize(r.getPessoa().getDocumentos());
-
+            
             return r;
 		} catch (NoResultException e) {
 			return null;
@@ -379,13 +381,42 @@ public class RecuperandoDAO {
 			TypedQuery<Estrutura> query = em.createQuery(jpql.toString(), Estrutura.class);
 			query.setParameter("idRecuperando", recuperando.getId());
 
+
+
 			List<Estrutura> list = query.getResultList();
-			
+
 			if (list.size() > 0) {
+				list.forEach(estrutura -> estruturaDAO.buscarEstruturasCompleta(estrutura));
 				return query.getResultList().get(0);
 			}
 			
 			return null; 
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	
+	public Estrutura PedidoTransitolotacaoAtual(Recuperando recuperando) {
+		try {
+			StringBuilder jpql = new StringBuilder();
+			jpql.append("select e ");
+			jpql.append("from Recuperando r, Passagem p, PassagemLotacao l, Estrutura e left join fetch e.unidadePrisional, UnidadePrisional u ");
+			jpql.append("where r.id = :idRecuperando ");
+			jpql.append("and p.recuperando.id = r.id ");
+			jpql.append("and p.dataSaida is null ");
+			jpql.append("and l.passagem.id = p.id ");
+			jpql.append("and l.dataSaida is null ");
+			jpql.append("and l.estrutura.id = e.id ");
+			jpql.append("and e.unidadePrisional.id = u.id ");
+		    jpql.append("order by l.id desc ");
+			
+			TypedQuery<Estrutura> query = em.createQuery(jpql.toString(), Estrutura.class);
+			query.setParameter("idRecuperando", recuperando.getId());
+
+
+
+			return query.getSingleResult();
+
 		} catch (NoResultException e) {
 			return null;
 		}

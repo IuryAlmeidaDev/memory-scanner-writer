@@ -111,6 +111,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 	private ParametroVisita parametroVisita;
 	
 	private List<ParametroVisita> parametrosVisita;
+
 	
 	private Long unidadeSelecionada;
 	
@@ -125,6 +126,17 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 	private boolean visualizacaoParametroVisita = false;
 	
 	private List<Estrutura> estruturaFilhos;
+	
+	private List<ParametroVisitaEstrutura> parametroVisitaEstrutura;
+	
+
+	public List<ParametroVisitaEstrutura> getParametroVisitaEstrutura() {
+		return parametroVisitaEstrutura;
+	}
+
+	public void setParametroVisitaEstrutura(List<ParametroVisitaEstrutura> parametroVisitaEstrutura) {
+		this.parametroVisitaEstrutura = parametroVisitaEstrutura;
+	}
 
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
@@ -708,12 +720,16 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 	
 	public void abrirDialogAlterarParametroVisita(ParametroVisita p) {
 		this.parametroVisita = p;
+//		this.parametroVisitaEstrutura = this.parametroVisitaService.listarEstruturas(p);
+		this.parametroVisita.setEstruturas(this.parametroVisitaService.listarEstruturas(p));
 		this.visualizacaoParametroVisita = false;
 		LoggerUtil.logInfo(Acao.ALTERAR, p, log);
 	}
 
 	public void abrirDialogBloquearParametroVisita(ParametroVisita p) {
 		this.parametroVisita = p;
+		this.parametroVisita.setEstruturas(this.parametroVisitaService.listarEstruturas(p));
+
 		this.bloqueio = new ParametroVisitaBloqueio();
 		this.bloqueio.setParametroVisita(this.parametroVisita);
 		LoggerUtil.logInfo(Acao.ALTERAR, p, log);
@@ -809,6 +825,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 	
 	public void abrirDialogVisualizarParametroVisita(ParametroVisita p) {
 		this.parametroVisita = p;
+		this.parametroVisita.setEstruturas(this.parametroVisitaService.listarEstruturas(p));
 		this.visualizacaoParametroVisita = true;
 		LoggerUtil.logInfo(Acao.VISUALIZAR, p, log);
 	}

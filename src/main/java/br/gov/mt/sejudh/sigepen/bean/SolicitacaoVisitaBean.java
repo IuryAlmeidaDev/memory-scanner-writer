@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -161,9 +162,11 @@ public class SolicitacaoVisitaBean extends MetodosDePaginaBean {
             return false;
         }
 
-        this.solicitacaoVisita = service.buscarPorId(id, true);
-
+//        this.solicitacaoVisita = service.buscarPorId(id, true);
+        this.solicitacaoVisita = service.buscarSolicitacaoVisitaPorId(id, true);
+        
         if(this.solicitacaoVisita.getRecuperando() != null){
+        	Hibernate.initialize(this.solicitacaoVisita.getRecuperando());
             FiltroRecuperandoView filtroRecuperando = new FiltroRecuperandoView();
             filtroRecuperando.setId(this.solicitacaoVisita.getRecuperando().getId());
             
@@ -211,7 +214,7 @@ public class SolicitacaoVisitaBean extends MetodosDePaginaBean {
         if (r == null) return;
 
         try {
-            Recuperando recuperando = this.recuperandoService.buscarRecuperandoDocumentosPorId(r.getId());
+            Recuperando recuperando = this.recuperandoService.buscarRecuperandoSimplesPorId(r.getId());
             if (recuperando == null) {
                 facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Recuperando não encontrado.");
                 return;

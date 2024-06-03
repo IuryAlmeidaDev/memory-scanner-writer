@@ -63,16 +63,19 @@ public class MovimentacaoExternaDAO {
 		try {
 			String jpql="select m from MovimentacaoExterna m where m.id = :id";
 			TypedQuery<MovimentacaoExterna> query = entityManager.createQuery(jpql, MovimentacaoExterna.class);
-			query.setParameter("id", id);			
+			query.setParameter("id", id);
 			MovimentacaoExterna m = query.getSingleResult();
 			Hibernate.initialize(m.getPedidos());
 			Hibernate.initialize(m.getEscolta());
 			Hibernate.initialize(m.getUnidadeOrigem());
-			
+
 			for(PedidoTransito p : m.getPedidos()) {
 				Hibernate.initialize(p.getEstabelecimento());
+				Hibernate.initialize(p.getRecuperando().getPessoa());
+				Hibernate.initialize(p.getTipoMovimentacao());
 			}
-			
+
+
 			return m;
 		} catch (NoResultException e) {
 			return null;

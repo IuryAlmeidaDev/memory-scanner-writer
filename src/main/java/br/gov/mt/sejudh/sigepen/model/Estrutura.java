@@ -68,7 +68,7 @@ public class Estrutura implements Serializable, PersistentAttributeInterceptable
     @ManyToOne(fetch = FetchType.LAZY)
     private UnidadePrisional unidadePrisional;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Estrutura estruturaPai;
 
     @OneToMany(mappedBy="estruturaPai", fetch = FetchType.LAZY)
@@ -128,13 +128,7 @@ public class Estrutura implements Serializable, PersistentAttributeInterceptable
     }
 
     public String getNomeCompleto() {
-        String nome = "";
-        Estrutura est = this;
-        while (est.getEstruturaPai() != null) {
-            nome = est.getEstruturaPai().getNome() +" > "+ nome;
-            est = est.getEstruturaPai();
-        }
-        return nome + getNome() ;
+        return estruturaComplemento.getNomeCompletoUnidade();
     }
 
     public boolean getCela() {

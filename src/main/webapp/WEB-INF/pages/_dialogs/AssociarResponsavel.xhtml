@@ -14,19 +14,19 @@
         <p:panel>
             <h:form id="registrosForm">
                 <sgp:formInputText display="text" id="nomePessoa" labelValue="Nome"
-                                   value="#{associarResponsavelBean.filtro.nome}"
+                                   value="#{associarResponsavelBean.filtroAssociarResp.nome}"
                                    size="40" maxlength="80" styleFormLabelColumn="width: 150px"/>
 
                 <sgp:formInputText display="text" id="cpf" labelValue="CPF"
-                                   value="#{associarResponsavelBean.filtro.cpf}"
+                                   value="#{associarResponsavelBean.filtroAssociarResp.cpf}"
                                    size="40" maxlength="80" styleFormLabelColumn="width: 150px"/>
 
                 <sgp:formCalendar display="text" labelValue="Data de Nascimento"
-                                  value="#{associarResponsavelBean.filtro.dataNascimento}"
+                                  value="#{associarResponsavelBean.filtroAssociarResp.dataNascimento}"
                                   dataMaxima="#{comboHelperBean.maxDate}" styleFormLabelColumn="width: 150px"/>
                                   
                <sgp:formInputText display="text" id="matricula" labelValue="Matricula"
-                   value="#{associarResponsavelBean.filtro.matricula}"
+                   value="#{associarResponsavelBean.filtroAssociarResp.matricula}"
                    size="40" maxlength="80" styleFormLabelColumn="width: 150px"
                    rendered="#{associarResponsavelBean.exibirMatricula}"/>
 
@@ -37,25 +37,25 @@
                 <br/>
 
                 <p:dataTable id="dataTable" var="visitante" value="#{associarResponsavelBean.lazyDataModel}" rows="5" paginator="true"
-                             paginatorPosition="bottom" lazy="true" sortBy="#{visitante.id}" sortOrder="descending"
+                             paginatorPosition="bottom" lazy="true" sortBy="#{visitante.visitanteId}" sortOrder="descending"
                              emptyMessage="Nenhum registro encontrado.">
 
-                    <p:column headerText="ID" width="60" sortBy="#{visitante.id}">
-                        <h:outputText value="#{visitante.id}" />
+                    <p:column headerText="ID" width="60" sortBy="#{visitante.visitanteId}">
+                        <h:outputText value="#{visitante.visitanteId}" />
                     </p:column>
 
-                    <p:column headerText="Nome" sortBy="#{visitante.pessoa.nome}">
-                        <h:outputText value="#{visitante.pessoa.nome}" />
+                    <p:column headerText="Nome" sortBy="#{visitante.nome}">
+                        <h:outputText value="#{visitante.nome}" />
                     </p:column>
 
-                    <p:column headerText="CPF" rendered="true" sortBy="#{visitante.doc.numero}">
+                    <p:column headerText="CPF" rendered="true" sortBy="#{visitante.cpf}">
                       <center>
-                        <h:outputText value="#{visitante.pessoa.cpf}" />
+                        <h:outputText value="#{visitante.cpf}" />
                       </center>
                     </p:column>
 
-                    <p:column headerText="Data de Nascimento" sortBy="#{visitante.pessoa.dataNascimento}">
-                        <h:outputText value="#{visitante.pessoa.dataNascimento}">
+                    <p:column headerText="Data de Nascimento" sortBy="#{visitante.dataNascimento}">
+                        <h:outputText value="#{visitante.dataNascimento}">
                             <f:convertDateTime pattern="dd/MM/yyyy" />
                         </h:outputText>
                     </p:column>
@@ -63,7 +63,7 @@
                     <p:column headerText="Ações" width="60" >
                         <center>
                             <p:commandButton title="Selecionar" icon="ui-icon-check"
-                                             actionListener="#{associarResponsavelBean.selecionarRecuperando(visitante)}"/>
+                                             actionListener="#{associarResponsavelBean.selecionarAssociarResponsavel(visitante)}"/>
                         </center>
                     </p:column>
 

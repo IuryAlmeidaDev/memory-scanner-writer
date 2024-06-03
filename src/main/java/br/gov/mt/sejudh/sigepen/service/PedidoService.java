@@ -22,6 +22,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoMovimentacao;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
@@ -57,6 +58,9 @@ public class PedidoService {
 	
 	@Inject
 	private VisitanteDAO visitanteDao;
+	
+	@Inject
+	private MovimentacaoInternaService movtoInternaService;
 
 	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(PedidoTransito pedido) {		
@@ -80,6 +84,79 @@ public class PedidoService {
 			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
 		}
 		
+		return pedidoTransito;
+    }
+
+	public PedidoTransito buscarPedidoTransferenciaPorId(long id) {
+		PedidoTransito pedidoTransito = dao.buscarPedidoTransferenciaPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+
+	public PedidoTransito buscarPedidoTransferenciaImpressaoPorId(long id) {
+		PedidoTransito pedidoTransito = dao.buscarPedidoTransferenciaImpressaoPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+
+	public PedidoTransito buscaPedidoTransitoPorId(long id) {
+		PedidoTransito pedidoTransito = dao.buscaPedidoTransitoPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+
+	public PedidoTransito buscaPedidoTransitoImpressaoPorId(long id) {
+		PedidoTransito pedidoTransito = dao.buscaPedidoTransitoImpressaoPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+
+	public PedidoTransito buscaPedidoRemanejamentoPorId(long id) {
+		PedidoTransito pedidoTransito = dao.buscaPedidoRemanejamentoPorId(id);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+
+	public PedidoTransito buscarPedidoPorId(long id, TipoMovimentacao tipoMovimentacao) {
+		PedidoTransito pedidoTransito = dao.buscarPedidoPorId(id, tipoMovimentacao);
+
+		if (pedidoTransito != null) {
+			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
+			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
+		}
+
+		return pedidoTransito;
+    }
+	
+	public PedidoTransito buscarPedidoPorIdComPassagens(long id, TipoMovimentacao tipoMovimentacao) {
+		PedidoTransito pedidoTransito = dao.buscarPedidoPorIdComPassagens(id, tipoMovimentacao);
+
+
 		return pedidoTransito;
     }
 		
@@ -127,9 +204,9 @@ public class PedidoService {
 	public void cancelarPedidoTransferencia(PedidoTransito pedido) {
 		pedido.setStatus(StatusPedido.CANCELADO);
 		pedido.setDataCancelamento(new Date());
-		dao.salvar(pedido);
+		dao.cancelar(pedido);
 		pedido.getTransferencia().setStatus(StatusMovimentacao.FINALIZADO_PARCIAL);
-		transfDao.salvar(pedido.getTransferencia());
+		transfDao.cancelar(pedido.getTransferencia());
 	}
 	
 	@Interceptors(EJBExcInterceptor.class)
@@ -143,6 +220,11 @@ public class PedidoService {
 		if (movIntDao.isPedidoFinalizadoOuCancelado(pedido.getId())) {
 			throw new ValidacaoException("O pedido " + pedido.getId() + " já está finalizado.");
 		}
+		
+		if(pedido.getTipoTransito().equals(TipoTransito.INTERNA)) {
+			movtoInternaService.validarMovimentacaoInterna(pedido, pedido.getMovimentacaoInterna(), MovimentacaoPassos.FINALIZAR, true);
+		}
+
 		
 		pedido.getRecuperando().getPassagemAtual().getLotacaoAtual().setDataSaida(dataFim);
 		PassagemLotacao novaLotacao = new PassagemLotacao(pedido.getRecuperando().getPassagemAtual(), TipoTransito.INTERNA);
@@ -379,5 +461,9 @@ public class PedidoService {
 	
 	public List<PedidoTransito> buscarPedidosDoRecuperando(long recuperandoId) {
 		return this.dao.buscarPedidosDoRecuperando(recuperandoId); 
+	}
+
+	public List<PedidoTransito> buscarPedidosPorMovimentacaoId(long id) {
+		return this.dao.buscarPedidosPorMovimentacaoId(id);
 	}
 }

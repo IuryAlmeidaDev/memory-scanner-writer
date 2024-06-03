@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,11 +29,11 @@ public class ParametroVisitaEstrutura  extends BaseModel<Long> {
 	@Id
 	private Long id;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PARAMETRO_VISITA")
 	private ParametroVisita parametroVisita;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ESTRUTURA")
 	private Estrutura estrutura;
 

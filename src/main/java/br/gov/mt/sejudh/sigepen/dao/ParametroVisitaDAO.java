@@ -10,6 +10,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.hibernate.Hibernate;
+import org.hibernate.Session;
 
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatus;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
@@ -146,5 +147,20 @@ public class ParametroVisitaDAO {
 		} catch (NoResultException e) {
 			return true;
 		}		
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ParametroVisitaEstrutura> listarEstruturas(ParametroVisita p) {
+		Session session = this.em.unwrap(Session.class);
+		List<ParametroVisitaEstrutura> pve = session.createSQLQuery("SELECT * FROM sigepen_owner.SGP_PARAM_VISITA_ESTRUTURA pve WHERE pve.id_parametro_visita = :id")
+			    .addEntity(ParametroVisitaEstrutura.class)
+			    .setParameter("id", p.getId())
+			    .list();
+		 
+		 for(ParametroVisitaEstrutura p1 : pve) {
+			 Hibernate.initialize(p1.getEstrutura());
+		 }
+		 
+		 return pve;
 	}
 }

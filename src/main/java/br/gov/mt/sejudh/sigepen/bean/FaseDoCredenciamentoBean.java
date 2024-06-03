@@ -199,13 +199,13 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
             return false;
         }
 
-        this.credenciamento = service.buscarPorId(id, false);
+        this.credenciamento = service.listarCredenciamentoVisitante(id);
 
         if (this.credenciamento == null) {
             return false;
         }
 
-        this.visitante = visitanteService.buscarPorId(this.credenciamento.getVisitante().getId(), true);
+        this.visitante = visitanteService.buscarVisitante(this.credenciamento.getVisitante().getId(), true);
         
         
         List<VisitanteResponsavel> listaResponsaveis = visitanteResponsavelService.buscarListaVisitantesReponsaveis(this.visitante);
@@ -260,7 +260,7 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
         return true;
     }
 
-    public String salvar() {
+    public String salvar()  {
         try {
         	this.validarDataRecebimento();
         	this.validarDateDespacho();
@@ -273,6 +273,8 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
             this.faseDoCredenciamento.setDataAprovacao(Calendar.getInstance().getTime());
             
             FaseDoCredenciamento fase = this.faseDoCredenciamentoService.salvar(this.faseDoCredenciamento);
+            Credenciamento credimento = this.service.buscarCredenciamentoVisitante(fase.getId());
+            fase.setCredenciamento(credimento);
             
             if(AcaoDefault.equals(this.getAcaoCredenciamento()) || ("ALTERAR_CREDENCIAMENTO".equals(this.getAcaoCredenciamento()) && fase.getFaseCredenciamento() == FaseCredenciamento.APROVACAO)) {
             	this.visitanteService.atribuirStatusVisitantePosCredenciamento(fase.getCredenciamento().getVisitante());

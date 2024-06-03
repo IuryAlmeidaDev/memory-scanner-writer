@@ -63,6 +63,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.AutorizacaoSemBiometriaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.VisitanteListaDTO;
+import br.gov.mt.sejudh.sigepen.model.view.AssociarVisitanteResponsavelView;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import br.gov.mt.sejudh.sigepen.service.VisitanteResponsavelService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
@@ -88,6 +89,9 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 	
 	@Inject 
 	private VisitanteResponsavelService visitanteResponsavelService;
+
+	@Inject
+	private AuditoriaDAO auditoriaDAO;
 
 	@Override
     public Visitante salvar(Visitante t) {
@@ -119,12 +123,50 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
         Visitante visitante = super.buscarPorId(id, buscarAuditoria);
         if (visitante == null) return null;
 
-        this.inicializarColecoes(visitante);
+        this.inicializarColecoesRelatorio(visitante);
 
         return visitante;
     }
+    
+	public Visitante buscarVisitanteDadosPessoa(Long id, boolean buscarAuditoria) {
+			
+	    	String jpql = "SELECT v FROM Visitante v " +
+	    			" LEFT JOIN FETCH v.tipoVisita " + 
+	    			" LEFT JOIN FETCH v.identidadeDeGenero " + 
+					" LEFT JOIN FETCH v.fotos " +
+					" LEFT JOIN FETCH v.pessoa p " +
+					" LEFT JOIN FETCH p.nacionalidade " +
+					" LEFT JOIN FETCH p.naturalidade " +
+					" LEFT JOIN FETCH p.pais "+ 
+					" LEFT JOIN FETCH v.responsavel r" +
+					" WHERE v.id = :idVisitante";
+	
+			TypedQuery<Visitante> query = em.createQuery(jpql, Visitante.class);
+			query.setParameter("idVisitante", id);
+			Visitante v = query.getSingleResult();
+			inicializarColecoes(v);
+			
+			if (buscarAuditoria && v != null) {
+	            v.setAutorRegistro(this.auditoriaDAO.autorRegistro(v, v.getId()));
+	            v.setAutorUltimaAlteracao(this.auditoriaDAO.autorUltimaAlteracao(v, v.getId()));
+	        }
+			
+			return v;
+			
+		}
 
     private void inicializarColecoes(Visitante visitante) {
+        Hibernate.initialize(visitante.getImpedimentos());
+        Hibernate.initialize(visitante.getCertidoes());
+        Hibernate.initialize(visitante.getVisitanteDocumentos());
+        Hibernate.initialize(visitante.getPessoa().getDocumentos());
+        Hibernate.initialize(visitante.getPessoa().getContatos());
+        Hibernate.initialize(visitante.getPessoa().getEnderecos());
+        Hibernate.initialize(visitante.getPessoa().getBiometria());
+   
+    }
+    
+    private void inicializarColecoesRelatorio(Visitante visitante) {
     	Hibernate.initialize(visitante.getTipoVisita());
     	Hibernate.initialize(visitante.getPessoa());
         Hibernate.initialize(visitante.getFotos());
@@ -168,6 +210,9 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
         	Hibernate.initialize(visitante.getPessoa().getVisitante());
     }
 
+
+
+
     public List<Visitante> listarRelatorio(FiltroVwVisitanteRelatorio filtro) {
   		Session session = em.unwrap(Session.class);
 
@@ -200,11 +245,11 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
   		
 
   		if (filtro.getNome() != null && !filtro.getNome().equals("")) {
-  			sql.append("AND pv.NOME LIKE :nome ");
+  			sql.append("AND pv.NOME LIKE '%' || :nome || '%' ");
   		}
   		
   		if(filtro.getNomeMae() != null && !filtro.getNomeMae().equals("")) {
-  			sql.append("AND pv.NOME_MAE LIKE :mae ");
+  			sql.append("AND pv.NOME_MAE LIKE '%' || :mae || '%' ");
   		}
   			
   		if(filtro.getCpf() != null && !filtro.getCpf().equals("")) {
@@ -212,7 +257,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
   		}
   		
   		if(filtro.getRecuperando() != null && !filtro.getRecuperando().equals("")) {
-  			sql.append("AND pr.NOME LIKE :recuperando ");
+  			sql.append("AND pr.NOME LIKE '%' || :recuperando || '%' ");
   		}
   		
   		if(filtro.getStatus() != null) {
@@ -299,7 +344,9 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
     }
 
     public List<Visitante> buscarDependenteVisitanteResponsavel(Visitante visitante) {
-        String jpql = "select v from Visitante v Where v.responsavel.id =:visitante";
+        String jpql = "select v from Visitante v " +
+				"Where v.id in (select vr.visitante.id from VisitanteResponsavel vr where vr.visitanteResponsavel.id =:visitante) " +
+				"and v.emancipado = 'N'";
         Query query = em.createQuery(jpql, Visitante.class).setParameter("visitante", visitante.getId());
         return query.getResultList();
     }
@@ -562,7 +609,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 		Session session = em.unwrap(Session.class);
 		
 		String sql = "SELECT "
-				+ "    /*+ org.hibernate.readOnly */ this_.ID_FASE_CREDENCIAMENTO as id, "
+				+ "    this_.ID_FASE_CREDENCIAMENTO as id, "
 				+ "    this_.ID_CREDENCIAMENTO as credenciamentoId, "
 				+ "    credenciam1_.DATA_VALIDADE as dataValidade, "
 				+ "    visitante2_.ID_VISITANTE as visitanteId, "
@@ -756,6 +803,14 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 			Hibernate.initialize(v.getPessoa().getDocumentos());
 		}
 		return visitantes;
+   }
+    
+    
+    @SuppressWarnings("unchecked")
+	public List<AssociarVisitanteResponsavelView> buscarPorFiltroAssociarResponsavel(FiltroConsulta filtro, boolean isRelatorio) {
+		Criteria criteria = filtro.criarCriteriaParaBusca(AssociarVisitanteResponsavelView.class, em, isRelatorio);
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return criteria.list();
    }
 
     public Visitante buscarVisitantePorIdPessoa(Long id) {
@@ -992,4 +1047,65 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 
 		return (List<AutorizacaoSemBiometriaDTO>) crit.list();
 	}
+	
+	
+	public int buscaQtdRegistroFiltrado(FiltroConsulta filtro) {
+		 	Criteria criteria = filtro.criarCriteriaParaQuantidade(AssociarVisitanteResponsavelView.class, em);
+	        criteria.setProjection(Projections.countDistinct("id"));
+	        return ((Number) criteria.uniqueResult()).intValue();
+		
+	}
+	
+	
+	public Visitante buscarVisitantePorId(Long id) {
+		Session session = this.em.unwrap(Session.class);
+		
+		 return (Visitante) session.createSQLQuery("SELECT * FROM SIGEPEN_OWNER.SGP_VISITANTE V WHERE V.ID_VISITANTE = :visitanteId").addEntity(Visitante.class).setParameter("visitanteId", id).uniqueResult();
+
+	}
+
+	public Visitante buscarVisitante(Long id, boolean buscarAuditoria) {
+		String jpql = "SELECT v FROM Visitante v " +
+				"LEFT JOIN FETCH v.fotos " +
+				"LEFT JOIN FETCH v.pessoa p " +
+				"LEFT JOIN FETCH p.nacionalidade " +
+				"LEFT JOIN FETCH p.naturalidade " +
+				"WHERE v.id = :idVisitante";
+
+		TypedQuery<Visitante> query = em.createQuery(jpql, Visitante.class);
+		query.setParameter("idVisitante", id);
+		Visitante v = query.getSingleResult();
+		buscarCertidaoVisitante(v);
+		buscarDocumentosVisitante(v);
+
+		if (buscarAuditoria) {
+			v.setAutorRegistro(this.auditoriaDAO.autorRegistro(v, v.getId()));
+			v.setAutorUltimaAlteracao(this.auditoriaDAO.autorUltimaAlteracao(v, v.getId()));
+		}
+		return v;
+	}
+
+	public void buscarCertidaoVisitante(Visitante visitante) {
+		String jpql = "SELECT v FROM Visitante v " +
+				"LEFT JOIN FETCH v.certidoes " +
+				"WHERE v.id = :idVisitante";
+
+		TypedQuery<Visitante> query = em.createQuery(jpql, Visitante.class);
+		query.setParameter("idVisitante", visitante.getId());
+		Visitante v = query.getSingleResult();
+		visitante.setCredenciamentos(v.getCredenciamentos());
+	}
+
+	public void buscarDocumentosVisitante(Visitante visitante) {
+		String jpql = "SELECT v FROM Visitante v " +
+				"LEFT JOIN FETCH v.visitanteDocumentos " +
+				"WHERE v.id = :idVisitante";
+
+		TypedQuery<Visitante> query = em.createQuery(jpql, Visitante.class);
+		query.setParameter("idVisitante", visitante.getId());
+		Visitante v = query.getSingleResult();
+		visitante.setCredenciamentos(v.getCredenciamentos());
+	}
+	
+	
 }
