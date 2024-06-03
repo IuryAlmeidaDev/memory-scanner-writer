@@ -25,6 +25,8 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import br.gov.mt.sejudh.sigepen.util.criterion.ExpressaoFonetica.MatchModeFonetica;
 import br.gov.mt.sejudh.sigepen.util.criterion.Restricao;
 
+import javax.persistence.Query;
+
 public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 
 	private static final long serialVersionUID = 5302934507717899462L;
@@ -350,5 +352,156 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 
 	public void setExibeUnidadeNoFiltro(boolean exibeUnidadeNoFiltro) {
 		this.exibeUnidadeNoFiltro = exibeUnidadeNoFiltro;
+	}
+
+	public String configureFiltros() {
+		StringBuilder builder = new StringBuilder("WHERE (1=1)  ");
+
+		if(this.getPossuiDependente() != null && this.getPossuiDependente()) {
+		    builder.append("and resp.id_visitante is not null  ");
+		}
+
+		if(this.getUnidade() != null && this.getUnidade().getId() > 0) {
+			builder.append("and up.id = :unidade  ");
+		}
+
+
+		if (this.getDataInicio() != null) {
+			builder.append("and esv.data_entrada between :di and :df  ");
+		}
+
+		if (this.getDataInicio() == null && this.getDataFim() != null) {
+			builder.append("and esv.data_entrada between :di and :df  ");
+		}
+
+		if (this.getTipoVisita() != null) {
+			builder.append("and tipo_visita.ID_TIPO_VISITA = :tipoVisita  ");
+		}
+
+		if (this.getTipoEntrada() != null) {
+			builder.append("and tipo_visita.CODG_TIPO_ENTRADA = :tipoEntrada  ");
+		}
+
+		if (this.getDataNascimento() != null) {
+			builder.append("and pessoa_v.DATA_NASCIMENTO > :dataNascimento  ");
+		}
+
+		if (this.getEmancipado() != null) {
+			builder.append("and vis.FLAG_EMANCIPADO = :emancipado  ");
+		}
+
+		if (this.getNacionalidade() != null) {
+			builder.append("and pessoa_v.nacionalidade_id = :nascionalidade  ");
+		}
+
+		if (this.getPne() != null && SimNao.N.equals(this.getPne())) {
+			builder.append("and(vis.FLAG_PNE is null or vis.FLAG_PNE = :pne )");
+		}
+
+		if (this.getPermanente() != null) {
+			builder.append("and vis.FLAG_PNE_PERMANENTE = :pnePermanente ");
+		}
+
+		if (StringUtils.isNotBlank(this.getNomeRecuperando())) {
+			builder.append("and translate(lower(pessoa_rec.nome),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') like translate(lower(:recuperando),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') ");
+		}
+
+		if (StringUtils.isNotBlank(this.getNome())) {
+			builder.append("and translate(lower(pessoa_v.nome),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') like translate(lower(:visitante),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') ");
+		}
+
+		if (this.getSituacao() != null) {
+		    int situacaoCode;
+		    switch (this.getSituacao()) {
+		        case FINALIZADA:
+		            situacaoCode = 2;
+		            break;
+		        case EM_ANDAMENTO:
+		            situacaoCode = 1;
+		            break;
+		        case CANCELADA:
+		            situacaoCode = 3;
+		            break;
+		        default:
+		            situacaoCode = -1; // Valor padrão para situações não tratadas, se necessário.
+		    }
+		    if (situacaoCode != -1) {
+		        builder.append("and esv.situacao = ").append(situacaoCode).append(" ");
+		    }
+		}
+
+		return builder.toString();
+	}
+
+	public void configureParametos(Query query, int first) {
+
+		if(this.getUnidade() != null && this.getUnidade().getId() > 0) {
+			query.setParameter("unidade", getUnidade().getId());
+
+		}
+
+
+		if (this.getDataInicio() != null) {
+			Date di = Sigepen.getDataConsultaMaiorIgual(this.getDataInicio());
+			Date df = Sigepen.getDataConsultaMenorIgual(this.getDataInicio());
+			if(this.getDataFim() != null) {
+				df = Sigepen.getDataConsultaMenorIgual(this.getDataFim());
+			}
+			query.setParameter("di", di);
+			query.setParameter("df", df);
+		}
+
+		if (this.getDataInicio() == null && this.getDataFim() != null) {
+			Date di = Sigepen.getDataConsultaMaiorIgual(this.getDataFim());
+			Date df = Sigepen.getDataConsultaMenorIgual(this.getDataFim());
+			query.setParameter("di", di);
+			query.setParameter("df", df);
+		}
+
+		if (this.getTipoVisita() != null) {
+			query.setParameter("tipoVisita", getTipoVisita().getId());
+		}
+
+		if (this.getTipoEntrada() != null) {
+			query.setParameter("tipoEntrada", getTipoEntrada().getId());
+		}
+
+		if (this.getDataNascimento() != null) {
+			query.setParameter("dataNascimento", getDataNascimento());
+		}
+
+		if (this.getEmancipado() != null) {
+			query.setParameter("emancipado", getEmancipado().getDescricao().equals("Sim") ? "S" : "N");
+		}
+
+		if (this.getNacionalidade() != null) {
+			query.setParameter("nascionalidade", getNacionalidade());
+		}
+
+		if (this.getPne() != null && SimNao.N.equals(this.getPne())) {
+			query.setParameter("pne", getPne().getDescricao().equals("Sim") ? "S" : "N");
+		}
+
+		if (this.getPermanente() != null) {
+			query.setParameter("pnePermanente", getPermanente().getDescricao().equals("Sim") ? "S" : "N");
+		}
+
+		if (StringUtils.isNotBlank(this.getNomeRecuperando())) {
+			query.setParameter("recuperando", "%" + getNomeRecuperando() + "%");
+		}
+
+		if (StringUtils.isNotBlank(this.getNome())) {
+			query.setParameter("visitante", "%" + getNome() + "%");
+		}
+
+//		if(this.getSituacao() != null) {
+//			query.setParameter("situacao", getSituacao());
+//		}
+
+		if (first>=0){
+			query.setParameter("rowInicial", first);
+			query.setParameter("rowFinal", (first+10));
+		}
+
 	}
 }

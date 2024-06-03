@@ -35,7 +35,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
 import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
-import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import br.gov.mt.sejudh.sigepen.util.ModelUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
@@ -81,7 +80,7 @@ public class Pessoa implements Serializable, PersistentAttributeInterceptable {
     private Nacionalidade nacionalidade;
 
     @Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="PAIS_ID")
     private Pais pais;
 
@@ -103,16 +102,10 @@ public class Pessoa implements Serializable, PersistentAttributeInterceptable {
     private List<Contato> contatos;
 
     @OneToOne(mappedBy = "pessoa", fetch=FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     private Recuperando recuperando;
     
     @OneToOne(mappedBy = "pessoa", fetch=FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
     private Visitante visitante;
-
-    @OneToOne(mappedBy = "pessoa", fetch=FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.NO_PROXY)
-    private VwVisitante vwVisitante;
 
     @NotFound(action = NotFoundAction.IGNORE)
     @OneToOne(cascade=CascadeType.ALL, orphanRemoval=true, fetch = FetchType.LAZY)
@@ -403,11 +396,4 @@ public class Pessoa implements Serializable, PersistentAttributeInterceptable {
 		this.cpf = cpf;
 	}
 
-	public VwVisitante getVwVisitante() {
-		return vwVisitante;
-	}
-
-	public void setVwVisitante(VwVisitante vwVisitante) {
-		this.vwVisitante = vwVisitante;
-	}
 }

@@ -11,6 +11,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
 import br.gov.mt.sejudh.sigepen.model.EntradaSaida;
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.model.dto.EntradaSaidaDTO;
+import org.primefaces.model.SortOrder;
 
 @Stateless
 public class EntradaSaidaRecuperandoService {
@@ -26,6 +27,14 @@ public class EntradaSaidaRecuperandoService {
 		return this.dao.buscarEntradasPorFiltro(filtro, isRelatorio);
 	}
 
+	public List<EntradaSaidaDTO> buscarEntradasPorFiltro(FiltroEntradaSaidaRecuperando filtro, String sortField, SortOrder sortOrder, int first) {
+		return this.dao.buscarEntradasPorFiltro(filtro, sortField,sortOrder,first);
+	}
+
+	public int buscarEntradasPorFiltroCount(FiltroEntradaSaidaRecuperando filtro, String sortField, SortOrder sortOrder, int first) {
+		return this.dao.buscarEntradasPorFiltroCount(filtro, sortField,sortOrder,first);
+	}
+	
 	public List<TipoVisita> getTipoVisitas(TipoEntrada te) {
 		return dao.listarTipoVisitas(te);
 	}
@@ -35,4 +44,7 @@ public class EntradaSaidaRecuperandoService {
 		
 	}
 
+	public List<EntradaSaidaDTO> buscarEntradasPorFiltro(FiltroEntradaSaidaRecuperando filtro) {
+		return this.dao.buscarEntradasPorFiltro(filtro);
+	}
 }

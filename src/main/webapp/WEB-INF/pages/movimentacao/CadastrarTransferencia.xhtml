@@ -48,19 +48,19 @@
 				<br />
 			    <br />				
 						
-				<p:dataTable id="pedidos" var="pedido" value="#{transferenciaBean.transferencia.pedidos}" rows="10" paginator="true" paginatorPosition="bottom" paginatorAlwaysVisible="false" sortBy="#{pedido.dataPrevista}"
+				<p:dataTable id="pedidos" var="pedido" value="#{transferenciaBean.transferencia.listTransferenciaPedidoTransitoDTO}" rows="10" paginator="true" paginatorPosition="bottom" paginatorAlwaysVisible="false" sortBy="#{pedido.dataPrevista}"
 				             emptyMessage="Nenhum registro encontrado.">
 				             
-				    <p:column headerText="Nº" width="60" sortBy="#{pedido.id}">
-						<h:outputText value="#{pedido.id}" />
+				    <p:column headerText="Nº" width="60" sortBy="#{pedido.nr}">
+						<h:outputText value="#{pedido.nr}" />
 					</p:column>
 				             
-					<p:column headerText="Matrícula" width="120" sortBy="#{pedido.recuperando.id}">
-						<h:outputText value="#{pedido.recuperando.id}" />
+					<p:column headerText="Matrícula" width="120" sortBy="#{pedido.matricula}">
+						<h:outputText value="#{pedido.matricula}" />
 					</p:column>
 	
-					<p:column headerText="Nome" sortBy="#{pedido.recuperando.pessoa.nome}">
-						<h:outputText value="#{pedido.recuperando.pessoa.nome}" />
+					<p:column headerText="Nome" sortBy="#{pedido.nome}">
+						<h:outputText value="#{pedido.nome}" />
 					</p:column>					
 					
 					<p:column headerText="Data Prevista" sortBy="#{pedido.dataPrevista}" width="160">
@@ -69,8 +69,8 @@
 						</h:outputText>
 					</p:column>
 					
-					<p:column headerText="Unidade Destino" sortBy="#{pedido.unidadeDestino.nome}">
-						<h:outputText value="#{pedido.unidadeDestino.nome}" />
+					<p:column headerText="Unidade Destino" sortBy="#{pedido.unidadeDestino}">
+						<h:outputText value="#{pedido.unidadeDestino}" />
 					</p:column>
 				
 					<p:column headerText="Status"  width="120" sortBy="#{pedido.status}">
@@ -79,12 +79,12 @@
 				
 				<p:column headerText="Ações"  width="80">
 					<center>						
-						<p:commandButton action="#{transferenciaBean.excluirPedido(pedido)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":formTransf:pedidos"
+						<p:commandButton action="#{transferenciaBean.excluirPedidoTransferenciaDTO(pedido)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":formTransf:pedidos"
 							rendered="#{(securityUtil.possuiPermissao('CadastrarTransferencia') or securityUtil.possuiPermissao('AlterarTransferencia')) and !transferenciaBean.isVisualizacao and !transferenciaBean.isIniciar and !transferenciaBean.isFinalizar}" >
 							<p:confirm header="Confirmação" message="Deseja excluir o pedido?" icon="ui-icon-alert" />
 						</p:commandButton>						
 						<p:commandButton title="Cancelar" icon="ui-icon-cancel"  action="#{transferenciaBean.cancelarPedido(pedido)}" oncomplete="PF('cancelarPedido').show()"  update="cancelarPedForm" process="@this" 
-							rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia') and pedido.status.descricao.equalsIgnoreCase('Em andamento') and transferenciaBean.isFinalizar}"/>
+							rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia') and pedido.statusStr.equals('EM_ANDAMENTO') and transferenciaBean.isFinalizar}"/>
 					</center>
 				</p:column>
 			</p:dataTable>
@@ -173,7 +173,7 @@
 					<br/>
 					<br/>
 					<p:commandButton title="Salvar" value="Confirmar" icon="ui-icon-check" update="@form :formTransf" action="#{transferenciaBean.confirmarCancelamentoPedido()}" 
-						rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia')}"/>
+						rendered="#{securityUtil.possuiPermissao('FinalizarTransferencia')}" oncomplete="window.location.reload()"/>
 			 		
 				<p:commandButton value="Fechar" onclick="PF('cancelarPedido').hide()" process="@this"/>
 				

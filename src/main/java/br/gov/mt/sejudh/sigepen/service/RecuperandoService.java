@@ -119,6 +119,10 @@ public class RecuperandoService {
 	@Inject
 	private FacesUtil facesUtil;
 
+	public void buscarListaFaltaDisciplinarPorRecuperandoId (Long id) {
+		
+	}
+	
 	public int buscarQuantidadeFiltrada(FiltroRecuperando filtro) {
 		return dao.buscarQuantidadeFiltrada(filtro);
 	}
@@ -460,6 +464,10 @@ public class RecuperandoService {
 	
 	public void excluirParticularidade(Particularidade p) {
 		dao.excluirParticularidade(p);
+	}
+	
+	public Estrutura PedidoTransitolotacaoAtual(Recuperando recuperando){		
+		return dao.PedidoTransitolotacaoAtual(recuperando);
 	}
 	
 	public Estrutura lotacaoAtual(Recuperando recuperando){		

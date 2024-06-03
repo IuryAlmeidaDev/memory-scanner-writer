@@ -158,15 +158,16 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 					String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
 
-				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
-				
+//				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
+				setRowCount(service.buscarEntradasPorFiltroCount(getFiltro(), sortField,sortOrder, first));
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
-				List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), false);		
+				List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), sortField,sortOrder, first);
+				
 				return lista;
 			}
 		};
@@ -214,8 +215,8 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 			return null;
 		}
 		try {
-			List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), true);
-			
+			List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro());
+
 			if (lista.size() == 0) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
 				return null;
@@ -256,8 +257,9 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 		this.entrada.setVisitante(visitanteService.buscarVisitanteDTO(e.getIdVisitante(), true));
 		this.entrada.setAutorizacoes(visitanteService.buscarAutorizacoesEntradasDTO(e.getId()));
 
-		if(e.getIdResponsavel() != null) {
-			this.entrada.getVisitante().setResponsavel(visitanteService.buscarVisitanteDTO(e.getIdResponsavel(), true));
+		Long entradaResponsavel = esService.responsavelDeuEntrada(this.entrada.getIdVisitante());
+		if(entradaResponsavel != null){
+			this.entrada.getVisitante().setResponsavel(visitanteService.buscarVisitanteDTO(entradaResponsavel, true));
 			
 			this.mostrarPanelVisitante = false;
 			this.mostrarPanelResponsavel = true;

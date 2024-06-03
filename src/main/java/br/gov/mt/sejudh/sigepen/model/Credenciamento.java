@@ -43,26 +43,26 @@ public class Credenciamento extends BaseModel<Long> {
     @Column(name = "ID_CREDENCIAMENTO")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VISITANTE")
     private Visitante visitante;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_RECUPERANDO")
     private Recuperando recuperando;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UNIDADE_PRISIONAL")
     private UnidadePrisional unidadePrisional;
 
     @Column(name = "PROFISSAO")
     private String profissao;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_VISITA")
     private TipoVisita tipoVisita;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PARENTE")
     private Parente parente;
 
@@ -208,7 +208,7 @@ public class Credenciamento extends BaseModel<Long> {
 	
 	@Override
 	public String toString() {
-		return "Visitante Recuperando [id=" + id +  " , "  +   this.visitante + "] ";
+		return "Visitante Recuperando [id=" + id +  "] ";
 	}
 
 	public Boolean getSelecionado() {

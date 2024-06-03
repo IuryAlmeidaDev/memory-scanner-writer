@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.enumerator.TipoMovimentacao;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -134,7 +135,7 @@ public class ReceberTransferenciaBean extends MetodosDePaginaBean {
 			return false;
 		}
 		
-		this.pedido = service.buscaPedidoPorId(id);
+		this.pedido = service.buscarPedidoTransferenciaPorId(id);
 		
 		if (this.pedido == null) {
 			return false;
@@ -303,7 +304,7 @@ public class ReceberTransferenciaBean extends MetodosDePaginaBean {
 	
 	public void imprimirRegistro(PedidoTransitoDTO pedidoTransferencia) {
 		try {
-			PedidoTransito pedido = service.buscaPedidoPorId(pedidoTransferencia.getId());
+			PedidoTransito pedido = service.buscarPedidoTransferenciaImpressaoPorId(pedidoTransferencia.getId());
 
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(pedido, Relatorio.RegistroRecebimentoTransferencia));
 			RequestContext.getCurrentInstance().execute("download()");

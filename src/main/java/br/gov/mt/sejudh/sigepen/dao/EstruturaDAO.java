@@ -13,6 +13,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
@@ -20,6 +21,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
 import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoConsultaDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import org.hibernate.Hibernate;
 
 @RequestScoped
 public class EstruturaDAO {
@@ -61,6 +63,7 @@ public class EstruturaDAO {
 		Query query = entityManager.createQuery(jpql, Estrutura.class);
 		query.setParameter("id", id);
 		Estrutura estrutura = (Estrutura) query.getSingleResult();
+		buscarEstruturasCompleta(estrutura);
 		return estrutura;
 	}
 
@@ -282,5 +285,11 @@ public class EstruturaDAO {
 				+ " and e.situacao <> 0" + " order siblings by e.id", EstruturaDto.class);
 		query.setParameter("idUnidade", idUnidade);
 		return query.getResultList();
+	}
+
+	public void buscarEstruturasCompleta(Estrutura ed) {
+		if(ed != null && ed.getEstruturaComplemento() != null){
+			Hibernate.initialize(ed.getEstruturaComplemento());
+		}
 	}
 }

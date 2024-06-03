@@ -71,11 +71,11 @@ public class UnidadePrisional implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private TipoUnidade tipoUnidade;
 	
-	@OneToOne(fetch=FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(fetch=FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Estrutura estrutura;
 
     @NotFound(action = NotFoundAction.IGNORE)
-	@OneToMany(mappedBy = "unidadePrisional", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "unidadePrisional", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<ParametroUnidade> parametrosUnidade;
     
 	@Transient
@@ -90,7 +90,7 @@ public class UnidadePrisional implements Serializable {
 	@Column(name = "BIOMETRIA_OBRIGATORIA", nullable = false, columnDefinition = "NUMBER(1) DEFAULT 1")
 	private Boolean biometriaObrigatoria;
 
-	@OneToMany(mappedBy = "unidade", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "unidade", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<ParametroVisita> parametrosVisita;
 	
 //	@ManyToMany

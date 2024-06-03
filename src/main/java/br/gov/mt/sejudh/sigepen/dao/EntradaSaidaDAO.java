@@ -11,7 +11,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
+import br.gov.mt.sejudh.sigepen.model.*;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -25,23 +27,12 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEntradaVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatus;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
-import br.gov.mt.sejudh.sigepen.model.Credenciamento;
-import br.gov.mt.sejudh.sigepen.model.EntradaSaida;
-import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisitaBloqueio;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisitaEstrutura;
-import br.gov.mt.sejudh.sigepen.model.Passagem;
-import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
-import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.model.Visitante;
-import br.gov.mt.sejudh.sigepen.model.VisitanteResponsavel;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
 public class EntradaSaidaDAO {
-	
+
 	@Inject
 	private EntityManager em;
 	
@@ -144,14 +135,36 @@ public class EntradaSaidaDAO {
 			if(e.getEstrutura().getCela())
 				incluirEstrutura(e.getEstrutura(), estruturas);
 			else {
-				List<Estrutura> retorno = new ArrayList<Estrutura>();
-            	this.buscarCelas(e.getEstrutura(), retorno);
-            	for(Estrutura e2 : retorno ) {
-            		incluirEstrutura(e2, estruturas);
-            	}
+				this.buscaTodasAsCelasDaEstruturaId(e.getEstrutura().getId())
+			    .stream() 
+			    .forEach(e2 -> {
+			    	incluirEstrutura(e2, estruturas);
+				});
 			}
 		}
 		return estruturas;
+	}
+	
+	@SuppressWarnings({ "unchecked" })
+	public List<Estrutura> buscaTodasAsCelasDaEstruturaId(Long id) {
+		Session session = this.em.unwrap(Session.class);
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT id,                                                           ");
+		sql.append("       capacidade,                                                    ");
+		sql.append("       cela,                                                          ");
+		sql.append("       nome,                                                          ");
+		sql.append("       situacao,                                                      ");
+		sql.append("       estruturapai_id,                                               ");
+		sql.append("       unidadeprisional_id,                                           ");
+		sql.append("       versao                                                         ");
+		sql.append("  FROM (SELECT e.*, SYS_CONNECT_BY_PATH(e.id, '/') AS BREADCRUMB_ALIAS");
+		sql.append("          FROM sigepen_owner.estrutura e                              ");
+		sql.append("         START WITH e.estruturapai_id IS NULL                         ");
+		sql.append("        CONNECT BY PRIOR e.id = e.estruturapai_id)                    ");
+		sql.append(" WHERE cela = 1 AND BREADCRUMB_ALIAS LIKE '%'||chr(47)||" + id + "||chr(47)||'%' ");
+		
+		 return session.createSQLQuery(sql.toString()).addEntity(Estrutura.class).list();
 	}
 
 	public void buscarCelas(Estrutura estrutura, List<Estrutura> retorno){
@@ -166,7 +179,7 @@ public class EntradaSaidaDAO {
 		return;
 	}
 
-	private void incluirEstrutura(Estrutura est, List<Estrutura> estruturas) throws ValidacaoException {
+	private void incluirEstrutura(Estrutura est, List<Estrutura> estruturas)  {
 		boolean jaCad = false;
 		for(Estrutura pe : estruturas) {
 			if(est.getId() == pe.getId())
@@ -202,7 +215,15 @@ public class EntradaSaidaDAO {
 		UnidadePrisional unidade = this.em.find(UnidadePrisional.class, idUnidade);
 		for(ParametroVisita p : unidade.getParametrosVisita()) {
 			List<Estrutura> estruturas = new ArrayList<Estrutura>();
-			if ((p.getStatus().equals(SgpStatus.A)) && (!bloqueada(p, hora)) && ((p.entrada() == 0 && p.saida() == 0) || (p.saida() > 0 && p.entrada() <= this.getHora(hora) && p.saida() >= this.getHora(hora)))) {
+			if (
+					(p.getStatus().equals(SgpStatus.A)) && 
+					(!bloqueada(p, hora)) && 
+					( 
+							(p.entrada() == 0 && p.saida() == 0) || (p.saida() > 0 && p.entrada() <= this.getHora(hora) && p.saida() >= this.getHora(hora))  
+							
+				    )
+					
+			 ) {
 				if ((dom && p.isDomingo()) ||
 					(seg && p.isSegunda()) ||
 					(ter && p.isTerca()) ||
@@ -394,6 +415,28 @@ public class EntradaSaidaDAO {
 		return null;
 	}
 
+	public Visitante buscarPessoaVisitante(List<Long> ids) {
+		
+		Session session = this.em.unwrap(Session.class);
+		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT v FROM Visitante v ");
+	    hql.append("LEFT JOIN FETCH v.identidadeDeGenero ");
+	    hql.append("LEFT JOIN FETCH v.pessoa p ");
+	    hql.append("LEFT JOIN FETCH p.nacionalidade ");
+	    hql.append("LEFT JOIN FETCH p.pais ");
+	    hql.append("LEFT JOIN FETCH p.naturalidade n "); 
+	    hql.append("LEFT JOIN FETCH n.estado "); 
+	    
+	    hql.append("LEFT JOIN FETCH v.pessoa.biometria ");
+	    hql.append("WHERE p.id = :pessoaId ");
+	    Visitante visitante = (Visitante) session.createQuery(hql.toString())
+                .setParameter("pessoaId", ids.get(0))
+                .uniqueResult();
+	    Hibernate.initialize(visitante.getFotos());
+	    
+	    return visitante;
+		
+	}
 	
 	public int buscarQuantidadeFiltrada(FiltroEntradaVisitante filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(Visitante.class, em);
@@ -411,6 +454,7 @@ public class EntradaSaidaDAO {
 		for(Visitante v : visitantes) {
 			Hibernate.initialize(v.getEntradas());
 			for(EntradaSaida e : v.getEntradas()) {
+				Hibernate.initialize(e.getUnidadePrisional());
 				Hibernate.initialize(e.getVisitante().getIdentidadeDeGenero());
 				Hibernate.initialize(e.getVisitante());
 				Hibernate.initialize(e.getRecuperandos());
@@ -492,17 +536,23 @@ public class EntradaSaidaDAO {
 		return null;
 	}
 
-	public UnidadePrisional buscaUnidadePriosionalAtualRecuperandoId(Long id) {
-		Session session = this.em.unwrap(Session.class);
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append("SELECT UP.* FROM SIGEPEN_OWNER.PASSAGEM PAS                                 ");
-		sql.append("INNER JOIN SIGEPEN_OWNER.PASSAGEM_LOTACAO PASL ON PASL.PASSAGEM_ID = PAS.ID ");
-		sql.append("INNER JOIN SIGEPEN_OWNER.ESTRUTURA E ON E.ID = PASL.ESTRUTURA_ID            ");
-		sql.append("INNER JOIN SIGEPEN_OWNER.UNIDADE_PRISIONAL UP ON UP.ID = E.UNIDADEPRISIONAL_ID     ");
-		sql.append("WHERE PAS.RECUPERANDO_ID = :recuperandoId                                   ");
-		sql.append("AND PAS.Data_Saida is null                                                  ");
-		sql.append("and PASL.Data_Saida is null                                                 ");
-		 return (UnidadePrisional) session.createSQLQuery(sql.toString()).addEntity(UnidadePrisional.class).setParameter("recuperandoId", id).uniqueResult();
+	public Long responsavelDeuEntrada(Long id) {
+		try {
+			String jpql = "SELECT ea " +
+					"FROM EntradaSaida ea " +
+					"WHERE ea.visitante.id IN " +
+					"(SELECT vr.visitanteResponsavel.id FROM VisitanteResponsavel vr " +
+					"WHERE vr.visitante.id = :idVisitante " +
+					"AND vr.status = 'A') " +
+					"AND ea.dataSaida IS NULL";
+
+			TypedQuery<EntradaSaida> query = em.createQuery(jpql, EntradaSaida.class);
+			query.setParameter("idVisitante", id);
+			query.setMaxResults(1);
+			EntradaSaida entradaSaida = query.getSingleResult();
+			return entradaSaida.getVisitante().getId();
+		}catch (Exception e){
+			return null;
+		}
 	}
 }

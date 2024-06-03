@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.hibernate.Hibernate;
@@ -24,6 +25,8 @@ import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 public class FaseDoCredenciamentoDAO extends BaseDAO<FaseDoCredenciamento, Long> {
 
 	private static final long serialVersionUID = -8114962078076068852L;
+	@Inject
+	private CredenciamentoDAO credenciamentoDAO;
 
 	public Integer inativarCredenciamentoRecuperando(Credenciamento Credenciamento) {
         String update = "UPDATE FaseDoCredenciamento c SET c.statusCredenciamento = :inativo WHERE c.Credenciamento = :cred ";
@@ -174,24 +177,25 @@ public class FaseDoCredenciamentoDAO extends BaseDAO<FaseDoCredenciamento, Long>
 		
 	}
 	
-	public FaseDoCredenciamento atribuirProximaFaseCredenciamento(Credenciamento Credenciamento) {
+	public FaseDoCredenciamento atribuirProximaFaseCredenciamento(Credenciamento credenciamento) {
 		
-		Credenciamento vr = this.em.find(Credenciamento.class, Credenciamento.getId());
+//		Credenciamento vr = this.em.find(Credenciamento.class, credenciamento.getId());
+		Credenciamento vr = this.credenciamentoDAO.listarCredenciamentoFaseCredencimaneto(credenciamento.getId());
 		Hibernate.initialize(vr.getFasesDoCredenciamento());
 		for(FaseDoCredenciamento vc : vr.getFasesDoCredenciamento()) {
-			if(vc.getFaseCredenciamento().getId() == Credenciamento.getFaseCredenciamento())
+			if(vc.getFaseCredenciamento().getId() == credenciamento.getFaseCredenciamento())
 				return vc;
 		}
 
-		FaseDoCredenciamento credenciamentoAnterior = Credenciamento.getFasesDoCredenciamento().stream()
+		FaseDoCredenciamento credenciamentoAnterior = credenciamento.getFasesDoCredenciamento().stream()
                 .max(Comparator.comparing(o -> o.getFaseCredenciamento().getId())).orElse(new FaseDoCredenciamento());
 
 		FaseDoCredenciamento fase = new FaseDoCredenciamento();
-        fase.setCredenciamento(Credenciamento);
+        fase.setCredenciamento(vr);
         fase.setDataMinima(credenciamentoAnterior.getDataRecebimento());
         fase.setUsuarioAprovacao(SecurityUtil.getUsuario());
 
-        fase.setFaseCredenciamento(FaseCredenciamento.getValue(Credenciamento.getFaseCredenciamento()));
+        fase.setFaseCredenciamento(FaseCredenciamento.getValue(credenciamento.getFaseCredenciamento()));
         fase.setStatusCredenciamento(StatusCredenciamento.PENDENTE);
 
         return fase;

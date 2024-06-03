@@ -6,6 +6,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.hibernate.Hibernate;
 
@@ -51,9 +52,15 @@ public class HistoricoRecuperandoDAO {
 	}
 	
 	public HistoricoRecuperando buscarHistoricoPorId(long id) {
-		HistoricoRecuperando h = this.entityManager.find(HistoricoRecuperando.class, id);
-		Hibernate.initialize(h.getRecuperando());
-		return h;
+		String jpql = "SELECT h FROM HistoricoRecuperando h " +
+				"JOIN FETCH h.recuperando rec " +
+				"JOIN FETCH rec.pessoa pessoa " +
+				"WHERE h.id = :id";
+
+		TypedQuery<HistoricoRecuperando> query = entityManager.createQuery(jpql, HistoricoRecuperando.class);
+		query.setParameter("id", id);
+
+		return query.getSingleResult();
 	}
 	
 }
