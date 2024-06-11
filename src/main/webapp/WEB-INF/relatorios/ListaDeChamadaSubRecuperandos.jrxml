@@ -53,7 +53,9 @@
    and pt.status(+) in ('SUSPENSO', 'EM_ANDAMENTO')
    and pa.recuperando_id is not null
    and es.id = $P!{SUB_ESTRUTURA_ID}
- order by es.estruturapai_id, es.id, p.nome) recup]]>
+ order by es.estruturapai_id, es.id, p.nome) recup
+order by NOME
+]]>
 	</queryString>
 	<field name="CELA" class="java.lang.String"/>
 	<field name="ID" class="java.math.BigDecimal"/>
