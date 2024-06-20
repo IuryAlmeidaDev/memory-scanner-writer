@@ -38,98 +38,97 @@
 						size="#{movimentacaoExternaBean.movimentacao.observacao.length()+5}" 
 						display="text" />
 						
-					<br /> <br /> <br /> <br /> <br /> <br /> <br />	
-									   				   
-				   	<h4>Pedidos</h4>
-				   
-						<p:commandButton 
-							icon="ui-icon-plus" 
-							value="Adicionar" 
-							immediate="true" 
-							actionListener="#{movimentacaoExternaBean.abrirDialogPedido}" 
-							rendered="#{(securityUtil.possuiPermissao('CadastrarMovimentacaoExterna') or securityUtil.possuiPermissao('AlterarMovimentacaoExterna')) and !movimentacaoExternaBean.isVisualizacao and !movimentacaoExternaBean.isIniciar and !movimentacaoExternaBean.isFinalizar}">
-							<p:ajax event="dialogReturn" listener="#{movimentacaoExternaBean.associarPedido}" update=":formMovInt:pedidos" />
-						</p:commandButton>		
-				<br />
-			    <br />				
-						
-						<p:dataTable 
-							id="pedidos" 
-							var="pedido" 
-							value="#{movimentacaoExternaBean.movimentacao.pedidos}" 
-							rows="10" 
-							paginator="true" 
-							paginatorPosition="bottom" 
-							paginatorAlwaysVisible="false"
-							sortBy="#{pedido.dataPrevista}"
-				            emptyMessage="Nenhum registro encontrado.">
-				             
-						    <p:column headerText="Nº" width="60" sortBy="#{pedido.id}">
-								<h:outputText value="#{pedido.id}" />
-							</p:column>
-				             
-							<p:column headerText="Matrícula" sortBy="#{pedido.recuperando.id}">
-								<h:outputText value="#{pedido.recuperando.id}" />
-							</p:column>
-	
-							<p:column headerText="Nome" sortBy="#{pedido.recuperando.pessoa.nome}">
-								<h:outputText value="#{pedido.recuperando.pessoa.nome}" />
-							</p:column>					
-					
-							<p:column headerText="Data Prevista" sortBy="#{pedido.dataPrevista}">
-								<h:outputText value="#{pedido.dataPrevista}">
-									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
-							</p:column>
-							
-							<p:column headerText="Tipo" sortBy="#{pedido.tipoMovimentacao}">
-								<h:outputText value="#{pedido.tipoMovimentacao.descricao}" />
-							</p:column>
-					
-							<p:column headerText="Destino" sortBy="#{pedido.estabelecimento}">
-								<h:outputText value="#{pedido.estabelecimento.nome}" />
-							</p:column>
-										
-							<p:column headerText="Status"  width="120" sortBy="#{pedido.status}">
-								<h:outputText value="#{pedido.status.descricao}" />
-							</p:column>
-					
-							<p:column headerText="Ações">
-								<center>
-									<p:commandButton 
-										title="Visualizar" 
-										icon="ui-icon-document"  
-										action="#{movimentacaoExternaBean.visualizarPedido(pedido)}" 
-										oncomplete="PF('visualizarPedido').show()"  
-										update="visualizarPedForm" process="@this" />						
-									<p:commandButton 
-										action="#{movimentacaoExternaBean.excluirPedido(pedido)}" 
-										immediate="true" icon="ui-icon-trash" 
-										title="Excluir" 
-										rendered="#{(securityUtil.possuiPermissao('CadastrarMovimentacaoExterna') or securityUtil.possuiPermissao('AlterarMovimentacaoExterna')) and !movimentacaoExternaBean.isVisualizacao and !movimentacaoExternaBean.isIniciar and !movimentacaoExternaBean.isFinalizar}" 
-										update=":formMovInt:pedidos">
-											<p:confirm 
-												header="Confirmação" 
-												message="Deseja excluir o pedido?" 
-												icon="ui-icon-alert" />
-									</p:commandButton>
-									<p:commandButton 
-										title="Retornado" 
-										icon="fa fa-reply"  
-										action="#{movimentacaoExternaBean.finalizarPedido(pedido)}" 
-										rendered="#{securityUtil.possuiPermissao('FinalizarMovimentacaoExterna') and pedido.status.descricao.equalsIgnoreCase('Em andamento') and movimentacaoExternaBean.isFinalizar}"
-										oncomplete="PF('finalizarPedido').show()"  
-										update="finalizarPedForm" process="@this" />
-									<p:commandButton 
-										title="Cancelar" 
-										icon="ui-icon-cancel"  
-										action="#{movimentacaoExternaBean.cancelarPedido(pedido)}" 
-										rendered="#{securityUtil.possuiPermissao('FinalizarMovimentacaoExterna') and pedido.status.descricao.equalsIgnoreCase('Em andamento') and movimentacaoExternaBean.isFinalizar}"
-										oncomplete="PF('cancelarPedido').show()"  
-										update="cancelarPedForm" process="@this" />
-								</center>
-							</p:column>
-			</p:dataTable>
+					<br /> <br /> <br /> <br /> <br /> <br /> <br />
+
+					   <h4>Pedidos</h4>
+
+					   <p:commandButton
+							   icon="ui-icon-plus"
+							   value="Adicionar"
+							   immediate="true"
+							   actionListener="#{movimentacaoExternaBean.abrirDialogPedido}"
+							   rendered="#{(securityUtil.possuiPermissao('CadastrarMovimentacaoExterna') or securityUtil.possuiPermissao('AlterarMovimentacaoExterna')) and !movimentacaoExternaBean.isVisualizacao and !movimentacaoExternaBean.isIniciar and !movimentacaoExternaBean.isFinalizar}">
+						   <p:ajax event="dialogReturn" listener="#{movimentacaoExternaBean.associarPedido}" update=":formMovInt:pedidos" />
+					   </p:commandButton>
+					   <br/>
+					   <br/>
+					   <p:dataTable
+							   id="pedidos"
+							   var="pedido"
+							   value="#{movimentacaoExternaBean.movimentacao.pedidos}"
+							   rows="10"
+							   paginator="true"
+							   paginatorPosition="bottom"
+							   paginatorAlwaysVisible="false"
+							   sortBy="#{pedido.dataPrevista}"
+							   emptyMessage="Nenhum registro encontrado.">
+
+						   <p:column headerText="Nº" width="60" sortBy="#{pedido.id}">
+							   <h:outputText value="#{pedido.id}" />
+						   </p:column>
+
+						   <p:column headerText="Matrícula" sortBy="#{pedido.recuperando.id}">
+							   <h:outputText value="#{pedido.recuperando.id}" />
+						   </p:column>
+
+						   <p:column headerText="Nome" sortBy="#{pedido.recuperando.pessoa.nome}">
+							   <h:outputText value="#{pedido.recuperando.pessoa.nome}" />
+						   </p:column>
+
+						   <p:column headerText="Data Prevista" sortBy="#{pedido.dataPrevista}">
+							   <h:outputText value="#{pedido.dataPrevista}">
+								   <f:convertDateTime pattern="dd/MM/yyyy" />
+							   </h:outputText>
+						   </p:column>
+
+						   <p:column headerText="Tipo" sortBy="#{pedido.tipoMovimentacao}">
+							   <h:outputText value="#{pedido.tipoMovimentacao.descricao}" />
+						   </p:column>
+
+						   <p:column headerText="Destino" sortBy="#{pedido.estabelecimento}">
+							   <h:outputText value="#{pedido.estabelecimento.nome}" />
+						   </p:column>
+
+						   <p:column headerText="Status"  width="120" sortBy="#{pedido.status}">
+							   <h:outputText value="#{pedido.status.descricao}" />
+						   </p:column>
+
+						   <p:column headerText="Ações">
+							   <center>
+								   <p:commandButton
+										   title="Visualizar"
+										   icon="ui-icon-document"
+										   action="#{movimentacaoExternaBean.visualizarPedido(pedido)}"
+										   oncomplete="PF('visualizarPedido').show()"
+										   update="visualizarPedForm" process="@this" />
+								   <p:commandButton
+										   action="#{movimentacaoExternaBean.excluirPedido(pedido)}"
+										   immediate="true" icon="ui-icon-trash"
+										   title="Excluir"
+										   rendered="#{(securityUtil.possuiPermissao('CadastrarMovimentacaoExterna') or securityUtil.possuiPermissao('AlterarMovimentacaoExterna')) and !movimentacaoExternaBean.isVisualizacao and !movimentacaoExternaBean.isIniciar and !movimentacaoExternaBean.isFinalizar}"
+										   update=":formMovInt:pedidos">
+									   <p:confirm
+											   header="Confirmação"
+											   message="Deseja excluir o pedido?"
+											   icon="ui-icon-alert" />
+								   </p:commandButton>
+								   <p:commandButton
+										   title="Retornado"
+										   icon="fa fa-reply"
+										   action="#{movimentacaoExternaBean.finalizarPedido(pedido)}"
+										   rendered="#{securityUtil.possuiPermissao('FinalizarMovimentacaoExterna') and pedido.status.descricao.equalsIgnoreCase('Em andamento') and movimentacaoExternaBean.isFinalizar}"
+										   oncomplete="PF('finalizarPedido').show()"
+										   update="finalizarPedForm" process="@this" />
+								   <p:commandButton
+										   title="Cancelar"
+										   icon="ui-icon-cancel"
+										   action="#{movimentacaoExternaBean.cancelarPedido(pedido)}"
+										   rendered="#{securityUtil.possuiPermissao('FinalizarMovimentacaoExterna') and pedido.status.descricao.equalsIgnoreCase('Em andamento') and movimentacaoExternaBean.isFinalizar}"
+										   oncomplete="PF('cancelarPedido').show()"
+										   update="cancelarPedForm" process="@this" />
+							   </center>
+						   </p:column>
+					   </p:dataTable>
 			
 			<p:confirmDialog global="true">
 				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
