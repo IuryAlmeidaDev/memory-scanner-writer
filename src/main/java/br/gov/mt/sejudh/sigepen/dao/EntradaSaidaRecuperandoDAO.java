@@ -76,7 +76,6 @@ public class EntradaSaidaRecuperandoDAO {
 		return query.getResultList();
 	}
 
-	
 	public int buscarEntradasPorFiltroCount(FiltroEntradaSaidaRecuperando filtro, String sortField, SortOrder sortOrder, int first) {
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("SELECT count(*) as id FROM ( ")
