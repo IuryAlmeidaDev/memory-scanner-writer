@@ -270,6 +270,7 @@ public class PedidoDAO {
                     "LEFT JOIN FETCH rec.passagens passagem " +
                     "LEFT JOIN passagem.lotacao l " +
                     "LEFT JOIN p.transferencia " +
+                    "LEFT JOIN FETCH p.tipoMovimentacao " +
                     "WHERE p.id = :id";
 
             TypedQuery<PedidoTransito> query = entityManager.createQuery(jpql, PedidoTransito.class);
