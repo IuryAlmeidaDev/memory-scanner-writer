@@ -3,11 +3,7 @@ package br.gov.mt.sejudh.sigepen.bean.outros;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -15,6 +11,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.model.relatorio.EstruturaRelatorio;
+import br.gov.mt.sejudh.sigepen.service.ListaDeChamadaService;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 
@@ -56,6 +54,9 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 	@Inject
 	private Logger log;
 
+    @Inject
+    private ListaDeChamadaService listaDeChamadaService;
+
 
 	@URLAction(onPostback = false)
 	public String init() {
@@ -69,32 +70,41 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 		try {
 			configurarDadosRelatorio();
 
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
+            List<EstruturaRelatorio> estruturaRelatorio = Collections.emptyList();
 
-			switch (tipoRelatorio) {
-			case "unidade":
-				parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(unidade.getIdEstrutura())));
-				parameters.put("ESTRUTURA_NOME", unidade.getNome());
-				break;
+            switch (tipoRelatorio) {
+                case "unidade":
+                    parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(unidade.getIdEstrutura())));
+                    estruturaRelatorio = listaDeChamadaService.listarEstrutura(unidade.getIdEstrutura());
+                    parameters.put("ESTRUTURA_NOME", unidade.getNome());
+                    break;
 
-			case "estrutura":
-				parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(estrutura.getId())));
-				int index = estrutura.getNomeCompleto().indexOf(">");
+                case "estrutura":
+                    parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(estrutura.getId())));
+                    estruturaRelatorio = listaDeChamadaService.listarEstrutura(estrutura.getId());
+                    int index = estrutura.getNomeCompleto().indexOf(">");
 
-				if (index > -1) {
-					parameters.put("ESTRUTURA_NOME", estrutura.getNomeCompleto().substring(0, index));
-				} else {
-					parameters.put("ESTRUTURA_NOME", estrutura.getNomeCompleto());
-				}
-				break;
-			}
+                    if (index > -1) {
+                        parameters.put("ESTRUTURA_NOME", estrutura.getNomeCompleto().substring(0, index));
+                    } else {
+                        parameters.put("ESTRUTURA_NOME", estrutura.getNomeCompleto());
+                    }
+                    break;
+            }
+            for (EstruturaRelatorio er : estruturaRelatorio) {
+                if (er.isCela()) {
+                    er.setRecuperandos(listaDeChamadaService.listarRecuperando(er.getIdEstrutura()));
+                }
+            }
+
 
 			if (comFoto) {
 				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.ListaDeChamadaComFoto, parameters));
 				LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Chamada com Foto", log);
 			} else {
-				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.ListaDeChamada, parameters));
+				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(estruturaRelatorio, Relatorio.ListaDeChamadaTeste, parameters));
 				LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Chamada", log);
 			}
 			RequestContext.getCurrentInstance().execute("download()");
