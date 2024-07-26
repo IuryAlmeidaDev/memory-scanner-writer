@@ -67,23 +67,17 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 
 	public void imprimirListaDeChamada(Boolean comFoto) {
 		try {
-            LocalTime inicio = LocalTime.now();
-            System.out.println(String.format("Inicio Relatorio: %s",inicio.format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
 			configurarDadosRelatorio();
 
             Map<String, Object> parameters = new HashMap<String, Object>();
             List<EstruturaRelatorio> estruturaRelatorio = Collections.emptyList();
+			Long idEstrutura = null;
 
             if (tipoRelatorio.equals("unidade")) {
-//                parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(unidade.getIdEstrutura())));
-                LocalTime principal = LocalTime.now();
-                System.out.println(String.format("Inicio principal: %s",principal.format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
-				estruturaRelatorio = listaDeChamadaService.listarEstrutura(unidade.getIdEstrutura());
-                System.out.println(String.format("Fim principal: %s %s",LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), Duration.between(principal,LocalTime.now())));
+				idEstrutura = unidade.getIdEstrutura();
 				parameters.put("ESTRUTURA_NOME", unidade.getNome());
             } else if (tipoRelatorio.equals("estrutura")) {
-//                parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(estrutura.getId())));
-                estruturaRelatorio = listaDeChamadaService.listarEstrutura(estrutura.getId());
+                idEstrutura = estrutura.getId();
                 int index = estrutura.getNomeCompleto().indexOf(">");
 
                 if (index > -1) {
@@ -92,26 +86,22 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 					parameters.put("ESTRUTURA_NOME", estrutura.getNomeCompleto());
                 }
             }
+			estruturaRelatorio = listaDeChamadaService.listarEstrutura(idEstrutura);
 
-            LocalTime sub = LocalTime.now();
-            System.out.println(String.format("Inicio principal: %s",sub.format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
 
             for (EstruturaRelatorio er : estruturaRelatorio) {
                 if (er.isCela()) {
-                    er.setRecuperandos(listaDeChamadaService.listarRecuperando(er.getIdEstrutura()));
+                    er.setRecuperandos(listaDeChamadaService.listarRecuperando(er.getIdEstrutura(), comFoto));
                 }
             }
-            System.out.println(String.format("Fim principal: %s %s",LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), Duration.between(sub,LocalTime.now())));
 
 
 
             if (comFoto) {
-				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.ListaDeChamadaComFoto, parameters));
-
+				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(estruturaRelatorio, Relatorio.ListaDeChamadaComFoto, parameters));
                 LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Chamada com Foto", log);
 			} else {
-				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(estruturaRelatorio, Relatorio.ListaDeChamadaTeste, parameters));
-                System.out.println(String.format("Fim principal: %s %s",LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), Duration.between(inicio,LocalTime.now())));
+				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(estruturaRelatorio, Relatorio.ListaDeChamada, parameters));
 				LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Chamada", log);
 			}
 			RequestContext.getCurrentInstance().execute("download()");

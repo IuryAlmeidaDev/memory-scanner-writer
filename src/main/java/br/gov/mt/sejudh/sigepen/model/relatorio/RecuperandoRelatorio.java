@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model.relatorio;
 
+import java.sql.Blob;
 import java.util.Date;
 
 public class RecuperandoRelatorio {
@@ -10,6 +11,7 @@ public class RecuperandoRelatorio {
     private String nomeMae;
     private Date dataNascimento;
     private String emMovimento;
+    private Blob foto;
 
     public String getNomeCela() {
         return nomeCela;
@@ -65,5 +67,13 @@ public class RecuperandoRelatorio {
 
     public void setEmMovimento(String emMovimento) {
         this.emMovimento = emMovimento;
+    }
+
+    public Blob getFoto() {
+        return foto;
+    }
+
+    public void setFoto(Blob foto) {
+        this.foto = foto;
     }
 }

@@ -17,7 +17,10 @@ public class ListaDeChamadaService {
         return listaDeChamadaDao.listarEstrutura(id);
     }
 
-    public List<RecuperandoRelatorio> listarRecuperando(Long idEstrutura) {
+    public List<RecuperandoRelatorio> listarRecuperando(Long idEstrutura, boolean comFoto) {
+        if (comFoto) {
+            return listaDeChamadaDao.listarRecuperandoComFoto(idEstrutura);
+        }
         return listaDeChamadaDao.listarRecuperando(idEstrutura);
     }
 }

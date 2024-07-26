@@ -114,4 +114,65 @@ public class ListaDeChamadaDao {
                 .addScalar("cela", BooleanType.INSTANCE)
                 .addScalar("quantidade", IntegerType.INSTANCE);
     }
+
+    public List<RecuperandoRelatorio> listarRecuperandoComFoto(Long idEstrutura) {
+        Session session = em.unwrap(Session.class);
+
+        String jpql = "SELECT (SELECT listagg(e.nome, ' > ') WITHIN GROUP (ORDER BY e.id) cela " +
+                "FROM sigepen_owner.estrutura e " +
+                "WHERE e.estruturapai_id IS NOT NULL " +
+                "START WITH e.id = recup.estrutura_id " +
+                "CONNECT BY e.id = PRIOR e.estruturapai_id) cela, " +
+                "    recup.id, " +
+                "    recup.nome, " +
+                "    recup.nome_social, " +
+                "    recup.nome_mae, " +
+                "    recup.data_nascimento, " +
+                "    recup.em_movimento, " +
+                "    recup.foto " +
+                "FROM (SELECT r.id, " +
+                "    p.nome, " +
+                "    p.nome_social, " +
+                "    p.nome_mae, " +
+                "    p.data_nascimento, " +
+                "    es.id     estrutura_id, " +
+                "    (CASE " +
+                "         WHEN pt.status IN ('EM_ANDAMENTO', 'SUSPENSO') THEN " +
+                "             'SIM' " +
+                "         ELSE " +
+                "             'NAO' " +
+                "        END)  em_movimento, " +
+                "    i.arquivo foto " +
+                "FROM sigepen_owner.estrutura es, " +
+                "    sigepen_owner.recuperando r, " +
+                "    sigepen_owner.pessoa p, " +
+                "    sigepen_owner.passagem pa, " +
+                "    sigepen_owner.passagem_lotacao pal, " +
+                "    sigepen_owner.pedido_transito pt, " +
+                "    sigepen_owner.foto f, " +
+                "    sigepen_owner.imagem i " +
+                "WHERE r.pessoa_id = p.id(+) " +
+                "  AND pa.id(+) = pal.passagem_id " +
+                "  AND pal.estrutura_id(+) = es.id " +
+                "  AND pa.recuperando_id = r.id(+) " +
+                "  AND pal.data_saida IS NULL " +
+                "  AND pt.recuperando_id(+) = r.id " +
+                "  AND pt.data_conclusao(+) IS NULL " +
+                "  AND pt.status(+) IN ('SUSPENSO', 'EM_ANDAMENTO') " +
+                "  AND f.recuperando_id(+) = r.id " +
+                "  AND f.imagem_id = i.id(+) " +
+                "  AND pa.recuperando_id IS NOT NULL " +
+                "  AND f.is_atual = 1 " +
+                "  AND f.tipo = 1 " +
+                "START WITH es.id = :id " +
+                "CONNECT BY PRIOR es.id = es.estruturapai_id " +
+                "ORDER BY es.estruturapai_id, es.id, p.nome) recup";
+
+        SQLQuery query = session.createSQLQuery(jpql);
+        addScalarRecuperando(query);
+        query.addScalar("foto", BlobType.INSTANCE);
+        query.setParameter("id", idEstrutura);
+        query.setResultTransformer(Transformers.aliasToBean(RecuperandoRelatorio.class));
+        return query.list();
+    }
 }
