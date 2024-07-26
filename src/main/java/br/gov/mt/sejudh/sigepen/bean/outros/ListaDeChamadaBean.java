@@ -1,8 +1,7 @@
 package br.gov.mt.sejudh.sigepen.bean.outros;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javax.faces.application.FacesMessage;
@@ -68,46 +67,55 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 
 	public void imprimirListaDeChamada(Boolean comFoto) {
 		try {
+            LocalTime inicio = LocalTime.now();
+            System.out.println(String.format("Inicio Relatorio: %s",inicio.format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
 			configurarDadosRelatorio();
 
             Map<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
             List<EstruturaRelatorio> estruturaRelatorio = Collections.emptyList();
 
-            switch (tipoRelatorio) {
-                case "unidade":
-                    parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(unidade.getIdEstrutura())));
-                    estruturaRelatorio = listaDeChamadaService.listarEstrutura(unidade.getIdEstrutura());
-                    parameters.put("ESTRUTURA_NOME", unidade.getNome());
-                    break;
+            if (tipoRelatorio.equals("unidade")) {
+//                parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(unidade.getIdEstrutura())));
+                LocalTime principal = LocalTime.now();
+                System.out.println(String.format("Inicio principal: %s",principal.format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
+				estruturaRelatorio = listaDeChamadaService.listarEstrutura(unidade.getIdEstrutura());
+                System.out.println(String.format("Fim principal: %s %s",LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), Duration.between(principal,LocalTime.now())));
+				parameters.put("ESTRUTURA_NOME", unidade.getNome());
+            } else if (tipoRelatorio.equals("estrutura")) {
+//                parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(estrutura.getId())));
+                estruturaRelatorio = listaDeChamadaService.listarEstrutura(estrutura.getId());
+                int index = estrutura.getNomeCompleto().indexOf(">");
 
-                case "estrutura":
-                    parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(estrutura.getId())));
-                    estruturaRelatorio = listaDeChamadaService.listarEstrutura(estrutura.getId());
-                    int index = estrutura.getNomeCompleto().indexOf(">");
-
-                    if (index > -1) {
-                        parameters.put("ESTRUTURA_NOME", estrutura.getNomeCompleto().substring(0, index));
-                    } else {
-                        parameters.put("ESTRUTURA_NOME", estrutura.getNomeCompleto());
-                    }
-                    break;
+                if (index > -1) {
+					parameters.put("ESTRUTURA_NOME", estrutura.getNomeCompleto().substring(0, index));
+                } else {
+					parameters.put("ESTRUTURA_NOME", estrutura.getNomeCompleto());
+                }
             }
+
+            LocalTime sub = LocalTime.now();
+            System.out.println(String.format("Inicio principal: %s",sub.format(DateTimeFormatter.ofPattern("HH:mm:ss"))));
+
             for (EstruturaRelatorio er : estruturaRelatorio) {
                 if (er.isCela()) {
                     er.setRecuperandos(listaDeChamadaService.listarRecuperando(er.getIdEstrutura()));
                 }
             }
+            System.out.println(String.format("Fim principal: %s %s",LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), Duration.between(sub,LocalTime.now())));
 
 
-			if (comFoto) {
+
+            if (comFoto) {
 				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.ListaDeChamadaComFoto, parameters));
-				LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Chamada com Foto", log);
+
+                LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Chamada com Foto", log);
 			} else {
 				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(estruturaRelatorio, Relatorio.ListaDeChamadaTeste, parameters));
+                System.out.println(String.format("Fim principal: %s %s",LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), Duration.between(inicio,LocalTime.now())));
 				LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Chamada", log);
 			}
 			RequestContext.getCurrentInstance().execute("download()");
+
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Chamada", e, log);
