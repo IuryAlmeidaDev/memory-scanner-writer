@@ -1,7 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model.relatorio;
 
-
-import java.io.ByteArrayInputStream;
+import java.sql.Blob;
 import java.util.Date;
 
 public class RecuperandoRelatorio {
@@ -12,7 +11,7 @@ public class RecuperandoRelatorio {
     private String nomeMae;
     private Date dataNascimento;
     private String emMovimento;
-    private byte[] foto;
+    private Blob foto;
 
     public String getNomeCela() {
         return nomeCela;
@@ -70,11 +69,11 @@ public class RecuperandoRelatorio {
         this.emMovimento = emMovimento;
     }
 
-    public ByteArrayInputStream getFoto() {
-        return new ByteArrayInputStream(foto);
+    public Blob getFoto() {
+        return foto;
     }
 
-    public void setFoto(byte[] foto) {
+    public void setFoto(Blob foto) {
         this.foto = foto;
     }
 }
