@@ -192,6 +192,10 @@
 										<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 										<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 									</reportElement>
+									<box>
+										<leftPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font isBold="true"/>
 									</textElement>
@@ -273,6 +277,10 @@
 									<reportElement x="0" y="0" width="59" height="20" uuid="32c96976-d875-4157-a093-3d8135b21e62">
 										<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 									</reportElement>
+									<box>
+										<leftPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font isBold="true"/>
 									</textElement>
@@ -291,11 +299,15 @@
 						</jr:column>
 						<jr:column width="86" uuid="7ab581f4-524c-4afb-9c19-d583b98caed8">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
-							<jr:columnHeader style="Table_CH" height="20">
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 								<staticText>
 									<reportElement x="0" y="0" width="86" height="20" uuid="bb30f816-1443-4d42-9092-43892b42dc4e">
 										<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 									</reportElement>
+									<box>
+										<leftPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font isBold="true"/>
 									</textElement>
@@ -303,8 +315,16 @@
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
+								<box>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
 								<staticText>
 									<reportElement x="0" y="0" width="86" height="20" uuid="95981e0e-1f58-4e87-9a01-163e90b07f32"/>
+									<box>
+										<leftPen lineWidth="0.5"/>
+										<rightPen lineWidth="0.5"/>
+									</box>
 									<text><![CDATA[]]></text>
 								</staticText>
 							</jr:detailCell>
@@ -312,7 +332,21 @@
 						<jr:column width="20" uuid="3ef7d22d-004e-4b65-948e-32837d4d494e">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<printWhenExpression><![CDATA[$P{PLANTOES}.size() > 0]]></printWhenExpression>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<box>
+									<pen lineWidth="0.5"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="20" uuid="f46cdd0b-87f1-41ca-ab00-078bcb30b0d5"/>
+									<text><![CDATA[]]></text>
+								</staticText>
+							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
+								<box>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
 								<staticText>
 									<reportElement x="0" y="0" width="20" height="20" uuid="0f811ab0-a801-442b-86b0-39cd287f17e2"/>
 									<text><![CDATA[]]></text>
@@ -322,7 +356,21 @@
 						<jr:column width="20" uuid="2d4a90d3-7b31-4551-9bd0-0fe6f5cc9f2f">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<printWhenExpression><![CDATA[$P{PLANTOES}.size() > 1]]></printWhenExpression>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<box>
+									<pen lineWidth="0.5"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="20" uuid="e8fa76a8-d300-4ce0-b39e-3d0cbfb72de0"/>
+									<text><![CDATA[]]></text>
+								</staticText>
+							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
+								<box>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
 								<staticText>
 									<reportElement x="0" y="0" width="20" height="20" uuid="624cd504-16a8-49b3-bf6d-0e6a39d2f050"/>
 									<text><![CDATA[]]></text>
@@ -332,7 +380,21 @@
 						<jr:column width="20" uuid="f658442c-1721-4637-b902-45989a94e94c">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<printWhenExpression><![CDATA[$P{PLANTOES}.size() > 2]]></printWhenExpression>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<box>
+									<pen lineWidth="0.5"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="20" uuid="370d87a9-5baf-4b6b-909b-08fe2eaae72e"/>
+									<text><![CDATA[]]></text>
+								</staticText>
+							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
+								<box>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
 								<staticText>
 									<reportElement x="0" y="0" width="20" height="20" uuid="cfe12fc9-62de-4656-9f94-e9554d88695f"/>
 									<text><![CDATA[]]></text>
@@ -342,7 +404,21 @@
 						<jr:column width="20" uuid="287e1e72-91a8-45c2-a399-a69d9498346b">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column9"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<printWhenExpression><![CDATA[$P{PLANTOES}.size() > 3]]></printWhenExpression>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<box>
+									<pen lineWidth="0.5"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="20" uuid="82b3670f-0df8-441b-95d9-83918eadb974"/>
+									<text><![CDATA[]]></text>
+								</staticText>
+							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
+								<box>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
 								<staticText>
 									<reportElement x="0" y="0" width="20" height="20" uuid="e4039515-cc7e-4379-82b7-82e8b551408b"/>
 									<text><![CDATA[]]></text>
@@ -352,7 +428,21 @@
 						<jr:column width="20" uuid="018d45ab-50e8-441a-bd96-26309fed8b9f">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column10"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<printWhenExpression><![CDATA[$P{PLANTOES}.size() > 4]]></printWhenExpression>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<box>
+									<pen lineWidth="0.5"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="20" uuid="e4410d47-9e04-4cc6-bc62-0acec08dec9b"/>
+									<text><![CDATA[]]></text>
+								</staticText>
+							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
+								<box>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
 								<staticText>
 									<reportElement x="0" y="0" width="20" height="20" uuid="625507b5-f9a3-4af7-ba52-e71349f6e126"/>
 									<text><![CDATA[]]></text>
@@ -362,7 +452,21 @@
 						<jr:column width="20" uuid="aca0ce0c-bc13-4e95-9e4b-48add4043727">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column11"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<printWhenExpression><![CDATA[$P{PLANTOES}.size() > 5]]></printWhenExpression>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<box>
+									<pen lineWidth="0.5"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="20" uuid="ce7cdce2-70ef-4980-b35e-7fbd676d8844"/>
+									<text><![CDATA[]]></text>
+								</staticText>
+							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
+								<box>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
 								<staticText>
 									<reportElement x="0" y="0" width="20" height="20" uuid="5fa1e942-0d45-44fd-b9d0-056f1ae7d2ac"/>
 									<text><![CDATA[]]></text>
@@ -372,7 +476,21 @@
 						<jr:column width="20" uuid="6f066c9e-1f25-41f6-8e1a-71fb4a5b162c">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column12"/>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<printWhenExpression><![CDATA[$P{PLANTOES}.size() > 6]]></printWhenExpression>
+							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+								<box>
+									<pen lineWidth="0.5"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="20" height="20" uuid="088923f6-60b0-4147-8149-cf9a132a6fc6"/>
+									<text><![CDATA[]]></text>
+								</staticText>
+							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
+								<box>
+									<leftPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
 								<staticText>
 									<reportElement x="0" y="0" width="20" height="20" uuid="94ac44f3-bad0-4bcc-a140-39ea97caf41b"/>
 									<text><![CDATA[]]></text>
@@ -400,8 +518,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(6)).getPlantao().getName()
-]]></textFieldExpression>
+					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(6)).getPlantao().getName()]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -421,8 +538,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(5)).getPlantao().getName()
-]]></textFieldExpression>
+					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(5)).getPlantao().getName()]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -442,8 +558,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(4)).getPlantao().getName()
-]]></textFieldExpression>
+					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(4)).getPlantao().getName()]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -463,8 +578,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(3)).getPlantao().getName()
-]]></textFieldExpression>
+					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(3)).getPlantao().getName()]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -484,8 +598,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(2)).getPlantao().getName()
-]]></textFieldExpression>
+					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(2)).getPlantao().getName()]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -505,8 +618,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(1)).getPlantao().getName()
-]]></textFieldExpression>
+					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(1)).getPlantao().getName()]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
@@ -526,8 +638,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(0)).getPlantao().getName()
-]]></textFieldExpression>
+					<textFieldExpression><![CDATA[((br.gov.mt.sejudh.sigepen.model.Plantao)((java.util.List) $P{PLANTOES}).get(0)).getPlantao().getName()]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
