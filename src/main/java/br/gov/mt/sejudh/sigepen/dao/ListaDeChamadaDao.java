@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
+import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.relatorio.EstruturaRelatorio;
 import br.gov.mt.sejudh.sigepen.model.relatorio.RecuperandoRelatorio;
 import org.hibernate.SQLQuery;
@@ -10,6 +11,7 @@ import org.hibernate.type.*;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 @RequestScoped
@@ -89,7 +91,8 @@ public class ListaDeChamadaDao {
                 "  AND pt.status(+) IN ('SUSPENSO', 'EM_ANDAMENTO') " +
                 "  AND pa.recuperando_id IS NOT NULL " +
                 "  AND es.id = :id " +
-                "ORDER BY es.estruturapai_id, es.id, p.nome) recup";
+                "ORDER BY es.estruturapai_id, es.id, p.nome) recup " +
+                "ORDER BY nomeRecuperando";
 
         SQLQuery query = session.createSQLQuery(jpql);
         addScalarRecuperando(query);
@@ -118,19 +121,20 @@ public class ListaDeChamadaDao {
     public List<RecuperandoRelatorio> listarRecuperandoComFoto(Long idEstrutura) {
         Session session = em.unwrap(Session.class);
 
-        String jpql = "SELECT (SELECT listagg(e.nome, ' > ') WITHIN GROUP (ORDER BY e.id) cela " +
-                "FROM sigepen_owner.estrutura e " +
-                "WHERE e.estruturapai_id IS NOT NULL " +
-                "START WITH e.id = recup.estrutura_id " +
-                "CONNECT BY e.id = PRIOR e.estruturapai_id) cela, " +
-                "    recup.id, " +
-                "    recup.nome, " +
-                "    recup.nome_social, " +
-                "    recup.nome_mae, " +
-                "    recup.data_nascimento, " +
-                "    recup.em_movimento, " +
+        String jpql =
+                " SELECT (SELECT listagg(e.nome, ' > ') WITHIN GROUP (ORDER BY e.id) cela " +
+                " FROM sigepen_owner.estrutura e " +
+                " WHERE e.estruturapai_id IS NOT NULL " +
+                " START WITH e.id = recup.estrutura_id " +
+                " CONNECT BY e.id = PRIOR e.estruturapai_id) nomeCela, " +
+                "    recup.id matricula, " +
+                "    recup.nome nomeRecuperando, " +
+                "    recup.nome_social nomeSocial, " +
+                "    recup.nome_mae nomeMae, " +
+                "    recup.data_nascimento dataNascimento, " +
+                "    recup.em_movimento emMovimento, " +
                 "    recup.foto " +
-                "FROM (SELECT r.id, " +
+                " FROM (SELECT r.id, " +
                 "    p.nome, " +
                 "    p.nome_social, " +
                 "    p.nome_mae, " +
@@ -143,7 +147,7 @@ public class ListaDeChamadaDao {
                 "             'NAO' " +
                 "        END)  em_movimento, " +
                 "    i.arquivo foto " +
-                "FROM sigepen_owner.estrutura es, " +
+                " FROM sigepen_owner.estrutura es, " +
                 "    sigepen_owner.recuperando r, " +
                 "    sigepen_owner.pessoa p, " +
                 "    sigepen_owner.passagem pa, " +
@@ -151,7 +155,7 @@ public class ListaDeChamadaDao {
                 "    sigepen_owner.pedido_transito pt, " +
                 "    sigepen_owner.foto f, " +
                 "    sigepen_owner.imagem i " +
-                "WHERE r.pessoa_id = p.id(+) " +
+                " WHERE r.pessoa_id = p.id(+) " +
                 "  AND pa.id(+) = pal.passagem_id " +
                 "  AND pal.estrutura_id(+) = es.id " +
                 "  AND pa.recuperando_id = r.id(+) " +
@@ -164,15 +168,19 @@ public class ListaDeChamadaDao {
                 "  AND pa.recuperando_id IS NOT NULL " +
                 "  AND f.is_atual = 1 " +
                 "  AND f.tipo = 1 " +
-                "START WITH es.id = :id " +
-                "CONNECT BY PRIOR es.id = es.estruturapai_id " +
-                "ORDER BY es.estruturapai_id, es.id, p.nome) recup";
+                " START WITH es.id = :id " +
+                " CONNECT BY PRIOR es.id = es.estruturapai_id " +
+                " ORDER BY es.estruturapai_id, es.id, p.nome) recup " +
+                "ORDER BY nomeRecuperando";
+
+
 
         SQLQuery query = session.createSQLQuery(jpql);
         addScalarRecuperando(query);
-        query.addScalar("foto", BlobType.INSTANCE);
         query.setParameter("id", idEstrutura);
+        query.addScalar("foto", StandardBasicTypes.BINARY);
         query.setResultTransformer(Transformers.aliasToBean(RecuperandoRelatorio.class));
+
         return query.list();
     }
 }

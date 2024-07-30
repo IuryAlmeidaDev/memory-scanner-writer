@@ -143,18 +143,14 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 			validarParametrosConfere();
 
 			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
-			parameters.put("SUBREPORT_DIR", RelatorioUtil.getSubReportPath(Relatorio.ListaDeConfere));
+			List<EstruturaRelatorio> estruturaRelatorio = Collections.emptyList();
+			Long idEstrutura = null;
 
-			switch (tipoRelatorio) {
-			case "unidade":
-				parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(unidade.getIdEstrutura())));
+			if (tipoRelatorio.equals("unidade")) {
+				idEstrutura = unidade.getIdEstrutura();
 				parameters.put("ESTRUTURA_NOME", unidade.getNome());
-				break;
-
-			case "estrutura":
-				parameters.put("ID_ESTRUTURA", Integer.parseInt(String.valueOf(estrutura.getId())));
-
+			} else if (tipoRelatorio.equals("estrutura")) {
+				idEstrutura = estrutura.getId();
 				int index = estrutura.getNomeCompleto().indexOf(">");
 
 				if (index > -1) {
@@ -162,12 +158,19 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 				} else {
 					parameters.put("ESTRUTURA_NOME", estrutura.getNomeCompleto());
 				}
-				break;
+			}
+			estruturaRelatorio = listaDeChamadaService.listarEstrutura(idEstrutura);
+
+
+			for (EstruturaRelatorio er : estruturaRelatorio) {
+				if (er.isCela()) {
+					er.setRecuperandos(listaDeChamadaService.listarRecuperando(er.getIdEstrutura(), false));
+				}
 			}
 
 			parameters.put("PLANTOES", gerarListaPlantoes());
 
-			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.ListaDeConfere, parameters));
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(estruturaRelatorio, Relatorio.ListaDeConfere, parameters));
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Chamada Confere", log);
 		} catch (ValidacaoException e) {
