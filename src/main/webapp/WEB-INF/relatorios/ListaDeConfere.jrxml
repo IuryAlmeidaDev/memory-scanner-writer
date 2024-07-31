@@ -151,7 +151,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="235" splitType="Stretch">
+		<band height="84" splitType="Stretch">
 			<printWhenExpression><![CDATA[$F{cela} == true & $F{quantidade} > 0]]></printWhenExpression>
 			<componentElement>
 				<reportElement x="0" y="10" width="555" height="56" uuid="86b7e0b3-49ee-4655-8140-df590f80c9a8">
@@ -162,7 +162,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+					<property name="com.jaspersoft.studio.components.autoresize.next" value="true"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
 					<datasetRun subDataset="Dataset1" uuid="748e7ac8-0227-497d-a4b9-24073efb4f08">
