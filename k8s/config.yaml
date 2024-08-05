@@ -3,7 +3,7 @@
 #    docker run --rm -v %cd%:/tmp/  2gis/k8s-handle k8s-handle render -s develop
 common:
     app_name: sigepen
-    app_port: 7001
+    app_port: 8080
     app_path: /sigepen
     replicas: 1
     image: "{{ env='CONTAINER_IMAGE_WITH_TAG' }}"
