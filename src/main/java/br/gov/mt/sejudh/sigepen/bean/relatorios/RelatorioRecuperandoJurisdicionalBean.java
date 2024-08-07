@@ -60,9 +60,7 @@ public class RelatorioRecuperandoJurisdicionalBean extends MetodosDialogBean {
 	
 	
 	private List<UnidadePrisional> unidadesPrisionais = new ArrayList<>();
-	
-	@Inject
-	private UnidadePrisionalService unidadeService;
+
 	
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
@@ -85,11 +83,7 @@ public class RelatorioRecuperandoJurisdicionalBean extends MetodosDialogBean {
 
 
 	public void imprimir() {
-		if (this.filtro.getUnidadePrisional().getId() > 0) {
-			this.filtro.setUnidade(this.filtro.getUnidadePrisional().getId());
-		} else {
-			this.filtro.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
-		}
+		
 		
 		boolean possuiDataInicial = this.filtro.getDataInicial() != null;
 		boolean possuiDataFinal = this.filtro.getDataFinal() != null;
