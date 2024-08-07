@@ -14,6 +14,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
 import br.gov.mt.sejudh.sigepen.enumerator.UfRelatorio;
 import br.gov.mt.sejudh.sigepen.model.Estabelecimento;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 
 
 public class FiltroRelatorioRecuperandoJurisdicional extends FiltroConsulta {
@@ -37,6 +38,8 @@ public class FiltroRelatorioRecuperandoJurisdicional extends FiltroConsulta {
 	private TipoDesligamentoRelatorio tipoDesligamento;
 	private TipoEntradaRelatorio tipoProcesso;
 
+	private UnidadePrisional unidadePrisional;
+	
 	@Override
 	public void configurarFiltros() {
 		
@@ -227,6 +230,14 @@ public class FiltroRelatorioRecuperandoJurisdicional extends FiltroConsulta {
 
 	public void setTipoProcesso(TipoEntradaRelatorio tipoProcesso) {
 		this.tipoProcesso = tipoProcesso;
+	}
+
+	public UnidadePrisional getUnidadePrisional() {
+		return unidadePrisional;
+	}
+
+	public void setUnidadePrisional(UnidadePrisional unidadePrisional) {
+		this.unidadePrisional = unidadePrisional;
 	}
 
 }

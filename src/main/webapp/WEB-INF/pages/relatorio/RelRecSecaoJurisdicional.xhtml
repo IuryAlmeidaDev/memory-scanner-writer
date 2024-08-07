@@ -54,6 +54,17 @@
 						rendered="#{relatorioRecuperandoJurisdicionalBean.mostrarTipoDesligamento()}"
 						/>
 		</ui:remove>	
+					<sgp:formSelectOneMenu 
+								id="unidadePrisional" labelValue="Unidade Prisional"
+								value="#{relatorioRecuperandoJurisdicionalBean.filtro.unidadePrisional}"
+								itemsValue="#{relatorioRecuperandoJurisdicionalBean.unidadesPrisionais}" 
+								itemValue="#{item}"
+								itemLabel="#{item.nome}" 
+								temSelecione="true"
+								filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+								styleFormLabelColumn="width:145px"
+								converter="SimpleEntityConverter"/>
+		
 					<sgp:formCalendar labelValue="Data Inicial" 
 						value="#{relatorioRecuperandoJurisdicionalBean.filtro.dataInicial}" display="text"
 						validationRequired="false" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 145px">
