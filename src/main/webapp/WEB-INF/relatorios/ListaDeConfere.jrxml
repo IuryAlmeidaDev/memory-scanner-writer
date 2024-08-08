@@ -646,16 +646,12 @@
 	<pageFooter>
 		<band height="61" splitType="Stretch">
 			<textField>
-				<reportElement x="435" y="13" width="80" height="20" uuid="927a2ce8-0fbc-4c36-8981-fdd2eebb924a">
-					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+				<reportElement x="435" y="13" width="80" height="20" uuid="927a2ce8-0fbc-4c36-8981-fdd2eebb924a"/>
+				<textElement textAlignment="Right" markup="html"/>
+				<textFieldExpression><![CDATA["P&aacute;gina "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="515" y="13" width="40" height="20" uuid="45abdca7-6784-4a18-bd98-56a8ecf2d563">
-					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="515" y="13" width="40" height="20" uuid="45abdca7-6784-4a18-bd98-56a8ecf2d563"/>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<line>
@@ -669,8 +665,8 @@
 			<textField pattern="">
 				<reportElement x="20" y="30" width="273" height="20" uuid="3c690e93-b0dd-48df-8f5d-087d33e59608"/>
 				<textElement markup="html"/>
-				<textFieldExpression><![CDATA["<b>Data Emissão: </b> " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())
-+ " às " + new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<b>Data Emiss&atilde;o: </b> " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())
+    + " &agrave;s " + new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
