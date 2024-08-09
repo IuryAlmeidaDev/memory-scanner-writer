@@ -72,8 +72,8 @@ public class RelatorioRecuperandoJurisdicionalBean extends MetodosDialogBean {
 
 	@URLAction(onPostback=false)
 	public String init() {
-//		this.filtro.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
-		this.unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
+		this.filtro.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
+//		this.unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
 		this.filtro.setDataInicial(new Date());
 		this.filtro.setDataFinal(new Date());
 		this.filtro.setTipoRelatorioEntradaSaidaRec(TipoRelatorioEntradaSaidaRec.ENTRADA);
