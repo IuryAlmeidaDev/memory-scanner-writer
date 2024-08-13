@@ -29,6 +29,7 @@ public enum Relatorio {
 	ListarRemanejamento("RELATÓRIO DE  REMANEJAMENTO",  ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	RegistroReceberTransferencia("RECEBER TRANSFERÊNCIA"),
 	ListaDeChamada("LISTA DE CHAMADA"),
+	ListaDeChamadaTeste("LISTA DE CHAMADA"),
 	ListaDeChamadaSintetica("LISTA SINTÉTICA"),
 	GerarPedido("Pedido de alimentação", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
 	GerarPedidoUnificado("Pedido de alimentação", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
