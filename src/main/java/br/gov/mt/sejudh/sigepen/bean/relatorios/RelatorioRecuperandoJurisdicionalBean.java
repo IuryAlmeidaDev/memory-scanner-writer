@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.bean.relatorios;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +32,12 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoEntradaRelatorio;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
 import br.gov.mt.sejudh.sigepen.enumerator.UfRelatorio;
 import br.gov.mt.sejudh.sigepen.model.Estabelecimento;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.RelatorioRecuperandoJurisdicionalDTO.RecuperandoJurisdicionalDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.RelatorioRecuperandoJurisdicionalService;
+import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -55,7 +58,10 @@ public class RelatorioRecuperandoJurisdicionalBean extends MetodosDialogBean {
 	@Inject
 	private RelatorioRecuperandoJurisdicionalService service;
 	
+	
+	private List<UnidadePrisional> unidadesPrisionais = new ArrayList<>();
 
+	
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
 	
@@ -67,6 +73,7 @@ public class RelatorioRecuperandoJurisdicionalBean extends MetodosDialogBean {
 	@URLAction(onPostback=false)
 	public String init() {
 		this.filtro.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
+//		this.unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
 		this.filtro.setDataInicial(new Date());
 		this.filtro.setDataFinal(new Date());
 		this.filtro.setTipoRelatorioEntradaSaidaRec(TipoRelatorioEntradaSaidaRec.ENTRADA);
@@ -76,6 +83,8 @@ public class RelatorioRecuperandoJurisdicionalBean extends MetodosDialogBean {
 
 
 	public void imprimir() {
+		
+		
 		boolean possuiDataInicial = this.filtro.getDataInicial() != null;
 		boolean possuiDataFinal = this.filtro.getDataFinal() != null;
 		
@@ -193,5 +202,15 @@ public class RelatorioRecuperandoJurisdicionalBean extends MetodosDialogBean {
 	
 	public UfRelatorio[] getEstados() {
 		return UfRelatorio.values();
+	}
+
+
+	public List<UnidadePrisional> getUnidadesPrisionais() {
+		return unidadesPrisionais;
+	}
+
+
+	public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
+		this.unidadesPrisionais = unidadesPrisionais;
 	}
 }
