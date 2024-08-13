@@ -116,13 +116,7 @@ public class TransferenciaDAO {
 			Transferencia t = query.getSingleResult();
 
 			if (t.getEscolta() != null) {
-				String jpqlEscolta = "SELECT e FROM Escolta e " +
-						"LEFT JOIN e.movimentacaoInterna m " +
-						"WHERE m.id = :id";
-				TypedQuery<Escolta> queryEscolta = entityManager.createQuery(jpqlEscolta, Escolta.class);
-				queryEscolta.setParameter("id", t.getId());
-				List<Escolta> escoltas = queryEscolta.getResultList();
-				t.setEscolta(escoltas);
+				Hibernate.initialize(t.getEscolta());
 			}
 
 
