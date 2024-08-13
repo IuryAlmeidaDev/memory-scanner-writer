@@ -57,8 +57,7 @@
 				</center>
 
 				<center>
-					
-					<p:commandButton value="Entrada / Saída Biométrica" id="btnBio" styleClass="botaoBiometrico" onclick="pesquisar(); return false;" icon="ui-icon-bio" rendered="#{false}"/>					
+					<p:commandButton value="Entrada / Saída Biométrica" id="btnBio" styleClass="botaoBiometrico" onclick="pesquisar(); return false;" icon="ui-icon-bio" rendered="#{false}"/>
 					<p:commandButton value="Pesquisar Visitante para Entrada / Saída" actionListener="#{entradaSaidaBean.abrirDialogAssociarVisitante}"  update=":registrosForm, :dialogInformacoesVisitante" > 
 						<p:ajax event="dialogReturn" listener="#{entradaSaidaBean.associarVisitante}" />
 					</p:commandButton>
