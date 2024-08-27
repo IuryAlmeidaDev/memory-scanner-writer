@@ -118,11 +118,7 @@ public class ListaDeChamadaDao {
         Session session = em.unwrap(Session.class);
 
         String jpql =
-                " SELECT (SELECT listagg(e.nome, ' > ') WITHIN GROUP (ORDER BY e.id) cela " +
-                " FROM sigepen_owner.estrutura e " +
-                " WHERE e.estruturapai_id IS NOT NULL " +
-                " START WITH e.id = recup.estrutura_id " +
-                " CONNECT BY e.id = PRIOR e.estruturapai_id) nomeCela, " +
+                " SELECT (SIGEPEN_OWNER.BUSCAESTRUTURANOMECOMPLETO(estrutura_id)) nomeCela, " +
                 "    recup.id matricula, " +
                 "    recup.nome nomeRecuperando, " +
                 "    recup.nome_social nomeSocial, " +
