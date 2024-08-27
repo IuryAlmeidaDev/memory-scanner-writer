@@ -52,11 +52,8 @@ public class ListaDeChamadaDao {
     public List<RecuperandoRelatorio> listarRecuperando(Long idEstrutura) {
         Session session = em.unwrap(Session.class);
 
-        String jpql = "SELECT DISTINCT(SELECT listagg(e.nome, ' > ') WITHIN GROUP (ORDER BY e.id) cela  " +
-                "FROM sigepen_owner.estrutura e  " +
-                "WHERE e.estruturapai_id IS NOT NULL  " +
-                "START WITH e.id = recup.estrutura_id " +
-                "CONNECT BY e.id = PRIOR e.estruturapai_id) nomeCela, " +
+
+        String jpql = "SELECT DISTINCT(SIGEPEN_OWNER.BUSCAESTRUTURANOMECOMPLETO(estrutura_id)) nomeCela, " +
                 "    recup.id as matricula, " +
                 "    recup.nome as nomeRecuperando, " +
                 "    recup.nome_social as nomeSocial, " +
@@ -122,11 +119,7 @@ public class ListaDeChamadaDao {
         Session session = em.unwrap(Session.class);
 
         String jpql =
-                " SELECT (SELECT listagg(e.nome, ' > ') WITHIN GROUP (ORDER BY e.id) cela " +
-                " FROM sigepen_owner.estrutura e " +
-                " WHERE e.estruturapai_id IS NOT NULL " +
-                " START WITH e.id = recup.estrutura_id " +
-                " CONNECT BY e.id = PRIOR e.estruturapai_id) nomeCela, " +
+      " SELECT (SIGEPEN_OWNER.BUSCAESTRUTURANOMECOMPLETO(estrutura_id)) nomeCela, " +
                 "    recup.id matricula, " +
                 "    recup.nome nomeRecuperando, " +
                 "    recup.nome_social nomeSocial, " +
