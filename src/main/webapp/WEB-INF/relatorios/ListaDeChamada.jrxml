@@ -166,24 +166,14 @@
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
 					<datasetRun subDataset="Dataset1" uuid="748e7ac8-0227-497d-a4b9-24073efb4f08">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{recuperandos})]]></dataSourceExpression>
-<<<<<<< HEAD
-=======
+
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{PLANTOES})]]></dataSourceExpression>
->>>>>>> feature/os-t-017
 					</datasetRun>
 					<jr:columnGroup width="555" uuid="5ea08d84-075a-48b6-8514-eafce67a1a4f">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [6]"/>
 						<jr:tableHeader style="Table_TH" height="16" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
-<<<<<<< HEAD
-							<box>
-								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							</box>
-=======
->>>>>>> feature/os-t-017
+
 							<textField>
 								<reportElement x="0" y="0" width="555" height="16" uuid="3381921a-273e-4003-a049-b41851686033">
 									<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -194,21 +184,15 @@
 								<textFieldExpression><![CDATA[$F{nomeCela}]]></textFieldExpression>
 							</textField>
 						</jr:tableHeader>
-<<<<<<< HEAD
-						<jr:column width="50" uuid="c0d96ed6-63f6-4c19-94a1-9886f0e4121c">
-=======
+
 						<jr:column width="51" uuid="c0d96ed6-63f6-4c19-94a1-9886f0e4121c">
->>>>>>> feature/os-t-017
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
 							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<staticText>
-<<<<<<< HEAD
-									<reportElement x="0" y="0" width="50" height="20" uuid="a4f000c2-fc7b-4793-b3d8-0c6c1090d563">
-=======
+
 									<reportElement x="0" y="0" width="51" height="20" uuid="a4f000c2-fc7b-4793-b3d8-0c6c1090d563">
->>>>>>> feature/os-t-017
 										<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 									</reportElement>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -219,36 +203,24 @@
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
-<<<<<<< HEAD
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="50" height="20" uuid="b66bd949-bfd1-4d86-82ad-9efba9e508e9"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-=======
+
 								<textField isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="51" height="20" uuid="b66bd949-bfd1-4d86-82ad-9efba9e508e9"/>
 									<textElement textAlignment="Left" verticalAlignment="Middle">
->>>>>>> feature/os-t-017
 										<font size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{matricula}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-<<<<<<< HEAD
-						<jr:column width="151" uuid="be144e3c-4367-4f3c-b6a8-3440149af7f3">
-=======
+
 						<jr:column width="146" uuid="be144e3c-4367-4f3c-b6a8-3440149af7f3">
->>>>>>> feature/os-t-017
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
 							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<staticText>
-<<<<<<< HEAD
-									<reportElement x="0" y="0" width="151" height="20" uuid="e9d6a83b-ae00-4c72-8560-939d2f46db83"/>
-=======
+
 									<reportElement x="0" y="0" width="146" height="20" uuid="e9d6a83b-ae00-4c72-8560-939d2f46db83"/>
->>>>>>> feature/os-t-017
 									<box>
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
@@ -263,11 +235,8 @@
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
 								<textField isBlankWhenNull="true">
-<<<<<<< HEAD
-									<reportElement x="0" y="0" width="151" height="20" uuid="dbe62221-1c39-46dc-8852-900a7ff1c2a5"/>
-=======
+
 									<reportElement x="0" y="0" width="146" height="20" uuid="dbe62221-1c39-46dc-8852-900a7ff1c2a5"/>
->>>>>>> feature/os-t-017
 									<textElement textAlignment="Left" verticalAlignment="Middle">
 										<font size="8"/>
 									</textElement>
@@ -275,20 +244,14 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-<<<<<<< HEAD
-						<jr:column width="132" uuid="2bf4a749-5d28-4e1d-be49-00ec718de517">
-=======
+
 						<jr:column width="122" uuid="2bf4a749-5d28-4e1d-be49-00ec718de517">
->>>>>>> feature/os-t-017
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
 							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<staticText>
-<<<<<<< HEAD
-									<reportElement x="0" y="0" width="132" height="20" uuid="1d6a225f-0b19-4dcf-b79b-554dea2419f4"/>
-=======
+
 									<reportElement x="0" y="0" width="122" height="20" uuid="1d6a225f-0b19-4dcf-b79b-554dea2419f4"/>
->>>>>>> feature/os-t-017
 									<box>
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
@@ -303,11 +266,8 @@
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
 								<textField isBlankWhenNull="true">
-<<<<<<< HEAD
-									<reportElement x="0" y="0" width="132" height="20" uuid="97fa4de0-f7cb-4792-8e0e-a9309d0edaeb"/>
-=======
+
 									<reportElement x="0" y="0" width="122" height="20" uuid="97fa4de0-f7cb-4792-8e0e-a9309d0edaeb"/>
->>>>>>> feature/os-t-017
 									<textElement textAlignment="Left" verticalAlignment="Middle">
 										<font size="8"/>
 									</textElement>
@@ -315,20 +275,14 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-<<<<<<< HEAD
-						<jr:column width="123" uuid="9e0d9378-e9d7-4860-b18c-f18894e337db">
-=======
+
 						<jr:column width="110" uuid="9e0d9378-e9d7-4860-b18c-f18894e337db">
->>>>>>> feature/os-t-017
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
 							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<staticText>
-<<<<<<< HEAD
-									<reportElement x="0" y="0" width="123" height="20" uuid="a7f274d8-9d09-4920-b2fb-d947c1cbe16c"/>
-=======
+
 									<reportElement x="0" y="0" width="110" height="20" uuid="a7f274d8-9d09-4920-b2fb-d947c1cbe16c"/>
->>>>>>> feature/os-t-017
 									<box>
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
@@ -343,11 +297,8 @@
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
 								<textField isBlankWhenNull="true">
-<<<<<<< HEAD
-									<reportElement x="0" y="0" width="123" height="20" uuid="48e76e26-eacf-4d53-abd7-7289e49c5cb3"/>
-=======
+
 									<reportElement x="0" y="0" width="110" height="20" uuid="48e76e26-eacf-4d53-abd7-7289e49c5cb3"/>
->>>>>>> feature/os-t-017
 									<textElement textAlignment="Left" verticalAlignment="Middle">
 										<font size="8"/>
 									</textElement>
@@ -355,20 +306,14 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-<<<<<<< HEAD
-						<jr:column width="50" uuid="27d2d03e-0f43-4c6b-81f8-6e37966cb59a">
-=======
+
 						<jr:column width="76" uuid="27d2d03e-0f43-4c6b-81f8-6e37966cb59a">
->>>>>>> feature/os-t-017
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
 							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<staticText>
-<<<<<<< HEAD
-									<reportElement x="0" y="0" width="50" height="20" uuid="6dc54be9-5b17-4b79-b0a3-0af56c200813"/>
-=======
+
 									<reportElement x="0" y="0" width="76" height="20" uuid="6dc54be9-5b17-4b79-b0a3-0af56c200813"/>
->>>>>>> feature/os-t-017
 									<box>
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
@@ -382,36 +327,24 @@
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
-<<<<<<< HEAD
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="50" height="20" uuid="312b7878-eb2b-4d60-92ad-1c382e02d5b0"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-=======
+
 								<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="76" height="20" uuid="312b7878-eb2b-4d60-92ad-1c382e02d5b0"/>
 									<textElement textAlignment="Left" verticalAlignment="Middle">
->>>>>>> feature/os-t-017
 										<font size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{dataNascimento}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-<<<<<<< HEAD
-						<jr:column width="49" uuid="60dc5a95-c2cc-4bf1-9e3a-7c09582fbfb3">
-=======
+
 						<jr:column width="50" uuid="60dc5a95-c2cc-4bf1-9e3a-7c09582fbfb3">
->>>>>>> feature/os-t-017
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
 							<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								<staticText>
-<<<<<<< HEAD
-									<reportElement x="0" y="0" width="49" height="20" uuid="32c96976-d875-4157-a093-3d8135b21e62">
-=======
+
 									<reportElement x="0" y="0" width="50" height="20" uuid="32c96976-d875-4157-a093-3d8135b21e62">
->>>>>>> feature/os-t-017
 										<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 									</reportElement>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -421,16 +354,10 @@
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell style="Table_TD" height="20">
-<<<<<<< HEAD
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<textField isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="49" height="20" uuid="f7c5d23e-afd5-4896-83da-966f40f67924"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-=======
+
 								<textField isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="50" height="20" uuid="f7c5d23e-afd5-4896-83da-966f40f67924"/>
 									<textElement textAlignment="Left" verticalAlignment="Middle">
->>>>>>> feature/os-t-017
 										<font size="8"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{emMovimento}]]></textFieldExpression>
@@ -445,14 +372,7 @@
 	<pageFooter>
 		<band height="61" splitType="Stretch">
 			<textField>
-<<<<<<< HEAD
-				<reportElement x="435" y="13" width="80" height="20" uuid="927a2ce8-0fbc-4c36-8981-fdd2eebb924a"/>
-				<textElement textAlignment="Right" markup="html"/>
-				<textFieldExpression><![CDATA["P&aacute;gina "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="515" y="13" width="40" height="20" uuid="45abdca7-6784-4a18-bd98-56a8ecf2d563"/>
-=======
+
 				<reportElement x="435" y="13" width="80" height="20" uuid="927a2ce8-0fbc-4c36-8981-fdd2eebb924a">
 					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
 				</reportElement>
@@ -463,7 +383,6 @@
 				<reportElement x="515" y="13" width="40" height="20" uuid="45abdca7-6784-4a18-bd98-56a8ecf2d563">
 					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
 				</reportElement>
->>>>>>> feature/os-t-017
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<line>
@@ -477,16 +396,10 @@
 			<textField pattern="">
 				<reportElement x="20" y="30" width="273" height="20" uuid="3c690e93-b0dd-48df-8f5d-087d33e59608"/>
 				<textElement markup="html"/>
-<<<<<<< HEAD
-				<textFieldExpression><![CDATA["<b>Data Emiss&atilde;o: </b> " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())
-    + " &agrave;s " + new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
-			</textField>
 
-=======
 				<textFieldExpression><![CDATA["<b>Data Emissão: </b> " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())
 + " às " + new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
 			</textField>
->>>>>>> feature/os-t-017
 		</band>
 	</pageFooter>
 	<summary>
