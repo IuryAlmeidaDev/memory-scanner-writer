@@ -1,6 +1,5 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
-import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.relatorio.EstruturaRelatorio;
 import br.gov.mt.sejudh.sigepen.model.relatorio.RecuperandoRelatorio;
 import org.hibernate.SQLQuery;
@@ -11,7 +10,6 @@ import org.hibernate.type.*;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.List;
 
 @RequestScoped
@@ -22,24 +20,14 @@ public class ListaDeChamadaDao {
     public List<EstruturaRelatorio> listarEstrutura(long id) {
         Session session = em.unwrap(Session.class);
 
-        String jpql = "SELECT e1.id as idEstrutura, " +
-                "    e1.nome as nomeEstrutura, " +
-                "    e1.cela, " +
-                "    (SELECT count(r.id) " +
-                "    FROM sigepen_owner.estrutura e, " +
-                "        sigepen_owner.passagem_lotacao plo, " +
-                "        sigepen_owner.passagem p, " +
-                "        sigepen_owner.recuperando r " +
-                "    WHERE plo.estrutura_id(+) = e.id " +
-                "      AND plo.passagem_id = p.id(+) " +
-                "      AND plo.data_saida IS NULL " +
-                "      AND p.data_saida IS NULL " +
-                "      AND p.recuperando_id = r.id(+) " +
-                "    START WITH e.id = e1.id " +
-                "    CONNECT BY PRIOR e.id = e.estruturapai_id) quantidade  " +
-                "FROM sigepen_owner.estrutura e1  " +
-                "START WITH e1.id = :id  " +
-                "CONNECT BY PRIOR e1.id = e1.estruturapai_id";
+        String jpql = "SELECT a.id AS idEstrutura" +
+                "     , a.NOME AS nomeEstrutura" +
+                "     , a.CELA" +
+                "     , sigepen_owner.retornar_ocupacao(a.id) AS quantidade" +
+                " FROM sigepen_owner.estrutura a" +
+                " START WITH a.id = :id" +
+                " CONNECT BY PRIOR a.id = a.estruturapai_id" +
+                " ORDER SIBLINGS BY a.id";
 
         SQLQuery query = session.createSQLQuery(jpql);
         addScalarEstrutura(query);
