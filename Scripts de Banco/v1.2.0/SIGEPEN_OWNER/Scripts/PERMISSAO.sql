@@ -1,0 +1,2 @@
+insert into sigepen_owner.permissao (id, nome, descricao, funcionalidade_id) values (119, 'VisualizarParametrosUnidade', 'Permite visualizar a aba Parâmetros no cadastro da Unidade Prisional.', 2);
+insert into sigepen_owner.permissao (id, nome, descricao, funcionalidade_id) values (120, 'VisualizarLogErro', 'Permite visualizar os erros do sistema.', 6);

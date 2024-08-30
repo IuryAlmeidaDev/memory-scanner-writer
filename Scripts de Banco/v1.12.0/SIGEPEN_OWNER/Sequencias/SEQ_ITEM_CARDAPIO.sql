@@ -1,0 +1,12 @@
+-------------------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_ITEM_CARDAPIO
+-------------------------------------------------------
+
+CREATE SEQUENCE SEQ_ITEM_CARDAPIO
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_ITEM_CARDAPIO TO sigepen_user;

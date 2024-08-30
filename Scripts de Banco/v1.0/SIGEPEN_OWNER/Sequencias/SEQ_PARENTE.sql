@@ -1,0 +1,12 @@
+-----------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_PARENTE
+-----------------------------------------------
+
+CREATE SEQUENCE SEQ_PARENTE
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_PARENTE TO SIGEPEN_USER;

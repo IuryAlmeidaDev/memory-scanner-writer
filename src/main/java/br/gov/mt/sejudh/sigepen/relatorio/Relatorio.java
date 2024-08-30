@@ -44,6 +44,7 @@ public enum Relatorio {
 	RegistroOficioPedidoTransito("OFÍCIO PEDIDO DE TRÂNSITO"),
 	RegistroAutorizacaoPedidoTransito("AUTORIZAÇÃO PEDIDO DE TRÂNSITO"),
 	ListaDeChamadaComFoto("LISTA DE CHAMADA"),
+	ListaDeChamadaComFotoNovo("LISTA DE CHAMADA"),
 	ExtratoRecuperando("EXTRATO DO RECUPERANDO", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	EstatisticoInfopen("Relatório Estatístico Infopen"),
 	ListaDeConfere("LISTA DE CHAMADA"),

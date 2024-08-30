@@ -1,0 +1,12 @@
+-----------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_AUT_CAD_BIO
+-----------------------------------------------
+
+CREATE SEQUENCE SEQ_AUT_CAD_BIO
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_AUT_CAD_BIO TO SIGEPEN_USER;
