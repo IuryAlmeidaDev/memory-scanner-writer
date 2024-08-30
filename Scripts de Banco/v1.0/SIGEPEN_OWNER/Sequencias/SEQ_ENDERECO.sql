@@ -1,0 +1,12 @@
+-----------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_ENDERECO
+-----------------------------------------------
+
+CREATE SEQUENCE SEQ_ENDERECO
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_ENDERECO TO SIGEPEN_USER;

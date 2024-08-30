@@ -1,0 +1,12 @@
+﻿-----------------------------------------------------------
+--- SCRIPT DE INSERÇÃO DE DADOS NA TABELA TIPO_HISTORICO
+-----------------------------------------------------------
+
+
+INSERT INTO TIPO_HISTORICO (ID, DESCRICAO) VALUES (1, 'Segurança e Disciplina');
+INSERT INTO TIPO_HISTORICO (ID, DESCRICAO) VALUES (2, 'Saúde');
+INSERT INTO TIPO_HISTORICO (ID, DESCRICAO) VALUES (3, 'Assistência Social');
+INSERT INTO TIPO_HISTORICO (ID, DESCRICAO) VALUES (4, 'Psicologia');
+INSERT INTO TIPO_HISTORICO (ID, DESCRICAO) VALUES (5, 'Produção');
+INSERT INTO TIPO_HISTORICO (ID, DESCRICAO) VALUES (6, 'Educação');
+INSERT INTO TIPO_HISTORICO (ID, DESCRICAO) VALUES (7, 'Jurídico');

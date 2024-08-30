@@ -1,0 +1,12 @@
+----------------------------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_SITUACAO_ESTRUTURA_UNIDADE
+----------------------------------------------------------------
+
+CREATE SEQUENCE SEQ_SITUACAO_ESTRUTURA_UNIDADE
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_SITUACAO_ESTRUTURA_UNIDADE TO SIGEPEN_USER;

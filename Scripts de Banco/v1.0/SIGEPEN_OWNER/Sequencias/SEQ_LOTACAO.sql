@@ -1,0 +1,12 @@
+-----------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_LOTACAO
+-----------------------------------------------
+
+CREATE SEQUENCE SEQ_LOTACAO
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_LOTACAO TO SIGEPEN_USER;

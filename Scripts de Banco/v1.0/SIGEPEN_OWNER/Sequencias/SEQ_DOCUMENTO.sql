@@ -1,0 +1,12 @@
+-----------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_DOCUMENTO
+-----------------------------------------------
+
+CREATE SEQUENCE SEQ_DOCUMENTO
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_DOCUMENTO TO SIGEPEN_USER;

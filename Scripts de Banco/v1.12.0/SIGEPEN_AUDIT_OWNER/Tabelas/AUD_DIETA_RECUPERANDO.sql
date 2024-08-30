@@ -1,0 +1,19 @@
+-------------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA TABELA AUD_DIETA_RECUPERANDO
+-------------------------------------------------
+
+CREATE TABLE AUD_DIETA_RECUPERANDO
+(
+    ID                  NUMBER(19) NOT NULL,
+    REV                 NUMBER(19) NOT NULL,
+    ACAO                NUMBER(3),
+    INICIO  		    DATE NULL,
+	FIM			        DATE NULL,
+    STATUS		   	NUMBER,
+	TIPO_DIETA_ID NUMBER NULL,
+	RECUPERANDO_ID 	NUMBER NULL
+);
+
+ALTER TABLE AUD_DIETA_RECUPERANDO ADD CONSTRAINT PK_AUD_DIETA_RECUPERANDO PRIMARY KEY (ID, REV);
+
+GRANT SELECT, INSERT ON AUD_DIETA_RECUPERANDO TO sigepen_user;

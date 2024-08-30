@@ -1,0 +1,12 @@
+-------------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA TABELA PARAMETRO
+-------------------------------------------------
+
+CREATE TABLE PARAMETRO
+(
+  NOME VARCHAR2(100 CHAR) NOT NULL,
+  VALOR VARCHAR2(100 CHAR) NOT NULL
+)
+TABLESPACE TBS_SIGEPEN_OWNER_D;
+
+GRANT SELECT ON PARAMETRO TO SIGEPEN_USER;

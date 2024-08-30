@@ -1,0 +1,12 @@
+-------------------------------------------------------
+--- SCRIPT DE CRIA��O DA SEQUENCE SIGEPEN_S_VISITANTE_RESPONSAVEL
+-------------------------------------------------------
+
+CREATE SEQUENCE SIGEPEN_S_VISITANTE_RESPOM
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SIGEPEN_S_VISITANTE_RESPOM TO sigepen_user;
