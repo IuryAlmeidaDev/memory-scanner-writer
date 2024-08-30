@@ -148,7 +148,7 @@
                     <driver-class>oracle.jdbc.OracleDriver</driver-class>
                     <driver>oracle</driver>
                     <pool>
-                        <min-pool-size>20</min-pool-size>
+                        <min-pool-size>1</min-pool-size>
                         <max-pool-size>100</max-pool-size>
                         <prefill>true</prefill>
                         <flush-strategy>IdleConnections</flush-strategy>
@@ -159,8 +159,9 @@
                     </security>
                     <validation>
                         <check-valid-connection-sql>select 1 from dual</check-valid-connection-sql>
-                        <validate-on-match>true</validate-on-match>
-                        <background-validation>false</background-validation>
+                        <validate-on-match>false</validate-on-match>
+                        <background-validation>true</background-validation>
+                        <background-validation-millis>15000</background-validation-millis>
                     </validation>
                     <timeout>
                         <set-tx-query-timeout>false</set-tx-query-timeout>
