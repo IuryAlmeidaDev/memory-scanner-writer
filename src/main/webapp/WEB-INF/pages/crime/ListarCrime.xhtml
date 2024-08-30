@@ -9,7 +9,11 @@
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 		
-		<h3>Crime</h3>	
+		<h3>Crime</h3>
+		
+		<h:form>				
+			<p:button value="Cadastrar" outcome="pretty:CadastrarCrime" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarCrime')}"/>
+		</h:form>	
 				
 		<h:form id="meuFormulario">
 			<p:panel>
@@ -25,9 +29,10 @@
 								filter="true" filterMatchMode="contains"
 								display="text" 
 								temSelecione="true" >
-										<f:ajax event="change" listener="#{crimeBean.listarArtigos}" render="meuFormulario:artigo:input"/>
-						</sgp:formSelectOneMenu>
-					<sgp:formSelectOneMenu 
+				<f:ajax event="change" listener="#{crimeBean.listarArtigos}" render="meuFormulario:artigo:input"/>
+				</sgp:formSelectOneMenu>
+										
+				<sgp:formSelectOneMenu 
 								id="artigo"
 								labelValue="Artigo" 
 								itemValue="#{item}" 
@@ -36,10 +41,8 @@
 								value="#{crimeBean.filtro.artigo}"
 								filter="true" filterMatchMode="contains"
 								temSelecione="true"
-								display="text"  />				
-				
-					
-					
+								display="text"  />
+															
 				<br />
 				<br />
 				<p:commandButton value="Pesquisar" update=":registrosForm"	process="@form" icon="ui-icon-search" />	
@@ -51,6 +54,10 @@
 			<p:dataTable id="dataTable" var="crime" value="#{crimeBean.crimes}" paginator="true" paginatorPosition="bottom" rows="10" lazy="true"
 			             emptyMessage="Nenhum registro encontrado.">		
 						
+				<p:column headerText="Código" width="100" sortBy="#{crime.id}">
+					<h:outputText value="#{crime.id}" />
+				</p:column>
+				
 				<p:column headerText="Legislação" sortBy="#{crime.nomeLegislacao}">
 					<h:outputText value="#{crime.nomeLegislacao}" />
 				</p:column>
@@ -71,16 +78,27 @@
 					<h:outputText value="#{crime.numAlinea}" />
 				</p:column>
 				
+				<p:column headerText="Situação" width="110" sortBy="#{crime.status}">
+					<h:outputText value="#{crime.status.descricao}" />						
+				</p:column>
+				
 				<p:column headerText="Detalhamento" sortBy="#{crime.detalhamento}">
 					<h:outputText value="#{crime.detalhamento}" />
 				</p:column>
 
-				<p:column headerText="Ações" width="80">
+				<p:column headerText="Ações" width="90">
 					<center>
 						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarCrime" rendered="#{securityUtil.possuiPermissao('VisualizarCrime')}">
 							<f:param name="id" value="#{crime.id}" />
 						</p:button>
+																		 
+						 <p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarCrime" rendered="#{securityUtil.possuiPermissao('AlterarCrime')}">
+							<f:param name="id" value="#{crime.id}"/>
+						</p:button>						
+									
 					</center>
+					
+					
 				</p:column>
 				
 				<f:facet name="footer">

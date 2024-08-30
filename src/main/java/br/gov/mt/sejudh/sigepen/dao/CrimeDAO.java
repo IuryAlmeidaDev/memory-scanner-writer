@@ -26,6 +26,20 @@ public class CrimeDAO {
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}
+	
+	public Crime salvar(Crime crime) {
+		if(crime.getId() > 0) {
+			crime = entityManager.merge(crime);			
+		} else {
+			entityManager.persist(crime);
+		}		
+		return crime;
+	}
+	
+	public void excluir(long crimeId) {
+		Crime crime = buscarPorId(crimeId); 		
+		entityManager.remove(entityManager.merge(crime));
+	}
 
 
 	@SuppressWarnings("unchecked")
@@ -39,14 +53,14 @@ public class CrimeDAO {
 	    criteria.setProjection(Projections.rowCount());		
 	    return ((Number) criteria.uniqueResult()).intValue();
 	}	
-	
+		
 	@SuppressWarnings("unchecked")
 	public List<String> listarLegislacoes() {
 		String jpql="select distinct c.nomeLegislacao from Crime c order by c.nomeLegislacao";
 		Query query = entityManager.createQuery(jpql);
 		List<String> legislacoes = query.getResultList();
 		return legislacoes;
-	}
+	}	
 	
 	@SuppressWarnings("unchecked")
 	public List<String> listarArtigos(String legislacao) {

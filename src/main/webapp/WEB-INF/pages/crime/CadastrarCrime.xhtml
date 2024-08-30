@@ -17,6 +17,7 @@
 					labelValue="Lei"
 					value="#{crimeBean.crime.nomeLegislacao}"
 					disabled="#{crimeBean.isVisualizacao}"
+					validationRequired="true"
 					size="100"
 					display="text"/>
 					
@@ -52,11 +53,21 @@
 					maxlength="80"
 					display="text"/>
 					
+					<sgp:formSelectOneMenu 
+						id="status" labelValue="Status"
+						value="#{crimeBean.crime.status}"
+						itemsValue="#{comboHelperBean.status}" 
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}" 
+						disabled="#{crimeBean.isVisualizacao}"
+						display="text" />
+					
                  <sgp:formInputTextarea 
                       id="descCrime"
                       labelValue="Descrição"
                       value="#{crimeBean.crime.detalhamento}"
                        disabled="#{crimeBean.isVisualizacao}"
+                       validationRequired="true"
                       rows="5"
                       columns="100"
                       maxlength="250"
@@ -72,9 +83,17 @@
 				<br/>
 				<br/>
 				<br/>
+				
+				
+				<p:commandButton value="Salvar" action="#{crimeBean.salvar()}"
+					update="@form" icon="ui-icon-disk"
+					rendered="#{(securityUtil.possuiPermissao('CadastrarCrime') and !crimeBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCrime') and !crimeBean.isVisualizacao)}" />
+					
 				<p:button outcome="pretty:ListarCrime" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
 					<f:param name="list" value="1"/>
 				</p:button>
+				
+				
 			</p:panel>
 		</h:form>
 	</ui:define>
