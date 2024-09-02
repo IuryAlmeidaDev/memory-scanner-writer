@@ -21,7 +21,9 @@ import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroCrime;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
+import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Crime;
+import br.gov.mt.sejudh.sigepen.model.dto.CrimeDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.CrimeService;
@@ -34,6 +36,8 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @URLMappings(mappings = {
 @URLMapping(id = "ListarCrime", pattern = "/crime", viewId = "/WEB-INF/pages/crime/ListarCrime.xhtml")
 ,@URLMapping(id = "VisualizarCrime", pattern = "/crime/visualizar/#{id}", viewId = "/WEB-INF/pages/crime/CadastrarCrime.xhtml")
+,@URLMapping(id = "CadastrarCrime", pattern = "/crime/cadastrar", viewId = "/WEB-INF/pages/crime/CadastrarCrime.xhtml")
+,@URLMapping(id = "AlterarCrime", pattern = "/crime/alterar/#{id}", viewId = "/WEB-INF/pages/crime/CadastrarCrime.xhtml")
 })
 public class CrimeBean extends MetodosDePaginaBean {
 
@@ -67,8 +71,13 @@ public class CrimeBean extends MetodosDePaginaBean {
 	@URLAction(onPostback=false)
 	public String init() {
 		try {
-			switch(this.getAcaoDeTela()) {				
+			switch(this.getAcaoDeTela()) {
+				case CADASTRAR:
+					this.crime = new Crime();
+					break;
+					
 				case VISUALIZAR:
+				case ALTERAR:
 					long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
 					
 					if (!buscarCrime(id)) {
@@ -110,6 +119,39 @@ public class CrimeBean extends MetodosDePaginaBean {
 		}
 		
 		return true;
+	}
+	
+	public String salvar() {
+		String retorno = null;
+		
+		try {
+			service.salvar(this.crime);
+			facesUtil.exibirMensagemInfo("Crime " + this.crime.getNomeLegislacao() + " salva com sucesso!", true);
+			retorno = "pretty:ListarCrime";
+			LoggerUtil.logInfo(Acao.SALVAR, this.crime, log);
+						
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao salvar crime (" + this.crime.getNomeLegislacao() + "): " + e.getMessage());
+			LoggerUtil.logErro(Acao.SALVAR, this.crime, e, log);			
+		}
+		
+		return retorno;		
+	}
+	
+
+	public void excluir(CrimeDTO crime) {
+		try {			
+			service.excluir(crime.getId());
+			facesUtil.exibirMensagemInfo("Crime " + crime.getNomeLegislacao() + " excluída com Sucesso!", false);
+			LoggerUtil.logInfo(Acao.EXCLUIR, crime, log);
+			
+		} catch(ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
+			
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir pessoa (" + crime.getNomeLegislacao() + "): " + e.getMessage());
+			LoggerUtil.logErro(Acao.EXCLUIR, crime, e, log);
+		}
 	}
 	
 	public void pesquisar() {
@@ -188,4 +230,6 @@ public class CrimeBean extends MetodosDePaginaBean {
 	public void setArtigos(List<String> artigos) {
 		this.artigos = artigos;
 	}
+	
+	
 }
