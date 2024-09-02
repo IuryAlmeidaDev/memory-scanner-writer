@@ -11,9 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
+@Audited
 @Entity
 @Table(name = "CRIME", schema = Sigepen.SEJUDH_SCHEMA)
 public class Crime implements Serializable{	
