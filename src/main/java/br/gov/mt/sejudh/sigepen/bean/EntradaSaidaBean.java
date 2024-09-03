@@ -859,7 +859,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 				}else {
 					if (vr.getRecuperando() != null) {
 						UnidadePrisional unidadePrisionalAtual = this.faltaDisciplinarService.buscaUnidadePriosionalAtualRecuperandoId(vr.getRecuperando().getId());
-						if (unidadePrisionalAtual.getId() == unidadeSelecionada.getId()) {
+						if (unidadePrisionalAtual != null && unidadePrisionalAtual.getId() == unidadeSelecionada.getId()) {
 							if (this.getFiltro().getStatusCredenciamento() == null) {
 								this.credenciamentos.add(vr);
 							} else {
