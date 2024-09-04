@@ -1108,24 +1108,28 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 	}
 
 
-	public boolean verificaResponsavelPossiCredenciamentoParaRecuperando(Visitante responsavel, Recuperando recuperandoSelecionado) {
+	public boolean verificaResponsavelPossiCredenciamentoParaRecuperando(List<Visitante> responsavel, Recuperando recuperandoSelecionado) {
 		String jpql = "SELECT c.statusCredenciamento FROM Pessoa p " +
 				"INNER JOIN p.visitante v " +
 				"INNER JOIN v.credenciamentos c " +
-				"WHERE p.nome = :visitante " +
+				"WHERE p.nome in :visitante " +
 				"AND c.recuperando = :recuperando " +
 				"AND c.statusCredenciamento in :status";
 
 
 		Query query = em.createQuery(jpql);
-		query.setParameter("visitante", responsavel.getPessoa().getNome());
+		List<String> nomesVisitantes = responsavel.stream()
+				.map(v -> v.getPessoa().getNome())
+				.collect(Collectors.toList());
+
+		query.setParameter("visitante", nomesVisitantes);
 		query.setParameter("recuperando", recuperandoSelecionado);
 		query.setParameter("status", Arrays.asList(
 				StatusCredenciamento.PENDENTE.getId(),
 				StatusCredenciamento.IRREGULAR.getId(),
 				StatusCredenciamento.REGULAR.getId(),
 				StatusCredenciamento.APROVADO.getId()));
-		Long count = (Long) query.getSingleResult();
+		int count = (Integer) query.getSingleResult();
 
 		return (count > 0);
 	}
