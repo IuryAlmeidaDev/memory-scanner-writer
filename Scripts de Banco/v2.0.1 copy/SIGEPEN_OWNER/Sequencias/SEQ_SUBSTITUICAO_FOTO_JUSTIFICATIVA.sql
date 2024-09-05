@@ -1,0 +1,12 @@
+-------------------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_JUSTIFICATIVA
+-------------------------------------------------------
+
+CREATE SEQUENCE SEQ_SUBSTITUICAO_FOTO_JUSTIFICATIVA
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_SUBSTITUICAO_FOTO_JUSTIFICATIVA TO sigepen_user;
