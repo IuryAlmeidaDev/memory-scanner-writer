@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Substituicao Foto</title>
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="justificativaForm">
+			<p:panel>	
+			
+				<sgp:formInputTextarea
+						labelValue="Justificativa"
+						value="#{associarSubstituicaoFotoJustificativaBean.substituicaoFotoJustificativa.descricao}"
+						validationRequired="true"
+						requiredMessage="Justificativa é obrigatória."
+						id="descricao"
+						display="display"
+						maxlength="4000"
+	                          rows="10"
+	                          columns="100"
+						styleFormLabelColumn="min-width:140px" />	
+					<br/>
+					<br/>
+				<p:commandButton title="Salvar" value="Adicionar" icon="ui-icon-plus" update="@form" action="#{associarSubstituicaoFotoJustificativaBean.incluirJustificativa()}" />
+				<p:commandButton value="Fechar" icon="ui-icon-close" immediate="true" actionListener="#{associarSubstituicaoFotoJustificativaBean.fecharDialog}" />
+				
+				<br/>
+			</p:panel>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

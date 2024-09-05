@@ -76,6 +76,7 @@ import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.ProcessoRegimeCondicao;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
+import br.gov.mt.sejudh.sigepen.model.SubstituicaoFotoJustificativa;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
@@ -95,6 +96,7 @@ import br.gov.mt.sejudh.sigepen.service.PedidoService;
 import br.gov.mt.sejudh.sigepen.service.PessoaService;
 import br.gov.mt.sejudh.sigepen.service.ProcessoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
+import br.gov.mt.sejudh.sigepen.service.SubstituicaoFotoJustificativaService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
@@ -176,6 +178,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private RecuperandoService service;
+	
+	@Inject
+	private SubstituicaoFotoJustificativaService substituicaoFotoJustificativaService;
 
 	@Inject
 	private PessoaService pessoaService;
@@ -229,6 +234,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
     private HistoricoRecuperandoService historicoService;
 	
 	private List<Etnia> etnias;
+	
+	private Foto fotoSubstituta;
 	
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
@@ -889,6 +896,55 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			service.excluirFoto(f);
 			this.recuperando.getFotos().remove(f);
 			LoggerUtil.logInfo(Acao.EXCLUIR, f, log);
+		} catch (ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir foto: " + e.getMessage());
+			LoggerUtil.logErro(null, this.recuperando, e, log);
+		}
+	}
+	
+	public void abrirDialogSubstituicaoFotoJustificativa(Foto foto) {
+		this.fotoSubstituta = foto;
+		facesUtil.exibirPaginaDialog("pretty:AssociarSubstituicaoFotoJustificativa");
+	}
+	
+	public void substituirFotoJustificativa(SelectEvent event) {
+		try {
+			SubstituicaoFotoJustificativa substituicaoFotoJustificativa = (SubstituicaoFotoJustificativa) event.getObject();
+			if(substituicaoFotoJustificativa == null) {
+				return;
+			}
+			Foto fotoAntiga = new Foto();
+			
+			for(Foto foto : this.recuperando.getFotos()) {
+				if(!foto.equals(this.fotoSubstituta) && foto.getTipo() == this.fotoSubstituta.getTipo()) {
+					fotoAntiga = foto;
+				}
+			}
+			if(fotoAntiga.getId() == 0) {
+				throw new ValidacaoException("Não foi encontrado foto para fazer a substituição");
+			}
+			
+			substituicaoFotoJustificativa.setFotoSubstituidaId(fotoAntiga.getId());
+			substituicaoFotoJustificativa.setFotoSubstitutaId(fotoSubstituta.getId());
+			substituicaoFotoJustificativa.setRecuperando(recuperando);
+			
+
+			substituicaoFotoJustificativaService.substituirFoto(substituicaoFotoJustificativa);
+			this.substituirFoto(fotoSubstituta,fotoAntiga);		
+		} catch (ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
+		}  catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir foto: " + e.getMessage());
+			LoggerUtil.logErro(null, this.recuperando, e, log);
+		}
+		facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO,"SUCESSO", "Substituição realizada com sucesso!");
+	}
+	
+	public void substituirFoto(Foto f,Foto substituida) {
+		try {
+			service.substituirFoto(f,substituida);
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
 		} catch (Exception e) {

@@ -1,0 +1,3 @@
+INSERT INTO PERMISSAO
+(ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+VALUES(281, 'SubstituirFoto', 'Permite subistituir foto.', 3);

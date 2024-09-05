@@ -719,6 +719,11 @@
 											<p:confirm header="Confirmação" message="Deseja excluir a foto?" icon="ui-icon-alert" />
 										</p:commandButton>
 										
+										<p:commandButton value="Substituir" immediate="true" actionListener="#{recuperandoBean.abrirDialogSubstituicaoFotoJustificativa(f)}" 
+						                    rendered="#{(securityUtil.possuiPermissao('SubstituirFoto'))}">
+						                    <p:ajax event="dialogReturn" listener="#{recuperandoBean.substituirFotoJustificativa}"/>
+						                </p:commandButton>
+										
 										<p:selectBooleanButton value="#{f.isAtual}" onLabel="Foto Atual" offLabel="Marcar Atual" disabled="#{recuperandoBean.isVisualizacao or !securityUtil.possuiPermissao('AlterarFotoAtual')}">
 											<p:ajax listener="#{recuperandoBean.configurarFotoAtual(foto)}" update=":tabView:formAbaFotosHistorico :tabView:formFoto :formCabecalho" />
 										</p:selectBooleanButton>
