@@ -112,8 +112,11 @@ public class FaltaDisciplinarDAO {
 		sql.append("SELECT PASL.* FROM SIGEPEN_OWNER.PASSAGEM PAS                               ");
 		sql.append("INNER JOIN SIGEPEN_OWNER.PASSAGEM_LOTACAO PASL ON PASL.PASSAGEM_ID = PAS.ID ");
 		sql.append("WHERE PAS.RECUPERANDO_ID = :recuperandoId                                   ");
-		sql.append("AND PAS.Data_Saida is null                                                  ");
-		sql.append("and PASL.Data_Saida is null                                                 ");
+//		sql.append("AND PAS.Data_Saida is null                                                  ");
+//		sql.append("and PASL.Data_Saida is null                                                 ");
+		sql.append("AND PAS.ID = (SELECT MAX(P2.ID) FROM SIGEPEN_OWNER.PASSAGEM P2 WHERE P2.RECUPERANDO_ID = :recuperandoId) ");
+		sql.append("AND PASL.ID = (SELECT MAX(P3.ID) FROM SIGEPEN_OWNER.PASSAGEM_LOTACAO P3 WHERE P3.PASSAGEM_ID = PAS.ID) ");
+		
 		 return (PassagemLotacao) session.createSQLQuery(sql.toString()).addEntity(PassagemLotacao.class).setParameter("recuperandoId", id).uniqueResult();
 	}
 	
@@ -127,8 +130,11 @@ public class FaltaDisciplinarDAO {
 		sql.append("INNER JOIN SIGEPEN_OWNER.ESTRUTURA E ON E.ID = PASL.ESTRUTURA_ID            ");
 		sql.append("INNER JOIN SIGEPEN_OWNER.UNIDADE_PRISIONAL UP ON UP.ID = E.UNIDADEPRISIONAL_ID     ");
 		sql.append("WHERE PAS.RECUPERANDO_ID = :recuperandoId                                   ");
-		sql.append("AND PAS.Data_Saida is null                                                  ");
-		sql.append("and PASL.Data_Saida is null                                                 ");
+//		sql.append("AND PAS.Data_Saida is null                                                  ");
+//		sql.append("and PASL.Data_Saida is null                                                 ");
+		sql.append("AND PAS.ID = (SELECT MAX(P2.ID) FROM SIGEPEN_OWNER.PASSAGEM P2 WHERE P2.RECUPERANDO_ID = :recuperandoId) ");
+		sql.append("AND PASL.ID = (SELECT MAX(P3.ID) FROM SIGEPEN_OWNER.PASSAGEM_LOTACAO P3 WHERE P3.PASSAGEM_ID = PAS.ID) ");
+		
 		 return (UnidadePrisional) session.createSQLQuery(sql.toString()).addEntity(UnidadePrisional.class).setParameter("recuperandoId", id).uniqueResult();
 	}
 	
