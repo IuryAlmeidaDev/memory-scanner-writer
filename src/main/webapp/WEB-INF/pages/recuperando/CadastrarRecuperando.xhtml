@@ -641,6 +641,15 @@
 									<p:commandButton title="Visualizar" icon="ui-icon-document"
 										action="#{recuperandoBean.abrirDialogProcesso(processo, true)}"
 										immediate="true" />
+										
+									<p:commandButton 
+										action="#{recuperandoBean.excluirProcesso(processo)}" 										
+										icon="ui-icon-trash" 
+										title="Excluir" 
+										update=":tabView:formPassagem :formCabecalho" 
+										rendered="#{securityUtil.possuiPermissao('ExcluirProcesso')}">											    	
+								 	</p:commandButton> 
+								 
 									<p:commandButton title="Finalizar Processo"
 										icon="ui-icon-check"
 										action="#{recuperandoBean.processoSelecionado(processo)}"
