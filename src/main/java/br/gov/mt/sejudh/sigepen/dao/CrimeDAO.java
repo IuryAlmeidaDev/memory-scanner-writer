@@ -38,8 +38,8 @@ public class CrimeDAO {
 	
 	public void excluir(long crimeId) {
 		Crime crime = buscarPorId(crimeId); 		
-		entityManager.remove(entityManager.merge(crime));
-	}
+		entityManager.remove(entityManager.merge(crime));		
+	}		
 
 
 	@SuppressWarnings("unchecked")
@@ -74,4 +74,6 @@ public class CrimeDAO {
 	public Crime buscarPorId(long id) {
 		return entityManager.find(Crime.class, id);
 	}
+
+	
 }

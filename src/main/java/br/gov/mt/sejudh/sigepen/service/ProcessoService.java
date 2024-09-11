@@ -9,6 +9,7 @@ import javax.interceptor.Interceptors;
 import br.gov.mt.sejudh.sigepen.dao.ProcessoDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
+import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
@@ -16,7 +17,7 @@ import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 public class ProcessoService {
 
 	@Inject
-	private ProcessoDAO dao;
+	private ProcessoDAO dao;	
 
 	@Interceptors(EJBExcInterceptor.class)
 	public Processo salvar(Processo processo){
@@ -42,6 +43,15 @@ public class ProcessoService {
 	public Processo buscaProcessoPorId(Processo processo){
 		return dao.buscaProcessoPorId(processo);
 	}
+	
+	public void excluirProcesso(Processo processo) throws ValidacaoException {					
+		dao.excluirProcesso(processo);		
+	}
+	
+	public long contarProcessosPorRecuperando(long idRecuperando) {        
+        return dao.contarProcessosPorRecuperando(idRecuperando);
+    }
+	
 	
 	public List<Processo> processosPorRecuperando(final long idRecuperando) {
 		return dao.processosPorRecuperando(idRecuperando);

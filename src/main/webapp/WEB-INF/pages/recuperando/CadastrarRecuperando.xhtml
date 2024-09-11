@@ -408,12 +408,34 @@
 						</p:column>
 						<p:column headerText="Ações">
 							<center>
-								<p:commandButton icon="ui-icon-pencil" immediate="true" actionListener="#{recuperandoBean.abrirDialogProcesso(processo, false)}" title="Editar Processo"
-									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and processo.dataFinalizado == null}">
-									<p:ajax event="dialogReturn" listener="#{recuperandoBean.atualizarProcessos}" update=":tabView:formPassagem :formCabecalho"/>
-							    </p:commandButton>
 							
-								<p:commandButton title="Visualizar" icon="ui-icon-document" action="#{recuperandoBean.abrirDialogProcesso(processo, true)}" immediate="true"/>
+								<p:commandButton icon="ui-icon-pencil" 
+									immediate="true"
+									actionListener="#{recuperandoBean.abrirDialogProcesso(processo, false)}" 
+									title="Editar Processo"
+									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao and processo.dataFinalizado == null}">
+									
+									<p:ajax event="dialogReturn" listener="#{recuperandoBean.atualizarProcessos}" 
+										update=":tabView:formPassagem :formCabecalho"/>
+							    </p:commandButton>
+							    							    							
+								<p:commandButton
+									immediate="true"
+									action="#{recuperandoBean.abrirDialogProcesso(processo, true)}"  
+									title="Visualizar" 
+									icon="ui-icon-document" 
+								/>
+																
+								<p:commandButton 
+								    action="#{recuperandoBean.excluirProcesso(processo)}" 
+								    icon="ui-icon-trash" 
+								    title="Excluir"					
+								    update=":tabView:formPassagem :formCabecalho"			     								    								     
+								    rendered="#{securityUtil.possuiPermissao('ExcluirProcesso')}" />  
+								    
+	
+														    							  						
+								
 								<p:commandButton title="Finalizar Processo" icon="ui-icon-check" action="#{recuperandoBean.processoSelecionado(processo)}" oncomplete="PF('dialogFinalizarProcesso').show()" update=":formDialogFinalizarProcesso :tabView:formPassagem" process="@form" 
 									rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and securityUtil.possuiPermissao('FinalizarProcessoRecuperando') and !recuperandoBean.isVisualizacao and processo.dataFinalizado == null and processo.getRegimeAtual().getDescricao().equals('Réu Solto')
                 and processo.getCondicaoAtual().getDescricao().equals('Condenado')}"/>
