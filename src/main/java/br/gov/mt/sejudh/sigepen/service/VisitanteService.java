@@ -621,7 +621,7 @@ public class VisitanteService extends BaseService<Visitante, Long> {
 		return visitanteDAO.buscarVisitantePorId(id);
 	}
 
-	public boolean verificaResponsavelPossiCredenciamentoParaRecuperando(Visitante responsavel, Recuperando recuperandoSelecionado) {
+	public boolean verificaResponsavelPossiCredenciamentoParaRecuperando(List<Visitante> responsavel, Recuperando recuperandoSelecionado) {
 		return visitanteDAO.verificaResponsavelPossiCredenciamentoParaRecuperando(responsavel, recuperandoSelecionado);
 	}
 }

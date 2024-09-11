@@ -459,6 +459,10 @@ public class RecuperandoService {
 		return dao.salvarParticularidade(p);
 	}
 	
+	public void substituirFoto(Foto foto, Foto fotoAntiga) throws ValidacaoException {
+		dao.substituirFoto(foto,fotoAntiga);
+	}
+	
 	public void excluirFoto(Foto f) throws ValidacaoException {
 		if(dao.fotoVinculada(f)){
 			throw new ValidacaoException("Foto vinculada a uma movimentação ou a uma passagem. Exclusão não permitida!");
