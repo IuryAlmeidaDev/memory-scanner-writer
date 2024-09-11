@@ -1,0 +1,3 @@
+INSERT INTO SIGEPEN_OWNER.PERMISSAO
+(ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+VALUES(282, 'ExcluirProcesso', 'Permite excluir processo.', 3);
