@@ -103,7 +103,8 @@ public class SecurityUtil implements Serializable {
 			case "recuperando":
 				resultado = this.possuiPermissao("ListarRecuperando") || 
 							this.possuiPermissao("ListarFaltaDisciplinar") || 
-							this.possuiPermissao("UnificarRecuperando");
+							this.possuiPermissao("UnificarRecuperando") ||
+							this.possuiPermissao("ExcluirProcesso");
 				break;
 				
 			case "movimentacoes":

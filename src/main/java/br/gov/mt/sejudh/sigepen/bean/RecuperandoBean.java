@@ -39,6 +39,7 @@ import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
+import br.gov.mt.sejudh.sigepen.bean.outros.CadastrarProcessoBean;
 import br.gov.mt.sejudh.sigepen.biometrics.BiometriaRetorno;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
@@ -109,7 +110,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ViewScoped
 @URLMappings(mappings = {
 		@URLMapping(id = "ListarRecuperando", pattern = "/recuperando", viewId = "/WEB-INF/pages/recuperando/ListarRecuperandoNovo.xhtml"),
-		@URLMapping(id = "CadastrarRecuperando", pattern = "/recuperando/cadastrar", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
+		@URLMapping(id = "CadastrarRecuperando", pattern = "/recuperando/cadastrar", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),	
 		@URLMapping(id = "AlterarRecuperando", pattern = "/recuperando/alterar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "VisualizarRecuperando", pattern = "/recuperando/visualizar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "RelatorioInfopen", pattern = "/recuperando/infopen", viewId = "/WEB-INF/pages/recuperando/RelatorioInfopen.xhtml") })
@@ -196,6 +197,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	@Inject
 	private ProcessoService processoService;
 
+	@Inject
+	private CadastrarProcessoBean cadastrarProcessoBean;
+	
 	@Inject
 	private BiometriaService bioService;
 
@@ -667,6 +671,20 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		}
 
 		return null;
+	}
+	
+	public void excluirProcesso(Processo processo) throws ValidacaoException {
+		try {											
+			cadastrarProcessoBean.excluirProcessoRegimeCondicaoECrime(processo);
+			this.recuperando.getProcessos().remove(processo);
+			
+			facesUtil.exibirMensagemInfo("Processo " + processo.getNumeroProcesso() + " excluído(a) com sucesso!", true);
+			LoggerUtil.logInfo(Acao.EXCLUIR, processo, log);
+			
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir processo (" + processo.getNumeroProcesso() + "): " + e.getMessage());
+			LoggerUtil.logErro(Acao.EXCLUIR, recuperando, e, log);
+		}
 	}
 
 	public void excluir(RecuperandoView recuperando) {
