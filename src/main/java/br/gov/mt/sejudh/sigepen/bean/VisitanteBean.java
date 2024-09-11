@@ -768,9 +768,11 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			return;
 		}
 
-		boolean verificacaoAntiga = !verificaVisitanteResponsavelPossuiCredenciamento(this.visitante, this.recuperandoSelecionado);
-		boolean verificacaoNova = !verificaResponsavelPossiCredenciamentoParaRecuperando(this.visitante.getVisitantesReponsaveis(), this.recuperandoSelecionado);
-		if (this.visitante.getVisitantesReponsaveis()!= null && verificacaoNova) {
+		//	boolean verificacaoAntiga = !verificaVisitanteResponsavelPossuiCredenciamento(this.visitante, this.recuperandoSelecionado);
+//		boolean verificacaoNova = !verificaResponsavelPossiCredenciamentoParaRecuperando(this.visitante.getVisitantesReponsaveis(), this.recuperandoSelecionado);
+		if (this.visitante.getVisitantesReponsaveis()!= null
+				&& !this.visitante.getVisitantesReponsaveis().isEmpty()
+				&& !verificaResponsavelPossiCredenciamentoParaRecuperando(this.visitante.getVisitantesReponsaveis(), this.recuperandoSelecionado)) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ATENÇÃO", "O responsável do visitante não possui credenciamento aprovado para este recuperando.");
 			return;
 		}
