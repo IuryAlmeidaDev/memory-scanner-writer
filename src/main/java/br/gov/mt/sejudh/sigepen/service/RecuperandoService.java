@@ -282,6 +282,10 @@ public class RecuperandoService {
 	public void excluir(RecuperandoView recuperando) {
 		dao.excluir(recuperando.getId());
 	}
+	
+	public void excluirProcesso(Processo processo) throws ValidacaoException {
+		processoDao.excluirProcesso(processo);
+	}
 
 	public Recuperando buscarRecuperandoPorId(long id, boolean buscarAuditoria) {
 		Recuperando recuperando = dao.buscarRecuperandoPorId(id);
