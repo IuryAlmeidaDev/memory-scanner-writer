@@ -25,7 +25,7 @@
 	</parameter>
 	<parameter name="FILTRO" class="java.lang.String"/>
 	<parameter name="CABECALHO_FILTRO" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["cabecalhos\\Filtro.jasper"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$P{FILTRO}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="UNIDADE_LOGADA" class="java.lang.String"/>
 	<queryString>
