@@ -346,6 +346,26 @@ public class PassagemBean extends MetodosDePaginaBean {
 		return null;
 	}
 	
+	public void excluirDesligar() {
+		try {
+//			validaPedidoTransito();
+			
+			passagemService.excluirDesligar(this.recuperando, this.passagem, this.lotacao);
+			this.salvar();
+			LoggerUtil.logInfo(Acao.EXCLUIR, this.recuperando, log);
+			facesUtil.exibirMensagemInfo("Desligamento do(a) recuperando(a) " + this.recuperando.getPessoa().getNome() + " Excluido com sucesso!", true);
+			return;
+//			return "pretty:ListarRecuperando";
+		} catch (ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
+			LoggerUtil.logErro(null, this.recuperando, e, log);
+		}
+		
+//		return null;
+	}
+	
 	public String desligar() {
 		try {
 			validaPedidoTransito();

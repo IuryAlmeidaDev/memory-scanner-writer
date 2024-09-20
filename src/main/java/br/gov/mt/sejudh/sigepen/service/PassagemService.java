@@ -71,6 +71,27 @@ public class PassagemService {
     public Recuperando buscarRecuperandoPorIdDesligamento(long id) {
         return dao.buscarRecuperandoPorIdDesligamento(id);
     }
+    
+    @Interceptors(EJBExcInterceptor.class)
+    public void excluirDesligar(Recuperando recuperando, Passagem passagem, PassagemLotacao lotacao) throws Exception {
+
+        recuperando.setStatus(StatusRecuperando.ATIVO);
+        
+        passagem.setDataDocDesligamento(null);
+        passagem.setDataSaida(null);
+        passagem.setDocumentoDesligamento(null);
+        passagem.setObsDesligamento(null);
+        passagem.setTipoDesligamento(null);
+        passagem.setNumeroDocumento(null);
+        lotacao.setDataSaida(null);
+
+        recuperando.getPassagens().remove(recuperando.getPassagemAtual());
+        passagem.getLotacao().remove(passagem.getLotacaoAtual());
+        passagem.getLotacao().add(lotacao);
+        recuperando.getPassagens().add(passagem);
+
+        recuperandoDao.salvar(recuperando);
+    }
 
     @Interceptors(EJBExcInterceptor.class)
     public void desligar(Recuperando recuperando, Passagem passagem, PassagemLotacao lotacao) throws Exception {
