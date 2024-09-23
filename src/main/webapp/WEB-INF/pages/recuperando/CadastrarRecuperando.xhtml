@@ -1111,7 +1111,7 @@
 										<p:commandButton icon="fa fa-camera" value="Substituir"
 											immediate="true"
 											actionListener="#{recuperandoBean.abrirDialogSubstituicaoFotoJustificativa(f)}"
-											rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and !recuperandoBean.isVisualizacao}">
+											rendered="#{securityUtil.possuiPermissao('SubstituirFoto')}">
 											<p:ajax event="dialogReturn"
 												listener="#{recuperandoBean.substituirFotoJustificativa}"
 												update=":tabView:formAbaFotos :tabView:formAbaFotosImg :tabView:formAbaFotosHistorico :tabView:formFoto :formCabecalho" />
