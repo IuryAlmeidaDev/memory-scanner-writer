@@ -6,199 +6,250 @@
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
-	
+
 	<ui:define name="footer">
 		<ui:include src="/WEB-INF/pages/_script/biometriaPassagemConfig.xhtml" />
-		<h:outputScript library="js" name="biometriaCore.js?ver=#{biometriaUtilBean.getBiometriaJsVersao('core')}" />
-		<h:outputScript library="js" name="biometriaPassagem.js?ver=#{biometriaUtilBean.getBiometriaJsVersao('cliente')}" />
+		<h:outputScript library="js"
+			name="biometriaCore.js?ver=#{biometriaUtilBean.getBiometriaJsVersao('core')}" />
+		<h:outputScript library="js"
+			name="biometriaPassagem.js?ver=#{biometriaUtilBean.getBiometriaJsVersao('cliente')}" />
 	</ui:define>
-	
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
-		
+
 		<h3>Alterar Passagem</h3>
-		
+
 		<h:form prependId="false">
-			<p:remoteCommand name="retornoBiometria" actionListener="#{passagemBean.retornoOperacaoBiometrica()}" />
+			<p:remoteCommand name="retornoBiometria"
+				actionListener="#{passagemBean.retornoOperacaoBiometrica()}" />
 		</h:form>
-				
+
 		<h:form id="formPassagem">
-			<h:inputHidden value="#{passagemBean.visitanteTemBiometria}" id="visitanteTemBiometria" />
+			<h:inputHidden value="#{passagemBean.visitanteTemBiometria}"
+				id="visitanteTemBiometria" />
 			<p:panel header="Recuperando">
-			<div class="row">
-				<div class="col-md-3" align="center">
-					<p:dataGrid id="foto" layout="tabular" style="width: 188px" columns="1" rows="1" value="#{passagemBean.passagem.foto}" emptyMessage="Sem foto de frente." var="f">
-					    <p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}" cache="false" width="180" height="240">
-						   <f:param name="hashId" value="#{f.imagem.id}" />
-						</p:graphicImage>
-							</p:dataGrid>
-							<br/>
-							
-				</div>
-			
-				<div class="col-md-5">
-					<sgp:formOutputLabel labelValue="Matrícula" value="#{passagemBean.recuperando.id}" />
-					<sgp:formOutputLabel labelValue="Nome" value="#{passagemBean.recuperando.pessoa.nome}" />
-					<sgp:formOutputLabel labelValue="Nome da mãe" value="#{passagemBean.recuperando.pessoa.nomeMae}" />
-					<sgp:formOutputLabel labelValue="Data Nascimento" value="#{passagemBean.recuperando.pessoa.dataNascimento}" converterData="true"/>
-		           	<br /><br /><br /><br /><br /><br />
-	                
-				    <div class="row">
-                            <div class="ui-g">
-                                <p:commandButton icon="fa fa-camera" value="Alterar Foto" immediate="true" actionListener="#{passagemBean.abrirDialogFoto}" rendered="#{!recuperandoBean.isVisualizacao}" style="margin-right: 12px;margin-left: -220px; margin-top: 25px;">
-									<p:ajax event="dialogReturn" listener="#{passagemBean.associarFoto}" update=":formPassagem:foto"/>
+				<div class="row">
+					<div class="col-md-3" align="center">
+						<p:dataGrid id="foto" layout="tabular" style="width: 188px"
+							columns="1" rows="1" value="#{passagemBean.passagem.foto}"
+							emptyMessage="Sem foto de frente." var="f">
+							<p:graphicImage value="#{imageHandlerBean.getImagem(f.imagem)}"
+								cache="false" width="180" height="240">
+								<f:param name="hashId" value="#{f.imagem.id}" />
+							</p:graphicImage>
+						</p:dataGrid>
+						<br />
+
+					</div>
+
+					<div class="col-md-5">
+						<sgp:formOutputLabel labelValue="Matrícula"
+							value="#{passagemBean.recuperando.id}" />
+						<sgp:formOutputLabel labelValue="Nome"
+							value="#{passagemBean.recuperando.pessoa.nome}" />
+						<sgp:formOutputLabel labelValue="Nome da mãe"
+							value="#{passagemBean.recuperando.pessoa.nomeMae}" />
+						<sgp:formOutputLabel labelValue="Data Nascimento"
+							value="#{passagemBean.recuperando.pessoa.dataNascimento}"
+							converterData="true" />
+						<br /> <br /> <br /> <br /> <br /> <br />
+
+						<div class="row">
+							<div class="ui-g">
+								<p:commandButton icon="fa fa-camera" value="Alterar Foto"
+									immediate="true"
+									actionListener="#{passagemBean.abrirDialogFoto}"
+									rendered="#{!recuperandoBean.isVisualizacao}"
+									style="margin-right: 12px;margin-left: -220px; margin-top: 25px;">
+									<p:ajax event="dialogReturn"
+										listener="#{passagemBean.associarFoto}"
+										update=":formPassagem:foto" />
 								</p:commandButton>
-								
+
 							</div>
-		            </div>
-				    
-				    
-				</div>			
-                              	
-                </div>    
+						</div>
+
+
+					</div>
+
+				</div>
 			</p:panel>
 
-			<br/>
+			<br />
 			<p:panel header="Passagem">
-				<sgp:formCalendar labelValue="Data da Prisão" value="#{passagemBean.passagem.dataPrisao}" dataMaxima="#{passagemBean.dataMaximaDesligamento}" display="text" validationRequired="true" pattern="dd/MM/yyyy"/>
-				<sgp:formCalendar labelValue="Data da Entrada" value="#{passagemBean.passagem.dataEntrada}" dataMaxima="#{passagemBean.dataMaximaDesligamento}" display="text" validationRequired="true" pattern="dd/MM/yyyy HH:mm"/>
-				<br/><br/>
+				<sgp:formCalendar labelValue="Data da Prisão"
+					value="#{passagemBean.passagem.dataPrisao}"
+					dataMaxima="#{passagemBean.dataMaximaDesligamento}" display="text"
+					validationRequired="true" pattern="dd/MM/yyyy" />
+				<sgp:formCalendar labelValue="Data da Entrada"
+					value="#{passagemBean.passagem.dataEntrada}"
+					dataMaxima="#{passagemBean.dataMaximaDesligamento}" display="text"
+					validationRequired="true" pattern="dd/MM/yyyy HH:mm" />
+				<br />
+				<br />
 				<h:panelGroup id="infoEst">
 					<div class="row">
 						<div class="col-md-10">
-							<sgp:formOutputLabel style="vertical-align: top" labelValue="Estrutura (Cela)" value="#{passagemBean.lotacao.estrutura.nomeCompleto}" />
-							<p:commandButton style="margin-top: -5px" icon="ui-icon ui-icon-search" immediate="true" actionListener="#{passagemBean.abrirDialogEstrutura}">
-								<p:ajax event="dialogReturn" listener="#{passagemBean.associarEstrutura}" update=":formPassagem:infoEst" />
+							<sgp:formOutputLabel style="vertical-align: top"
+								labelValue="Estrutura (Cela)"
+								value="#{passagemBean.lotacao.estrutura.nomeCompleto}" />
+							<p:commandButton style="margin-top: -5px"
+								icon="ui-icon ui-icon-search" immediate="true"
+								actionListener="#{passagemBean.abrirDialogEstrutura}">
+								<p:ajax event="dialogReturn"
+									listener="#{passagemBean.associarEstrutura}"
+									update=":formPassagem:infoEst" />
 							</p:commandButton>
 						</div>
 					</div>
 				</h:panelGroup>
 			</p:panel>
-			
-			<br/>
-			<p:panel header="Procedência" id="painelProcedencia" style="height:400px">
-				<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{passagemBean.abrirDialogProcedencia}">
+
+			<br />
+			<p:panel header="Procedência" id="painelProcedencia"
+				style="height:400px">
+				<p:commandButton icon="ui-icon-plus" value="Adicionar"
+					immediate="true"
+					actionListener="#{passagemBean.abrirDialogProcedencia}">
 					<p:ajax event="dialogReturn"
 						listener="#{passagemBean.associarProcedencia}"
 						update=":formPassagem:painelProcedencia" />
 				</p:commandButton>
-				
-				<sgp:formOutputLabel 
+
+				<sgp:formOutputLabel
 					value="#{passagemBean.passagemProcedencia.procedencia.nome}"
-					labelValue="Procedência"/>
-				
-				<sgp:formOutputLabel 
+					labelValue="Procedência" />
+
+				<sgp:formOutputLabel
 					value="#{passagemBean.passagemProcedencia.procedencia.cidade.estado.nome}"
-					labelValue="Estado"/>
-					
+					labelValue="Estado" />
+
 				<sgp:formOutputLabel
 					value="#{passagemBean.passagemProcedencia.procedencia.cidade.nome}"
-					labelValue="Cidade"/>
-			
-				<sgp:formInputTextarea 
-					id="observacao"
-					labelValue="Observação"
-					value="#{passagemBean.passagemProcedencia.observacao}"
-					rows="10"
-					columns="50"
-					maxlength="250"
-					autoResize="true"
+					labelValue="Cidade" />
+
+				<sgp:formInputTextarea id="observacao" labelValue="Observação"
+					value="#{passagemBean.passagemProcedencia.observacao}" rows="10"
+					columns="50" maxlength="250" autoResize="true"
 					size="#{passagemBean.passagemProcedencia.observacao.length()}"
-					display="text"
-					validationRequired="true"/>
+					display="text" validationRequired="true" />
 			</p:panel>
-			
-			<br />
 
 			<br />
 
-			<p:panel header="Desligamento" rendered="#{passagemBean.passagem.dataSaida != null}">
-				<sgp:formCalendar labelValue="Data" value="#{passagemBean.passagem.dataSaida}" dataMaxima="#{passagemBean.dataMaximaDesligamento}" display="text" requiredMessage="*" validationRequired="true" pattern="dd/MM/yyyy HH:mm" />
-				<sgp:formSelectOneMenu 
-						id="motivo" labelValue="Motivo"
-						value="#{passagemBean.passagem.tipoDesligamento}"
-						itemsValue="#{comboHelperBean.tipoDesligamento}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						temSelecione="true"
-						display="text" requiredMessage="*" validationRequired="true">
-							<f:ajax event="change" listener="#{passagemBean.alterarTipoDesligamento}" render=":formPassagem:destino"/>
-						</sgp:formSelectOneMenu>
-				<h:panelGroup id="destino" >
-					<sgp:formInputText id="estabelecimento" style="vertical-align: top" 
-						labelValue="Estabelecimento" 
-						value="#{passagemBean.passagem.estabelecimentoDestino.nome}" 
-						size="40" 
-						disabled="true" 
-						rendered="#{passagemBean.passagem.tipoDesligamento != null and passagemBean.passagem.tipoDesligamento.descricao.equalsIgnoreCase('Outro Sistema Penitenciário')}"/>
-						
-						<p:commandButton style="margin-top: -5px" icon="ui-icon-plus" immediate="true" actionListener="#{passagemBean.abrirDialogEstabelecimento}"
-							rendered="#{passagemBean.passagem.tipoDesligamento != null and passagemBean.passagem.tipoDesligamento.descricao.equalsIgnoreCase('Outro Sistema Penitenciário')}">
-							<p:ajax event="dialogReturn" listener="#{passagemBean.associarEstabelecimento}" update=":formPassagem:estabelecimento:input" />
-						</p:commandButton>	
+			<br />
+
+			<p:panel header="Desligamento"
+				rendered="#{passagemBean.passagem.dataSaida != null}">
+				<sgp:formCalendar labelValue="Data"
+					value="#{passagemBean.passagem.dataSaida}"
+					dataMaxima="#{passagemBean.dataMaximaDesligamento}" display="text"
+					requiredMessage="*" validationRequired="true"
+					pattern="dd/MM/yyyy HH:mm" />
+				<sgp:formSelectOneMenu id="motivo" labelValue="Motivo"
+					value="#{passagemBean.passagem.tipoDesligamento}"
+					itemsValue="#{comboHelperBean.tipoDesligamento}"
+					itemValue="#{item}" itemLabel="#{item.descricao}"
+					temSelecione="true" display="text" requiredMessage="*"
+					validationRequired="true">
+					<f:ajax event="change"
+						listener="#{passagemBean.alterarTipoDesligamento}"
+						render=":formPassagem:destino" />
+				</sgp:formSelectOneMenu>
+				<h:panelGroup id="destino">
+					<sgp:formInputText id="estabelecimento" style="vertical-align: top"
+						labelValue="Estabelecimento"
+						value="#{passagemBean.passagem.estabelecimentoDestino.nome}"
+						size="40" disabled="true"
+						rendered="#{passagemBean.passagem.tipoDesligamento != null and passagemBean.passagem.tipoDesligamento.descricao.equalsIgnoreCase('Outro Sistema Penitenciário')}" />
+
+					<p:commandButton style="margin-top: -5px" icon="ui-icon-plus"
+						immediate="true"
+						actionListener="#{passagemBean.abrirDialogEstabelecimento}"
+						rendered="#{passagemBean.passagem.tipoDesligamento != null and passagemBean.passagem.tipoDesligamento.descricao.equalsIgnoreCase('Outro Sistema Penitenciário')}">
+						<p:ajax event="dialogReturn"
+							listener="#{passagemBean.associarEstabelecimento}"
+							update=":formPassagem:estabelecimento:input" />
+					</p:commandButton>
 				</h:panelGroup>
-				
-				<sgp:formInputText 
-						id="numeroDocumento"
-						labelValue="Núm. Documento"
-						value="#{passagemBean.passagem.numeroDocumento}"
-						maxlength="80"
-						size="40"
-						permiteCaracterEspecial="true"
-						/>
-				
-				<sgp:formInputText 
-						id="documento"
-						labelValue="Nome Documento"
-						value="#{passagemBean.passagem.documentoDesligamento}"
-						maxlength="50"
-						size="80"
-						display="text"
-						/>
-												
-					<sgp:formCalendar display="text" labelValue="Data Documento"
-						value="#{passagemBean.passagem.dataDocDesligamento}" 
-						dataMaxima="#{passagemBean.dataMinima}" />
-						
-				<sgp:formInputTextarea 
-					id="obsDesligamento"
-					labelValue="Observação"
-					value="#{passagemBean.passagem.obsDesligamento}"
-					rows="5"
-					columns="100"
-					maxlength="250"
-					autoResize="true"
+
+				<sgp:formInputText id="numeroDocumento" labelValue="Núm. Documento"
+					value="#{passagemBean.passagem.numeroDocumento}" maxlength="80"
+					size="40" permiteCaracterEspecial="true" />
+
+				<sgp:formInputText id="documento" labelValue="Nome Documento"
+					value="#{passagemBean.passagem.documentoDesligamento}"
+					maxlength="50" size="80" display="text" />
+
+				<sgp:formCalendar display="text" labelValue="Data Documento"
+					value="#{passagemBean.passagem.dataDocDesligamento}"
+					dataMaxima="#{passagemBean.dataMinima}" />
+
+				<sgp:formInputTextarea id="obsDesligamento" labelValue="Observação"
+					value="#{passagemBean.passagem.obsDesligamento}" rows="5"
+					columns="100" maxlength="250" autoResize="true"
 					size="#{passagemBean.passagem.obsDesligamento.length()}"
-					display="text" requiredMessage="*" validationRequired="true" 
-					/>
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				
-				<p:commandButton value="Excluir desligamento" icon="ui-icon-disk" action="#{passagemBean.excluirDesligar}" update="@form"/>
-			
+					display="text" requiredMessage="*" validationRequired="true" />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+				<br />
+
+				<p:commandButton value="Excluir desligamento" icon="ui-icon-disk"
+					action="#{passagemBean.excluirDesligar}" update="@form"
+					rendered="#{securityUtil.possuiPermissao('ExcluirDesligamentoRecuperando')}">
+					<p:confirm header="Confirmação"
+						message="Deseja excluir o Desligamento?" icon="ui-icon-alert" />
+				</p:commandButton>
+
 			</p:panel>
 			<br />
-
-			<p:commandButton value="Salvar" icon="ui-icon-disk" action="#{passagemBean.salvar}" update="@form"/>
-			<p:button outcome="pretty:ListarRecuperando" value="Voltar" icon="ui-icon-arrowreturnthick-1-w" />
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			<p:commandButton value="Salvar" icon="ui-icon-disk"
+				action="#{passagemBean.salvar}" update="@form" />
+			<p:button outcome="pretty:ListarRecuperando" value="Voltar"
+				icon="ui-icon-arrowreturnthick-1-w" />
 		</h:form>
-		
-	    <h:form id="formAutCadBio2" prependId="false">
-	        <p:dialog id="dialogAutorizacaoBiometria2" dynamic="true" header="Autorização para passagem SEM BIOMETRIA" showEffect="fade" widgetVar="dlgAutBio2" modal="true" draggable="false"
-	                  resizable="false" closeOnEscape="true">
-	            <h:panelGroup id="divAut2">
-	                <sgp:formInputText id="login2" labelValue="Login" maxlength="11" minlength="4" value="#{passagemBean.loginUsuarioAutorizador}" validationRequired="true"
-	                                   display="text" requiredMessage="*"/>
-	                <sgp:formInputPassword id="senha2" labelValue="Senha" maxlength="15" display="text" requiredMessage="*"
-	                                       value="#{passagemBean.senhaUsuarioAutorizador}" validationRequired="true" />
-	                <sgp:formInputTextarea id="observacao2" labelValue="Observação" value="#{passagemBean.observacaoUsuarioAutorizador}"
-	                                       columns="40" maxlength="250" display="text" requiredMessage="*" validationRequired="true" />
-	
-	                <br/><br/><br/>
-	                <p:commandButton value="Autorizar" action="#{passagemBean.autorizarPassagemSemBiometria()}" icon="ui-icon-disk" />
-	                <p:commandButton value="Fechar" onclick="PF('dlgAutBio2').hide()" immediate="true"/>
-	            </h:panelGroup>
-	        </p:dialog>
-	    </h:form>
-	    
+
+		<h:form id="formAutCadBio2" prependId="false">
+			<p:dialog id="dialogAutorizacaoBiometria2" dynamic="true"
+				header="Autorização para passagem SEM BIOMETRIA" showEffect="fade"
+				widgetVar="dlgAutBio2" modal="true" draggable="false"
+				resizable="false" closeOnEscape="true">
+				<h:panelGroup id="divAut2">
+					<sgp:formInputText id="login2" labelValue="Login" maxlength="11"
+						minlength="4" value="#{passagemBean.loginUsuarioAutorizador}"
+						validationRequired="true" display="text" requiredMessage="*" />
+					<sgp:formInputPassword id="senha2" labelValue="Senha"
+						maxlength="15" display="text" requiredMessage="*"
+						value="#{passagemBean.senhaUsuarioAutorizador}"
+						validationRequired="true" />
+					<sgp:formInputTextarea id="observacao2" labelValue="Observação"
+						value="#{passagemBean.observacaoUsuarioAutorizador}" columns="40"
+						maxlength="250" display="text" requiredMessage="*"
+						validationRequired="true" />
+
+					<br />
+					<br />
+					<br />
+					<p:commandButton value="Autorizar"
+						action="#{passagemBean.autorizarPassagemSemBiometria()}"
+						icon="ui-icon-disk" />
+					<p:commandButton value="Fechar" onclick="PF('dlgAutBio2').hide()"
+						immediate="true" />
+				</h:panelGroup>
+			</p:dialog>
+		</h:form>
+
 	</ui:define>
 </ui:composition>

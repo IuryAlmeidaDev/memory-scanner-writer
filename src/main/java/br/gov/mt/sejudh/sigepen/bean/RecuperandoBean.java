@@ -951,7 +951,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public void abrirDialogSubstituicaoFotoJustificativa(Foto foto) {
 		this.fotoSubstituida = foto;
-		facesUtil.exibirPaginaDialog("pretty:AssociarSubstituicaoFotoJustificativa");
+		facesUtil.exibirPaginaDialog("pretty:AssociarSubstituicaoFotoJustificativa", 768, 1024);
 	}
 
 	public void substituirFotoJustificativa(SelectEvent event) {
