@@ -26,6 +26,30 @@
 		            <p:ajax update="meuFormulario:panel_filtros" />
 		        </sgp:formSelectOneMenuRelatorios>
 		        
+		        <!-- Primeiro SelectOneMenu -->
+	
+		            <sgp:formSelectOneMenuRelatorios 
+		            	id="tipo_relatorioss" value="#{infopenBean.tipoRelatorio}"
+						labelValue="Por Data" 
+						display="text" styleFormLabelColumn="width:145px">						
+			                <f:selectItem itemLabel="NAO" itemValue="" />			                
+			                <f:selectItem itemLabel="SIM" itemValue="data" />
+			                <p:ajax update="meuFormulario:painelData" />			                
+		            </sgp:formSelectOneMenuRelatorios>
+		       
+		
+		        <!-- Segundo Campo (p:calendar) que só aparece se "data" for selecionado -->
+		        <p:outputPanel id="painelData" deferred="true">
+		            <sgp:formCalendar 
+		            	id="data_inicial" value="#{infopenBean.filtro.dataInicial}" 
+						rendered="#{infopenBean.tipoRelatorio eq 'data'}"
+						labelValue="Data Inicial" pattern="dd/MM/yyyy" 
+						styleFormLabelColumn="width:145px">						
+		                	<p:ajax event="dateSelect" />		                
+		            </sgp:formCalendar>
+		         </p:outputPanel>
+		       
+		        
 				<h:panelGroup id="panel_filtros" >
 					<sgp:formSelectOneMenuRelatorios
 						labelValue="Nacionalidade"

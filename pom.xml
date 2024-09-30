@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.gov.mt.sejudh.sigepen</groupId>
     <artifactId>sigepen</artifactId>
-    <version>1.19.3</version>
+    <version>1.19.4</version>
     <packaging>war</packaging>
     <name>sigepen Webapp</name>
     <description>sigepen Webapp</description>

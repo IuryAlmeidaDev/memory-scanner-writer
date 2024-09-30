@@ -47,6 +47,7 @@ public enum Relatorio {
 	ListaDeChamadaComFotoNovo("LISTA DE CHAMADA"),
 	ExtratoRecuperando("EXTRATO DO RECUPERANDO", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	EstatisticoInfopen("Relatório Estatístico Infopen"),
+	EstatisticoInfopenPorData("Relatório Estatístico Infopen Por Data"),
 	ListaDeConfere("LISTA DE CHAMADA"),
 	ListaVisitantes("Credenciamentos"),
 	HistoricoCredenciamentos("HISTÓRICO DO CREDENCIAMENTO"),
