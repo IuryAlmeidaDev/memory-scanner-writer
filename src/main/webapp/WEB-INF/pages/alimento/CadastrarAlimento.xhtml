@@ -23,6 +23,16 @@
                         maxlength="80"/>
 
                 <sgp:formSelectOneMenu
+                        id="unidadeMedida"
+                        labelValue="Unidade de Medida"
+                        value="#{alimentoBean.alimento.unidadeMedida}"
+                        itemsValue="#{comboHelperBean.unidadesMedida}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        disabled="#{alimentoBean.isVisualizacao}"
+                        display="text"/>
+
+                <sgp:formSelectOneMenu
                         id="status"
                         labelValue="Status"
                         value="#{alimentoBean.alimento.status}"

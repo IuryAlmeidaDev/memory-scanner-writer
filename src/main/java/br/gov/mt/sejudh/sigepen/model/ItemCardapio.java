@@ -39,10 +39,10 @@ public class ItemCardapio extends BaseModel<Long>{
 	private Status status;
 	
 	@Column(name = "MASC_MG", nullable = false)
-	private Double mg_masc;
+	private Double masc;
 	
 	@Column(name = "FEM_MG", nullable = false)
-	private Double mg_fem;
+	private Double fem;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CARDAPIO_ID")
@@ -77,20 +77,20 @@ public class ItemCardapio extends BaseModel<Long>{
 		this.status = status;
 	}
 
-	public Double getMg_masc() {
-		return mg_masc;
+	public Double getMasc() {
+		return masc;
 	}
 
-	public void setMg_masc(Double mg_masc) {
-		this.mg_masc = mg_masc;
+	public void setMasc(Double masc) {
+		this.masc = masc;
 	}
 
-	public Double getMg_fem() {
-		return mg_fem;
+	public Double getFem() {
+		return fem;
 	}
 
-	public void setMg_fem(Double mg_fem) {
-		this.mg_fem = mg_fem;
+	public void setFem(Double fem) {
+		this.fem = fem;
 	}
 
 	public Cardapio getCardapio() {

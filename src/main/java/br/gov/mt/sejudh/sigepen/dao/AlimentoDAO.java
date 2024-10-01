@@ -35,20 +35,17 @@ public class AlimentoDAO extends BaseDAO<Alimento, Long> {
 
 		return alimentos;
 	}
-	
-	public Alimento buscarAlimentoPorNome(Alimento alimento) {
-		String jpql = "select a from Alimento a where status = :status and descricao = :descricao";
+
+	public Alimento buscarAlimento(Alimento alimento) {
+		String jpql = "select a from Alimento a where status = :status and descricao = :descricao and :unidadeMedida = :unidadeMedida";
 		Query query = em.createQuery(jpql, Alimento.class);
 		query.setParameter("status", Status.ATIVO);
 		query.setParameter("descricao", alimento.getDescricao());
-		Alimento alimentoRetorno = new Alimento();
+		query.setParameter("unidadeMedida", alimento.getUnidadeMedida());
 		try {
-			alimentoRetorno = (Alimento) query.getSingleResult();			
-		}catch(NoResultException e) {
+			return (Alimento) query.getSingleResult();
+		} catch (NoResultException e) {
 			return null;
 		}
-
-		return alimentoRetorno;
 	}
-
 }

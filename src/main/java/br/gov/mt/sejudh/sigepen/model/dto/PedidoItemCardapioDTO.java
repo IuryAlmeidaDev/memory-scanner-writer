@@ -4,8 +4,8 @@ public class PedidoItemCardapioDTO {
 
 	private String descricao;
 	private Double quantidade;
-	private Double mg_masc;
-	private Double mg_fem;
+	private Double masc;
+	private Double fem;
 	
 	public String getDescricao() {
 		return descricao;
@@ -23,23 +23,22 @@ public class PedidoItemCardapioDTO {
 		this.quantidade = quantidade * (peso / 1000);
 	}
 	
-	public Double getMg_masc() {
-		return mg_masc;
+	public Double getMasc() {
+		return masc;
 	}
 	
-	public void setMg_masc(Double mg_masc) {
-		this.mg_masc = mg_masc;
+	public void setMasc(Double masc) {
+		this.masc = masc;
 	}
 	
-	public double getMg_fem() {
-		return mg_fem;
+	public double getFem() {
+		return fem;
 	}
 	
-	public void setMg_fem(double mg_fem) {
-		this.mg_fem = mg_fem;
+	public void setFem(double fem) {
+		this.fem = fem;
 	}
 	
-	@Override
 	public String toString() {
 		return "PedidoItemCardapioDTO [+ descricao = " + descricao + "]";
 	}

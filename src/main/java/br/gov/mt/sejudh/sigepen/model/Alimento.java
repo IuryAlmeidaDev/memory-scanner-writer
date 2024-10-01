@@ -1,7 +1,9 @@
 package br.gov.mt.sejudh.sigepen.model;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.gov.mt.sejudh.sigepen.conversores.EnumCustomConverter;
+import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
 import org.hibernate.envers.Audited;
 
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
@@ -30,8 +34,13 @@ public class Alimento extends BaseModel<Long>{
 
 	@Column(name = "DESCRICAO", length = 80, nullable = false)
 	private String descricao;
+
+	@Enumerated(EnumType.ORDINAL)
+	@Convert(converter = EnumCustomConverter.class, disableConversion=true)
+	@Column(name = "UNIDADE_MEDIDA", nullable = false)
+	private UnidadeMedida unidadeMedida;
 	
-	@Enumerated
+	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "STATUS", nullable = false)
 	private Status status;
 	
@@ -50,6 +59,14 @@ public class Alimento extends BaseModel<Long>{
 
 	public void setDescricao(String descricao) {
 		this.descricao = Sigepen.formatarEspacos(descricao);
+	}
+
+	public UnidadeMedida getUnidadeMedida() {
+		return unidadeMedida;
+	}
+
+	public void setUnidadeMedida(UnidadeMedida unidadeMedida) {
+		this.unidadeMedida = unidadeMedida;
 	}
 
 	public Status getStatus() {
@@ -100,7 +117,4 @@ public class Alimento extends BaseModel<Long>{
 	public String toString() {
 		return "TipoDieta [id=" + id + ", descricao=" + descricao + ", status=" + status + "]";
 	}
-
-	
-
 }

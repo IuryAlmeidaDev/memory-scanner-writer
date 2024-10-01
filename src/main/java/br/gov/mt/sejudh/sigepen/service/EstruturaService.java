@@ -402,7 +402,7 @@ public class EstruturaService {
 	 * Verifica se se tem pelo menos 1 filho com situação de Ativo ou Inativo. Se
 	 * encontrar 1, retorna verdadeiro, senão falso.
 	 * 
-	 * @param nó da estruturaUnidade
+	 * @param no da estruturaUnidade
 	 * @return true or false
 	 */
 	public boolean validaFilhoAtivoOuParcial(DefaultTreeNode no) {
@@ -422,7 +422,7 @@ public class EstruturaService {
 	 * Se encontrar pelo menos um filho diferente de Ativo e Inativo, o retorno será
 	 * false, caso contrário o retorno será true;
 	 * 
-	 * @param nó da estruturaUnidade
+	 * @param no da estruturaUnidade
 	 * @return true or false
 	 */
 	public boolean validaFilhoAtivoOuInativo(DefaultTreeNode no) {
@@ -499,10 +499,11 @@ public class EstruturaService {
 		TipoRefeicao tipoRefeicao, String data) {
 		CardapioPedidoDTO pedidoCardapio = new CardapioPedidoDTO();
 		PedidoDetalhadoDTO pedidoDetalhado = new PedidoDetalhadoDTO();
-		ArrayList<CardapioPedidoDTO> listaCardapio = new ArrayList<CardapioPedidoDTO>();
+		ArrayList<CardapioPedidoDTO> listaCardapio = new ArrayList<>();
 		pedidoDetalhado.setDataPedido(data);
 
-		for (int i = 0; i < list.size(); i++) {
+		int size = list.size();
+		for (int i = 0; i < size; i++) {
 			if (list.get(i).isEspecial()) {
 				pedidoDetalhado.setQtdEspecial(list.get(i).getQtd().intValue());
 			} else {
@@ -510,9 +511,9 @@ public class EstruturaService {
 			}
 			PedidoItemCardapioDTO pedidoItem = new PedidoItemCardapioDTO();
 			pedidoItem.setDescricao(list.get(i).getItem());
-			pedidoItem.setMg_masc(list.get(i).getMg_masc());
-			pedidoItem.setMg_fem(list.get(i).getMg_fem());
-			Double peso = list.get(i).getSexo().equals("M") ? list.get(i).getMg_masc() : list.get(i).getMg_masc();
+			pedidoItem.setMasc(list.get(i).getMasc());
+			pedidoItem.setFem(list.get(i).getFem());
+			Double peso = list.get(i).getSexo().equals("M") ? list.get(i).getMasc() : list.get(i).getFem();
 			pedidoItem.setQuantidade(Double.valueOf(list.get(i).getQtd()), peso);
 			if ((pedidoCardapio.getNome() == null || list.get(i).getCardapio().equals(pedidoCardapio.getNome()))
 					&& (pedidoCardapio.getEstrutura() == null
@@ -529,7 +530,7 @@ public class EstruturaService {
 				pedidoCardapio.setEstrutura(list.get(i).getNomeEstrutura());
 				pedidoCardapio.getItens().add(pedidoItem);
 			}
-			if ((i + 1) == list.size()) {
+			if ((i + 1) == size) {
 				listaCardapio.add(new CardapioPedidoDTO(pedidoCardapio));
 			}
 		}
