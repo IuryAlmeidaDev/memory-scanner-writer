@@ -205,7 +205,7 @@ public class CardapioBean extends MetodosDePaginaBean {
 
 		try {
 			if (itemCardapio != null) {
-				if (itemCardapio.getMg_fem() < 0 || itemCardapio.getMg_masc() < 0 ) {
+				if (itemCardapio.getFem() < 0 || itemCardapio.getMasc() < 0) {
 					facesUtil.exibirMensagemErro("Valor de gramatura de alimento não pode ser negativo", true);
 					return;
 				}

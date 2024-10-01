@@ -18,7 +18,6 @@
 		<h:form id="meuFormulario">
 			<p:panel>
                 <p:outputLabel value="Consulta"/>
-                
                 <sgp:formInputText
                         id="descricaoConsulta"
                         labelValue="Descrição"
@@ -28,8 +27,17 @@
                         size="40"
                         styleFormLabelColumn="min-width:150px !important"
                 />
-                
-                <sgp:formSelectOneMenu 
+				<sgp:formSelectOneMenu
+                        id="unidadeMedida"
+                        labelValue="Unidade de medida"
+						value="#{alimentoBean.filtro.unidadeMedida}"
+						itemsValue="#{comboHelperBean.unidadesMedida}"
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}"
+						temSelecione="true"
+ 						styleFormLabelColumn="min-width:150px !important"
+                />
+                <sgp:formSelectOneMenu
 					styleFormLabelColumn="min-width:150px !important"
 					id="status" labelValue="Status"
 					value="#{alimentoBean.filtro.status}"
@@ -52,11 +60,15 @@
 					<h:outputText value="#{alimento.id}" />
 				</p:column>
 				
-				<p:column headerText="Descrição" sortBy="#{talimento.descricao}" width="75%">
+				<p:column headerText="Descrição" sortBy="#{alimento.descricao}" width="75%">
 					<h:outputText value="#{alimento.descricao}" />
 				</p:column>
 				
-				<p:column headerText="Situação" sortBy="#{alimento.status}" width="15%">
+				<p:column headerText="Unidade de Medida" sortBy="#{alimento.unidadeMedida}" width="15%">
+                    <h:outputText value="#{alimento.unidadeMedida.descricao}" />
+                </p:column>
+
+				<p:column headerText="Situação" sortBy="#{alimento.status}" width="10%">
                     <h:outputText value="#{alimento.status.descricao}" />
                 </p:column>
 
