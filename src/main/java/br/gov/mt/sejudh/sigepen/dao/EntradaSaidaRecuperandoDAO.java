@@ -153,7 +153,7 @@ public class EntradaSaidaRecuperandoDAO {
 				"ON vis.ID_PESSOA_VISITANTE = pessoa_v.ID " +
 				"LEFT OUTER JOIN " +
 				"SIGEPEN_OWNER.SGP_VISITANTE resp " +
-				"ON resp.ID_VISITANTE = ( " +
+				"ON resp.ID_VISITANTE in ( " +
 				"SELECT DISTINCT vr.VISITANTE_RESPONSAVEL " +
 				"FROM sigepen_owner.sgp_entrada_saida es " +
 				"LEFT JOIN sigepen_owner.sgp_visitante v ON es.id_visitante = v.id_visitante " +
