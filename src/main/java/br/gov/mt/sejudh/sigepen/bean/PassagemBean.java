@@ -41,6 +41,7 @@ import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.AutorizacaoValidacaoSemBiometria;
 import br.gov.mt.sejudh.sigepen.model.Estabelecimento;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.ExclusaoDesligamentoJustificativa;
 import br.gov.mt.sejudh.sigepen.model.Foto;
 import br.gov.mt.sejudh.sigepen.model.Imagem;
 import br.gov.mt.sejudh.sigepen.model.Passagem;
@@ -50,6 +51,7 @@ import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
+import br.gov.mt.sejudh.sigepen.service.ExclusaoDesligamentoJustificativaService;
 import br.gov.mt.sejudh.sigepen.service.PassagemService;
 import br.gov.mt.sejudh.sigepen.service.PedidoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
@@ -103,6 +105,9 @@ public class PassagemBean extends MetodosDePaginaBean {
 	
 	@Inject
 	private PedidoService pedidoService;
+	
+	@Inject
+	private ExclusaoDesligamentoJustificativaService desligamentoJustificativaService;
 
     private String loginUsuarioAutorizador;
     private String senhaUsuarioAutorizador;
@@ -118,6 +123,8 @@ public class PassagemBean extends MetodosDePaginaBean {
 	private Boolean recuperandoTemBiometria = null;
 	
 	private Boolean visitanteTemBiometria = null;
+	
+	private String descricaoJustificativa;
 
 	@URLAction(onPostback=false)
 	public String init() {
@@ -346,9 +353,18 @@ public class PassagemBean extends MetodosDePaginaBean {
 		return null;
 	}
 	
-	public void excluirDesligar() {
+	public void abrirDialogExclusaoDesligamentoJustificativa() {
+		facesUtil.exibirPaginaDialog("AssociarExclusaoDesligamentoJustificativa",300, 800);
+	}
+	
+	public void excluirDesligamento() {
 		try {
-//			validaPedidoTransito();
+			
+			ExclusaoDesligamentoJustificativa desligamentoJustificativa = (ExclusaoDesligamentoJustificativa) facesUtil.getObjetoSessao("exclusaoDesligamentoJustificativa");
+			
+			desligamentoJustificativa.setPassagem(this.passagem);
+			
+			this.desligamentoJustificativaService.salvar(desligamentoJustificativa);
 			
 			passagemService.excluirDesligar(this.recuperando, this.passagem, this.lotacao);
 			this.salvar();
@@ -729,5 +745,13 @@ public class PassagemBean extends MetodosDePaginaBean {
 	
 	public String getAcao() {
 		return this.getAcaoDeTela().toString();
+	}
+
+	public String getDescricaoJustificativa() {
+		return descricaoJustificativa;
+	}
+
+	public void setDescricaoJustificativa(String descricaoJustificativa) {
+		this.descricaoJustificativa = descricaoJustificativa;
 	}
 }

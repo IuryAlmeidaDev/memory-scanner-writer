@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/pages/_templates/dialog.xhtml"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+
+	<ui:define name="head">
+		<title>Justificartiva exclusão desligamento</title>
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<br />
+		<h:form prependId="false">
+			<sgp:formInputTextarea labelValue="Descrição"
+				value="#{associarJustificativaExclusaoDesligamentoBean.exclusaoDesligamentoJustificativa.descricao}"
+				validationRequired="true" id="descricao"
+				requiredMessage="Justificativa é obrigatória." display="display"
+				maxlength="4000" rows="10" columns="100"
+				styleFormLabelColumn="min-width:140px" />
+
+			<br />
+
+
+			<p:commandButton value="Salvar" icon="ui-icon-salve"
+				actionListener="#{associarJustificativaExclusaoDesligamentoBean.incluirJustificativa}" />
+		</h:form>
+
+		<style>
+.ui-fileupload-choose {
+	width: auto !important;
+	height: auto !important;
+}
+
+.ui-panelgrid-content {
+	border: none !important;
+}
+</style>
+	</ui:define>
+</ui:composition>

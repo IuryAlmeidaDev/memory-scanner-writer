@@ -201,10 +201,15 @@
 				<br />
 
 				<p:commandButton value="Excluir desligamento" icon="ui-icon-disk"
-					action="#{passagemBean.excluirDesligar}" update="@form"
+					action="#{passagemBean.abrirDialogExclusaoDesligamentoJustificativa}"
+					update="@form"
 					rendered="#{securityUtil.possuiPermissao('ExcluirDesligamentoRecuperando')}">
 					<p:confirm header="Confirmação"
-						message="Deseja excluir o Desligamento?" icon="ui-icon-alert" />
+						message="Deseja excluir o Desligamento? 
+						 Está ação ira alterar o status do Recuperando de Inativo para Ativo, e limpará os campos preenchidos do desligamento, bem como relatórios correlacionados "
+						icon="ui-icon-alert" />
+					<p:ajax event="dialogReturn"
+						listener="#{passagemBean.excluirDesligamento}" update="@form" />
 				</p:commandButton>
 
 			</p:panel>
