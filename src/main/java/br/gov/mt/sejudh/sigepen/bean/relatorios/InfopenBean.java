@@ -180,9 +180,9 @@ public class InfopenBean extends MetodosDialogBean {
 	            	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	                
 	                String dataInicialFormatada = sdf.format(this.filtro.getDataInicial());
-	                parameters.put("DATA_INICIAL", dataInicialFormatada);
-	               
+	                parameters.put("DATA_SAIDA", dataInicialFormatada);
 	                
+	               	                
 	                fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.EstatisticoInfopenPorData, parameters));
 	                LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório Estatístico Infopen por Data", log);
 	            } 
