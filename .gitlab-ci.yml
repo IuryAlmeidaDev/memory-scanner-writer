@@ -60,6 +60,7 @@ build_maven:
       - tags
       - main
       - feat-gitlab-ci
+      - gitlab-ci-test
   cache:
     - paths:
         - .m2/repository
@@ -83,6 +84,7 @@ code_check:
       - tags
       - main
       - feat-gitlab-ci
+      - gitlab-ci-test
   cache:
     - paths:
         - .m2/repository
@@ -100,6 +102,7 @@ build_desenv:
       - develop
       - gitlab-ci-test
       - feat-gitlab-ci
+      - gitlab-ci-test
   cache:
     - key: "$CI_COMMIT_REF_SLUG"
       paths:
@@ -161,7 +164,8 @@ deploy_rancher_desenv:
       - develop
       - gitlab-ci-test
       - feat-gitlab-ci
-
+      - gitlab-ci-test
+      -
 #DEPLOY RANCHER HOMOLOGAÇÃO
 deploy_rancher_homloga:
   stage: deploy_rancher
@@ -185,7 +189,7 @@ reload_rancher_desenv:
     refs:
       - develop
       - feat-gitlab-ci
-
+      - gitlab-ci-test
 #DEPLOY RANCHER HOMOLOGACAO
 reload_rancher_homologa:
   variables:
