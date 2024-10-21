@@ -165,7 +165,6 @@ deploy_rancher_desenv:
       - gitlab-ci-test
       - feat-gitlab-ci
       - gitlab-ci-test
-      -
 #DEPLOY RANCHER HOMOLOGAÇÃO
 deploy_rancher_homloga:
   stage: deploy_rancher
