@@ -23,6 +23,7 @@ import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 
 import br.gov.mt.sejudh.sigepen.model.Imagem;
+import br.gov.mt.sejudh.sigepen.model.Justificativa;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
@@ -52,6 +53,8 @@ public class AssociarFotoBean extends MetodosDialogBean {
 	private final String EXTENSAO_FOTO_COM_PONTO = "." + EXTENSAO_FOTO;
 	
 	private final String CONTENT_TYPE = "image/" + EXTENSAO_FOTO;
+	
+	private String descricaoJustificativa;
 	
 	@Inject
 	private FacesUtil facesUtil;
@@ -101,6 +104,28 @@ public class AssociarFotoBean extends MetodosDialogBean {
 	        
 			excluirImagemDoDisco();
 			
+			facesUtil.fecharPaginaDialog(imagem);
+		} catch(Exception e) {
+			 e.printStackTrace();
+		}
+    }
+	
+	public void recortarImagemEAssociarESubstituir() {
+		try {
+			if (croppedImage == null) {
+	            throw new Exception("Crop null");
+	        }
+
+	        BufferedImage bi = ImageIO.read(new ByteArrayInputStream(croppedImage.getBytes()));
+	        
+	        byte[] imagemComTamanhoReduzido = reduzirTamanhoDaImagem(512000, bi);
+
+	        Imagem imagem = new Imagem();
+	        imagem.setContentType(CONTENT_TYPE);
+	        imagem.setArquivo(imagemComTamanhoReduzido);
+	        
+			excluirImagemDoDisco();
+			facesUtil.setObjetoSessao("descricaoJustificativa",this.descricaoJustificativa);
 			facesUtil.fecharPaginaDialog(imagem);
 		} catch(Exception e) {
 			 e.printStackTrace();
@@ -206,5 +231,13 @@ public class AssociarFotoBean extends MetodosDialogBean {
 
 	public void setTipoFoto(String tipoFoto) {
 		this.tipoFoto = tipoFoto;
+	}
+	
+	public String getDescricaoJustificativa() {
+		return descricaoJustificativa;
+	}
+
+	public void setDescricaoJustificativa(String descricaoJustificativa) {
+		this.descricaoJustificativa = descricaoJustificativa;
 	}
 }

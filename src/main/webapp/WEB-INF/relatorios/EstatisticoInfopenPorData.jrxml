@@ -1,0 +1,2204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EstatisticoInfopen" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#D3D3D3">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<subDataset name="Nacionalidade" uuid="bc390008-b5da-4822-b513-d6fba9db1093">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false"/>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[select (case
+                      when p.nacionalidade_id = 1 then
+                        'BRASIL'
+                      else
+                        pa.nome
+                    end) pais,
+                    count(r.id) quantidade
+              from $P!{SCHEMA_SUB}.recuperando r
+              join $P!{SCHEMA_SUB}.pessoa p on r.pessoa_id = p.id
+              join $P!{SCHEMA_SUB}.nacionalidade n on p.nacionalidade_id = n.id
+              left join $P!{SCHEMA_SUB}.pais pa on p.pais_id = pa.id
+              join $P!{SCHEMA_SUB}.lista_todos_recuperandos l on l.matricula = r.id
+              join (select p2.recuperando_id, min(p2.data_saida) data_saida
+                      from $P!{SCHEMA_SUB}.passagem p2
+                     group by p2.recuperando_id) p2 on r.id = p2.recuperando_id
+             where l.id_unidade = $P!{UNIDADE_SUB_ID}
+               and r.status = 1
+               and (p2.data_saida <= to_date($P!{DATA_SAIDA}, 'DD/MM/YYYY') or p2.data_saida is null)
+             group by pa.nome, n.descricao, p.nacionalidade_id
+             order by n.descricao, pais]]>
+		</queryString>
+		<field name="PAIS" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="Regime" uuid="d66188d8-e38d-47b8-aed8-34ce9fc51025">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT re.descricao regime, COUNT(DISTINCT r.id) quantidade
+                FROM $P!{SCHEMA_SUB}.recuperando r
+                JOIN $P!{SCHEMA_SUB}.regime re ON r.regime_atual_id = re.id
+                JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON r.id = l.matricula
+                LEFT JOIN (
+                    SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                    FROM $P!{SCHEMA_SUB}.passagem
+                    WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                    GROUP BY RECUPERANDO_ID
+                ) p_max ON r.id = p_max.RECUPERANDO_ID
+                LEFT JOIN $P!{SCHEMA_SUB}.passagem p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                WHERE l.id_unidade = $P!{UNIDADE_SUB_ID}
+                AND r.status = 1
+                GROUP BY re.descricao
+                ORDER BY re.descricao]]>
+		</queryString>
+		<field name="REGIME" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="EstadoCivil" uuid="b51f4864-e8d3-4a54-8d99-e0e32e1955f9">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT(CASE
+                        WHEN ec.descricao IS NULL THEN 'Não informado'
+                        ELSE ec.descricao
+                    END) AS estado,
+                    COUNT(DISTINCT r.id) AS quantidade
+                FROM
+                    $P!{SCHEMA_SUB}.recuperando r
+                LEFT JOIN $P!{SCHEMA_SUB}.estado_civil ec ON r.estado_civil_id = ec.id
+                JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON r.id = l.matricula
+                LEFT JOIN (
+                    SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                    FROM $P!{SCHEMA_SUB}.passagem
+                    WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                    GROUP BY RECUPERANDO_ID
+                ) p_max ON r.id = p_max.RECUPERANDO_ID
+                LEFT JOIN $P!{SCHEMA_SUB}.passagem p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                WHERE
+                    l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    AND r.status = 1
+                GROUP BY
+                    ec.descricao
+                ORDER BY
+                    ec.descricao]]>
+		</queryString>
+		<field name="ESTADO" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="Religiao" uuid="9760a078-0a8d-432b-91e3-cc4b557eda7d">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT(CASE
+                        WHEN re.descricao IS NULL THEN 'Não informado'
+                        ELSE re.descricao
+                    END) AS religiao,
+                    COUNT(DISTINCT r.id) AS quantidade
+                FROM
+                    $P!{SCHEMA_SUB}.recuperando r
+                LEFT JOIN $P!{SCHEMA_SUB}.religiao re ON r.religiao_id = re.id
+                JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON r.id = l.matricula
+                LEFT JOIN (
+                    SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                    FROM $P!{SCHEMA_SUB}.passagem
+                    WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                    GROUP BY RECUPERANDO_ID
+                ) p_max ON r.id = p_max.RECUPERANDO_ID
+                LEFT JOIN $P!{SCHEMA_SUB}.passagem p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                WHERE
+                    r.status = 1
+                    AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                GROUP BY
+                    re.descricao
+                ORDER BY
+                    re.descricao]]>
+		</queryString>
+		<field name="RELIGIAO" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="Escolaridade" uuid="acb988f9-eaba-43af-9386-aa410f99c3ee">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT(CASE
+                        WHEN e.descricao IS NULL THEN 'Não informado'
+                        ELSE e.descricao
+                    END) AS escolaridade,
+                    COUNT(DISTINCT r.id) AS quantidade
+                FROM
+                    $P!{SCHEMA_SUB}.recuperando r
+                LEFT JOIN $P!{SCHEMA_SUB}.escolaridade e ON r.escolaridade_id = e.id
+                JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON r.id = l.matricula
+                LEFT JOIN (
+                    SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                    FROM $P!{SCHEMA_SUB}.passagem
+                    WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                    GROUP BY RECUPERANDO_ID
+                ) p_max ON r.id = p_max.RECUPERANDO_ID
+                LEFT JOIN $P!{SCHEMA_SUB}.passagem p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                WHERE
+                    r.status = 1
+                    AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                GROUP BY
+                    e.descricao
+                ORDER BY
+                    e.descricao]]>
+		</queryString>
+		<field name="ESCOLARIDADE" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="Raca" uuid="cd4cc8d6-2433-419b-956f-47d81ade9752">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT (CASE
+                        WHEN ra.descricao IS NULL THEN 'Não informado'
+                        ELSE ra.descricao
+                    END) AS raca,
+                    COUNT(DISTINCT r.id) AS quantidade
+                FROM $P!{SCHEMA_SUB}.recuperando r
+                LEFT JOIN $P!{SCHEMA_SUB}.raca ra ON r.raca_id = ra.id
+                JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON r.id = l.matricula
+                LEFT JOIN (SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                    FROM $P!{SCHEMA_SUB}.PASSAGEM
+                    WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                    GROUP BY RECUPERANDO_ID
+                ) p_max ON r.id = p_max.RECUPERANDO_ID
+                LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                WHERE l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    AND r.status = 1
+                GROUP BY ra.descricao
+                ORDER BY ra.descricao]]>
+		</queryString>
+		<field name="RACA" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="Idade" uuid="cdecf607-8498-4aa3-8e45-1f2eab9141a6">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT z.idade,
+                    SUM(z.quantidade) AS quantidade
+                FROM (
+                    SELECT
+                        (CASE
+                            WHEN y.idade >= 18 AND y.idade <= 24 THEN 5
+                            WHEN y.idade >= 25 AND y.idade <= 29 THEN 4
+                            WHEN y.idade >= 30 AND y.idade <= 34 THEN 3
+                            WHEN y.idade >= 35 AND y.idade <= 45 THEN 2
+                            WHEN y.idade >= 46 AND y.idade <= 60 THEN 1
+                            WHEN y.idade > 60 THEN 0
+                        END) AS id,
+                        (CASE
+                            WHEN y.idade >= 18 AND y.idade <= 24 THEN 'Entre 18 e 24 anos'
+                            WHEN y.idade >= 25 AND y.idade <= 29 THEN 'Entre 25 e 29 anos'
+                            WHEN y.idade >= 30 AND y.idade <= 34 THEN 'Entre 30 e 34 anos'
+                            WHEN y.idade >= 35 AND y.idade <= 45 THEN 'Entre 35 e 45 anos'
+                            WHEN y.idade >= 46 AND y.idade <= 60 THEN 'Entre 46 e 60 anos'
+                            WHEN y.idade > 60 THEN 'Acima de 60 anos'
+                        END) AS idade,
+                        COUNT(y.id) AS quantidade
+                    FROM (
+                        SELECT
+                            r.id,
+                            TRUNC((TRUNC(SYSDATE) - p.data_nascimento) / 365) AS idade
+                        FROM
+                            $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.pessoa p ON r.pessoa_id = p.id
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON r.id = l.matricula
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.passagem
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.passagem p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE
+                            l.id_unidade = $P!{UNIDADE_SUB_ID}
+                            AND r.status = 1
+                    ) y
+                    GROUP BY y.idade
+                ) z
+                GROUP BY z.idade, z.id
+                ORDER BY z.id]]>
+		</queryString>
+		<field name="IDADE" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="TempoCondenacao" uuid="d3409d08-6f1c-40d2-a1b8-bee81865f8c6">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT z.tempo,
+                    COUNT(z.id) AS quantidade
+                FROM (
+                    SELECT
+                        y.id,
+                        (CASE
+                            WHEN y.dias <= 4*365 THEN 'Condenação até 04 anos'
+                            WHEN y.dias > 4*365 AND y.dias <= 8*365 THEN 'Condenação maior que 04 até 08 anos'
+                            WHEN y.dias > 8*365 AND y.dias <= 15*365 THEN 'Condenação maior que 08 até 15 anos'
+                            WHEN y.dias > 15*365 AND y.dias <= 20*365 THEN 'Condenação maior que 15 até 20 anos'
+                            WHEN y.dias > 20*365 AND y.dias <= 30*365 THEN 'Condenação maior que 20 até 30 anos'
+                            WHEN y.dias > 30*365 AND y.dias <= 50*365 THEN 'Condenação maior que 30 até 50 anos'
+                            WHEN y.dias > 50*365 AND y.dias <= 100*365 THEN 'Condenação maior que 50 até 100 anos'
+                            WHEN y.dias > 100*365 THEN 'Acima de 100 Anos'
+                        END) AS tempo
+                    FROM (
+                        SELECT
+                            r.id,
+                            (p.ano*365) + (p.mes*30) + p.dia AS dias
+                        FROM
+                            $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.processo p ON r.id = p.recuperando_id
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON r.id = l.matricula
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.passagem
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.passagem p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE
+                            r.status = 1
+                            AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                            AND r.condicao_atual = 'CONDENADO'
+                            AND p.status_processo <> 'FINALIZADO'
+                            AND p.ano IS NOT NULL
+                            AND p.dia IS NOT NULL
+                            AND p.mes IS NOT NULL
+                    ) y
+                ) z
+                GROUP BY z.tempo
+                ORDER BY z.tempo]]>
+		</queryString>
+		<field name="TEMPO" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="LGBT" uuid="d3409d08-6f1c-40d2-a1b8-bee81865f8c6">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT * FROM (
+                    SELECT 0 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Mulheres Trans' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE l.sexo = 'M'
+                        AND r.identidade_genero_id = 2
+                        AND r.status = 1
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    )
+                    UNION
+                    SELECT 1 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Homens Trans' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE l.sexo = 'F'
+                        AND r.identidade_genero_id = 2
+                        AND r.status = 1
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    )
+                    UNION
+                    SELECT 2 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Travesti' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE r.identidade_genero_id = 1
+                        AND r.status = 1
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    )
+                    UNION
+                    SELECT 3 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Bissexual' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE r.ORIENTACAO_SEXUAL_id = 3
+                        AND r.status = 1
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    )
+                    UNION
+                    SELECT 4 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Homossexual' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE r.ORIENTACAO_SEXUAL_id = 2
+                        AND r.status = 1
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    )
+                    UNION
+                    SELECT 5 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Heterossexual' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE r.ORIENTACAO_SEXUAL_id = 1
+                        AND r.status = 1
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    )
+                )
+                ORDER BY ID]]>
+		</queryString>
+		<field name="DESCRICAO" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="Feminino" uuid="d3409d08-6f1c-40d2-a1b8-bee81865f8c6">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT * FROM (
+                    SELECT 0 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Gestante' DESCRICAO, COUNT(r.id) quantidade
+                        FROM ${SCHEMA_SUB}.recuperando r
+                        JOIN ${SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM ${SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN ${SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE r.gestante = 1
+                        AND l.id_unidade = ${UNIDADE_SUB_ID}
+                        AND r.status = 1
+                        AND l.sexo = 'F'
+                    )
+                    UNION
+                    SELECT 1 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Lactante' DESCRICAO, COUNT(r.id) quantidade
+                        FROM ${SCHEMA_SUB}.recuperando r
+                        JOIN ${SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM ${SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN ${SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE r.lactante = 1
+                        AND l.id_unidade = ${UNIDADE_SUB_ID}
+                        AND r.status = 1
+                        AND l.sexo = 'F'
+                    )
+                    UNION
+                    SELECT 2 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Mãe de menor de 12 anos' DESCRICAO, COUNT(DISTINCT r.id) quantidade
+                        FROM ${SCHEMA_SUB}.recuperando r
+                        JOIN ${SCHEMA_SUB}.PARENTE p ON p.recuperando_id = r.id
+                        JOIN ${SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM ${SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN ${SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE p.parentesco_id = 3
+                        AND p.DATA_NASCIMENTO IS NOT NULL
+                        AND TRUNC((TRUNC(SYSDATE) - p.DATA_NASCIMENTO) / 365) < 12
+                        AND l.id_unidade = ${UNIDADE_SUB_ID}
+                        AND r.status = 1
+                        AND l.sexo = 'F'
+                    )
+                    UNION
+                    SELECT 3 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Mãe de PCD' DESCRICAO, COUNT(DISTINCT r.id) quantidade
+                        FROM ${SCHEMA_SUB}.recuperando r
+                        JOIN ${SCHEMA_SUB}.PARENTE p ON p.recuperando_id = r.id
+                        JOIN ${SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM ${SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN ${SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE p.parentesco_id = 3
+                        AND p.filho_pcd = 1
+                        AND l.id_unidade = ${UNIDADE_SUB_ID}
+                        AND r.status = 1
+                        AND l.sexo = 'F'
+                    )
+                )
+                ORDER BY ID]]>
+		</queryString>
+		<field name="DESCRICAO" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="PCD" uuid="d3409d08-6f1c-40d2-a1b8-bee81865f8c6">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT * FROM (
+                    SELECT 0 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Não Possui' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE (r.pne IS NULL OR r.pne = 0)
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                        AND r.status = 1
+                    )
+                    UNION
+                    SELECT 1 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Visual' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE r.pne = 1
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                        AND r.status = 1
+                    )
+                    UNION
+                    SELECT 2 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Auditiva' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE r.pne = 2
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                        AND r.status = 1
+                    )
+                    UNION
+                    SELECT 3 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Motora' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE r.pne = 3
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                        AND r.status = 1
+                    )
+                    UNION
+                    SELECT 4 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Mental' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE r.pne = 4
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                        AND r.status = 1
+                    )
+                )
+                ORDER BY ID]]>
+		</queryString>
+		<field name="DESCRICAO" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="RECEBE_AUXILIO" uuid="d3409d08-6f1c-40d2-a1b8-bee81865f8c6">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT * FROM (
+                    SELECT 0 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Não Recebe' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE (r.pne IS NOT NULL AND r.pne > 0)
+                        AND r.recebe_beneficio = 0
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                        AND r.status = 1
+                    )
+                    UNION
+                    SELECT 1 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Recebe' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE (r.pne IS NOT NULL AND r.pne > 0)
+                        AND r.recebe_beneficio = 1
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                        AND r.status = 1
+                    )
+                    UNION
+                    SELECT 2 ID, DESCRICAO, QUANTIDADE
+                    FROM (
+                        SELECT 'Não informado' DESCRICAO, COUNT(r.id) quantidade
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        LEFT JOIN (
+                            SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
+                            WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                            GROUP BY RECUPERANDO_ID
+                        ) p_max ON r.id = p_max.RECUPERANDO_ID
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        WHERE (r.pne IS NOT NULL AND r.pne > 0)
+                        AND r.recebe_beneficio IS NULL
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
+                        AND r.status = 1
+                    )
+                )
+                ORDER BY ID]]>
+		</queryString>
+		<field name="DESCRICAO" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="Aposentados" uuid="d3409d08-6f1c-40d2-a1b8-bee81865f8c6">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT * FROM (
+                    SELECT 'Aposentados' DESCRICAO, COUNT(r.id) quantidade
+                    FROM $P!{SCHEMA_SUB}.recuperando r
+                    JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                    LEFT JOIN (
+                        SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                        FROM $P!{SCHEMA_SUB}.PASSAGEM
+                        WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                        GROUP BY RECUPERANDO_ID
+                    ) p_max ON r.id = p_max.RECUPERANDO_ID
+                    LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                    WHERE l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    AND trunc((trunc(sysdate) - l.data_nascimento) / 365) > 60
+                    AND r.APOSENTADO = 1
+                    AND r.status = 1
+                )
+                UNION
+                SELECT * FROM (
+                    SELECT 'Não Aposentados' DESCRICAO, COUNT(r.id) quantidade
+                    FROM $P!{SCHEMA_SUB}.recuperando r
+                    JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                    LEFT JOIN (
+                        SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                        FROM $P!{SCHEMA_SUB}.PASSAGEM
+                        WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                        GROUP BY RECUPERANDO_ID
+                    ) p_max ON r.id = p_max.RECUPERANDO_ID
+                    LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                    WHERE l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    AND trunc((trunc(sysdate) - l.data_nascimento) / 365) > 60
+                    AND r.APOSENTADO = 0
+                    AND r.status = 1
+                )
+                UNION
+                SELECT * FROM (
+                    SELECT 'Não informado' DESCRICAO, COUNT(r.id) quantidade
+                    FROM $P!{SCHEMA_SUB}.recuperando r
+                    JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                    LEFT JOIN (
+                        SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                        FROM $P!{SCHEMA_SUB}.PASSAGEM
+                        WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                        GROUP BY RECUPERANDO_ID
+                    ) p_max ON r.id = p_max.RECUPERANDO_ID
+                    LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p ON p.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                    WHERE l.id_unidade = $P!{UNIDADE_SUB_ID}
+                    AND trunc((trunc(sysdate) - l.data_nascimento) / 365) > 60
+                    AND r.APOSENTADO IS NULL
+                    AND r.status = 1
+                )]]>
+		</queryString>
+		<field name="DESCRICAO" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="Etnias" uuid="d3409d08-6f1c-40d2-a1b8-bee81865f8c6">
+		<parameter name="SCHEMA_SUB" class="java.lang.String" isForPrompting="false">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="UNIDADE_SUB_ID" class="java.lang.Long" isForPrompting="false"/>
+		<parameter name="DATA_SAIDA" class="java.lang.String" isForPrompting="false"/>
+		<queryString>
+			<![CDATA[SELECT E.DESCRICAO, COUNT(r.id) quantidade
+                FROM $P!{SCHEMA_SUB}.recuperando r
+                JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                JOIN $P!{SCHEMA_SUB}.ETNIA E ON E.ID = R.ID_ETNIA
+                JOIN (
+                    SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
+                    FROM $P!{SCHEMA_SUB}.PASSAGEM
+                    WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
+                    GROUP BY RECUPERANDO_ID
+                ) p_max ON r.id = p_max.RECUPERANDO_ID
+                JOIN $P!{SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                WHERE l.id_unidade = $P!{UNIDADE_SUB_ID}
+                AND r.status = 1
+                AND r.RACA_ID = 5
+                GROUP BY E.DESCRICAO
+                ORDER BY 1]]>
+		</queryString>
+		<field name="DESCRICAO" class="java.lang.String"/>
+		<field name="QUANTIDADE" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
+	<parameter name="TEM_PAGINACAO" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SCHEMA" class="java.lang.String"/>
+	<parameter name="UNIDADE_ID" class="java.lang.Long"/>
+	<parameter name="IMP_FEMININO" class="java.lang.Long"/>
+	<parameter name="DATA_SAIDA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 1 from dual]]>
+	</queryString>
+	<field name="1" class="java.math.BigDecimal"/>
+	<pageHeader>
+		<band height="106" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="89" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
+				<subreportParameter name="UNIDADE_LOGADA">
+					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="263" y="89" width="100" height="17" uuid="abf022b7-49c8-4855-8972-7ed8f97ebb46"/>
+				<textFieldExpression><![CDATA[$P{DATA_SAIDA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="86eda8eb-9be3-4ad0-b4f9-3bbb94d872ec"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="d00510c1-bfa3-4302-b28f-ae5660208aab"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária por Nacionalidade]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="ca306a15-ab14-445f-bac7-1087b8edba8e"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Nacionalidade" uuid="68117d4e-cd67-4580-b7ce-b6c33f8f035f">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="b92986d9-5606-4616-977b-ab3dbd57ac77">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="3193021a-dc6a-474d-aa4e-a3826a62d2f2"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Nacionalidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="6a1eaab4-27eb-4f58-a587-b4bb39966f54"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{PAIS}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="05eac62e-1418-4f41-af7b-377997d91c7a">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="84ef9126-5b4b-41d3-99db-3c4562bfd624"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="bfb5c24e-b309-4436-942d-4e37238c43ed"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="7d8d2930-9862-4c58-a1ee-98b358055873"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="c903f735-2f4a-4f97-af32-bfe7aa18fa59"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária por Raça]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="1177120f-f4d7-43c0-ba49-3e7529449b10"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Raca" uuid="7a7b6f26-357e-474e-876a-1a7dfbb88362">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="2d5ead48-99d2-479b-8837-3faf6c4a5444">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="5565e926-2d28-4d2a-8a17-0cbbc53a4160"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Raça]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="0dccd7fc-bfa2-409d-a96d-38d11d2e9d61"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{RACA}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="0682e35d-b4fa-4495-a1d3-59c56b42939f">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="8f52fdba-1295-4f94-a3a0-9be765f6620c"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="41e759d2-f772-4b6b-be80-bfb1ce869b71"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="7d8d2930-9862-4c58-a1ee-98b358055873"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="c903f735-2f4a-4f97-af32-bfe7aa18fa59"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária por Etnia]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="1177120f-f4d7-43c0-ba49-3e7529449b10"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Etnias" uuid="2267b46c-873f-4adf-9a21-3ea735cc5e14">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="2d5ead48-99d2-479b-8837-3faf6c4a5444">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="5565e926-2d28-4d2a-8a17-0cbbc53a4160"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Etnia]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="0dccd7fc-bfa2-409d-a96d-38d11d2e9d61"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DESCRICAO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="0682e35d-b4fa-4495-a1d3-59c56b42939f">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="8f52fdba-1295-4f94-a3a0-9be765f6620c"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="41e759d2-f772-4b6b-be80-bfb1ce869b71"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="b2141ddd-9cc6-4c74-aee8-2f50415e3365"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="8b24ee20-a565-4605-a6b5-0bdcd078dc9b"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária por Regime Prisional]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="a117149e-bdb1-49b9-9bcc-b95e0c4c043d"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Regime" uuid="9bf88125-b8c3-4819-978e-8624606a7123">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="86382df8-94b0-49ef-aab9-8a5ea959685a">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="d6aafda6-8d15-4a78-9117-e73e33c322cb"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Regime Prisional]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="885d9983-6888-4dea-af11-a362cadd27b7"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{REGIME}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="5f722423-de52-4e64-9d6d-f6afb8544db3">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="629c9d39-99f1-46c5-9f5d-f9f37b7ef9d9"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="f97edf2d-30d1-4e31-9932-a00ba4ae4dab"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="05a8d26b-ce2c-4efe-be1c-55a4b831583b"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="1ab80f6d-e311-4da8-b155-de7671381956"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária por Idade]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="8d846cdb-1359-477e-b6c3-1f8d56de92ab"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Idade" uuid="e5eefc88-b689-4d6a-9fad-b486b50500f1">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="b31c08d1-c18a-43c6-acf7-bd8ae84f0e08">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="36271435-0fa5-4f0b-83c8-0507ca5fa44c"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Idade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="00a4fcc2-81a1-4db2-ac23-e653652f9a36"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{IDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="f1159ca7-8de9-4992-ad33-f334fefe9062">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="0e02ba10-4ffb-4ff5-8498-63a71f1622a5"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="94414c34-0fc3-4598-b9f2-5718ae63c8ef"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="a28b8de4-5517-4ccb-bd0c-f164e98b25d4"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="589ea355-8992-419c-a3e9-1e5ee52746ce"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária Acima de 60 que são aposentados]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="c05e65e9-3366-4892-9086-d52a7a79def5"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Aposentados" uuid="a8a5e4ce-cfcb-4917-8c5e-2502bc5ac0f4">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="f4f67700-5970-4d1b-9612-82532338d75e">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="c56930a8-87ab-4ade-a3ab-d87cb99a459e"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Aposentado]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="191f28d2-645e-4a80-a0c6-b9d7e8654375"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DESCRICAO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="e3a0a1a3-9258-41c9-8506-9edc97267ea9">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="55798fd5-742a-4dbe-b064-8931164b4d99"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="89eef57f-7139-4d6e-8bd2-d097333917e7"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="0a91930d-c7b4-4593-b8ac-fce41a8dd40d"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="5fc09623-e74d-4dbb-8650-4bb82970cba0"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária por Estado Civil]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="ee91eaf7-7ec6-4d28-841c-c2663798be6a"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="EstadoCivil" uuid="3665f827-d26f-40eb-a454-6b628f840a75">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="2aac9d21-3659-4fcf-9c69-6507de91c0ce">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="42b228aa-aad4-471d-9470-05622176f9ea"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Estado Civil]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="d4003800-93ec-4ddb-a371-08171338d9cf"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{ESTADO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="fa892eb8-363a-4bc3-a930-44a0a365c2bf">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="323de2f7-5b93-4086-99df-049352f65711"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="22ac6b84-900d-44bd-8753-316c7edafcf4"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="f6861a53-ffab-47ce-967c-9c8b087793aa"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="104080d3-4a2e-4210-aa20-571bfd8c034b"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária por Religião]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="8b6e2288-b287-4bf1-8401-dc934e9ee20a"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Religiao" uuid="be70107c-ad2a-4e4a-a618-07a692fc3e22">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="23d44f7b-e94a-4707-8f83-74c0995ff209">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="930be661-f67a-40f9-a110-050a1897506e"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Religião]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="fb41de67-fb3f-4f03-888e-6f6cd52902bd"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{RELIGIAO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="62bcbc30-1389-4e71-b9c8-8418bdf5ea91">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="c6899a3f-57a9-4788-a2a1-8bc38e1d27a6"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="22e58747-8db2-45fe-a57a-83082325d5f4"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="22def151-5f94-493a-9ca0-2031776909ef"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="28acec56-a4cc-4979-93fb-d377291254e9"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária por Escolaridade]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="ecdd95c2-5490-4d4a-9bb8-88f82bb24c84"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Escolaridade" uuid="41bb7ea2-6167-4c91-9195-0c8aa9b176fd">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="6be5ee55-2706-4343-b44a-05fc70c81de6">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="2bb0d62a-94b9-4ef9-a2a5-b300d0bf945e"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Escolaridade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="29ab6e72-e4d5-4cfa-b846-1552ec6dacc0"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{ESCOLARIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="e5c8201c-a86d-4f11-823a-0b1a9a932200">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="7fa2c7f1-cb21-4d4f-82d4-e276eb4b94bb"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="187e3331-cf09-44fd-a37c-f569a643b9e9"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="a28b8de4-5517-4ccb-bd0c-f164e98b25d4"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="589ea355-8992-419c-a3e9-1e5ee52746ce"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária por PCD]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="c05e65e9-3366-4892-9086-d52a7a79def5"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="PCD" uuid="cd25ad00-5f79-4a4b-b696-34fe0a184fde">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="f4f67700-5970-4d1b-9612-82532338d75e">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="c56930a8-87ab-4ade-a3ab-d87cb99a459e"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[PCD]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="191f28d2-645e-4a80-a0c6-b9d7e8654375"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DESCRICAO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="e3a0a1a3-9258-41c9-8506-9edc97267ea9">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="55798fd5-742a-4dbe-b064-8931164b4d99"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="89eef57f-7139-4d6e-8bd2-d097333917e7"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="a28b8de4-5517-4ccb-bd0c-f164e98b25d4"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="589ea355-8992-419c-a3e9-1e5ee52746ce"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária PCD recebe auxílio]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="c05e65e9-3366-4892-9086-d52a7a79def5"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="RECEBE_AUXILIO" uuid="40438125-f452-42fd-835a-f3256d5dd516">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="f4f67700-5970-4d1b-9612-82532338d75e">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="c56930a8-87ab-4ade-a3ab-d87cb99a459e"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Recebe auxílio]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="191f28d2-645e-4a80-a0c6-b9d7e8654375"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DESCRICAO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="e3a0a1a3-9258-41c9-8506-9edc97267ea9">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="55798fd5-742a-4dbe-b064-8931164b4d99"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="89eef57f-7139-4d6e-8bd2-d097333917e7"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<printWhenExpression><![CDATA[$P{IMP_FEMININO} > 0L]]></printWhenExpression>
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="a28b8de4-5517-4ccb-bd0c-f164e98b25d4"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="589ea355-8992-419c-a3e9-1e5ee52746ce"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária Feminino]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="c05e65e9-3366-4892-9086-d52a7a79def5"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Feminino" uuid="36fb4c81-3ab1-4429-ae3c-3b93478b0dd3">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="f4f67700-5970-4d1b-9612-82532338d75e">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="c56930a8-87ab-4ade-a3ab-d87cb99a459e"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Feminino]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="191f28d2-645e-4a80-a0c6-b9d7e8654375"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DESCRICAO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="e3a0a1a3-9258-41c9-8506-9edc97267ea9">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="55798fd5-742a-4dbe-b064-8931164b4d99"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="89eef57f-7139-4d6e-8bd2-d097333917e7"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="a28b8de4-5517-4ccb-bd0c-f164e98b25d4"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="589ea355-8992-419c-a3e9-1e5ee52746ce"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População Carcerária por Vida Social]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="c05e65e9-3366-4892-9086-d52a7a79def5"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="LGBT" uuid="9f8e55f6-fa8c-49b3-bbee-4f241011fb47">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="f4f67700-5970-4d1b-9612-82532338d75e">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="c56930a8-87ab-4ade-a3ab-d87cb99a459e"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Identidade de Gênero]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="191f28d2-645e-4a80-a0c6-b9d7e8654375"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{DESCRICAO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="e3a0a1a3-9258-41c9-8506-9edc97267ea9">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="55798fd5-742a-4dbe-b064-8931164b4d99"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="89eef57f-7139-4d6e-8bd2-d097333917e7"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="70" splitType="Prevent">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="a28b8de4-5517-4ccb-bd0c-f164e98b25d4"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="16" uuid="589ea355-8992-419c-a3e9-1e5ee52746ce"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[População carcerária por Tempo de Condenação]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="c05e65e9-3366-4892-9086-d52a7a79def5"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="TempoCondenacao" uuid="cf5d4ef4-bc2c-419a-b505-55b2342e2170">
+						<datasetParameter name="SCHEMA_SUB">
+							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UNIDADE_SUB_ID">
+							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="DATA_SAIDA">
+							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:column width="355" uuid="f4f67700-5970-4d1b-9612-82532338d75e">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="355" height="16" uuid="c56930a8-87ab-4ade-a3ab-d87cb99a459e"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Tempo de Condenação]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="355" height="16" uuid="191f28d2-645e-4a80-a0c6-b9d7e8654375"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{TEMPO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="e3a0a1a3-9258-41c9-8506-9edc97267ea9">
+						<jr:columnHeader height="17" rowSpan="1">
+							<box>
+								<bottomPen lineWidth="0.5"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="1" width="200" height="16" uuid="55798fd5-742a-4dbe-b064-8931164b4d99"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Quantidade]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="18" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="1" width="200" height="16" uuid="89eef57f-7139-4d6e-8bd2-d097333917e7"/>
+								<box leftPadding="2" rightPadding="2">
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{QUANTIDADE}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="51" splitType="Stretch">
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
+				<subreportParameter name="PAGINA">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EMISSOR">
+					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_PAGINAS">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="435" y="13" width="80" height="20" uuid="21949555-196a-4d34-89dd-e4b9f2f2f2af">
+					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="13" width="40" height="20" uuid="18471924-0526-4b68-acd6-512add5df44e">
+					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

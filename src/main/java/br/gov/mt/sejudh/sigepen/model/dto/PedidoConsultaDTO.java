@@ -9,8 +9,8 @@ public class PedidoConsultaDTO {
 	private String item;
 	private Long qtd;
 	private boolean especial; 
-	private double mg_masc;
-	private double mg_fem;
+	private double masc;
+	private double fem;
 	private String nomeEstrutura;
 	private String sexo;
 
@@ -22,9 +22,9 @@ public class PedidoConsultaDTO {
 		this.refeicao = (String) row[7];
 		this.cardapio = (String) row[6];
 		this.item = (String) row[2];
-		this.especial = (boolean) row[5].equals("ESPECIAL") ? true : false;
-		this.mg_masc = ((BigDecimal) row[3]).longValue();
-		this.mg_fem = ((BigDecimal) row[4]).longValue();
+		this.especial = row[5].equals("ESPECIAL");
+		this.masc = ((BigDecimal) row[3]).longValue();
+		this.fem = ((BigDecimal) row[4]).longValue();
 		this.qtd = ((BigDecimal) row[0]).longValue();
 		//this.nomeEstrutura = (String) row[8];
 		this.setSexo((String) row[8]);
@@ -70,20 +70,20 @@ public class PedidoConsultaDTO {
 		this.especial = especial;
 	}
 	
-	public double getMg_masc() {
-		return mg_masc;
+	public double getMasc() {
+		return masc;
 	}
 	
-	public void setMg_masc(double mg_masc) {
-		this.mg_masc = mg_masc;
+	public void setMasc(double masc) {
+		this.masc = masc;
 	}
 	
-	public double getMg_fem() {
-		return mg_fem;
+	public double getFem() {
+		return fem;
 	}
 	
-	public void setMg_fem(double mg_fem) {
-		this.mg_fem = mg_fem;
+	public void setFem(double fem) {
+		this.fem = fem;
 	}
 	
 	public String getNomeEstrutura() {
@@ -105,7 +105,7 @@ public class PedidoConsultaDTO {
 	@Override
 	public String toString() {
 		return "PedidoConsultaDTO [refeicao=" + refeicao + ", cardapio=" + cardapio + ", item=" + item + ", qtd=" + qtd
-				+ ", especial=" + especial + ", mg_masc=" + mg_masc + ", mg_fem=" + mg_fem + "]";
+				+ ", especial=" + especial + ", masc=" + masc + ", fem=" + fem + "]";
 	}
 
 }

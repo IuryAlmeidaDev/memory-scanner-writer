@@ -37,9 +37,12 @@ import br.gov.mt.sejudh.sigepen.model.Imagem;
 import br.gov.mt.sejudh.sigepen.model.OutroNome;
 import br.gov.mt.sejudh.sigepen.model.Parente;
 import br.gov.mt.sejudh.sigepen.model.Particularidade;
+import br.gov.mt.sejudh.sigepen.model.Passagem;
+import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.Remanejamento;
 import br.gov.mt.sejudh.sigepen.model.SolicitacaoVisita;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
@@ -253,7 +256,8 @@ public class RecuperandoDAO {
 	}
 	
 	public void excluirFoto(Foto f) {
-		em.remove(em.merge(f));
+		Foto foto = em.merge(f);
+		em.remove(foto);
 	}
 	
 	public void excluirParticularidade(Particularidade p) {
@@ -349,6 +353,91 @@ public class RecuperandoDAO {
 		query.setParameter("idRecuperando", idRecuperando);
 		return query.getResultList();
 	}
+	
+	public PedidoTransito findByFotoPedidoTransito(long idFoto) {
+		try {
+			Query query = em.createQuery("select p from PedidoTransito p where p.foto.id = :idFoto");
+			query.setParameter("idFoto", idFoto);
+			PedidoTransito pedidoTransito = (PedidoTransito)query.getSingleResult();
+			return pedidoTransito;
+		} catch (NoResultException e) {
+			return null;
+		}		
+	}
+	
+	public int updateFotoPedidoTransito(long id, long idFoto) {
+		try {
+			Query query = em.createQuery("update PedidoTransito p set p.foto.id = :idFoto where p.id = :id");
+			query.setParameter("idFoto", idFoto);
+	        query.setParameter("id", id);
+			int pedidoTransito = query.executeUpdate();
+			return pedidoTransito;
+		} catch (NoResultException e) {
+			return 0;
+		}		
+	}
+	
+	public Remanejamento findByFotoRemanejamento(long idFoto) {
+		try {
+			Query query = em.createQuery("select r from Remanejamento r where r.foto.id = :idFoto");
+			query.setParameter("idFoto", idFoto);
+			Remanejamento pedidoTransito = (Remanejamento)query.getSingleResult();
+		return pedidoTransito;
+		} catch (NoResultException e) {
+			return null;
+		}		
+	}
+	
+	public int updateFotoRemanejamento(long id, long idFoto) {
+		try {
+			Query query = em.createQuery("update Remanejamento r set r.foto.id = :idFoto where r.id = :id");
+			query.setParameter("idFoto", idFoto);
+	        query.setParameter("id", id);
+			int pedidoTransito = query.executeUpdate();
+			return pedidoTransito;
+		} catch (NoResultException e) {
+			return 0;
+		}		
+	}
+	
+	public Passagem findByFotoPassagem(long idFoto) {
+		try {
+			Query query = em.createQuery("select p from Passagem p where p.foto.id = :idFoto");
+			query.setParameter("idFoto", idFoto);
+			Passagem passagem = (Passagem)query.getSingleResult();
+			return passagem;
+		} catch (NoResultException e) {
+			return null;
+		}	
+	}
+	
+	public int updateFotoPassagem(long id, long idFoto) {
+		try {
+			Query query = em.createQuery("update Passagem p set p.foto.id = :idFoto where p.id = :id");
+			query.setParameter("idFoto", idFoto);
+	        query.setParameter("id", id);
+			int pedidoTransito = query.executeUpdate();
+			return pedidoTransito;
+		} catch (NoResultException e) {
+			return 0;
+		}		
+	}
+	
+	public void substituirFoto(Foto foto, Foto fotoAntiga) {
+		PedidoTransito pedidoTransito = findByFotoPedidoTransito(fotoAntiga.getId());
+		if(pedidoTransito != null){
+			updateFotoPedidoTransito(pedidoTransito.getId(),foto.getId());
+		}
+		Remanejamento remanejamento = findByFotoRemanejamento(fotoAntiga.getId());
+		if(remanejamento != null){
+			updateFotoRemanejamento(remanejamento.getId(),foto.getId());
+		}
+		Passagem passagem = findByFotoPassagem(fotoAntiga.getId());
+		if(passagem != null){
+			updateFotoPassagem(passagem.getId(),foto.getId());
+		}
+	}
+
 	
 	public boolean fotoVinculada(Foto foto) {
 		Query query = em.createQuery("select count(p) from PedidoTransito p where p.foto.id = :idFoto");

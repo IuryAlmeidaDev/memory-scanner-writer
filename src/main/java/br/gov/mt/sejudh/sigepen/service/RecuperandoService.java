@@ -282,6 +282,10 @@ public class RecuperandoService {
 	public void excluir(RecuperandoView recuperando) {
 		dao.excluir(recuperando.getId());
 	}
+	
+	public void excluirProcesso(Processo processo) throws ValidacaoException {
+		processoDao.excluirProcesso(processo);
+	}
 
 	public Recuperando buscarRecuperandoPorId(long id, boolean buscarAuditoria) {
 		Recuperando recuperando = dao.buscarRecuperandoPorId(id);
@@ -453,6 +457,10 @@ public class RecuperandoService {
 	
 	public Particularidade salvarParticularidade(Particularidade p) {
 		return dao.salvarParticularidade(p);
+	}
+	
+	public void substituirFoto(Foto foto, Foto fotoAntiga) throws ValidacaoException {
+		dao.substituirFoto(foto,fotoAntiga);
 	}
 	
 	public void excluirFoto(Foto f) throws ValidacaoException {

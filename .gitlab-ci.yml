@@ -10,11 +10,10 @@ variables:
   CONTAINER_IMAGE: $REGISTRY_URL/sesp/$CI_PROJECT_NAME
   MAVEN_PROFILE: "desenvolvimento"
   SONAR_URL: "https://homolog2.sesp.mt.gov.br/sonarqube"
-  SONAR_KEY: "sqp_a538e9213322270831976b0f17122ecb77487936"
+  SONAR_KEY: "sqp_ccecceced28a34f31d703cb31ff80358a74ba389"
   DTRACK_HOST: "https://homolog2.seguranca.local/dtrack"
   DTRACK_TOKEN: "YY6xcWE73rK0UObCh9WxSxUOsD2Oboab"
   DTRACK_PROJECT: "b31350be-7bd3-42d3-bbef-df04338bcf7f"
-  WLS_HOST: "wls12c-sesp-d1.seguranca.local:7001"
   K8S_HANDLE_SECTION: "desenvolvimento"
 
 workflow:
@@ -28,7 +27,7 @@ workflow:
 
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       when: never
-      
+
     - if: $CI_COMMIT_REF_NAME =~ /^release/
       variables:
         MAVEN_PROFILE: "homologacao"
@@ -46,7 +45,7 @@ stages:
   - deploy_rancher
   - reload_rancher
   - deploy_openshift
-  
+
 build_maven:
   stage: build
   image: maven:3.8.6-jdk-8-slim
@@ -67,14 +66,15 @@ build_maven:
     - key: "$CI_COMMIT_REF_SLUG"
       paths:
         - target/
-        
+
 code_check:
   stage: code_check
-  image: maven:3.8.6-jdk-8-slim
+  image: maven:3.6.3-jdk-11-slim
   extends: .setup_maven
   script:
     - "mvn -s settings.xml -B -ntp cyclonedx:makeBom -P $MAVEN_PROFILE"
     - "curl -k -s -X POST $DTRACK_HOST/api/v1/bom -H Content-Type:multipart/form-data -H X-API-Key:$DTRACK_TOKEN -F bom=@target/bom.json -F project=$DTRACK_PROJECT"
+    - "mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -s $mavenSettings -B -ntp verify sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.token=$SONAR_KEY"
   allow_failure: true
   only:
     refs:
@@ -82,6 +82,7 @@ code_check:
       - /^release/[0-9]+(?:.[0-9]+)+$/
       - tags
       - main
+      - feat-gitlab-ci
   cache:
     - paths:
         - .m2/repository
@@ -113,10 +114,10 @@ build_homologa:
     refs:
       - /^release/[0-9]+(?:.[0-9]+)+$/
   cache:
-  - key: "$CI_COMMIT_REF_SLUG"
-    paths:
-      - target/
-    policy: pull
+    - key: "$CI_COMMIT_REF_SLUG"
+      paths:
+        - target/
+      policy: pull
   environment:
     name: homologacao
 
@@ -127,13 +128,13 @@ build_prod_manual:
   rules:
     - if: "$CI_COMMIT_TAG || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
   cache:
-  - key: "$CI_COMMIT_REF_SLUG"
-    paths:
-      - target/
-    policy: pull
+    - key: "$CI_COMMIT_REF_SLUG"
+      paths:
+        - target/
+      policy: pull
   environment:
     name: producao
-      
+
 apply_tamplate_k8s:
   stage: template_k8s
   extends: .get_git_template_repository_k8s_handle
@@ -147,7 +148,6 @@ apply_tamplate_k8s:
     paths:
       - k8s/k8s-handle/
     expire_in: 4 week
-
 
 #DEPLOY RANCHER DESENVOLVIMENTO
 deploy_rancher_desenv:

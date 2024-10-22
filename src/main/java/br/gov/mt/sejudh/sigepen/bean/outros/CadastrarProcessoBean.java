@@ -204,6 +204,27 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 			this.processo.getCrimes().add(processoCrime);
 		}
 	}
+	
+	
+	public void excluirProcessoRegimeCondicaoECrime(Processo processo) throws ValidacaoException {
+		try {
+			
+			Long idProcesso = processoService.contarProcessosPorRecuperando(processo.getRecuperando().getId());
+	        
+	        if (idProcesso <= 1) {
+	            throw new ValidacaoException("Não é permitido excluir o processo (" + processo.getNumeroProcesso() + ").");
+	        }
+			
+			processo = processoService.buscaProcessoPorId(processo);
+			
+			processoService.excluirProcesso(processo);	
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "SUCESSO", "Processo " + processo.getNumeroProcesso() + " excluído(a) com sucesso!");						
+			
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir processo (" + processo.getNumeroProcesso() + "): " + e.getMessage());
+			LoggerUtil.logErro(Acao.EXCLUIR, recuperando, e, log);
+		}
+	}
 
 	public void salvar() {
 		try {

@@ -30,8 +30,8 @@ public class AlimentoService extends BaseService<Alimento, Long> {
 		return alimentoDAO.listarAtivos();
 	}
 	
-	public Alimento buscarAlimentoPorNome(Alimento alimento) {
-		return alimentoDAO.buscarAlimentoPorNome(alimento);
+	public Alimento buscarAlimento(Alimento alimento) {
+		return alimentoDAO.buscarAlimento(alimento);
 	}
 
 }

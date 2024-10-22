@@ -52,6 +52,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoProcesso;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoVisitaObrigatoriedade;
+import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
 import br.gov.mt.sejudh.sigepen.model.Estado;
 import br.gov.mt.sejudh.sigepen.model.EstadoCivil;
@@ -198,6 +199,8 @@ public class ComboHelperBean {
 	
 	private TipoVisitaObrigatoriedade[] tipoVisitaObrigatoriedade;
 
+	private UnidadeMedida[] unidadesMedida;
+
 
 	@Inject
 	private ComboService comboService;	
@@ -265,6 +268,7 @@ public class ComboHelperBean {
 		TipoRelatorioEntradaSaidaRec = comboService.getTipoRelatorioEntradaSaidaRec();
 		populacaoFeminino = comboService.getPopulacaoFeminino();
 		tipoVisitaObrigatoriedade = comboService.getTipoVisitaObrigatoriedade();
+		unidadesMedida = comboService.getUnidadesMedida();
 	}
 
 	public NaturezaFaltaDisciplinar[] getNaturezaFaltaDisciplinar(){
@@ -766,5 +770,13 @@ public class ComboHelperBean {
 
 	public void setTipoVisitaObrigatoriedade(TipoVisitaObrigatoriedade[] tipoVisitaObrigatoriedade) {
 		this.tipoVisitaObrigatoriedade = tipoVisitaObrigatoriedade;
+	}
+
+	public UnidadeMedida[] getUnidadesMedida() {
+		return unidadesMedida;
+	}
+
+	public void setUnidadesMedida(UnidadeMedida[] unidadesMedida) {
+		this.unidadesMedida = unidadesMedida;
 	}
 }

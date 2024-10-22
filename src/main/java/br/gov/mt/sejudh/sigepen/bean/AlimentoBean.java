@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.bean;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -40,7 +41,7 @@ public class AlimentoBean extends MetodosDePaginaBean {
 	private LazyDataModel<Alimento> alimentos;
 
 	private FiltroAlimento filtro;
-	
+
 	@Inject
 	private AlimentoService service;
 
@@ -119,10 +120,10 @@ public class AlimentoBean extends MetodosDePaginaBean {
 			}
 		};
 	}
-	
+
 	private boolean validarAlimentoUnico(Alimento alimento) {
-		Alimento retornoAlimento = service.buscarAlimentoPorNome(this.alimento);
-		if(retornoAlimento != null && retornoAlimento.getId() != alimento.getId()) {
+		Alimento retornoAlimento = service.buscarAlimento(this.alimento);
+		if (retornoAlimento != null && !Objects.equals(retornoAlimento.getId(), alimento.getId())) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Alimento já existe");
 			return false;
 		}
@@ -131,10 +132,10 @@ public class AlimentoBean extends MetodosDePaginaBean {
 
 	public String salvar() {
 		String retorno = null;
-		if(this.validarAlimentoUnico(alimento)) {			
+		if (this.validarAlimentoUnico(alimento)) {
 			try {
 				service.salvar(this.alimento);
-				
+
 				facesUtil.exibirMensagemInfo("Alimento " + this.alimento.getDescricao() + " salva com Sucesso!", true);
 				retorno = "pretty:ListarAlimento";
 				LoggerUtil.logInfo(Acao.SALVAR, alimento, log);

@@ -20,21 +20,28 @@
                    validationRequired="true" 
                    converter="SimpleEntityConverter"/>
                    
-                <sgp:formInputMask
-                	id="mgMasc"
-					labelValue="Mg Masculino"
-					validationRequired="true"
-					value="#{associarItemCardapioBean.itemCardapio.mg_masc}"
-					mask="999?"
-					maxlength="80"/>
-				
-				<sgp:formInputMask
-					id="mgFem"
-					labelValue="Mg Feminino"
-					validationRequired="true"
-					value="#{associarItemCardapioBean.itemCardapio.mg_fem}"
-					mask="999?"
-					maxlength="80"/>
+                <sgp:formInputNumber
+						id="masc"
+						labelValue="Masculino"
+						validationRequired="true"
+						value="#{associarItemCardapioBean.itemCardapio.masc}"
+						decimalPlaces="1"
+						maxValue="999.9"
+						decimalSeparator="."
+						toolTip="Informe o valor masculino com uma casa decimal."
+						maxlength="80" />
+
+
+				<sgp:formInputNumber
+						id="fem"
+						labelValue="Feminino"
+						validationRequired="true"
+						value="#{associarItemCardapioBean.itemCardapio.fem}"
+						decimalPlaces="1"
+						maxValue="999.9"
+						decimalSeparator="."
+						toolTip="Informe o valor feminino com uma casa decimal."
+						maxlength="80" />
 					
 				<sgp:formSelectOneMenu 
 					id="status" labelValue="Status"

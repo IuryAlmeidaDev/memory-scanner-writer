@@ -1,0 +1,12 @@
+-----------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_PASSAGEM
+-----------------------------------------------
+
+CREATE SEQUENCE SEQ_PASSAGEM
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_PASSAGEM TO SIGEPEN_USER;

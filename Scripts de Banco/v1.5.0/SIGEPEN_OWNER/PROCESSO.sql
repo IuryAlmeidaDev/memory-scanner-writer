@@ -1,0 +1,1 @@
+alter table PROCESSO add modalidade VARCHAR2(80 CHAR);

@@ -1,6 +1,8 @@
 package br.gov.mt.sejudh.sigepen.bean.relatorios;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +64,10 @@ public class InfopenBean extends MetodosDialogBean {
 	private TempoCondenacao tempoCondenacao;
 	private Lgbt lbgt;
 	private Etnia[] etnia = {};
+	
+	
+	private String tipoRelatorio;
+    private String periodo;
 
 	@Inject
 	private FacesUtil facesUtil;
@@ -71,9 +77,10 @@ public class InfopenBean extends MetodosDialogBean {
 
 	@Inject
 	private Logger log;
-
+	
 	@URLAction(onPostback=false)
-	public String init() {
+	public String init() {		
+		this.filtro.setDataInicial(new Date());
 		this.filtro.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
 		this.nacionalidades = this.service.buscarNacionalidades(SecurityUtil.getUnidadeSelecionada().getId());
 		this.regimes = this.service.buscarRegimes(SecurityUtil.getUnidadeSelecionada().getId());
@@ -157,49 +164,75 @@ public class InfopenBean extends MetodosDialogBean {
 	public void setTempoCondenacao(TempoCondenacao tempoCondenacao) {
 		this.tempoCondenacao = tempoCondenacao;
 	}
-
+	
 	public void imprimir() {
-		if(this.filtro.getTipoRelatorio() == 0) {
-			try {
-				long impFeminino = service.buscarFeminino(SecurityUtil.getUnidadeSelecionada().getId());
-				
-				Map<String, Object> parameters = new HashMap<String, Object>();
-				
-				parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
-				parameters.put("UNIDADE_ID", SecurityUtil.getUnidadeSelecionada().getId());
-				parameters.put("IMP_FEMININO", impFeminino);
-				
-				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.EstatisticoInfopen, parameters));
-				
-				RequestContext.getCurrentInstance().execute("download()");
-				LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório Estatístico Infopen", log);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir Relatório Estatístico Infopen: " + e.getMessage());
-				LoggerUtil.logErro(Acao.IMPRIMIR, "Relatório Estatístico Infopen", e, log);
-			}
-			
-		} else {
-			try {
-				List<InfopenDTO> lista = this.service.buscarInfopenDetalhadoPorFiltro(this.filtro);
-				InfopenDTO info = lista.get(0);
-				if (info.getRecuperandos().size() == 0) {
-					facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
-					return;
-				}
+	    try {
 
-				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.InfopenDetalhado));
-				RequestContext.getCurrentInstance().execute("download()");
-				LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório de Recuperandos Infopen Detalhado", log);
-			} catch (Exception e) {
-				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir Relatório de Recuperandos Infopen Detalhado: " + e.getMessage());
-				LoggerUtil.logErro(Acao.IMPRIMIR, "Relatório de Recuperandos Infopen Detalhado", e, log);
-			}
-			
-		}
+	        if (this.filtro.getTipoRelatorio() == 0) {
+	            long impFeminino = service.buscarFeminino(SecurityUtil.getUnidadeSelecionada().getId());
+	            Map<String, Object> parameters = new HashMap<>();
+	            parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
+	            parameters.put("UNIDADE_ID", SecurityUtil.getUnidadeSelecionada().getId());
+	            parameters.put("IMP_FEMININO", impFeminino);
+	            
+	            if (this.filtro.getDataInicial() != null) {
+	            	
+	            	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	                
+	                String dataInicialFormatada = sdf.format(this.filtro.getDataInicial());
+	                parameters.put("DATA_SAIDA", dataInicialFormatada);
+	                
+	               	                
+	                fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.EstatisticoInfopenPorData, parameters));
+	                LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório Estatístico Infopen por Data", log);
+	            } 
+
+	            else {
+	                fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.EstatisticoInfopen, parameters));
+	                LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório Estatístico Infopen", log);
+	            }
+
+	            RequestContext.getCurrentInstance().execute("download()");
+	        } 
+	        
+	        else if (this.filtro.getTipoRelatorio() == 1) {
+	            List<InfopenDTO> lista = this.service.buscarInfopenDetalhadoPorFiltro(this.filtro);
+	            	        
+	            if (lista.isEmpty() || lista.get(0).getRecuperandos().isEmpty()) {
+	                facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
+	                return;
+	            }
+	            
+	            fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.InfopenDetalhado));
+	            LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório de Recuperandos Infopen Detalhado", log);
+	            RequestContext.getCurrentInstance().execute("download()");
+	        }
+	    } 
+
+	    catch (Exception e) {
+	        e.printStackTrace();
+	        facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao imprimir Relatório: " + e.getMessage());
+	        LoggerUtil.logErro(Acao.IMPRIMIR, "Erro ao gerar relatório", e, log);
+	    }
+	}
+	
+	
+	public String getTipoRelatorio() {
+		return tipoRelatorio;
 	}
 
+	public void setTipoRelatorio(String tipoRelatorio) {
+		this.tipoRelatorio = tipoRelatorio;
+	}
+
+	public String getPeriodo() {
+		return periodo;
+	}
+
+	public void setPeriodo(String periodo) {
+		this.periodo = periodo;
+	}
+	
 	public Etnia[] getEtnia() {
 		return etnia;
 	}
@@ -211,4 +244,5 @@ public class InfopenBean extends MetodosDialogBean {
 	public TipoDeficienciaRelatorio[] getTiposDeficiencia() {
 		return TipoDeficienciaRelatorio.values();
 	}
+    
 }

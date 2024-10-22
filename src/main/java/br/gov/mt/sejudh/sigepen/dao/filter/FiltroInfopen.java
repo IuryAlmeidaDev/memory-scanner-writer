@@ -1,5 +1,8 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import br.gov.mt.sejudh.sigepen.enumerator.IdadeRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Lgbt;
 import br.gov.mt.sejudh.sigepen.enumerator.PopulacaoFeminino;
@@ -49,6 +52,9 @@ public class FiltroInfopen extends FiltroConsulta {
 	private PopulacaoFeminino populacaoFeminino;
 	
 	private SimNao aposentado;
+		
+	private Date dataInicial;	
+	
 
 	public int getTipoRelatorio() {
 		return tipoRelatorio;
@@ -128,6 +134,9 @@ public class FiltroInfopen extends FiltroConsulta {
 	}
 	
 	public String getDescricao() {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
 		String filtros = "";
 		if(this.getNacionalidade() != null)
 			filtros += "Nacionalidade: " + this.getNacionalidade().getDescricao() + ", ";
@@ -161,10 +170,16 @@ public class FiltroInfopen extends FiltroConsulta {
 			String dscr = SimNao.N.equals(this.getAposentado()) ? "Não, " : "Sim, ";
 			filtros += "Aposentado: " + dscr;
 		}
+		
+		if(this.getDataInicial() != null) {
+			filtros += "Período: " + sdf.format(this.getDataInicial()) +  ", ";			
+		}
+	
 		if(!"".equals(filtros))
 			return "Filtro utilizado: " + filtros;
 		return null;
 	}
+
 
 	public long getUnidade() {
 		return unidade;
@@ -221,5 +236,13 @@ public class FiltroInfopen extends FiltroConsulta {
 	public void setAposentado(SimNao aposentado) {
 		this.aposentado = aposentado;
 	}
-	
+
+	public Date getDataInicial() {
+		return dataInicial;
+	}
+
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial = dataInicial;
+	}
+
 }

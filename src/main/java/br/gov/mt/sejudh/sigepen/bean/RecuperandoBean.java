@@ -39,6 +39,7 @@ import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
+import br.gov.mt.sejudh.sigepen.bean.outros.CadastrarProcessoBean;
 import br.gov.mt.sejudh.sigepen.biometrics.BiometriaRetorno;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
@@ -76,6 +77,7 @@ import br.gov.mt.sejudh.sigepen.model.Pessoa;
 import br.gov.mt.sejudh.sigepen.model.Processo;
 import br.gov.mt.sejudh.sigepen.model.ProcessoRegimeCondicao;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
+import br.gov.mt.sejudh.sigepen.model.SubstituicaoFotoJustificativa;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
@@ -95,6 +97,7 @@ import br.gov.mt.sejudh.sigepen.service.PedidoService;
 import br.gov.mt.sejudh.sigepen.service.PessoaService;
 import br.gov.mt.sejudh.sigepen.service.ProcessoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
+import br.gov.mt.sejudh.sigepen.service.SubstituicaoFotoJustificativaService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
@@ -107,27 +110,26 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ViewScoped
 @URLMappings(mappings = {
 		@URLMapping(id = "ListarRecuperando", pattern = "/recuperando", viewId = "/WEB-INF/pages/recuperando/ListarRecuperandoNovo.xhtml"),
-		@URLMapping(id = "CadastrarRecuperando", pattern = "/recuperando/cadastrar", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
+		@URLMapping(id = "CadastrarRecuperando", pattern = "/recuperando/cadastrar", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),	
 		@URLMapping(id = "AlterarRecuperando", pattern = "/recuperando/alterar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "VisualizarRecuperando", pattern = "/recuperando/visualizar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
-		@URLMapping(id = "RelatorioInfopen", pattern = "/recuperando/infopen", viewId = "/WEB-INF/pages/recuperando/RelatorioInfopen.xhtml")
-})
+		@URLMapping(id = "RelatorioInfopen", pattern = "/recuperando/infopen", viewId = "/WEB-INF/pages/recuperando/RelatorioInfopen.xhtml") })
 public class RecuperandoBean extends MetodosDePaginaBean {
 
 	private static final int REU_SOLTO = 4;
 
 	private Boolean usuarioEstaCadastrando = false;
-	
+
 	private Boolean usuarioPossuiLeitorBiometricoAtivo = false;
-	
+
 	private FiltroRecuperandoView filtro;
-	
+
 	private LazyDataModel<RecuperandoView> recuperandos;
-	
+
 	private List<RecuperandoView> recuperandoSimilares;
-	
+
 	private Recuperando recuperando;
-	
+
 	private Foto fotoDoFormulario;
 
 	private Contato contato;
@@ -151,11 +153,11 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	private Parente parenteAux;
 
 	private Passagem passagemSelecionada;
-	
+
 	private String loginUsuarioAutorizador;
-	
+
 	private String senhaUsuarioAutorizador;
-	
+
 	private String observacaoUsuarioAutorizador;
 
 	@SuppressWarnings("unused")
@@ -178,6 +180,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	private RecuperandoService service;
 
 	@Inject
+	private SubstituicaoFotoJustificativaService substituicaoFotoJustificativaService;
+
+	@Inject
 	private PessoaService pessoaService;
 
 	@Inject
@@ -191,19 +196,22 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private ProcessoService processoService;
+
+	@Inject
+	private CadastrarProcessoBean cadastrarProcessoBean;
 	
 	@Inject
 	private BiometriaService bioService;
 
 	@Inject
 	private PedidoService pedido;
-	
+
 	@Inject
 	private UsuarioService usuarioService;
-	
+
 	@Inject
 	private UnidadePrisionalService unidadeService;
-	
+
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
 
@@ -212,29 +220,32 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	private String movimentacaoExterna;
 
 	private String emTransferencia;
-	
+
 	private RecuperandoView recuperandoSelecionado;
-	
+
 	@Inject
 	private PassagemService passagemService;
-	
+
 	private List<UnidadePrisional> unidadesPrisionais;
-	
+
 	private UnidadePrisional unidadeInfopenSelecionada;
 
-    @Inject
-    private VisitanteService visitanteService;
-    
-    @Inject
-    private HistoricoRecuperandoService historicoService;
-	
+	@Inject
+	private VisitanteService visitanteService;
+
+	@Inject
+	private HistoricoRecuperandoService historicoService;
+
 	private List<Etnia> etnias;
+
+	private Foto fotoSubstituida;
 	
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
 		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
-			FiltroRecuperandoView filtroDash = (FiltroRecuperandoView)facesUtil.getFlashParameter("filtroRecuperandoDash");
-			
+			FiltroRecuperandoView filtroDash = (FiltroRecuperandoView) facesUtil
+					.getFlashParameter("filtroRecuperandoDash");
+
 			if (filtroDash != null) {
 				setFiltro(filtroDash);
 			} else {
@@ -243,115 +254,117 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		}
 	}
 
-	@URLAction(onPostback=false)
+	@URLAction(onPostback = false)
 	public String init() {
 		this.listarEtnias();
-		try {	
-			switch(this.getAcaoDeTela()) {
-				case CADASTRAR:
-					boolean tornar = false;
-					long pessoaId = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
-					Pessoa p = null;
-					Long idPessoa = (Long)facesUtil.getObjetoSessao("idPessoa");
-					if (pessoaId == 0 && idPessoa != null) {
-						pessoaId = idPessoa;
-						tornar = true;
-					}
-					//A pessoa pode já existir no sistema como visitante ou outros...
-					if (pessoaId > 0) {
-						p = pessoaService.buscarPessoaPorId(pessoaId);
-						
-						if (p == null) {
-							facesUtil.exibirMensagemErro("Pessoa não encontrada.", true);
-							return "pretty:ListarRecuperando";
-						}
-					} else {
-						p = new Pessoa();
-						p.setNaturalidade(new Cidade());
-					}
+		try {
+			switch (this.getAcaoDeTela()) {
+			case CADASTRAR:
+				boolean tornar = false;
+				long pessoaId = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
+				Pessoa p = null;
+				Long idPessoa = (Long) facesUtil.getObjetoSessao("idPessoa");
+				if (pessoaId == 0 && idPessoa != null) {
+					pessoaId = idPessoa;
+					tornar = true;
+				}
+				// A pessoa pode já existir no sistema como visitante ou outros...
+				if (pessoaId > 0) {
+					p = pessoaService.buscarPessoaPorId(pessoaId);
 
-					Visitante v = null;
-					Long idVisitante = null;
-					Long tornarRecuperandoIdVisitante = (Long)facesUtil.getObjetoSessao("tornarRecuperandoIdVisitante");
-					if(tornarRecuperandoIdVisitante != null) {
-						idVisitante = tornarRecuperandoIdVisitante;
-						v = visitanteService.buscarPorId(idVisitante);
-					}
-
-					this.recuperando = new Recuperando(StatusRecuperando.INATIVO_PARCIAL);
-					this.recuperando.setPessoa(p);
-					this.recuperando.setTornarRecuperando(tornar);
-					this.recuperando.setTornarRecuperandoIdVisitante(idVisitante);
-
-					if(v != null && tornarRecuperandoIdVisitante != null) {
-						Foto foto = new Foto();
-						foto.setIsAtual(true);
-						foto.setRecuperando(this.recuperando);
-						foto.setDataInclusao(new Date());
-						foto.setTipo(TipoFoto.FRENTE);
-						Imagem imagem = new Imagem();
-						imagem.setDataInclusao(new Date());
-						imagem.setArquivo(v.getFotoFrenteAtual().getImagem().getArquivo());
-						foto.setImagem(imagem);
-						this.recuperando.setFotos(new ArrayList<Foto>());
-						this.recuperando.getFotos().add(foto);						
-					}
-					
-					inicializarVariaveis();
-					break;
-					
-				case ALTERAR:
-				case VISUALIZAR:
-					long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
-					
-					if (!buscarRecuperando(id)) {
-						facesUtil.exibirMensagemErro("Recuperando não encontrado.", true);
+					if (p == null) {
+						facesUtil.exibirMensagemErro("Pessoa não encontrada.", true);
 						return "pretty:ListarRecuperando";
 					}
-					
-					if (!validarRecuperando()) {
-						facesUtil.exibirMensagemErro("Operação não permitida.", true);
-						return "pretty:ListarRecuperando";
-					}
+				} else {
+					p = new Pessoa();
+					p.setNaturalidade(new Cidade());
+				}
 
-					inicializarVariaveis();
-					carregarStatusMovimentacao();
-					logDeAcesso(log, this.recuperando);
-					
-					if(verificarSeBiometriaEhObrigatoria()) {
-						validarBiometriaAtualizada();
-					}
-					break;
-					
-				case LISTAR:
-					unidadesPrisionais   = unidadeService.listarUnidadesNaoInativas();
-					pesquisar();
-					logDeAcesso(log, "Recuperandos");
-					break;
-					
-				default:
-					break;
+				Visitante v = null;
+				Long idVisitante = null;
+				Long tornarRecuperandoIdVisitante = (Long) facesUtil.getObjetoSessao("tornarRecuperandoIdVisitante");
+				if (tornarRecuperandoIdVisitante != null) {
+					idVisitante = tornarRecuperandoIdVisitante;
+					v = visitanteService.buscarPorId(idVisitante);
+				}
+
+				this.recuperando = new Recuperando(StatusRecuperando.INATIVO_PARCIAL);
+				this.recuperando.setPessoa(p);
+				this.recuperando.setTornarRecuperando(tornar);
+				this.recuperando.setTornarRecuperandoIdVisitante(idVisitante);
+
+				if (v != null && tornarRecuperandoIdVisitante != null) {
+					Foto foto = new Foto();
+					foto.setIsAtual(true);
+					foto.setRecuperando(this.recuperando);
+					foto.setDataInclusao(new Date());
+					foto.setTipo(TipoFoto.FRENTE);
+					Imagem imagem = new Imagem();
+					imagem.setDataInclusao(new Date());
+					imagem.setArquivo(v.getFotoFrenteAtual().getImagem().getArquivo());
+					foto.setImagem(imagem);
+					this.recuperando.setFotos(new ArrayList<Foto>());
+					this.recuperando.getFotos().add(foto);
+				}
+
+				inicializarVariaveis();
+				break;
+
+			case ALTERAR:
+			case VISUALIZAR:
+				long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
+
+				if (!buscarRecuperando(id)) {
+					facesUtil.exibirMensagemErro("Recuperando não encontrado.", true);
+					return "pretty:ListarRecuperando";
+				}
+
+				if (!validarRecuperando()) {
+					facesUtil.exibirMensagemErro("Operação não permitida.", true);
+					return "pretty:ListarRecuperando";
+				}
+
+				inicializarVariaveis();
+				carregarStatusMovimentacao();
+				logDeAcesso(log, this.recuperando);
+
+				if (verificarSeBiometriaEhObrigatoria()) {
+					validarBiometriaAtualizada();
+				}
+				break;
+
+			case LISTAR:
+				unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
+				pesquisar();
+				logDeAcesso(log, "Recuperandos");
+				break;
+
+			default:
+				break;
 			}
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(e, log);
 		}
-		
+
 		return null;
 	}
-	
+
 	public Boolean verificarSeBiometriaEhObrigatoria() {
 		return unidadeService.verificarSeBiometriaEhObrigatoria(SecurityUtil.getUnidadeSelecionada().getId());
 	}
-	
+
 	public String executarCadastro() {
 		return "pretty:CadastrarRecuperando";
 	}
-	
+
 	private void validarBiometriaAtualizada() {
-		if (this.recuperando.getPessoa().getBiometria() != null && recuperando.getPessoa().getBiometria().getTemplate() == null
+		if (this.recuperando.getPessoa().getBiometria() != null
+				&& recuperando.getPessoa().getBiometria().getTemplate() == null
 				&& this.getAcaoDeTela() == AcaoDeTela.ALTERAR) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATUALIZAÇÃO CADASTRAL NECESSÁRIA", "A biometria deste recuperando está DESATUALIZADA.");
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATUALIZAÇÃO CADASTRAL NECESSÁRIA",
+					"A biometria deste recuperando está DESATUALIZADA.");
 		}
 	}
 
@@ -359,29 +372,31 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		if (id <= 0) {
 			return false;
 		}
-		
+
 		this.recuperando = service.buscarRecuperandoPorId(id, true);
-		
+
 		if (this.recuperando == null) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	private boolean validarRecuperando() {
 		Estrutura estruturaAtual = service.lotacaoAtual(recuperando);
-		
+
 		if (getAcaoDeTela().equals(AcaoDeTela.ALTERAR)) {
-			if (!recuperando.getStatus().equals(StatusRecuperando.ATIVO) && !securityUtil.possuiPermissao("AlterarRecuperandoInativo"))
-				return false;
-			
-			if (estruturaAtual == null && !securityUtil.possuiPermissao("AlterarRecuperandoInativo")) 
+			if (!recuperando.getStatus().equals(StatusRecuperando.ATIVO)
+					&& !securityUtil.possuiPermissao("AlterarRecuperandoInativo"))
 				return false;
 
-			if(estruturaAtual != null) {
-				boolean isUnidadeLogadaIgualLotacaoRecuperando = estruturaAtual.getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId();
-			
+			if (estruturaAtual == null && !securityUtil.possuiPermissao("AlterarRecuperandoInativo"))
+				return false;
+
+			if (estruturaAtual != null) {
+				boolean isUnidadeLogadaIgualLotacaoRecuperando = estruturaAtual.getUnidadePrisional()
+						.getId() == SecurityUtil.getUnidadeSelecionada().getId();
+
 				if (!isUnidadeLogadaIgualLotacaoRecuperando)
 					return false;
 			}
@@ -389,18 +404,18 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 		return true;
 	}
-	
+
 	private void inicializarVariaveis() {
 		this.fotoDoFormulario = new Foto();
 		this.particularidade = new Particularidade();
-		
+
 		this.parente = new Parente();
 		this.documentos = new ArrayList<Documento>();
 		this.alcunha = new Alcunha();
-		
+
 		this.passagemSelecionada = new Passagem();
 	}
-	
+
 	public void carregarStatusMovimentacao() {
 		this.movimentacaoInterna = (pedido.recuperandoEmMovimentacaoInterna(recuperando)) ? "SIM" : "NÃO";
 		this.movimentacaoExterna = (pedido.recuperandoEmMovimentacaoExterna(recuperando)) ? "SIM" : "NÃO";
@@ -411,9 +426,12 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		if (this.recuperando.getAutorRegistro() == null) {
 			return "";
 		}
-		String rodape = "Cadastrado por: " + this.recuperando.getAutorRegistro().getUsuario() + " em " + this.recuperando.getAutorRegistro().getData();
-		if (!this.recuperando.getAutorUltimaAlteracao().getData() .equals(this.recuperando.getAutorRegistro().getData())) {
-			return rodape + "| Alterado por: " + this.recuperando.getAutorUltimaAlteracao().getUsuario() + " em " + this.recuperando.getAutorUltimaAlteracao().getData();
+		String rodape = "Cadastrado por: " + this.recuperando.getAutorRegistro().getUsuario() + " em "
+				+ this.recuperando.getAutorRegistro().getData();
+		if (!this.recuperando.getAutorUltimaAlteracao().getData()
+				.equals(this.recuperando.getAutorRegistro().getData())) {
+			return rodape + "| Alterado por: " + this.recuperando.getAutorUltimaAlteracao().getUsuario() + " em "
+					+ this.recuperando.getAutorUltimaAlteracao().getData();
 		} else {
 			return rodape;
 		}
@@ -425,12 +443,12 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	private void pesquisar() {
 		this.recuperandos = new LazyDataModel<RecuperandoView>() {
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public Object getRowKey(RecuperandoView object) {
-				if(object != null && object.getId() != null) {
+				if (object != null && object.getId() != null) {
 					return object.getId();
-				} else if(object != null && object.getVisitanteId() != null) {
+				} else if (object != null && object.getVisitanteId() != null) {
 					return object.getVisitanteId();
 				}
 				return null;
@@ -451,13 +469,12 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				}
 				return null;
 			}
-			
+
 			@Override
-			public List<RecuperandoView> load(int first, int pageSize,
-					String sortField, SortOrder sortOrder,
+			public List<RecuperandoView> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
 				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
-				
+
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
@@ -479,20 +496,21 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				}
 
 				usuarioEstaCadastrando = false;
-				
+
 				return recuperandos;
 			}
 		};
 	}
-	
+
 	public void imprimir() {
 		try {
 			filtro.setIsTrazerEstruturaNome(true);
 			List<RecuperandoView> lista = service.buscarRecuperandosPorFiltro(filtro, true);
 			filtro.setIsTrazerEstruturaNome(false);
-			
+
 			if (lista.size() == 0) {
-				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO",
+						"Relatório não impresso, nenhum registro encontrado!");
 				return;
 			}
 
@@ -500,28 +518,30 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Recuperandos", log);
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir lista de recuperandos: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro imprimir lista de recuperandos: " + e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Recuperandos", e, log);
 		}
 	}
-	
+
 	public void imprimirExtratoRecuperandoPorPassagem(long passagemId) {
 		gerarExtratoRecuperando(service.gerarEntidadeExtratoRecuperando(this.recuperando, passagemId));
 	}
-	
+
 	public void imprimirExtratoRecuperando() {
 		gerarExtratoRecuperando(service.gerarEntidadeExtratoRecuperando(this.recuperando, null));
 	}
-	
+
 	private void gerarExtratoRecuperando(List<ExtratoRecuperandoDTO> lista) {
 		try {
 			List<ExtratoRecuperandoDTO> listaRec = lista;
-			
+
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(listaRec, Relatorio.ExtratoRecuperando));
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Recuperandos", log);
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir extrato do recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro imprimir extrato do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Extrato do Recuperando", e, log);
 		}
 	}
@@ -529,62 +549,70 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	/*
 	 * Métodos de Bean
 	 */
-	
+
 	public String salvar() {
 		try {
 			if (!this.recuperando.possuiFotoFrenteAtual()) {
 				throw new ValidacaoException("É necessário associar uma foto de frente atual do recuperando.");
 			}
-			
-			if(this.recuperando.ehGestante() && this.recuperando.getInicioGestacao() == null) {
+
+			if (this.recuperando.ehGestante() && this.recuperando.getInicioGestacao() == null) {
 				throw new ValidacaoException("É necessário informar o campo início da gestação.");
 			}
-			
-			if(this.recuperando.ehLactante() && this.recuperando.getInicioLactante() == null) {
+
+			if (this.recuperando.ehLactante() && this.recuperando.getInicioLactante() == null) {
 				throw new ValidacaoException("É necessário informar o campo início da lactação.");
 			}
 			Date hj = new Date();
-			if(this.recuperando.ehGestante() && this.recuperando.getInicioGestacao() != null && this.recuperando.getInicioGestacao().after(hj)) {
+			if (this.recuperando.ehGestante() && this.recuperando.getInicioGestacao() != null
+					&& this.recuperando.getInicioGestacao().after(hj)) {
 				throw new ValidacaoException("Campo início gestação deve ser inferior que a data atual.");
 			}
-			
-			if(this.recuperando.ehLactante() && this.recuperando.getInicioLactante() != null && this.recuperando.getInicioLactante().after(hj)) {
+
+			if (this.recuperando.ehLactante() && this.recuperando.getInicioLactante() != null
+					&& this.recuperando.getInicioLactante().after(hj)) {
 				throw new ValidacaoException("Campo início lactação deve ser inferior que a data atual.");
 			}
-			
-			if(this.recuperando.getRaca() != null && this.recuperando.getRaca().getId() == 5 && this.recuperando.getEtnia() == null) {
+
+			if (this.recuperando.getRaca() != null && this.recuperando.getRaca().getId() == 5
+					&& this.recuperando.getEtnia() == null) {
 				throw new ValidacaoException("Campo Etnia deve ser informado");
 			}
-			
+
 			if (verificarSeBiometriaEhObrigatoria()) {
 				if (this.usuarioPossuiLeitorBiometricoAtivo && this.recuperando.getPessoa().getBiometria() == null) {
-					RequestContext.getCurrentInstance().execute("enviaComandoParaApp({acao: 'registrar', idPessoa: " + this.recuperando.getPessoa().getId() + "})");
+					RequestContext.getCurrentInstance().execute("enviaComandoParaApp({acao: 'registrar', idPessoa: "
+							+ this.recuperando.getPessoa().getId() + "})");
 					return null;
-				} 
-				else if (!this.usuarioPossuiLeitorBiometricoAtivo && this.recuperando.getAutorizacaoCadastroSemBiometria() == null && this.recuperando.getPessoa().getBiometria() == null) {
+				} else if (!this.usuarioPossuiLeitorBiometricoAtivo
+						&& this.recuperando.getAutorizacaoCadastroSemBiometria() == null
+						&& this.recuperando.getPessoa().getBiometria() == null) {
 					RequestContext.getCurrentInstance().execute("PF('confirmaCadBio').show()");
 					return null;
 				}
 			}
-			if(this.recuperando.getParentes() != null) {
+			if (this.recuperando.getParentes() != null) {
 				int conjuges = 0;
-				for(Parente p : this.recuperando.getParentes()) {
-					if(p.getParentesco().getDescricao().equals("Conjugê") && p.getStatus().equals(SgpStatusAlternativo.A)){
+				for (Parente p : this.recuperando.getParentes()) {
+					if (p.getParentesco().getDescricao().equals("Conjugê")
+							&& p.getStatus().equals(SgpStatusAlternativo.A)) {
 						conjuges++;
-					}	
+					}
 				}
-				if(conjuges > 1) {
-					facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Não pode haver mais de um cadastro conjugê ativo!");
+				if (conjuges > 1) {
+					facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO",
+							"Não pode haver mais de um cadastro conjugê ativo!");
 					return null;
 				}
 			}
-			boolean isTornarRecuperando = this.recuperando.getTornarRecuperandoIdVisitante() != null && this.recuperando.getTornarRecuperandoIdVisitante() > 0;
+			boolean isTornarRecuperando = this.recuperando.getTornarRecuperandoIdVisitante() != null
+					&& this.recuperando.getTornarRecuperandoIdVisitante() > 0;
 			boolean isNovoRecuperando = this.recuperando.getId() <= 0;
 			this.recuperando = service.salvar(this.recuperando);
 
 			bioService.salvarBiometriaNServer(this.recuperando.getPessoa());
 
-			if(!isTornarRecuperando)
+			if (!isTornarRecuperando)
 				buscarRecuperando(this.recuperando.getId());
 
 			LoggerUtil.logInfo(Acao.SALVAR, this.recuperando, log);
@@ -592,12 +620,12 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 			if (isNovoRecuperando) {
 				facesUtil.exibirMensagemInfo(mensagemSucesso, true);
-				
+
 				if (!securityUtil.possuiPermissao("CadastrarNovaPassagem")) {
 					return "pretty:ListarRecuperando";
 				}
-				
-				facesUtil.setQueryParameter("id", String.valueOf(this.recuperando.getId()));				
+
+				facesUtil.setQueryParameter("id", String.valueOf(this.recuperando.getId()));
 				return "pretty:CadastrarNovaPassagem";
 			} else {
 				facesUtil.exibirMensagemInfo(mensagemSucesso, false);
@@ -605,58 +633,77 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", e.getMessage());
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Erro ao salvar recuperando (" + this.recuperando.getPessoa().getNome() + "): " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO",
+					"Erro ao salvar recuperando (" + this.recuperando.getPessoa().getNome() + "): " + e.getMessage());
 			LoggerUtil.logErro(Acao.SALVAR, this.recuperando, e, log);
 		}
 
 		return null;
 	}
-	
+
 	public String autorizarCadastroSemBiometria() {
 		try {
-			AuthenticationInfo ai = SecurityUtils.getSecurityManager().authenticate(new UsernamePasswordToken(loginUsuarioAutorizador, senhaUsuarioAutorizador));
+			AuthenticationInfo ai = SecurityUtils.getSecurityManager()
+					.authenticate(new UsernamePasswordToken(loginUsuarioAutorizador, senhaUsuarioAutorizador));
 			SecurityUtils.getSecurityManager().checkPermission(ai.getPrincipals(), "AutorizarCadastroSemBiometria");
 			Usuario u = usuarioService.buscarUsuarioPorLogin(loginUsuarioAutorizador);
-		
+
 			AutorizacaoCadastroSemBiometria autCad = new AutorizacaoCadastroSemBiometria();
 			autCad.setObservacao(this.observacaoUsuarioAutorizador);
 			autCad.setUsuario(u);
 			autCad.setDataAutorizacao(Sigepen.getDataAtual());
 			autCad.setRecuperando(this.recuperando);
-		
+
 			this.recuperando.setAutorizacaoCadastroSemBiometria(autCad);
-		
+
 			RequestContext.getCurrentInstance().execute("PF('dlgAutBio').hide()");
-			
+
 			return salvar();
 
 		} catch (UnauthorizedException e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Usuário informado não possui permissão para autorizar cadastro.");
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Usuário informado não possui permissão para autorizar cadastro.");
 		} catch (UnknownAccountException | IncorrectCredentialsException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Usuário ou senha inválidos.");
-		} catch(Exception e) {
+		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao autorizar cadastro sem biometria.");
 			LoggerUtil.logErro(e, log);
 		}
-		
+
 		return null;
+	}
+	
+	public void excluirProcesso(Processo processo) throws ValidacaoException {
+		try {											
+			cadastrarProcessoBean.excluirProcessoRegimeCondicaoECrime(processo);
+			this.recuperando.getProcessos().remove(processo);
+			
+			facesUtil.exibirMensagemInfo("Processo " + processo.getNumeroProcesso() + " excluído(a) com sucesso!", true);
+			LoggerUtil.logInfo(Acao.EXCLUIR, processo, log);
+			
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir processo (" + processo.getNumeroProcesso() + "): " + e.getMessage());
+			LoggerUtil.logErro(Acao.EXCLUIR, recuperando, e, log);
+		}
 	}
 
 	public void excluir(RecuperandoView recuperando) {
 		try {
 			service.excluir(recuperando);
-			facesUtil.exibirMensagemInfo("Recuperando(a) " + recuperando.getNome() + " excluído(a) com sucesso!", false);
+			facesUtil.exibirMensagemInfo("Recuperando(a) " + recuperando.getNome() + " excluído(a) com sucesso!",
+					false);
 			LoggerUtil.logInfo(Acao.EXCLUIR, recuperando, log);
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir recuperando (" + recuperando.getNome() + "): " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao excluir recuperando (" + recuperando.getNome() + "): " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, recuperando, e, log);
 		}
 	}
 
 	public void configurarNomeSocial() {
-		String nomeSocial = 
-				(this.recuperando.getIdentidadeDeGenero() != null &&
-					this.recuperando.getPessoa().getNomeSocial() != null) ? this.recuperando.getPessoa().getNomeSocial() : null;
+		String nomeSocial = (this.recuperando.getIdentidadeDeGenero() != null
+				&& this.recuperando.getPessoa().getNomeSocial() != null) ? this.recuperando.getPessoa().getNomeSocial()
+						: null;
 		this.recuperando.getPessoa().setNomeSocial(nomeSocial);
 	}
 
@@ -672,26 +719,27 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			this.filtro.setPessoasIds(ids);
 			RequestContext.getCurrentInstance().update("registrosForm");
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao pesquisar por biometria: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao pesquisar por biometria: " + e.getMessage());
 			LoggerUtil.logErro(e, log);
 		}
 	}
-	
+
 	public void setUsuarioPossuiLeitorBiometricoAtivo() {
 		Map<String, String> map = facesUtil.getParameters();
 		this.usuarioPossuiLeitorBiometricoAtivo = Boolean.parseBoolean(map.get("status"));
 	}
-	
+
 	public void retornoOperacaoBiometrica() {
 		switch (BiometriaRetorno.getOperacao(facesUtil)) {
-			case Pesquisar:
-				pesquisarBiometria(BiometriaRetorno.getValor());
-				break;
-			case Registrar:
-				registrarBiometria(BiometriaRetorno.getValor());
-				break;
-			default:
-				break;
+		case Pesquisar:
+			pesquisarBiometria(BiometriaRetorno.getValor());
+			break;
+		case Registrar:
+			registrarBiometria(BiometriaRetorno.getValor());
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -704,7 +752,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			if (idBiometriaTemp == null) {
 				throw new Exception("Biometria inválida.");
 			}
-			
+
 			Biometria bio = bioService.buscarBiometriaConvertida(idBiometriaTemp);
 			bioService.vincularBiometriaAPessoa(bio, this.recuperando.getPessoa());
 
@@ -715,7 +763,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao capturar biometria: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao capturar biometria: " + e.getMessage());
 			LoggerUtil.logErro(e, log);
 		}
 	}
@@ -751,43 +800,43 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		LoggerUtil.logInfo(Acao.ADICIONAR, foto + " " + this.recuperando, log);
 	}
 
-
 	/*
 	 * Associar Processo
 	 */
-	
+
 	private String acaoDialogProcesso(Processo proc, boolean isVisualizar) {
 		if (proc == null) {
 			return "pretty:CadastrarProcesso";
 		}
-		
+
 		if (isVisualizar) {
 			return "pretty:VisualizarProcesso";
-		} 
-		
+		}
+
 		return "pretty:AlterarProcesso";
 	}
 
 	public void abrirDialogProcesso(Processo processo, boolean isVisualizar) {
 		facesUtil.setObjetoSessao("recuperandoProcesso", this.recuperando);
-		
+
 		if (processo != null) {
 			facesUtil.setObjetoSessao("processo", processo);
 		}
-		
+
 		facesUtil.exibirPaginaDialog(acaoDialogProcesso(processo, isVisualizar), null, 1300);
 	}
 
 	public void atualizarProcessos(SelectEvent event) {
 		String numProc = (String) event.getObject();
-		
+
 		try {
 			if (numProc != null && numProc != "") {
 				this.recuperando = this.service.atualizarRegimeCondicaoAtualRecuperando(recuperando);
 				facesUtil.exibirMensagemInfo("Processo " + numProc + " salvo com sucesso!", false);
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro atualizar processos do recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro atualizar processos do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ASSOCIAR, numProc, e, log);
 		}
 	}
@@ -803,7 +852,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			if (processo.getDataFinalizado() != null) {
 				this.processo.setStatusProcesso(StatusProcesso.FINALIZADO);
 			}
-			
+
 			this.recuperando.getProcessos().remove(processo);
 			this.processo = this.processoService.salvar(processo);
 
@@ -838,17 +887,19 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		this.fotoDoFormulario.setImagem((Imagem) retorno);
 	}
 
-	public void adicionarNovaFoto() {
+	public List<Foto> adicionarNovaFoto() {
 		if (this.fotoDoFormulario == null || this.fotoDoFormulario.getImagem() == null) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Adicionar foto", "Preencha corretamente os campos e associe uma foto.");
-			return;
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Adicionar foto",
+					"Preencha corretamente os campos e associe uma foto.");
+			return null;
 		}
 
 		this.fotoDoFormulario.getImagem().setDataInclusao(Sigepen.getDataAtual());
 		this.fotoDoFormulario.setDataInclusao(Sigepen.getDataAtual());
-
+		List<Foto> fotos = new ArrayList<Foto>();
 		try {
-			this.recuperando.setFotos(service.salvarFoto(this.fotoDoFormulario));
+			fotos = service.salvarFoto(this.fotoDoFormulario);
+			this.recuperando.setFotos(fotos);
 			LoggerUtil.logInfo(Acao.SALVAR, this.fotoDoFormulario, log);
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
@@ -856,6 +907,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		}
 
 		this.fotoDoFormulario = new Foto();
+		return fotos;
 	}
 
 	public void configurarFotoAtual(Foto foto) {
@@ -864,7 +916,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				for (Foto f : this.recuperando.getFotos()) {
 					if (f.getTipo().equals(TipoFoto.FRENTE) && f.getId() == foto.getId()) {
 						foto.setIsAtual(!foto.getIsAtual());
-						
+
 						throw new ValidacaoException("É necessário ter pelo menos uma foto de frente atual.");
 					}
 				}
@@ -889,6 +941,65 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			service.excluirFoto(f);
 			this.recuperando.getFotos().remove(f);
 			LoggerUtil.logInfo(Acao.EXCLUIR, f, log);
+		} catch (ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir foto: " + e.getMessage());
+			LoggerUtil.logErro(null, this.recuperando, e, log);
+		}
+	}
+
+	public void abrirDialogSubstituicaoFotoJustificativa(Foto foto) {
+		this.fotoSubstituida = foto;
+		facesUtil.exibirPaginaDialog("pretty:AssociarSubstituicaoFotoJustificativa", 768, 1024);
+	}
+
+	public void substituirFotoJustificativa(SelectEvent event) {
+		try {
+			SubstituicaoFotoJustificativa substituicaoFotoJustificativa = new SubstituicaoFotoJustificativa();
+			String descricaoJustificativa = (String) facesUtil.getObjetoSessao("descricaoJustificativa");
+			if (descricaoJustificativa == null || descricaoJustificativa.isEmpty()) {
+				throw new ValidacaoException("Infore uma Justificativa");
+			} else {
+				Imagem imagem = (Imagem) event.getObject();
+				this.fotoDoFormulario.setIsAtual(true);
+				this.fotoDoFormulario.setRecuperando(this.recuperando);
+				this.fotoDoFormulario.setTipo(this.fotoSubstituida.getTipo());
+				this.fotoDoFormulario.setImagem(imagem);
+				
+				List<Foto> fotos = this.adicionarNovaFoto();
+				substituicaoFotoJustificativa.setDescricao(descricaoJustificativa);
+				substituicaoFotoJustificativa.setFotoSubstituidaId(this.fotoSubstituida.getId());
+				substituicaoFotoJustificativa.setRecuperando(this.recuperando);
+				if (!fotos.isEmpty()) {
+					Foto fotoNova = new Foto();
+					for (Foto foto : fotos) {
+						if (foto.getImagem().getArquivo() == imagem.getArquivo()
+								&& foto.getImagem().getDataInclusao() == imagem.getDataInclusao()) {
+							fotoNova = foto;
+						}
+					}
+					substituicaoFotoJustificativa.setFotoSubstitutaId(fotoNova.getId());
+					substituicaoFotoJustificativaService.substituirFoto(substituicaoFotoJustificativa);
+					this.substituirFoto(fotoNova, this.fotoSubstituida);
+				} else {
+					throw new ValidacaoException("Erro na Substituição de fotos!");
+				}
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "SUCESSO", "Substituição realizada com sucesso!");
+			}
+		} catch (ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir foto: " + e.getMessage());
+			LoggerUtil.logErro(null, this.recuperando, e, log);
+		}
+	}
+
+	public void substituirFoto(Foto substituta, Foto substituida) {
+		try {
+			service.substituirFoto(substituta, substituida);
+			service.excluirFoto(substituida);
+			this.recuperando.getFotos().remove(substituida);
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
 		} catch (Exception e) {
@@ -926,7 +1037,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public void adicionarParticularidade() {
 		if (this.particularidade == null || this.particularidade.getImagem() == null) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Adicionar Particularidade", "Preencha corretamente os campos e associe uma foto a uma região do corpo humano.");
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Adicionar Particularidade",
+					"Preencha corretamente os campos e associe uma foto a uma região do corpo humano.");
 			return;
 		}
 
@@ -937,7 +1049,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			this.particularidade = service.salvarParticularidade(this.particularidade);
 			LoggerUtil.logInfo(Acao.SALVAR, this.particularidade, log);
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao adicionar particularidade: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao adicionar particularidade: " + e.getMessage());
 			LoggerUtil.logErro(Acao.SALVAR, this.recuperando, e, log);
 		}
 
@@ -951,7 +1064,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			this.recuperando.getParticularidades().remove(p);
 			LoggerUtil.logInfo(Acao.EXCLUIR, p, log);
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir particularidade: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao excluir particularidade: " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, this.recuperando, e, log);
 		}
 	}
@@ -979,12 +1093,12 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		facesUtil.setObjetoSessao("idRecuperando", this.recuperando.getId());
 		facesUtil.exibirPaginaDialog(acaoDialogPreCadastroPessoa(), options, 400, 800);
 	}
-	
-	private String acaoDialogPreCadastroPessoa() {	
+
+	private String acaoDialogPreCadastroPessoa() {
 		if (this.getIsVisualizacao()) {
 			return "pretty:PreCadastroPessoaVisualizar";
-		} 
-		
+		}
+
 		if (this.recuperando.getId() > 0) {
 			return "pretty:PreCadastroPessoaAlterar";
 		} else {
@@ -1005,11 +1119,10 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	}
 
 	public boolean bloquearAbas() {
-		if(this.recuperando != null)
+		if (this.recuperando != null)
 			return (this.recuperando.getId() <= 0);
 		return true;
 	}
-	
 
 	/*
 	 * Perículosidade
@@ -1019,7 +1132,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		try {
 			RequestContext.getCurrentInstance().execute("PF('altPericulosidade').hide()");
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao alterar periculosidade: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao alterar periculosidade: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ALTERAR, this.recuperando, e, log);
 		}
 	}
@@ -1041,9 +1155,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public void incluirContato(SelectEvent event) {
 		Contato contato = (Contato) event.getObject();
-		
+
 		try {
-			if (contato != null) {	
+			if (contato != null) {
 				if (this.contato != null) {
 					this.recuperando.getPessoa().getContatos().remove(this.contato);
 					this.recuperando.getPessoa().getContatos().add(contato);
@@ -1057,7 +1171,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				}
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao incluir contato no recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao incluir contato no recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ADICIONAR, contato, e, log);
 		}
 	}
@@ -1065,13 +1180,14 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	public void excluirContato(Contato contato) {
 		try {
 			this.recuperando.getPessoa().getContatos().remove(contato);
-			
+
 			if (this.recuperando.getPessoa().getId() > 0) {
 				contatoService.excluirContato(contato);
 				LoggerUtil.logInfo(Acao.EXCLUIR, contato, log);
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir contato do recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao excluir contato do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, contato, e, log);
 		}
 	}
@@ -1093,11 +1209,12 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public void incluirDocumento(SelectEvent event) {
 		Documento documento = (Documento) event.getObject();
-		
+
 		try {
 			if (documento != null) {
 				if (this.doc == null) {
-					if (jaPossuiTipoDocumento(this.recuperando.getPessoa().getDocumentos(), documento.getTipoDocumento()) != null) {
+					if (jaPossuiTipoDocumento(this.recuperando.getPessoa().getDocumentos(),
+							documento.getTipoDocumento()) != null) {
 						documento.setRecuperando(this.recuperando);
 						this.recuperando.getDocumentos().add(documento);
 					} else {
@@ -1107,8 +1224,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				} else {
 					this.recuperando.getDocumentos().remove(documento);
 					this.recuperando.getPessoa().getDocumentos().remove(documento);
-	
-					if (jaPossuiTipoDocumento(this.recuperando.getPessoa().getDocumentos(), documento.getTipoDocumento()) != null) {
+
+					if (jaPossuiTipoDocumento(this.recuperando.getPessoa().getDocumentos(),
+							documento.getTipoDocumento()) != null) {
 						documento.setPessoa(null);
 						documento.setRecuperando(this.recuperando);
 						this.recuperando.getDocumentos().add(documento);
@@ -1118,42 +1236,48 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 						this.recuperando.getPessoa().getDocumentos().add(documento);
 					}
 				}
-				if ((documento.getRecuperando() != null && documento.getRecuperando().getId() > 0) || (documento.getPessoa() != null && documento.getPessoa().getId() > 0)) {
+				if ((documento.getRecuperando() != null && documento.getRecuperando().getId() > 0)
+						|| (documento.getPessoa() != null && documento.getPessoa().getId() > 0)) {
 					documentoService.salvarDocumento(documento);
 					LoggerUtil.logInfo(Acao.SALVAR, documento, log);
 				}
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao adicionar documento ao recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao adicionar documento ao recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ADICIONAR, documento, e, log);
 		}
 	}
 
 	public void tornarDocumentoPrincipal(Documento documento) {
 		try {
-			Documento doc = jaPossuiTipoDocumento(this.recuperando.getPessoa().getDocumentos(), documento.getTipoDocumento());
-	
+			Documento doc = jaPossuiTipoDocumento(this.recuperando.getPessoa().getDocumentos(),
+					documento.getTipoDocumento());
+
 			if (doc != null) {
 				this.recuperando.getPessoa().getDocumentos().remove(doc);
 				doc.setPessoa(null);
 				doc.setRecuperando(this.recuperando);
 				this.recuperando.getDocumentos().add(doc);
-				
-				if ((doc.getRecuperando() != null && doc.getRecuperando().getId() > 0) || (doc.getPessoa() != null && doc.getPessoa().getId() > 0)) {
+
+				if ((doc.getRecuperando() != null && doc.getRecuperando().getId() > 0)
+						|| (doc.getPessoa() != null && doc.getPessoa().getId() > 0)) {
 					documentoService.salvarDocumento(doc);
 				}
 			}
-	
+
 			this.recuperando.getDocumentos().remove(documento);
 			documento.setPessoa(this.recuperando.getPessoa());
 			documento.setRecuperando(null);
 			this.recuperando.getPessoa().getDocumentos().add(documento);
-			
-			if ((documento.getRecuperando() != null && documento.getRecuperando().getId() > 0) || (documento.getPessoa() != null && documento.getPessoa().getId() > 0)) {
+
+			if ((documento.getRecuperando() != null && documento.getRecuperando().getId() > 0)
+					|| (documento.getPessoa() != null && documento.getPessoa().getId() > 0)) {
 				documentoService.salvarDocumento(documento);
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao alterar documento principal do recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao alterar documento principal do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ALTERAR, documento, e, log);
 		}
 	}
@@ -1162,19 +1286,20 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		try {
 			this.recuperando.getDocumentos().remove(documento);
 			this.recuperando.getPessoa().getDocumentos().remove(documento);
-	
-			if ((documento.getRecuperando() != null && documento.getRecuperando().getId() > 0) || (documento.getPessoa() != null && documento.getPessoa().getId() > 0)) {
+
+			if ((documento.getRecuperando() != null && documento.getRecuperando().getId() > 0)
+					|| (documento.getPessoa() != null && documento.getPessoa().getId() > 0)) {
 				documentoService.excluirDocumento(documento);
 				LoggerUtil.logInfo(Acao.EXCLUIR, documento, log);
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir documento do recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao excluir documento do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, documento, e, log);
 		}
 	}
 
-	public Documento jaPossuiTipoDocumento(List<Documento> documentos,
-			TipoDocumento tipoDoc) {
+	public Documento jaPossuiTipoDocumento(List<Documento> documentos, TipoDocumento tipoDoc) {
 		for (Documento doc : documentos) {
 			if (doc.getTipoDocumento().equals(tipoDoc)) {
 				return doc;
@@ -1202,23 +1327,24 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	public void excluirEndereco(Endereco endereco) {
 		try {
 			this.recuperando.getPessoa().getEnderecos().remove(endereco);
-			
+
 			if (this.recuperando.getPessoa().getId() > 0) {
 				enderecoService.excluirEndereco(endereco);
 				LoggerUtil.logInfo(Acao.EXCLUIR, endereco, log);
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir endereço do recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao excluir endereço do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, endereco, e, log);
 		}
 	}
 
 	public void incluirEndereco(SelectEvent event) {
 		Endereco endereco = (Endereco) event.getObject();
-		
+
 		try {
 			if (endereco != null) {
-	
+
 				if (this.endereco != null) {
 					this.recuperando.getPessoa().getEnderecos().remove(this.endereco);
 					this.recuperando.getPessoa().getEnderecos().add(endereco);
@@ -1226,14 +1352,15 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					endereco.setPessoa(this.recuperando.getPessoa());
 					this.recuperando.getPessoa().getEnderecos().add(endereco);
 				}
-				
+
 				if (this.recuperando.getPessoa().getId() > 0) {
 					enderecoService.salvarEndereco(endereco);
 					LoggerUtil.logInfo(Acao.SALVAR, endereco, log);
 				}
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao adicionar endereço ao recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao adicionar endereço ao recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ADICIONAR, endereco, e, log);
 		}
 	}
@@ -1255,13 +1382,14 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	public void excluirAlcunha(Alcunha alcunha) {
 		try {
 			this.recuperando.getAlcunhas().remove(alcunha);
-			
+
 			if (this.recuperando.getId() > 0) {
 				service.excluirAlcunha(alcunha);
 				LoggerUtil.logInfo(Acao.EXCLUIR, alcunha, log);
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir alcunha do recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao excluir alcunha do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, alcunha, e, log);
 		}
 	}
@@ -1269,7 +1397,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	public void incluirAlcunha() {
 		try {
 			if (this.alcunha != null) {
-	
+
 				if (this.alcunha.isPrincipal()) {
 					for (Alcunha alcunha : this.recuperando.getAlcunhas()) {
 						alcunha.setPrincipal(false);
@@ -1286,11 +1414,12 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					service.salvarAlcunha(this.alcunha);
 					LoggerUtil.logInfo(Acao.SALVAR, this.alcunha, log);
 				}
-				
+
 				RequestContext.getCurrentInstance().execute("PF('novaAlcunha').hide()");
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao adicionar alcunha ao recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao adicionar alcunha ao recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ADICIONAR, this.alcunha, e, log);
 		}
 	}
@@ -1312,24 +1441,25 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	public void excluirNome(OutroNome outroNome) {
 		try {
 			this.recuperando.getOutrosNomes().remove(outroNome);
-			
+
 			if (this.recuperando.getId() > 0) {
 				service.excluirOutroNome(outroNome);
 				LoggerUtil.logInfo(Acao.EXCLUIR, outroNome, log);
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir outro nome do recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao excluir outro nome do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, outroNome, e, log);
 		}
 	}
 
-	public void incluirNome() {	
+	public void incluirNome() {
 		try {
 			if (this.outroNome != null) {
 				if (this.outroNome.getDataNascimento().after(this.getDataMaioridade())) {
 					throw new ValidacaoException("Recuperando deve possuir maioridade.");
 				}
-				
+
 				if (this.nomeAux == null) {
 					this.outroNome.setRecuperando(this.recuperando);
 					this.recuperando.getOutrosNomes().add(this.outroNome);
@@ -1337,18 +1467,19 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					this.recuperando.getOutrosNomes().remove(this.outroNome);
 					this.recuperando.getOutrosNomes().add(this.outroNome);
 				}
-				
-				if (this.recuperando.getId()>0) {
+
+				if (this.recuperando.getId() > 0) {
 					service.salvarOutroNome(this.outroNome);
 					LoggerUtil.logInfo(Acao.SALVAR, this.outroNome, log);
 				}
-				
+
 				RequestContext.getCurrentInstance().execute("PF('outroNome').hide()");
 			}
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", e.getMessage());
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Erro ao adicionar outro nome ao recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO",
+					"Erro ao adicionar outro nome ao recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.SALVAR, this.outroNome, e, log);
 		}
 	}
@@ -1388,17 +1519,18 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				service.excluirParente(parente);
 				LoggerUtil.logInfo(Acao.EXCLUIR, parente, log);
 			}
-            this.recuperando.getParentes().remove(parente);
+			this.recuperando.getParentes().remove(parente);
 		} catch (ValidacaoException e) {
-            facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", e.getMessage());
-        } catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir parente do recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", e.getMessage());
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao excluir parente do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, parente, e, log);
 		}
 	}
 
 	public void incluirParente() {
-		
+
 		try {
 			if (service.habilitaAlteracaoParente(this.recuperando)) {
 
@@ -1407,38 +1539,40 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 						this.parente.setRecuperando(this.recuperando);
 						this.parente.setCredenciamentos(new ArrayList<Credenciamento>());
 					}
-					
-					for(Parente p : this.recuperando.getParentes()) {
-						if(SgpStatusAlternativo.A.equals(this.parente.getStatus()) && p.getParentesco().getDescricao().equals("Conjugê") && p.getStatus().equals(SgpStatusAlternativo.A) && 
-								p.getId() != this.parente.getId() && this.parente.getParentesco().getDescricao().equals("Conjugê")){
-							if(parenteAux != null)
-								this.parente.setStatus(parenteAux.getStatus());
-							throw new ValidacaoException("Não pode haver mais de um cadastro conjugê ativo!");							
-						}	
-					}
-						
 
-					if (this.parente.getStatus().equals(SgpStatusAlternativo.A)  && !this.parente.getMenorIdade()) {
+					for (Parente p : this.recuperando.getParentes()) {
+						if (SgpStatusAlternativo.A.equals(this.parente.getStatus())
+								&& p.getParentesco().getDescricao().equals("Conjugê")
+								&& p.getStatus().equals(SgpStatusAlternativo.A) && p.getId() != this.parente.getId()
+								&& this.parente.getParentesco().getDescricao().equals("Conjugê")) {
+							if (parenteAux != null)
+								this.parente.setStatus(parenteAux.getStatus());
+							throw new ValidacaoException("Não pode haver mais de um cadastro conjugê ativo!");
+						}
+					}
+
+					if (this.parente.getStatus().equals(SgpStatusAlternativo.A) && !this.parente.getMenorIdade()) {
 
 						if (!service.limiteParentes(this.recuperando, this.parente)) {
-							if(this.parenteAux != null) {
+							if (this.parenteAux != null) {
 								this.parente.setParentesco(this.parenteAux.getParentesco());
 								this.parente.setStatus(this.parenteAux.getStatus());
 								this.parente.setDataNascimento(this.parenteAux.getDataNascimento());
 							}
-							throw new ValidacaoException("Limite de parentes Ativos, maior de idade, não pode ser excedido!");
+							throw new ValidacaoException(
+									"Limite de parentes Ativos, maior de idade, não pode ser excedido!");
 						}
 					}
-					
-					if(this.parenteAux == null)
+
+					if (this.parenteAux == null)
 						this.recuperando.getParentes().add(this.parente);
-					
+
 					if (this.parente.getDataNascimento() != null) {
 						if (this.parente.getDataNascimento().after(new Date())) {
 							throw new ValidacaoException("Data de nascimento não pode ser maior que a data atual.");
 						}
 					}
-					
+
 					if (this.recuperando.getId() > 0) {
 						service.salvarParente(this.parente);
 						LoggerUtil.logInfo(Acao.SALVAR, this.parente, log);
@@ -1449,50 +1583,52 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				}
 			} else {
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-				throw new ValidacaoException("Alterações só serão permitidas a partir de " + sdf.format(this.recuperando.getAlteracaoParentes()));
+				throw new ValidacaoException("Alterações só serão permitidas a partir de "
+						+ sdf.format(this.recuperando.getAlteracaoParentes()));
 			}
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao adicionar parente ao recuperando: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao adicionar parente ao recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ADICIONAR, this.parente, e, log);
 		}
 	}
-	
+
 	public void abrirDialogAtestados(RecuperandoView recuperando) {
 		facesUtil.setObjetoSessao("recuperandoAtestado", recuperando);
 		facesUtil.exibirPaginaDialog("AtestadosRecuperando", 170, 370);
 	}
-	
+
 	public void imprimirRelatorioInfopen() {
 		try {
 			Map<String, Object> parameters = new HashMap<String, Object>();
-			
+
 			parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
 			parameters.put("UNIDADE_ID", this.unidadeInfopenSelecionada.getId());
-			
+
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.EstatisticoInfopen, parameters));
-			
+
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório Estatístico Infopen", log);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir Relatório Estatístico Infopen: " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro imprimir Relatório Estatístico Infopen: " + e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Relatório Estatístico Infopen", e, log);
 		}
 	}
-	
+
 	public void imprimirRegistro(RecuperandoView recuperando) {
 		try {
 			Recuperando r = service.buscarRecuperandoPorId(recuperando.getId(), false);
 			List<Recuperando> recs = new ArrayList<Recuperando>();
 			r.setLotacaoAtual(this.service.buscarLotacaoAtual(recuperando.getId(), false));
 			r.setUnidadeAtual(recuperando.getNomeUnidade());
-			
-			List<HistoricoRecuperando> hists = new ArrayList<HistoricoRecuperando>();	
-			for(HistoricoRecuperando his: historicoService.listarHistoricoRecuperando(recuperando.getId())){
-				if(his != null) {
+
+			List<HistoricoRecuperando> hists = new ArrayList<HistoricoRecuperando>();
+			for (HistoricoRecuperando his : historicoService.listarHistoricoRecuperando(recuperando.getId())) {
+				if (his != null) {
 					HistoricoRecuperando historicos = new HistoricoRecuperando();
 					historicos.setTipoHistorico(his.getTipoHistorico());
 					historicos.setDataRegistro(his.getDataRegistro());
@@ -1501,17 +1637,17 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					hists.add(his);
 				}
 			}
-			
-			List<Processo> processos = new ArrayList<Processo>();
-			//Iteração para setar regime e condição atual de cada processo
-			for(Processo p : r.getProcessos()) {
-				Processo proc = processoService.buscaProcessoPorId(p);
-				
-				List<ProcessoRegimeCondicao> collectProc = proc.getProcessosRegimeCondicao().stream()
-					.sorted(Comparator.comparing(ProcessoRegimeCondicao::getId).reversed())
-					.collect(Collectors.toList());
 
-				for(ProcessoRegimeCondicao prc : collectProc) {					
+			List<Processo> processos = new ArrayList<Processo>();
+			// Iteração para setar regime e condição atual de cada processo
+			for (Processo p : r.getProcessos()) {
+				Processo proc = processoService.buscaProcessoPorId(p);
+
+				List<ProcessoRegimeCondicao> collectProc = proc.getProcessosRegimeCondicao().stream()
+						.sorted(Comparator.comparing(ProcessoRegimeCondicao::getId).reversed())
+						.collect(Collectors.toList());
+
+				for (ProcessoRegimeCondicao prc : collectProc) {
 					Processo pAux = new Processo();
 					pAux.setId(proc.getId());
 					pAux.setNumeroProcesso(proc.getNumeroProcesso());
@@ -1528,50 +1664,51 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			}
 			r.getProcessos().clear();
 			r.setProcessos(processos);
-			
+
 			List<Foto> fotos = new ArrayList<Foto>();
-			for(Foto f : r.getFotos()){
-				if(f.getIsAtual()){
+			for (Foto f : r.getFotos()) {
+				if (f.getIsAtual()) {
 					fotos.add(f);
 				}
 			}
 			r.getFotos().clear();
 			r.setFotos(fotos);
-			
-			for(Alcunha a : r.getAlcunhas()){
-				if(a.isPrincipal()){
+
+			for (Alcunha a : r.getAlcunhas()) {
+				if (a.isPrincipal()) {
 					r.setAlcunhaPrincipal(a.getNome());
 				}
 			}
-			
-			for(Parente p : r.getParentes()){
-				if(p.getParentesco().getDescricao().equals("Conjugê")){
+
+			for (Parente p : r.getParentes()) {
+				if (p.getParentesco().getDescricao().equals("Conjugê")) {
 					r.setConjuge(p.getNome());
 				}
 			}
-			
+
 			int i = 0;
-			for(Parente p : r.getParentes()){
-				if(p.getParentesco().getDescricao().equals("Filho(a)")){
+			for (Parente p : r.getParentes()) {
+				if (p.getParentesco().getDescricao().equals("Filho(a)")) {
 					i++;
 				}
 			}
 			r.setQuantFilhos(i);
 			recs.add(r);
-			
+
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(recs, Relatorio.RegistroRecuperando));
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, recuperando, log);
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir registro do recuperando (" + recuperando.getNome() + "): " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro imprimir registro do recuperando (" + recuperando.getNome() + "): " + e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, recuperando, e, log);
 		}
 	}
 
-	public Date getDataMaioridade(){
+	public Date getDataMaioridade() {
 		Calendar now = Calendar.getInstance();
-        now.add(Calendar.YEAR, -18);
-        return now.getTime();
+		now.add(Calendar.YEAR, -18);
+		return now.getTime();
 	}
 
 	/*
@@ -1667,8 +1804,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	}
 
 	public String getCorPericulosidade() {
-		if (this.recuperando.getId() > 0
-				&& recuperando.getPericulosidade() != null) {
+		if (this.recuperando.getId() > 0 && recuperando.getPericulosidade() != null) {
 			switch (recuperando.getPericulosidade()) {
 
 			case BAIXA:
@@ -1809,88 +1945,89 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	public void setUnidadeInfopenSelecionada(UnidadePrisional unidadeInfopenSelecionada) {
 		this.unidadeInfopenSelecionada = unidadeInfopenSelecionada;
 	}
-	
+
 	public String tornarRecuperando(RecuperandoView rec) {
 		facesUtil.setObjetoSessao("idPessoa", rec.getPessoaId());
 		facesUtil.setObjetoSessao("tornarRecuperandoIdVisitante", rec.getVisitanteId());
-		
-	    if(rec.getVisitanteId() != null) {
-	    	RequestContext.getCurrentInstance().execute("PF('avisoTornarRecuperando').show()");
-		    return "";
-	    }
+
+		if (rec.getVisitanteId() != null) {
+			RequestContext.getCurrentInstance().execute("PF('avisoTornarRecuperando').show()");
+			return "";
+		}
 		return "pretty:CadastrarRecuperando";
 	}
-	
+
 	public String executarTornarRecuperando() {
 		FacesContext context = FacesContext.getCurrentInstance();
-	    Map<String,String> params = context.getExternalContext().getRequestParameterMap();
-	    String idPessoa = params.get("idPessoa");
-	    String idVisitante = params.get("idVisitante");
-	    if("0".equals(idVisitante))
-	    	idVisitante = null;
+		Map<String, String> params = context.getExternalContext().getRequestParameterMap();
+		String idPessoa = params.get("idPessoa");
+		String idVisitante = params.get("idVisitante");
+		if ("0".equals(idVisitante))
+			idVisitante = null;
 		facesUtil.setObjetoSessao("idPessoa", idPessoa);
 		facesUtil.setObjetoSessao("tornarRecuperandoIdVisitante", idVisitante);
-	    if(idVisitante != null) {
-	    	RequestContext.getCurrentInstance().execute("PF('avisoTornarRecuperando').show()");
-		    return "";
-	    }
+		if (idVisitante != null) {
+			RequestContext.getCurrentInstance().execute("PF('avisoTornarRecuperando').show()");
+			return "";
+		}
 		return "pretty:CadastrarRecuperando";
 	}
-	
+
 	public void selectRecuperando(SelectEvent event) {
 		RecuperandoView rec = (RecuperandoView) event.getObject();
-	    
-	    if (rec != null) {
-		    this.recuperandoSelecionado = service.buscarRecuperandoSelecionado(rec.getPessoaId());
-		    
-		    if(rec.getIsRecuperando() == false) {
-		    	RequestContext.getCurrentInstance().execute("PF('dialogDetalhesVisitanteRecuperando').show()");
-		    	return;
-		    }
-		    
-		    RequestContext.getCurrentInstance().execute("PF('dialogDetalhes').show()");
-	    }
+
+		if (rec != null) {
+			this.recuperandoSelecionado = service.buscarRecuperandoSelecionado(rec.getPessoaId());
+
+			if (rec.getIsRecuperando() == false) {
+				RequestContext.getCurrentInstance().execute("PF('dialogDetalhesVisitanteRecuperando').show()");
+				return;
+			}
+
+			RequestContext.getCurrentInstance().execute("PF('dialogDetalhes').show()");
+		}
 	}
-	
+
 	public void selecionarGestante() {
 		this.recuperando.setInicioGestacao(null);
 		this.recuperando.setLactante(SimNao.N);
 	}
-	
+
 	public void selecionarPossuiFilho() {
 		this.recuperando.setFilhoPcd(SimNao.N);
 	}
-	
+
 	public boolean mostrarAposentado() {
-		Date dataNascimento = this.recuperando.getPessoa().getDataNascimento(); 
-    	if(dataNascimento != null) {
-    		java.util.Date dtAux = new java.util.Date(dataNascimento.getYear(), dataNascimento.getMonth(), dataNascimento.getDate());
-	    	LocalDate niver = dtAux.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();		
-	    	int idade = Period.between(niver, LocalDate.now()).getYears();
-	    	
-	    	return idade >= 60;
-    	}
-    	
-    	return false;
+		Date dataNascimento = this.recuperando.getPessoa().getDataNascimento();
+		if (dataNascimento != null) {
+			java.util.Date dtAux = new java.util.Date(dataNascimento.getYear(), dataNascimento.getMonth(),
+					dataNascimento.getDate());
+			LocalDate niver = dtAux.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			int idade = Period.between(niver, LocalDate.now()).getYears();
+
+			return idade >= 60;
+		}
+
+		return false;
 
 	}
-	
+
 	public boolean mostrarRecebeBeneficio() {
 		return null != this.recuperando.getPne() && !TipoDeficiencia.NAO_POSSUI.equals(this.recuperando.getPne());
 	}
-	
+
 	public void selecionarPcd() {
 		this.recuperando.setRecebeBeneficio(SimNao.N);
 	}
-	
-    public void listarEtnias() {
-        try {
-        	this.etnias = this.service.listarEtnias();
-        } catch (Exception e) {
-            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao listar etnias: " + e.getMessage());
-            LoggerUtil.logErro(e, log);
-        }
-    }
+
+	public void listarEtnias() {
+		try {
+			this.etnias = this.service.listarEtnias();
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao listar etnias: " + e.getMessage());
+			LoggerUtil.logErro(e, log);
+		}
+	}
 
 	public List<Etnia> getEtnias() {
 		return etnias;
@@ -1905,7 +2042,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	}
 
 	public boolean mostrarEtnia() {
-		if(this.recuperando != null && this.recuperando.getRaca() != null)
+		if (this.recuperando != null && this.recuperando.getRaca() != null)
 			return this.recuperando.getRaca().getId() == 5;
 		return false;
 	}
@@ -1921,7 +2058,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	public void setHistoricoService(HistoricoRecuperandoService historicoService) {
 		this.historicoService = historicoService;
 	}
-	
+
 	public void imprimirBiometria() {
 		List<RecuperandoDTO> lista = new ArrayList<RecuperandoDTO>();
 		RecuperandoDTO r = new RecuperandoDTO();
@@ -1934,7 +2071,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		r.setCondicaoAtual(this.recuperando.getCondicaoAtual());
 		r.setLotacaoAtualNomeEstrutura(this.service.buscarLotacaoAtual(recuperando.getId(), true));
 		r.setImprimirBiometria(false);
-		
+
 		if (this.recuperando.getAutorizacaoCadastroSemBiometria() != null) {
 			AutorizacaoCadastroSemBiometria aut = this.recuperando.getAutorizacaoCadastroSemBiometria();
 
@@ -1942,21 +2079,31 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			r.setObservacao(aut.getObservacao());
 			r.setUsuario(aut.getUsuario().getServidor().getNome());
 		}
-		
+
 		r.setImagemFrente(recuperando.getFotoFrenteAtual().getImagem());
-		
+
 		if (this.recuperando.getPessoa().getBiometria() != null) {
 			r.setImprimirBiometria(true);
-			r.setPolegarEsquerdo(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.POLEGAR_ESQUERDO));
-			r.setPolegarDireito(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.POLEGAR_DIREITO));
-			r.setIndicadorEsquerdo(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.INDICADOR_ESQUERDO));
-			r.setIndicadorDireito(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.INDICADOR_DIREITO));
-			r.setMedioEsquerdo(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.MEDIO_ESQUERDO));
-			r.setMedioDireito(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.MEDIO_DIREITO));
-			r.setAnelarEsquerdo(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.ANELAR_ESQUERDO));
-			r.setAnelarDireito(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.ANELAR_DIREITO));
-			r.setMinimoEsquerdo(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.MINIMO_ESQUERDO));
-			r.setMinimoDireito(this.recuperando.getPessoa().getBiometria().getImagemBiometriaPorPosicao(BiometriaTipoDedo.MINIMO_DIREITO));
+			r.setPolegarEsquerdo(this.recuperando.getPessoa().getBiometria()
+					.getImagemBiometriaPorPosicao(BiometriaTipoDedo.POLEGAR_ESQUERDO));
+			r.setPolegarDireito(this.recuperando.getPessoa().getBiometria()
+					.getImagemBiometriaPorPosicao(BiometriaTipoDedo.POLEGAR_DIREITO));
+			r.setIndicadorEsquerdo(this.recuperando.getPessoa().getBiometria()
+					.getImagemBiometriaPorPosicao(BiometriaTipoDedo.INDICADOR_ESQUERDO));
+			r.setIndicadorDireito(this.recuperando.getPessoa().getBiometria()
+					.getImagemBiometriaPorPosicao(BiometriaTipoDedo.INDICADOR_DIREITO));
+			r.setMedioEsquerdo(this.recuperando.getPessoa().getBiometria()
+					.getImagemBiometriaPorPosicao(BiometriaTipoDedo.MEDIO_ESQUERDO));
+			r.setMedioDireito(this.recuperando.getPessoa().getBiometria()
+					.getImagemBiometriaPorPosicao(BiometriaTipoDedo.MEDIO_DIREITO));
+			r.setAnelarEsquerdo(this.recuperando.getPessoa().getBiometria()
+					.getImagemBiometriaPorPosicao(BiometriaTipoDedo.ANELAR_ESQUERDO));
+			r.setAnelarDireito(this.recuperando.getPessoa().getBiometria()
+					.getImagemBiometriaPorPosicao(BiometriaTipoDedo.ANELAR_DIREITO));
+			r.setMinimoEsquerdo(this.recuperando.getPessoa().getBiometria()
+					.getImagemBiometriaPorPosicao(BiometriaTipoDedo.MINIMO_ESQUERDO));
+			r.setMinimoDireito(this.recuperando.getPessoa().getBiometria()
+					.getImagemBiometriaPorPosicao(BiometriaTipoDedo.MINIMO_DIREITO));
 		}
 		lista.add(r);
 		try {
@@ -1969,30 +2116,30 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					"Erro imprimir Relatório de Entrada/Saída de Recuperandos " + e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Relatório de Entrada/Saída de Recuperandos", e, log);
 		}
-		
+
 	}
-	
+
 	public boolean mostrarImprimirBiometria() {
-		if(!securityUtil.possuiPermissao("ImprimirBiometriaRecuperando"))
+		if (!securityUtil.possuiPermissao("ImprimirBiometriaRecuperando"))
 			return false;
-		
-		if(this.recuperando != null && this.recuperando.getPessoa() != null && this.recuperando.getPessoa().getBiometria() != null)
+
+		if (this.recuperando != null && this.recuperando.getPessoa() != null
+				&& this.recuperando.getPessoa().getBiometria() != null)
 			return true;
-		
-		if(this.recuperando != null && this.recuperando.getPessoa() != null && this.recuperando.getAutorizacaoCadastroSemBiometria() != null)
+
+		if (this.recuperando != null && this.recuperando.getPessoa() != null
+				&& this.recuperando.getAutorizacaoCadastroSemBiometria() != null)
 			return true;
-		
+
 		return false;
 	}
-	
+
 	public void determinarCondicaoAtual() {
 
 		final List<Processo> listaProcessos = processoService.processosPorRecuperando(recuperando.getId());
 
 		listaProcessos.forEach(processo -> {
-			if (processo != null 
-					&& processo.getRegimeAtual() != null 
-					&& processo.getCondicaoAtual() != null
+			if (processo != null && processo.getRegimeAtual() != null && processo.getCondicaoAtual() != null
 					&& processo.getStatusProcesso() != null) {
 
 				if (processo.getCondicaoAtual() == Condicao.CONDENADO
@@ -2008,4 +2155,5 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				}
 			}
 		});
-	}}
+	}
+}

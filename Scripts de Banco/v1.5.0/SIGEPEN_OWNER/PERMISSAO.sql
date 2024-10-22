@@ -1,0 +1,6 @@
+insert into permissao(id, nome, descricao, funcionalidade_id) values(123, 'TemporariosNaUnidadeAVencer', 'Exibe quantidade de recuperandos temporários na unidade com data de soltura a vencer', 4);
+insert into permissao(id, nome, descricao, funcionalidade_id) values(124, 'TemporariosNaUnidadeVenceHoje', 'Exibe quantidade de recuperandos temporários na unidade com data de soltura que vence hoje', 4);
+insert into permissao(id, nome, descricao, funcionalidade_id) values(125, 'TemporariosNaUnidadeVencido', 'Exibe quantidade de recuperandos temporários na unidade com data de soltura vencida', 4);
+insert into permissao(id, nome, descricao, funcionalidade_id) values(126, 'TemporariosNoSistemaAVencer', 'Exibe quantidade de recuperandos temporários no sistema com data de soltura a vencer', 4);
+insert into permissao(id, nome, descricao, funcionalidade_id) values(127, 'TemporariosNoSistemaVenceHoje', 'Exibe quantidade de recuperandos temporários no sistema com data de soltura que vence hoje', 4);
+insert into permissao(id, nome, descricao, funcionalidade_id) values(128, 'TemporariosNoSistemaVencido', 'Exibe quantidade de recuperandos temporários no sistema com data de soltura vencida', 4);

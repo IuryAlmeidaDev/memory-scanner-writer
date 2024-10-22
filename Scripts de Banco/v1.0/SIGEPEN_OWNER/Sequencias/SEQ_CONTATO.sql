@@ -1,0 +1,12 @@
+-----------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SEQ_CONTATO
+-----------------------------------------------
+
+CREATE SEQUENCE SEQ_CONTATO
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_CONTATO TO SIGEPEN_USER;

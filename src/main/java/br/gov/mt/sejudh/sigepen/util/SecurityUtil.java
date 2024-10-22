@@ -93,11 +93,18 @@ public class SecurityUtil implements Serializable {
 							this.possuiPermissao("ListarPerfil")  || 
 							this.possuiPermissao("ListarPermissao");
 				break;
+							
+			case "crime":
+				resultado = this.possuiPermissao("CadastrarCrime") ||
+						this.possuiPermissao("AlterarCrime") || 
+						this.possuiPermissao("ExcluirCrime");
+				break;
 				
 			case "recuperando":
 				resultado = this.possuiPermissao("ListarRecuperando") || 
 							this.possuiPermissao("ListarFaltaDisciplinar") || 
-							this.possuiPermissao("UnificarRecuperando");
+							this.possuiPermissao("UnificarRecuperando") ||
+							this.possuiPermissao("ExcluirProcesso");
 				break;
 				
 			case "movimentacoes":
