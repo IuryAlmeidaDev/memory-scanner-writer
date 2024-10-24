@@ -151,22 +151,22 @@ public class EntradaSaidaRecuperandoDAO {
 				"INNER JOIN " +
 				"SIGEPEN_OWNER.PESSOA pessoa_v " +
 				"ON vis.ID_PESSOA_VISITANTE = pessoa_v.ID " +
-				"LEFT OUTER JOIN " +
-				"SIGEPEN_OWNER.SGP_VISITANTE resp " +
-				"ON resp.ID_VISITANTE in ( " +
-				"SELECT DISTINCT vr.VISITANTE_RESPONSAVEL " +
-				"FROM sigepen_owner.sgp_entrada_saida es " +
-				"LEFT JOIN sigepen_owner.sgp_visitante v ON es.id_visitante = v.id_visitante " +
-				"LEFT JOIN sigepen_owner.sgp_visitante_responsavel vr ON vr.visitante = v.id_visitante " +
-				"WHERE es.id_visitante = vis.ID_VISITANTE AND " +
-				"((vr.visitante_responsavel IS NOT NULL AND vr.sta_visitante_responsavel = 'A') " +
-				"AND EXISTS (SELECT 1 " +
-				"FROM sigepen_owner.sgp_entrada_saida ss " +
-				"WHERE ss.id_visitante = vr.visitante_responsavel " +
-				"AND trunc(ss.data_entrada) = trunc(es.data_entrada)))) " +
-				"LEFT OUTER JOIN " +
-				"SIGEPEN_OWNER.PESSOA pessoa_resp " +
-				"ON resp.ID_PESSOA_VISITANTE = pessoa_resp.ID ";
+				"LEFT JOIN SIGEPEN_OWNER.SGP_VISITANTE_RESPONSAVEL vResp ON " +
+				"(vResp.visitante = vis.id_visitante " +
+				"AND vResp.Sta_Visitante_Responsavel = 'A' " +
+				"AND EXISTS " +
+				"(SELECT " +
+				"'O visitante responsável precisa estar na visita' " +
+				"FROM " +
+				"sigepen_owner.sgp_entrada_saida esVisResp " +
+				"WHERE " +
+				"esVisResp.id_visitante = vResp.visitante_responsavel " +
+				"AND trunc(esVisResp.data_entrada) = trunc(esv.data_entrada) " +
+				")) " +
+				"LEFT JOIN SIGEPEN_OWNER.SGP_VISITANTE resp ON " +
+				"resp.Id_Visitante = vResp.Visitante_Responsavel " +
+				"LEFT OUTER JOIN SIGEPEN_OWNER.PESSOA pessoa_resp ON " +
+				"pessoa_resp.ID = resp.ID_PESSOA_VISITANTE ";
 
 	}
 
