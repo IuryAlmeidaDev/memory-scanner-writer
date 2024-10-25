@@ -64,7 +64,7 @@
 											icon="fa fa-print"
 											update=":formListaChamadas" process="@this"
 											action="#{gerarPedidoBean.selecionarEstruturaChamada(est,gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}"
-											 
+														 rendered="#{gerarPedidoBean.isUnidadePrisional(est)}"
 											/>
 									</center>
 								</p:column>
