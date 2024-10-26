@@ -1,16 +1,19 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.model.dto.PedidoConsultaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDetalhadoDTO;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultTreeNode;
@@ -212,26 +215,20 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 
 		this.unidade = unidadeService.buscaPorId(id);
 
-		if (this.unidade == null) {
-			return false;
-		}
-
-		// this.montarEstrutura();
-
-		return true;
-	}
+        return this.unidade != null;
+    }
 
 	private String montarFiltroData() {
-		StringBuffer filtroDataHorario = new StringBuffer();
+		StringBuilder filtroDataHorario = new StringBuilder();
 		if (this.filtroPedido != null) {
 			String horarioRefeiracao = this.contratoService.buscarHorarioRefeiracao(this.unidade.getId(),
 					this.filtroPedido.getTipoRefeicao().getId());
-			StringBuffer horarioRefeiracaoFormatado = new StringBuffer(horarioRefeiracao);
+			StringBuilder horarioRefeiracaoFormatado = new StringBuilder(horarioRefeiracao);
 			horarioRefeiracaoFormatado.insert(2, ":");
 			String filtroData = filtroPedido.getDataFormadata();
 			filtroDataHorario.append(filtroData);
 			filtroDataHorario.append(" ");
-			filtroDataHorario.append(horarioRefeiracaoFormatado.toString());
+			filtroDataHorario.append(horarioRefeiracaoFormatado);
 		}
 		this.dataFormatada = filtroDataHorario.toString();
 		return filtroDataHorario.toString();
@@ -317,37 +314,39 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		this.imprimirPedidoUnificado(data, tipoRefeicao);
 	}
 
-	public void imprimirPedidoUnificado(String data, FiltroGerarPedido tipoRefeicao) {
+	public void imprimirPedidoUnificado(final String data, final FiltroGerarPedido filtroGerarPedido) {
 		try {
-			configurarDadosRelatorio(true);
+			configurarDadosRelatorio();
+			final long idEstrutura = gerarPedidoEstruturaDTO.getId();
+			final String unidadePrisionalSigla = this.unidade.getSigla();
 
-			Map<String, Object> parameters = new HashMap<String, Object>();
+			final Map<String, Object> parameters = new HashMap<>();
 			parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
 			parameters.put("DATA", data);
+			parameters.put("ID_ESTRUTURA", idEstrutura);
 
-			switch (tipoRelatorio) {
-			case "unidade":
-				parameters.put("ID_ESTRUTURA", this.unidadeDTO.getIdEstrutura());
-				break;
+			// Obter a estrutura e filtrar níveis
+			final List<PedidoEstruturaDTO> estruturaPedido = estruturaService.montarEstruturaPedido(data, idEstrutura);
+			final List<PedidoEstruturaDTO> estruturaAteNivel2 = estruturaPedido.stream()
+					.filter(obj -> obj.getNivel() <= 2)
+					.collect(Collectors.toList());
 
-			case "estrutura":
-				parameters.put("ID_ESTRUTURA", gerarPedidoEstruturaDTO.getId());
-				break;
+			// Calcular totais e preparar a lista detalhada de pedidos
+			final Integer totalDietasPadrao = calcularTotalDietaPadrao(estruturaPedido);
+			final List<PedidoConsultaDTO> pedidosConsulta = estruturaService.buscaPedidoConsulta(data, idEstrutura, filtroGerarPedido.getTipoRefeicao());
+			final List<PedidoEstruturaDetalhadoDTO> pedidosPorEstrutura = PedidoEstruturaDetalhadoDTO.combinarPedidos(estruturaAteNivel2, pedidosConsulta, unidadePrisionalSigla);
 
-			}
-			List<PedidoDetalhadoDTO> lista = new ArrayList<>();
-			PedidoDetalhadoDTO pedido = this.gerarPedidoDetalhado(data, tipoRefeicao);
-			lista.add(pedido);
-			parameters.put("PEDIDO_DETALHADO", lista);
-			parameters.put("MENSAGEM_PEDIDO_DETALHADO",
-					this.getMensagemCabecalhoDetalhado(pedido, filtroPedido.getDataFormadata()));
+			// Definir parâmetros para o relatório
+			parameters.put("PEDIDO_ESTRUTURA_DETALHADO", pedidosPorEstrutura);
+			parameters.put("TOTAL_DIETA_PADRAO", totalDietasPadrao);
+			parameters.put("MENSAGEM_PEDIDO_DETALHADO", this.getMensagemCabecalhoDetalhado(filtroGerarPedido.getTipoRefeicao().getDescricao(), filtroPedido.getDataFormadata()));
 
-			if (this.validacao(this.unidade.getId())) {
-				Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroPedido.getDataInicio());
-				parameters.put("MENSAGEM",
-						this.getMensagemCabecalhoQuantitativo(tipoRefeicao, filtroPedido.getDataFormadata(), contrato));
+			// Validar unidade e gerar o relatório
+			if (validacao(this.unidade.getId())) {
+				final Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroPedido.getDataInicio());
+				parameters.put("MENSAGEM", this.getMensagemCabecalhoQuantitativo(filtroGerarPedido, filtroPedido.getDataFormadata(), contrato));
 
-				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.GerarPedidoUnificado, parameters));
+				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(estruturaPedido, Relatorio.GerarPedidoUnificado, parameters));
 				RequestContext.getCurrentInstance().execute("download()");
 				LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Pedido", log);
 			}
@@ -357,41 +356,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
-	public void imprimirQuantitativo(String data, FiltroGerarPedido tipoRefeicao) {
-		try {
-			configurarDadosRelatorio(true);
 
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
-			parameters.put("DATA", data);
-
-			switch (tipoRelatorio) {
-			case "unidade":
-				parameters.put("ID_ESTRUTURA", this.unidadeDTO.getIdEstrutura());
-				break;
-
-			case "estrutura":
-				parameters.put("ID_ESTRUTURA", gerarPedidoEstruturaDTO.getId());
-				break;
-
-			}
-
-			if (this.validacao(this.unidade.getId())) {
-				Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroPedido.getDataInicio());
-				parameters.put("MENSAGEM",
-						this.getMensagemCabecalhoQuantitativo(tipoRefeicao, filtroPedido.getDataFormadata(), contrato));
-
-				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.GerarPedido, parameters));
-				RequestContext.getCurrentInstance().execute("download()");
-				LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Pedido", log);
-			}
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
-			LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
-		}
-	}
-
-	private boolean validacao(long id) throws ParseException {
+	private boolean validacao(long id) {
 		Contrato contrato = contratoService.buscarContratoPorUnidade(id, this.filtroPedido.getDataInicio());
 		if (contrato == null) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
@@ -404,23 +370,21 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 
 	private boolean validarCardapio(List<CardapioPedidoDTO> cardapios) throws Exception {
 		if (cardapios.isEmpty()) {
-//			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-//					"Não existe um cardápio para esse tipo de refeição!");
-		throw new Exception("Não existe um cardápio para esse tipo de refeição!");
+			throw new Exception("Não existe um cardápio para esse tipo de refeição!");
 		}
 		return true;
 	}
 
 	public void imprimirDetalhado(String data, FiltroGerarPedido tipoRefeicao) {
 		try {
-			configurarDadosRelatorio(true);
+			configurarDadosRelatorio();
 
-			Map<String, Object> parameters = new HashMap<String, Object>();
+			Map<String, Object> parameters = new HashMap<>();
 			parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
 			parameters.put("DATA", data);
 			Long id = null;
 
-			if (existeApostilamentoParaUniadade(this.unidade.getId()) && this.validacao(this.unidade.getId())) {
+			if (existeApostilamentoParaUnidade(this.unidade.getId()) && this.validacao(this.unidade.getId())) {
 				switch (tipoRelatorio) {
 				case "unidade":
 					parameters.put("ID_ESTRUTURA", this.unidadeDTO.getIdEstrutura());
@@ -455,69 +419,59 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
-	public PedidoDetalhadoDTO gerarPedidoDetalhado(String data, FiltroGerarPedido tipoRefeicao) throws ParseException, Exception {
-		PedidoDetalhadoDTO pedido = null;
-		
-		Long id = null;
-
-		if (existeApostilamentoParaUniadade(this.unidade.getId()) && this.validacao(this.unidade.getId())) {
-			switch (tipoRelatorio) {
-			case "unidade":
-				id = this.unidadeDTO.getIdEstrutura();
-				break;
-
-			case "estrutura":
-				id = gerarPedidoEstruturaDTO.getId();
-				break;
-			}
-
-			pedido = estruturaService.buscaPedidoDetalhado(data, id, tipoRefeicao.getTipoRefeicao());
-			if (this.validarCardapio(pedido.getCardapio())) {
-				pedido.setQtdPadrao(gerarPedidoEstruturaDTO.getTotalDietaPadrao());
-				pedido.setQtdEspecial(gerarPedidoEstruturaDTO.getTotalDietaEspecial());
-			}
-		}
-		return pedido;
-	}
-
-	private String getMensagemCabecalhoQuantitativo(FiltroGerarPedido filtroGerarPedido, String data,
-			Contrato contrato) {
-		StringBuilder msg = new StringBuilder("Solicito a empresa ");
-		msg.append(contrato.getFornecedor().getNomeFantasia());
-		msg.append(", cadastrada no CNPJ nº " + contrato.getFornecedor().getCnpj());
-		msg.append(", o fornecimento do " + filtroGerarPedido.getTipoRefeicao().getDescricao());
-		msg.append(" para o dia " + data);
-		msg.append(", para a " + this.unidade.getNome());
-		msg.append(" sendo assim relacionado.");
-		return msg.toString();
-	}
+    private String getMensagemCabecalhoQuantitativo(FiltroGerarPedido filtroGerarPedido, String data,
+                                                    Contrato contrato) {
+        return "Solicito a empresa " + contrato.getFornecedor().getNomeFantasia() +
+                ", cadastrada no CNPJ nº " + contrato.getFornecedor().getCnpj() +
+                ", o fornecimento do " + filtroGerarPedido.getTipoRefeicao().getDescricao() +
+                " para o dia " + data +
+                ", para a " + this.unidade.getNome() +
+                " conforme cardápios relacionados abaixo:";
+    }
 
 	private String getMensagemCabecalhoDetalhado(PedidoDetalhadoDTO pedido, String data) {
-		Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroPedido.getDataInicio());
-		StringBuilder msg = new StringBuilder("Solicito a empresa ");
-		msg.append(contrato.getFornecedor().getNomeFantasia());
-		msg.append(", cadastrada no CNPJ nº " + contrato.getFornecedor().getCnpj());
-		msg.append(", o fornecimento do " + pedido.getRefeicao());
-		msg.append(" para o dia " + data);
-		msg.append(", para a " + this.unidade.getNome());
-		msg.append(", com dieta Padrão " + pedido.getQtdPadrao());
-		msg.append(" e dieta especial " + pedido.getQtdEspecial());
-		msg.append(", sendo assim relacionado.");
-		return msg.toString();
+        return getMensagemCabecalhoDetalhado(pedido.getRefeicao(), data);
 	}
 
-	private void configurarDadosRelatorio(boolean gerarPedido) {
+	private String getMensagemCabecalhoDetalhado(String refeicao, String data) {
+		Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroPedido.getDataInicio());
+        return "Solicito a empresa " + contrato.getFornecedor().getNomeFantasia() +
+                ", cadastrada no CNPJ nº " + contrato.getFornecedor().getCnpj() +
+                ", o fornecimento do " + refeicao +
+                " para o dia " + data +
+                ", para a " + this.unidade.getNome() +
+                ", conforme cardápios selecionados abaixo:";
+	}
+
+	private void configurarDadosRelatorio() {
 		this.unidadeDTO = (UnidadePrisionalDTO) facesUtil.getObjetoSessao("unidade");
 		this.gerarPedidoEstruturaDTO = (GerarPedidoEstruturaDTO) facesUtil.getObjetoSessao("estrutura");
 		this.tipoRelatorio = (String) facesUtil.getObjetoSessao("tipo_relatorio");
 	}
 
-	private boolean existeApostilamentoParaUniadade(Long idUnidade) {
+	private boolean existeApostilamentoParaUnidade(Long idUnidade) {
 		if (apostilamentoService.existeApostilamentoUnidade(idUnidade)) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "É nescessário criar um apostilamento!");
 			return false;
 		}
 
 		return true;
+	}
+
+	public Integer calcularTotalDietaPadrao(List<PedidoEstruturaDTO> pedidosEstrutura) {
+		OptionalInt menorNivelOpt = pedidosEstrutura.stream()
+				.mapToInt(PedidoEstruturaDTO::getNivel)
+				.min();
+
+		return menorNivelOpt.isPresent()
+				? pedidosEstrutura.stream()
+				.filter(pedidoEstrutura -> pedidoEstrutura.getNivel() == menorNivelOpt.getAsInt())
+				.mapToInt(PedidoEstruturaDTO::getQtdPadrao)
+				.sum()
+				: 0;
+	}
+
+	public boolean isUnidadePrisional(GerarPedidoEstruturaDTO estrutura) {
+		return this.unidade.getEstrutura().getId() == estrutura.getId();
 	}
 }

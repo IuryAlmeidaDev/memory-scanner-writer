@@ -1,5 +1,9 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
+import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.math.BigDecimal;
 
 public class PedidoConsultaDTO {
@@ -7,27 +11,28 @@ public class PedidoConsultaDTO {
 	private String refeicao;
 	private String cardapio;
 	private String item;
-	private Long qtd;
+	private Long recuperandoTotal;
 	private boolean especial; 
 	private double masc;
 	private double fem;
 	private String nomeEstrutura;
 	private String sexo;
+	private String siglaUnidadeMedida;
 
 	public PedidoConsultaDTO(Object[] row) {
 		this.montarCardapio(row);
 	}
 	
 	private void montarCardapio(Object[] row) {
-		this.refeicao = (String) row[7];
-		this.cardapio = (String) row[6];
-		this.item = (String) row[2];
-		this.especial = row[5].equals("ESPECIAL");
-		this.masc = ((BigDecimal) row[3]).longValue();
-		this.fem = ((BigDecimal) row[4]).longValue();
-		this.qtd = ((BigDecimal) row[0]).longValue();
-		//this.nomeEstrutura = (String) row[8];
-		this.setSexo((String) row[8]);
+		this.refeicao = (String) row[6];
+		this.cardapio = (String) row[5];
+		this.item = (String) row[1];
+		this.especial = row[4].equals("ESPECIAL");
+		this.masc = ((BigDecimal) row[2]).longValue();
+		this.fem = ((BigDecimal) row[3]).longValue();
+		this.recuperandoTotal = ((BigDecimal) row[0]).longValue();
+		this.setSexo((String) row[7]);
+		this.siglaUnidadeMedida = UnidadeMedida.getSiglaPorId(((BigDecimal) row[8]).intValue());
 	}
 
 	public String getRefeicao() {
@@ -54,12 +59,12 @@ public class PedidoConsultaDTO {
 		this.item = item;
 	}
 
-	public Long getQtd() {
-		return qtd;
+	public Long getRecuperandoTotal() {
+		return recuperandoTotal;
 	}
 
-	public void setQtd(Long qtd) {
-		this.qtd = qtd;
+	public void setRecuperandoTotal(Long recuperandoTotal) {
+		this.recuperandoTotal = recuperandoTotal;
 	}
 	
 	public boolean isEspecial() {
@@ -102,10 +107,27 @@ public class PedidoConsultaDTO {
 		this.sexo = sexo;
 	}
 
-	@Override
-	public String toString() {
-		return "PedidoConsultaDTO [refeicao=" + refeicao + ", cardapio=" + cardapio + ", item=" + item + ", qtd=" + qtd
-				+ ", especial=" + especial + ", masc=" + masc + ", fem=" + fem + "]";
+	public String getSiglaUnidadeMedida() {
+		return siglaUnidadeMedida;
 	}
 
+	public void setSiglaUnidadeMedida(String siglaUnidadeMedida) {
+		this.siglaUnidadeMedida = siglaUnidadeMedida;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("refeicao", refeicao)
+				.append("cardapio", cardapio)
+				.append("item", item)
+				.append("recuperandoTotal", recuperandoTotal)
+				.append("especial", especial)
+				.append("masc", masc)
+				.append("fem", fem)
+				.append("nomeEstrutura", nomeEstrutura)
+				.append("sexo", sexo)
+				.append("unidadeMedida", siglaUnidadeMedida)
+				.toString();
+	}
 }
