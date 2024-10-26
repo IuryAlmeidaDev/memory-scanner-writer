@@ -67,22 +67,6 @@ public class EstruturaDAO {
 		return estrutura;
 	}
 
-	public Estrutura buscaEstraturaRaizUnidade(Long id) {
-		String jpql = "select e from Estrutura e, UnidadePrisional u where u.id = :id and u.estrutura = e";
-		Query query = entityManager.createQuery(jpql, Estrutura.class);
-		query.setParameter("id", id);
-		Estrutura estrutura = (Estrutura) query.getSingleResult();
-		return estrutura;
-	}
-
-	public Estrutura buscaEstruturaCompletaPorId(Long id) {
-		String jpql = "select e from Estrutura e join fetch e.estruturas where e.id = :id";
-		Query query = entityManager.createQuery(jpql, Estrutura.class);
-		query.setParameter("id", id);
-		Estrutura estrutura = (Estrutura) query.getSingleResult();
-		return estrutura;
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<Estrutura> buscaEstruturaFilho(Estrutura estrutura) {
 		String jpql = "select e from Estrutura e where e.estruturaPai = :id ORDER BY e.id";
