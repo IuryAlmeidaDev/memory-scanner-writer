@@ -65,9 +65,10 @@ build_maven:
   cache:
     - paths:
         - .m2/repository
-    - key: "$CI_COMMIT_REF_SLUG"
-      paths:
-        - target/
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
 
 code_check:
   stage: code_check
@@ -90,7 +91,6 @@ code_check:
         - .m2/repository
     - key: "$CI_COMMIT_REF_SLUG"
       paths:
-        - target/
         - .sonar/cache
 
 #DESENVOLVIMENTO
@@ -103,11 +103,6 @@ build_desenv:
       - gitlab-ci-test
       - feat-gitlab-ci
       - /^test/
-  cache:
-    - key: "$CI_COMMIT_REF_SLUG"
-      paths:
-        - target/
-      policy: pull
 
 #HOMOLOGAÇÃO
 build_homologa:
