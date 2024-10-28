@@ -61,6 +61,7 @@ build_maven:
       - main
       - feat-gitlab-ci
       - /^hotfix/[0-9]+(?:.[0-9]+)+$/
+      - /^test/
   cache:
     - paths:
         - .m2/repository
@@ -101,6 +102,7 @@ build_desenv:
       - develop
       - gitlab-ci-test
       - feat-gitlab-ci
+      - /^test/
   cache:
     - key: "$CI_COMMIT_REF_SLUG"
       paths:
@@ -163,6 +165,7 @@ deploy_rancher_desenv:
       - develop
       - gitlab-ci-test
       - feat-gitlab-ci
+      - /^test/
 
 #DEPLOY RANCHER HOMOLOGAÇÃO
 deploy_rancher_homloga:
