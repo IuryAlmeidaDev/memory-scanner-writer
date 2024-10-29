@@ -63,6 +63,7 @@ public enum Relatorio {
 	ListarEntradaSaida("CONSULTAR VISITAS", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	HistoricoRecuperando("HISTÓRICO RECUPERANDO"),
 	InfopenDetalhado("Relatório de Recuperandos Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
+	InfopenDetalhadoPorData("Relatório de Recuperandos Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	Biometrias("Biometrias");
 	
 	private Relatorio(String nome) {
