@@ -2,7 +2,6 @@ package br.gov.mt.sejudh.sigepen.bean.relatorios;
 
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
-
 import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
@@ -79,8 +77,9 @@ public class InfopenBean extends MetodosDialogBean {
 	private Logger log;
 	
 	@URLAction(onPostback=false)
-	public String init() {		
-		this.filtro.setDataInicial(new Date());
+	public String init() {
+		//this.filtro.setDataInicial(new Date());
+		//this.filtro.setDataFinal(new Date());
 		this.filtro.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
 		this.nacionalidades = this.service.buscarNacionalidades(SecurityUtil.getUnidadeSelecionada().getId());
 		this.regimes = this.service.buscarRegimes(SecurityUtil.getUnidadeSelecionada().getId());
@@ -196,6 +195,9 @@ public class InfopenBean extends MetodosDialogBean {
 	        } 
 	        
 	        else if (this.filtro.getTipoRelatorio() == 1) {
+	        	Map<String, Object> parameters = new HashMap<>();
+	            parameters.put("FILTRO_DETALHADO", this.filtro.getDescricao());
+	        	
 	            List<InfopenDTO> lista = this.service.buscarInfopenDetalhadoPorFiltro(this.filtro);
 	            	        
 	            if (lista.isEmpty() || lista.get(0).getRecuperandos().isEmpty()) {
@@ -203,7 +205,7 @@ public class InfopenBean extends MetodosDialogBean {
 	                return;
 	            }
 	            
-	            fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.InfopenDetalhado));
+	            fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.InfopenDetalhadoPorData, parameters));
 	            LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório de Recuperandos Infopen Detalhado", log);
 	            RequestContext.getCurrentInstance().execute("download()");
 	        }
@@ -216,6 +218,7 @@ public class InfopenBean extends MetodosDialogBean {
 	    }
 	}
 	
+	//CRIAR METODO PRIVADO PARA PASSAR O FILTRO
 	
 	public String getTipoRelatorio() {
 		return tipoRelatorio;
