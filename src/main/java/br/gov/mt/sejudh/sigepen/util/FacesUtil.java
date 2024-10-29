@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -131,4 +132,10 @@ public class FacesUtil implements Serializable{
 	public void setQueryParameter(String nome, String valor) {
 		FacesContext.getCurrentInstance().getExternalContext().getRequestMap().put(nome, valor);
 	}
+
+	public static HttpServletRequest getRequest() {
+		ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
+		return (HttpServletRequest) ctx.getRequest();
+	}
+
 }
