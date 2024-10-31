@@ -198,9 +198,10 @@ public class LoginBean {
 	}
 
 	private void invalidarLogin() throws ApplicationException {
+		String usuarioAtual = (String) SecurityUtils.getSubject().getPrincipal();
 		SecurityUtils.getSubject().logout();
+		gravarLogAcesso(TipoAcessoLog.LOGOUT, TipoBloqueioLog.NENHUM, usuarioAtual);
 		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-		gravarLogAcesso(TipoAcessoLog.LOGOUT, TipoBloqueioLog.NENHUM, usuario);
 	}
 	
 	public void setarUnidade() throws IOException {
