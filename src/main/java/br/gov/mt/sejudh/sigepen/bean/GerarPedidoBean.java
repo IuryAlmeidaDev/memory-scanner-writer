@@ -337,9 +337,9 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			final List<PedidoEstruturaDetalhadoDTO> pedidosPorEstrutura = PedidoEstruturaDetalhadoDTO.combinarPedidos(estruturaAteNivel2, pedidosConsulta, unidadePrisionalSigla);
 
 			// Definir parâmetros para o relatório
+			parameters.put("NOME_RELATORIO_DETALHADO", "Pedido detalhado de Alimentação");
 			parameters.put("PEDIDO_ESTRUTURA_DETALHADO", pedidosPorEstrutura);
 			parameters.put("TOTAL_DIETA_PADRAO", totalDietasPadrao);
-			parameters.put("MENSAGEM_PEDIDO_DETALHADO", this.getMensagemCabecalhoDetalhado(filtroGerarPedido.getTipoRefeicao().getDescricao(), filtroPedido.getDataFormadata()));
 
 			// Validar unidade e gerar o relatório
 			if (validacao(this.unidade.getId())) {
@@ -404,7 +404,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 					pedido.setQtdEspecial(gerarPedidoEstruturaDTO.getTotalDietaEspecial());
 
 					parameters.put("MENSAGEM",
-							this.getMensagemCabecalhoDetalhado(pedido, filtroPedido.getDataFormadata()));
+							this.getMensagemCabecalhoDetalhado(pedido.getRefeicao(), filtroPedido.getDataFormadata()));
 
 					fileDownload.prepararArquivo(
 							RelatorioUtil.gerarRelatorio(pedido, Relatorio.PedidoDetalhado, parameters));
@@ -419,28 +419,23 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
-    private String getMensagemCabecalhoQuantitativo(FiltroGerarPedido filtroGerarPedido, String data,
-                                                    Contrato contrato) {
-        return "Solicito a empresa " + contrato.getFornecedor().getNomeFantasia() +
-                ", cadastrada no CNPJ nº " + contrato.getFornecedor().getCnpj() +
-                ", o fornecimento do " + filtroGerarPedido.getTipoRefeicao().getDescricao() +
-                " para o dia " + data +
-                ", para a " + this.unidade.getNome() +
-                " conforme cardápios relacionados abaixo:";
-    }
-
-	private String getMensagemCabecalhoDetalhado(PedidoDetalhadoDTO pedido, String data) {
-        return getMensagemCabecalhoDetalhado(pedido.getRefeicao(), data);
+	private String getMensagemCabecalhoQuantitativo(FiltroGerarPedido filtroGerarPedido, String data, Contrato contrato) {
+		String refeicao = filtroGerarPedido.getTipoRefeicao().getDescricao();
+		return gerarMensagemCabecalho(refeicao, data, contrato);
 	}
 
 	private String getMensagemCabecalhoDetalhado(String refeicao, String data) {
 		Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroPedido.getDataInicio());
-        return "Solicito a empresa " + contrato.getFornecedor().getNomeFantasia() +
-                ", cadastrada no CNPJ nº " + contrato.getFornecedor().getCnpj() +
-                ", o fornecimento do " + refeicao +
-                " para o dia " + data +
-                ", para a " + this.unidade.getNome() +
-                ", conforme cardápios selecionados abaixo:";
+		return gerarMensagemCabecalho(refeicao, data, contrato);
+	}
+
+	private String gerarMensagemCabecalho(String refeicao, String data, Contrato contrato) {
+		return "Solicito a empresa " + contrato.getFornecedor().getNomeFantasia() +
+				", cadastrada no CNPJ nº " + contrato.getFornecedor().getCnpj() +
+				", o fornecimento do " + refeicao +
+				" para o dia " + data +
+				", para a " + this.unidade.getNome() +
+				" conforme cardápios relacionados abaixo:";
 	}
 
 	private void configurarDadosRelatorio() {
