@@ -172,7 +172,7 @@ public class LoginBean {
 
 		LogAcesso logAcesso = new LogAcesso();
 
-		String ipUsuario = Optional.ofNullable(FacesUtil.getRequest().getHeader("X-FORWARDED-FOR"))
+		String ipUsuario = Optional.ofNullable(FacesUtil.getRequest().getHeader("X-REAL-IP"))
 				.filter(ip -> !ip.trim().isEmpty()).orElseGet(() -> FacesUtil.getRequest().getRemoteAddr());
 
 		logAcesso.setDataHoraAcesso(new Date());
