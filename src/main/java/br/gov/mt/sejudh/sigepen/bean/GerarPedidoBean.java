@@ -335,6 +335,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			final Integer totalDietasPadrao = calcularTotalDietaPadrao(estruturaPedido);
 			final List<PedidoConsultaDTO> pedidosConsulta = estruturaService.buscaPedidoConsulta(data, idEstrutura, filtroGerarPedido.getTipoRefeicao());
 			final List<PedidoEstruturaDetalhadoDTO> pedidosPorEstrutura = PedidoEstruturaDetalhadoDTO.combinarPedidos(estruturaAteNivel2, pedidosConsulta, unidadePrisionalSigla);
+			this.validarCardapio(pedidosPorEstrutura);
 
 			// Definir parâmetros para o relatório
 			parameters.put("NOME_RELATORIO_DETALHADO", "Pedido detalhado de Alimentação");
@@ -368,11 +369,10 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		return true;
 	}
 
-	private boolean validarCardapio(List<CardapioPedidoDTO> cardapios) throws Exception {
+	private <T> void validarCardapio(List<T> cardapios) throws Exception {
 		if (cardapios.isEmpty()) {
 			throw new Exception("Não existe um cardápio para esse tipo de refeição!");
 		}
-		return true;
 	}
 
 	public void imprimirDetalhado(String data, FiltroGerarPedido tipoRefeicao) {
@@ -397,22 +397,19 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 					break;
 				}
 
-				PedidoDetalhadoDTO pedido = estruturaService.buscaPedidoDetalhado(data, id,
-						tipoRefeicao.getTipoRefeicao());
-				if (this.validarCardapio(pedido.getCardapio())) {
-					pedido.setQtdPadrao(gerarPedidoEstruturaDTO.getTotalDietaPadrao());
-					pedido.setQtdEspecial(gerarPedidoEstruturaDTO.getTotalDietaEspecial());
+				PedidoDetalhadoDTO pedido = estruturaService.buscaPedidoDetalhado(data, id, tipoRefeicao.getTipoRefeicao());
+				this.validarCardapio(pedido.getCardapio());
+				pedido.setQtdPadrao(gerarPedidoEstruturaDTO.getTotalDietaPadrao());
+				pedido.setQtdEspecial(gerarPedidoEstruturaDTO.getTotalDietaEspecial());
 
-					parameters.put("MENSAGEM",
-							this.getMensagemCabecalhoDetalhado(pedido.getRefeicao(), filtroPedido.getDataFormadata()));
+				parameters.put("MENSAGEM",
+						this.getMensagemCabecalhoDetalhado(pedido.getRefeicao(), filtroPedido.getDataFormadata()));
 
-					fileDownload.prepararArquivo(
-							RelatorioUtil.gerarRelatorio(pedido, Relatorio.PedidoDetalhado, parameters));
-					RequestContext.getCurrentInstance().execute("download()");
-					LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Pedido", log);
-				}
+				fileDownload.prepararArquivo(
+						RelatorioUtil.gerarRelatorio(pedido, Relatorio.PedidoDetalhado, parameters));
+				RequestContext.getCurrentInstance().execute("download()");
+				LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Pedido", log);
 			}
-
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
