@@ -13,13 +13,13 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
 import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
 import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoConsultaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.hibernate.Hibernate;
 
@@ -64,22 +64,6 @@ public class EstruturaDAO {
 		query.setParameter("id", id);
 		Estrutura estrutura = (Estrutura) query.getSingleResult();
 		buscarEstruturasCompleta(estrutura);
-		return estrutura;
-	}
-
-	public Estrutura buscaEstraturaRaizUnidade(Long id) {
-		String jpql = "select e from Estrutura e, UnidadePrisional u where u.id = :id and u.estrutura = e";
-		Query query = entityManager.createQuery(jpql, Estrutura.class);
-		query.setParameter("id", id);
-		Estrutura estrutura = (Estrutura) query.getSingleResult();
-		return estrutura;
-	}
-
-	public Estrutura buscaEstruturaCompletaPorId(Long id) {
-		String jpql = "select e from Estrutura e join fetch e.estruturas where e.id = :id";
-		Query query = entityManager.createQuery(jpql, Estrutura.class);
-		query.setParameter("id", id);
-		Estrutura estrutura = (Estrutura) query.getSingleResult();
 		return estrutura;
 	}
 
@@ -166,82 +150,77 @@ public class EstruturaDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<PedidoConsultaDTO> buscaPedidoDetalhado(String dataHora, Long id, Long tipoRefeicao) {
-		int numeroSemana = this.obterNumeroSemanaAno(dataHora);
-		int semana = this.obterSemana(numeroSemana);
-		StringBuilder where = new StringBuilder("WHERE ");
-		StringBuilder sql = new StringBuilder("SELECT count(pas.ID) AS QTD ,sum(pas.ID) * ic.MASC_MG  AS PESO "
-				+ ",a.DESCRICAO, ic.MASC_MG, ic.FEM_MG,'PADRAO' AS tipo, td.DESCRICAO AS cardapio, tr.DESCRICAO AS TIPO_REFEICAO, p.SEXO ");
-		sql.append("FROM " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM PAS ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".RECUPERANDO r ON r.ID = pas.RECUPERANDO_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".PESSOA p ON p.ID = r.PESSOA_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM_LOTACAO L on l.PASSAGEM_ID = pas.ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".ESTRUTURA e2 ON e2.ID = l.ESTRUTURA_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
-				+ ".CONTRATO_UNIDADE_PRISIONAL cup ON cup.UNIDADE_PRISIONAL_ID = e2.UNIDADEPRISIONAL_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c2 ON c2.ID = cup.CONTRATO_ID ");
-		sql.append(
-				"AND (c2.STATUS = 1 AND c2.VIGENCIA_CONTRATO_INICIO <= TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') AND c2.VIGENCIA_CONTRATO_FIM >= TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS')) ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".CARDAPIO c ON c.CONTRATO_ID = cup.CONTRATO_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".ITEM_CARDAPIO ic ON ic.CARDAPIO_ID = c.ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".ALIMENTO a on a.id = ic.ALIMENTO_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".TIPO_DIETA td ON td.ID = c.TIPO_DIETA_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".TIPO_REFEICAO tr ON tr.ID = c.TIPO_REFEICAO_ID ");
+	public List<PedidoConsultaDTO> buscaPedidoDetalhado(final String dataHora, final Long id, final Long tipoRefeicao) {
+		final int numeroSemana = obterNumeroSemanaAno(dataHora);
+		final int semana = obterSemana(numeroSemana);
 
-		where.append(
-				"c.TIPO_REFEICAO_ID = :tipoRefeicao AND c.SEMANA = :semana and td.ESPECIAL = 0 and c.CODG_DIA_SEMANA = (select to_char(TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS'),'D') from dual) - 1 and ");
-		where.append("l.ESTRUTURA_ID in(SELECT id FROM " + Sigepen.SEJUDH_SCHEMA
-				+ ".estrutura e START WITH id = :id CONNECT BY PRIOR id = ESTRUTURAPAI_ID) and ");
-		where.append(
-				"TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') >= l.DATA_ENTRADA AND (TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') <= l.DATA_SAIDA OR L.DATA_SAIDA IS NULL) and ");
-		where.append("pas.RECUPERANDO_ID NOT IN (SELECT dr1.recuperando_id FROM " + Sigepen.SEJUDH_SCHEMA
-				+ ".DIETA_RECUPERANDO dr1 where dr1.STATUS = 1 and (dr1.FIM IS null or dr1.FIM > SYSDATE)) ");
-		sql.append(where);
+		final StringBuilder sql = new StringBuilder();
 
-		sql.append("GROUP BY a.DESCRICAO, ic.MASC_MG, ic.FEM_MG, td.DESCRICAO, tr.DESCRICAO,p.SEXO ");
-		sql.append("union ");
+		// Consulta para dieta Padrão
+		sql.append("SELECT count(pas.ID) AS QTD, a.DESCRICAO, ic.MASC_MG, ic.FEM_MG, 'PADRAO' AS tipo, td.DESCRICAO AS cardapio, tr.DESCRICAO AS TIPO_REFEICAO, p.SEXO, a.UNIDADE_MEDIDA ")
+				.append("FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM pas ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".RECUPERANDO r ON r.ID = pas.RECUPERANDO_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PESSOA p ON p.ID = r.PESSOA_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM_LOTACAO l ON l.PASSAGEM_ID = pas.ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA e2 ON e2.ID = l.ESTRUTURA_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".CONTRATO_UNIDADE_PRISIONAL cup ON cup.UNIDADE_PRISIONAL_ID = e2.UNIDADEPRISIONAL_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".CONTRATO c2 ON c2.ID = cup.CONTRATO_ID ")
+				.append("AND (c2.STATUS = 1 AND c2.VIGENCIA_CONTRATO_INICIO <= TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') ")
+				.append("AND c2.VIGENCIA_CONTRATO_FIM >= TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS')) ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".CARDAPIO c ON c.CONTRATO_ID = cup.CONTRATO_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".ITEM_CARDAPIO ic ON ic.CARDAPIO_ID = c.ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".ALIMENTO a ON a.ID = ic.ALIMENTO_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".TIPO_DIETA td ON td.ID = c.TIPO_DIETA_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".TIPO_REFEICAO tr ON tr.ID = c.TIPO_REFEICAO_ID ")
+				.append("WHERE c.TIPO_REFEICAO_ID = :tipoRefeicao ")
+				.append("AND c.SEMANA = :semana ")
+				.append("AND td.ESPECIAL = 0 ")
+				.append("AND c.CODG_DIA_SEMANA = (SELECT TO_CHAR(TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS'), 'D') FROM dual) - 1 ")
+				.append("AND l.ESTRUTURA_ID IN (SELECT id FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA e START WITH id = :id CONNECT BY PRIOR id = ESTRUTURAPAI_ID) ")
+				.append("AND TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') >= l.DATA_ENTRADA ")
+				.append("AND (TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') <= l.DATA_SAIDA OR l.DATA_SAIDA IS NULL) ")
+				.append("AND pas.RECUPERANDO_ID NOT IN (SELECT dr1.recuperando_id FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".DIETA_RECUPERANDO dr1 WHERE dr1.STATUS = 1 AND (dr1.FIM IS NULL OR dr1.FIM > SYSDATE)) ")
+				.append("GROUP BY a.DESCRICAO, ic.MASC_MG, ic.FEM_MG, td.DESCRICAO, tr.DESCRICAO, p.SEXO, a.UNIDADE_MEDIDA ")
+				.append("UNION ");
 
-		sql.append("SELECT count(pas.ID) AS QTD ,sum(pas.ID) * ic.MASC_MG  AS PESO "
-				+ ",a.DESCRICAO, ic.MASC_MG, ic.FEM_MG,'ESPECIAL' AS tipo, td.DESCRICAO AS cardapio, tr.DESCRICAO AS TIPO_REFEICAO, p.SEXO ");
-		sql.append("FROM " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM PAS ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".RECUPERANDO r ON r.ID = pas.RECUPERANDO_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".PESSOA p ON p.ID = r.PESSOA_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM_LOTACAO L on l.PASSAGEM_ID = pas.ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".ESTRUTURA e2 ON e2.ID = l.ESTRUTURA_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
-				+ ".CONTRATO_UNIDADE_PRISIONAL cup ON cup.UNIDADE_PRISIONAL_ID = e2.UNIDADEPRISIONAL_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c2 ON c2.ID = cup.CONTRATO_ID ");
-		sql.append(
-				"AND (c2.STATUS = 1 AND c2.VIGENCIA_CONTRATO_INICIO <= TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') AND c2.VIGENCIA_CONTRATO_FIM >= TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS')) ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".CARDAPIO c ON c.CONTRATO_ID = cup.CONTRATO_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".ITEM_CARDAPIO ic ON ic.CARDAPIO_ID = c.ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".ALIMENTO a on a.id = ic.ALIMENTO_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
-				+ ".DIETA_RECUPERANDO dr ON dr.RECUPERANDO_ID = PAS.RECUPERANDO_ID AND dr.STATUS = 1 and (dr.FIM IS null or dr.FIM > SYSDATE) ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
-				+ ".TIPO_DIETA td ON td.ID = c.TIPO_DIETA_ID AND td.ID = c.TIPO_DIETA_ID ");
-		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".TIPO_REFEICAO tr ON tr.ID = c.TIPO_REFEICAO_ID ");
+		// Consulta para dieta especial
+		sql.append("SELECT count(pas.ID) AS QTD, a.DESCRICAO, ic.MASC_MG, ic.FEM_MG, 'ESPECIAL' AS tipo, td.DESCRICAO AS cardapio, tr.DESCRICAO AS TIPO_REFEICAO, p.SEXO, a.UNIDADE_MEDIDA ")
+				.append("FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM pas ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".RECUPERANDO r ON r.ID = pas.RECUPERANDO_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PESSOA p ON p.ID = r.PESSOA_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM_LOTACAO l ON l.PASSAGEM_ID = pas.ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA e2 ON e2.ID = l.ESTRUTURA_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".CONTRATO_UNIDADE_PRISIONAL cup ON cup.UNIDADE_PRISIONAL_ID = e2.UNIDADEPRISIONAL_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".CONTRATO c2 ON c2.ID = cup.CONTRATO_ID ")
+				.append("AND (c2.STATUS = 1 AND c2.VIGENCIA_CONTRATO_INICIO <= TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') ")
+				.append("AND c2.VIGENCIA_CONTRATO_FIM >= TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS')) ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".CARDAPIO c ON c.CONTRATO_ID = cup.CONTRATO_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".ITEM_CARDAPIO ic ON ic.CARDAPIO_ID = c.ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".ALIMENTO a ON a.ID = ic.ALIMENTO_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".DIETA_RECUPERANDO dr ON dr.RECUPERANDO_ID = pas.RECUPERANDO_ID AND dr.STATUS = 1 AND (dr.FIM IS NULL OR dr.FIM > SYSDATE) ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".TIPO_DIETA td ON td.ID = c.TIPO_DIETA_ID ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".TIPO_REFEICAO tr ON tr.ID = c.TIPO_REFEICAO_ID ")
+				.append("WHERE c.TIPO_REFEICAO_ID = :tipoRefeicao ")
+				.append("AND c.SEMANA = :semana ")
+				.append("AND td.ESPECIAL = 1 ")
+				.append("AND c.CODG_DIA_SEMANA = (SELECT TO_CHAR(TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS'), 'D') FROM dual) - 1 ")
+				.append("AND l.ESTRUTURA_ID IN (SELECT id FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA e START WITH id = :id CONNECT BY PRIOR id = ESTRUTURAPAI_ID) ")
+				.append("AND TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') >= l.DATA_ENTRADA ")
+				.append("AND (TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') <= l.DATA_SAIDA OR l.DATA_SAIDA IS NULL) ")
+				.append("GROUP BY a.DESCRICAO, ic.MASC_MG, ic.FEM_MG, td.DESCRICAO, tr.DESCRICAO, p.SEXO, a.UNIDADE_MEDIDA ")
+				.append("ORDER BY cardapio ");
 
-		where = new StringBuilder("WHERE ");
-		where.append(
-				"c.TIPO_REFEICAO_ID = :tipoRefeicao AND c.SEMANA = :semana and td.ESPECIAL = 1 and c.CODG_DIA_SEMANA = (select to_char(TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS'),'D') from dual) - 1 and ");
-		where.append("l.ESTRUTURA_ID in(SELECT id FROM " + Sigepen.SEJUDH_SCHEMA
-				+ ".estrutura e START WITH id = :id CONNECT BY PRIOR id = ESTRUTURAPAI_ID) and ");
-		where.append(
-				"TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') >= l.DATA_ENTRADA AND (TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') <= l.DATA_SAIDA OR L.DATA_SAIDA IS NULL) ");
-		sql.append(where);
-
-		sql.append("GROUP BY a.DESCRICAO, ic.MASC_MG, ic.FEM_MG, td.DESCRICAO, tr.DESCRICAO,p.SEXO ");
-		sql.append("ORDER BY cardapio ");
-		Query query = entityManager.createNativeQuery(sql.toString());
+		final Query query = entityManager.createNativeQuery(sql.toString());
 		query.setParameter("id", id);
 		query.setParameter("data", dataHora);
 		query.setParameter("tipoRefeicao", tipoRefeicao);
 		query.setParameter("semana", semana);
 
 		return (List<PedidoConsultaDTO>) query.getResultList().stream()
-				.map(row -> new PedidoConsultaDTO((Object[]) row)).collect(Collectors.toList());
+				.map(row -> new PedidoConsultaDTO((Object[]) row))
+				.collect(Collectors.toList());
 	}
+
 
 	public String buscarNomeEstrutura(Long idEstrutura) {
 
@@ -292,4 +271,45 @@ public class EstruturaDAO {
 			Hibernate.initialize(ed.getEstruturaComplemento());
 		}
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<PedidoEstruturaDTO> montarEstruturaPedido(final String data, final long idEstrutura) {
+		final StringBuilder sql = new StringBuilder();
+
+		sql.append("SELECT LEVEL NIVEL, E.ID ESTRUTURA_ID, ")
+				.append("(CASE WHEN LEVEL > 1 THEN LPAD('>', LEVEL * LEVEL, ' ') END) || E.NOME EST_NOME, ")
+				.append("(SELECT SUM(NVL(QT.QTD_PADRAO, 0)) FROM (SELECT L.ESTRUTURA_ID, COUNT(PAS.RECUPERANDO_ID) QTD_RECUPERANDOS_ESTRUTURA, ")
+				.append("SUM(CASE WHEN DR.ID IS NULL THEN 1 ELSE 0 END) AS QTD_PADRAO, SUM(CASE WHEN DR.ID IS NOT NULL THEN 1 ELSE 0 END) AS QTD_ESPECIAL ")
+				.append("FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM PAS ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM_LOTACAO L ON L.PASSAGEM_ID = PAS.ID ")
+				.append("LEFT JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".DIETA_RECUPERANDO DR ON DR.RECUPERANDO_ID = PAS.RECUPERANDO_ID AND DR.STATUS = 1 AND (DR.INICIO < TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS')) AND (DR.FIM IS NULL OR DR.FIM > TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS')) ")
+				.append("WHERE TO_DATE(:data, 'DD/MM/YYYY HH24:MI') >= L.DATA_ENTRADA AND (TO_DATE(:data, 'DD/MM/YYYY HH24:MI') <= L.DATA_SAIDA OR L.DATA_SAIDA IS NULL) ")
+				.append("GROUP BY L.ESTRUTURA_ID) QT, ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA E3 ")
+				.append("WHERE QT.ESTRUTURA_ID(+) = E3.ID ")
+				.append("START WITH E3.ID = E.ID ")
+				.append("CONNECT BY PRIOR E3.ID = E3.ESTRUTURAPAI_ID) QTD_PADRAO, ")
+				.append("(SELECT SUM(NVL(QT.QTD_ESPECIAL, 0)) FROM (SELECT L.ESTRUTURA_ID, COUNT(PAS.RECUPERANDO_ID) QTD_RECUPERANDOS_ESTRUTURA, ")
+				.append("SUM(CASE WHEN DR.ID IS NULL THEN 1 ELSE 0 END) AS QTD_PADRAO, SUM(CASE WHEN DR.ID IS NOT NULL THEN 1 ELSE 0 END) AS QTD_ESPECIAL ")
+				.append("FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM PAS ")
+				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM_LOTACAO L ON L.PASSAGEM_ID = PAS.ID ")
+				.append("LEFT JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".DIETA_RECUPERANDO DR ON DR.RECUPERANDO_ID = PAS.RECUPERANDO_ID AND DR.STATUS = 1 AND (DR.INICIO < TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS')) AND (DR.FIM IS NULL OR DR.FIM > TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS')) ")
+				.append("WHERE TO_DATE(:data, 'DD/MM/YYYY HH24:MI') >= L.DATA_ENTRADA AND (TO_DATE(:data, 'DD/MM/YYYY HH24:MI') <= L.DATA_SAIDA OR L.DATA_SAIDA IS NULL) ")
+				.append("GROUP BY L.ESTRUTURA_ID) QT, ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA E3 ")
+				.append("WHERE QT.ESTRUTURA_ID(+) = E3.ID ")
+				.append("START WITH E3.ID = E.ID ")
+				.append("CONNECT BY PRIOR E3.ID = E3.ESTRUTURAPAI_ID) QTD_ESPECIAL ")
+				.append("FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA E ")
+				.append("START WITH E.ID = :idEstrutura ")
+				.append("CONNECT BY PRIOR E.ID = E.ESTRUTURAPAI_ID ")
+				.append("ORDER SIBLINGS BY E.ID ");
+
+		final Query query = entityManager.createNativeQuery(sql.toString());
+		query.setParameter("data", data);
+		query.setParameter("idEstrutura", idEstrutura);
+
+		return (List<PedidoEstruturaDTO>) query.getResultList().stream()
+				.map(row -> new PedidoEstruturaDTO((Object[]) row))
+				.collect(Collectors.toList());
+	}
+
 }
