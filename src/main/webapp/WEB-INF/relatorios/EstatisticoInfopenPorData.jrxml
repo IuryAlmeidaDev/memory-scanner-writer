@@ -461,17 +461,17 @@
                     SELECT 0 ID, DESCRICAO, QUANTIDADE
                     FROM (
                         SELECT 'Gestante' DESCRICAO, COUNT(r.id) quantidade
-                        FROM ${SCHEMA_SUB}.recuperando r
-                        JOIN ${SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
                         LEFT JOIN (
                             SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
-                            FROM ${SCHEMA_SUB}.PASSAGEM
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
                             WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
                             GROUP BY RECUPERANDO_ID
                         ) p_max ON r.id = p_max.RECUPERANDO_ID
-                        LEFT JOIN ${SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
                         WHERE r.gestante = 1
-                        AND l.id_unidade = ${UNIDADE_SUB_ID}
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
                         AND r.status = 1
                         AND l.sexo = 'F'
                     )
@@ -479,17 +479,17 @@
                     SELECT 1 ID, DESCRICAO, QUANTIDADE
                     FROM (
                         SELECT 'Lactante' DESCRICAO, COUNT(r.id) quantidade
-                        FROM ${SCHEMA_SUB}.recuperando r
-                        JOIN ${SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
                         LEFT JOIN (
                             SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
-                            FROM ${SCHEMA_SUB}.PASSAGEM
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
                             WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
                             GROUP BY RECUPERANDO_ID
                         ) p_max ON r.id = p_max.RECUPERANDO_ID
-                        LEFT JOIN ${SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
                         WHERE r.lactante = 1
-                        AND l.id_unidade = ${UNIDADE_SUB_ID}
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
                         AND r.status = 1
                         AND l.sexo = 'F'
                     )
@@ -497,20 +497,20 @@
                     SELECT 2 ID, DESCRICAO, QUANTIDADE
                     FROM (
                         SELECT 'Mãe de menor de 12 anos' DESCRICAO, COUNT(DISTINCT r.id) quantidade
-                        FROM ${SCHEMA_SUB}.recuperando r
-                        JOIN ${SCHEMA_SUB}.PARENTE p ON p.recuperando_id = r.id
-                        JOIN ${SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.PARENTE p ON p.recuperando_id = r.id
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
                         LEFT JOIN (
                             SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
-                            FROM ${SCHEMA_SUB}.PASSAGEM
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
                             WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
                             GROUP BY RECUPERANDO_ID
                         ) p_max ON r.id = p_max.RECUPERANDO_ID
-                        LEFT JOIN ${SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
                         WHERE p.parentesco_id = 3
                         AND p.DATA_NASCIMENTO IS NOT NULL
                         AND TRUNC((TRUNC(SYSDATE) - p.DATA_NASCIMENTO) / 365) < 12
-                        AND l.id_unidade = ${UNIDADE_SUB_ID}
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
                         AND r.status = 1
                         AND l.sexo = 'F'
                     )
@@ -518,19 +518,19 @@
                     SELECT 3 ID, DESCRICAO, QUANTIDADE
                     FROM (
                         SELECT 'Mãe de PCD' DESCRICAO, COUNT(DISTINCT r.id) quantidade
-                        FROM ${SCHEMA_SUB}.recuperando r
-                        JOIN ${SCHEMA_SUB}.PARENTE p ON p.recuperando_id = r.id
-                        JOIN ${SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
+                        FROM $P!{SCHEMA_SUB}.recuperando r
+                        JOIN $P!{SCHEMA_SUB}.PARENTE p ON p.recuperando_id = r.id
+                        JOIN $P!{SCHEMA_SUB}.lista_todos_recuperandos l ON l.matricula = r.id
                         LEFT JOIN (
                             SELECT RECUPERANDO_ID, MAX(DATA_ENTRADA) AS ULTIMA_DATA_ENTRADA
-                            FROM ${SCHEMA_SUB}.PASSAGEM
+                            FROM $P!{SCHEMA_SUB}.PASSAGEM
                             WHERE (DATA_SAIDA <= TO_DATE($P!{DATA_SAIDA}, 'DD/MM/YYYY') OR DATA_SAIDA IS NULL)
                             GROUP BY RECUPERANDO_ID
                         ) p_max ON r.id = p_max.RECUPERANDO_ID
-                        LEFT JOIN ${SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
+                        LEFT JOIN $P!{SCHEMA_SUB}.PASSAGEM p2 ON p2.RECUPERANDO_ID = p_max.RECUPERANDO_ID AND p2.DATA_ENTRADA = p_max.ULTIMA_DATA_ENTRADA
                         WHERE p.parentesco_id = 3
                         AND p.filho_pcd = 1
-                        AND l.id_unidade = ${UNIDADE_SUB_ID}
+                        AND l.id_unidade = $P!{UNIDADE_SUB_ID}
                         AND r.status = 1
                         AND l.sexo = 'F'
                     )
