@@ -172,8 +172,9 @@ public class LoginBean {
 
 		LogAcesso logAcesso = new LogAcesso();
 
-		String ipUsuario = Optional.ofNullable(FacesUtil.getRequest().getHeader("X-REAL-IP"))
-				.filter(ip -> !ip.trim().isEmpty()).orElseGet(() -> FacesUtil.getRequest().getRemoteAddr());
+		String ipUsuario = Optional.ofNullable(FacesUtil.getRequest().getHeader("X-Real-IP-Port"))
+                .filter(ipPort -> !ipPort.trim().isEmpty())
+                .orElseGet(() -> FacesUtil.getRequest().getRemoteAddr());
 
 		logAcesso.setDataHoraAcesso(new Date());
 		logAcesso.setLogin(loginUsuarioAutorizador);
