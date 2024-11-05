@@ -64,9 +64,10 @@ build_maven:
   cache:
     - paths:
         - .m2/repository
-    - key: "$CI_COMMIT_REF_SLUG"
-      paths:
-        - target/
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
 
 code_check:
   stage: code_check
@@ -89,7 +90,6 @@ code_check:
         - .m2/repository
     - key: "$CI_COMMIT_REF_SLUG"
       paths:
-        - target/
         - .sonar/cache
 
 #DESENVOLVIMENTO
@@ -101,11 +101,7 @@ build_desenv:
       - develop
       - gitlab-ci-test
       - feat-gitlab-ci
-  cache:
-    - key: "$CI_COMMIT_REF_SLUG"
-      paths:
-        - target/
-      policy: pull
+      - /^test/
 
 #HOMOLOGAÇÃO
 build_homologa:
@@ -163,6 +159,7 @@ deploy_rancher_desenv:
       - develop
       - gitlab-ci-test
       - feat-gitlab-ci
+      - /^test/
 
 #DEPLOY RANCHER HOMOLOGAÇÃO
 deploy_rancher_homloga:
