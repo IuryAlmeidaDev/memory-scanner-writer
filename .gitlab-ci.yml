@@ -65,8 +65,10 @@ build_maven:
     - paths:
         - .m2/repository
     - key: "$CI_COMMIT_REF_SLUG"
-      paths:
-        - target/
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
 
 code_check:
   stage: code_check
