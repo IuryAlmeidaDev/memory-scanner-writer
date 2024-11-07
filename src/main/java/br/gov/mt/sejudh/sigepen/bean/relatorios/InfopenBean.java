@@ -77,9 +77,7 @@ public class InfopenBean extends MetodosDialogBean {
 	private Logger log;
 	
 	@URLAction(onPostback=false)
-	public String init() {
-		//this.filtro.setDataInicial(new Date());
-		//this.filtro.setDataFinal(new Date());
+	public String init() {		
 		this.filtro.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
 		this.nacionalidades = this.service.buscarNacionalidades(SecurityUtil.getUnidadeSelecionada().getId());
 		this.regimes = this.service.buscarRegimes(SecurityUtil.getUnidadeSelecionada().getId());
