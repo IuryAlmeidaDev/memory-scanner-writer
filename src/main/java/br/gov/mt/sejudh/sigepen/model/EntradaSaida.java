@@ -49,6 +49,10 @@ public class EntradaSaida extends BaseModel<Long> {
 	@JoinColumn(name = "ID_VISITANTE")
 	private Visitante visitante;
 
+	@ManyToOne
+	@JoinColumn(name = "ID_VISITANTE_RESPONSAVEL")
+	private Visitante visitanteResponsavel;
+
 	@Column(name = "DATA_ENTRADA")
 	private Date dataEntrada;
     
@@ -116,6 +120,14 @@ public class EntradaSaida extends BaseModel<Long> {
 
 	public void setVisitante(Visitante visitante) {
 		this.visitante = visitante;
+	}
+
+	public Visitante getVisitanteResponsavel() {
+		return visitanteResponsavel;
+	}
+
+	public void setVisitanteResponsavel(Visitante visitanteResponsavel) {
+		this.visitanteResponsavel = visitanteResponsavel;
 	}
 
 	public Date getDataEntrada() {

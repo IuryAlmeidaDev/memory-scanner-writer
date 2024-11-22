@@ -73,7 +73,12 @@ public class EntradaSaidaRecuperandoDAO {
 		}
 		Query query =  em.createNativeQuery(jpql.toString(), EntradaSaidaDTO.class);
 		filtro.configureParametos(query,first);
-		return query.getResultList();
+		List<EntradaSaidaDTO> sql = query.getResultList();
+		sql.forEach(dto->{
+			dto.criarVisitante();
+			dto.criarResponsavel();
+		});
+		return sql;
 	}
 
 	public int buscarEntradasPorFiltroCount(FiltroEntradaSaidaRecuperando filtro, String sortField, SortOrder sortOrder, int first) {
@@ -97,76 +102,71 @@ public class EntradaSaidaRecuperandoDAO {
 
 	private String script() {
         return "SELECT " +
-				"esv.ID AS id, " +
-				"tipo_visita.DESC_TIPO_VISITA AS tipoVisita, " +
-				"pessoa_v.NOME AS nomeVisitante, " +
-				"vis.ID_VISITANTE AS idVisitante, " +
-				"pessoa_resp.NOME AS nomeResponsavel, " +
-				"resp.ID_VISITANTE AS idResponsavel, " +
-				"parentesco.DESCRICAO AS parentesco, " +
-				"cred.PROFISSAO AS profissao, " +
-				"pessoa_rec.NOME AS nomeRecuperando, " +
-				"esv.DATA_ENTRADA AS dataEntrada, " +
-				"esv.DATA_SAIDA AS dataSaida, " +
-				"esv.DATA_CANCELAMENTO AS dataCancelamento, " +
-				"esv.SITUACAO AS situacao, " +
-				"esv.MOTIVO_FINALIZACAO AS motivoFinalizacao, " +
-				"esv.MOTIVO_ENTRADA AS motivoEntrada, " +
-				"esv.MOTIVO_CANCELAMENTO AS motivoCancelamento, " +
-				"up.ID AS idUnidade, " +
-				"up.NOME AS nomeUnidade, " +
-				"up.SIGLA AS siglaUnidade " +
+				"    esv.ID AS id, " +
+				"    esv.DATA_ENTRADA AS dataEntrada, " +
+				"    esv.DATA_SAIDA AS dataSaida, " +
+				"    esv.DATA_CANCELAMENTO AS dataCancelamento, " +
+				"    esv.SITUACAO AS situacao, " +
+				"    esv.MOTIVO_FINALIZACAO AS motivoFinalizacao, " +
+				"    esv.MOTIVO_ENTRADA AS motivoEntrada, " +
+				"    esv.MOTIVO_CANCELAMENTO AS motivoCancelamento, " +
+				"    tipo_visita.DESC_TIPO_VISITA AS tipoVisita, " +
+				"    parentesco.DESCRICAO AS parentesco, " +
+				"    cred.PROFISSAO AS profissao, " +
+				"    pessoa_rec.NOME AS nomeRecuperando, " +
+				"    up.ID AS idUnidade, " +
+				"    up.NOME AS nomeUnidade, " +
+				"    up.SIGLA AS siglaUnidade, " +
+				"    vis.ID_VISITANTE AS visitanteId, " +
+				"    vis.FLAG_PNE AS pneVisitante, " +
+				"    vis.FLAG_PNE_PERMANENTE AS pnePermanenteVisitante, " +
+				"    vis.FLAG_EMANCIPADO AS emancipadoVisitante, " +
+				"    pessoa_v.NOME AS nomeVisitante, " +
+				"    pessoa_v.SEXO AS sexoVisitante, " +
+				"    pessoa_v.NOME_MAE AS nomeMaeVisitante, " +
+				"    pessoa_v.NOME_PAI AS nomePaiVisitante, " +
+				"    pessoa_v.NOME_SOCIAL AS nomeSocialVisitante, " +
+				"    pessoa_v.DATA_NASCIMENTO AS dataNascimentoVisitante, " +
+				"    nacionalidade.DESCRICAO AS nacionalidadeVisitante, " +
+				"    estado.NOME AS estadoVisitante, " +
+				"    cidade.NOME AS cidadeVisitante, " +
+				"    identidade_genero.DESCRICAO AS identidadeGeneroVisitante, " +
+				"    resp.ID_VISITANTE AS idResponsavel, " +
+				"    resp.FLAG_PNE AS pneResponsavel, " +
+				"    resp.FLAG_PNE_PERMANENTE AS pnePermanenteResponsavel, " +
+				"    resp.FLAG_EMANCIPADO AS emancipadoResponsavel, " +
+				"    pessoa_resp.NOME AS nomeResponsavel, " +
+				"    pessoa_resp.SEXO AS sexoResponsavel, " +
+				"    pessoa_resp.NOME_MAE AS nomeMaeResponsavel, " +
+				"    pessoa_resp.NOME_PAI AS nomePaiResponsavel, " +
+				"    pessoa_resp.NOME_SOCIAL AS nomeSocialResponsavel, " +
+				"    pessoa_resp.DATA_NASCIMENTO AS dataNascimentoResponsavel, " +
+				"    nacionalidade_resp.DESCRICAO AS nacionalidadeResponsavel, " +
+				"    estado_resp.NOME AS estadoResponsavel, " +
+				"    cidade_resp.NOME AS cidadeResponsavel, " +
+				"    identidade_genero_resp.DESCRICAO AS identidadeGeneroResponsavel " +
 				"FROM " +
-				"SIGEPEN_OWNER.SGP_ENTRADA_SAIDA_RECUP esr " +
-				"INNER JOIN " +
-				"SIGEPEN_OWNER.SGP_CREDENCIAMENTO cred " +
-				"ON esr.ID_CREDENCIAMENTO = cred.ID_CREDENCIAMENTO " +
-				"LEFT OUTER JOIN " +
-				"SIGEPEN_OWNER.PARENTE parente " +
-				"ON cred.ID_PARENTE = parente.ID " +
-				"LEFT OUTER JOIN " +
-				"SIGEPEN_OWNER.PARENTESCO parentesco " +
-				"ON parente.PARENTESCO_ID = parentesco.ID " +
-				"LEFT OUTER JOIN " +
-				"SIGEPEN_OWNER.RECUPERANDO rec " +
-				"ON cred.ID_RECUPERANDO = rec.ID " +
-				"LEFT OUTER JOIN " +
-				"SIGEPEN_OWNER.PESSOA pessoa_rec " +
-				"ON rec.PESSOA_ID = pessoa_rec.ID " +
-				"INNER JOIN " +
-				"SIGEPEN_OWNER.SGP_TIPO_VISITA tipo_visita " +
-				"ON cred.ID_TIPO_VISITA = tipo_visita.ID_TIPO_VISITA " +
-//				"INNER JOIN " +
-//				"SIGEPEN_OWNER.UNIDADE_PRISIONAL up " +
-//				"ON cred.ID_UNIDADE_PRISIONAL = up.ID " +
-				"INNER JOIN " +
-				"SIGEPEN_OWNER.SGP_ENTRADA_SAIDA esv " +
-				"ON esr.ID_ENTRADA_SAIDA = esv.ID " +
-				"INNER JOIN " +
-				"SIGEPEN_OWNER.UNIDADE_PRISIONAL up " +
-				"ON esv.ID_UNIDADE_PRISIONAL = up.ID " +
-				"INNER JOIN " +
-				"SIGEPEN_OWNER.SGP_VISITANTE vis " +
-				"ON esv.ID_VISITANTE = vis.ID_VISITANTE " +
-				"INNER JOIN " +
-				"SIGEPEN_OWNER.PESSOA pessoa_v " +
-				"ON vis.ID_PESSOA_VISITANTE = pessoa_v.ID " +
-				"LEFT JOIN SIGEPEN_OWNER.SGP_VISITANTE_RESPONSAVEL vResp ON " +
-				"(vResp.visitante = vis.id_visitante " +
-				"AND vResp.Sta_Visitante_Responsavel = 'A' " +
-				"AND EXISTS " +
-				"(SELECT " +
-				"'O visitante responsável precisa estar na visita' " +
-				"FROM " +
-				"sigepen_owner.sgp_entrada_saida esVisResp " +
-				"WHERE " +
-				"esVisResp.id_visitante = vResp.visitante_responsavel " +
-				"AND trunc(esVisResp.data_entrada) = trunc(esv.data_entrada) " +
-				")) " +
-				"LEFT JOIN SIGEPEN_OWNER.SGP_VISITANTE resp ON " +
-				"resp.Id_Visitante = vResp.Visitante_Responsavel " +
-				"LEFT OUTER JOIN SIGEPEN_OWNER.PESSOA pessoa_resp ON " +
-				"pessoa_resp.ID = resp.ID_PESSOA_VISITANTE ";
+				"    SIGEPEN_OWNER.SGP_ENTRADA_SAIDA_RECUP esr " +
+				"    INNER JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO cred ON esr.ID_CREDENCIAMENTO = cred.ID_CREDENCIAMENTO " +
+				"    LEFT OUTER JOIN SIGEPEN_OWNER.PARENTE parente ON cred.ID_PARENTE = parente.ID " +
+				"    LEFT OUTER JOIN SIGEPEN_OWNER.PARENTESCO parentesco ON parente.PARENTESCO_ID = parentesco.ID " +
+				"    LEFT OUTER JOIN SIGEPEN_OWNER.RECUPERANDO rec ON cred.ID_RECUPERANDO = rec.ID " +
+				"    LEFT OUTER JOIN SIGEPEN_OWNER.PESSOA pessoa_rec ON rec.PESSOA_ID = pessoa_rec.ID " +
+				"    INNER JOIN SIGEPEN_OWNER.SGP_TIPO_VISITA tipo_visita ON cred.ID_TIPO_VISITA = tipo_visita.ID_TIPO_VISITA " +
+				"    INNER JOIN SIGEPEN_OWNER.SGP_ENTRADA_SAIDA esv ON esr.ID_ENTRADA_SAIDA = esv.ID " +
+				"    INNER JOIN SIGEPEN_OWNER.UNIDADE_PRISIONAL up ON esv.ID_UNIDADE_PRISIONAL = up.ID " +
+				"    INNER JOIN SIGEPEN_OWNER.SGP_VISITANTE vis ON esv.ID_VISITANTE = vis.ID_VISITANTE " +
+				"    LEFT OUTER JOIN SIGEPEN_OWNER.IDENTIDADE_GENERO identidade_genero ON vis.ID_IDENTIDADE_GENERO = identidade_genero.ID " +
+				"    INNER JOIN SIGEPEN_OWNER.PESSOA pessoa_v ON vis.ID_PESSOA_VISITANTE = pessoa_v.ID " +
+				"    LEFT OUTER JOIN SIGEPEN_OWNER.NACIONALIDADE nacionalidade ON pessoa_v.NACIONALIDADE_ID = nacionalidade.ID " +
+				"    LEFT OUTER JOIN SIGEPEN_OWNER.MUNICIPIO cidade ON pessoa_v.CIDADE_ID = cidade.ID " +
+				"    LEFT OUTER JOIN SIGEPEN_OWNER.ESTADO estado ON cidade.ESTADO = estado.UF " +
+				"    LEFT JOIN SIGEPEN_OWNER.SGP_VISITANTE resp ON resp.Id_Visitante = esv.Id_Visitante_Responsavel " +
+				"	 LEFT OUTER JOIN SIGEPEN_OWNER.IDENTIDADE_GENERO identidade_genero_resp ON resp.ID_IDENTIDADE_GENERO = identidade_genero.ID " +
+				"    LEFT OUTER JOIN SIGEPEN_OWNER.PESSOA pessoa_resp ON pessoa_resp.ID = resp.ID_PESSOA_VISITANTE " +
+				"    LEFT JOIN SIGEPEN_OWNER.NACIONALIDADE nacionalidade_resp ON pessoa_resp.NACIONALIDADE_ID = nacionalidade_resp.ID " +
+				"    LEFT JOIN SIGEPEN_OWNER.MUNICIPIO cidade_resp ON pessoa_resp.CIDADE_ID = cidade_resp.ID " +
+				"    LEFT JOIN SIGEPEN_OWNER.ESTADO estado_resp ON cidade_resp.ESTADO = estado_resp.UF ";
 
 	}
 
@@ -199,6 +199,11 @@ public class EntradaSaidaRecuperandoDAO {
 
 		Query query =  em.createNativeQuery(jpql.toString(), EntradaSaidaDTO.class);
 		filtro.configureParametos(query, -1);
-		return query.getResultList();
+		List<EntradaSaidaDTO> sql = query.getResultList();
+		sql.forEach(dto->{
+			dto.criarVisitante();
+			dto.criarResponsavel();
+		});
+		return sql;
 	}
 }
