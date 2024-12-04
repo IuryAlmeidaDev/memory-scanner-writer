@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -67,6 +68,17 @@ public class UsuarioDAO {
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(UsuarioDTO.class));
 		return criteria.list();
+	}
+	
+	public Usuario buscarUsuariosPorCpfAndNascimento(String cpf, Date nascimento) {
+		
+		FiltroUsuario filtro = new FiltroUsuario();
+		filtro.setCpf(cpf);
+		filtro.setNascimento(nascimento);
+		
+		Criteria criteria = filtro.criarCriteriaParaBusca(Usuario.class, em);
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return (Usuario) criteria.uniqueResult();
 	}
 
 	public int buscarQuantidadeFiltrada(FiltroUsuario filtro) {

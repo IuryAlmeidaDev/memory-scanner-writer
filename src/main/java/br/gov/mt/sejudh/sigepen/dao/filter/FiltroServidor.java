@@ -22,6 +22,10 @@ public class FiltroServidor extends FiltroConsulta {
 	
 	private String nome;
 
+	private String mae;
+	
+	private String cpf;
+	
 	private Status status;
 	
 	private Long matricula;
@@ -42,6 +46,22 @@ public class FiltroServidor extends FiltroConsulta {
 
 	public void setNome(String nome) {
 		this.nome = Sigepen.formatarEspacos(nome);
+	}
+	
+	public String getMae() {
+		return mae;
+	}
+
+	public void setMae(String mae) {
+		this.mae = Sigepen.formatarEspacos(mae);
+	}
+	
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
 	}
 
 	public Status getStatus() {
@@ -136,6 +156,14 @@ public class FiltroServidor extends FiltroConsulta {
 		
 		if (this.getNome()!= null && !this.getNome().equalsIgnoreCase("") ){
 			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nome", this.getNome(), MatchMode.ANYWHERE));
+		}
+		
+		if (this.getMae()!= null && !this.getMae().equalsIgnoreCase("") ){
+			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("mae", this.getMae(), MatchMode.ANYWHERE));
+		}
+		
+		if (this.getCpf()!= null && !this.getCpf().equalsIgnoreCase("") ){
+			getCriteria().add(Restrictions.like("cpf", this.getCpf(), MatchMode.ANYWHERE));
 		}
 		
 		if (this.getMatricula() != null){

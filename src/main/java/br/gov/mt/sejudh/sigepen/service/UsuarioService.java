@@ -113,6 +113,11 @@ public class UsuarioService {
 	public List<UsuarioDTO> buscarUsuariosPorFiltro(FiltroUsuario filtro) {
 		return dao.buscarUsuariosPorFiltro(filtro);
 	}
+	
+	public Usuario buscarUsuariosPorCpfAndNascimento(String cpf, Date nascimento) {
+		return dao.buscarUsuariosPorCpfAndNascimento(cpf, nascimento);
+	}
+
 
 	public void excluir(long usuarioId) throws Exception {		
 		dao.excluir(usuarioId);
