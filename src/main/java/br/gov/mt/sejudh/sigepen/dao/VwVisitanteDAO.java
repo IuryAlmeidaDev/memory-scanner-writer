@@ -185,6 +185,7 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         sb.append("                  ON TD.ID = D.TIPO_DOCUMENTO_ID ");
         sb.append("               WHERE TD.DESCRICAO = 'CPF' GROUP BY D.PESSOA_ID , replace(D.NUMERO,' ','') ) TBDOCUMENTO ");
         sb.append("     ON TBDOCUMENTO.PESSOAID = P.ID ");
+        sb.append(" INNER JOIN SIGEPEN_OWNER.SGP_VISITANTE V ON P.ID = V.ID_PESSOA_VISITANTE ");
         sb.append(" WHERE NOT EXISTS (SELECT 1 FROM SIGEPEN_OWNER.SGP_VISITANTE VT WHERE VT.ID_PESSOA_VISITANTE = P.ID) ");
 
         
@@ -279,32 +280,51 @@ public class VwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
             sb.append("  ON R.ID = CRE.ID_RECUPERANDO");
             sb.append("  INNER JOIN SIGEPEN_OWNER.PESSOA P");
             sb.append("  ON P.ID = R.PESSOA_ID");
-            sb.append("  WHERE CRE.ID_VISITANTE = V.ID_VISITANTE");
-            sb.append("  AND  P.NOME LIKE '%' || :nome || '%'");
+            sb.append("  INNER JOIN SIGEPEN_OWNER.SGP_VISITANTE V");
+            sb.append("  ON V.ID_VISITANTE = CRE.ID_VISITANTE");
+            sb.append("  WHERE  P.NOME LIKE '%' || :nome || '%'");
             sb.append(" ) ");
         }
     }
-
+    
     private void addFiltroCredenciamento(StringBuilder sb, FiltroVwVisitante filtro) {
         if (filtro.getUnidadePrisional() != null || filtro.getSituacaoCredenciamento() != null || filtro.getFaseCredenciamento() != null) {
-            sb.append("  AND EXISTS (SELECT 1");
-            sb.append("  FROM SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE");
-            sb.append("  WHERE CRE.ID_VISITANTE = V.ID_VISITANTE");
+            sb.append("  AND EXISTS (SELECT 1 ");
+            sb.append("  FROM SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE ");
+            
+            sb.append("  INNER JOIN SIGEPEN_OWNER.SGP_VISITANTE V ON V.ID_VISITANTE = CRE.ID_VISITANTE ");
+
+            boolean firstCondition = true;
 
             if (filtro.getFaseCredenciamento() != null) {
-                sb.append("  AND CRE.CODG_FASE_CREDENCIAL = :CODG_FASE_CREDENCIAL");
+                if (firstCondition) {
+                    sb.append("  WHERE CRE.CODG_FASE_CREDENCIAL = :CODG_FASE_CREDENCIAL ");
+                    firstCondition = false;
+                } 
             }
 
             if (filtro.getSituacaoCredenciamento() != null) {
-                sb.append("  AND CRE.CODG_SITUACAO_CREDENCIAL = :CODG_SITUACAO_CREDENCIAL");
+                if (firstCondition) {
+                    sb.append("  WHERE CRE.CODG_SITUACAO_CREDENCIAL = :CODG_SITUACAO_CREDENCIAL ");
+                    firstCondition = false;
+                } else {
+                    sb.append("  AND CRE.CODG_SITUACAO_CREDENCIAL = :CODG_SITUACAO_CREDENCIAL ");
+                }
             }
 
             if (filtro.getUnidadePrisional() != null) {
-                sb.append("  AND cre.ID_UNIDADE_PRISIONAL = :unidade ");
+                if (firstCondition) {
+                    sb.append("  WHERE CRE.ID_UNIDADE_PRISIONAL = :unidade ");
+                    firstCondition = false;
+                } else {
+                    sb.append("  AND CRE.ID_UNIDADE_PRISIONAL = :unidade ");
+                }
             }
             
             sb.append(" ) ");
         }
     }
+
+
 
 }
