@@ -56,7 +56,7 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 	
 	private Recuperando recuperandoSelecionado;
 	
-	private List<Recuperando> recuperandos = new ArrayList<>();
+	private final List<Recuperando> recuperandos = new ArrayList<>();
 	
 	private List<TipoDieta> tipoDietas;
 
@@ -201,12 +201,8 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 		this.dietaEspecial = dietaEspecialService.buscaPorId(id);
 		this.recuperandos.add(dietaEspecial.getRecuperando());
 
-		if (this.dietaEspecial == null) {
-			return false;
-		}
-
-		return true;
-	}
+        return this.dietaEspecial != null;
+    }
 
 	public void pesquisar() {
 		this.dietasEspeciais = new LazyDataModel<DietaEspecialDTO>() {
@@ -270,9 +266,7 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 		try {
 			if (recuperandoSelecionado == null) {
                 facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Recuperando não encontrado.");
-                return;
-            }			
-
+            }
 		} catch (Exception e) {
  			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao incluir um Recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ADICIONAR, recuperandoSelecionado, e, log);
