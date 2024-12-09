@@ -8,6 +8,7 @@ public class DietaEspecialDTO {
 	private Date inicio;
 	private Date fim;
 	private String nomeRecuperando;
+	private String nomeUnidadePrisional;
 	private String tipoDieta;
 	
 	private Date dataEntrada;
@@ -27,19 +28,23 @@ public class DietaEspecialDTO {
 	public Date getFim() {
 		return fim;
 	}
-	
+
 	public String getTipoDieta() {
 		return tipoDieta;
 	}
-	
+
 	public String setTipoDieta() {
 		return tipoDieta;
 	}
-	
+
 	public String getNomeRecuperando() {
 		return nomeRecuperando;
 	}
-		
+
+	public String getNomeUnidadePrisional() {
+		return nomeUnidadePrisional;
+	}
+
 	@Override
 	public String toString() {
 		return "Contrato [id=" + id + ",nomeRecuperando = " + nomeRecuperando + "]";
@@ -52,5 +57,4 @@ public class DietaEspecialDTO {
 	public void setDataEntrada(Date dataEntrada) {
 		this.dataEntrada = dataEntrada;
 	}
-
 }
