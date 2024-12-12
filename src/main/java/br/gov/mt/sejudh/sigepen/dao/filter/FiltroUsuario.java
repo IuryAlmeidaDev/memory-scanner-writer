@@ -1,7 +1,5 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
-import java.util.Date;
-
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
@@ -19,7 +17,6 @@ public class FiltroUsuario extends FiltroConsulta {
 	private String cpf;
 	private String login;
 	private String email;
-	private Date nascimento;
 
 	public String getNome() {
 		return nome;
@@ -52,15 +49,6 @@ public class FiltroUsuario extends FiltroConsulta {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-
-	public Date getNascimento() {
-		return nascimento;
-	}
-
-	public void setNascimento(Date nascimento) {
-		this.nascimento = nascimento;
-	}
 
 	@Override
 	public void configurarFiltros() {
@@ -84,10 +72,6 @@ public class FiltroUsuario extends FiltroConsulta {
 		
 		if (this.getCpf() != null && !this.getCpf().equalsIgnoreCase("")) {
 			getCriteria().add(Restrictions.ilike("servidor.cpf", this.getCpf(), MatchMode.ANYWHERE));
-		}
-		
-		if (this.getNascimento() != null) {
-			getCriteria().add(Restrictions.eq("servidor.dataNascimento", this.getNascimento()));
 		}
 		
 		if (this.getLogin() != null && !this.getLogin().equalsIgnoreCase("")) {

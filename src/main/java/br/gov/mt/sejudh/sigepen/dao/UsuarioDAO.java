@@ -70,15 +70,16 @@ public class UsuarioDAO {
 		return criteria.list();
 	}
 	
-	public Usuario buscarUsuariosPorCpfAndNascimento(String cpf, Date nascimento) {
+	public Usuario buscarUsuariosPorCpfAndNascimento(String cpf, Date dataNascimento) {
 		
-		FiltroUsuario filtro = new FiltroUsuario();
-		filtro.setCpf(cpf);
-		filtro.setNascimento(nascimento);
+		StringBuilder jpql = new StringBuilder("select u from Usuario u ");
+		jpql.append("join u.servidor s ");
+		jpql.append("where u.login = :login and s.dataNascimento = :dataNascimento");
+		TypedQuery<Usuario> query = em.createQuery(jpql.toString(), Usuario.class);
+		query.setParameter("login", cpf);
+		query.setParameter("dataNascimento", dataNascimento);
 		
-		Criteria criteria = filtro.criarCriteriaParaBusca(Usuario.class, em);
-		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return (Usuario) criteria.uniqueResult();
+		return (Usuario) query.getSingleResult();
 	}
 
 	public int buscarQuantidadeFiltrada(FiltroUsuario filtro) {

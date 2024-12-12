@@ -63,7 +63,6 @@ public class LoginBean {
 
 	private String usuario;
 	private String senha;
-	private Date nascimento;
 	private UnidadePrisional unidadeSelecionada;
 	private List<UnidadePrisional> unidades;
 	private UsuarioResertSenhaDTO usuarioResertSenhaDTO;
@@ -92,6 +91,10 @@ public class LoginBean {
 	@PostConstruct
 	public void init() {
 		UnidadePrisional uni = SecurityUtil.getUnidadeSelecionada();
+		
+		if(this.usuarioResertSenhaDTO == null) {
+			this.usuarioResertSenhaDTO = new UsuarioResertSenhaDTO();
+		}
 
 		if (uni != null) {
 			this.unidadeSelecionada = uni;
@@ -120,14 +123,6 @@ public class LoginBean {
 
 	public void setUnidadeSelecionada(UnidadePrisional unidadeSelecionada) {
 		this.unidadeSelecionada = unidadeSelecionada;
-	}
-
-	public Date getNascimento() {
-		return this.nascimento;
-	}
-
-	public void setNascimento(Date nascimento) {
-		this.nascimento = nascimento;
 	}
 
 	public UsuarioResertSenhaDTO getUsuarioResertSenhaDTO() {
@@ -244,39 +239,25 @@ public class LoginBean {
 
 	public void resetSenha() {
 
-		Usuario usuario = this.usuarioService.buscarUsuariosPorCpfAndNascimento(this.usuario, this.nascimento);
+		Usuario usuario = this.usuarioService.buscarUsuariosPorCpfAndNascimento(this.usuarioResertSenhaDTO.getCpf(), this.usuarioResertSenhaDTO.getNascimento());
 
 		if (usuario != null) {
 			this.usuarioResertSenhaDTO.setUsuario(usuario);
-			this.setListaMatriculaENomeDaMae(usuario.getServidor().getCpf(), usuario.getServidor().getMae());
+			
+			this.setListaMatricula(String.valueOf(usuario.getServidor().getMatricula()));
+			this.setListaNomeDaMae(usuario.getServidor().getMae());
 		}
 
 	}
-
-	private void setListaMatriculaENomeDaMae(String cpf, String mae) {
+	
+	private void setListaMatricula(String matricula) {
 		FiltroServidor filtroServidor = new FiltroServidor();
 
-		filtroServidor.setCpf(this.pegarCincosPrimeirosCaracters(cpf));
-		filtroServidor.setMae(this.pegarCincosPrimeirosCaracters(mae));
+		filtroServidor.setMatriculaLike(this.pegarTresPrimeirosCaracters(matricula));
 
 		List<ServidorDTO> servidorDTOs = servidorService.buscaPorFiltro(filtroServidor, false);
-
-		this.listaRandomMatriculaENomeMae(servidorDTOs);
-
-	}
-
-	private String pegarCincosPrimeirosCaracters(String string) {
-
-		if (string != null && string.length() >= 5) {
-			return string.substring(0, string.length());
-		}
-
-		return string;
-	}
-
-	private void listaRandomMatriculaENomeMae(List<ServidorDTO> lista) {
-
-		if (lista.size() < 3) {
+		
+		if (servidorDTOs.size() < 3) {
 			System.out.println("A lista deve conter pelo menos 3 elementos!");
 			throw new IllegalArgumentException("A lista deve conter pelo menos 3 elementos!");
 		}
@@ -284,11 +265,43 @@ public class LoginBean {
 		Random random = new Random();
 
 		while (this.usuarioResertSenhaDTO.getMatriculaList().size() < 3 && this.usuarioResertSenhaDTO.getNomeMaeList().size() < 3) {
-			int index = random.nextInt(lista.size());
-			this.usuarioResertSenhaDTO.getMatriculaList().add(lista.get(index).getMatricula());
-			this.usuarioResertSenhaDTO.getNomeMaeList().add(lista.get(index).getMae());
+			int index = random.nextInt(servidorDTOs.size());
+			this.usuarioResertSenhaDTO.getMatriculaList().add(servidorDTOs.get(index).getMatricula());
 		}
 
+	}
+	
+	private void setListaNomeDaMae(String mae) {
+		FiltroServidor filtroServidor = new FiltroServidor();
+
+		filtroServidor.setMae(this.pegarTresPrimeirosCaracters(mae));
+
+		List<ServidorDTO> servidorDTOs = servidorService.buscaPorFiltro(filtroServidor, false);
+		
+		if (servidorDTOs.size() < 3) {
+			System.out.println("A lista deve conter pelo menos 3 elementos!");
+			throw new IllegalArgumentException("A lista deve conter pelo menos 3 elementos!");
+		}
+
+		Random random = new Random();
+
+		while (this.usuarioResertSenhaDTO.getNomeMaeList().size() < 3 && this.usuarioResertSenhaDTO.getNomeMaeList().size() < 3) {
+			int index = random.nextInt(servidorDTOs.size());
+			this.usuarioResertSenhaDTO.getNomeMaeList().add(servidorDTOs.get(index).getMae());
+		}
+
+
+	}
+
+	private String pegarTresPrimeirosCaracters(String string) {
+		
+		int quantCaracter = 3;
+
+		if (string != null && string.length() >= quantCaracter) {
+			return string.substring(0, quantCaracter);
+		}
+
+		return string;
 	}
 
 

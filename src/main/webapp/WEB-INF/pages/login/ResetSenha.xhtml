@@ -55,16 +55,18 @@ html, body {
 	                	Resert Senha
 	                	<div class="row"
 						style="width: 380px; height: 160px; margin-top: 8%;">
-						<sgp:formInputText id="login" labelValue="Login" maxlength="11"
-							minlength="4" value="#{loginBean.usuario}"
+						<sgp:formInputText id="cpf" labelValue="CPF" maxlength="11"
+							minlength="4" value="#{loginBean.usuarioResertSenhaDTO.cpf}"
 							validationRequired="true" display="text" requiredMessage="*" />
 
-						<sgp:formInputPassword id="senha" labelValue="Senha"
-							maxlength="15" value="#{loginBean.senha}"
-							validationRequired="true" display="text" requiredMessage="*" />
+						<sgp:formCalendar id="nascimento" labelValue="Data de nascimento"
+							value="#{loginBean.usuarioResertSenhaDTO.nascimento}"
+							validationRequired="true" dataMinima="#{usuarioBean.dataMinima}"
+							display="text">							
+						</sgp:formCalendar>
 
 						<br /> <br />
-						<p:commandButton id="autenticador" action="#{loginBean.login()}"
+						<p:commandButton id="verificar" action="#{loginBean.resetSenha()}"
 							value="Login" update="@form" icon="ui-icon-key" />
 					</div>
 					<div class="row">
