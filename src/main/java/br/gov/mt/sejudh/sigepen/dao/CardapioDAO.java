@@ -8,14 +8,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroCardapio;
 import br.gov.mt.sejudh.sigepen.model.Cardapio;
-import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.dto.CardapioDTO;
 
 @RequestScoped
