@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
+import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
@@ -174,6 +175,14 @@ public class GerarPedidoEstruturaDTO {
 
 	public Long setDietaEspecial(Long dietaEspecial) {
 		return this.dietaEspecial;
+	}
+
+	public static GerarPedidoEstruturaDTO from(Estrutura estrutura) {
+		GerarPedidoEstruturaDTO dto = new GerarPedidoEstruturaDTO();
+		dto.setNome(estrutura.getNome());
+		dto.setCela(estrutura.getCela());
+		dto.setId(estrutura.getId());
+		return dto;
 	}
 
 	@Override

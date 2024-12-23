@@ -95,36 +95,31 @@ public class RelatorioUtil {
 	}
 	
 	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio, Map<String, Object> parameters) throws JRException {
-		Arquivo arquivo = null;
-		
-		try {
-			ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-			
-			parameters.put("CABECALHO", getCabecalhoPath(ctx, relatorio.getCabecalho()));
-			parameters.put("RODAPE", getRodapePath(ctx, relatorio.getRodape()));
-			parameters.put("UNIDADE_LOGADA", SecurityUtil.getUnidadeSelecionada().getNome());
-			parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
-			
-			if (!parameters.containsKey("NOME_DO_RELATORIO")) {
-				parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
-			}
-			
-			JRDataSource datasource = new JRBeanCollectionDataSource(valores);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(getRelatorioPath(ctx, relatorio), parameters, datasource);
-			
-			byte[] pdf = JasperExportManager.exportReportToPdf(jasperPrint);
-			
-			arquivo = new Arquivo();
-			arquivo.setBytes(pdf);
-			arquivo.setContentType("application/pdf");
-			arquivo.setNome(relatorio.name());
-			arquivo.setTipo(TipoArquivo.PDF);
-			
-		} catch (Exception e) {
-			throw e;
-		}
-		
-		return arquivo;
+		Arquivo arquivo;
+
+        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+
+        parameters.put("CABECALHO", getCabecalhoPath(ctx, relatorio.getCabecalho()));
+        parameters.put("RODAPE", getRodapePath(ctx, relatorio.getRodape()));
+        parameters.put("UNIDADE_LOGADA", SecurityUtil.getUnidadeSelecionada().getNome());
+        parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
+
+        if (!parameters.containsKey("NOME_DO_RELATORIO")) {
+            parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
+        }
+
+        JRDataSource datasource = new JRBeanCollectionDataSource(valores);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(getRelatorioPath(ctx, relatorio), parameters, datasource);
+
+        byte[] pdf = JasperExportManager.exportReportToPdf(jasperPrint);
+
+        arquivo = new Arquivo();
+        arquivo.setBytes(pdf);
+        arquivo.setContentType("application/pdf");
+        arquivo.setNome(relatorio.name());
+        arquivo.setTipo(TipoArquivo.PDF);
+
+        return arquivo;
 	}
 
 	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo) throws JRException, NamingException, SQLException {
