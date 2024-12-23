@@ -18,7 +18,7 @@ import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
 import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
 import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoConsultaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.RefeicaoDetalhadaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.hibernate.Hibernate;
@@ -150,7 +150,7 @@ public class EstruturaDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<PedidoConsultaDTO> buscaPedidoDetalhado(final String dataHora, final Long id, final Long tipoRefeicao) {
+	public List<RefeicaoDetalhadaDTO> buscaPedidoDetalhado(final String dataHora, final Long id, final Long tipoRefeicao) {
 		final int numeroSemana = obterNumeroSemanaAno(dataHora);
 		final int semana = obterSemana(numeroSemana);
 
@@ -216,8 +216,8 @@ public class EstruturaDAO {
 		query.setParameter("tipoRefeicao", tipoRefeicao);
 		query.setParameter("semana", semana);
 
-		return (List<PedidoConsultaDTO>) query.getResultList().stream()
-				.map(row -> new PedidoConsultaDTO((Object[]) row))
+		return (List<RefeicaoDetalhadaDTO>) query.getResultList().stream()
+				.map(row -> new RefeicaoDetalhadaDTO((Object[]) row))
 				.collect(Collectors.toList());
 	}
 

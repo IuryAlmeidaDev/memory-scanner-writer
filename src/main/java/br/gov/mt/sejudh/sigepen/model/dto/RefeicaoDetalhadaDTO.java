@@ -6,10 +6,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.math.BigDecimal;
 
-public class PedidoConsultaDTO {
+public class RefeicaoDetalhadaDTO {
 
 	private String refeicao;
-	private String cardapio;
+	private String tipoCardapio;
 	private String item;
 	private Long recuperandoTotal;
 	private boolean especial; 
@@ -19,13 +19,13 @@ public class PedidoConsultaDTO {
 	private String sexo;
 	private String siglaUnidadeMedida;
 
-	public PedidoConsultaDTO(Object[] row) {
+	public RefeicaoDetalhadaDTO(Object[] row) {
 		this.montarCardapio(row);
 	}
 	
 	private void montarCardapio(Object[] row) {
 		this.refeicao = (String) row[6];
-		this.cardapio = (String) row[5];
+		this.tipoCardapio = (String) row[5];
 		this.item = (String) row[1];
 		this.especial = row[4].equals("ESPECIAL");
 		this.masc = ((BigDecimal) row[2]).longValue();
@@ -43,12 +43,12 @@ public class PedidoConsultaDTO {
 		this.refeicao = refeicao;
 	}
 
-	public String getCardapio() {
-		return cardapio;
+	public String getTipoCardapio() {
+		return tipoCardapio;
 	}
 
-	public void setCardapio(String cardapio) {
-		this.cardapio = cardapio;
+	public void setTipoCardapio(String tipoCardapio) {
+		this.tipoCardapio = tipoCardapio;
 	}
 
 	public String getItem() {
@@ -119,7 +119,7 @@ public class PedidoConsultaDTO {
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
 				.append("refeicao", refeicao)
-				.append("cardapio", cardapio)
+				.append("cardapio", tipoCardapio)
 				.append("item", item)
 				.append("recuperandoTotal", recuperandoTotal)
 				.append("especial", especial)
