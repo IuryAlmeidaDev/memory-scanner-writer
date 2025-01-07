@@ -1,8 +1,8 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import br.gov.mt.sejudh.sigepen.model.Usuario;
 
@@ -11,12 +11,12 @@ public class UsuarioResertSenhaDTO {
 	private Usuario usuario;
 	private String cpf;
 	private Date nascimento;
-	private Set<String> nomeMaeList = new HashSet<String>();
-	private Set<Long> matriculaList = new HashSet<Long>();
-	private String nomeMaeSelecionada;
-	private Long matriculaSelecionada;
-	private boolean respostaNomeMaeCorreta = false;
-	private boolean respostaMatriculaCorerta = false;
+	private List<String> nomeMaeList = new ArrayList<String>();
+	private List<Long> matriculaList = new ArrayList<Long>();
+	private int indexNomeMaeSelecionada;
+	private int indexMatriculaSelecionada;
+	private String nomeMae;
+	private Long matricula;
 	
 	public Usuario getUsuario() {
 		return usuario;
@@ -24,8 +24,8 @@ public class UsuarioResertSenhaDTO {
 	
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
-		this.nomeMaeList.add(usuario.getServidor().getMae());
-		this.matriculaList.add(usuario.getServidor().getMatricula());
+		this.nomeMae = usuario.getServidor().getMae();
+		this.matricula = usuario.getServidor().getMatricula();
 	}
 	
 	public String getCpf() {
@@ -44,52 +44,47 @@ public class UsuarioResertSenhaDTO {
 		this.nascimento = nascimento;
 	}
 	
-	public Set<String> getNomeMaeList() {
-		return nomeMaeList;
+	public List<String> getNomeMaeList() {
+		return this.nomeMaeList;
 	}
 	
-	public void setNomeMaeList(Set<String> nomeMaeList) {
+	public void resetNomeMaeList() {
+		this.nomeMaeList.clear();
+		this.nomeMaeList.add(this.nomeMae);
+	}
+	
+	public void setNomeMaeList(List<String> nomeMaeList) {
 		this.nomeMaeList = nomeMaeList;
 	}
 	
-	public Set<Long> getMatriculaList() {
+	public List<Long> getMatriculaList() {
 		return matriculaList;
 	}
 	
-	public void setMatriculaList(Set<Long> matriculaList) {
+	public void resetMatriculaList() {
+		this.matriculaList.clear();
+		this.matriculaList.add(matricula);
+	}
+	
+	public void setMatriculaList(List<Long> matriculaList) {
 		this.matriculaList = matriculaList;
 	}
 	
-	public void  setNomeMaeSelecionada(String nomeMaeSelecionada) {
-		this.nomeMaeSelecionada = nomeMaeSelecionada;
-	}
-	
-	public String getNomeMaeSelecionada() {
-		return this.nomeMaeSelecionada;
-	}
-	
-	public void  setMatriculaSelecionada(Long matriculaSelecionada) {
-		this.matriculaSelecionada = matriculaSelecionada;
-	}
-	
-	public Long getMatriculaSelecionada() {
-		return this.matriculaSelecionada;
-	}
-	
-	public boolean isRespostaNomeMaeCorreta() {
-		return respostaNomeMaeCorreta;
-	}
 
-	public void setRespostaNomeMaeCorreta(boolean respostaNomeMaeCorreta) {
-		this.respostaNomeMaeCorreta = respostaNomeMaeCorreta;
+	public void  setIndexNomeMaeSelecionada(int indexNomeMaeSelecionada) {
+		this.indexNomeMaeSelecionada = indexNomeMaeSelecionada;
 	}
-
-	public boolean isRespostaMatriculaCorerta() {
-		return respostaMatriculaCorerta;
+	
+	public int getIndexNomeMaeSelecionada() {
+		return this.indexNomeMaeSelecionada;
 	}
-
-	public void setRespostaMatriculaCorerta(boolean respostaMatriculaCorerta) {
-		this.respostaMatriculaCorerta = respostaMatriculaCorerta;
+	
+	public void  setIndexMatriculaSelecionada(int indexMatriculaSelecionada) {
+		this.indexMatriculaSelecionada = indexMatriculaSelecionada;
+	}
+	
+	public int getIndexMatriculaSelecionada() {
+		return this.indexMatriculaSelecionada;
 	}
 	
 }

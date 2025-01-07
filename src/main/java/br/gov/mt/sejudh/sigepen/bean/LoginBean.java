@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -240,15 +238,28 @@ public class LoginBean {
 	public void resetSenha() {
 
 		Usuario usuario = this.usuarioService.buscarUsuariosPorCpfAndNascimento(this.usuarioResertSenhaDTO.getCpf(), this.usuarioResertSenhaDTO.getNascimento());
+		
 
 		if (usuario != null) {
 			this.usuarioResertSenhaDTO.setUsuario(usuario);
 			
-			this.setListaMatricula(String.valueOf(usuario.getServidor().getMatricula()));
 			this.setListaNomeDaMae(usuario.getServidor().getMae());
+			SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO",this.usuarioResertSenhaDTO);
+			//this.setListaMatricula(String.valueOf(usuario.getServidor().getMatricula()));
 		}
 
 	}
+	
+	public void verificaNomeMae() {
+		int index = this.usuarioResertSenhaDTO.getIndexNomeMaeSelecionada();
+		this.usuarioResertSenhaDTO = (UsuarioResertSenhaDTO) SecurityUtils.getSubject().getSession().getAttribute("usuarioResertSenhaDTO");
+		String nomeMaeSelecionado = this.usuarioResertSenhaDTO.getNomeMaeList().get(index);
+		if(nomeMaeSelecionado.equals(this.usuarioResertSenhaDTO.getUsuario().getServidor().getMae())) {			
+			this.setListaMatricula(String.valueOf(this.usuarioResertSenhaDTO.getUsuario().getServidor().getMatricula()));
+		}
+
+	}
+	
 	
 	private void setListaMatricula(String matricula) {
 		FiltroServidor filtroServidor = new FiltroServidor();
@@ -263,8 +274,8 @@ public class LoginBean {
 		}
 
 		Random random = new Random();
-
-		while (this.usuarioResertSenhaDTO.getMatriculaList().size() < 3 && this.usuarioResertSenhaDTO.getNomeMaeList().size() < 3) {
+		this.usuarioResertSenhaDTO.resetMatriculaList();
+		while (this.usuarioResertSenhaDTO.getMatriculaList().size() < 3) {
 			int index = random.nextInt(servidorDTOs.size());
 			this.usuarioResertSenhaDTO.getMatriculaList().add(servidorDTOs.get(index).getMatricula());
 		}
@@ -284,8 +295,8 @@ public class LoginBean {
 		}
 
 		Random random = new Random();
-
-		while (this.usuarioResertSenhaDTO.getNomeMaeList().size() < 3 && this.usuarioResertSenhaDTO.getNomeMaeList().size() < 3) {
+		this.usuarioResertSenhaDTO.resetNomeMaeList();
+		while (this.usuarioResertSenhaDTO.getNomeMaeList().size() < 3) {
 			int index = random.nextInt(servidorDTOs.size());
 			this.usuarioResertSenhaDTO.getNomeMaeList().add(servidorDTOs.get(index).getMae());
 		}

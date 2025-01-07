@@ -62,12 +62,13 @@ html, body {
 						<sgp:formCalendar id="nascimento" labelValue="Data de nascimento"
 							value="#{loginBean.usuarioResertSenhaDTO.nascimento}"
 							validationRequired="true" dataMinima="#{usuarioBean.dataMinima}"
-							display="text">							
+							display="text">
 						</sgp:formCalendar>
 
 						<br /> <br />
 						<p:commandButton id="verificar" action="#{loginBean.resetSenha()}"
-							value="Login" update="@form" icon="ui-icon-key" />
+							value="verificar" update="@form,formLogin-step-1,panelLogin-step-1"
+							icon="ui-icon-key" />
 					</div>
 					<div class="row">
 						<p>1. Informe CPF e Data de Nascimento.</p>
@@ -87,6 +88,85 @@ html, body {
 
 				</p:panel>
 			</h:form>
+
+			<br /> <br />
+			<p:panel id="panelLogin-step-1" style="width:650px; height:550px;">
+
+				<br />
+				<br />
+				<div class="row"
+					style="width: 380px; height: 160px; margin-top: 8%;">
+					<sgp:formInputText id="nome-step-2" labelValue="Nome do usuario"
+						maxlength="11" minlength="4"
+						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.nome}"
+						display="text"
+						 />
+
+					<sgp:formInputText id="cpf-step-2" labelValue="CPF" maxlength="11"
+						minlength="4"
+						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf}"
+						display="text"
+						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf != null}" />
+
+					<sgp:formCalendar id="nascimento-step-2"
+						labelValue="Data de nascimento"
+						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento}"
+						dataMinima="#{usuarioBean.dataMinima}" display="text"
+						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento != null}">
+					</sgp:formCalendar>
+
+					<sgp:formInputText id="unidade-step-2" labelValue="Unidade"
+						maxlength="11" minlength="4"
+						value="#{loginBean.usuarioResertSenhaDTO.cpf}" display="text"
+						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf == null}" />
+					<br /> <br />
+					<h:form id="formLogin-step-1">
+
+						<h6>Assina-le o campo que corresponde ao nome da sua mãe: *</h6>
+						<p:selectOneRadio id="listMae"
+							value="#{loginBean.usuarioResertSenhaDTO.indexNomeMaeSelecionada}"
+							layout="pageDirection">
+							<f:selectItem
+								itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[0]}"
+								itemValue="0" />
+							<f:selectItem
+								itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[1]}"
+								itemValue="1" />
+							<f:selectItem
+								itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[2]}"
+								itemValue="2" />
+						</p:selectOneRadio>
+						<p:commandButton id="verificar-step-1"
+							action="#{loginBean.verificaNomeMae()}" value="verificar"
+							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1" icon="ui-icon-key" />
+
+					</h:form>
+					<h:form id="panelLogin-step-2">
+						<h6>Assina-le o campo que corresponde a sua matricula:</h6>
+						<p:selectOneRadio id="listMatricula"
+							value="#{loginBean.usuarioResertSenhaDTO.indexMatriculaSelecionada}"
+							layout="pageDirection">
+							<f:selectItem
+								itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[0]}"
+								itemValue="0" />
+							<f:selectItem
+								itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[1]}"
+								itemValue="1" />
+							<f:selectItem
+								itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[2]}"
+								itemValue="2" />
+						</p:selectOneRadio>
+
+						<p:commandButton id="verificar-step-2"
+							action="#{loginBean.verificaNomeMae()}" value="verificar"
+							update="@form,formLogin-step-1" icon="ui-icon-key" />
+					</h:form>
+
+				</div>
+
+
+			</p:panel>
+
 		</div>
 	</div>
 </h:body>
