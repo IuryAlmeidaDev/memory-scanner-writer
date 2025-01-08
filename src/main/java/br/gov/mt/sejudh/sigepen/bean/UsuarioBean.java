@@ -17,6 +17,7 @@ import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
+import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
@@ -46,6 +47,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ViewScoped
 @URLMappings(mappings ={
 @URLMapping(id = "ListarUsuario", pattern = "/usuario", viewId = "/WEB-INF/pages/usuario/ListarUsuarios.xhtml")
+,@URLMapping(id = "ListarUsuarioResetSenha", pattern = "/usuario/reset/senha", viewId = "/WEB-INF/pages/usuario/ListarUsuariosResetSenha.xhtml")
 ,@URLMapping(id = "CadastrarUsuario", pattern="/usuario/cadastrar", viewId = "/WEB-INF/pages/usuario/CadastrarUsuario.xhtml")
 ,@URLMapping(id = "AlterarUsuario", pattern="/usuario/alterar/#{id}", viewId = "/WEB-INF/pages/usuario/CadastrarUsuario.xhtml")
 ,@URLMapping(id = "VisualizarUsuario", pattern="/usuario/visualizar/#{id}", viewId = "/WEB-INF/pages/usuario/CadastrarUsuario.xhtml")
@@ -142,6 +144,9 @@ public class UsuarioBean extends MetodosDePaginaBean {
 			private static final long serialVersionUID = 1L;
 			
 			public List<UsuarioDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+				if(PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("reset")) {
+					getFiltro().setResetSenha(true);
+				}
 				setRowCount(usuarioService.buscarQuantidadeFiltrada(getFiltro()));
 				
 				try {

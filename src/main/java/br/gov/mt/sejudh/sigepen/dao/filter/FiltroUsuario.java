@@ -17,6 +17,7 @@ public class FiltroUsuario extends FiltroConsulta {
 	private String cpf;
 	private String login;
 	private String email;
+	private Boolean resetSenha;
 
 	public String getNome() {
 		return nome;
@@ -48,6 +49,14 @@ public class FiltroUsuario extends FiltroConsulta {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public Boolean getResetSenha() {
+		return resetSenha;
+	}
+
+	public void setResetSenha(Boolean resetSenha) {
+		this.resetSenha = resetSenha;
 	}
 
 	@Override
@@ -81,5 +90,11 @@ public class FiltroUsuario extends FiltroConsulta {
 		if (this.getEmail() != null && !this.getEmail().equalsIgnoreCase("")) {
 			getCriteria().add(Restrictions.ilike("email", this.getEmail(), MatchMode.ANYWHERE));
 		}
+		
+		if (this.getResetSenha() != null) {
+			getCriteria().add(Restrictions.eqOrIsNull("resetSenha", this.getResetSenha()));
+		}
 	}
+
+
 }

@@ -76,6 +76,9 @@ public class Usuario implements Serializable {
 	@Column(name = "IS_PRIMEIRO_ACESSO", nullable = false)
 	private Boolean primeiroAcesso;
 	
+	@Column(name = "IS_RESET_SENHA", nullable = false)
+	private Boolean resetSenha;
+	
 	@OneToMany(mappedBy = "usuario", orphanRemoval=true, fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	@Fetch(FetchMode.SUBSELECT)	
 	private List<Acesso> acessos;
@@ -167,6 +170,14 @@ public class Usuario implements Serializable {
 		this.primeiroAcesso = primeiroAcesso;
 	}
 
+	public Boolean getResetSenha() {
+		return resetSenha;
+	}
+
+	public void setResetSenha(Boolean resetSenha) {
+		this.resetSenha = resetSenha;
+	}
+	
 	public List<Acesso> getAcessos() {
 		return acessos;
 	}
