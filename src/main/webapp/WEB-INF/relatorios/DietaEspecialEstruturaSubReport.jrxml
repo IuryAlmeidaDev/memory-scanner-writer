@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DietaEspecialEstruturaSubReport" pageWidth="595" pageHeight="120" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="535a0d99-9616-4004-b0c2-47cb75c40e2b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="tipoDieta" class="java.lang.String"/>
+	<field name="nomeEstrutura" class="java.lang.String"/>
+	<field name="qtdRecuperando" class="java.lang.Integer"/>
+	<group name="GroupEstrutura">
+		<groupExpression><![CDATA[$F{nomeEstrutura}]]></groupExpression>
+		<groupHeader>
+			<band height="20" splitType="Stretch">
+				<textField>
+					<reportElement mode="Transparent" x="0" y="0" width="300" height="20" backcolor="#FFFFFF" uuid="b8697c19-1370-44c0-8a60-3a8ed2a8932c"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nomeEstrutura}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="98">
+			<textField>
+				<reportElement x="0" y="25" width="595" height="50" uuid="b24a4ea0-1ca5-45bd-aa41-044444a996a0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Resumo de Dietas Especiais por Estrutura"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="20" y="0" width="280" height="20" uuid="9aa35a80-6df4-4002-b43d-91507f262acb"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tipoDieta} + ": " + $F{qtdRecuperando}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

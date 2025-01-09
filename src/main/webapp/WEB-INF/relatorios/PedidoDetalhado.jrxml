@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PedidoDetalhado" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="6fa271da-495c-47d7-bfc4-2354b2e3ab76">
-	<property name="ireport.zoom" value="1.2100000000000004"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="CABECALHO" class="java.lang.String"/>
@@ -10,25 +10,24 @@
 	<parameter name="MENSAGEM" class="java.lang.String"/>
 	<parameter name="EMISSOR" class="java.lang.String"/>
 	<parameter name="UNIDADE_LOGADA" class="java.lang.String"/>
+	<parameter name="DIETA_ESPECIAL_POR_ESTRUTURA" class="java.util.List"/>
 	<field name="item" class="java.lang.String"/>
 	<field name="quantidade" class="java.lang.Double"/>
-	<field name="unidadeMedidaSigla" class="java.lang.String"/>
-	<field name="dietaEstrutura" class="java.lang.String"/>
-	<field name="tipoDieta" class="java.lang.String"/>
-	<field name="tipoCardapio" class="java.lang.String"/>
+	<field name="siglaUnidadeMedida" class="java.lang.String"/>
+	<field name="nomeEstrutura" class="java.lang.String"/>
 	<group name="GroupDietaEstrutura">
-		<groupExpression><![CDATA[$F{dietaEstrutura}]]></groupExpression>
+		<groupExpression><![CDATA[$F{nomeEstrutura}]]></groupExpression>
 		<groupHeader>
 			<band height="60" splitType="Stretch">
 				<textField>
-					<reportElement x="0" y="0" width="555" height="40" uuid="24688374-9382-4719-8b98-89cbd3b1517c"/>
+					<reportElement x="0" y="0" width="555" height="40" isRemoveLineWhenBlank="true" uuid="24688374-9382-4719-8b98-89cbd3b1517c"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Dieta: " + $F{dietaEstrutura}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{nomeEstrutura}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Opaque" x="0" y="40" width="250" height="20" backcolor="#C0C0C0" uuid="d3af317c-7c83-4ce7-af1f-3a74032438ee"/>
+					<reportElement mode="Opaque" x="0" y="40" width="250" height="20" isRemoveLineWhenBlank="true" backcolor="#C0C0C0" uuid="d3af317c-7c83-4ce7-af1f-3a74032438ee"/>
 					<box>
 						<pen lineWidth="0.25"/>
 						<topPen lineWidth="0.25"/>
@@ -42,7 +41,7 @@
 					<textFieldExpression><![CDATA["Item"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Opaque" x="250" y="40" width="120" height="20" backcolor="#C0C0C0" uuid="9056b25b-e4cb-409f-844e-848b5b27f355"/>
+					<reportElement mode="Opaque" x="250" y="40" width="120" height="20" isRemoveLineWhenBlank="true" backcolor="#C0C0C0" uuid="9056b25b-e4cb-409f-844e-848b5b27f355"/>
 					<box>
 						<pen lineWidth="0.25"/>
 						<topPen lineWidth="0.25"/>
@@ -57,9 +56,6 @@
 				</textField>
 			</band>
 		</groupHeader>
-		<groupFooter>
-			<band height="5" splitType="Stretch"/>
-		</groupFooter>
 	</group>
 	<pageHeader>
 		<band height="106" splitType="Stretch">
@@ -107,7 +103,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement mode="Opaque" x="0" y="0" width="250" height="20" backcolor="#E6E6E6" uuid="638dfd58-bb3e-439a-bdf6-facb5b9c1cf1"/>
+				<reportElement mode="Opaque" x="0" y="0" width="250" height="20" isRemoveLineWhenBlank="true" backcolor="#E6E6E6" uuid="638dfd58-bb3e-439a-bdf6-facb5b9c1cf1"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -119,7 +115,7 @@
 				<textFieldExpression><![CDATA[$F{item}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.##">
-				<reportElement mode="Opaque" x="250" y="0" width="120" height="20" backcolor="#E6E6E6" uuid="b5815845-a301-4b0b-abcb-ec89a7a93b9f"/>
+				<reportElement mode="Opaque" x="250" y="0" width="120" height="20" isRemoveLineWhenBlank="true" backcolor="#E6E6E6" uuid="b5815845-a301-4b0b-abcb-ec89a7a93b9f"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -128,7 +124,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{quantidade} + "/" + $F{unidadeMedidaSigla}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{quantidade} + "/" + $F{siglaUnidadeMedida}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -153,6 +149,12 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="20"/>
+		<band height="100" splitType="Stretch">
+			<subreport isUsingCache="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="100" isRemoveLineWhenBlank="true" uuid="97ea5d40-9354-46f7-91fd-7f8230821583"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{DIETA_ESPECIAL_POR_ESTRUTURA})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["DietaEspecialEstruturaSubReport.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
 	</summary>
 </jasperReport>
