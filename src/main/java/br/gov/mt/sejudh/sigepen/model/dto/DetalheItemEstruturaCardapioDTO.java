@@ -13,20 +13,16 @@ public class DetalheItemEstruturaCardapioDTO {
 
     private String item;
     private double quantidade;
-    private String unidadeMedidaSigla;
-    private String dietaEstrutura;
-    private Integer estruturaNivel;
-    private String tipoDieta;
-    private String tipoCardapio;
+    private String siglaUnidadeMedida;
+    private String nomeEstrutura;
+    private Integer nivelEstrutura;
 
-    public DetalheItemEstruturaCardapioDTO(String item, double quantidade, String unidadeMedidaSigla, String dietaEstrutura, Integer estruturaNivel, boolean isEspecial, String tipoCardapio) {
+    public DetalheItemEstruturaCardapioDTO(String item, double quantidade, String siglaUnidadeMedida, String nomeEstrutura, Integer nivelEstrutura) {
         this.item = item;
         this.quantidade = quantidade;
-        this.unidadeMedidaSigla = unidadeMedidaSigla;
-        this.dietaEstrutura = dietaEstrutura;
-        this.estruturaNivel = estruturaNivel;
-        this.tipoDieta = isEspecial ? "Especial" : "Padrão";
-        this.tipoCardapio = tipoCardapio;
+        this.siglaUnidadeMedida = siglaUnidadeMedida;
+        this.nomeEstrutura = nomeEstrutura;
+        this.nivelEstrutura = nivelEstrutura;
     }
 
     public String getItem() {
@@ -45,36 +41,62 @@ public class DetalheItemEstruturaCardapioDTO {
         this.quantidade = quantidade;
     }
 
-    public String getUnidadeMedidaSigla() {
-        return unidadeMedidaSigla;
+    public String getSiglaUnidadeMedida() {
+        return siglaUnidadeMedida;
     }
 
-    public void setUnidadeMedidaSigla(String unidadeMedidaSigla) {
-        this.unidadeMedidaSigla = unidadeMedidaSigla;
+    public void setSiglaUnidadeMedida(String siglaUnidadeMedida) {
+        this.siglaUnidadeMedida = siglaUnidadeMedida;
     }
 
-    public String getDietaEstrutura() {
-        return dietaEstrutura;
+    public String getNomeEstrutura() {
+        return nomeEstrutura;
     }
 
-    public void setDietaEstrutura(String dietaEstrutura) {
-        this.dietaEstrutura = dietaEstrutura;
+    public void setNomeEstrutura(String nomeEstrutura) {
+        this.nomeEstrutura = nomeEstrutura;
     }
 
-    public Integer getEstruturaNivel() {
-        return estruturaNivel;
+    public Integer getNivelEstrutura() {
+        return nivelEstrutura;
     }
 
-    public void setEstruturaNivel(Integer estruturaNivel) {
-        this.estruturaNivel = estruturaNivel;
+    public void setNivelEstrutura(Integer nivelEstrutura) {
+        this.nivelEstrutura = nivelEstrutura;
     }
 
-    public String getTipoDieta() {
-        return tipoDieta;
+    public static List<DetalheItemEstruturaCardapioDTO> combinarPedidos(List<PedidoEstruturaDTO> estruturas, List<RefeicaoDetalhadaDTO> pedidosConsulta) {
+        List<DetalheItemEstruturaCardapioDTO> combinados = new ArrayList<>();
+        for (RefeicaoDetalhadaDTO pedido : pedidosConsulta) {
+            for (PedidoEstruturaDTO estrutura : estruturas) {
+                if (possuiRecuperando(pedido, estrutura)) {
+                    combinados.add(criaPedidoEstruturaDetalhadoDTO(pedido, estrutura));
+                }
+            }
+        }
+
+        return combinados.stream()
+                .sorted(Comparator.comparing(DetalheItemEstruturaCardapioDTO::getNomeEstrutura))
+                .collect(Collectors.toList());
     }
 
-    public void setTipoDieta(String tipoDieta) {
-        this.tipoDieta = tipoDieta;
+    private static boolean possuiRecuperando(RefeicaoDetalhadaDTO pedido, PedidoEstruturaDTO estrutura) {
+        return estrutura.getQtdPadrao() > 0;
+    }
+
+    private static DetalheItemEstruturaCardapioDTO criaPedidoEstruturaDetalhadoDTO(RefeicaoDetalhadaDTO pedido, PedidoEstruturaDTO estrutura) {
+        String unidadeMedidaSigla = pedido.getSiglaUnidadeMedida();
+        Integer nivel = estrutura.getNivel();
+        String nomeEstrutura = StringUtils.stripStart(estrutura.getEstruturaNome(), " >");
+        double quantidadeRecuperando = estrutura.getQtdPadrao();
+        double quantidadeItem = quantidadeRecuperando * ("M".equalsIgnoreCase(pedido.getSexo()) ? pedido.getMasc() : pedido.getFem());
+        return new DetalheItemEstruturaCardapioDTO(
+                pedido.getItem(),
+                quantidadeItem,
+                unidadeMedidaSigla,
+                nomeEstrutura,
+                nivel
+        );
     }
 
     @Override
@@ -82,62 +104,10 @@ public class DetalheItemEstruturaCardapioDTO {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
                 .append("item", item)
                 .append("quantidade", quantidade)
-                .append("unidadeMedidaSigla", unidadeMedidaSigla)
-                .append("dietaEstrutura", dietaEstrutura)
-                .append("tipoDieta", tipoDieta)
-                .append("tipoCardapio", tipoCardapio)
+                .append("siglaUnidadeMedida", siglaUnidadeMedida)
+                .append("nomeEstrutura", nomeEstrutura)
+                .append("nivelEstrutura", nivelEstrutura)
                 .toString();
-    }
-
-    public String getTipoCardapio() {
-        return tipoCardapio;
-    }
-
-    public void setTipoCardapio(String tipoCardapio) {
-        this.tipoCardapio = tipoCardapio;
-    }
-
-    public static List<DetalheItemEstruturaCardapioDTO> combinarPedidos(List<PedidoEstruturaDTO> estruturas, List<RefeicaoDetalhadaDTO> pedidosConsulta) {
-        List<DetalheItemEstruturaCardapioDTO> combinados = new ArrayList<>();
-
-        for (RefeicaoDetalhadaDTO pedido : pedidosConsulta) {
-            for (PedidoEstruturaDTO estrutura : estruturas) {
-                if (possuiRecuperando(pedido, estrutura)) {
-                    String estruturaNome = StringUtils.stripStart(estrutura.getEstruturaNome(), " >");
-                    String dietaEstrutura = pedido.getTipoCardapio() + " - " + estruturaNome;
-                    combinados.add(criaPedidoEstruturaDetalhadoDTO(pedido, estrutura, dietaEstrutura));
-                }
-            }
-        }
-
-        combinados.sort(
-                Comparator.comparing(DetalheItemEstruturaCardapioDTO::getDietaEstrutura, String.CASE_INSENSITIVE_ORDER)
-                        .thenComparing(DetalheItemEstruturaCardapioDTO::getItem, String.CASE_INSENSITIVE_ORDER)
-        );
-
-        return combinados.stream()
-                .sorted(Comparator.comparing(DetalheItemEstruturaCardapioDTO::getTipoDieta)
-                        .thenComparing(DetalheItemEstruturaCardapioDTO::getDietaEstrutura))
-                .collect(Collectors.toList());
-    }
-
-    private static boolean possuiRecuperando(RefeicaoDetalhadaDTO pedido, PedidoEstruturaDTO estrutura) {
-        return (pedido.isEspecial() ? estrutura.getQtdEspecial() : estrutura.getQtdPadrao()) > 0;
-    }
-
-    private static DetalheItemEstruturaCardapioDTO criaPedidoEstruturaDetalhadoDTO(RefeicaoDetalhadaDTO pedido, PedidoEstruturaDTO estrutura, String dietaEstrutura) {
-        String unidadeMedidaSigla = pedido.getSiglaUnidadeMedida();
-        Integer nivel = estrutura.getNivel();
-        double quantidadeRecuperando = pedido.isEspecial() ? estrutura.getQtdEspecial() : estrutura.getQtdPadrao();
-        double quantidadeItem = quantidadeRecuperando * ("M".equalsIgnoreCase(pedido.getSexo()) ? pedido.getMasc() : pedido.getFem());
-        return new DetalheItemEstruturaCardapioDTO(
-                pedido.getItem(),
-                quantidadeItem,
-                unidadeMedidaSigla,
-                dietaEstrutura,
-                nivel,
-                pedido.isEspecial(),
-                pedido.getTipoCardapio());
     }
 }
 

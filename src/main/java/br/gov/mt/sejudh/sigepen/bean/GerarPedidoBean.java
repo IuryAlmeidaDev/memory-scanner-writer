@@ -13,6 +13,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.DetalheItemEstruturaCardapioDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RefeicaoDetalhadaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
@@ -29,6 +30,7 @@ import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultTreeNode;
@@ -300,11 +302,12 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 
 			final List<DetalheItemEstruturaCardapioDTO> itemCardapioPorEstrutura = DetalheItemEstruturaCardapioDTO.combinarPedidos(
 					estruturaNivel2, refeicoesDetalhadas);
+			final List<DietaEspecialEstruturaDTO> refeicoesEspeciais = estruturaService.buscarDietasEspeciais(idEstrutura, data);
 
 			validarCardapio(itemCardapioPorEstrutura);
 
 			// Parâmetros do relatório
-			final Map<String, Object> parameters = criarParametrosRelatorio(data, filtroGerarPedido);
+			final Map<String, Object> parameters = criarParametrosRelatorio(data, filtroGerarPedido, refeicoesEspeciais);
 
 			// Geração do relatório
 			gerarRelatorioUnificado(itemCardapioPorEstrutura, parameters);
@@ -320,12 +323,13 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 				.collect(Collectors.toList());
 	}
 
-	private Map<String, Object> criarParametrosRelatorio(String data, FiltroGerarPedido filtroGerarPedido) {
+	private <T> Map<String, Object> criarParametrosRelatorio(String data, FiltroGerarPedido filtroGerarPedido, List<T> refeicoesEspeciais) {
 		final Map<String, Object> parameters = new HashMap<>();
 		parameters.put("DATA", data);
 
 		final Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroGerarPedido.getDataInicio());
 		parameters.put("MENSAGEM", getMensagemCabecalhoQuantitativo(filtroGerarPedido, data, contrato));
+		parameters.put("DIETA_ESPECIAL_POR_ESTRUTURA", refeicoesEspeciais);
 
 		return parameters;
 	}

@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialEstruturaDTO;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -464,5 +465,9 @@ public class EstruturaService {
 
 	public List<PedidoEstruturaDTO> montarEstruturaPedido(String data, long idEstrutura) {
 		return dao.montarEstruturaPedido(data, idEstrutura);
+	}
+
+	public List<DietaEspecialEstruturaDTO> buscarDietasEspeciais(long idEstrutura, String data) {
+		return dao.buscarDietasEspeciaisPorEstrutura(idEstrutura, data);
 	}
 }

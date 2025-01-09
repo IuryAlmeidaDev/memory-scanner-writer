@@ -7,12 +7,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.math.BigDecimal;
 
 public class RefeicaoDetalhadaDTO {
-
 	private String refeicao;
-	private String tipoCardapio;
 	private String item;
 	private Long recuperandoTotal;
-	private boolean especial; 
 	private double masc;
 	private double fem;
 	private String nomeEstrutura;
@@ -24,15 +21,13 @@ public class RefeicaoDetalhadaDTO {
 	}
 	
 	private void montarCardapio(Object[] row) {
-		this.refeicao = (String) row[6];
-		this.tipoCardapio = (String) row[5];
+		this.recuperandoTotal = ((BigDecimal) row[0]).longValue();
 		this.item = (String) row[1];
-		this.especial = row[4].equals("ESPECIAL");
 		this.masc = ((BigDecimal) row[2]).longValue();
 		this.fem = ((BigDecimal) row[3]).longValue();
-		this.recuperandoTotal = ((BigDecimal) row[0]).longValue();
-		this.setSexo((String) row[7]);
-		this.siglaUnidadeMedida = UnidadeMedida.getSiglaPorId(((BigDecimal) row[8]).intValue());
+		this.refeicao = (String) row[4];
+		this.setSexo((String) row[5]);
+		this.siglaUnidadeMedida = UnidadeMedida.getSiglaPorId(((BigDecimal) row[6]).intValue());
 	}
 
 	public String getRefeicao() {
@@ -41,14 +36,6 @@ public class RefeicaoDetalhadaDTO {
 
 	public void setRefeicao(String refeicao) {
 		this.refeicao = refeicao;
-	}
-
-	public String getTipoCardapio() {
-		return tipoCardapio;
-	}
-
-	public void setTipoCardapio(String tipoCardapio) {
-		this.tipoCardapio = tipoCardapio;
 	}
 
 	public String getItem() {
@@ -65,14 +52,6 @@ public class RefeicaoDetalhadaDTO {
 
 	public void setRecuperandoTotal(Long recuperandoTotal) {
 		this.recuperandoTotal = recuperandoTotal;
-	}
-	
-	public boolean isEspecial() {
-		return especial;
-	}
-
-	public void setEspecial(boolean especial) {
-		this.especial = especial;
 	}
 	
 	public double getMasc() {
@@ -119,10 +98,8 @@ public class RefeicaoDetalhadaDTO {
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
 				.append("refeicao", refeicao)
-				.append("cardapio", tipoCardapio)
 				.append("item", item)
 				.append("recuperandoTotal", recuperandoTotal)
-				.append("especial", especial)
 				.append("masc", masc)
 				.append("fem", fem)
 				.append("nomeEstrutura", nomeEstrutura)
