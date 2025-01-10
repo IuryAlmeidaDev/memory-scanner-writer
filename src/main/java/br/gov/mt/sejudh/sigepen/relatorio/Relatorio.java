@@ -45,6 +45,7 @@ public enum Relatorio {
 	RegistroAutorizacaoPedidoTransito("AUTORIZAÇÃO PEDIDO DE TRÂNSITO"),
 	ListaDeChamadaComFoto("LISTA DE CHAMADA"),
 	ListaDeChamadaComFotoNovo("LISTA DE CHAMADA"),
+	ListarDietaEspecialRecuperando("Listar Dieta Especial Recuperando"),
 	ExtratoRecuperando("EXTRATO DO RECUPERANDO", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	EstatisticoInfopen("Relatório Estatístico Infopen"),
 	EstatisticoInfopenPorData("Relatório Estatístico Infopen Por Data"),

@@ -10,7 +10,11 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.model.Arquivo;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
+import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -90,6 +94,9 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 	
 	@Inject
     private PermissaoUtil permissaoUtil;
+
+	@Inject
+	private FileDownloadHandlerBean fileDownload;
 
 	private Long contratoSelecionada;
 	
@@ -302,5 +309,25 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 		this.permissaoUtil.filtrarUnidadesComBaseNaPermissaoListarTodasRecuperandos(true);
 		facesUtil.exibirPaginaDialog("pretty:AssociarRecuperando");
     }
+
+	public void imprimir() {
+		try {
+			List<DietaEspecialDTO> dietaEspecialDTOList = new ArrayList<>();
+			int totalRegistros = dietasEspeciais.getRowCount();
+			if (totalRegistros > 0) {
+				dietaEspecialDTOList = dietasEspeciais.load(0, totalRegistros, null, SortOrder.UNSORTED, null);
+			}
+
+			Arquivo relatorio = RelatorioUtil.gerarRelatorio(dietaEspecialDTOList, Relatorio.ListarDietaEspecialRecuperando);
+			fileDownload.prepararArquivo(relatorio);
+
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, "Listar Dieta Especial Recuperando", log);
+
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
+			LoggerUtil.logErro(Acao.IMPRIMIR, "Dieta Especial", e, log);
+		}
+	}
 
 }

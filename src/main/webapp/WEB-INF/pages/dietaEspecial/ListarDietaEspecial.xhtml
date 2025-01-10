@@ -54,7 +54,14 @@
 			</p:panel>
 		</h:form>
 
+
 		<h:form id="registrosForm">
+			<p:panel>
+				<p:commandButton value="Imprimir" icon="ui-icon-print"
+								 oncomplete="PF('dlgListaDeChamada').hide()"
+								 actionListener="#{dietaEspecialBean.imprimir()}"
+								 style="margin-bottom: 10px;" />
+			</p:panel>
 			<p:dataTable id="dataTable" var="dietaEspecial"
 				value="#{dietaEspecialBean.dietasEspeciais}"
 				emptyMessage="Nenhum registro encontrado." rows="10"
