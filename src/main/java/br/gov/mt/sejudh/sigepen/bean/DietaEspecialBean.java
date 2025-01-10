@@ -312,13 +312,13 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 
 	public void imprimir() {
 		try {
-			List<DietaEspecialDTO> dietaEspecialDTOList = new ArrayList<>();
 			int totalRegistros = dietasEspeciais.getRowCount();
-			if (totalRegistros > 0) {
-				dietaEspecialDTOList = dietasEspeciais.load(0, totalRegistros, null, SortOrder.UNSORTED, null);
+			if (totalRegistros == 0) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "Atenção", "Não há registros para serem impressos");
+				return;
 			}
 
-			Arquivo relatorio = RelatorioUtil.gerarRelatorio(dietaEspecialDTOList, Relatorio.ListarDietaEspecialRecuperando);
+			Arquivo relatorio = RelatorioUtil.gerarRelatorio(dietasEspeciais.load(0, totalRegistros, null, SortOrder.UNSORTED, null), Relatorio.ListarDietaEspecialRecuperando);
 			fileDownload.prepararArquivo(relatorio);
 
 			RequestContext.getCurrentInstance().execute("download()");
