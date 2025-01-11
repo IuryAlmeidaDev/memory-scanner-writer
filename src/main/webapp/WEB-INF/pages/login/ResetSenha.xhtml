@@ -88,7 +88,7 @@ html, body {
 			<p:panel id="panelLogin-step-1" style="width:650px; height:550px;">
 
 				<h:form id="formLogin-step-0"
-					rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf != null}">
+					rendered="#{loginBean.usuarioResertSenhaDTO.nomeMaeList.size() > 0}">
 
 					<sgp:formInputText id="nome-step-2" labelValue="Nome do usuario"
 						maxlength="11" minlength="4"
@@ -165,7 +165,7 @@ html, body {
 
 						<p:commandButton id="verificar-step-2"
 							action="#{loginBean.verificaMatricula()}" value="verificar"
-							update="@form,formLogin-step-1" icon="ui-icon-key" />
+							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1" icon="ui-icon-key" />
 					</h:form>
 
 				</div>

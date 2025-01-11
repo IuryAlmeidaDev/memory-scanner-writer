@@ -39,7 +39,7 @@ import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.UsuarioResertSenhaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.UsuarioResetSenhaDTO;
 import br.gov.mt.sejudh.sigepen.realm.SigepenRealm;
 import br.gov.mt.sejudh.sigepen.service.LogAcessoBO;
 import br.gov.mt.sejudh.sigepen.service.LoginService;
@@ -63,7 +63,7 @@ public class LoginBean {
 	private String senha;
 	private UnidadePrisional unidadeSelecionada;
 	private List<UnidadePrisional> unidades;
-	private UsuarioResertSenhaDTO usuarioResertSenhaDTO;
+	private UsuarioResetSenhaDTO usuarioResetSenhaDTO;
 	private boolean resetSenha = false;
 
 	@Inject
@@ -90,9 +90,9 @@ public class LoginBean {
 	@PostConstruct
 	public void init() {
 		UnidadePrisional uni = SecurityUtil.getUnidadeSelecionada();
-		
-		if(this.usuarioResertSenhaDTO == null) {
-			this.usuarioResertSenhaDTO = new UsuarioResertSenhaDTO();
+
+		if (this.usuarioResetSenhaDTO == null) {
+			this.usuarioResetSenhaDTO = new UsuarioResetSenhaDTO();
 		}
 
 		if (uni != null) {
@@ -124,14 +124,14 @@ public class LoginBean {
 		this.unidadeSelecionada = unidadeSelecionada;
 	}
 
-	public UsuarioResertSenhaDTO getUsuarioResertSenhaDTO() {
-		return usuarioResertSenhaDTO;
+	public UsuarioResetSenhaDTO getUsuarioResertSenhaDTO() {
+		return usuarioResetSenhaDTO;
 	}
 
-	public void setUsuarioResertSenhaDTO(UsuarioResertSenhaDTO usuarioResertSenhaDTO) {
-		this.usuarioResertSenhaDTO = usuarioResertSenhaDTO;
+	public void setUsuarioResertSenhaDTO(UsuarioResetSenhaDTO usuarioResertSenhaDTO) {
+		this.usuarioResetSenhaDTO = usuarioResertSenhaDTO;
 	}
-	
+
 	public boolean isResetSenha() {
 		return resetSenha;
 	}
@@ -183,7 +183,8 @@ public class LoginBean {
 			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login", "Usuário ou senha inválidos.");
 			gravarLogAcesso(TipoAcessoLog.TENTATIVA_LOGIN, TipoBloqueioLog.NENHUM, usuario);
 		} catch (AuthenticationException e) {
-			//faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login", e.getMessage());
+			// faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login",
+			// e.getMessage());
 			this.resetSenha = true;
 			gravarLogAcesso(TipoAcessoLog.FALHA_LOGIN, TipoBloqueioLog.NENHUM, usuario);
 		} catch (Exception e) {
@@ -193,7 +194,7 @@ public class LoginBean {
 			gravarLogAcesso(TipoAcessoLog.FALHA_LOGIN, TipoBloqueioLog.NENHUM, usuario);
 		}
 	}
-	
+
 	public String redicetResetSenha() {
 		return "ResetSenha?faces-redirect=true";
 	}
@@ -251,92 +252,110 @@ public class LoginBean {
 
 	public void resetSenha() {
 
-		Usuario usuario = this.usuarioService.buscarUsuariosPorCpfAndNascimento(this.usuarioResertSenhaDTO.getCpf(), this.usuarioResertSenhaDTO.getNascimento());
-		
+		Usuario usuario = this.usuarioService.buscarUsuariosPorCpfAndNascimento(this.usuarioResetSenhaDTO.getCpf(),
+				this.usuarioResetSenhaDTO.getNascimento());
+
 		if (usuario == null) {
-			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!", "Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
+			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
+					"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
 			return;
 		}
 
-		
-		this.usuarioResertSenhaDTO.setUsuario(usuario);
-		
+		this.usuarioResetSenhaDTO.setUsuario(usuario);
+
 		this.setListaNomeDaMae(usuario.getServidor().getMae());
-		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO",this.usuarioResertSenhaDTO);
+		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", this.usuarioResetSenhaDTO);
 
 	}
-	
+
 	public void verificaNomeMae() {
-		int index = this.usuarioResertSenhaDTO.getIndexNomeMaeSelecionada();
-		this.usuarioResertSenhaDTO = (UsuarioResertSenhaDTO) SecurityUtils.getSubject().getSession().getAttribute("usuarioResertSenhaDTO");
-		String nomeMaeSelecionado = this.usuarioResertSenhaDTO.getNomeMaeList().get(index);
-		if(nomeMaeSelecionado.equals(this.usuarioResertSenhaDTO.getUsuario().getServidor().getMae())) {			
-			this.setListaMatricula(String.valueOf(this.usuarioResertSenhaDTO.getUsuario().getServidor().getMatricula()));
+		int index = this.usuarioResetSenhaDTO.getIndexNomeMaeSelecionada();
+		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
+				.getAttribute("usuarioResertSenhaDTO");
+		String nomeMaeSelecionado = this.usuarioResetSenhaDTO.getNomeMaeList().get(index);
+		if (nomeMaeSelecionado.equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae())) {
+			this.setListaMatricula(String.valueOf(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()));
+			return;
 		}
 
+		faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
+				"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
+		
+		this.resetSenha();
+
 	}
-	
+
 	public void verificaMatricula() throws Exception {
-		
-		int index = this.usuarioResertSenhaDTO.getIndexMatriculaSelecionada();
-		this.usuarioResertSenhaDTO = (UsuarioResertSenhaDTO) SecurityUtils.getSubject().getSession().getAttribute("usuarioResertSenhaDTO");
-		Long MatriculaSelecionado = this.usuarioResertSenhaDTO.getMatriculaList().get(index);
-		
-		if(MatriculaSelecionado == this.usuarioResertSenhaDTO.getUsuario().getServidor().getMatricula()) {			
-			Usuario usuario = this.usuarioResertSenhaDTO.getUsuario();
+
+		int index = this.usuarioResetSenhaDTO.getIndexMatriculaSelecionada();
+		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
+				.getAttribute("usuarioResertSenhaDTO");
+		Long MatriculaSelecionado = this.usuarioResetSenhaDTO.getMatriculaList().get(index);
+
+		if (MatriculaSelecionado == this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()) {
+			Usuario usuario = this.usuarioResetSenhaDTO.getUsuario();
 			usuario.setResetSenha(true);
-			SecurityUtils.getSubject().getSession().setAttribute("usuario",usuario);
+			SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
 			this.usuarioService.salvar(usuario);
+			SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
+			
+			faces.exibirMensagem(FacesMessage.SEVERITY_INFO, "Solicitação realizada com sucesso!",
+					"");
+			
+			return;
 		}
+		
+		faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
+				"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
+		this.usuarioResetSenhaDTO.getMatriculaList().clear();
+		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
 
 	}
-	
-	
+
 	private void setListaMatricula(String matricula) {
 		FiltroServidor filtroServidor = new FiltroServidor();
 
 		filtroServidor.setMatriculaLike(this.pegarTresPrimeirosCaracters(matricula));
 
 		List<ServidorDTO> servidorDTOs = servidorService.buscaPorFiltro(filtroServidor, false);
-		
+
 		if (servidorDTOs.size() < 3) {
 			System.out.println("A lista deve conter pelo menos 3 elementos!");
 			throw new IllegalArgumentException("A lista deve conter pelo menos 3 elementos!");
 		}
 
 		Random random = new Random();
-		this.usuarioResertSenhaDTO.resetMatriculaList();
-		while (this.usuarioResertSenhaDTO.getMatriculaList().size() < 3) {
+		this.usuarioResetSenhaDTO.resetMatriculaList();
+		while (this.usuarioResetSenhaDTO.getMatriculaList().size() < 3) {
 			int index = random.nextInt(servidorDTOs.size());
-			this.usuarioResertSenhaDTO.getMatriculaList().add(servidorDTOs.get(index).getMatricula());
+			this.usuarioResetSenhaDTO.getMatriculaList().add(servidorDTOs.get(index).getMatricula());
 		}
 
 	}
-	
+
 	private void setListaNomeDaMae(String mae) {
 		FiltroServidor filtroServidor = new FiltroServidor();
 
 		filtroServidor.setMae(this.pegarTresPrimeirosCaracters(mae));
 
 		List<ServidorDTO> servidorDTOs = servidorService.buscaPorFiltro(filtroServidor, false);
-		
+
 		if (servidorDTOs.size() < 3) {
 			System.out.println("A lista deve conter pelo menos 3 elementos!");
 			throw new IllegalArgumentException("A lista deve conter pelo menos 3 elementos!");
 		}
 
 		Random random = new Random();
-		this.usuarioResertSenhaDTO.resetNomeMaeList();
-		while (this.usuarioResertSenhaDTO.getNomeMaeList().size() < 3) {
+		this.usuarioResetSenhaDTO.resetNomeMaeList();
+		while (this.usuarioResetSenhaDTO.getNomeMaeList().size() < 3) {
 			int index = random.nextInt(servidorDTOs.size());
-			this.usuarioResertSenhaDTO.getNomeMaeList().add(servidorDTOs.get(index).getMae());
+			this.usuarioResetSenhaDTO.getNomeMaeList().add(servidorDTOs.get(index).getMae());
 		}
-
 
 	}
 
 	private String pegarTresPrimeirosCaracters(String string) {
-		
+
 		int quantCaracter = 3;
 
 		if (string != null && string.length() >= quantCaracter) {
@@ -345,6 +364,5 @@ public class LoginBean {
 
 		return string;
 	}
-
 
 }

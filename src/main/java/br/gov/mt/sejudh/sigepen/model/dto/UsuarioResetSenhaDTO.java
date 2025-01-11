@@ -6,7 +6,7 @@ import java.util.List;
 
 import br.gov.mt.sejudh.sigepen.model.Usuario;
 
-public class UsuarioResertSenhaDTO {
+public class UsuarioResetSenhaDTO {
 
 	private Usuario usuario;
 	private String cpf;
