@@ -22,10 +22,10 @@ import br.gov.mt.sejudh.sigepen.model.dto.UsuarioDTO;
 
 @RequestScoped
 public class UsuarioDAO {
-	
+
 	@Inject
-	private EntityManager em; 
-	
+	private EntityManager em;
+
 	public Usuario salvar(Usuario usuario) throws Exception {
 		try {
 			if (usuario.getId() > 0) {
@@ -35,23 +35,23 @@ public class UsuarioDAO {
 				em.persist(usuario);
 				return usuario;
 			}
-		} catch (Exception e){
+		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
+
 	public void excluir(long usuarioId) throws Exception {
 		try {
-			Usuario usuario =  buscarUsuarioPorId(usuarioId);
+			Usuario usuario = buscarUsuarioPorId(usuarioId);
 			em.remove(em.merge(usuario));
 		} catch (Exception e) {
 			throw e;
 		}
 	}
-	
+
 	public Usuario buscarUsuarioPorId(long id) {
 		try {
-			String jpql="select u from Usuario u where u.id = :id";
+			String jpql = "select u from Usuario u where u.id = :id";
 			TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
 			query.setParameter("id", id);
 			Usuario u = query.getSingleResult();
@@ -69,22 +69,30 @@ public class UsuarioDAO {
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(UsuarioDTO.class));
 		return criteria.list();
 	}
-	
+
 	public Usuario buscarUsuariosPorCpfAndNascimento(String cpf, Date dataNascimento) {
-		
-		StringBuilder jpql = new StringBuilder("select u from Usuario u ");
-		jpql.append("join u.servidor s ");
-		jpql.append("where u.login = :login and s.dataNascimento = :dataNascimento");
-		TypedQuery<Usuario> query = em.createQuery(jpql.toString(), Usuario.class);
-		query.setParameter("login", cpf);
-		query.setParameter("dataNascimento", dataNascimento);
-		
-		return (Usuario) query.getSingleResult();
+		try {
+			StringBuilder jpql = new StringBuilder("select u from Usuario u ");
+			jpql.append("join u.servidor s ");
+			jpql.append("where u.login = :login and s.dataNascimento = :dataNascimento");
+
+			TypedQuery<Usuario> query = em.createQuery(jpql.toString(), Usuario.class);
+
+			query.setParameter("login", cpf);
+			query.setParameter("dataNascimento", dataNascimento);
+
+			Usuario u = query.getSingleResult();
+			Hibernate.initialize(u.getAcessos());
+			return u;
+
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	public int buscarQuantidadeFiltrada(FiltroUsuario filtro) {
-		Criteria criteria = filtro.criarCriteriaParaQuantidade(Usuario.class, em);	
-		criteria.setProjection(Projections.rowCount());		
+		Criteria criteria = filtro.criarCriteriaParaQuantidade(Usuario.class, em);
+		criteria.setProjection(Projections.rowCount());
 		return ((Number) criteria.uniqueResult()).intValue();
 	}
 
@@ -96,7 +104,7 @@ public class UsuarioDAO {
 
 	public Usuario buscarUsuarioPorLogin(String loginUsuarioAutorizador) {
 		try {
-			String jpql="select u from Usuario u where u.login = :login";
+			String jpql = "select u from Usuario u where u.login = :login";
 			TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
 			query.setParameter("login", loginUsuarioAutorizador);
 			return query.getSingleResult();

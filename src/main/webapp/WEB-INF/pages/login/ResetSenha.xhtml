@@ -52,8 +52,8 @@ html, body {
 					</div>
 					<br />
 					<br />
-	                	Resert Senha
-	                	<div class="row"
+
+					<div class="row"
 						style="width: 380px; height: 160px; margin-top: 8%;">
 						<sgp:formInputText id="cpf" labelValue="CPF" maxlength="11"
 							minlength="4" value="#{loginBean.usuarioResertSenhaDTO.cpf}"
@@ -67,16 +67,11 @@ html, body {
 
 						<br /> <br />
 						<p:commandButton id="verificar" action="#{loginBean.resetSenha()}"
-							value="verificar" update="@form,formLogin-step-1,panelLogin-step-1"
+							value="verificar"
+							update="@form,formLogin-step-1,panelLogin-step-1"
 							icon="ui-icon-key" />
 					</div>
-					<div class="row">
-						<p>1. Informe CPF e Data de Nascimento.</p>
-						<p>2. Após a verificação, responda ao campo sorteado.</p>
-						<p>3. Aguarde um e-mail com instruções de acesso. Caso não
-							tenha mais acesso ao e-mail cadastrado, entre em contato com o
-							administrador do sistema.</p>
-					</div>
+
 					<div class="row" style="width: 520px;">
 						<p>
 							SESP - Secretaria de Estado de Segurança Pública de Mato Grosso <br />
@@ -92,35 +87,44 @@ html, body {
 			<br /> <br />
 			<p:panel id="panelLogin-step-1" style="width:650px; height:550px;">
 
-				<br />
-				<br />
-				<div class="row"
-					style="width: 380px; height: 160px; margin-top: 8%;">
+				<h:form id="formLogin-step-0"
+					rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf != null}">
+
 					<sgp:formInputText id="nome-step-2" labelValue="Nome do usuario"
 						maxlength="11" minlength="4"
 						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.nome}"
-						display="text"
-						 />
+						display="text" disabled="true"/>
 
 					<sgp:formInputText id="cpf-step-2" labelValue="CPF" maxlength="11"
 						minlength="4"
 						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf}"
 						display="text"
-						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf != null}" />
+						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf != null}" 
+						disabled="true"/>
 
 					<sgp:formCalendar id="nascimento-step-2"
 						labelValue="Data de nascimento"
 						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento}"
 						dataMinima="#{usuarioBean.dataMinima}" display="text"
-						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento != null}">
+						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento != null}"
+						disabled="true">
 					</sgp:formCalendar>
 
 					<sgp:formInputText id="unidade-step-2" labelValue="Unidade"
 						maxlength="11" minlength="4"
-						value="#{loginBean.usuarioResertSenhaDTO.cpf}" display="text"
-						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf == null}" />
-					<br /> <br />
-					<h:form id="formLogin-step-1">
+						value="#{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getPerfis().get(0).getNome()}" display="text"
+						disabled="true" />
+					<br />
+					<br />
+
+				</h:form>
+
+				<div class="row"
+					style="width: 380px; height: 160px; margin-top: 8%;">
+
+
+					<h:form id="formLogin-step-1"
+						rendered="#{loginBean.usuarioResertSenhaDTO.nomeMaeList.size() > 0}">
 
 						<h6>Assina-le o campo que corresponde ao nome da sua mãe: *</h6>
 						<p:selectOneRadio id="listMae"
@@ -138,10 +142,12 @@ html, body {
 						</p:selectOneRadio>
 						<p:commandButton id="verificar-step-1"
 							action="#{loginBean.verificaNomeMae()}" value="verificar"
-							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1" icon="ui-icon-key" />
+							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1"
+							icon="ui-icon-key" />
 
 					</h:form>
-					<h:form id="panelLogin-step-2">
+
+					<h:form id="panelLogin-step-2" rendered="#{loginBean.usuarioResertSenhaDTO.matriculaList.size() > 0}">
 						<h6>Assina-le o campo que corresponde a sua matricula:</h6>
 						<p:selectOneRadio id="listMatricula"
 							value="#{loginBean.usuarioResertSenhaDTO.indexMatriculaSelecionada}"
@@ -158,7 +164,7 @@ html, body {
 						</p:selectOneRadio>
 
 						<p:commandButton id="verificar-step-2"
-							action="#{loginBean.verificaNomeMae()}" value="verificar"
+							action="#{loginBean.verificaMatricula()}" value="verificar"
 							update="@form,formLogin-step-1" icon="ui-icon-key" />
 					</h:form>
 

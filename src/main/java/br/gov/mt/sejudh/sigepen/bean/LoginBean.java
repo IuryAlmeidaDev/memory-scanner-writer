@@ -64,6 +64,7 @@ public class LoginBean {
 	private UnidadePrisional unidadeSelecionada;
 	private List<UnidadePrisional> unidades;
 	private UsuarioResertSenhaDTO usuarioResertSenhaDTO;
+	private boolean resetSenha = false;
 
 	@Inject
 	private FacesUtil faces;
@@ -130,6 +131,14 @@ public class LoginBean {
 	public void setUsuarioResertSenhaDTO(UsuarioResertSenhaDTO usuarioResertSenhaDTO) {
 		this.usuarioResertSenhaDTO = usuarioResertSenhaDTO;
 	}
+	
+	public boolean isResetSenha() {
+		return resetSenha;
+	}
+
+	public void setResetSenha(boolean resetSenha) {
+		this.resetSenha = resetSenha;
+	}
 
 	public List<UnidadePrisional> getUnidades() {
 		if (this.unidades == null) {
@@ -174,7 +183,8 @@ public class LoginBean {
 			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login", "Usuário ou senha inválidos.");
 			gravarLogAcesso(TipoAcessoLog.TENTATIVA_LOGIN, TipoBloqueioLog.NENHUM, usuario);
 		} catch (AuthenticationException e) {
-			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login", e.getMessage());
+			//faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login", e.getMessage());
+			this.resetSenha = true;
 			gravarLogAcesso(TipoAcessoLog.FALHA_LOGIN, TipoBloqueioLog.NENHUM, usuario);
 		} catch (Exception e) {
 			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login", e.getMessage());
@@ -182,6 +192,10 @@ public class LoginBean {
 			LoggerUtil.logErro(e, log);
 			gravarLogAcesso(TipoAcessoLog.FALHA_LOGIN, TipoBloqueioLog.NENHUM, usuario);
 		}
+	}
+	
+	public String redicetResetSenha() {
+		return "ResetSenha?faces-redirect=true";
 	}
 
 	private void gravarLogAcesso(TipoAcessoLog tipoAcessoLog, TipoBloqueioLog tipoBloqueio,
@@ -239,14 +253,16 @@ public class LoginBean {
 
 		Usuario usuario = this.usuarioService.buscarUsuariosPorCpfAndNascimento(this.usuarioResertSenhaDTO.getCpf(), this.usuarioResertSenhaDTO.getNascimento());
 		
-
-		if (usuario != null) {
-			this.usuarioResertSenhaDTO.setUsuario(usuario);
-			
-			this.setListaNomeDaMae(usuario.getServidor().getMae());
-			SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO",this.usuarioResertSenhaDTO);
-			//this.setListaMatricula(String.valueOf(usuario.getServidor().getMatricula()));
+		if (usuario == null) {
+			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!", "Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
+			return;
 		}
+
+		
+		this.usuarioResertSenhaDTO.setUsuario(usuario);
+		
+		this.setListaNomeDaMae(usuario.getServidor().getMae());
+		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO",this.usuarioResertSenhaDTO);
 
 	}
 	
@@ -256,6 +272,21 @@ public class LoginBean {
 		String nomeMaeSelecionado = this.usuarioResertSenhaDTO.getNomeMaeList().get(index);
 		if(nomeMaeSelecionado.equals(this.usuarioResertSenhaDTO.getUsuario().getServidor().getMae())) {			
 			this.setListaMatricula(String.valueOf(this.usuarioResertSenhaDTO.getUsuario().getServidor().getMatricula()));
+		}
+
+	}
+	
+	public void verificaMatricula() throws Exception {
+		
+		int index = this.usuarioResertSenhaDTO.getIndexMatriculaSelecionada();
+		this.usuarioResertSenhaDTO = (UsuarioResertSenhaDTO) SecurityUtils.getSubject().getSession().getAttribute("usuarioResertSenhaDTO");
+		Long MatriculaSelecionado = this.usuarioResertSenhaDTO.getMatriculaList().get(index);
+		
+		if(MatriculaSelecionado == this.usuarioResertSenhaDTO.getUsuario().getServidor().getMatricula()) {			
+			Usuario usuario = this.usuarioResertSenhaDTO.getUsuario();
+			usuario.setResetSenha(true);
+			SecurityUtils.getSubject().getSession().setAttribute("usuario",usuario);
+			this.usuarioService.salvar(usuario);
 		}
 
 	}
