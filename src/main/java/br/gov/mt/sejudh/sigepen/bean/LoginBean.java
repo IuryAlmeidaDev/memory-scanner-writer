@@ -45,6 +45,7 @@ import br.gov.mt.sejudh.sigepen.service.LogAcessoBO;
 import br.gov.mt.sejudh.sigepen.service.LoginService;
 import br.gov.mt.sejudh.sigepen.service.ParametroUnidadeService;
 import br.gov.mt.sejudh.sigepen.service.ServidorService;
+import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
@@ -63,8 +64,10 @@ public class LoginBean {
 	private String senha;
 	private UnidadePrisional unidadeSelecionada;
 	private List<UnidadePrisional> unidades;
+	private List<UnidadePrisional> unidadesResetSenha;
 	private UsuarioResetSenhaDTO usuarioResetSenhaDTO;
-	private boolean resetSenha = false;
+	private boolean resetSenha;
+	private boolean unidadeErrada;
 
 	@Inject
 	private FacesUtil faces;
@@ -86,6 +89,9 @@ public class LoginBean {
 
 	@Inject
 	private ServidorService servidorService;
+	
+	@Inject
+	private UnidadePrisionalService unidadePrisionalService;
 
 	@PostConstruct
 	public void init() {
@@ -140,6 +146,14 @@ public class LoginBean {
 		this.resetSenha = resetSenha;
 	}
 
+	public boolean isUnidadeErrada() {
+		return unidadeErrada;
+	}
+
+	public void setUnidadeErrada(boolean unidadeErrada) {
+		this.unidadeErrada = unidadeErrada;
+	}
+
 	public List<UnidadePrisional> getUnidades() {
 		if (this.unidades == null) {
 			this.unidades = new ArrayList<UnidadePrisional>();
@@ -152,6 +166,20 @@ public class LoginBean {
 		this.unidades.sort(Comparator.comparing(UnidadePrisional::getNome));
 
 		return unidades;
+	}
+	
+	public List<UnidadePrisional> getUnidadesResetSenha() {
+		
+		if(true) {
+			
+			this.unidadesResetSenha = this.unidadePrisionalService.listarUnidadesNaoInativas();
+			
+			this.unidadesResetSenha.sort(Comparator.comparing(UnidadePrisional::getNome));
+			
+			return unidadesResetSenha;
+		}
+		
+		return new ArrayList<UnidadePrisional>();
 	}
 
 	public void setUnidades(List<UnidadePrisional> unidades) {
@@ -243,6 +271,12 @@ public class LoginBean {
 		LoggerUtil.logInfo(Acao.LOGAR, unidadeSelecionada, log);
 		FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_DASHBOARD_URL);
 	}
+	
+	public void setarUnidadeResetSenha() throws IOException {
+		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession().getAttribute("usuarioResertSenhaDTO");
+		this.usuarioResetSenhaDTO.getUsuario().setUnidadePerfilSolicitadaResetSenha(this.unidadeSelecionada.getNome());
+		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", this.usuarioResetSenhaDTO);
+	}
 
 	private void ativarModuloVisitante() {
 		List<ParametroUnidade> parametros = parametroUnidadeService.listarPorUnidade(unidadeSelecionada);
@@ -295,6 +329,7 @@ public class LoginBean {
 		if (MatriculaSelecionado == this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()) {
 			Usuario usuario = this.usuarioResetSenhaDTO.getUsuario();
 			usuario.setResetSenha(true);
+			usuario.setDataSolicitacaoResetSenha(new Date());
 			SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
 			this.usuarioService.salvar(usuario);
 			SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
@@ -363,6 +398,10 @@ public class LoginBean {
 		}
 
 		return string;
+	}
+
+	public void setUnidadesResetSenha(List<UnidadePrisional>  unidadesResetSenha) {
+		this.unidadesResetSenha = unidadesResetSenha;
 	}
 
 }

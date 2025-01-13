@@ -9,11 +9,7 @@
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 		<h3>Solicitações</h3>
-		
-		<h:form>
-			<p:button value="Cadastrar" outcome="pretty:CadastrarUsuario" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarUsuario')}" />
-		</h:form>
-		
+
 		<h:form id="meuFormulario">
 			<p:panel>
 				<p:outputLabel value="Consulta"/>
@@ -42,12 +38,16 @@
 						<h:outputText value="#{u.nome}"/>
 					</p:column>					
 		
-					<p:column headerText="Login" sortBy="#{u.login}">
+					<p:column headerText="CPF" sortBy="#{u.login}">
 						<h:outputText value="#{u.login}" />
 					</p:column>
 					
-					<p:column headerText="E-mail" sortBy="#{u.email}">
-						<h:outputText value="#{u.email}"/>
+					<p:column headerText="unidade de perfil solicitada" sortBy="#{u.unidadePerfilSolicitadaResetSenha}">
+						<h:outputText value="#{u.unidadePerfilSolicitadaResetSenha}"/>
+					</p:column>
+					
+					<p:column headerText="Data de solicitação" width="109" sortBy="#{u.dataSolicitacaoResetSenha}">
+						<h:outputText value="#{u.dataSolicitacaoResetSenha}"/>
 					</p:column>
 					
 					<p:column headerText="Situação" width="109" sortBy="#{u.status}">

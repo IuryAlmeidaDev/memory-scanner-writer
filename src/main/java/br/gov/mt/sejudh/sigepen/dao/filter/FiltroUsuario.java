@@ -67,7 +67,8 @@ public class FiltroUsuario extends FiltroConsulta {
 				.add(Projections.distinct(Projections.property("id").as("id"))) 
 				.add(Projections.property("servidor.nome").as("nome"))
 				.add(Projections.property("login").as("login"))
-				.add(Projections.property("email").as("email"))
+				.add(Projections.property("unidadePerfilSolicitadaResetSenha").as("unidadePerfilSolicitadaResetSenha"))
+	            .add(Projections.property("dataSolicitacaoResetSenha").as("dataSolicitacaoResetSenha"))
 	            .add(Projections.property("status").as("status"));
 
 		getCriteria().setProjection(proj);

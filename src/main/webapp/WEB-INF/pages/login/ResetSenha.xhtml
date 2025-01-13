@@ -85,22 +85,23 @@ html, body {
 			</h:form>
 
 			<br /> <br />
-			<p:panel id="panelLogin-step-1" style="width:650px; height:550px;">
+			<p:panel id="panelLogin-step-1"
+				style="width:650px; height:550px; display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
 
 				<h:form id="formLogin-step-0"
-					rendered="#{loginBean.usuarioResertSenhaDTO.nomeMaeList.size() > 0}">
+					style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
 
 					<sgp:formInputText id="nome-step-2" labelValue="Nome do usuario"
 						maxlength="11" minlength="4"
 						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.nome}"
-						display="text" disabled="true"/>
+						display="text" disabled="true" />
 
 					<sgp:formInputText id="cpf-step-2" labelValue="CPF" maxlength="11"
 						minlength="4"
 						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf}"
 						display="text"
-						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf != null}" 
-						disabled="true"/>
+						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf != null}"
+						disabled="true" />
 
 					<sgp:formCalendar id="nascimento-step-2"
 						labelValue="Data de nascimento"
@@ -112,19 +113,53 @@ html, body {
 
 					<sgp:formInputText id="unidade-step-2" labelValue="Unidade"
 						maxlength="11" minlength="4"
-						value="#{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getPerfis().get(0).getNome()}" display="text"
-						disabled="true" />
+						value="#{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getPerfis().get(0).getNome()}"
+						display="text" disabled="true" />
 					<br />
 					<br />
 
 				</h:form>
+
+				<h:form
+					style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+					<p:outputLabel for="checkbox" value="Unidade de Lotação Errada:" />
+					<p:selectBooleanCheckbox id="checkbox"
+						value="#{loginBean.unidadeErrada}">
+						<p:ajax event="change"
+							listener="#{loginBean.getUnidadesResetSenha()}" update="unidade" />
+					</p:selectBooleanCheckbox>
+
+				</h:form>
+
+				<h:form id="unidade"
+					style="display: #{loginBean.unidadeErrada ? 'block' : 'none'};">
+
+					<p:panel id="basic" header="Selecione uma unidade para acessar"
+						style="margin-top:20px; width:650px;"
+						styleClass="ui-tds-panel-conteudo">
+
+						<sgp:formSelectOneMenu id="unidade" labelValue="Unidade"
+							value="#{loginBean.unidadeSelecionada}"
+							itemsValue="#{loginBean.unidadesResetSenha}" itemValue="#{item}"
+							itemLabel="#{item.nome}" temSelecione="true" requiredMessage="*"
+							display="text" validationRequired="true"
+							converter="SimpleEntityConverter" />
+
+						<br />
+						<br />
+						<p:commandButton id="autenticador"
+							action="#{loginBean.setarUnidadeResetSenha}" value="Acessar"
+							update="@form" icon="ui-icon-key" />
+					</p:panel>
+				</h:form>
+
 
 				<div class="row"
 					style="width: 380px; height: 160px; margin-top: 8%;">
 
 
 					<h:form id="formLogin-step-1"
-						rendered="#{loginBean.usuarioResertSenhaDTO.nomeMaeList.size() > 0}">
+						style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
 
 						<h6>Assina-le o campo que corresponde ao nome da sua mãe: *</h6>
 						<p:selectOneRadio id="listMae"
@@ -147,7 +182,8 @@ html, body {
 
 					</h:form>
 
-					<h:form id="panelLogin-step-2" rendered="#{loginBean.usuarioResertSenhaDTO.matriculaList.size() > 0}">
+					<h:form id="panelLogin-step-2"
+						style="display: #{not empty loginBean.usuarioResertSenhaDTO.matriculaList ? 'block' : 'none'};">
 						<h6>Assina-le o campo que corresponde a sua matricula:</h6>
 						<p:selectOneRadio id="listMatricula"
 							value="#{loginBean.usuarioResertSenhaDTO.indexMatriculaSelecionada}"
@@ -165,7 +201,8 @@ html, body {
 
 						<p:commandButton id="verificar-step-2"
 							action="#{loginBean.verificaMatricula()}" value="verificar"
-							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1" icon="ui-icon-key" />
+							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1"
+							icon="ui-icon-key" />
 					</h:form>
 
 				</div>
