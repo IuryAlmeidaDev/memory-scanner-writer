@@ -2,11 +2,14 @@ package br.gov.mt.sejudh.sigepen.bean;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -295,6 +298,7 @@ public class LoginBean {
 			return;
 		}
 
+		usuario.setUnidadePerfilSolicitadaResetSenha(null);
 		this.usuarioResetSenhaDTO.setUsuario(usuario);
 
 		this.setListaNomeDaMae(usuario.getServidor().getMae());
@@ -315,7 +319,9 @@ public class LoginBean {
 		faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
 				"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
 		
-		this.resetSenha();
+		this.usuarioResetSenhaDTO.getMatriculaList().clear();
+		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
+
 
 	}
 
@@ -347,7 +353,10 @@ public class LoginBean {
 
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	private void setListaMatricula(String matricula) {
+		Set<Long> list = new HashSet<Long>();
+		
 		FiltroServidor filtroServidor = new FiltroServidor();
 
 		filtroServidor.setMatriculaLike(this.pegarTresPrimeirosCaracters(matricula));
@@ -360,15 +369,22 @@ public class LoginBean {
 		}
 
 		Random random = new Random();
+		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula());
 		this.usuarioResetSenhaDTO.resetMatriculaList();
-		while (this.usuarioResetSenhaDTO.getMatriculaList().size() < 3) {
+		while (list.size() < 3) {
 			int index = random.nextInt(servidorDTOs.size());
-			this.usuarioResetSenhaDTO.getMatriculaList().add(servidorDTOs.get(index).getMatricula());
+			list.add(servidorDTOs.get(index).getMatricula());
 		}
+		
+		this.usuarioResetSenhaDTO.getMatriculaList().addAll(list);
+		Collections.shuffle(this.usuarioResetSenhaDTO.getMatriculaList());
 
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	private void setListaNomeDaMae(String mae) {
+		Set<String> list = new HashSet<String>();
+		
 		FiltroServidor filtroServidor = new FiltroServidor();
 
 		filtroServidor.setMae(this.pegarTresPrimeirosCaracters(mae));
@@ -381,11 +397,15 @@ public class LoginBean {
 		}
 
 		Random random = new Random();
+		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae());
 		this.usuarioResetSenhaDTO.resetNomeMaeList();
-		while (this.usuarioResetSenhaDTO.getNomeMaeList().size() < 3) {
+		while (list.size() < 3) {
 			int index = random.nextInt(servidorDTOs.size());
-			this.usuarioResetSenhaDTO.getNomeMaeList().add(servidorDTOs.get(index).getMae());
+			list.add(servidorDTOs.get(index).getMae());
 		}
+		
+		this.usuarioResetSenhaDTO.getNomeMaeList().addAll(list);
+		Collections.shuffle(this.usuarioResetSenhaDTO.getNomeMaeList());
 
 	}
 

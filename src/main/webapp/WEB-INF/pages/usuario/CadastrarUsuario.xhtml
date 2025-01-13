@@ -5,138 +5,177 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
-	
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
-		
+
 		<h3>#{usuarioBean.tituloPagina} Usuário</h3>
-				<h:form id="formUsuario">
-					<p:panel footer="Cadastrado por: #{usuarioBean.usuario.autorRegistro.usuario} em #{usuarioBean.usuario.autorRegistro.data} | Última alteração: #{usuarioBean.usuario.autorUltimaAlteracao.usuario} em #{usuarioBean.usuario.autorUltimaAlteracao.data}">
-						<p:panel header="Servidor">
-							<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{usuarioBean.abrirDialogServidor}" rendered="#{!usuarioBean.isVisualizacao and usuarioBean.usuario.id == 0}">
-								<p:ajax event="dialogReturn" listener="#{usuarioBean.associarServidor}" update="@form" />
-							</p:commandButton>
-							
-							<p:row id="rowServidor" rendered="#{usuarioBean.possuiServidor()}">
-								<sgp:formOutputLabel labelValue="Nome" value="#{usuarioBean.usuario.servidor.nome}" />
-								<sgp:formOutputLabel labelValue="CPF" value="#{usuarioBean.usuario.servidor.cpf}" />
-								<sgp:formOutputLabel labelValue="Matrícula" value="#{usuarioBean.usuario.servidor.matricula}" />
-							</p:row>
-							<br/>
-						</p:panel>
-						
-						<br/>
-						
-						<sgp:formOutputLabel labelValue="Login" value="#{usuarioBean.usuario.servidor.cpf}" />
-						
-						
-						<sgp:formInputText labelValue="Email do Usuário" validationRequired="true" value="#{usuarioBean.usuario.email}" disabled="#{usuarioBean.isVisualizacao}" maxlength="100" size="40"
-						display="text" validatorId="emailValidator" permiteCaracterEspecial="true"/>
-							
-						<sgp:formSelectOneMenu
-							labelValue="Status"
-							value="#{usuarioBean.usuario.status}" 
-							itemsValue="#{comboHelperBean.status}" 
-							itemValue="#{item}" 
-							itemLabel="#{item.descricao}" 
-							disabled="#{usuarioBean.isVisualizacao}" 
-							display="text"/>		
-						
-						<sgp:formCalendar
-							id="calendario"
-							labelValue="Data Expiração" 
-							value="#{usuarioBean.usuario.dataExpiracao}" 
-							validationRequired="true"
-							dataMinima="#{usuarioBean.dataMinima}"
-							disabled="#{usuarioBean.isVisualizacao}"
-							display="text">
-							<p:ajax event="dateSelect" listener="#{usuarioBean.dataExpiracaoListener}"/>
-						</sgp:formCalendar>
-						
-						<sgp:formCheckbox labelValue="Reiniciar Senha" value="#{usuarioBean.usuario.primeiroAcesso}" disabled="#{usuarioBean.isVisualizacao}"/>
-						
-						
-						<br/>
-						<br/>
-						<p:row rendered="#{usuarioBean.usuario.id == 0}">
-							<div style="text-align: left">
-								<p:outputLabel id="texto" style="color: red" value="** A senha inicial do usuário será o seu próprio cpf. **" />
-							</div>
-						</p:row>
-						<p:panel header="Permissões de Acesso">
-							<p:commandButton icon="ui-icon ui-icon-plusthick" value="Adicionar Unidade" immediate="true" actionListener="#{usuarioBean.abrirDialogUnidade}" rendered="#{!usuarioBean.isVisualizacao}">
-								<p:ajax event="dialogReturn" listener="#{usuarioBean.associarUnidade}" update=":formUsuario:dtAcesso"/>
-							</p:commandButton>
-							
-							<br/><br/>
-							<p:row>
-								<p:dataTable value="#{usuarioBean.usuario.acessos}" id="dtAcesso" emptyMessage="Nenhuma unidade adicionada." var="acesso" paginatorAlwaysVisible="false" rows="5" paginator="true" paginatorPosition="bottom" lazy="true">
-									<p:column headerText="Nome">
-										<h:outputText value="#{acesso.unidade.nome}"/>
-									</p:column>
-									
-									<p:column headerText="Perfis de Acesso">
-										<ul>
-											<ui:repeat value="#{acesso.perfis}" var="perfil">
-		    									<li>#{perfil.nome}</li>
-											</ui:repeat>
-										</ul>
-									</p:column>
-	
-									<p:column style="width:100px;">
-										<center>
-											<p:commandButton rendered="#{!usuarioBean.isVisualizacao}" title="Adicionar Perfil" icon="ui-icon-person" update=":formDlg" immediate="true" actionListener="#{usuarioBean.configurarAcesso}" oncomplete="PF('dlg').show();">
-												<f:attribute name="acesso" value="#{acesso}" />
-											</p:commandButton>
-											
-											<p:commandButton rendered="#{!usuarioBean.isVisualizacao}" title="Excluir" icon="ui-icon-trash" immediate="true" actionListener="#{usuarioBean.removerUnidadeDoUsuario}" update="@form">
-												<f:attribute name="acesso" value="#{acesso}"/>
-											</p:commandButton>
-										</center>
-									</p:column>
-								</p:dataTable>
-							</p:row>
-							<br/>
-						</p:panel>
-						
-						<br/>
-						<br/>
-						<p:commandButton action="#{usuarioBean.salvar()}" update="@form :mensagens" icon="ui-icon-disk" value="Salvar" rendered="#{(securityUtil.possuiPermissao('CadastrarUsuario') and !usuarioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUsuario') and !usuarioBean.isVisualizacao)}" />
-						<p:button outcome="pretty:ListarUsuario" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
-							<f:param name="list" value="1" />
-						</p:button>
-					</p:panel>
-				</h:form>
-	
-		<h:form id="formDlg">
-			<p:dialog dynamic="true" modal="true" id="dialog" closable="true" closeOnEscape="true" width="481" height="303" widgetVar="dlg" resizable="false" draggable="false" header="Perfis de Acesso para o Usuário">
-				<p:pickList id="pickList" value="#{usuarioBean.perfisModel}" label="Perfis:" var="perfisModel" 
-						 converter="PerfisModelConverter" 
-						 itemLabel="#{perfisModel.nome}"
-	 					 itemValue="#{perfisModel}" 
-	 					 addLabel="Adicionar" 
-	 					 addAllLabel="Adicionar Todos" 
-	 					 removeLabel="Remover" 
-	 					 removeAllLabel="Remover Todos"
-	 					 showSourceFilter="true" 
-	 					 showTargetFilter="true" 
-	 					 filterMatchMode="contains"
-	 					 responsive="true">
-	 						<f:facet name="sourceCaption">Perfis Disponíveis:</f:facet>
-	 						<f:facet name="targetCaption">Perfis Associados:</f:facet>
-				</p:pickList>
-				<br/>
-	 			
-	 			<div style="text-align: center">
-					<p:commandButton title="Adicionar" value="Adicionar" actionListener="#{usuarioBean.associarPerfis}"  oncomplete="PF('dlg').hide();" update=":formUsuario:dtAcesso">
-						<p:confirm header="Atenção" message="Salve o cadastro para confirmar a alteração!" icon="ui-icon-alert" />
+		<h:form id="formUsuario">
+			<p:panel
+				footer="Cadastrado por: #{usuarioBean.usuario.autorRegistro.usuario} em #{usuarioBean.usuario.autorRegistro.data} | Última alteração: #{usuarioBean.usuario.autorUltimaAlteracao.usuario} em #{usuarioBean.usuario.autorUltimaAlteracao.data}">
+				<p:panel header="Servidor">
+					<p:commandButton icon="ui-icon-plus" value="Adicionar"
+						immediate="true"
+						actionListener="#{usuarioBean.abrirDialogServidor}"
+						rendered="#{!usuarioBean.isVisualizacao and usuarioBean.usuario.id == 0}">
+						<p:ajax event="dialogReturn"
+							listener="#{usuarioBean.associarServidor}" update="@form" />
 					</p:commandButton>
-					<p:commandButton value="Fechar" immediate="true" onclick="PF('dlg').hide()" />
-				</div>
+
+					<p:row id="rowServidor" rendered="#{usuarioBean.possuiServidor()}">
+						<sgp:formOutputLabel labelValue="Nome"
+							value="#{usuarioBean.usuario.servidor.nome}" />
+						<sgp:formOutputLabel labelValue="CPF"
+							value="#{usuarioBean.usuario.servidor.cpf}" />
+						<sgp:formOutputLabel labelValue="Matrícula"
+							value="#{usuarioBean.usuario.servidor.matricula}" />
+					</p:row>
+					<br />
+				</p:panel>
+
+				<br />
+
+				<sgp:formOutputLabel labelValue="Login"
+					value="#{usuarioBean.usuario.servidor.cpf}" />
+
+
+				<sgp:formInputText labelValue="Email do Usuário"
+					validationRequired="true" value="#{usuarioBean.usuario.email}"
+					disabled="#{usuarioBean.isVisualizacao}" maxlength="100" size="40"
+					display="text" validatorId="emailValidator"
+					permiteCaracterEspecial="true" />
+
+				<sgp:formSelectOneMenu labelValue="Status"
+					value="#{usuarioBean.usuario.status}"
+					itemsValue="#{comboHelperBean.status}" itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					disabled="#{usuarioBean.isVisualizacao}" display="text" />
+
+				<sgp:formCalendar id="calendario" labelValue="Data Expiração"
+					value="#{usuarioBean.usuario.dataExpiracao}"
+					validationRequired="true" dataMinima="#{usuarioBean.dataMinima}"
+					disabled="#{usuarioBean.isVisualizacao}" display="text">
+					<p:ajax event="dateSelect"
+						listener="#{usuarioBean.dataExpiracaoListener}" />
+				</sgp:formCalendar>
 				
+				<sgp:formInputTextarea labelValue="Justificativa"
+					value="#{usuarioBean.usuario.resetSenhaJustificativa}"
+					validationRequired="true"
+					requiredMessage="Justificativa é obrigatória." maxlength="2000"
+					rows="10" columns="100" rendered="#{usuarioBean.usuario.resetSenha}" />
+					
+				<sgp:formCheckbox labelValue="Reiniciar Senha"
+					value="#{usuarioBean.usuario.primeiroAcesso}"
+					disabled="#{usuarioBean.isVisualizacao}" />
+
+
+				<br />
+				<br />
+				<p:row rendered="#{usuarioBean.usuario.id == 0}">
+					<div style="text-align: left">
+						<p:outputLabel id="texto" style="color: red"
+							value="** A senha inicial do usuário será o seu próprio cpf. **" />
+					</div>
+				</p:row>
+				<p:panel header="Permissões de Acesso">
+					<p:commandButton icon="ui-icon ui-icon-plusthick"
+						value="Adicionar Unidade" immediate="true"
+						actionListener="#{usuarioBean.abrirDialogUnidade}"
+						rendered="#{!usuarioBean.isVisualizacao}">
+						<p:ajax event="dialogReturn"
+							listener="#{usuarioBean.associarUnidade}"
+							update=":formUsuario:dtAcesso" />
+					</p:commandButton>
+
+					<br />
+					<br />
+					<p:row>
+						<p:dataTable value="#{usuarioBean.usuario.acessos}" id="dtAcesso"
+							emptyMessage="Nenhuma unidade adicionada." var="acesso"
+							paginatorAlwaysVisible="false" rows="5" paginator="true"
+							paginatorPosition="bottom" lazy="true">
+							<p:column headerText="Nome">
+								<h:outputText value="#{acesso.unidade.nome}" />
+							</p:column>
+
+							<p:column headerText="Perfis de Acesso">
+								<ul>
+									<ui:repeat value="#{acesso.perfis}" var="perfil">
+										<li>#{perfil.nome}</li>
+									</ui:repeat>
+								</ul>
+							</p:column>
+
+							<p:column style="width:100px;">
+								<center>
+									<p:commandButton rendered="#{!usuarioBean.isVisualizacao}"
+										title="Adicionar Perfil" icon="ui-icon-person"
+										update=":formDlg" immediate="true"
+										actionListener="#{usuarioBean.configurarAcesso}"
+										oncomplete="PF('dlg').show();">
+										<f:attribute name="acesso" value="#{acesso}" />
+									</p:commandButton>
+
+									<p:commandButton rendered="#{!usuarioBean.isVisualizacao}"
+										title="Excluir" icon="ui-icon-trash" immediate="true"
+										actionListener="#{usuarioBean.removerUnidadeDoUsuario}"
+										update="@form">
+										<f:attribute name="acesso" value="#{acesso}" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+					</p:row>
+					<br />
+				</p:panel>
+
+				<br />
+				<br />
+				<p:commandButton action="#{usuarioBean.salvar()}"
+					update="@form :mensagens" icon="ui-icon-disk" value="Salvar"
+					rendered="#{(securityUtil.possuiPermissao('CadastrarUsuario') and !usuarioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUsuario') and !usuarioBean.isVisualizacao)}" />
+				<p:button outcome="pretty:ListarUsuario" value="Voltar"
+					icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1" />
+				</p:button>
+			</p:panel>
+		</h:form>
+
+		<h:form id="formDlg">
+			<p:dialog dynamic="true" modal="true" id="dialog" closable="true"
+				closeOnEscape="true" width="481" height="303" widgetVar="dlg"
+				resizable="false" draggable="false"
+				header="Perfis de Acesso para o Usuário">
+				<p:pickList id="pickList" value="#{usuarioBean.perfisModel}"
+					label="Perfis:" var="perfisModel" converter="PerfisModelConverter"
+					itemLabel="#{perfisModel.nome}" itemValue="#{perfisModel}"
+					addLabel="Adicionar" addAllLabel="Adicionar Todos"
+					removeLabel="Remover" removeAllLabel="Remover Todos"
+					showSourceFilter="true" showTargetFilter="true"
+					filterMatchMode="contains" responsive="true">
+					<f:facet name="sourceCaption">Perfis Disponíveis:</f:facet>
+					<f:facet name="targetCaption">Perfis Associados:</f:facet>
+				</p:pickList>
+				<br />
+
+				<div style="text-align: center">
+					<p:commandButton title="Adicionar" value="Adicionar"
+						actionListener="#{usuarioBean.associarPerfis}"
+						oncomplete="PF('dlg').hide();" update=":formUsuario:dtAcesso">
+						<p:confirm header="Atenção"
+							message="Salve o cadastro para confirmar a alteração!"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:commandButton value="Fechar" immediate="true"
+						onclick="PF('dlg').hide()" />
+				</div>
+
 				<p:confirmDialog global="true">
-					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 				</p:confirmDialog>
 			</p:dialog>
 		</h:form>

@@ -86,6 +86,9 @@ public class Usuario implements Serializable {
 	@Column(name = "UNIDADE_PERFIL_SOLICITADA_RESET_SENHA")
 	private String unidadePerfilSolicitadaResetSenha;
 	
+	@Column(name = "RESET_SENHA_JUSTIFICATIVA")
+	private String resetSenhaJustificativa;
+	
 	@OneToMany(mappedBy = "usuario", orphanRemoval=true, fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	@Fetch(FetchMode.SUBSELECT)	
 	private List<Acesso> acessos;
@@ -185,6 +188,14 @@ public class Usuario implements Serializable {
 		this.resetSenha = resetSenha;
 	}
 	
+	public String getResetSenhaJustificativa() {
+		return resetSenhaJustificativa;
+	}
+
+	public void setResetSenhaJustificativa(String resetSenhaJustificativa) {
+		this.resetSenhaJustificativa = resetSenhaJustificativa;
+	}
+
 	public List<Acesso> getAcessos() {
 		return acessos;
 	}

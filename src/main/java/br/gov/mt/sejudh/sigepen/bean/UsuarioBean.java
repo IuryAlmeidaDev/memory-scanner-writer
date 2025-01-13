@@ -166,6 +166,10 @@ public class UsuarioBean extends MetodosDePaginaBean {
 				throw new ValidacaoException("Email do Usuário é obrigatório.");
 			}
 			
+			if(this.usuario.getResetSenha()) {
+				this.usuario.setResetSenha(false);
+			}
+			
 			this.usuario = usuarioService.salvar(this.usuario, false);
 			
 			facesUtil.exibirMensagemInfo("Usuário " + this.usuario.getLogin() + " salvo com sucesso!", false);
