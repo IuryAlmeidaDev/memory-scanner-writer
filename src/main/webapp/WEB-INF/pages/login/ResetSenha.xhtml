@@ -53,31 +53,42 @@ html, body {
 					<br />
 					<br />
 
-					<div class="row"
-						style="width: 380px; height: 160px; margin-top: 8%;">
-						<sgp:formInputText id="cpf" labelValue="CPF" maxlength="11"
-							minlength="4" value="#{loginBean.usuarioResertSenhaDTO.cpf}"
-							validationRequired="true" display="text" requiredMessage="*" />
+					<div class="col" id="coluna">
 
-						<sgp:formCalendar id="nascimento" labelValue="Data de nascimento"
-							value="#{loginBean.usuarioResertSenhaDTO.nascimento}"
-							validationRequired="true" dataMinima="#{usuarioBean.dataMinima}"
-							display="text">
-						</sgp:formCalendar>
+						<div class="row" style="margin-right: 50%; margin-left: 5%; margin-top: -7%;">
+							<h3>Recuperação de acesso:</h3>
+							<p>Por favor insira as seguintes informações.</p>
 
-						<br /> <br />
-						<p:commandButton id="verificar" action="#{loginBean.resetSenha()}"
-							value="verificar"
-							update="@form,formLogin-step-1,panelLogin-step-1"
-							icon="ui-icon-key" />
-					</div>
+							<div class="instruction-text">
+								1 - Informar CPF e Data de Nascimento<br /> <br /> 2- Depois
+								da verificação de existencia de usuário com os dados informados,
+								responder campo sortido<br /> <br /> 3- Aguardar e-mail com
+								instruções de acesso. (Será enviado ao e-mail do cadastro, caso
+								não tenha mais acesso, entre em contato com adminstrador do
+								sistema.)
+							</div>
 
-					<div class="row" style="width: 520px;">
-						<p>
-							SESP - Secretaria de Estado de Segurança Pública de Mato Grosso <br />
-							Desenvolvido pela STI - Superintendência de Tecnologia da
-							Informação <br /> Versão: #{versionBean.versao}
-						</p>
+							<div class="row"
+								style="width: 380px; height: 160px; margin-left: 90%; margin-top: -60%;">
+								<sgp:formInputText id="cpf" labelValue="CPF" maxlength="11"
+									minlength="4" value="#{loginBean.usuarioResertSenhaDTO.cpf}"
+									validationRequired="true" display="text" requiredMessage="*" />
+
+								<sgp:formCalendar id="nascimento"
+									labelValue="Data de nascimento"
+									value="#{loginBean.usuarioResertSenhaDTO.nascimento}"
+									validationRequired="true"
+									dataMinima="#{usuarioBean.dataMinima}" display="text">
+								</sgp:formCalendar>
+
+								<br /> <br />
+								<p:commandButton id="verificar"
+									action="#{loginBean.resetSenha()}" value="verificar"
+									update="@form,formLogin-step-1,panelLogin-step-1"
+									icon="ui-icon-key" />
+							</div>
+
+						</div>
 
 					</div>
 
@@ -115,12 +126,12 @@ html, body {
 						maxlength="11" minlength="4"
 						value="#{loginBean.usuarioResertSenhaDTO.usuario.email}"
 						display="text" disabled="true" />
-						
-							<sgp:formInputText id="unidade-step-2" labelValue="Unidade"
+
+					<sgp:formInputText id="unidade-step-2" labelValue="Unidade"
 						maxlength="11" minlength="4"
 						value="#{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getPerfis().get(0).getNome()}"
 						display="text" disabled="true" />
-						
+
 					<br />
 					<br />
 
