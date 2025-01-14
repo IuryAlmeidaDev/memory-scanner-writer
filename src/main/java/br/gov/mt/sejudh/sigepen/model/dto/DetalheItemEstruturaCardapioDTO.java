@@ -12,14 +12,16 @@ import java.util.stream.Collectors;
 public class DetalheItemEstruturaCardapioDTO {
 
     private String item;
-    private double quantidade;
+    private double qtdPorItem;
+    private Integer qtdRecuperando;
     private String siglaUnidadeMedida;
     private String nomeEstrutura;
     private Integer nivelEstrutura;
 
-    public DetalheItemEstruturaCardapioDTO(String item, double quantidade, String siglaUnidadeMedida, String nomeEstrutura, Integer nivelEstrutura) {
+    public DetalheItemEstruturaCardapioDTO(String item, double qtdPorItem, Integer qtdRecuperando, String siglaUnidadeMedida, String nomeEstrutura, Integer nivelEstrutura) {
         this.item = item;
-        this.quantidade = quantidade;
+        this.qtdPorItem = qtdPorItem;
+        this.qtdRecuperando = qtdRecuperando;
         this.siglaUnidadeMedida = siglaUnidadeMedida;
         this.nomeEstrutura = nomeEstrutura;
         this.nivelEstrutura = nivelEstrutura;
@@ -33,12 +35,12 @@ public class DetalheItemEstruturaCardapioDTO {
         this.item = item;
     }
 
-    public double getQuantidade() {
-        return quantidade;
+    public double getQtdPorItem() {
+        return qtdPorItem;
     }
 
-    public void setQuantidade(double quantidade) {
-        this.quantidade = quantidade;
+    public void setQtdPorItem(double qtdPorItem) {
+        this.qtdPorItem = qtdPorItem;
     }
 
     public String getSiglaUnidadeMedida() {
@@ -69,7 +71,7 @@ public class DetalheItemEstruturaCardapioDTO {
         List<DetalheItemEstruturaCardapioDTO> combinados = new ArrayList<>();
         for (RefeicaoDetalhadaDTO pedido : pedidosConsulta) {
             for (PedidoEstruturaDTO estrutura : estruturas) {
-                if (possuiRecuperando(pedido, estrutura)) {
+                if (possuiRecuperando(estrutura)) {
                     combinados.add(criaPedidoEstruturaDetalhadoDTO(pedido, estrutura));
                 }
             }
@@ -80,7 +82,15 @@ public class DetalheItemEstruturaCardapioDTO {
                 .collect(Collectors.toList());
     }
 
-    private static boolean possuiRecuperando(RefeicaoDetalhadaDTO pedido, PedidoEstruturaDTO estrutura) {
+    public Integer getQtdRecuperando() {
+        return qtdRecuperando;
+    }
+
+    public void setQtdRecuperando(Integer qtdRecuperando) {
+        this.qtdRecuperando = qtdRecuperando;
+    }
+
+    private static boolean possuiRecuperando(PedidoEstruturaDTO estrutura) {
         return estrutura.getQtdPadrao() > 0;
     }
 
@@ -88,11 +98,11 @@ public class DetalheItemEstruturaCardapioDTO {
         String unidadeMedidaSigla = pedido.getSiglaUnidadeMedida();
         Integer nivel = estrutura.getNivel();
         String nomeEstrutura = StringUtils.stripStart(estrutura.getEstruturaNome(), " >");
-        double quantidadeRecuperando = estrutura.getQtdPadrao();
-        double quantidadeItem = quantidadeRecuperando * ("M".equalsIgnoreCase(pedido.getSexo()) ? pedido.getMasc() : pedido.getFem());
+        double qtdPorItem = "M".equalsIgnoreCase(pedido.getSexo()) ? pedido.getMasc() : pedido.getFem();
         return new DetalheItemEstruturaCardapioDTO(
                 pedido.getItem(),
-                quantidadeItem,
+                qtdPorItem,
+                estrutura.getQtdPadrao(),
                 unidadeMedidaSigla,
                 nomeEstrutura,
                 nivel
@@ -103,7 +113,8 @@ public class DetalheItemEstruturaCardapioDTO {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
                 .append("item", item)
-                .append("quantidade", quantidade)
+                .append("qtdPorItem", qtdPorItem)
+                .append("qtdRecuperando", qtdRecuperando)
                 .append("siglaUnidadeMedida", siglaUnidadeMedida)
                 .append("nomeEstrutura", nomeEstrutura)
                 .append("nivelEstrutura", nivelEstrutura)

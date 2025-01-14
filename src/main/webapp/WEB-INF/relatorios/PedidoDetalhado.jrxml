@@ -12,7 +12,8 @@
 	<parameter name="UNIDADE_LOGADA" class="java.lang.String"/>
 	<parameter name="DIETA_ESPECIAL_POR_ESTRUTURA" class="java.util.List"/>
 	<field name="item" class="java.lang.String"/>
-	<field name="quantidade" class="java.lang.Double"/>
+	<field name="qtdPorItem" class="java.lang.Double"/>
+	<field name="qtdRecuperando" class="java.lang.Integer"/>
 	<field name="siglaUnidadeMedida" class="java.lang.String"/>
 	<field name="nomeEstrutura" class="java.lang.String"/>
 	<group name="GroupDietaEstrutura">
@@ -24,7 +25,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="11" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{nomeEstrutura}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{nomeEstrutura} + " - Pessoas: " + $F{qtdRecuperando}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Opaque" x="0" y="40" width="250" height="20" isRemoveLineWhenBlank="true" backcolor="#C0C0C0" uuid="d3af317c-7c83-4ce7-af1f-3a74032438ee"/>
@@ -124,7 +125,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{quantidade} + "/" + $F{siglaUnidadeMedida}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{qtdPorItem} * $F{qtdRecuperando}) + "/" + $F{siglaUnidadeMedida}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
