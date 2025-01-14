@@ -111,10 +111,16 @@ html, body {
 						disabled="true">
 					</sgp:formCalendar>
 
-					<sgp:formInputText id="unidade-step-2" labelValue="Unidade"
+					<sgp:formInputText id="email-step-2" labelValue="Email"
+						maxlength="11" minlength="4"
+						value="#{loginBean.usuarioResertSenhaDTO.usuario.email}"
+						display="text" disabled="true" />
+						
+							<sgp:formInputText id="unidade-step-2" labelValue="Unidade"
 						maxlength="11" minlength="4"
 						value="#{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getPerfis().get(0).getNome()}"
 						display="text" disabled="true" />
+						
 					<br />
 					<br />
 
