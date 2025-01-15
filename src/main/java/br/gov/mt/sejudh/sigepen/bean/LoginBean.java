@@ -44,6 +44,7 @@ import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UsuarioResetSenhaDTO;
 import br.gov.mt.sejudh.sigepen.realm.SigepenRealm;
+import br.gov.mt.sejudh.sigepen.service.EmailService;
 import br.gov.mt.sejudh.sigepen.service.LogAcessoBO;
 import br.gov.mt.sejudh.sigepen.service.LoginService;
 import br.gov.mt.sejudh.sigepen.service.ParametroUnidadeService;
@@ -350,6 +351,8 @@ public class LoginBean {
 			SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
 			this.usuarioService.salvar(usuario);
 			SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
+			
+			EmailService.sendEmail(usuario.getEmail(), "Teste", "Teste email");
 
 			faces.exibirMensagem(FacesMessage.SEVERITY_INFO, "Solicitação realizada com sucesso!",
 					"Usuário, aguarde instruções de acesso no e-mail cadastrado na base.");
