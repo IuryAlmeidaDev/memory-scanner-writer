@@ -43,9 +43,9 @@ html, body {
 	<div class="container" align="center">
 		<div class="row" style="margin-top: 10%;">
 			<h:form id="formLogin">
-				<p:panel id="panelLogin" style="width:650px; height:550px;">
+				<p:panel id="panelLogin" style="width:750px; height:550px;">
 					<div class="row"
-						style="background-color: #183664; height: 240px; width: 650px; border: none; padding: 0; margin-top: -1px;">
+						style="background-color: #183664; height: 240px; width: 750px; border: none; padding: 0; margin-top: -1px;">
 						<p:graphicImage
 							name="#{(sigepen.getIsProducao() ? 'sigepen-login.png' : 'sigepen-login-h.png')}"
 							library="images" style="padding-top:10px; height:240px;" />
@@ -53,9 +53,10 @@ html, body {
 					<br />
 					<br />
 
-					<div class="col" id="coluna">
+					<div class="col" style="margin-top: 5%;">
 
-						<div class="row" style="margin-right: 50%; margin-left: 5%; margin-top: -7%;">
+						<div class="row"
+							style="margin-right: 50%; margin-left: 5%; margin-top: -7%;">
 							<h3>Recuperação de acesso:</h3>
 							<p>Por favor insira as seguintes informações.</p>
 
@@ -69,23 +70,58 @@ html, body {
 							</div>
 
 							<div class="row"
-								style="width: 380px; height: 160px; margin-left: 90%; margin-top: -60%;">
-								<sgp:formInputText id="cpf" labelValue="CPF" maxlength="11"
-									minlength="4" value="#{loginBean.usuarioResertSenhaDTO.cpf}"
-									validationRequired="true" display="text" requiredMessage="*" />
+								style="width: 380px; height: 160px; margin-left: 100%; margin-top: -50%;">
+								<div
+									style="display: #{empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+									<sgp:formInputText id="cpf" labelValue="CPF" maxlength="11"
+										minlength="4" value="#{loginBean.usuarioResertSenhaDTO.cpf}"
+										validationRequired="true" display="text" requiredMessage="*" />
 
-								<sgp:formCalendar id="nascimento"
-									labelValue="Data de nascimento"
-									value="#{loginBean.usuarioResertSenhaDTO.nascimento}"
-									validationRequired="true"
-									dataMinima="#{usuarioBean.dataMinima}" display="text">
-								</sgp:formCalendar>
+									<sgp:formCalendar id="nascimento"
+										labelValue="Data de nascimento"
+										value="#{loginBean.usuarioResertSenhaDTO.nascimento}"
+										validationRequired="true"
+										dataMinima="#{usuarioBean.dataMinima}" display="text" />
 
-								<br /> <br />
-								<p:commandButton id="verificar"
-									action="#{loginBean.resetSenha()}" value="verificar"
-									update="@form,formLogin-step-1,panelLogin-step-1"
-									icon="ui-icon-key" />
+									<br /> <br />
+									<p:commandButton id="verificar"
+										action="#{loginBean.resetSenha()}" value="verificar"
+										update="@form,formLogin-step-1,panelLogin-step-1"
+										icon="ui-icon-key" />
+								</div>
+
+								<div>
+
+
+									<h:form id="formLogin-step-0"
+										style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+
+										<p:outputLabel
+											value="Nome do usuario: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.nome}"
+											style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};" />
+										<br />
+										<p:outputLabel
+											value="CPF:  #{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf}"
+											style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};" />
+										<br />
+										<p:outputLabel
+											value="Data de nascimento: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento}"
+											style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};" />
+										<br />
+										<p:outputLabel
+											value="Email: #{loginBean.usuarioResertSenhaDTO.usuario.email}"
+											style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};" />
+										<br />
+										<p:outputLabel
+											value="Unidade: #{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getPerfis().get(0).getNome()}"
+											style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};" />
+										<br />
+										<br />
+
+									</h:form>
+
+								</div>
+
 							</div>
 
 						</div>
@@ -97,45 +133,8 @@ html, body {
 
 			<br /> <br />
 			<p:panel id="panelLogin-step-1"
-				style="width:650px; height:550px; display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+				style="width:750px; height:400px; display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
 
-				<h:form id="formLogin-step-0"
-					style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
-
-					<sgp:formInputText id="nome-step-2" labelValue="Nome do usuario"
-						maxlength="11" minlength="4"
-						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.nome}"
-						display="text" disabled="true" />
-
-					<sgp:formInputText id="cpf-step-2" labelValue="CPF" maxlength="11"
-						minlength="4"
-						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf}"
-						display="text"
-						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf != null}"
-						disabled="true" />
-
-					<sgp:formCalendar id="nascimento-step-2"
-						labelValue="Data de nascimento"
-						value="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento}"
-						dataMinima="#{usuarioBean.dataMinima}" display="text"
-						rendered="#{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento != null}"
-						disabled="true">
-					</sgp:formCalendar>
-
-					<sgp:formInputText id="email-step-2" labelValue="Email"
-						maxlength="11" minlength="4"
-						value="#{loginBean.usuarioResertSenhaDTO.usuario.email}"
-						display="text" disabled="true" />
-
-					<sgp:formInputText id="unidade-step-2" labelValue="Unidade"
-						maxlength="11" minlength="4"
-						value="#{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getPerfis().get(0).getNome()}"
-						display="text" disabled="true" />
-
-					<br />
-					<br />
-
-				</h:form>
 
 				<h:form
 					style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
@@ -165,7 +164,7 @@ html, body {
 						<br />
 						<br />
 						<p:commandButton id="autenticador"
-							action="#{loginBean.setarUnidadeResetSenha}" value="Acessar"
+							action="#{loginBean.setarUnidadeResetSenha}" value="Solicitar"
 							update="@form" icon="ui-icon-key" />
 					</p:panel>
 				</h:form>
@@ -193,8 +192,8 @@ html, body {
 								itemValue="2" />
 						</p:selectOneRadio>
 						<p:commandButton id="verificar-step-1"
-							action="#{loginBean.verificaNomeMae()}" value="verificar"
-							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1"
+							action="#{loginBean.verificaNomeMae()}" value="Solicitar"
+							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1,formLogin"
 							icon="ui-icon-key" />
 
 					</h:form>
@@ -217,8 +216,8 @@ html, body {
 						</p:selectOneRadio>
 
 						<p:commandButton id="verificar-step-2"
-							action="#{loginBean.verificaMatricula()}" value="verificar"
-							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1"
+							action="#{loginBean.verificaMatricula()}" value="Solicitar"
+							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1,formLogin"
 							icon="ui-icon-key" />
 					</h:form>
 
