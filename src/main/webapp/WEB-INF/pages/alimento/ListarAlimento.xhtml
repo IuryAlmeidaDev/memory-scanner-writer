@@ -54,7 +54,7 @@
         
 		<h:form id="registrosForm">
 			<p:dataTable id="dataTable" var="alimento" value="#{alimentoBean.alimentos}" emptyMessage="Nenhum registro encontrado."
-				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{tipoDieta.id}">
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{alimento.descricao}">
 
 				<p:column headerText="Código" style="width:100px;" sortBy="#{alimento.id}">
 					<h:outputText value="#{alimento.id}" />
