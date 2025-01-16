@@ -1,8 +1,10 @@
 package br.gov.mt.sejudh.sigepen.service;
 
-import java.util.Properties;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.faces.context.FacesContext;
 import javax.mail.Authenticator;
@@ -16,9 +18,6 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
 
 import br.gov.mt.sejudh.sigepen.model.Usuario;
-
-import java.io.File;
-import java.nio.file.*;
 
 public class EmailService {
 
@@ -62,13 +61,14 @@ public class EmailService {
 			placeholders.put("{{nome}}", usuario.getServidor().getNome());
 			placeholders.put("{{login}}", usuario.getLogin());
 			placeholders.put("{{senha}}", usuario.getLogin());
-			
+
 			String content = "";
 			try {				
 				content = loadTemplate(TEMPLATE_PATH, placeholders);
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
+
 			sendEmail(usuario.getEmail(), subject, content);
 
 			System.out.println("E-mail enviado com sucesso!");
