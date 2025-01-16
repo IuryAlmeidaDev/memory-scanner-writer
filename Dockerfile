@@ -24,8 +24,12 @@ COPY Resources/standalone.conf /opt/jboss/wildfly/bin/standalone.conf
 
 COPY --from=apm-agent /usr/agent/elastic-apm-agent.jar /opt/jboss/wildfly/
 
-COPY cert/postfix.crt /usr/local/share/ca-certificates/
-RUN update-ca-certificates
+COPY cert/*.crt /usr/local/certs/
+RUN find /usr/local/certs/  -name *.cer -o -name *.crt -exec keytool -import -trustcacerts \
+    -keystore /etc/ssl/certs/java/cacerts -storepass changeit -noprompt \
+    -file {} -alias {} \; && \
+    keytool -list -keystore /etc/ssl/certs/java/cacerts --storepass changeit
+
 
 COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
 
