@@ -23,7 +23,13 @@ COPY Resources/aplicativo /opt/jboss/wildfly/sigepen-arquivos/aplicativo
 COPY Resources/standalone.conf /opt/jboss/wildfly/bin/standalone.conf
 
 COPY --from=apm-agent /usr/agent/elastic-apm-agent.jar /opt/jboss/wildfly/
+
+COPY cert/*.crt /opt/
+RUN /usr/local/$JAVA_VER/bin/keytool -import -v -trustcacerts -alias smtp-cert -file /opt/smtp-cert.crt \
+   -cacerts -noprompt -storepass changeit
+
 COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
+
 
 EXPOSE 9990
 
