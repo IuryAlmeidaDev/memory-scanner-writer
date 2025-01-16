@@ -48,22 +48,12 @@ public class UsuarioResetSenhaDTO {
 		return this.nomeMaeList;
 	}
 	
-	public void resetNomeMaeList() {
-		this.nomeMaeList.clear();
-		this.nomeMaeList.add(this.nomeMae);
-	}
-	
 	public void setNomeMaeList(List<String> nomeMaeList) {
 		this.nomeMaeList = nomeMaeList;
 	}
 	
 	public List<Long> getMatriculaList() {
 		return matriculaList;
-	}
-	
-	public void resetMatriculaList() {
-		this.matriculaList.clear();
-		this.matriculaList.add(matricula);
 	}
 	
 	public void setMatriculaList(List<Long> matriculaList) {
@@ -85,6 +75,22 @@ public class UsuarioResetSenhaDTO {
 	
 	public int getIndexMatriculaSelecionada() {
 		return this.indexMatriculaSelecionada;
+	}
+
+	public String getNomeMae() {
+		return nomeMae;
+	}
+
+	public void setNomeMae(String nomeMae) {
+		this.nomeMae = nomeMae;
+	}
+
+	public Long getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(Long matricula) {
+		this.matricula = matricula;
 	}
 	
 }

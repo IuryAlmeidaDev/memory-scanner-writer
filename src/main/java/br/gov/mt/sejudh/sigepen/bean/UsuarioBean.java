@@ -35,6 +35,7 @@ import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UsuarioDTO;
+import br.gov.mt.sejudh.sigepen.service.EmailService;
 import br.gov.mt.sejudh.sigepen.service.PerfilService;
 import br.gov.mt.sejudh.sigepen.service.ServidorService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
@@ -161,20 +162,26 @@ public class UsuarioBean extends MetodosDePaginaBean {
 	}
 
 	public void salvar() {
+		boolean resetSenha = this.usuario.getResetSenha();
 		try {			
 			if (this.usuario.getEmail() == null || this.usuario.getEmail().equals("")) {
 				throw new ValidacaoException("Email do Usuário é obrigatório.");
 			}
 			
-			if(this.usuario.getResetSenha()) {
+			if(resetSenha) {
 				this.usuario.setResetSenha(false);
 			}
 			
 			this.usuario = usuarioService.salvar(this.usuario, false);
 			
+			if(resetSenha) {
+				EmailService.sendEmailResetSenha(usuario);
+			}			
+			
 			facesUtil.exibirMensagemInfo("Usuário " + this.usuario.getLogin() + " salvo com sucesso!", false);
 			LoggerUtil.logInfo(Acao.SALVAR, this.usuario, log);
 		} catch (ValidacaoException e){
+			this.usuario.setResetSenha(resetSenha);
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Erro ao salvar usuário (" + this.usuario.getLogin() + "): " + e.getMessage());
