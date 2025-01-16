@@ -2,10 +2,14 @@ package br.gov.mt.sejudh.sigepen.bean;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -13,13 +17,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-
-import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoAcessoLog;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoBloqueioLog;
-import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
-import br.gov.mt.sejudh.sigepen.service.ParametroUnidadeService;
-import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -34,14 +31,25 @@ import org.omg.CORBA.portable.ApplicationException;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroServidor;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoAcessoLog;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoBloqueioLog;
 import br.gov.mt.sejudh.sigepen.model.Acesso;
 import br.gov.mt.sejudh.sigepen.model.LogAcesso;
+import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
+import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.UsuarioResetSenhaDTO;
+import br.gov.mt.sejudh.sigepen.realm.SigepenRealm;
 import br.gov.mt.sejudh.sigepen.service.LogAcessoBO;
 import br.gov.mt.sejudh.sigepen.service.LoginService;
-import br.gov.mt.sejudh.sigepen.realm.SigepenRealm;
+import br.gov.mt.sejudh.sigepen.service.ParametroUnidadeService;
+import br.gov.mt.sejudh.sigepen.service.ServidorService;
+import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
+import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -49,39 +57,53 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @ManagedBean
 @RequestScoped
-@URLMappings(mappings = {
-@URLMapping(id = "login", pattern = "/login", viewId = "/WEB-INF/pages/login/Login.xhtml"),
-@URLMapping(id = "erro", pattern = "/erro", viewId = "/WEB-INF/pages/erro.xhtml"),
-@URLMapping(id = "SelecionarUnidade", pattern = "/login/unidade", viewId = "/WEB-INF/pages/login/Unidade.xhtml") })
+@URLMappings(mappings = { @URLMapping(id = "login", pattern = "/login", viewId = "/WEB-INF/pages/login/Login.xhtml"),
+		@URLMapping(id = "erro", pattern = "/erro", viewId = "/WEB-INF/pages/erro.xhtml"),
+		@URLMapping(id = "ResetSenha", pattern = "/resetSenha", viewId = "/WEB-INF/pages/login/ResetSenha.xhtml"),
+		@URLMapping(id = "SelecionarUnidade", pattern = "/login/unidade", viewId = "/WEB-INF/pages/login/Unidade.xhtml") })
 public class LoginBean {
 
 	private String usuario;
-	private String senha;	
+	private String senha;
 	private UnidadePrisional unidadeSelecionada;
 	private List<UnidadePrisional> unidades;
+	private List<UnidadePrisional> unidadesResetSenha;
+	private UsuarioResetSenhaDTO usuarioResetSenhaDTO;
+	private boolean resetSenha;
+	private boolean unidadeErrada;
 
 	@Inject
 	private FacesUtil faces;
-	
+
 	@Inject
 	private LoginService service;
-	
+
 	@Inject
 	private Logger log;
 
 	@Inject
 	private ParametroUnidadeService parametroUnidadeService;
-	
+
 	@Inject
 	private LogAcessoBO logAcessoBO;
-	
+
 	@Inject
 	private UsuarioService usuarioService;
-	
+
+	@Inject
+	private ServidorService servidorService;
+
+	@Inject
+	private UnidadePrisionalService unidadePrisionalService;
+
 	@PostConstruct
-	public void init() {		
+	public void init() {
 		UnidadePrisional uni = SecurityUtil.getUnidadeSelecionada();
-		
+
+		if (this.usuarioResetSenhaDTO == null) {
+			this.usuarioResetSenhaDTO = new UsuarioResetSenhaDTO();
+		}
+
 		if (uni != null) {
 			this.unidadeSelecionada = uni;
 		}
@@ -102,7 +124,7 @@ public class LoginBean {
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
-	
+
 	public UnidadePrisional getUnidadeSelecionada() {
 		return unidadeSelecionada;
 	}
@@ -111,30 +133,68 @@ public class LoginBean {
 		this.unidadeSelecionada = unidadeSelecionada;
 	}
 
+	public UsuarioResetSenhaDTO getUsuarioResertSenhaDTO() {
+		return usuarioResetSenhaDTO;
+	}
+
+	public void setUsuarioResertSenhaDTO(UsuarioResetSenhaDTO usuarioResertSenhaDTO) {
+		this.usuarioResetSenhaDTO = usuarioResertSenhaDTO;
+	}
+
+	public boolean isResetSenha() {
+		return resetSenha;
+	}
+
+	public void setResetSenha(boolean resetSenha) {
+		this.resetSenha = resetSenha;
+	}
+
+	public boolean isUnidadeErrada() {
+		return unidadeErrada;
+	}
+
+	public void setUnidadeErrada(boolean unidadeErrada) {
+		this.unidadeErrada = unidadeErrada;
+	}
+
 	public List<UnidadePrisional> getUnidades() {
 		if (this.unidades == null) {
-			this.unidades=  new ArrayList<UnidadePrisional>();
+			this.unidades = new ArrayList<UnidadePrisional>();
 
 			for (Acesso acesso : SecurityUtil.getUsuario().getAcessos()) {
 				this.unidades.add(acesso.getUnidade());
 			}
 		}
-		
+
 		this.unidades.sort(Comparator.comparing(UnidadePrisional::getNome));
-		
+
 		return unidades;
+	}
+
+	public List<UnidadePrisional> getUnidadesResetSenha() {
+
+		this.unidadesResetSenha = this.unidadePrisionalService.listarUnidadesNaoInativas();
+		
+		if (this.unidadesResetSenha != null) {
+
+			this.unidadesResetSenha.sort(Comparator.comparing(UnidadePrisional::getNome));
+
+			return unidadesResetSenha;
+		}
+
+		return new ArrayList<UnidadePrisional>();
 	}
 
 	public void setUnidades(List<UnidadePrisional> unidades) {
 		this.unidades = unidades;
 	}
-	
+
 	private void clearCache() {
 		for (Realm realm : ((RealmSecurityManager) SecurityUtils.getSecurityManager()).getRealms()) {
-		    if (realm.getName().equals("jdbcRealm")) {
-		    	SigepenRealm realm2 = (SigepenRealm)realm;
-		    	realm2.getAuthorizationCache().remove(SecurityUtils.getSubject().getPrincipals());
-		    }
+			if (realm.getName().equals("jdbcRealm")) {
+				SigepenRealm realm2 = (SigepenRealm) realm;
+				realm2.getAuthorizationCache().remove(SecurityUtils.getSubject().getPrincipals());
+			}
 		}
 	}
 
@@ -142,21 +202,21 @@ public class LoginBean {
 		try {
 			SecurityUtils.getSubject().login(new UsernamePasswordToken(usuario, senha));
 			clearCache();
-			SecurityUtils.getSubject().getSession().setAttribute("usuario", service.buscarUsuario(SecurityUtil.getLoginUsuario()));
+			SecurityUtils.getSubject().getSession().setAttribute("usuario",
+					service.buscarUsuario(SecurityUtil.getLoginUsuario()));
 			LoggerUtil.logInfo(Acao.LOGAR, usuario, log);
 			FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_DASHBOARD_URL);
 			gravarLogAcesso(TipoAcessoLog.SUCESSO_LOGIN, TipoBloqueioLog.NENHUM, usuario);
-		} 
-		catch (UnknownAccountException e) {
+		} catch (UnknownAccountException e) {
 			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login", "Usuário ou senha inválidos.");
 			gravarLogAcesso(TipoAcessoLog.FALHA_LOGIN, TipoBloqueioLog.NENHUM, usuario);
-		}
-		catch (IncorrectCredentialsException e) {
+		} catch (IncorrectCredentialsException e) {
 			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login", "Usuário ou senha inválidos.");
 			gravarLogAcesso(TipoAcessoLog.TENTATIVA_LOGIN, TipoBloqueioLog.NENHUM, usuario);
-		}
-		catch (AuthenticationException e) {
-			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login", e.getMessage());
+		} catch (AuthenticationException e) {
+			// faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login",
+			// e.getMessage());
+			this.resetSenha = true;
 			gravarLogAcesso(TipoAcessoLog.FALHA_LOGIN, TipoBloqueioLog.NENHUM, usuario);
 		} catch (Exception e) {
 			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao realizar login", e.getMessage());
@@ -165,8 +225,11 @@ public class LoginBean {
 			gravarLogAcesso(TipoAcessoLog.FALHA_LOGIN, TipoBloqueioLog.NENHUM, usuario);
 		}
 	}
-	
-	
+
+	public String redicetResetSenha() {
+		return "ResetSenha?faces-redirect=true";
+	}
+
 	private void gravarLogAcesso(TipoAcessoLog tipoAcessoLog, TipoBloqueioLog tipoBloqueio,
 			String loginUsuarioAutorizador) throws ApplicationException {
 
@@ -185,16 +248,16 @@ public class LoginBean {
 		Optional<Usuario> usuarioOpt = Optional
 				.ofNullable(this.usuarioService.buscarUsuarioPorLogin(loginUsuarioAutorizador));
 		logAcesso.setUsuario(usuarioOpt.orElse(null));
-		
+
 		this.logAcessoBO.salvarLogAcesso(logAcesso);
 	}
 
 	public void logout() throws IOException {
 		try {
-		    invalidarLogin();
-		    FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_LOGIN_URL);
+			invalidarLogin();
+			FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_LOGIN_URL);
 		} catch (Exception e) {
-			
+
 		}
 	}
 
@@ -204,7 +267,7 @@ public class LoginBean {
 		gravarLogAcesso(TipoAcessoLog.LOGOUT, TipoBloqueioLog.NENHUM, usuarioAtual);
 		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
 	}
-	
+
 	public void setarUnidade() throws IOException {
 		ativarModuloVisitante();
 		SecurityUtil.setUnidadeSelecionada(unidadeSelecionada);
@@ -213,8 +276,169 @@ public class LoginBean {
 		FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_DASHBOARD_URL);
 	}
 
-	private void ativarModuloVisitante(){
-		List<ParametroUnidade> parametros = parametroUnidadeService.listarPorUnidade(unidadeSelecionada);
-		unidadeSelecionada.setAtivaModuloVisitante(parametros.size() > 0 && parametros.stream().anyMatch(parametroUnidade -> parametroUnidade.getValidar() == SimNao.S));
+	public void setarUnidadeResetSenha() throws IOException {
+		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
+				.getAttribute("usuarioResertSenhaDTO");
+		this.usuarioResetSenhaDTO.getUsuario().setUnidadePerfilSolicitadaResetSenha(this.unidadeSelecionada.getNome());
+		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", this.usuarioResetSenhaDTO);
 	}
+
+	private void ativarModuloVisitante() {
+		List<ParametroUnidade> parametros = parametroUnidadeService.listarPorUnidade(unidadeSelecionada);
+		unidadeSelecionada.setAtivaModuloVisitante(parametros.size() > 0
+				&& parametros.stream().anyMatch(parametroUnidade -> parametroUnidade.getValidar() == SimNao.S));
+	}
+
+	public void resetSenha() {
+
+		Usuario usuario = this.usuarioService.buscarUsuariosPorCpfAndNascimento(this.usuarioResetSenhaDTO.getCpf(),
+				this.usuarioResetSenhaDTO.getNascimento());
+
+		if (usuario == null) {
+			faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
+					"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
+			return;
+		}
+
+		usuario.setUnidadePerfilSolicitadaResetSenha(null);
+		this.usuarioResetSenhaDTO.setUsuario(usuario);
+
+		this.setListaNomeDaMae(usuario.getServidor().getMae());
+		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", this.usuarioResetSenhaDTO);
+
+	}
+
+	public void verificaNomeMae() {
+		int index = this.usuarioResetSenhaDTO.getIndexNomeMaeSelecionada();
+		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
+				.getAttribute("usuarioResertSenhaDTO");
+		String nomeMaeSelecionado = this.usuarioResetSenhaDTO.getNomeMaeList().get(index);
+		if (nomeMaeSelecionado.equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae())) {
+			this.setListaMatricula(String.valueOf(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()));
+			return;
+		}
+
+		this.limparResetSenha();
+		
+		faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
+				"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
+
+	}
+
+	private void limparResetSenha() {
+		
+		this.usuarioResetSenhaDTO.getMatriculaList().clear();
+		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
+
+		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
+		
+		this.usuarioResetSenhaDTO = null;
+
+		return;
+	}
+
+	public void verificaMatricula() throws Exception {
+
+		int index = this.usuarioResetSenhaDTO.getIndexMatriculaSelecionada();
+		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
+				.getAttribute("usuarioResertSenhaDTO");
+		Long MatriculaSelecionado = this.usuarioResetSenhaDTO.getMatriculaList().get(index);
+
+		if (MatriculaSelecionado == this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()) {
+			
+			Usuario usuario = this.usuarioResetSenhaDTO.getUsuario();
+			usuario.setResetSenha(true);
+			usuario.setDataSolicitacaoResetSenha(new Date());
+			
+			SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
+			
+			this.usuarioService.salvar(usuario);
+			
+			SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
+
+			faces.exibirMensagem(FacesMessage.SEVERITY_INFO, "Solicitação realizada com sucesso!",
+					"Usuário, aguarde instruções de acesso no e-mail cadastrado na base.");
+			
+			return ;
+
+		}
+
+		this.limparResetSenha();
+		
+		faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
+				"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
+	}
+
+	@SuppressWarnings("unlikely-arg-type")
+	private void setListaMatricula(String matricula) {
+		Set<Long> list = new HashSet<Long>();
+
+		FiltroServidor filtroServidor = new FiltroServidor();
+
+		filtroServidor.setMatriculaLike(this.pegarTresPrimeirosCaracters(matricula));
+
+		List<ServidorDTO> servidorDTOs = servidorService.buscaPorFiltro(filtroServidor, false);
+
+		if (servidorDTOs.size() < 3) {
+			System.out.println("A lista deve conter pelo menos 3 elementos!");
+			throw new IllegalArgumentException("A lista deve conter pelo menos 3 elementos!");
+		}
+
+		Random random = new Random();
+		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula());
+		this.usuarioResetSenhaDTO.getMatriculaList().clear();
+		while (list.size() < 2) {
+			int index = random.nextInt(servidorDTOs.size());
+			list.add(servidorDTOs.get(index).getMatricula());
+		}
+		
+		list.add(this.usuarioResetSenhaDTO.getMatricula());
+		this.usuarioResetSenhaDTO.getMatriculaList().addAll(list);
+		Collections.shuffle(this.usuarioResetSenhaDTO.getMatriculaList());
+
+	}
+
+	@SuppressWarnings("unlikely-arg-type")
+	private void setListaNomeDaMae(String mae) {
+		Set<String> list = new HashSet<String>();
+
+		FiltroServidor filtroServidor = new FiltroServidor();
+
+		filtroServidor.setMae(this.pegarTresPrimeirosCaracters(mae));
+
+		List<ServidorDTO> servidorDTOs = servidorService.buscaPorFiltro(filtroServidor, false);
+
+		if (servidorDTOs.size() < 3) {
+			System.out.println("A lista deve conter pelo menos 3 elementos!");
+			throw new IllegalArgumentException("A lista deve conter pelo menos 3 elementos!");
+		}
+
+		Random random = new Random();
+		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae());
+		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
+		while (list.size() < 2) {
+			int index = random.nextInt(servidorDTOs.size());
+			list.add(servidorDTOs.get(index).getMae());
+		}
+		list.add(this.usuarioResetSenhaDTO.getNomeMae());
+		this.usuarioResetSenhaDTO.getNomeMaeList().addAll(list);
+		Collections.shuffle(this.usuarioResetSenhaDTO.getNomeMaeList());
+
+	}
+
+	private String pegarTresPrimeirosCaracters(String string) {
+
+		int quantCaracter = 3;
+
+		if (string != null && string.length() >= quantCaracter) {
+			return string.substring(0, quantCaracter);
+		}
+
+		return string;
+	}
+
+	public void setUnidadesResetSenha(List<UnidadePrisional> unidadesResetSenha) {
+		this.unidadesResetSenha = unidadesResetSenha;
+	}
+
 }

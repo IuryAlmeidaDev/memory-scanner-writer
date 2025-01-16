@@ -17,6 +17,7 @@ import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
+import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
@@ -34,6 +35,7 @@ import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UsuarioDTO;
+import br.gov.mt.sejudh.sigepen.service.EmailService;
 import br.gov.mt.sejudh.sigepen.service.PerfilService;
 import br.gov.mt.sejudh.sigepen.service.ServidorService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
@@ -46,6 +48,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ViewScoped
 @URLMappings(mappings ={
 @URLMapping(id = "ListarUsuario", pattern = "/usuario", viewId = "/WEB-INF/pages/usuario/ListarUsuarios.xhtml")
+,@URLMapping(id = "ListarUsuarioResetSenha", pattern = "/usuario/reset/senha", viewId = "/WEB-INF/pages/usuario/ListarUsuariosResetSenha.xhtml")
 ,@URLMapping(id = "CadastrarUsuario", pattern="/usuario/cadastrar", viewId = "/WEB-INF/pages/usuario/CadastrarUsuario.xhtml")
 ,@URLMapping(id = "AlterarUsuario", pattern="/usuario/alterar/#{id}", viewId = "/WEB-INF/pages/usuario/CadastrarUsuario.xhtml")
 ,@URLMapping(id = "VisualizarUsuario", pattern="/usuario/visualizar/#{id}", viewId = "/WEB-INF/pages/usuario/CadastrarUsuario.xhtml")
@@ -142,6 +145,9 @@ public class UsuarioBean extends MetodosDePaginaBean {
 			private static final long serialVersionUID = 1L;
 			
 			public List<UsuarioDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+				if(PrettyContext.getCurrentInstance().getCurrentMapping().getPattern().contains("reset")) {
+					getFiltro().setResetSenha(true);
+				}
 				setRowCount(usuarioService.buscarQuantidadeFiltrada(getFiltro()));
 				
 				try {
@@ -156,16 +162,26 @@ public class UsuarioBean extends MetodosDePaginaBean {
 	}
 
 	public void salvar() {
+		boolean resetSenha = this.usuario.getResetSenha();
 		try {			
 			if (this.usuario.getEmail() == null || this.usuario.getEmail().equals("")) {
 				throw new ValidacaoException("Email do Usuário é obrigatório.");
 			}
 			
+			if(resetSenha) {
+				this.usuario.setResetSenha(false);
+			}
+			
 			this.usuario = usuarioService.salvar(this.usuario, false);
+			
+			if(resetSenha) {
+				EmailService.sendEmailResetSenha(usuario);
+			}			
 			
 			facesUtil.exibirMensagemInfo("Usuário " + this.usuario.getLogin() + " salvo com sucesso!", false);
 			LoggerUtil.logInfo(Acao.SALVAR, this.usuario, log);
 		} catch (ValidacaoException e){
+			this.usuario.setResetSenha(resetSenha);
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Erro ao salvar usuário (" + this.usuario.getLogin() + "): " + e.getMessage());

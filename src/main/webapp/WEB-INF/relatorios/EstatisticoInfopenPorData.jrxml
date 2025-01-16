@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EstatisticoInfopen" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="1680"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -1907,7 +1907,7 @@
 			<componentElement>
 				<reportElement key="table" style="table" x="0" y="16" width="555" height="35" uuid="c05e65e9-3366-4892-9086-d52a7a79def5"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="Feminino" uuid="36fb4c81-3ab1-4429-ae3c-3b93478b0dd3">
+					<datasetRun subDataset="Feminino" uuid="195b36ba-6b27-4d8b-a287-58aada38f387">
 						<datasetParameter name="SCHEMA_SUB">
 							<datasetParameterExpression><![CDATA[$P{SCHEMA}]]></datasetParameterExpression>
 						</datasetParameter>
@@ -1915,7 +1915,7 @@
 							<datasetParameterExpression><![CDATA[$P{UNIDADE_ID}]]></datasetParameterExpression>
 						</datasetParameter>
 						<datasetParameter name="DATA_SAIDA">
-							<datasetParameterExpression><![CDATA["'"+$P{DATA_SAIDA}+"'"]]></datasetParameterExpression>
+							<datasetParameterExpression><![CDATA[$P{DATA_SAIDA}]]></datasetParameterExpression>
 						</datasetParameter>
 					</datasetRun>
 					<jr:column width="355" uuid="f4f67700-5970-4d1b-9612-82532338d75e">

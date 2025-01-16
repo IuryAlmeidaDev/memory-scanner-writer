@@ -11,6 +11,7 @@ public class PedidoDetalhadoDTO {
 	private String dataPedido;
 	private String refeicao;
 	private String estrutura;
+	private String unidadePrisionalSigla;
 	private Integer qtdPadrao;
 	private Integer qtdEspecial;
 	private List<CardapioPedidoDTO> cardapio = new ArrayList<>();
@@ -18,17 +19,7 @@ public class PedidoDetalhadoDTO {
 	public PedidoDetalhadoDTO() {
 		
 	}
-	
-	public PedidoDetalhadoDTO(List<CardapioPedidoDTO> cardapio, String data) {
-		this.cardapio = cardapio;		
-	}
 
-	public PedidoDetalhadoDTO(String dataPedido, String refeicao, String estrutura, Integer qtdPadrao,
-			Integer qtdEspecial) {
-		this.dataPedido = dataPedido;
-		this.estrutura = estrutura;
-	}
-	
 	public Long getId() {
 		return id;
 	}
@@ -85,10 +76,17 @@ public class PedidoDetalhadoDTO {
 		this.cardapio = cardapio;
 	}
 
+	public String getUnidadePrisionalSigla() {
+		return unidadePrisionalSigla;
+	}
+
+	public void setUnidadePrisionalSigla(String unidadePrisionalSigla) {
+		this.unidadePrisionalSigla = unidadePrisionalSigla;
+	}
+
 	@Override
 	public String toString() {
 		return "PedidoDetalhadoDTO [dataPedido=" + dataPedido + ", estrutura=" + estrutura
-				+ ", qtdPadrao=" + qtdPadrao + ", qtdEspecial=" + qtdEspecial + "]";
+				+ ", qtdPadrao=" + qtdPadrao + ", qtdEspecial=" + qtdEspecial + ", unidadePrisionalSigla=" + unidadePrisionalSigla + "]";
 	}
-
 }

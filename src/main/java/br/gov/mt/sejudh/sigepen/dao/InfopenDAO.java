@@ -1,7 +1,9 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -242,9 +244,9 @@ public class InfopenDAO {
 					"  	WHEN 0 THEN 'INATIVO'\r\n" + 
 					"  	WHEN 2 THEN 'INATIVO_PARCIAL'\r\n" + 
 					"  END AS STATUS, \r\n" +
-					"  l.estrutura \r\n " +
+					"  l.estrutura \r\n " +									
 					"  from " + Sigepen.SEJUDH_SCHEMA + ".recuperando r, " + Sigepen.SEJUDH_SCHEMA + ".regime re, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos l, " + Sigepen.SEJUDH_SCHEMA + ".pessoa p, \r\n" +
-					" " +Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " +Sigepen.SEJUDH_SCHEMA + ".processo pro "+
+					" " +Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " +Sigepen.SEJUDH_SCHEMA + ".processo pro, " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM p2 "+
 					" where r.regime_atual_id = re.id\r\n" + 
 					"   and r.id = l.matricula\r\n" + 
 					"   and l.id_unidade = :UNIDADE \r\n" + 
@@ -253,7 +255,9 @@ public class InfopenDAO {
 					" AND na.id = p.nacionalidade_id " +
 					" AND r.id = pro.recuperando_id " +
 					" AND R.CONDICAO_ATUAL = 'CONDENADO'" + 
-					" AND PRO.STATUS_PROCESSO <> 'FINALIZADO'";
+					" AND PRO.STATUS_PROCESSO <> 'FINALIZADO'" +
+					" AND r.ID = p2.RECUPERANDO_ID" +
+					" AND (p2.DATA_SAIDA BETWEEN :DATA_ENTRADA AND :DATA_SAIDA OR p2.DATA_SAIDA IS NULL)";										
 		} else if(filtro.getPopulacaoFeminino() != null && (PopulacaoFeminino.C.equals(filtro.getPopulacaoFeminino()) || PopulacaoFeminino.D.equals(filtro.getPopulacaoFeminino()))) {
 			sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL,  \r\n" + 
 					"   CASE R.STATUS \r\n" + 
@@ -263,14 +267,16 @@ public class InfopenDAO {
 					"  END AS STATUS, \r\n" +
 					"  l.estrutura \r\n " +
 					"  from " + Sigepen.SEJUDH_SCHEMA + ".recuperando r, " + Sigepen.SEJUDH_SCHEMA + ".regime re, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos l, " + Sigepen.SEJUDH_SCHEMA + ".pessoa p, \r\n" +
-					" " +Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " + Sigepen.SEJUDH_SCHEMA + ".parente par "+
+					" " +Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " + Sigepen.SEJUDH_SCHEMA + ".parente par "  +Sigepen.SEJUDH_SCHEMA + ".PASSAGEM p2 " +
 					" where r.regime_atual_id = re.id\r\n" + 
 					"   and r.id = l.matricula\r\n" + 
 					"   and l.id_unidade = :UNIDADE \r\n" + 
 					"   and r.status = 1\r\n" + 
 					"   AND r.PESSOA_ID = p.id\r\n" +
 					" AND na.id = p.nacionalidade_id " +
-					" and par.recuperando_id = r.id";
+					" and par.recuperando_id = r.id" +
+					" AND r.ID = p2.RECUPERANDO_ID" +
+					" AND (p2.DATA_SAIDA BETWEEN :DATA_ENTRADA AND :DATA_SAIDA OR p2.DATA_SAIDA IS NULL)";					
 		} else {
 			sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL,  \r\n" + 
 					"   CASE R.STATUS \r\n" + 
@@ -278,15 +284,19 @@ public class InfopenDAO {
 					"  	WHEN 0 THEN 'INATIVO'\r\n" + 
 					"  	WHEN 2 THEN 'INATIVO_PARCIAL'\r\n" + 
 					"  END AS STATUS, \r\n" +
-					"  l.estrutura \r\n " +
+					"  l.estrutura, \r\n " +
+					"  p2.DATA_ENTRADA, \r\n " +
+					"  p2.DATA_SAIDA \r\n " +					
 					"  from " + Sigepen.SEJUDH_SCHEMA + ".recuperando r, " + Sigepen.SEJUDH_SCHEMA + ".regime re, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos l, " + Sigepen.SEJUDH_SCHEMA + ".pessoa p, \r\n" +
-					" " +Sigepen.SEJUDH_SCHEMA + ".nacionalidade na " +
+					" " +Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM p2 " +
 					" where r.regime_atual_id = re.id\r\n" + 
 					"   and r.id = l.matricula\r\n" + 
 					"   and l.id_unidade = :UNIDADE \r\n" + 
 					"   and r.status = 1\r\n" + 
 					"   AND r.PESSOA_ID = p.id\r\n" +
-					" AND na.id = p.nacionalidade_id ";
+					" AND na.id = p.nacionalidade_id " +
+					" AND r.ID = p2.RECUPERANDO_ID" +
+				    " AND (p2.DATA_SAIDA BETWEEN :DATA_ENTRADA AND :DATA_SAIDA OR p2.DATA_SAIDA IS NULL)";															
 		}
 		
 		if(filtro.getNacionalidade() != null) {
@@ -368,9 +378,20 @@ public class InfopenDAO {
 		if(filtro.getAposentado() != null) {
 			query.setParameter("APOSENTADO", SimNao.N.equals(filtro.getAposentado()) ? 0 : 1);
 		}
+		
+		if(filtro.getDataInicial() != null) {
+			query.setParameter("DATA_ENTRADA", filtro.getDataInicial());
+		}
+		
+		if(filtro.getDataFinal() != null) {
+			query.setParameter("DATA_SAIDA", filtro.getDataFinal());
+		}
 		@SuppressWarnings("unchecked")
 		List<Object[]> results = query.getResultList();
-        String descricaoTitulo = "População carcerária por Nacionalidade";		 
+        String descricaoTitulo = "População carcerária por Nacionalidade";	
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        
 		results.stream().forEach((record) -> {
 	        Long id = ((BigDecimal) record[0]).longValue();
 	        String nome = (String) record[1];
@@ -380,7 +401,17 @@ public class InfopenDAO {
 	        String status = (String) record[5];
 	        String estrutura = (String) record[6];
 	        String descricaoFiltro = filtro.getNacionalidade() == null ? null : filtro.getNacionalidade().getDescricao();
-			InfopenRecuperandoDTO r = new InfopenRecuperandoDTO(id, nome, nomeMae, regime, condicao, status, filtro, descricaoFiltro, descricaoTitulo, estrutura);
+	       
+	        
+	        //String dataEntrada = sdf.format((Date) record[7]);
+	        //String dataSaida = sdf.format((Date) record[8]);
+	        
+	        String dataEntrada = record[7] != null ? sdf.format((Date) record[7]) : "";
+	        String dataSaida = record[8] != null ? sdf.format((Date) record[8]) : "";
+	        
+			
+	        
+	        InfopenRecuperandoDTO r = new InfopenRecuperandoDTO(id, nome, nomeMae, regime, condicao, status, filtro, descricaoFiltro, descricaoTitulo, estrutura, dataEntrada, dataSaida);
 			recs.add(r);
 		});
 		return recs;

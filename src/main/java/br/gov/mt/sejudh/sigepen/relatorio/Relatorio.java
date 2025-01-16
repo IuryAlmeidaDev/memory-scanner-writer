@@ -45,6 +45,7 @@ public enum Relatorio {
 	RegistroAutorizacaoPedidoTransito("AUTORIZAÇÃO PEDIDO DE TRÂNSITO"),
 	ListaDeChamadaComFoto("LISTA DE CHAMADA"),
 	ListaDeChamadaComFotoNovo("LISTA DE CHAMADA"),
+	ListarDietaEspecialRecuperando("Listar Dieta Especial Recuperando"),
 	ExtratoRecuperando("EXTRATO DO RECUPERANDO", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	EstatisticoInfopen("Relatório Estatístico Infopen"),
 	EstatisticoInfopenPorData("Relatório Estatístico Infopen Por Data"),
@@ -63,6 +64,7 @@ public enum Relatorio {
 	ListarEntradaSaida("CONSULTAR VISITAS", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	HistoricoRecuperando("HISTÓRICO RECUPERANDO"),
 	InfopenDetalhado("Relatório de Recuperandos Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
+	InfopenDetalhadoPorData("Relatório de Recuperandos Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	Biometrias("Biometrias");
 	
 	private Relatorio(String nome) {
