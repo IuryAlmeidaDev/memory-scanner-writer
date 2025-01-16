@@ -118,7 +118,7 @@ public class EntradaSaidaService {
 		return this.dao.validarEntrada(f, unidade);
 	}
 
-	public Long responsavelDeuEntrada(Long id) {
+	public Visitante responsavelDeuEntrada(Long id) {
 		return dao.responsavelDeuEntrada(id);
 	}
 }
