@@ -26,9 +26,9 @@ COPY --from=apm-agent /usr/agent/elastic-apm-agent.jar /opt/jboss/wildfly/
 
 COPY cert/*.crt /usr/local/certs/
 RUN find /usr/local/certs/  -name *.crt -exec keytool -import -trustcacerts \
-    -keystore /usr/lib/jvm/java/jre/lib/security -storepass changeit -noprompt \
+    -keystore /usr/lib/jvm/java/jre/lib/security/cacerts -storepass changeit -noprompt \
     -file {} -alias {} \; && \
-    keytool -list -keystore /usr/lib/jvm/java/jre/lib/security --storepass changeit
+    keytool -list -keystore /usr/lib/jvm/java/jre/lib/security/cacerts --storepass changeit
 
 
 COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
