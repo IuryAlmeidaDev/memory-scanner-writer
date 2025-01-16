@@ -55,6 +55,7 @@ public class FiltroInfopen extends FiltroConsulta {
 		
 	private Date dataInicial;	
 	
+	private Date dataFinal;	
 
 	public int getTipoRelatorio() {
 		return tipoRelatorio;
@@ -174,6 +175,10 @@ public class FiltroInfopen extends FiltroConsulta {
 		if(this.getDataInicial() != null) {
 			filtros += "Período: " + sdf.format(this.getDataInicial()) +  ", ";			
 		}
+		
+		if(this.getDataFinal() != null) {
+			filtros += "Período: " + sdf.format(this.getDataFinal()) +  ", ";			
+		}
 	
 		if(!"".equals(filtros))
 			return "Filtro utilizado: " + filtros;
@@ -244,5 +249,14 @@ public class FiltroInfopen extends FiltroConsulta {
 	public void setDataInicial(Date dataInicial) {
 		this.dataInicial = dataInicial;
 	}
+
+	public Date getDataFinal() {
+		return dataFinal;
+	}
+
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = dataFinal;
+	}
+		
 
 }

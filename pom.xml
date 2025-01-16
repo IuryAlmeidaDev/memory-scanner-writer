@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.gov.mt.sejudh.sigepen</groupId>
     <artifactId>sigepen</artifactId>
-    <version>1.23.0</version>
+    <version>1.23.1</version>
     <packaging>war</packaging>
     <name>sigepen Webapp</name>
     <description>sigepen Webapp</description>
@@ -348,6 +348,11 @@
             <groupId>com.neurotec</groupId>
             <artifactId>neurotec-biometrics-client</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+                <artifactId>jakarta.mail</artifactId>
+            <version>1.6.7</version>
         </dependency>
     </dependencies>
 

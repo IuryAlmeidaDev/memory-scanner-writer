@@ -64,7 +64,7 @@
 											icon="fa fa-print"
 											update=":formListaChamadas" process="@this"
 											action="#{gerarPedidoBean.selecionarEstruturaChamada(est,gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}"
-											 
+														 rendered="#{gerarPedidoBean.isUnidadePrisional(est)}"
 											/>
 									</center>
 								</p:column>
@@ -93,12 +93,7 @@
 				<p:panel>
 					<p:commandButton value="Quantitativo" icon="ui-icon-plus"
 						oncomplete="PF('dlgListaDeChamada').hide()"
-						actionListener="#{gerarPedidoBean.imprimirPedidoUnificado(gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}" />
-				</p:panel>
-				<p:panel>
-					<p:commandButton value="Detalhado" icon="ui-icon-plus"
-						oncomplete="PF('dlgListaDeChamada').hide()"
-						actionListener="#{gerarPedidoBean.imprimirDetalhado(gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}" />
+						actionListener="#{gerarPedidoBean.imprimir(gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}" />
 				</p:panel>
 			</h:form>
 		</p:dialog>

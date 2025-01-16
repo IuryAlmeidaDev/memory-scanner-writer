@@ -1,0 +1,1 @@
+insert into permissao (ID,NOME,DESCRICAO,FUNCIONALIDADE_ID) values (285,'ListarUsuarioResetSenha',	'Permite acesso ao menu e a tela de listar usuarios reset de senha.',1);
