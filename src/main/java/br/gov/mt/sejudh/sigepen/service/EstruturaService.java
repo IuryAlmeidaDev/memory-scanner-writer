@@ -1,6 +1,5 @@
 package br.gov.mt.sejudh.sigepen.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,10 +10,10 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialEstruturaDTO;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
-import br.gov.mt.sejudh.sigepen.dao.CardapioPedidoDTO;
 import br.gov.mt.sejudh.sigepen.dao.EstruturaDAO;
 import br.gov.mt.sejudh.sigepen.dao.ServidorDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
@@ -24,9 +23,7 @@ import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
 import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoConsultaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoDetalhadoDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoItemCardapioDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.RefeicaoDetalhadaDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
@@ -462,65 +459,15 @@ public class EstruturaService {
 		estruturasFilho.forEach(e -> montarArvoreDaUnidade(estruturas, e, noPai));
 	}
 
-	public PedidoDetalhadoDTO buscaPedidoDetalhado(String data, Long idEstrutura, TipoRefeicao tipoRefeicao) {
-		List<PedidoConsultaDTO> pedidoConsulta = dao.buscaPedidoDetalhado(data, idEstrutura, tipoRefeicao.getId());
-		return montarPedidoDetalhado(pedidoConsulta, idEstrutura, tipoRefeicao, data);
-	}
-
-	public List<PedidoConsultaDTO> buscaPedidoConsulta(String data, Long idEstrutura, TipoRefeicao tipoRefeicao) {
+	public List<RefeicaoDetalhadaDTO> buscaPedidoConsulta(String data, Long idEstrutura, TipoRefeicao tipoRefeicao) {
 		return dao.buscaPedidoDetalhado(data, idEstrutura, tipoRefeicao.getId());
-	}
-
-	private PedidoDetalhadoDTO montarPedidoDetalhado(List<PedidoConsultaDTO> list, Long idEstrutura,
-		TipoRefeicao tipoRefeicao, String data) {
-		CardapioPedidoDTO pedidoCardapio = new CardapioPedidoDTO();
-		PedidoDetalhadoDTO pedidoDetalhado = new PedidoDetalhadoDTO();
-		List<CardapioPedidoDTO> listaCardapio = new ArrayList<>();
-		pedidoDetalhado.setDataPedido(data);
-
-		int size = list.size();
-		for (int i = 0; i < size; i++) {
-			PedidoConsultaDTO pedidoConsulta = list.get(i);
-			if (pedidoConsulta.isEspecial()) {
-				pedidoDetalhado.setQtdEspecial(pedidoConsulta.getRecuperandoTotal().intValue());
-			} else {
-				pedidoDetalhado.setQtdPadrao(pedidoConsulta.getRecuperandoTotal().intValue());
-			}
-			PedidoItemCardapioDTO pedidoItem = new PedidoItemCardapioDTO();
-			pedidoItem.setDescricao(pedidoConsulta.getItem());
-			Double peso = pedidoConsulta.getSexo().equals("M") ? pedidoConsulta.getMasc() : pedidoConsulta.getFem();
-			pedidoItem.setQuantidade(Double.valueOf(pedidoConsulta.getRecuperandoTotal()), peso);
-			if ((pedidoCardapio.getNome() == null || pedidoConsulta.getCardapio().equals(pedidoCardapio.getNome()))
-					&& (pedidoCardapio.getEstrutura() == null
-							|| pedidoConsulta.getNomeEstrutura().equals(pedidoCardapio.getEstrutura()))) {
-				pedidoCardapio.setNome(pedidoConsulta.getCardapio());
-				pedidoCardapio.setEstrutura(pedidoConsulta.getNomeEstrutura());
-				pedidoCardapio.getItens().add(pedidoItem);
-				pedidoCardapio.setEspecial(pedidoConsulta.isEspecial());
-			} else {
-				listaCardapio.add(new CardapioPedidoDTO(pedidoCardapio));
-				pedidoCardapio.setEspecial(pedidoConsulta.isEspecial());
-				pedidoCardapio.getItens().clear();
-				pedidoCardapio.setNome(pedidoConsulta.getCardapio());
-				pedidoCardapio.setEstrutura(pedidoConsulta.getNomeEstrutura());
-				pedidoCardapio.getItens().add(pedidoItem);
-			}
-			if ((i + 1) == size) {
-				listaCardapio.add(new CardapioPedidoDTO(pedidoCardapio));
-			}
-		}
-
-		pedidoDetalhado.setCardapio(listaCardapio);
-		pedidoDetalhado.setEstrutura(nomeEstrutura(idEstrutura));
-		pedidoDetalhado.setRefeicao(tipoRefeicao.getDescricao());
-		return pedidoDetalhado;
-	}
-
-	public String nomeEstrutura(Long idEstrutura) {
-		return dao.buscarNomeEstrutura(idEstrutura);
 	}
 
 	public List<PedidoEstruturaDTO> montarEstruturaPedido(String data, long idEstrutura) {
 		return dao.montarEstruturaPedido(data, idEstrutura);
+	}
+
+	public List<DietaEspecialEstruturaDTO> buscarDietasEspeciais(long idEstrutura, String data) {
+		return dao.buscarDietasEspeciaisPorEstrutura(idEstrutura, data);
 	}
 }

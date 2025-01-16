@@ -1,5 +1,8 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.Date;
 
 public class DietaEspecialDTO {
@@ -8,6 +11,7 @@ public class DietaEspecialDTO {
 	private Date inicio;
 	private Date fim;
 	private String nomeRecuperando;
+	private String nomeUnidadePrisional;
 	private String tipoDieta;
 	
 	private Date dataEntrada;
@@ -27,22 +31,21 @@ public class DietaEspecialDTO {
 	public Date getFim() {
 		return fim;
 	}
-	
+
 	public String getTipoDieta() {
 		return tipoDieta;
 	}
-	
+
 	public String setTipoDieta() {
 		return tipoDieta;
 	}
-	
+
 	public String getNomeRecuperando() {
 		return nomeRecuperando;
 	}
-		
-	@Override
-	public String toString() {
-		return "Contrato [id=" + id + ",nomeRecuperando = " + nomeRecuperando + "]";
+
+	public String getNomeUnidadePrisional() {
+		return nomeUnidadePrisional;
 	}
 
 	public Date getDataEntrada() {
@@ -53,4 +56,16 @@ public class DietaEspecialDTO {
 		this.dataEntrada = dataEntrada;
 	}
 
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("id", id)
+				.append("inicio", inicio)
+				.append("fim", fim)
+				.append("nomeRecuperando", nomeRecuperando)
+				.append("nomeUnidadePrisional", nomeUnidadePrisional)
+				.append("tipoDieta", tipoDieta)
+				.append("dataEntrada", dataEntrada)
+				.toString();
+	}
 }

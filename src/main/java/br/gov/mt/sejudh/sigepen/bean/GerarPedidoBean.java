@@ -1,46 +1,22 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalInt;
-import java.util.stream.Collectors;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.inject.Inject;
-
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoConsultaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDetalhadoDTO;
-import org.apache.logging.log4j.Logger;
-import org.primefaces.context.RequestContext;
-import org.primefaces.model.DefaultTreeNode;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
-
-import com.ocpsoft.pretty.faces.annotation.URLAction;
-import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
-import com.ocpsoft.pretty.faces.annotation.URLMapping;
-import com.ocpsoft.pretty.faces.annotation.URLMappings;
-
-import br.gov.mt.sejudh.sigepen.dao.CardapioPedidoDTO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroGerarPedido;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnidadePrisional;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
+import br.gov.mt.sejudh.sigepen.model.Arquivo;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
+import br.gov.mt.sejudh.sigepen.model.dto.DetalheItemEstruturaCardapioDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoDetalhadoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.RefeicaoDetalhadaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
-import br.gov.mt.sejudh.sigepen.service.ApostilamentoService;
 import br.gov.mt.sejudh.sigepen.service.ContratoService;
 import br.gov.mt.sejudh.sigepen.service.EstruturaService;
 import br.gov.mt.sejudh.sigepen.service.TipoRefeicaoService;
@@ -49,6 +25,26 @@ import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import com.ocpsoft.pretty.faces.annotation.URLAction;
+import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
+import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import com.ocpsoft.pretty.faces.annotation.URLMappings;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @ManagedBean
 @ViewScoped
@@ -65,14 +61,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	private LazyDataModel<UnidadePrisionalDTO> unidades;
 	private DefaultTreeNode root = new DefaultTreeNode();
 	private Estrutura estrutura;
-	private SituacaoEstruturaUnidade situacaoEstruturaUnidade;
-	private Long unidadeSelecionada;
-	private String tipoRelatorio;
-	private UnidadePrisionalDTO unidadeDTO;
-	private GerarPedidoEstruturaDTO gerarPedidoEstruturaDTO;
-
-	@Inject
-	private ApostilamentoService apostilamentoService;
+    private Long unidadeSelecionada;
+    private GerarPedidoEstruturaDTO gerarPedidoEstruturaDTO;
 
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
@@ -132,10 +122,6 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 
 	public Estrutura getEstrutura() {
 		return this.estrutura;
-	}
-
-	public SituacaoEstruturaUnidade getSituacaoEstruturaUnidade() {
-		return this.situacaoEstruturaUnidade;
 	}
 
 	public DefaultTreeNode getRoot() {
@@ -240,8 +226,12 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			if (this.unidade.getId() > 0) {
 				root = new DefaultTreeNode(new GerarPedidoEstruturaDTO(), null);
 				root.setExpanded(true);
-				estruturaService.montarArvoreEstruturaGerarPedido(this.toDto(unidade.getEstrutura()), root,
-						montarFiltroData(), tipoRefeicao);
+				estruturaService.montarArvoreEstruturaGerarPedido(
+						GerarPedidoEstruturaDTO.from(unidade.getEstrutura()),
+						root,
+						montarFiltroData(),
+						tipoRefeicao
+				);
 				estruturaService.capacidadeTotalEstruturaGerarPedido(root);
 				estruturaService.capacidadeTotalDietaPadrao(root);
 				estruturaService.capacidadeTotalDietaEspecial(root);
@@ -251,22 +241,6 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 
 		estrutura = new Estrutura();
-		situacaoEstruturaUnidade = new SituacaoEstruturaUnidade();
-	}
-
-	private GerarPedidoEstruturaDTO toDto(Estrutura estrutura) {
-		GerarPedidoEstruturaDTO dto = new GerarPedidoEstruturaDTO();
-		dto.setNome(estrutura.getNome());
-		dto.setCela(estrutura.getCela());
-		dto.setId(estrutura.getId());
-		return dto;
-	}
-
-	public void estruturaRelacionada(Estrutura estrutura) {
-		this.situacaoEstruturaUnidade = new SituacaoEstruturaUnidade();
-		this.estrutura = estrutura;
-		this.situacaoEstruturaUnidade.setEstrutura(estrutura);
-		this.situacaoEstruturaUnidade.setUnidadePrisional(estrutura.getUnidadePrisional());
 	}
 
 	public void pesquisar() {
@@ -284,7 +258,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.error(e);
 				}
 
 				return UnidadePrisionalDTO;
@@ -305,68 +279,78 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	public void selecionarEstruturaChamada(UnidadePrisionalDTO unidade,String data, FiltroGerarPedido tipoRefeicao) {
 		facesUtil.setObjetoSessao("unidade", unidade);
 		facesUtil.setObjetoSessao("tipo_relatorio", "unidade");
-		this.imprimirPedidoUnificado(data, tipoRefeicao);
+		this.imprimir(data, tipoRefeicao);
 	}
 
 	public void selecionarEstruturaChamada(GerarPedidoEstruturaDTO estrutura,String data, FiltroGerarPedido tipoRefeicao) {
 		facesUtil.setObjetoSessao("estrutura", estrutura);
 		facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
-		this.imprimirPedidoUnificado(data, tipoRefeicao);
+		this.imprimir(data, tipoRefeicao);
 	}
 
-	public void imprimirPedidoUnificado(final String data, final FiltroGerarPedido filtroGerarPedido) {
+	public void imprimir(final String data, final FiltroGerarPedido filtroGerarPedido) {
 		try {
 			configurarDadosRelatorio();
+			validarVigenciaContrato(this.unidade.getId());
+
 			final long idEstrutura = gerarPedidoEstruturaDTO.getId();
-			final String unidadePrisionalSigla = this.unidade.getSigla();
 
-			final Map<String, Object> parameters = new HashMap<>();
-			parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
-			parameters.put("DATA", data);
-			parameters.put("ID_ESTRUTURA", idEstrutura);
-
-			// Obter a estrutura e filtrar níveis
 			final List<PedidoEstruturaDTO> estruturaPedido = estruturaService.montarEstruturaPedido(data, idEstrutura);
-			final List<PedidoEstruturaDTO> estruturaAteNivel2 = estruturaPedido.stream()
-					.filter(obj -> obj.getNivel() <= 2)
-					.collect(Collectors.toList());
+			final List<PedidoEstruturaDTO> estruturaNivel2 = getEstruturasDeNivel2(estruturaPedido);
+			final List<RefeicaoDetalhadaDTO> refeicoesDetalhadas = estruturaService.buscaPedidoConsulta(
+					data, idEstrutura, filtroGerarPedido.getTipoRefeicao());
 
-			// Calcular totais e preparar a lista detalhada de pedidos
-			final Integer totalDietasPadrao = calcularTotalDietaPadrao(estruturaPedido);
-			final List<PedidoConsultaDTO> pedidosConsulta = estruturaService.buscaPedidoConsulta(data, idEstrutura, filtroGerarPedido.getTipoRefeicao());
-			final List<PedidoEstruturaDetalhadoDTO> pedidosPorEstrutura = PedidoEstruturaDetalhadoDTO.combinarPedidos(estruturaAteNivel2, pedidosConsulta, unidadePrisionalSigla);
-			this.validarCardapio(pedidosPorEstrutura);
+			final List<DetalheItemEstruturaCardapioDTO> itemCardapioPorEstrutura = DetalheItemEstruturaCardapioDTO.combinarPedidos(
+					estruturaNivel2, refeicoesDetalhadas);
+			final List<DietaEspecialEstruturaDTO> refeicoesEspeciais = estruturaService.buscarDietasEspeciais(idEstrutura, data);
 
-			// Definir parâmetros para o relatório
-			parameters.put("NOME_RELATORIO_DETALHADO", "Pedido detalhado de Alimentação");
-			parameters.put("PEDIDO_ESTRUTURA_DETALHADO", pedidosPorEstrutura);
-			parameters.put("TOTAL_DIETA_PADRAO", totalDietasPadrao);
+			validarCardapio(itemCardapioPorEstrutura);
 
-			// Validar unidade e gerar o relatório
-			if (validacao(this.unidade.getId())) {
-				final Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroPedido.getDataInicio());
-				parameters.put("MENSAGEM", this.getMensagemCabecalhoQuantitativo(filtroGerarPedido, filtroPedido.getDataFormadata(), contrato));
+			// Parâmetros do relatório
+			final Map<String, Object> parameters = criarParametrosRelatorio(data, filtroGerarPedido, refeicoesEspeciais);
 
-				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(estruturaPedido, Relatorio.GerarPedidoUnificado, parameters));
-				RequestContext.getCurrentInstance().execute("download()");
-				LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Pedido", log);
-			}
+			// Geração do relatório
+			gerarRelatorioUnificado(itemCardapioPorEstrutura, parameters);
+			LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Pedido", log);
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
-			LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
+			tratarErroGeracaoRelatorio(e);
 		}
 	}
 
+	private List<PedidoEstruturaDTO> getEstruturasDeNivel2(List<PedidoEstruturaDTO> estruturaPedido) {
+		return estruturaPedido.stream()
+				.filter(estrutura -> estrutura.getNivel() == 2)
+				.collect(Collectors.toList());
+	}
 
-	private boolean validacao(long id) {
+	private <T> Map<String, Object> criarParametrosRelatorio(String data, FiltroGerarPedido filtroGerarPedido, List<T> refeicoesEspeciais) {
+		final Map<String, Object> parameters = new HashMap<>();
+		parameters.put("DATA", data);
+
+		final Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroGerarPedido.getDataInicio());
+		parameters.put("MENSAGEM", getMensagemCabecalhoQuantitativo(filtroGerarPedido, data, contrato));
+		parameters.put("DIETA_ESPECIAL_POR_ESTRUTURA", refeicoesEspeciais);
+
+		return parameters;
+	}
+
+	private <T> void gerarRelatorioUnificado(List<T> estruturaAgrupada, Map<String, Object> parameters) throws JRException {
+		Arquivo relatorioGerado = RelatorioUtil.gerarRelatorio(estruturaAgrupada, Relatorio.PedidoDetalhado, parameters);
+		fileDownload.prepararArquivo(relatorioGerado);
+		RequestContext.getCurrentInstance().execute("download()");
+	}
+
+	private void tratarErroGeracaoRelatorio(Exception e) {
+		facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
+		LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
+	}
+
+	private void validarVigenciaContrato(long id) {
 		Contrato contrato = contratoService.buscarContratoPorUnidade(id, this.filtroPedido.getDataInicio());
 		if (contrato == null) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
 					"O contrato está fora do período de vigência!");
-			return false;
 		}
-		
-		return true;
 	}
 
 	private <T> void validarCardapio(List<T> cardapios) throws Exception {
@@ -375,54 +359,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
-	public void imprimirDetalhado(String data, FiltroGerarPedido tipoRefeicao) {
-		try {
-			configurarDadosRelatorio();
-
-			Map<String, Object> parameters = new HashMap<>();
-			parameters.put("SCHEMA", Sigepen.SEJUDH_SCHEMA);
-			parameters.put("DATA", data);
-			Long id = null;
-
-			if (existeApostilamentoParaUnidade(this.unidade.getId()) && this.validacao(this.unidade.getId())) {
-				switch (tipoRelatorio) {
-				case "unidade":
-					parameters.put("ID_ESTRUTURA", this.unidadeDTO.getIdEstrutura());
-					id = this.unidadeDTO.getIdEstrutura();
-					break;
-
-				case "estrutura":
-					parameters.put("ID_ESTRUTURA", gerarPedidoEstruturaDTO.getId());
-					id = gerarPedidoEstruturaDTO.getId();
-					break;
-				}
-
-				PedidoDetalhadoDTO pedido = estruturaService.buscaPedidoDetalhado(data, id, tipoRefeicao.getTipoRefeicao());
-				this.validarCardapio(pedido.getCardapio());
-				pedido.setQtdPadrao(gerarPedidoEstruturaDTO.getTotalDietaPadrao());
-				pedido.setQtdEspecial(gerarPedidoEstruturaDTO.getTotalDietaEspecial());
-
-				parameters.put("MENSAGEM",
-						this.getMensagemCabecalhoDetalhado(pedido.getRefeicao(), filtroPedido.getDataFormadata()));
-
-				fileDownload.prepararArquivo(
-						RelatorioUtil.gerarRelatorio(pedido, Relatorio.PedidoDetalhado, parameters));
-				RequestContext.getCurrentInstance().execute("download()");
-				LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Pedido", log);
-			}
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
-			LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
-		}
-	}
-
 	private String getMensagemCabecalhoQuantitativo(FiltroGerarPedido filtroGerarPedido, String data, Contrato contrato) {
 		String refeicao = filtroGerarPedido.getTipoRefeicao().getDescricao();
-		return gerarMensagemCabecalho(refeicao, data, contrato);
-	}
-
-	private String getMensagemCabecalhoDetalhado(String refeicao, String data) {
-		Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroPedido.getDataInicio());
 		return gerarMensagemCabecalho(refeicao, data, contrato);
 	}
 
@@ -436,31 +374,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	}
 
 	private void configurarDadosRelatorio() {
-		this.unidadeDTO = (UnidadePrisionalDTO) facesUtil.getObjetoSessao("unidade");
-		this.gerarPedidoEstruturaDTO = (GerarPedidoEstruturaDTO) facesUtil.getObjetoSessao("estrutura");
-		this.tipoRelatorio = (String) facesUtil.getObjetoSessao("tipo_relatorio");
-	}
-
-	private boolean existeApostilamentoParaUnidade(Long idUnidade) {
-		if (apostilamentoService.existeApostilamentoUnidade(idUnidade)) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "É nescessário criar um apostilamento!");
-			return false;
-		}
-
-		return true;
-	}
-
-	public Integer calcularTotalDietaPadrao(List<PedidoEstruturaDTO> pedidosEstrutura) {
-		OptionalInt menorNivelOpt = pedidosEstrutura.stream()
-				.mapToInt(PedidoEstruturaDTO::getNivel)
-				.min();
-
-		return menorNivelOpt.isPresent()
-				? pedidosEstrutura.stream()
-				.filter(pedidoEstrutura -> pedidoEstrutura.getNivel() == menorNivelOpt.getAsInt())
-				.mapToInt(PedidoEstruturaDTO::getQtdPadrao)
-				.sum()
-				: 0;
+        this.gerarPedidoEstruturaDTO = (GerarPedidoEstruturaDTO) facesUtil.getObjetoSessao("estrutura");
 	}
 
 	public boolean isUnidadePrisional(GerarPedidoEstruturaDTO estrutura) {

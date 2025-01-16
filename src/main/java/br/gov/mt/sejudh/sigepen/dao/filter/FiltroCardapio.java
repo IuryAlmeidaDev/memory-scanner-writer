@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
+import br.gov.mt.sejudh.sigepen.model.TipoDieta;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -18,6 +19,7 @@ public class FiltroCardapio extends FiltroConsulta {
 	private Contrato contrato;
 	private UnidadePrisional unidadePrisional;
 	private TipoRefeicao tipoRefeicao;
+	private TipoDieta tipoDieta;
 	private Boolean festivo;
 	private ObjetoSelectOne semana;
 	private boolean listarTodasUnidades;
@@ -27,34 +29,43 @@ public class FiltroCardapio extends FiltroConsulta {
 		getCriteria().createAlias("tipoRefeicao", "tipoRefeicao", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("contrato", "contrato", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("contrato.unidades", "unidade", JoinType.LEFT_OUTER_JOIN);
+		getCriteria().createAlias("tipoDieta", "tipoDieta", JoinType.LEFT_OUTER_JOIN);
 
 		Projection proj = Projections.distinct(Projections.projectionList()
 				.add(Projections.property("id").as("id"))
 				.add(Projections.property("semana").as("semana"))
 				.add(Projections.property("diaSemana").as("diaSemana"))
 				.add(Projections.property("tipoRefeicao.descricao").as("nomeRefeicao"))
-				.add(Projections.property("festivo").as("festivo")));
+				.add(Projections.property("tipoDieta.descricao").as("nomeDieta"))
+				.add(Projections.property("contrato.numContrato").as("numContrato"))
+				.add(Projections.property("unidade.nome").as("nomeUnidadePrisional"))
+				.add(Projections.property("festivo").as("festivo"))
+		);
 
 		getCriteria().setProjection(proj);
-		
+
 		if (this.getContrato() != null) {
 			getCriteria().add(Restrictions.eq("contrato.id", this.getContrato().getId()));
 		}
-		
+
 		if (this.getTipoRefeicao() != null) {
 			getCriteria().add(Restrictions.eq("tipoRefeicao.id", this.getTipoRefeicao().getId()));
 		}
-		
+
+		if (this.getTipoDieta() != null) {
+			getCriteria().add(Restrictions.eq("tipoDieta.id", this.getTipoDieta().getId()));
+		}
+
 		if (this.getFestivo() != null) {
 			getCriteria().add(Restrictions.eq("festivo", this.getFestivo()));
 		}
-		
+
 		if (this.getSemana() != null) {
 			getCriteria().add(Restrictions.eq("semana", this.getSemana().getId()));
 		}
 
 		if (this.isListarTodasUnidades()) {
-			if(this.getUnidadePrisional() != null) {
+			if (this.getUnidadePrisional() != null) {
 				getCriteria().add(Restrictions.eq("unidade.id", this.getUnidadePrisional().getId()));
 			}
 		} else {
@@ -116,5 +127,13 @@ public class FiltroCardapio extends FiltroConsulta {
 
 	public void setUnidadePrisional(UnidadePrisional unidadePrisional) {
 		this.unidadePrisional = unidadePrisional;
+	}
+
+	public TipoDieta getTipoDieta() {
+		return tipoDieta;
+	}
+
+	public void setTipoDieta(TipoDieta tipoDieta) {
+		this.tipoDieta = tipoDieta;
 	}
 }
