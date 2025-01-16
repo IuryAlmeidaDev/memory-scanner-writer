@@ -30,6 +30,9 @@ RUN find /usr/local/certs/  -name *.crt -exec keytool -import -trustcacerts \
     -file {} -alias {} \; && \
     keytool -list -keystore /usr/lib/jvm/java/jre/lib/security/cacerts --storepass changeit
 
+RUN wget http://comodo.tbs-certificats.com/SectigoRSADomainValidationSecureServerCA.crt  \
+	&& apk add tzdata \
+	&& keytool -import -trustcacerts -keystore /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts \-storepass changeit -noprompt -alias sesp4 -file SectigoRSADomainValidationSecureServerCA.crt
 
 COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
 
