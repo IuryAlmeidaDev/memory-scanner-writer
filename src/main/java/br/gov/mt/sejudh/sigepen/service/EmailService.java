@@ -63,8 +63,12 @@ public class EmailService {
 			placeholders.put("{{login}}", usuario.getLogin());
 			placeholders.put("{{senha}}", usuario.getLogin());
 			
-
-			String content = loadTemplate(TEMPLATE_PATH, placeholders);
+			String content = "";
+			try {				
+				content = loadTemplate(TEMPLATE_PATH, placeholders);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
 			sendEmail(usuario.getEmail(), subject, content);
 
 			System.out.println("E-mail enviado com sucesso!");
