@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.util;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Disposes;
@@ -220,13 +221,9 @@ public class LoggerUtil implements Serializable {
 		}
 	}
 	
-	public static String getIp() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-		String ip =  request.getHeader("X-FORWARDED-FOR");
-		if (ip == null) {
-		    ip = request.getRemoteAddr();
-		}
-        return ip;
+	public static String getIp() {	
+		return Optional.ofNullable(FacesUtil.getRequest().getHeader("X-Real-IP-Port"))
+                .filter(ipPort -> !ipPort.trim().isEmpty())
+                .orElseGet(() -> FacesUtil.getRequest().getRemoteAddr());
     }
 }

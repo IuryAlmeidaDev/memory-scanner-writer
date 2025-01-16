@@ -28,12 +28,17 @@ public class SigepenFilter extends UserFilter {
 		String url = req.getRequestURI();
 		String urlSelecionarUnidade = Sigepen.APPLICATION_SELECIONAR_UNIDADE_URL;
 		String urlAlterarSenha = Sigepen.APPLICATION_ALTERAR_SENHA_URL;
+		String urlResetSenha = Sigepen.APPLICATION_RESET_SENHA_URL;
 		
 		List<String> urlsLiberadas = new ArrayList<String>();
 		
 		urlsLiberadas.add(urlAlterarSenha);
 		
 		if (url.equals(Sigepen.APPLICATION_DOWNLOAD_URL)) {
+			return true;
+		}
+
+		if (url.equals(urlResetSenha)) {
 			return true;
 		}
 		

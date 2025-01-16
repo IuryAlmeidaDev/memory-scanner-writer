@@ -14,6 +14,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
+import br.gov.mt.sejudh.sigepen.model.Visitante;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
@@ -254,12 +255,15 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 	
 	public void abrirVisualizarVisita(EntradaSaidaDTO e) {
 		this.entrada = e;
-		this.entrada.setVisitante(visitanteService.buscarVisitanteDTO(e.getIdVisitante(), true));
+		this.entrada.setVisitante(e.getVisitante());
 		this.entrada.setAutorizacoes(visitanteService.buscarAutorizacoesEntradasDTO(e.getId()));
+		this.entrada.getVisitante().setImagemAtual(visitanteService.buscarImagemFrente(e.getVisitante().getId()));
 
-		Long entradaResponsavel = esService.responsavelDeuEntrada(this.entrada.getIdVisitante());
-		if(entradaResponsavel != null){
-			this.entrada.getVisitante().setResponsavel(visitanteService.buscarVisitanteDTO(entradaResponsavel, true));
+
+//		Visitante entradaResponsavel = esService.responsavelDeuEntrada(this.entrada.getVisitante().getId());
+		if(e.getResponsavel() != null){
+			this.entrada.getVisitante().setResponsavel(e.getResponsavel());
+			this.entrada.getVisitante().getResponsavel().setImagemAtual(visitanteService.buscarImagemFrente(e.getVisitante().getResponsavel().getId()));
 			
 			this.mostrarPanelVisitante = false;
 			this.mostrarPanelResponsavel = true;

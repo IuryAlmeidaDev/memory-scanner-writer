@@ -90,7 +90,8 @@ public class SecurityUtil implements Serializable {
 
 			case "controledeacesso":
 				resultado = this.possuiPermissao("ListarUsuario") || 
-							this.possuiPermissao("ListarPerfil")  || 
+							this.possuiPermissao("ListarPerfil")  ||
+							this.possuiPermissao("ListarUsuarioResetSenha")  || 
 							this.possuiPermissao("ListarPermissao");
 				break;
 							

@@ -536,7 +536,7 @@ public class EntradaSaidaDAO {
 		return null;
 	}
 
-	public Long responsavelDeuEntrada(Long id) {
+	public Visitante responsavelDeuEntrada(Long id) {
 		try {
 			String jpql = "SELECT ea " +
 					"FROM EntradaSaida ea " +
@@ -550,7 +550,7 @@ public class EntradaSaidaDAO {
 			query.setParameter("idVisitante", id);
 			query.setMaxResults(1);
 			EntradaSaida entradaSaida = query.getSingleResult();
-			return entradaSaida.getVisitante().getId();
+			return entradaSaida.getVisitante();
 		}catch (Exception e){
 			return null;
 		}
