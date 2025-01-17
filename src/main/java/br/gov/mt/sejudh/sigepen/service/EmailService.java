@@ -21,16 +21,15 @@ import br.gov.mt.sejudh.sigepen.model.Usuario;
 
 public class EmailService {
 
-	private static final String SMTP_HOST = "srv-smtp.seguranca.local";
+	private static final String SMTP_HOST = "srv-smtp-dev-hmg.seguranca.local";
 	private static final String SMTP_PORT = "587";
-	private static final String USERNAME = "sistemas@sesp.mt.gov.br";
-	private static final String PASSWORD = "O@bM9TUn";
+	private static final String USERNAME = "sistemas.homolog@sesp.mt.gov.br";
+	private static final String PASSWORD = "hzljkaunxezqltof";
 	private static final String TEMPLATE_PATH = "/WEB-INF/pages/_templates/EmailResetSenha.xhtml";
 
 	private static void sendEmail(String destinatario, String assunto, String body) throws MessagingException {
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.ssl.trust", SMTP_HOST);
 		props.put("mail.smtp.starttls.enable", "true");
 		props.put("mail.smtp.host", SMTP_HOST);
 		props.put("mail.smtp.port", SMTP_PORT);
