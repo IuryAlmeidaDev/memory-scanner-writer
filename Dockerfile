@@ -1,7 +1,7 @@
-FROM docker.elastic.co/observability/apm-agent-java:1.34.1 as apm-agent
+FROM docker.elastic.co/observability/apm-agent-java:1.34.1 AS apm-agent
 FROM jboss/wildfly:8.2.1.Final
 
-ENV BIO_LIB_PATH /opt/jboss/wildfly/modules/system/layers/base/com/neurotec/main/lib/linux_x86_64/
+ENV BIO_LIB_PATH=/opt/jboss/wildfly/modules/system/layers/base/com/neurotec/main/lib/linux_x86_64/
 ENV PATH=${PATH}:${BIO_LIB_PATH}
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/lib:/usr/lib64:${BIO_LIB_PATH}
 
@@ -23,7 +23,20 @@ COPY Resources/aplicativo /opt/jboss/wildfly/sigepen-arquivos/aplicativo
 COPY Resources/standalone.conf /opt/jboss/wildfly/bin/standalone.conf
 
 COPY --from=apm-agent /usr/agent/elastic-apm-agent.jar /opt/jboss/wildfly/
+
+
+
+COPY certs/*.crt /usr/local/certs/
+
+RUN curl -O /usr/local/certs/SectigoRSADomainValidationSecureServerCA.crt https://sectigo.tbs-certificats.com/SectigoRSADomainValidationSecureServerCA.crt
+
+RUN find /usr/local/certs/  -name *.crt -exec keytool -import -trustcacerts \
+    -keystore /usr/lib/jvm/java/jre/lib/security/cacerts -storepass changeit -noprompt \
+    -file {} -alias {} \; && \
+    keytool -list -keystore /usr/lib/jvm/java/jre/lib/security/cacerts --storepass changeit
+
 COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
+
 
 EXPOSE 9990
 
