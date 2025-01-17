@@ -30,10 +30,9 @@ public class EmailService {
 	private static void sendEmail(String destinatario, String assunto, String body) throws MessagingException {
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.ssl.trust", SMTP_HOST);
 		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.host", SMTP_HOST);
-		props.put("mail.smtp.port", SMTP_PORT);
+		props.put("mail.smtp.host", System.getProperty(SMTP_HOST));
+		props.put("mail.smtp.port", System.getProperty(SMTP_PORT));
 
 		//
 		Session session = Session.getInstance(props, new Authenticator() {
