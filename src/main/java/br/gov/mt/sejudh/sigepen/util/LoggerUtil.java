@@ -228,6 +228,17 @@ public class LoggerUtil implements Serializable {
 		}
 	}
 	
+	public static  String getHashImpressao() {
+		//set session em: FileDownloadHandlerBean.prepararArquivo
+		String hashImpressao = "HashNaoGerador";
+		FacesUtil facesUtil = new FacesUtil();
+		if(facesUtil != null) {
+			hashImpressao = (String) facesUtil.getObjetoSessao("hashImpressao");
+		}
+		
+		return hashImpressao;
+	}
+	
 	public static String getIp() {	
 		return Optional.ofNullable(FacesUtil.getRequest().getHeader("X-Real-IP-Port"))
                 .filter(ipPort -> !ipPort.trim().isEmpty())
