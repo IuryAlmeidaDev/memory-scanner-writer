@@ -11,6 +11,7 @@
       <Column name="USUARIO_ID" pattern="%X{loginUser}"/>
       <Column name="IP_ORIGEM" pattern="%X{ipOrigem}"/>  
       <Column name="THROWABLE" pattern="%ex{full}" />
+      <Column name="HASH_IMPRESSAO" pattern="%X{hashImpressao}" />
     </JDBC>
   </Appenders>
   <Loggers>
