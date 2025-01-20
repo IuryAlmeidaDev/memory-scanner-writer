@@ -61,7 +61,7 @@
 				<subreportParameter name="FILTRO">
 					<subreportParameterExpression><![CDATA[$P{FILTRO}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportExpression><![CDATA["cabecalhos\\Filtro.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA["cabecalhos/Filtro.jasper"]]></subreportExpression>
 			</subreport>
 			<textField>
 				<reportElement x="0" y="116" width="802" height="13" uuid="77ff7a55-2565-4240-b6cb-a336ae3b183b"/>

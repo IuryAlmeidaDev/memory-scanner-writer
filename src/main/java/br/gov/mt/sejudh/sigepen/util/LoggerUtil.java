@@ -8,6 +8,7 @@ import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
@@ -204,6 +205,12 @@ public class LoggerUtil implements Serializable {
 		
 		ThreadContext.put("loginUser", String.valueOf(SecurityUtil.getUsuario().getId()));
 		ThreadContext.put("ipOrigem", getIp());
+
+		if (acao.equals(Acao.IMPRIMIR)) {
+			ThreadContext.put("hashImpressao", getHashImpressao());
+
+		}
+
 		String mensagem = configuraMensagem(acao, severidade, objeto);
 		
 		switch(severidade) {
