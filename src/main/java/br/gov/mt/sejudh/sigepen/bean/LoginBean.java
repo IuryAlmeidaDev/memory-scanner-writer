@@ -290,7 +290,7 @@ public class LoginBean {
 	}
 
 	public void resetSenha() {
-
+		
 		Usuario usuario = this.usuarioService.buscarUsuariosPorCpfAndNascimento(this.usuarioResetSenhaDTO.getCpf(),
 				this.usuarioResetSenhaDTO.getNascimento());
 
@@ -310,9 +310,12 @@ public class LoginBean {
 
 	public void verificaNomeMae() {
 		int index = this.usuarioResetSenhaDTO.getIndexNomeMaeSelecionada();
+		
 		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
 				.getAttribute("usuarioResertSenhaDTO");
+		
 		String nomeMaeSelecionado = this.usuarioResetSenhaDTO.getNomeMaeList().get(index);
+		
 		if (nomeMaeSelecionado.equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae())) {
 			this.setListaMatricula(String.valueOf(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()));
 			return;
@@ -331,17 +334,18 @@ public class LoginBean {
 		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
 
 		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
+		SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
 		
 		this.usuarioResetSenhaDTO = null;
-
-		return;
 	}
 
 	public void verificaMatricula() throws Exception {
 
 		int index = this.usuarioResetSenhaDTO.getIndexMatriculaSelecionada();
+		
 		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
 				.getAttribute("usuarioResertSenhaDTO");
+		
 		Long MatriculaSelecionado = this.usuarioResetSenhaDTO.getMatriculaList().get(index);
 
 		if (MatriculaSelecionado == this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()) {
@@ -355,9 +359,12 @@ public class LoginBean {
 			this.usuarioService.salvar(usuario);
 			
 			SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
+			SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
 
 			faces.exibirMensagem(FacesMessage.SEVERITY_INFO, "Solicitação realizada com sucesso!",
 					"Usuário, aguarde instruções de acesso no e-mail cadastrado na base.");
+			
+			this.limparResetSenha();
 			
 			return ;
 
@@ -385,8 +392,11 @@ public class LoginBean {
 		}
 
 		Random random = new Random();
-		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula());
+		
+		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario());
+		
 		this.usuarioResetSenhaDTO.getMatriculaList().clear();
+		
 		while (list.size() < 2) {
 			int index = random.nextInt(servidorDTOs.size());
 			list.add(servidorDTOs.get(index).getMatricula());
@@ -414,13 +424,17 @@ public class LoginBean {
 		}
 
 		Random random = new Random();
-		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae());
+		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario().getServidor());
+		
 		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
+		
 		while (list.size() < 2) {
 			int index = random.nextInt(servidorDTOs.size());
 			list.add(servidorDTOs.get(index).getMae());
 		}
+		
 		list.add(this.usuarioResetSenhaDTO.getNomeMae());
+		
 		this.usuarioResetSenhaDTO.getNomeMaeList().addAll(list);
 		Collections.shuffle(this.usuarioResetSenhaDTO.getNomeMaeList());
 
