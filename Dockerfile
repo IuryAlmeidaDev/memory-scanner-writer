@@ -38,14 +38,10 @@ RUN curl -O /usr/local/certs/SectigoRSADomainValidationSecureServerCA.crt https:
 
 #RUN ls -lash /usr/lib/jvm/java/jre/lib/security/cacerts
 
-#RUN find /usr/local/certs/  -name *.crt -exec keytool -import -trustcacerts \
-#    -keystore /usr/lib/jvm/java/jre/lib/security/cacerts -storepass changeit -noprompt \
-#    -file {} -alias {} \; && \
-#    keytool -list -keystore /usr/lib/jvm/java/jre/lib/security/cacerts --storepass changeit
-
-    RUN find /usr/local/certs/  -name *.crt -exec keytool -import -trustcacerts \
-    -keystore /usr/lib/jvm/java/jre/lib/security/cacerts -storepass changeit -noprompt \
-    -file {} -alias {} \;
+RUN find /usr/local/certs/  -name *.crt -exec keytool -import -trustcacerts \
+    -keystore /etc/pki/java/cacerts -storepass changeit -noprompt \
+    -file {} -alias {} \; && \
+    keytool -list -keystore /etc/pki/java/cacerts --storepass changeit
 
 COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
 
