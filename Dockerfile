@@ -30,6 +30,11 @@ COPY certs/*.crt /usr/local/certs/
 
 RUN curl -O /usr/local/certs/SectigoRSADomainValidationSecureServerCA.crt https://sectigo.tbs-certificats.com/SectigoRSADomainValidationSecureServerCA.crt
 
+#RUN chmod 777 /usr/lib/jvm/java/jre/lib/security/cacerts
+
+RUN ls -lash /usr/local/certs/
+RUN ls -lash /usr/lib/jvm/java/jre/lib/security/cacerts
+
 RUN find /usr/local/certs/  -name *.crt -exec keytool -import -trustcacerts \
     -keystore /usr/lib/jvm/java/jre/lib/security/cacerts -storepass changeit -noprompt \
     -file {} -alias {} \; && \
