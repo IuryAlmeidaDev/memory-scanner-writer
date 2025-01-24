@@ -13,6 +13,8 @@ ENV ELASTIC_APM_ENVIRONMENT=DEV
 ENV JAVA_OPTS="-Xms1g -Xmx4g -Djava.net.preferIPv4Stack=true -javaagent:/opt/jboss/wildfly/elastic-apm-agent.jar"
 ENV AMBIENTE="desenvolvimento"
 
+USER root
+
 RUN rm -rf /opt/jboss/wildfly/bin/standalone.conf
 
 COPY Resources/neurotec /opt/jboss/wildfly/modules/system/layers/base/com/neurotec
@@ -32,8 +34,9 @@ RUN find /usr/local/certs/  -name *.crt -exec keytool -import -trustcacerts \
     -keystore /usr/lib/jvm/java/jre/lib/security/cacerts -storepass changeit -noprompt \
     -file {} -alias {} \;
 
-COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
+USER jboss
 
+COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
 
 EXPOSE 9990
 
