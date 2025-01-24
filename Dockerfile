@@ -24,24 +24,14 @@ COPY Resources/standalone.conf /opt/jboss/wildfly/bin/standalone.conf
 
 COPY --from=apm-agent /usr/agent/elastic-apm-agent.jar /opt/jboss/wildfly/
 
+COPY cert/*.crt /usr/local/certs/
 
-
-COPY certs/*.crt /usr/local/certs/
-
-RUN curl -O /usr/local/certs/SectigoRSADomainValidationSecureServerCA.crt https://sectigo.tbs-certificats.com/SectigoRSADomainValidationSecureServerCA.crt
-
-
-#RUN ls -lash /usr/local/certs/
-#RUN ls -lash /usr/lib/jvm/java/jre/lib/security/cacerts
-
-#RUN chmod 777 /usr/lib/jvm/java/jre/lib/security/cacerts
-
-#RUN ls -lash /usr/lib/jvm/java/jre/lib/security/cacerts
+RUN curl -O /usr/local/certs/SectigoRSADomainValidationSecureServerCA.crt https://sectigo.tbs-certificats.com/SectigoRSADomainValidationSecureServerCA.crt 
 
 RUN find /usr/local/certs/  -name *.crt -exec keytool -import -trustcacerts \
-    -keystore /etc/pki/java/cacerts -storepass changeit -noprompt \
+    -keystore /usr/lib/jvm/java/jre/lib/security/cacerts -storepass changeit -noprompt \
     -file {} -alias {} \; && \
-    keytool -list -keystore /etc/pki/java/cacerts --storepass changeit
+    keytool -list -keystore /usr/lib/jvm/java/jre/lib/security/cacerts --storepass changeit
 
 COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
 
