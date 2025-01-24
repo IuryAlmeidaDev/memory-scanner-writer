@@ -24,7 +24,7 @@ COPY Resources/standalone.conf /opt/jboss/wildfly/bin/standalone.conf
 
 COPY --from=apm-agent /usr/agent/elastic-apm-agent.jar /opt/jboss/wildfly/
 
-COPY cert/*.crt /usr/local/certs/
+COPY certs/*.crt /usr/local/certs/
 
 RUN curl -O /usr/local/certs/SectigoRSADomainValidationSecureServerCA.crt https://sectigo.tbs-certificats.com/SectigoRSADomainValidationSecureServerCA.crt 
 
