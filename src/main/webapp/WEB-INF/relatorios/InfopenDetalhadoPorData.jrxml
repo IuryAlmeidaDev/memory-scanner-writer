@@ -58,6 +58,8 @@
 	</parameter>
 	<parameter name="SCHEMA" class="java.lang.String"/>
 	<parameter name="UNIDADE_ID" class="java.lang.Long"/>
+    <parameter name="DATA_PESQUISA" class="java.lang.String" isForPrompting="false"/>
+
 	<queryString>
 		<![CDATA[select 1 from dual]]>
 	</queryString>
