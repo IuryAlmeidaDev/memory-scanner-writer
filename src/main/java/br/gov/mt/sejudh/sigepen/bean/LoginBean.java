@@ -71,6 +71,7 @@ public class LoginBean {
 	private UsuarioResetSenhaDTO usuarioResetSenhaDTO;
 	private boolean resetSenha;
 	private boolean unidadeErrada;
+	private boolean isRedirectResetSenha;
 
 	@Inject
 	private FacesUtil faces;
@@ -99,6 +100,9 @@ public class LoginBean {
 	@PostConstruct
 	public void init() {
 		UnidadePrisional uni = SecurityUtil.getUnidadeSelecionada();
+		if(SecurityUtils.getSubject().getSession().getAttribute("unidadeErrada") != null) {
+			this.unidadeErrada = (boolean) SecurityUtils.getSubject().getSession().getAttribute("unidadeErrada");
+		}
 
 		if (this.usuarioResetSenhaDTO == null) {
 			this.usuarioResetSenhaDTO = new UsuarioResetSenhaDTO();
@@ -145,6 +149,14 @@ public class LoginBean {
 		return resetSenha;
 	}
 
+	public void setUnidadesResetSenha(List<UnidadePrisional> unidadesResetSenha) {
+		this.unidadesResetSenha = unidadesResetSenha;
+	}
+
+	public boolean getIsRedirectResetSenha(){
+		return this.isRedirectResetSenha;
+	}
+
 	public void setResetSenha(boolean resetSenha) {
 		this.resetSenha = resetSenha;
 	}
@@ -154,6 +166,7 @@ public class LoginBean {
 	}
 
 	public void setUnidadeErrada(boolean unidadeErrada) {
+		SecurityUtils.getSubject().getSession().setAttribute("unidadeErrada", unidadeErrada);
 		this.unidadeErrada = unidadeErrada;
 	}
 
@@ -332,6 +345,7 @@ public class LoginBean {
 		
 		this.usuarioResetSenhaDTO.getMatriculaList().clear();
 		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
+		this.unidadeErrada = false;
 
 		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
 		SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
@@ -348,22 +362,24 @@ public class LoginBean {
 		
 		Long MatriculaSelecionado = this.usuarioResetSenhaDTO.getMatriculaList().get(index);
 
-		if (MatriculaSelecionado == this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()) {
+		if (MatriculaSelecionado.equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula())) {
 			
 			Usuario usuario = this.usuarioResetSenhaDTO.getUsuario();
 			usuario.setResetSenha(true);
 			usuario.setDataSolicitacaoResetSenha(new Date());
 			
 			SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
+
+			if(!this.unidadeErrada){
+				usuario.setUnidadePerfilSolicitadaResetSenha(null);
+			}
 			
 			this.usuarioService.salvar(usuario);
+			this.isRedirectResetSenha = true;
 			
 			SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
 			SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
 
-			faces.exibirMensagem(FacesMessage.SEVERITY_INFO, "Solicitação realizada com sucesso!",
-					"Usuário, aguarde instruções de acesso no e-mail cadastrado na base.");
-			
 			this.limparResetSenha();
 			
 			return ;
@@ -374,6 +390,10 @@ public class LoginBean {
 		
 		faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
 				"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
+	}
+
+	public void redirectLogin() throws IOException {
+		FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_LOGIN_URL);
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
@@ -449,10 +469,6 @@ public class LoginBean {
 		}
 
 		return string;
-	}
-
-	public void setUnidadesResetSenha(List<UnidadePrisional> unidadesResetSenha) {
-		this.unidadesResetSenha = unidadesResetSenha;
 	}
 
 }
