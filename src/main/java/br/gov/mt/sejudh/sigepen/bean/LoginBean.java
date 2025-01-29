@@ -363,26 +363,8 @@ public class LoginBean {
 		Long MatriculaSelecionado = this.usuarioResetSenhaDTO.getMatriculaList().get(index);
 
 		if (MatriculaSelecionado.equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula())) {
-			
-			Usuario usuario = this.usuarioResetSenhaDTO.getUsuario();
-			usuario.setResetSenha(true);
-			usuario.setDataSolicitacaoResetSenha(new Date());
-			
-			SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
 
-			if(!this.unidadeErrada){
-				usuario.setUnidadePerfilSolicitadaResetSenha(null);
-			}
-			
-			this.usuarioService.salvar(usuario);
-			this.isRedirectResetSenha = true;
-			
-			SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
-			SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
-
-			this.limparResetSenha();
-			
-			return ;
+			this.enviarResetSenha();
 
 		}
 
@@ -390,6 +372,28 @@ public class LoginBean {
 		
 		faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
 				"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
+	}
+
+	private void enviarResetSenha() throws Exception {
+		Usuario usuario = this.usuarioResetSenhaDTO.getUsuario();
+		usuario.setResetSenha(true);
+		usuario.setDataSolicitacaoResetSenha(new Date());
+
+		SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
+
+		if(!this.unidadeErrada){
+			usuario.setUnidadePerfilSolicitadaResetSenha(null);
+		}
+
+		this.usuarioService.salvar(usuario);
+		this.isRedirectResetSenha = true;
+
+		SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
+		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
+
+		this.limparResetSenha();
+
+		return ;
 	}
 
 	public void redirectLogin() throws IOException {
