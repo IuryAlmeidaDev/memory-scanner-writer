@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -251,6 +253,58 @@ public class InfopenBean extends MetodosDialogBean {
 	        
 	        
 	        /* Estatistico Sequenciado e SequenciadoPorData */
+	        
+	        //novo para testar
+	        if (this.filtro.getTipoRelatorio() == 3) {
+                List<UnidadePrisional> unidades = prisionalService.listarUnidadesNaoInativas();
+
+                if (unidades == null || unidades.isEmpty()) {
+                    return;
+                }
+
+                List<Arquivo> arquivosGerados = new ArrayList<>();
+                criarDiretorio();
+
+                for (UnidadePrisional unidade : unidades) {
+                    Arquivo arquivo = null;
+
+                    if (this.filtro.getDataInicial() != null && relatorioPorData != null) {
+                        parameters.put("UNIDADE_ID", unidade.getId());
+                        parameters.put("DATA_SAIDA", formatarData(this.filtro.getDataInicial()));
+
+                        arquivo = RelatorioUtil.gerarRelatorio(relatorioPorData, parameters);
+                    } else {
+                        parameters.put("UNIDADE_ID", unidade.getId());
+                        arquivo = RelatorioUtil.gerarRelatorio(relatorio, parameters);
+                    }
+
+                    if (arquivo != null) {
+                        String nomeArquivo = "relatorio_" + unidade.getId() + ".pdf";
+                        Path tempFile = Files.createTempFile("infopen_", ".pdf");
+                        arquivo.setCaminho(tempFile.toString());
+                        arquivo.setNome(nomeArquivo);
+
+                        try (FileOutputStream fos = new FileOutputStream(tempFile.toFile())) {
+                            fos.write(arquivo.getBytes());
+                            LoggerUtil.logInfo(Acao.IMPRIMIR, "Arquivo criado e conteúdo salvo: " + tempFile, log);
+                            
+                        } catch (IOException e) {
+                            LoggerUtil.logErro(Acao.IMPRIMIR, "Erro ao salvar conteúdo no arquivo: " + tempFile, e, log);
+                            throw new RuntimeException("Erro ao salvar conteúdo no arquivo: " + tempFile);
+                        }
+
+                        arquivosGerados.add(arquivo);
+                    }
+                }
+
+                File zipFile = zipArquivos(arquivosGerados);
+                fileDownload.prepararArquivo22(zipFile);
+                RequestContext.getCurrentInstance().execute("download()");
+            }
+	        
+	        
+	        
+	        //antigo
 	        if (this.filtro.getTipoRelatorio() == 3) {	            
 	            List<UnidadePrisional> unidades = prisionalService.listarUnidadesNaoInativas();
 	            
