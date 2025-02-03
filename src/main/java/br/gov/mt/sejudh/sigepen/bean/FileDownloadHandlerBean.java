@@ -1,5 +1,13 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -67,6 +75,28 @@ public class FileDownloadHandlerBean {
         arquivo.setBytes(Files.readAllBytes(file.toPath()));
         arquivo.setCaminho(file.getAbsolutePath());
         return arquivo;
+    }
+    
+    public void prepararArquivo22(File zipFile) throws IOException {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+
+        externalContext.setResponseContentType("application/zip");
+        externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + zipFile.getName() + "\"");
+
+        try (InputStream inputStream = new FileInputStream(zipFile);
+             OutputStream outputStream = externalContext.getResponseOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            Logger.getLogger(FileDownloadHandlerBean.class.getName()).log(Level.SEVERE, "Erro ao preparar o arquivo para download", e);
+            throw e;
+        } finally {
+            facesContext.responseComplete();
+        }
     }
 
 
