@@ -70,8 +70,8 @@ public enum Relatorio {
 	EstatisticoInfopenUnificado("Relatório Estatístico Infopen Unificado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
 	EstatisticoInfopenUnificadoPorData("Relatório Estatístico Infopen Unificado Por Data", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
 
-	EstatisticoInfopenSequenciado("Relatório Estatístico Infopen Sequenciado"),
-	EstatisticoInfopenSequenciadoPorData("Relatório Estatístico Infopen Sequenciado Por Data"),
+	EstatisticoInfopenSequenciado("Relatório Estatístico Infopen Sequenciado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
+	EstatisticoInfopenSequenciadoPorData("Relatório Estatístico Infopen Sequenciado Por Data", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
 
 
 	/* Relatórios Infopen Detalhado */
@@ -79,8 +79,8 @@ public enum Relatorio {
 	InfopenDetalhado("Relatório de Recuperandos Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	InfopenDetalhadoPorData("Relatório de Recuperandos Infopen Detalhado Por Data", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 
-	InfopenDetalhadoSequenciado("Relatório de Recuperandos Infopen Detalhado Sequenciado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
-	InfopenDetalhadoSequenciadoPorData("Relatório de Recuperandos Infopen Detalhado Sequenciado Por Data", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
+	InfopenDetalhadoSequenciado("Relatório de Recuperandos Infopen Detalhado Sequenciado", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM),
+	InfopenDetalhadoSequenciadoPorData("Relatório de Recuperandos Infopen Detalhado Sequenciado Por Data", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM),
 
 	InfopenDetalhadoUnificado("Relatório de Recuperandos Infopen Detalhado Unificado", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM),
 	InfopenDetalhadoUnificadoPorData("Relatório de Recuperandos Infopen Detalhado Unificado Por Data", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM),
