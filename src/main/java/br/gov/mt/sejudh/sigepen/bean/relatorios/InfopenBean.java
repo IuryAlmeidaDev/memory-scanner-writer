@@ -253,8 +253,7 @@ public class InfopenBean extends MetodosDialogBean {
 	        
 	        
 	        /* Estatistico Sequenciado e SequenciadoPorData */
-	        
-	        //novo para testar
+	        	        
 	        if (this.filtro.getTipoRelatorio() == 3) {
                 List<UnidadePrisional> unidades = prisionalService.listarUnidadesNaoInativas();
 
@@ -262,20 +261,23 @@ public class InfopenBean extends MetodosDialogBean {
                     return;
                 }
 
-                List<Arquivo> arquivosGerados = new ArrayList<>();
-                criarDiretorio();
+                List<Arquivo> arquivosGerados = new ArrayList<>();                
 
-                for (UnidadePrisional unidade : unidades) {
+                for (UnidadePrisional unidade : unidades) {                	
+                    
+                    Map<String, Object> parametrosUnidade = new HashMap<>(parameters);                                                                                                           
+                	
                     Arquivo arquivo = null;
 
                     if (this.filtro.getDataInicial() != null && relatorioPorData != null) {
-                        parameters.put("UNIDADE_ID", unidade.getId());
-                        parameters.put("DATA_SAIDA", formatarData(this.filtro.getDataInicial()));
-
-                        arquivo = RelatorioUtil.gerarRelatorio(relatorioPorData, parameters);
+                    	parametrosUnidade.put("UNIDADE_ID", unidade.getId());
+                    	parametrosUnidade.put("UNIDADE_NOME", unidade.getNome());
+                    	parametrosUnidade.put("DATA_SAIDA", formatarData(this.filtro.getDataInicial()));
+                        arquivo = RelatorioUtil.gerarRelatorio(relatorioPorData, parametrosUnidade);
                     } else {
-                        parameters.put("UNIDADE_ID", unidade.getId());
-                        arquivo = RelatorioUtil.gerarRelatorio(relatorio, parameters);
+                    	parametrosUnidade.put("UNIDADE_ID", unidade.getId());
+                    	parametrosUnidade.put("UNIDADE_NOME", unidade.getNome());
+                        arquivo = RelatorioUtil.gerarRelatorio(relatorio, parametrosUnidade);
                     }
 
                     if (arquivo != null) {
@@ -303,70 +305,14 @@ public class InfopenBean extends MetodosDialogBean {
             }
 	        
 	        
-	        
-	        //antigo
-	        if (this.filtro.getTipoRelatorio() == 3) {	            
-	            List<UnidadePrisional> unidades = prisionalService.listarUnidadesNaoInativas();
-	            
-	            if (unidades == null || unidades.isEmpty()) { 
-	                return; 
-	            }
-	            
-	            List<Arquivo> arquivosGerados = new ArrayList<>();	            
-	            criarDiretorio();
-	            
-	            for (UnidadePrisional unidade : unidades) {
-	            	
-	                Arquivo arquivo = null;	                
-	                if (this.filtro.getDataInicial() != null && relatorioPorData != null) {
-	                    parameters.put("UNIDADE_ID", unidade.getId());		        	    
-	                    parameters.put("DATA_SAIDA", formatarData(this.filtro.getDataInicial()));	
-	                    
-	                    arquivo = RelatorioUtil.gerarRelatorio(relatorioPorData, parameters);
-	                    
-	                } else {
-	                    parameters.put("UNIDADE_ID", unidade.getId());
-	                    arquivo = RelatorioUtil.gerarRelatorio(relatorio, parameters);
-	                }
-	                
-	                if (arquivo != null) {
-	                    String nomeArquivo = "relatorio_" + unidade.getId() + ".pdf";
-	                    String caminhoArquivo = "C:\\infopen\\" + nomeArquivo;
-	                    arquivo.setCaminho(caminhoArquivo);
-	                    arquivo.setNome(nomeArquivo);
-	                    
-	                    try (FileOutputStream fos = new FileOutputStream(new File(caminhoArquivo))) {
-	                        fos.write(arquivo.getBytes()); // Usando setBytes para obter o conteúdo
-	                        LoggerUtil.logInfo(Acao.IMPRIMIR, "Arquivo criado e conteúdo salvo: " + caminhoArquivo, log);
-	                        
-	                    } catch (IOException e) {
-	                        LoggerUtil.logErro(Acao.IMPRIMIR, "Erro ao salvar conteúdo no arquivo: " + caminhoArquivo, e, log);
-	                        throw new RuntimeException("Erro ao salvar conteúdo no arquivo: " + caminhoArquivo);
-	                    }
-	                    
-	                    arquivosGerados.add(arquivo);
-	                }
-	            }
-	            
-	            File zipFile = zipArquivos(arquivosGerados);
-	            fileDownload.prepararArquivo2(zipFile);
-	            RequestContext.getCurrentInstance().execute("download()");
-	        }
-
-
-	        
-	        
 	        /* -------------------------------------- Detalhado ---------------------------------------------------- */
 	        
 	        
      	     // Infopen DetalhadoPorData ou DetalhadoUnificadoPorData
-	        if (this.filtro.getTipoRelatorio() == 1 || this.filtro.getTipoRelatorio() == 5) {
-	        	
+	        if (this.filtro.getTipoRelatorio() == 1 || this.filtro.getTipoRelatorio() == 5) {	        	
 	        	parameters.put("UNIDADE_ID", SecurityUtil.getUnidadeSelecionada().getId());
-	        	
-	        	
-	        	if (this.filtro.getDataInicial() != null && relatorioPorData != null) {	        		
-	        		
+	        		        	
+	        	if (this.filtro.getDataInicial() != null && relatorioPorData != null) {	        			        		
 	        	    parameters.put("DATA_PESQUISA", formatarData(this.filtro.getDataInicial()));
 	        	    
 	        	    if (this.filtro.getDescricao() != null && !this.filtro.getDescricao().isEmpty()) {
@@ -386,6 +332,7 @@ public class InfopenBean extends MetodosDialogBean {
 		        	return;		        		
 	        	}
 				
+	        	
 				//Infopen Detalhado ou DetalhadoUnificado	        	
 	        	if (this.filtro.getDescricao() != null && !this.filtro.getDescricao().isEmpty()) {
                     parameters.put("FILTRO_DETALHADO", this.filtro.getDescricao());
@@ -414,8 +361,7 @@ public class InfopenBean extends MetodosDialogBean {
 	        		return;
 	        	}
 	        	
-	        	List<Arquivo> arquivosGerados = new ArrayList < > ();	        	
-	        	criarDiretorio();
+	        	List<Arquivo> arquivosGerados = new ArrayList < > ();	        		        	
 	        	
 	        	for(UnidadePrisional unidade: unidades) {	        		
 	        		List <InfopenDTO> lista = this.service.buscarInfopenDetalhadoPorFiltro(this.filtro);
@@ -423,51 +369,56 @@ public class InfopenBean extends MetodosDialogBean {
 	        		if(lista.isEmpty() || lista.get(0).getRecuperandos().isEmpty()) {
 	        			facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado para a unidade " + unidade.getNome() + "!");
 	        			return;
-	        		}
+	        		}	        		
+
+                    Map<String, Object> parametrosUnidade = new HashMap<>(parameters);                    
 	        		
 	        		Arquivo arquivo = null;
+	        		
 	        		if(this.filtro.getDataInicial() != null && this.filtro.getDataFinal() != null) {	        			
-		        	    parameters.put("DATA_PESQUISA", formatarData(this.filtro.getDataInicial()));
-	        			parameters.put("UNIDADE_ID", unidade.getId());
+	        			parametrosUnidade.put("DATA_PESQUISA", formatarData(this.filtro.getDataInicial()));
+	        			parametrosUnidade.put("UNIDADE_ID", unidade.getId());
+	        			parametrosUnidade.put("UNIDADE_NOME", unidade.getNome());
 	        			
 	        			if (this.filtro.getDescricao() != null && !this.filtro.getDescricao().isEmpty()) {
-	                        parameters.put("FILTRO_DETALHADO", this.filtro.getDescricao());
+	        				parameters.put("FILTRO_DETALHADO", this.filtro.getDescricao());
 	                    }
-	        			arquivo = RelatorioUtil.gerarRelatorio(lista, relatorioPorData, parameters);
+	        			arquivo = RelatorioUtil.gerarRelatorio(lista, relatorioPorData, parametrosUnidade);
 	        			
 	        		} else {
-	        			parameters.put("UNIDADE_ID", unidade.getId());
+	        			parametrosUnidade.put("UNIDADE_ID", unidade.getId());
+	        			parametrosUnidade.put("UNIDADE_NOME", unidade.getNome());
 	        			
 	        			if (this.filtro.getDescricao() != null && !this.filtro.getDescricao().isEmpty()) {
 	                        parameters.put("FILTRO_DETALHADO", this.filtro.getDescricao());
 	                    }
 	        			
-	        			arquivo = RelatorioUtil.gerarRelatorio(lista, relatorio, parameters);
+	        			arquivo = RelatorioUtil.gerarRelatorio(lista, relatorio, parametrosUnidade);
 	        		}
 	        		
-	        		if(arquivo != null) {	        			
-	        			String nomeArquivo = "relatorio_" + unidade.getId() + ".pdf";
-	        			String caminhoArquivo = "C:\\infopen\\" + nomeArquivo;
-	        			
-	        			arquivo.setCaminho(caminhoArquivo);
-	        			arquivo.setNome(nomeArquivo);
-	        			
-	        			try (FileOutputStream fos = new FileOutputStream(new File(caminhoArquivo))) {
-	        				fos.write(arquivo.getBytes());
-	        				LoggerUtil.logInfo(Acao.IMPRIMIR, "Arquivo criado e conteúdo salvo: " + caminhoArquivo, log);
-	        				
-	        			} catch (IOException e) {
-	        				LoggerUtil.logErro(Acao.IMPRIMIR, "Erro ao salvar conteúdo no arquivo: " + caminhoArquivo, e, log);
-	        				throw new RuntimeException("Erro ao salvar conteúdo no arquivo: " + caminhoArquivo);
-	        			}
-	        			arquivosGerados.add(arquivo);
-	        		}
-	        	}
-	        	
-	        	File zipFile = zipArquivos(arquivosGerados);
-	        	fileDownload.prepararArquivo2(zipFile);
-	        	RequestContext.getCurrentInstance().execute("download()");
-	        }
+	        		if (arquivo != null) {
+                        String nomeArquivo = "relatorio_" + unidade.getId() + ".pdf";
+                        Path tempFile = Files.createTempFile("infopen_", ".pdf");
+                        arquivo.setCaminho(tempFile.toString());
+                        arquivo.setNome(nomeArquivo);
+
+                        try (FileOutputStream fos = new FileOutputStream(tempFile.toFile())) {
+                            fos.write(arquivo.getBytes());
+                            LoggerUtil.logInfo(Acao.IMPRIMIR, "Arquivo criado e conteúdo salvo: " + tempFile, log);
+                            
+                        } catch (IOException e) {
+                            LoggerUtil.logErro(Acao.IMPRIMIR, "Erro ao salvar conteúdo no arquivo: " + tempFile, e, log);
+                            throw new RuntimeException("Erro ao salvar conteúdo no arquivo: " + tempFile);
+                        }
+
+                        arquivosGerados.add(arquivo);
+                    }
+                }
+
+                File zipFile = zipArquivos(arquivosGerados);
+                fileDownload.prepararArquivo22(zipFile);
+                RequestContext.getCurrentInstance().execute("download()");
+            }
 
 	  	        
 	    } catch (Exception e) {

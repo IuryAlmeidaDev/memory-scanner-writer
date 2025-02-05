@@ -42,7 +42,7 @@
   		     			 <f:selectItem itemLabel="Detalhado Sequenciado" itemValue="4" />
    					 </c:if>
    					  		 	                
-		            <p:ajax update="meuFormulario:panel_filtros" />
+		            <p:ajax update="meuFormulario:panel_filtros, meuFormulario:panelImprimir"/>
 		        </sgp:formSelectOneMenuRelatorios>
 		        							       
 						        
@@ -426,11 +426,18 @@
 					    styleFormLabelColumn="width:145px"/>
 					
 				</h:panelGroup>
-				<br/>
-				<br/>
-				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{infopenBean.imprimir()}" ajax="false" />
 				
-				<p:button outcome="pretty:Relatorio" value="Voltar" icon="ui-icon-arrowreturnthick-1-w"/>					
+				<br/><br/>
+				
+				<h:panelGroup id="panelImprimir">               
+				    <h:panelGrid columns="3">
+				        <p:commandButton style="display: #{not (infopenBean.filtro.tipoRelatorio eq 3 or infopenBean.filtro.tipoRelatorio eq 4) ? 'block' : 'none'};" value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{infopenBean.imprimir()}" />
+				        <p:commandButton style="display: #{infopenBean.filtro.tipoRelatorio eq 3 or infopenBean.filtro.tipoRelatorio eq 4 ? 'block' : 'none'};" value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{infopenBean.imprimir()}" ajax="false" />
+				        <p:button outcome="pretty:Relatorio" value="Voltar" icon="ui-icon-arrowreturnthick-1-w"/>
+				    </h:panelGrid>                                 
+				</h:panelGroup>
+
+								
 			</p:panel>
 		</h:form>
 		
