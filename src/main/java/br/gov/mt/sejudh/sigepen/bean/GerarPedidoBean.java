@@ -19,6 +19,7 @@ import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.ContratoService;
 import br.gov.mt.sejudh.sigepen.service.EstruturaService;
+import br.gov.mt.sejudh.sigepen.service.PedidoAlimentoService;
 import br.gov.mt.sejudh.sigepen.service.TipoRefeicaoService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
@@ -30,7 +31,6 @@ import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultTreeNode;
@@ -81,6 +81,9 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private UnidadePrisionalService unidadeService;
+
+	@Inject
+	private PedidoAlimentoService pedidoAlimentoService;
 
 	@Inject
 	private FacesUtil facesUtil;
@@ -305,7 +308,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			final List<DietaEspecialEstruturaDTO> refeicoesEspeciais = estruturaService.buscarDietasEspeciais(idEstrutura, data);
 
 			validarCardapio(itemCardapioPorEstrutura);
-
+			pedidoAlimentoService.salvarRegistroRelatorio(itemCardapioPorEstrutura, refeicoesEspeciais);
 			// Parâmetros do relatório
 			final Map<String, Object> parameters = criarParametrosRelatorio(data, filtroGerarPedido, refeicoesEspeciais);
 
