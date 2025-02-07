@@ -59,6 +59,10 @@ public class EstruturaService {
 		return dao.buscarEstruturasUnidade(idUnidade);
 	}
 
+	public List<Estrutura> buscarEstruturas(Long idUnidade) {
+		return dao.buscarEstruturas(idUnidade);
+	}
+
 	public void montarArvoreEstrutura(Estrutura estrutura, TreeNode no) {
 		List<Estrutura> filhos = dao.buscaEstruturaFilho(estrutura);
 		if (!filhos.isEmpty()) {

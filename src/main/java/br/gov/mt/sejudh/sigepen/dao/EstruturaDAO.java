@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -305,6 +306,29 @@ public class EstruturaDAO {
 				+ " and e.situacao <> 0" + " order siblings by e.id", EstruturaDto.class);
 		query.setParameter("idUnidade", idUnidade);
 		return query.getResultList();
+	}
+	public List<Estrutura> buscarEstruturas(Long idUnidade) {
+	    Query query = entityManager.createNativeQuery(
+	        "SELECT e.ID, " +
+					" sigepen_owner.buscaestruturanomecompleto(e.ID)" +
+					"FROM sigepen_owner.estrutura e " +
+					"START WITH e.ESTRUTURAPAI_ID IS NULL " +
+					"       AND e.unidadeprisional_id = :idUnidade " +
+					"CONNECT BY PRIOR e.id = e.estruturapai_id " +
+					"ORDER SIBLINGS BY e.id");
+		query.setParameter("idUnidade", idUnidade);
+
+		List<Object[]> resultados = query.getResultList();
+		List<Estrutura> estruturas = new ArrayList<>();
+
+		for (Object[] row : resultados) {
+			Estrutura estrutura = new Estrutura();
+			estrutura.setId(((Number) row[0]).longValue());
+			estrutura.setNome((String) row[1]);
+			estruturas.add(estrutura);
+		}
+
+		return estruturas;
 	}
 
 	public void buscarEstruturasCompleta(Estrutura ed) {
