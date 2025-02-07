@@ -95,6 +95,11 @@ public class Estrutura implements Serializable, PersistentAttributeInterceptable
         this.nome = Sigepen.formatarEspacos(nome);
     }
 
+    public Estrutura(int i, String s) {
+        this.id = i;
+        this.nome = Sigepen.formatarEspacos(s);
+    }
+
     public long getId() {
         return id;
     }

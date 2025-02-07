@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.dao.filter;
 
 import java.util.List;
 
+import br.gov.mt.sejudh.sigepen.model.*;
 import org.hibernate.NullPrecedence;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -16,16 +17,11 @@ import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
 import br.gov.mt.sejudh.sigepen.enumerator.Periculosidade;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
-import br.gov.mt.sejudh.sigepen.model.Alcunha;
-import br.gov.mt.sejudh.sigepen.model.OutroNome;
-import br.gov.mt.sejudh.sigepen.model.ProcessoRegimeCondicao;
-import br.gov.mt.sejudh.sigepen.model.Regime;
-import br.gov.mt.sejudh.sigepen.model.SituacaoCadastroRecuperando;
-import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.util.RestrictionsSigepen;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import br.gov.mt.sejudh.sigepen.util.criterion.ExpressaoFonetica.MatchModeFonetica;
 import br.gov.mt.sejudh.sigepen.util.criterion.Restricao;
+import org.hibernate.type.StandardBasicTypes;
 
 public class FiltroRecuperandoView extends FiltroConsulta {
 
@@ -59,6 +55,8 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 	private Boolean isDietaEspecial = false;
 
 	private List<Long> recuperandoIds;
+
+	private Estrutura estrutura;
 
 	@Override
 	public void configurarFiltros() {
@@ -105,9 +103,24 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 			getCriteria().add(Restrictions.in("pessoaId", this.getPessoasIds()));
 		}
 
-		if (this.getUnidade() != null && !this.getListarTodasUnidades()) {
+		if (this.getUnidade() != null && !this.getListarTodasUnidades() && this.getEstrutura() == null) {
 			getCriteria().add(Restrictions.eq("unidadeId", this.getUnidade().getId()));
 		}
+
+
+		if (this.getEstrutura() != null) {
+			DetachedCriteria critEstrutura = DetachedCriteria.forClass(Estrutura.class, "e")
+					.add(Restrictions.sqlRestriction(
+							"ID IN (SELECT ID FROM sigepen_owner.ESTRUTURA START WITH ID = ? CONNECT BY PRIOR ID = ESTRUTURAPAI_ID)",
+							this.getEstrutura().getId(),
+							StandardBasicTypes.LONG
+					))
+					.setProjection(Projections.property("e.id"));
+
+			getCriteria().add(Subqueries.propertyIn("estruturaId", critEstrutura));
+		}
+
+
 
 		if (this.getAlcunha() != null && !this.getAlcunha().equalsIgnoreCase("")) {
 			DetachedCriteria critAlcunha = DetachedCriteria.forClass(Alcunha.class, "a")
@@ -369,5 +382,13 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 
 	public void setIsDietaEspecial(Boolean isDietaEspecial) {
 		this.isDietaEspecial = isDietaEspecial;
+	}
+
+	public Estrutura getEstrutura() {
+		return estrutura;
+	}
+
+	public void setEstrutura(Estrutura estrutura) {
+		this.estrutura = estrutura;
 	}
 }
