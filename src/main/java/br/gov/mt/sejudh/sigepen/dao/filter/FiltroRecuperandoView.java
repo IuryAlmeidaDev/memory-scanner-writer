@@ -114,7 +114,7 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 							"ID IN (SELECT ID, NOME, SITUACAO " +
 									"FROM SIGEPEN_OWNER.ESTRUTURA e" +
 									"WHERE e.SITUACAO = 1" +
-									"START WITH e.ID = 2055 " +
+									"START WITH e.ID = ? " +
 									"CONNECT BY PRIOR e.ID = e.ESTRUTURAPAI_ID;)",
 							this.getEstrutura().getId(),
 							StandardBasicTypes.LONG
