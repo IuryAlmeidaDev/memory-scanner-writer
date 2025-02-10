@@ -238,6 +238,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			} else {
 				super.carregarFiltroPaginacao(FiltroRecuperandoView.class, this);
 			}
+			if(getFiltro().getUnidade() != null && estruturas.isEmpty()){
+				onUnidadePrisionalChange();
+			}
 		}
 	}
 
@@ -2149,7 +2152,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		if (this.filtro.getUnidade() != null) {
 			this.estruturas = this.estruturaService.buscarEstruturas(this.filtro.getUnidade().getId());
 			estruturas.remove(0);
-			System.out.println(estruturas);
+
 		}else {
 			estruturas = new ArrayList<>();
 		}
@@ -2162,8 +2165,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	private Estrutura estrutura;
 
 	public List<Estrutura> getEstruturas() {
-		System.out.println(estruturas);
-//		return Arrays.asList(new Estrutura(1, "Cela Teste 1"), new Estrutura(2, "Cela Teste 2"));
+
 		return estruturas;
 	}
 
