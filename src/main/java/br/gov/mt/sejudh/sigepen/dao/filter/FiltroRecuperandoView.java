@@ -111,11 +111,11 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 		if (this.getEstrutura() != null) {
 			DetachedCriteria critEstrutura = DetachedCriteria.forClass(Estrutura.class, "e")
 					.add(Restrictions.sqlRestriction(
-							"ID IN (SELECT ID " +
-									"FROM SIGEPEN_OWNER.ESTRUTURA e" +
-									"WHERE e.SITUACAO = 1" +
-									"START WITH e.ID = ? " +
-									"CONNECT BY PRIOR e.ID = e.ESTRUTURAPAI_ID)",
+							" ID IN (SELECT ID " +
+									" FROM SIGEPEN_OWNER.ESTRUTURA e " +
+									" WHERE e.SITUACAO = 1 " +
+									" START WITH e.ID = ? " +
+									" CONNECT BY PRIOR e.ID = e.ESTRUTURAPAI_ID) ",
 							this.getEstrutura().getId(),
 							StandardBasicTypes.LONG
 					))
