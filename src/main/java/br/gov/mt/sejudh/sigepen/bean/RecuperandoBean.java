@@ -238,7 +238,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			} else {
 				super.carregarFiltroPaginacao(FiltroRecuperandoView.class, this);
 			}
-			if(getFiltro().getUnidade() != null && estruturas.isEmpty()){
+			if(filtroDash != null && estruturas.isEmpty()){
 				onUnidadePrisionalChange();
 			}
 		}
