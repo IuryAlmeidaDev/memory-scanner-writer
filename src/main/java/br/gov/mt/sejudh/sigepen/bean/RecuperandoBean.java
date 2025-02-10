@@ -235,19 +235,20 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 			if (filtroDash != null) {
 				setFiltro(filtroDash);
+				onUnidadePrisionalChange();
+				//this.estruturas = this.estruturaService.buscarEstruturas(SecurityUtil.getUnidadeSelecionada().getId());
+
 			} else {
 				super.carregarFiltroPaginacao(FiltroRecuperandoView.class, this);
 			}
-			if(getFiltro().getUnidade() != null && estruturas.isEmpty()){
-				onUnidadePrisionalChange();
-			}
+			
 		}
 	}
 
 	@URLAction(onPostback = false)
 	public String init() {
 		this.listarEtnias();
-		estruturas = new ArrayList<>();
+		
 		try {
 			switch (this.getAcaoDeTela()) {
 			case CADASTRAR:
@@ -2153,15 +2154,13 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			this.estruturas = this.estruturaService.buscarEstruturas(this.filtro.getUnidade().getId());
 			estruturas.remove(0);
 
-		}else {
-			estruturas = new ArrayList<>();
 		}
 
 	}
 
 	@Inject
 	private EstruturaService estruturaService;
-	private List<Estrutura> estruturas;
+	private List<Estrutura> estruturas = new ArrayList<>();
 	private Estrutura estrutura;
 
 	public List<Estrutura> getEstruturas() {
