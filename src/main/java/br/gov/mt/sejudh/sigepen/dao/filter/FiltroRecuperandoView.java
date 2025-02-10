@@ -116,7 +116,8 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 									"FROM SIGEPEN_OWNER.ESTRUTURA e" +
 									"WHERE e.SITUACAO = 1" +
 									"START WITH e.ID = ? " +
-									"CONNECT BY PRIOR e.ID = e.ESTRUTURAPAI_ID;)",
+
+									"CONNECT BY PRIOR e.ID = e.ESTRUTURAPAI_ID)",
 
 							this.getEstrutura().getId(),
 							StandardBasicTypes.LONG
