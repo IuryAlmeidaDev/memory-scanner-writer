@@ -32,8 +32,20 @@ public class PedidoAlimento extends BaseModel<Long> {
     @Column(name = "DATA_EMISSAO", nullable = false)
     private Date dataEmissao;
 
-    @Column(name = "USUARIO", nullable = false, length = 100)
-    private String usuario;
+    @Column(name = "DATA_PEDIDO", nullable = false)
+    private String dataPedido;
+
+    @Column(name = "ID_USUARIO", nullable = false)
+    private Long idUsuario;
+
+    @Column(name = "ID_UNIDADE_PRISIONAL", nullable = false)
+    private Long idUnidadePrisional;
+
+    @Column(name = "ID_CONTRATO", nullable = false)
+    private Long idContrato;
+
+    @Column(name = "ID_TIPO_REFEICAO", nullable = false)
+    private Long idTipoRefeicao;
 
     @Lob
     @Column(name = "JSON_CONTEUDO", nullable = false)
@@ -43,8 +55,21 @@ public class PedidoAlimento extends BaseModel<Long> {
     @Column(name = "STATUS", nullable = false)
     private Status status;
 
-    public PedidoAlimento() {
+    private PedidoAlimento(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato, Long idTipoRefeicao, String jsonConteudo) {
+        this.dataEmissao = new Date();
+        this.dataPedido = dataPedido;
+        this.idUsuario = idUsuario;
+        this.idUnidadePrisional = idUnidadePrisional;
+        this.idContrato = idContrato;
+        this.idTipoRefeicao = idTipoRefeicao;
+        this.jsonConteudo = jsonConteudo;
         this.status = Status.ATIVO;
+    }
+
+    public PedidoAlimento() {}
+
+    public static PedidoAlimento create(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato, Long idTipoRefeicao, String jsonConteudo) {
+        return new PedidoAlimento(dataPedido, idUsuario, idUnidadePrisional, idContrato, idTipoRefeicao, jsonConteudo);
     }
 
     @Override
@@ -60,32 +85,40 @@ public class PedidoAlimento extends BaseModel<Long> {
         return dataEmissao;
     }
 
-    public void setDataEmissao(final Date dataEmissao) {
-        this.dataEmissao = dataEmissao;
+    public String getDataPedido() {
+        return dataPedido;
     }
 
-    public String getUsuario() {
-        return usuario;
+    public Long getUsuario() {
+        return idUsuario;
     }
 
-    public void setUsuario(final String usuario) {
-        this.usuario = Sigepen.formatarEspacos(usuario);
+    public Long getUnidadePrisional() {
+        return idUnidadePrisional;
+    }
+
+    public Long getIdUsuario() {
+        return idUsuario;
+    }
+
+    public Long getIdUnidadePrisional() {
+        return idUnidadePrisional;
+    }
+
+    public Long getIdContrato() {
+        return idContrato;
+    }
+
+    public Long getIdTipoRefeicao() {
+        return idTipoRefeicao;
     }
 
     public String getJsonConteudo() {
         return jsonConteudo;
     }
 
-    public void setJsonConteudo(final String jsonConteudo) {
-        this.jsonConteudo = jsonConteudo;
-    }
-
     public Status getStatus() {
         return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     @Override
@@ -110,13 +143,16 @@ public class PedidoAlimento extends BaseModel<Long> {
         } else return id.equals(other.id);
     }
 
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
                 .append("id", id)
                 .append("dataEmissao", dataEmissao)
-                .append("usuario", usuario)
+                .append("dataPedido", dataPedido)
+                .append("idUsuario", idUsuario)
+                .append("idUnidadePrisional", idUnidadePrisional)
+                .append("idContrato", idContrato)
+                .append("idTipoRefeicao", idTipoRefeicao)
                 .append("jsonConteudo", jsonConteudo)
                 .append("status", status)
                 .toString();

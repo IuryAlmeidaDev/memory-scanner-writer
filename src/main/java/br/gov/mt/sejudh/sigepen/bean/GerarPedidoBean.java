@@ -7,6 +7,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.model.Arquivo;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.DetalheItemEstruturaCardapioDTO;
@@ -26,6 +27,7 @@ import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import com.google.gson.Gson;
 import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
@@ -308,9 +310,22 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			final List<DietaEspecialEstruturaDTO> refeicoesEspeciais = estruturaService.buscarDietasEspeciais(idEstrutura, data);
 
 			validarCardapio(itemCardapioPorEstrutura);
-			pedidoAlimentoService.salvarRegistroRelatorio(itemCardapioPorEstrutura, refeicoesEspeciais);
+
+			final Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroGerarPedido.getDataInicio());
+
+			String jsonDadosRelatorio = criarJsonRelatorio(itemCardapioPorEstrutura, refeicoesEspeciais);
+			PedidoAlimento pedidoAlimento = PedidoAlimento.create(
+					data,
+					SecurityUtil.getUsuario().getId(),
+					idEstrutura, contrato.getId(),
+					filtroGerarPedido.getTipoRefeicao().getId(),
+					jsonDadosRelatorio
+			);
+
+			pedidoAlimentoService.salvarRegistroRelatorio(pedidoAlimento);
+
 			// Parâmetros do relatório
-			final Map<String, Object> parameters = criarParametrosRelatorio(data, filtroGerarPedido, refeicoesEspeciais);
+			final Map<String, Object> parameters = criarParametrosRelatorio(data, filtroGerarPedido, refeicoesEspeciais, contrato);
 
 			// Geração do relatório
 			gerarRelatorioUnificado(itemCardapioPorEstrutura, parameters);
@@ -320,17 +335,24 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
+	private String criarJsonRelatorio(List<DetalheItemEstruturaCardapioDTO> itemCardapioPorEstrutura, List<DietaEspecialEstruturaDTO> refeicoesEspeciais) {
+		final Map<String, Object> dadosRelatorio = new HashMap<>();
+		dadosRelatorio.put("itensCardapio", itemCardapioPorEstrutura);
+		dadosRelatorio.put("refeicoesEspeciais", refeicoesEspeciais);
+		final Gson gson = new Gson();
+		return gson.toJson(dadosRelatorio);
+	}
+
 	private List<PedidoEstruturaDTO> getEstruturasDeNivel2(List<PedidoEstruturaDTO> estruturaPedido) {
 		return estruturaPedido.stream()
 				.filter(estrutura -> estrutura.getNivel() == 2)
 				.collect(Collectors.toList());
 	}
 
-	private <T> Map<String, Object> criarParametrosRelatorio(String data, FiltroGerarPedido filtroGerarPedido, List<T> refeicoesEspeciais) {
+	private <T> Map<String, Object> criarParametrosRelatorio(String data, FiltroGerarPedido filtroGerarPedido, List<T> refeicoesEspeciais, Contrato contrato) {
 		final Map<String, Object> parameters = new HashMap<>();
-		parameters.put("DATA", data);
 
-		final Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroGerarPedido.getDataInicio());
+		parameters.put("DATA", data);
 		parameters.put("MENSAGEM", getMensagemCabecalhoQuantitativo(filtroGerarPedido, data, contrato));
 		parameters.put("DIETA_ESPECIAL_POR_ESTRUTURA", refeicoesEspeciais);
 
