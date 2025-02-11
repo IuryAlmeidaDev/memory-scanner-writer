@@ -790,6 +790,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 			}
 		}
 		entrada.setSituacao(SituacaoVisita.EM_ANDAMENTO);
+		addVisitanteResponsavel(entrada);
 		this.entrada = service.salvar(entrada);
 		LoggerUtil.logInfo(Acao.INICIAR, this.entrada, log);
 		facesUtil.exibirMensagemInfo(
@@ -803,6 +804,13 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		}
 
 		return;
+	}
+
+	private void addVisitanteResponsavel(EntradaSaida entrada) {
+			Visitante entradaResponsavel = service.responsavelDeuEntrada(this.credenciamentos.get(0).getVisitante().getId());
+			if (entradaResponsavel != null) {
+				entrada.setVisitanteResponsavel(entradaResponsavel);
+			}
 	}
 
 	public void finalizarVisita() {
@@ -1104,7 +1112,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 //			throw new ValidacaoException("É necessário selecionar um Visitante responsável!");
 //		}
 
-		Long entradaResponsavel = service.responsavelDeuEntrada(this.credenciamentos.get(0).getVisitante().getId());
+		Long entradaResponsavel = service.responsavelDeuEntrada(this.credenciamentos.get(0).getVisitante().getId()).getId();
 		if(entradaResponsavel == null){
 			throw new ValidacaoException("É necessário selecionar um Visitante responsável!");
 		}

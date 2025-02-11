@@ -1,12 +1,14 @@
 package br.gov.mt.sejudh.sigepen.util;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
@@ -203,6 +205,12 @@ public class LoggerUtil implements Serializable {
 		
 		ThreadContext.put("loginUser", String.valueOf(SecurityUtil.getUsuario().getId()));
 		ThreadContext.put("ipOrigem", getIp());
+
+		if (acao.equals(Acao.IMPRIMIR)) {
+			ThreadContext.put("hashImpressao", getHashImpressao());
+
+		}
+
 		String mensagem = configuraMensagem(acao, severidade, objeto);
 		
 		switch(severidade) {
@@ -220,13 +228,20 @@ public class LoggerUtil implements Serializable {
 		}
 	}
 	
-	public static String getIp() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-		String ip =  request.getHeader("X-FORWARDED-FOR");
-		if (ip == null) {
-		    ip = request.getRemoteAddr();
+	public static  String getHashImpressao() {
+		//set session em: FileDownloadHandlerBean.prepararArquivo
+		String hashImpressao = "HashNaoGerador";
+		FacesUtil facesUtil = new FacesUtil();
+		if(facesUtil != null) {
+			hashImpressao = (String) facesUtil.getObjetoSessao("hashImpressao");
 		}
-        return ip;
+		
+		return hashImpressao;
+	}
+	
+	public static String getIp() {	
+		return Optional.ofNullable(FacesUtil.getRequest().getHeader("X-Real-IP-Port"))
+                .filter(ipPort -> !ipPort.trim().isEmpty())
+                .orElseGet(() -> FacesUtil.getRequest().getRemoteAddr());
     }
 }

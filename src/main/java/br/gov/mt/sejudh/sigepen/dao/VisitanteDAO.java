@@ -492,6 +492,19 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
         }
         
         for(VisitanteCertidao vd : remCer) {
+        	 String checkChild = "SELECT COUNT(*) FROM " + Sigepen.SEJUDH_SCHEMA + ".SGP_CREDENCIAL_CERTIDAO WHERE ID_VISITANTE_CERTIDAO = :id";
+        	    Query checkQuery = em.createNativeQuery(checkChild);
+        	    checkQuery.setParameter("id", vd.getId());
+        	    
+        	    BigDecimal count = (BigDecimal) checkQuery.getSingleResult();
+        	    if (count.intValue() > 0) {
+        	        String deleteChild = "DELETE FROM " + Sigepen.SEJUDH_SCHEMA + ".SGP_CREDENCIAL_CERTIDAO WHERE ID_VISITANTE_CERTIDAO = :id";
+        	        Query queryChild = em.createNativeQuery(deleteChild);
+        	        queryChild.setParameter("id", vd.getId());
+        	        queryChild.executeUpdate();
+        	    }
+        	
+        	
 	        String delete = "DELETE FROM " + Sigepen.SEJUDH_SCHEMA + ".SGP_VISITANTE_CERTIDAO WHERE ID_VISITANTE_CERTIDAO = " + vd.getId();
 
 	        Query query = em.createNativeQuery(delete);

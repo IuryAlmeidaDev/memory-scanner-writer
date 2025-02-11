@@ -20,37 +20,82 @@
 		<h:form id="meuFormulario">
 			<p:panel>
 
-		 		<sgp:formSelectOneMenuRelatorios id="tipo_relatorio" value="#{infopenBean.filtro.tipoRelatorio}" labelValue="Tipo do relatório" styleFormLabelColumn="width:145px">
+		 		<sgp:formSelectOneMenuRelatorios id="tipo_relatorio" value="#{infopenBean.filtro.tipoRelatorio}" labelValue="Tipo do relatório" styleFormLabelColumn="width:145px">		            
 		            <f:selectItem itemLabel="Sintético" itemValue="0" />	 			
 		            <f:selectItem itemLabel="Detalhado" itemValue="1" />
+	                
 		            <p:ajax update="meuFormulario:panel_filtros" />
 		        </sgp:formSelectOneMenuRelatorios>
 		        
-		        <!-- Primeiro SelectOneMenu -->
 	
+				<!-- Sintetico 
 		            <sgp:formSelectOneMenuRelatorios 
-		            	id="tipo_relatorioss" value="#{infopenBean.tipoRelatorio}"
-						labelValue="Por Data" 
+		            	id="tipo_relatorioss" value="#{infopenBean.tipoRelatorio}"		            	
+						labelValue="Por Data Sintético" 
 						display="text" styleFormLabelColumn="width:145px">						
 			                <f:selectItem itemLabel="NAO" itemValue="" />			                
 			                <f:selectItem itemLabel="SIM" itemValue="data" />
 			                <p:ajax update="meuFormulario:painelData" />			                
 		            </sgp:formSelectOneMenuRelatorios>
-		       
-		
-		        <!-- Segundo Campo (p:calendar) que só aparece se "data" for selecionado -->
+		            
+		             <sgp:formSelectOneMenuRelatorios 
+		            	id="tipo_detalhado" value="#{infopenBean.tipoRelatorio}"		            		            	
+						labelValue="Por Data Detalhado" 
+						display="text" styleFormLabelColumn="width:145px">						
+			                <f:selectItem itemLabel="NAO" itemValue="" />			                
+			                <f:selectItem itemLabel="SIM" itemValue="detalhado" />			                
+			                <p:ajax update="meuFormulario:painelData meuFormulario:painelData2 meuFormulario:painelData3" />
+			                			                
+		            </sgp:formSelectOneMenuRelatorios>
+		            
+		        
 		        <p:outputPanel id="painelData" deferred="true">
 		            <sgp:formCalendar 
 		            	id="data_inicial" value="#{infopenBean.filtro.dataInicial}" 
 						rendered="#{infopenBean.tipoRelatorio eq 'data'}"
+
 						labelValue="Data Inicial" pattern="dd/MM/yyyy" 
 						styleFormLabelColumn="width:145px">						
 		                	<p:ajax event="dateSelect" />		                
 		            </sgp:formCalendar>
 		         </p:outputPanel>
-		       
+		       -->
 		        
 				<h:panelGroup id="panel_filtros" >
+				
+				
+				   <p:outputPanel id="panelFiltros">
+				      <sgp:formSelectOneMenuRelatorios id="tipoRelatorioSintetico" value="#{infopenBean.tipoRelatorio}" labelValue="Por Data Sintético" rendered="#{infopenBean.filtro.tipoRelatorio eq '0'}" styleFormLabelColumn="width:145px">
+				        <f:selectItem itemLabel="NAO" itemValue="" />
+				        <f:selectItem itemLabel="SIM" itemValue="data" />
+				        <p:ajax update="meuFormulario:painelData" />
+				      </sgp:formSelectOneMenuRelatorios>
+				      
+				      <sgp:formSelectOneMenuRelatorios id="tipoRelatorioDetalhado" value="#{infopenBean.tipoRelatorio}" labelValue="Por Data Detalhado" rendered="#{infopenBean.filtro.tipoRelatorio eq '1'}" styleFormLabelColumn="width:145px">
+				        <f:selectItem itemLabel="NAO" itemValue="" />
+				        <f:selectItem itemLabel="SIM" itemValue="detalhado" />
+				        <p:ajax update="meuFormulario:painelData meuFormulario:painelData2 meuFormulario:painelData3" />
+				      </sgp:formSelectOneMenuRelatorios>
+				    </p:outputPanel>
+				    
+				    <p:outputPanel id="painelData" deferred="true">
+				      <sgp:formCalendar id="dataInicial" value="#{infopenBean.filtro.dataInicial}" rendered="#{infopenBean.tipoRelatorio eq 'data'}" labelValue="Data Inicial" pattern="dd/MM/yyyy" styleFormLabelColumn="width:145px">
+				        <p:ajax event="dateSelect" />
+				      </sgp:formCalendar>
+				    </p:outputPanel>
+				    
+				    <p:outputPanel id="painelData2" deferred="true">
+				      <sgp:formCalendar id="dataInicial2" value="#{infopenBean.filtro.dataInicial}" rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}" labelValue="Data Inicial" pattern="dd/MM/yyyy" styleFormLabelColumn="width:145px">
+				        <p:ajax event="dateSelect" />
+				      </sgp:formCalendar>
+				    </p:outputPanel>
+				    
+				    <p:outputPanel id="painelData3" deferred="true">
+				      <sgp:formCalendar id="dataFinal" value="#{infopenBean.filtro.dataFinal}" rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}" labelValue="Data Final" pattern="dd/MM/yyyy" styleFormLabelColumn="width:145px">
+				        <p:ajax event="dateSelect" />
+				      </sgp:formCalendar>
+				    </p:outputPanel>
+				
 					<sgp:formSelectOneMenuRelatorios
 						labelValue="Nacionalidade"
 						value="#{infopenBean.filtro.nacionalidade}"
@@ -211,6 +256,52 @@
 					        display="text"
 					        rendered="#{infopenBean.filtro.tipoRelatorio eq 1}"
 					        styleFormLabelColumn="width:145px"/>
+					        					
+                       
+		            
+		            <!--   
+		            
+		            <sgp:formCalendar 
+		            	id="data_iniciall" value="#{infopenBean.filtro.dataInicial}" 
+						rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}"
+						labelValue="Data Inicial" pattern="dd/MM/yyyy" 
+						styleFormLabelColumn="width:145px">						
+		                	<p:ajax event="dateSelect" />		                
+		            </sgp:formCalendar>
+		            
+		            <sgp:formCalendar 
+		            	id="data_final" value="#{infopenBean.filtro.dataFinal}" 
+						rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}"
+						labelValue="Data Final" pattern="dd/MM/yyyy" 
+						styleFormLabelColumn="width:145px">						
+		                	<p:ajax event="dateSelect" />		                
+		            </sgp:formCalendar>
+		           
+		              
+		          <p:outputPanel id="painelData2" deferred="true">
+		            <sgp:formCalendar 
+		            	id="data_iniciall" value="#{infopenBean.filtro.dataInicial}" 
+						rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}"
+
+						labelValue="Data Inicial" pattern="dd/MM/yyyy" 
+						styleFormLabelColumn="width:145px">						
+		                	<p:ajax event="dateSelect" />		                
+		            </sgp:formCalendar>
+		         </p:outputPanel>
+		            
+		          <p:outputPanel id="painelData3" deferred="true">
+		            <sgp:formCalendar 
+		            	id="data_final" value="#{infopenBean.filtro.dataFinal}"  
+						rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}"
+
+						labelValue="Data Final" pattern="dd/MM/yyyy" 
+						styleFormLabelColumn="width:145px">						
+		                	<p:ajax event="dateSelect" />		                
+		            </sgp:formCalendar>
+		         </p:outputPanel>
+		           -->
+		            
+		                   
 					        
 				</h:panelGroup>
 				<br/>

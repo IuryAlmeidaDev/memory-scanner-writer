@@ -46,16 +46,34 @@
 							<sgp:formInputText id="alcunha" labelValue="Alcunha"  size="40" value="#{recuperandoBean.filtro.alcunha}" />
 							<sgp:formInputText id="mae" labelValue="Nome da Mãe" size="40" value="#{recuperandoBean.filtro.nomeMae}"/>
 							<sgp:formInputText id="outrasMaes" labelValue="Outra mãe" size="40" value="#{recuperandoBean.filtro.outraMae}"/>
-							<sgp:formSelectOneMenu 
-								id="unidadePrisional" labelValue="Unidade Prisional"
-								value="#{recuperandoBean.filtro.unidade}"
-								itemsValue="#{recuperandoBean.unidadesPrisionais}" 
-								itemValue="#{item}"
-								itemLabel="#{item.nome}" 
-								temSelecione="true"
-								filter="true" filterMatchMode="custom" filterFunction="removeAcento"
-								converter="SimpleEntityConverter"/>
-								
+
+							<sgp:formSelectOneMenu
+									display="text"
+									id="unidadePrisional"
+									labelValue="Unidade Prisional"
+									itemValue="#{item}"
+									itemLabel="#{item.nome}"
+									temSelecione="true"
+									itemsValue="#{recuperandoBean.unidadesPrisionais}"
+									value="#{recuperandoBean.filtro.unidade}"
+									filter="true"
+									filterMatchMode="custom"
+									filterFunction="removeAcento"
+									converter="SimpleEntityConverter">
+								<f:ajax event="change" listener="#{recuperandoBean.onUnidadePrisionalChange}" render="@form" />
+							</sgp:formSelectOneMenu>
+
+							<sgp:formSelectOneMenu
+									disabled="#{recuperandoBean.filtro.unidade == null}"
+									id="cela"
+									labelValue="Estrutura" itemValue="#{item}" itemLabel="#{item.nome}"
+									temSelecione="true"
+									itemsValue="#{recuperandoBean.estruturas}"
+									value="#{recuperandoBean.filtro.estrutura}"
+									filter="true" filterMatchMode="custom"
+									filterFunction="removeAcento" converter="SimpleEntityConverter"/>
+
+
 							<sgp:formSelectOneMenu
 								id="regime"
 								labelValue="Regime"

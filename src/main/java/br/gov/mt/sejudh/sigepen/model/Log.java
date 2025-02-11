@@ -43,6 +43,17 @@ public class Log implements Serializable {
     @Column(name = "THROWABLE")
     private String textoExcecao;
 
+    @Column(name = "HASH_IMPRESSAO", length = 100)
+    private String hashImpressao;
+    
+	public String getHashImpressao() {
+		return hashImpressao;
+	}
+
+	public void setHashImpressao(String hashImpressao) {
+		this.hashImpressao = hashImpressao;
+	}
+
 	public String getTextoExcecao() {
 		return textoExcecao;
 	}

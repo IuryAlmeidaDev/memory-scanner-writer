@@ -277,4 +277,26 @@ public class VisitanteDTO {
 	public void setImpedido(boolean isImpedido) {
 		this.isImpedido = isImpedido;
 	}
+
+	public void setResponsavel(Visitante entradaResponsavel) {
+		VisitanteDTO dto = new VisitanteDTO(entradaResponsavel);
+		this.setResponsavel(dto);
+	}
+
+	public VisitanteDTO(Visitante visitante) {
+    this.id = visitante.getId();
+    this.pne = visitante.getPne();
+    this.pnePermanente = visitante.getPnePermanente();
+    this.emancipado = visitante.getEmancipado();
+    this.nome = visitante.getPessoa().getNome();
+    this.sexo = visitante.getPessoa().getSexo();
+    this.nomeMae = visitante.getPessoa().getNomeMae();
+    this.nomePai = visitante.getPessoa().getNomePai();
+    this.nomeSocial = visitante.getPessoa().getNomeSocial();
+    this.dataNascimento = visitante.getPessoa().getDataNascimento();
+    this.nacionalidade = visitante.getPessoa().getNacionalidade().getDescricao();
+    this.estado = visitante.getPessoa().getNaturalidade().getEstado().getNome();
+    this.cidade = visitante.getPessoa().getNaturalidade().getNome();
+    this.identidadeDeGenero = visitante.getIdentidadeDeGenero().getDescricao();
+}
 }

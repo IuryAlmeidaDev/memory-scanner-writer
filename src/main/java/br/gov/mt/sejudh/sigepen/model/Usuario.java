@@ -76,6 +76,19 @@ public class Usuario implements Serializable {
 	@Column(name = "IS_PRIMEIRO_ACESSO", nullable = false)
 	private Boolean primeiroAcesso;
 	
+	@Column(name = "IS_RESET_SENHA", nullable = false)
+	private Boolean resetSenha;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_SOLICITACAO_RESET_SENHA")
+	private Date  dataSolicitacaoResetSenha;
+	
+	@Column(name = "UNIDADE_PERFIL_SOLICITADA_RESET_SENHA")
+	private String unidadePerfilSolicitadaResetSenha;
+	
+	@Column(name = "RESET_SENHA_JUSTIFICATIVA")
+	private String resetSenhaJustificativa;
+	
 	@OneToMany(mappedBy = "usuario", orphanRemoval=true, fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	@Fetch(FetchMode.SUBSELECT)	
 	private List<Acesso> acessos;
@@ -167,6 +180,22 @@ public class Usuario implements Serializable {
 		this.primeiroAcesso = primeiroAcesso;
 	}
 
+	public Boolean getResetSenha() {
+		return resetSenha;
+	}
+
+	public void setResetSenha(Boolean resetSenha) {
+		this.resetSenha = resetSenha;
+	}
+	
+	public String getResetSenhaJustificativa() {
+		return resetSenhaJustificativa;
+	}
+
+	public void setResetSenhaJustificativa(String resetSenhaJustificativa) {
+		this.resetSenhaJustificativa = resetSenhaJustificativa;
+	}
+
 	public List<Acesso> getAcessos() {
 		return acessos;
 	}
@@ -197,6 +226,22 @@ public class Usuario implements Serializable {
 
 	public void setAutorUltimaAlteracao(AutoriaRegistro autorUltimaAlteracao) {
 		this.autorUltimaAlteracao = autorUltimaAlteracao;
+	}
+
+	public Date getDataSolicitacaoResetSenha() {
+		return dataSolicitacaoResetSenha;
+	}
+
+	public void setDataSolicitacaoResetSenha(Date dataSolicitacaoResetSenha) {
+		this.dataSolicitacaoResetSenha = dataSolicitacaoResetSenha;
+	}
+
+	public String getUnidadePerfilSolicitadaResetSenha() {
+		return unidadePerfilSolicitadaResetSenha;
+	}
+
+	public void setUnidadePerfilSolicitadaResetSenha(String unidadePerfilSolicitadaResetSenha) {
+		this.unidadePerfilSolicitadaResetSenha = unidadePerfilSolicitadaResetSenha;
 	}
 
 	@Override

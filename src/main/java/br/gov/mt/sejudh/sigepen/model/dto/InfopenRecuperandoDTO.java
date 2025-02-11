@@ -3,7 +3,7 @@ package br.gov.mt.sejudh.sigepen.model.dto;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroInfopen;
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
-import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
+
 
 public class InfopenRecuperandoDTO {
 
@@ -16,6 +16,8 @@ public class InfopenRecuperandoDTO {
 	private String estrutura;
 	private String descricaoFiltro;
 	private String descricaoTitulo;
+	private String dataEntrada;
+	private String dataSaida;
 	
 	private FiltroInfopen filtro;
 
@@ -23,7 +25,7 @@ public class InfopenRecuperandoDTO {
 	}
 
 	public InfopenRecuperandoDTO(Long id, String nome, String nomeMae, String regime, String condicao,
-			String status, FiltroInfopen filtro, String descricaoFiltro, String descricaoTitulo, String estrutura) {
+			String status, FiltroInfopen filtro, String descricaoFiltro, String descricaoTitulo, String estrutura, String dataEntrada, String dataSaida) {
 		this.id = id;
 		this.nome = nome;
 		this.nomeMae = nomeMae;
@@ -34,6 +36,8 @@ public class InfopenRecuperandoDTO {
 		this.descricaoFiltro = descricaoFiltro;
 		this.descricaoTitulo = descricaoTitulo;
 		this.estrutura = estrutura;
+		this.dataEntrada = dataEntrada;
+		this.dataSaida = dataSaida;
 	}
 
 	public Long getId() {
@@ -136,5 +140,23 @@ public class InfopenRecuperandoDTO {
 	public void setCondicao(Condicao condicao) {
 		this.condicao = condicao;
 	}
+
+	public String getDataEntrada() {
+		return dataEntrada;
+	}
+
+	public void setDataEntrada(String dataEntrada) {
+		this.dataEntrada = dataEntrada;
+	}
+
+	public String getDataSaida() {
+		return dataSaida;
+	}
+
+	public void setDataSaida(String dataSaida) {
+		this.dataSaida = dataSaida;
+	}
+
+
 
 }

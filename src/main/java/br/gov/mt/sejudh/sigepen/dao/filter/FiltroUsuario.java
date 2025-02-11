@@ -17,6 +17,7 @@ public class FiltroUsuario extends FiltroConsulta {
 	private String cpf;
 	private String login;
 	private String email;
+	private Boolean resetSenha;
 
 	public String getNome() {
 		return nome;
@@ -49,6 +50,14 @@ public class FiltroUsuario extends FiltroConsulta {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public Boolean getResetSenha() {
+		return resetSenha;
+	}
+
+	public void setResetSenha(Boolean resetSenha) {
+		this.resetSenha = resetSenha;
+	}
 
 	@Override
 	public void configurarFiltros() {
@@ -58,7 +67,8 @@ public class FiltroUsuario extends FiltroConsulta {
 				.add(Projections.distinct(Projections.property("id").as("id"))) 
 				.add(Projections.property("servidor.nome").as("nome"))
 				.add(Projections.property("login").as("login"))
-				.add(Projections.property("email").as("email"))
+				.add(Projections.property("unidadePerfilSolicitadaResetSenha").as("unidadePerfilSolicitadaResetSenha"))
+	            .add(Projections.property("dataSolicitacaoResetSenha").as("dataSolicitacaoResetSenha"))
 	            .add(Projections.property("status").as("status"));
 
 		getCriteria().setProjection(proj);
@@ -81,5 +91,11 @@ public class FiltroUsuario extends FiltroConsulta {
 		if (this.getEmail() != null && !this.getEmail().equalsIgnoreCase("")) {
 			getCriteria().add(Restrictions.ilike("email", this.getEmail(), MatchMode.ANYWHERE));
 		}
+		
+		if (this.getResetSenha() != null) {
+			getCriteria().add(Restrictions.eqOrIsNull("resetSenha", this.getResetSenha()));
+		}
 	}
+
+
 }

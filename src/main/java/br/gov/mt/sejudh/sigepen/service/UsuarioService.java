@@ -81,6 +81,19 @@ public class UsuarioService {
 		return usuario;
 	}
 	
+	@Interceptors(EJBExcInterceptor.class)
+	public Usuario salvar(Usuario usuario) throws Exception {
+		
+		usuario = dao.salvar(usuario);
+				
+		if (usuario != null) {
+			usuario.setAutorRegistro(auditDAO.autorRegistro(usuario, usuario.getId()));
+			usuario.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(usuario, usuario.getId()));
+		}
+		
+		return usuario;
+	}
+	
 	private void validarSeUsuarioPossuiAcessoSemPerfil(Usuario usuario) throws ValidacaoException {
 		List<Acesso> acessos = usuario.getAcessos();
 		
@@ -113,6 +126,11 @@ public class UsuarioService {
 	public List<UsuarioDTO> buscarUsuariosPorFiltro(FiltroUsuario filtro) {
 		return dao.buscarUsuariosPorFiltro(filtro);
 	}
+	
+	public Usuario buscarUsuariosPorCpfAndNascimento(String cpf, Date nascimento) {
+		return dao.buscarUsuariosPorCpfAndNascimento(cpf, nascimento);
+	}
+
 
 	public void excluir(long usuarioId) throws Exception {		
 		dao.excluir(usuarioId);

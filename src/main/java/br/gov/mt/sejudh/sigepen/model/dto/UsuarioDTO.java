@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
+import java.sql.Date;
+
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 
 public class UsuarioDTO {
@@ -9,6 +11,8 @@ public class UsuarioDTO {
 	private String login;
 	private String email;
 	private Status status;
+	private String unidadePerfilSolicitadaResetSenha;
+	private Date dataSolicitacaoResetSenha;
 
 	public long getId() {
 		return id;
@@ -48,6 +52,22 @@ public class UsuarioDTO {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public String getUnidadePerfilSolicitadaResetSenha() {
+		return unidadePerfilSolicitadaResetSenha;
+	}
+
+	public void setUnidadePerfilSolicitadaResetSenha(String unidadePerfilSolicitadaResetSenha) {
+		this.unidadePerfilSolicitadaResetSenha = unidadePerfilSolicitadaResetSenha;
+	}
+
+	public Date getDataSolicitacaoResetSenha() {
+		return dataSolicitacaoResetSenha;
+	}
+
+	public void setDataSolicitacaoResetSenha(Date dataSolicitacaoResetSenha) {
+		this.dataSolicitacaoResetSenha = dataSolicitacaoResetSenha;
 	}
 
 	@Override

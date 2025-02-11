@@ -1,124 +1,161 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PedidoDetalhado" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
-	<property name="ireport.zoom" value="1.5"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PedidoDetalhado" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="6fa271da-495c-47d7-bfc4-2354b2e3ab76">
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="UNIDADE_LOGADA" class="java.lang.String">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
-	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String"/>
+	<parameter name="RODAPE" class="java.lang.String"/>
 	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
-	<parameter name="TEM_PAGINACAO" class="java.lang.Boolean">
-		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
-	</parameter>
-	<parameter name="CABECALHO" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="ID_ESTRUTURA" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
-	</parameter>
-	<parameter name="ESTRUTURA_NOME" class="java.lang.String"/>
-	<parameter name="SCHEMA" class="java.lang.String"/>
-	<parameter name="CARDAPIO" class="java.util.List"/>
+	<parameter name="DATA" class="java.lang.String"/>
 	<parameter name="MENSAGEM" class="java.lang.String"/>
-	<queryString>
-		<![CDATA[]]>
-	</queryString>
-	<field name="id" class="java.lang.Long"/>
-	<field name="dataPedido" class="java.lang.String"/>
-	<field name="refeicao" class="java.lang.String"/>
-	<field name="estrutura" class="java.lang.String"/>
-	<field name="qtdPadrao" class="java.lang.Integer"/>
-	<field name="qtdEspecial" class="java.lang.Integer"/>
-	<field name="cardapio" class="java.util.List"/>
-	<variable name="id_1" class="java.lang.Integer" calculation="Count">
-		<variableExpression><![CDATA[]]></variableExpression>
-	</variable>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="UNIDADE_LOGADA" class="java.lang.String"/>
+	<parameter name="DIETA_ESPECIAL_POR_ESTRUTURA" class="java.util.List"/>
+	<field name="item" class="java.lang.String"/>
+	<field name="qtdPorItem" class="java.lang.Double"/>
+	<field name="qtdRecuperando" class="java.lang.Integer"/>
+	<field name="siglaUnidadeMedida" class="java.lang.String"/>
+	<field name="nomeEstrutura" class="java.lang.String"/>
+	<group name="GroupDietaEstrutura">
+		<groupExpression><![CDATA[$F{nomeEstrutura}]]></groupExpression>
+		<groupHeader>
+			<band height="60" splitType="Stretch">
+				<textField>
+					<reportElement x="0" y="0" width="555" height="40" isRemoveLineWhenBlank="true" uuid="24688374-9382-4719-8b98-89cbd3b1517c"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nomeEstrutura} + " - Pessoas: " + $F{qtdRecuperando}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="40" width="250" height="20" isRemoveLineWhenBlank="true" backcolor="#C0C0C0" uuid="d3af317c-7c83-4ce7-af1f-3a74032438ee"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Item"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="250" y="40" width="120" height="20" isRemoveLineWhenBlank="true" backcolor="#C0C0C0" uuid="9056b25b-e4cb-409f-844e-848b5b27f355"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Quantidade/Un"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
 	<pageHeader>
 		<band height="106" splitType="Stretch">
-			<subreport isUsingCache="false">
-				<reportElement positionType="Float" x="0" y="0" width="555" height="106" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
-				<subreportParameter name="UNIDADE_LOGADA">
-					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="NOME_DO_RELATORIO">
-					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
-			</subreport>
+			<line>
+				<reportElement x="0" y="63" width="555" height="1" forecolor="#666666" uuid="efbda9bc-fbe6-4b5f-a071-c069848d17b5"/>
+			</line>
+			<staticText>
+				<reportElement x="265" y="7" width="290" height="20" uuid="9548420a-e987-42e8-a473-ce5c2c670139"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SIGEPEN - Sistema de Gestão Penitenciária de Mato Grosso]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" isUsingCache="false" evaluationTime="Report">
+				<reportElement x="-16" y="-20" width="245" height="97" uuid="9ca4d566-2a5b-439d-92ff-515d1584ed40"/>
+				<imageExpression><![CDATA["imagens/sesp.png"]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<reportElement x="245" y="26" width="310" height="46" uuid="73293021-78b2-4c6c-8c68-8ecf5b130e1d"/>
+				<textElement textAlignment="Right" markup="html">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Unidade: </b>" + $P{UNIDADE_LOGADA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="73" width="555" height="20" uuid="d414b1af-c0b1-474d-b25a-dfb685a4e7b2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="40">
+		<band height="70" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="555" height="40" uuid="f82f4986-b4cd-414a-830f-a549c5ad64d5"/>
-				<textElement textAlignment="Left" markup="none">
-					<font size="11" isBold="true"/>
+				<reportElement x="0" y="0" width="555" height="70" uuid="a8d50108-aa47-492e-ba94-048754452e09"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{MENSAGEM}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="106" splitType="Stretch">
-			<subreport isUsingCache="false">
-				<reportElement x="0" y="0" width="555" height="106" uuid="fb3b10d4-88a7-4eac-b9c2-228132bf215a"/>
-				<subreportParameter name="SUBREPORT_DIR"/>
-				<subreportParameter name="RODAPE"/>
-				<subreportParameter name="SUB_ESTRUTURA_ID">
-					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="CABECALHO"/>
-				<subreportParameter name="SUB_SCHEMA">
-					<subreportParameterExpression><![CDATA[$P{SCHEMA}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="EMISSOR"/>
-				<subreportParameter name="NOME_DO_RELATORIO"/>
-				<subreportParameter name="SUB_DATA">
-					<subreportParameterExpression><![CDATA[$F{cardapio}]]></subreportParameterExpression>
-				</subreportParameter>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{cardapio})]]></dataSourceExpression>
-				<subreportExpression><![CDATA["PedidoCardapio.jasper"]]></subreportExpression>
-			</subreport>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="250" height="20" isRemoveLineWhenBlank="true" backcolor="#E6E6E6" uuid="638dfd58-bb3e-439a-bdf6-facb5b9c1cf1"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{item}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##">
+				<reportElement mode="Opaque" x="250" y="0" width="120" height="20" isRemoveLineWhenBlank="true" backcolor="#E6E6E6" uuid="b5815845-a301-4b0b-abcb-ec89a7a93b9f"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($F{qtdPorItem} * $F{qtdRecuperando}) + "/" + $F{siglaUnidadeMedida}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>
 		<band height="51" splitType="Stretch">
-			<subreport isUsingCache="false" runToBottom="true">
-				<reportElement positionType="Float" x="0" y="0" width="555" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
-				<subreportParameter name="PAGINA">
-					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="EMISSOR">
-					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="TOTAL_PAGINAS">
-					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
-			</subreport>
+			<line>
+				<reportElement x="0" y="12" width="555" height="1" forecolor="#666666" uuid="d3287468-1a5e-4bab-940a-d76c70098617"/>
+			</line>
 			<textField>
-				<reportElement x="435" y="13" width="80" height="20" uuid="21949555-196a-4d34-89dd-e4b9f2f2f2af">
-					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+				<reportElement x="20" y="13" width="303" height="20" uuid="73d6fea7-2f60-4914-abd5-68171152153a"/>
+				<textElement markup="html"/>
+				<textFieldExpression><![CDATA["<b>Emitido por: </b>" + $P{EMISSOR}]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="515" y="13" width="40" height="20" uuid="18471924-0526-4b68-acd6-512add5df44e">
-					<printWhenExpression><![CDATA[new Boolean($P{TEM_PAGINACAO})]]></printWhenExpression>
-				</reportElement>
-				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			<textField pattern="">
+				<reportElement x="20" y="30" width="273" height="20" uuid="d4e56d1f-d52c-4971-a730-0052d5611f8b"/>
+				<textElement markup="html"/>
+				<textFieldExpression><![CDATA["<b>Data Emissão: </b> "
+    + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())
+    + " às "
+    + new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="63"/>
+		<band height="100" splitType="Stretch">
+			<subreport isUsingCache="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="100" isRemoveLineWhenBlank="true" uuid="97ea5d40-9354-46f7-91fd-7f8230821583"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{DIETA_ESPECIAL_POR_ESTRUTURA})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["DietaEspecialEstruturaSubReport.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
 	</summary>
 </jasperReport>

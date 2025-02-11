@@ -22,6 +22,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.service.*;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -87,20 +88,6 @@ import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
-import br.gov.mt.sejudh.sigepen.service.BiometriaService;
-import br.gov.mt.sejudh.sigepen.service.ContatoService;
-import br.gov.mt.sejudh.sigepen.service.DocumentoService;
-import br.gov.mt.sejudh.sigepen.service.EnderecoService;
-import br.gov.mt.sejudh.sigepen.service.HistoricoRecuperandoService;
-import br.gov.mt.sejudh.sigepen.service.PassagemService;
-import br.gov.mt.sejudh.sigepen.service.PedidoService;
-import br.gov.mt.sejudh.sigepen.service.PessoaService;
-import br.gov.mt.sejudh.sigepen.service.ProcessoService;
-import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
-import br.gov.mt.sejudh.sigepen.service.SubstituicaoFotoJustificativaService;
-import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
-import br.gov.mt.sejudh.sigepen.service.UsuarioService;
-import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -248,15 +235,20 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 			if (filtroDash != null) {
 				setFiltro(filtroDash);
+				onUnidadePrisionalChange();
+				//this.estruturas = this.estruturaService.buscarEstruturas(SecurityUtil.getUnidadeSelecionada().getId());
+
 			} else {
 				super.carregarFiltroPaginacao(FiltroRecuperandoView.class, this);
 			}
+			
 		}
 	}
 
 	@URLAction(onPostback = false)
 	public String init() {
 		this.listarEtnias();
+		
 		try {
 			switch (this.getAcaoDeTela()) {
 			case CADASTRAR:
@@ -2155,5 +2147,36 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				}
 			}
 		});
+	}
+
+	public void onUnidadePrisionalChange() {
+		if (this.filtro.getUnidade() != null) {
+			this.estruturas = this.estruturaService.buscarEstruturas(this.filtro.getUnidade().getId());
+			estruturas.remove(0);
+
+		}
+
+	}
+
+	@Inject
+	private EstruturaService estruturaService;
+	private List<Estrutura> estruturas = new ArrayList<>();
+	private Estrutura estrutura;
+
+	public List<Estrutura> getEstruturas() {
+
+		return estruturas;
+	}
+
+	public void setEstruturas(List<Estrutura> estruturas) {
+		this.estruturas = estruturas;
+	}
+
+	public Estrutura getEstrutura() {
+		return estrutura;
+	}
+
+	public void setEstrutura(Estrutura estrutura) {
+		this.estrutura = estrutura;
 	}
 }

@@ -4,7 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.gov.mt.sejudh.sigepen</groupId>
     <artifactId>sigepen</artifactId>
-    <version>1.20.3</version>
+
+    <version>1.24.0</version>
+
     <packaging>war</packaging>
     <name>sigepen Webapp</name>
     <description>sigepen Webapp</description>
@@ -21,6 +23,13 @@
 
 
     <dependencies>
+    
+    	<dependency>
+            <groupId>br.gov.mt.seguranca</groupId>
+            <artifactId>sesp-audit-report</artifactId>
+            <version>0.0.3</version>
+        </dependency>
+    
         <!-- Apache Commons BeanUtils -->
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -348,6 +357,11 @@
             <groupId>com.neurotec</groupId>
             <artifactId>neurotec-biometrics-client</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+                <artifactId>jakarta.mail</artifactId>
+            <version>1.6.7</version>
         </dependency>
     </dependencies>
 

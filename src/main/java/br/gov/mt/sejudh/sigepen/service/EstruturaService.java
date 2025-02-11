@@ -1,6 +1,5 @@
 package br.gov.mt.sejudh.sigepen.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -10,10 +9,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialEstruturaDTO;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
-import br.gov.mt.sejudh.sigepen.dao.CardapioPedidoDTO;
 import br.gov.mt.sejudh.sigepen.dao.EstruturaDAO;
 import br.gov.mt.sejudh.sigepen.dao.ServidorDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
@@ -23,9 +23,7 @@ import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
 import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoConsultaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoDetalhadoDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.PedidoItemCardapioDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.RefeicaoDetalhadaDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
@@ -57,21 +55,17 @@ public class EstruturaService {
 		return dao.buscaPorId(id);
 	}
 
-	public Estrutura buscaEstraturaRaizUnidade(Long id) {
-		return dao.buscaEstraturaRaizUnidade(id);
-	}
-
 	public List<EstruturaDto> buscarEstruturasUnidade(Long idUnidade) {
 		return dao.buscarEstruturasUnidade(idUnidade);
 	}
 
-	public Estrutura buscaEstruturaCompletaPorId(Long id) {
-		return dao.buscaEstruturaCompletaPorId(id);
+	public List<Estrutura> buscarEstruturas(Long idUnidade) {
+		return dao.buscarEstruturas(idUnidade);
 	}
 
 	public void montarArvoreEstrutura(Estrutura estrutura, TreeNode no) {
 		List<Estrutura> filhos = dao.buscaEstruturaFilho(estrutura);
-		if (filhos.size() > 0) {
+		if (!filhos.isEmpty()) {
 			estrutura.setTemEstruturaFilho(true);
 		}
 		TreeNode pai = new DefaultTreeNode(estrutura, no);
@@ -83,7 +77,7 @@ public class EstruturaService {
 
 	public void montarArvoreEstruturaGerarPedido(GerarPedidoEstruturaDTO estrutura, TreeNode no, String dataHora, Long tipoRefeicao) {
 		List<GerarPedidoEstruturaDTO> filhos = dao.buscaEstruturaFilhoGerarPedido(estrutura, dataHora, tipoRefeicao);
-		if (filhos.size() > 0) {
+		if (!filhos.isEmpty()) {
 			estrutura.setTemEstruturaFilho(true);
 		}
 		TreeNode pai = new DefaultTreeNode(estrutura, no);
@@ -137,7 +131,7 @@ public class EstruturaService {
 		int dietaEspecial = e.getDietaEspecial().intValue();
 		List<TreeNode> filhos = no.getChildren();
 		for (TreeNode filho : filhos) {
-			dietaEspecial += capacidadeTotalDietaEspecial((DefaultTreeNode) filho);
+			dietaEspecial += (int) capacidadeTotalDietaEspecial((DefaultTreeNode) filho);
 		}
 		e.setTotalDietaEspecial(dietaEspecial);
 		no.setData(e);
@@ -176,12 +170,6 @@ public class EstruturaService {
 		return null;
 	}
 
-	/**
-	 * Situação Estrutura
-	 * 
-	 * @param situacaoEstruturaUnidade
-	 * @throws ValidacaoException
-	 */
 	public void salvarSituacaoEstrutura(SituacaoEstruturaUnidade situacaoEstruturaUnidade, DefaultTreeNode root)
 			throws ValidacaoException {
 		situacaoEstruturaUnidade.setLoginUsuario((SecurityUtil.getLoginUsuario()));
@@ -225,17 +213,16 @@ public class EstruturaService {
 	 * do nó irão receber interditado_total exceto os filhos inativos. O nó pai irá
 	 * receber "interditado_parcial" se tiver um filho ativo ou interditado_parcial,
 	 * senão, recebe "interditado_total".
-	 * 
+	 * <p>
 	 * # INTERDITADO_PARCIAL: O usuário não poderá alterar alguma estrutura para
 	 * "interditado_parcial"
-	 * 
+	 * <p>
 	 * 
 	 * # ATIVO
-	 * 
+	 * <p>
 	 * $ INATIVO
-	 * 
-	 * @param situacaoEstruturaUnidade
-	 */
+	 *
+     */
 	@Interceptors(EJBExcInterceptor.class)
 	public void alterarSituacaoEstruturasFilhos(SituacaoEstruturaUnidade situacaoEstruturaUnidade, DefaultTreeNode root,
 			Estrutura estrutura) {
@@ -320,11 +307,6 @@ public class EstruturaService {
 		}
 	}
 
-	/**
-	 * 
-	 * @param situacaoEstruturaUnidade
-	 * @param root
-	 */
 	@Interceptors(EJBExcInterceptor.class)
 	public void alterarSituacaoEstruturaPai(SituacaoEstruturaUnidade situacaoEstruturaUnidade, DefaultTreeNode root) {
 		Estrutura e = (Estrutura) root.getData();
@@ -334,8 +316,7 @@ public class EstruturaService {
 		SituacaoEstruturaUnidade s;
 
 		if (e.getEstruturaPai() != null) {
-			switch (situacaoEstruturaUnidade.getSituacao()) {
-			case INTERDITADO_TOTAL:
+			if (situacaoEstruturaUnidade.getSituacao() != null && situacaoEstruturaUnidade.getSituacao() == SituacaoUnidade.INTERDITADO_TOTAL) {
 				noPai = (DefaultTreeNode) root.getParent();
 				est = (Estrutura) noPai.getData();
 				estruturaOrigem = (Estrutura) root.getData();
@@ -363,10 +344,8 @@ public class EstruturaService {
 				dao.salvarSituacaoEstrutura(s);
 
 				this.alterarSituacaoEstruturaPai(situacaoEstruturaUnidade, noPai);
-				break;
-
-			default:
-				/**
+			} else {
+				/*
 				 * Atende os casos de ATIVO e INATIVO
 				 */
 				noPai = (DefaultTreeNode) root.getParent();
@@ -393,7 +372,6 @@ public class EstruturaService {
 				dao.salvarSituacaoEstrutura(s);
 
 				this.alterarSituacaoEstruturaPai(situacaoEstruturaUnidade, noPai);
-				break;
 			}
 		}
 	}
@@ -451,7 +429,6 @@ public class EstruturaService {
 				buscarEstruturasFilhos(e, retorno);
 			}
 		}
-		return;
 	}
 
 	public void montarArvoreDaUnidade(List<EstruturaDto> estruturas, TreeNode no) {
@@ -464,14 +441,12 @@ public class EstruturaService {
 					.filter(e -> Objects.equals(e.getIdEstruturaPai(), estruturaPai.getId()))
 					.collect(Collectors.toList());
 
-			if (estruturasFilho.size() > 0) {
+			if (!estruturasFilho.isEmpty()) {
 				estruturaPai.setTemEstruturaFilho(true);
 				noPai.setExpanded(true);
 			}
 
-			estruturasFilho.forEach(e -> {
-				montarArvoreDaUnidade(estruturas, e, noPai);
-			});
+			estruturasFilho.forEach(e -> montarArvoreDaUnidade(estruturas, e, noPai));
 		}
 	}
 
@@ -480,69 +455,23 @@ public class EstruturaService {
 		List<EstruturaDto> estruturasFilho = estruturas.stream()
 				.filter(e -> Objects.equals(e.getIdEstruturaPai(), estruturaPai.getId())).collect(Collectors.toList());
 
-		if (estruturasFilho.size() > 0) {
+		if (!estruturasFilho.isEmpty()) {
 			estruturaPai.setTemEstruturaFilho(true);
 			noPai.setExpanded(true);
 		}
 
-		estruturasFilho.forEach(e -> {
-			montarArvoreDaUnidade(estruturas, e, noPai);
-		});
+		estruturasFilho.forEach(e -> montarArvoreDaUnidade(estruturas, e, noPai));
 	}
 
-	public PedidoDetalhadoDTO buscaPedidoDetalhado(String data, Long idEstrutura, TipoRefeicao tipoRefeicao) {
-		List<PedidoConsultaDTO> pedidoConsulta = dao.buscaPedidoDetalhado(data, idEstrutura, tipoRefeicao.getId());
-		return montarPedidoDetalhado(pedidoConsulta, idEstrutura, tipoRefeicao, data);
+	public List<RefeicaoDetalhadaDTO> buscaPedidoConsulta(String data, Long idEstrutura, TipoRefeicao tipoRefeicao) {
+		return dao.buscaPedidoDetalhado(data, idEstrutura, tipoRefeicao.getId());
 	}
 
-	private PedidoDetalhadoDTO montarPedidoDetalhado(List<PedidoConsultaDTO> list, Long idEstrutura,
-		TipoRefeicao tipoRefeicao, String data) {
-		CardapioPedidoDTO pedidoCardapio = new CardapioPedidoDTO();
-		PedidoDetalhadoDTO pedidoDetalhado = new PedidoDetalhadoDTO();
-		ArrayList<CardapioPedidoDTO> listaCardapio = new ArrayList<>();
-		pedidoDetalhado.setDataPedido(data);
-
-		int size = list.size();
-		for (int i = 0; i < size; i++) {
-			if (list.get(i).isEspecial()) {
-				pedidoDetalhado.setQtdEspecial(list.get(i).getQtd().intValue());
-			} else {
-				pedidoDetalhado.setQtdPadrao(list.get(i).getQtd().intValue());
-			}
-			PedidoItemCardapioDTO pedidoItem = new PedidoItemCardapioDTO();
-			pedidoItem.setDescricao(list.get(i).getItem());
-			pedidoItem.setMasc(list.get(i).getMasc());
-			pedidoItem.setFem(list.get(i).getFem());
-			Double peso = list.get(i).getSexo().equals("M") ? list.get(i).getMasc() : list.get(i).getFem();
-			pedidoItem.setQuantidade(Double.valueOf(list.get(i).getQtd()), peso);
-			if ((pedidoCardapio.getNome() == null || list.get(i).getCardapio().equals(pedidoCardapio.getNome()))
-					&& (pedidoCardapio.getEstrutura() == null
-							|| list.get(i).getNomeEstrutura().equals(pedidoCardapio.getEstrutura()))) {
-				pedidoCardapio.setNome(list.get(i).getCardapio());
-				pedidoCardapio.setEstrutura(list.get(i).getNomeEstrutura());
-				pedidoCardapio.getItens().add(pedidoItem);
-				pedidoCardapio.setEspecial(list.get(i).isEspecial());
-			} else {
-				listaCardapio.add(new CardapioPedidoDTO(pedidoCardapio));
-				pedidoCardapio.setEspecial(list.get(i).isEspecial());
-				pedidoCardapio.getItens().clear();
-				pedidoCardapio.setNome(list.get(i).getCardapio());
-				pedidoCardapio.setEstrutura(list.get(i).getNomeEstrutura());
-				pedidoCardapio.getItens().add(pedidoItem);
-			}
-			if ((i + 1) == size) {
-				listaCardapio.add(new CardapioPedidoDTO(pedidoCardapio));
-			}
-		}
-
-		pedidoDetalhado.setCardapio(listaCardapio);
-		pedidoDetalhado.setEstrutura(nomeEstrutura(idEstrutura));
-		pedidoDetalhado.setRefeicao(tipoRefeicao.getDescricao());
-		return pedidoDetalhado;
+	public List<PedidoEstruturaDTO> montarEstruturaPedido(String data, long idEstrutura) {
+		return dao.montarEstruturaPedido(data, idEstrutura);
 	}
 
-	public String nomeEstrutura(Long idEstrutura) {
-		return dao.buscarNomeEstrutura(idEstrutura);
+	public List<DietaEspecialEstruturaDTO> buscarDietasEspeciais(long idEstrutura, String data) {
+		return dao.buscarDietasEspeciaisPorEstrutura(idEstrutura, data);
 	}
-
 }

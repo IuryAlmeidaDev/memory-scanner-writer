@@ -8,6 +8,7 @@ public class ServidorDTO {
 	private long id;	
 	private long matricula;	
 	private String nome;	
+	private String mae;
 	private String orgao;	
 	private String cargo;	
 	private String tipo;	
@@ -35,6 +36,14 @@ public class ServidorDTO {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	
+	public String getMae() {
+		return mae;
+	}
+
+	public void setMae(String mae) {
+		this.mae = mae;
 	}
 
 	public String getOrgao() {

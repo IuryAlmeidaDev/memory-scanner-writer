@@ -61,6 +61,7 @@ public class DietaEspecialDAO {
 		query.setParameter("id", id);
 		DietaRecuperando dietaEspecial = (DietaRecuperando) query.getSingleResult();
 		Hibernate.initialize(dietaEspecial.getRecuperando());
+		Hibernate.initialize(dietaEspecial.getRecuperando().getPessoa());
 
 		return dietaEspecial;
 	}

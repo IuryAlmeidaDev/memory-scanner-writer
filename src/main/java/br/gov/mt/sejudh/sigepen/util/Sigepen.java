@@ -27,6 +27,7 @@ public class Sigepen {
 	public static final String APPLICATION_LOGIN_URL = getApplicationName() + "/login";
 	public static final String APPLICATION_DASHBOARD_URL = getApplicationName() + "/dashboard";
 	public static final String APPLICATION_ALTERAR_SENHA_URL = getApplicationName() + "/usuario/alterarsenha";
+	public static final String APPLICATION_RESET_SENHA_URL = getApplicationName() + "/resetSenha";
 	public static final String APPLICATION_SELECIONAR_UNIDADE_URL = APPLICATION_LOGIN_URL + "/unidade";
 	public static final String APPLICATION_DOWNLOAD_URL = getApplicationName() + "/download";
 	
