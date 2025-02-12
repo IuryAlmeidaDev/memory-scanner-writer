@@ -66,6 +66,8 @@ build_maven:
   cache:
     - paths:
         - .m2/repository
+    - key: "$CI_COMMIT_REF_SLUG"
+
   artifacts:
     paths:
       - target/

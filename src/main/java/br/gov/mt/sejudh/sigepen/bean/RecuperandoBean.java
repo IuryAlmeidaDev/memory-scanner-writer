@@ -1826,6 +1826,11 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		return service.habilitaAlteracaoParente(this.recuperando);
 	}
 
+	public void abrirRollParentes() throws Exception {
+		service.abrirRollParentes(this.recuperando);
+		facesUtil.exibirMensagemInfo("Roll de parente Habilitado! ", true);
+	}
+
 	public Foto getFotoDoFormulario() {
 		return fotoDoFormulario;
 	}
@@ -2153,6 +2158,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		if (this.filtro.getUnidade() != null) {
 			this.estruturas = this.estruturaService.buscarEstruturas(this.filtro.getUnidade().getId());
 			estruturas.remove(0);
+
 		}
 
 	}
@@ -2163,6 +2169,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	private Estrutura estrutura;
 
 	public List<Estrutura> getEstruturas() {
+
 		return estruturas;
 	}
 

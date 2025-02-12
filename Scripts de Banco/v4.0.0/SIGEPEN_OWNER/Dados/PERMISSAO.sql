@@ -1,0 +1,1 @@
+insert into permissao (ID,NOME,DESCRICAO,FUNCIONALIDADE_ID) values (289,'AbrirRollParente',	'Habilitar o Roll de parente.',3);
