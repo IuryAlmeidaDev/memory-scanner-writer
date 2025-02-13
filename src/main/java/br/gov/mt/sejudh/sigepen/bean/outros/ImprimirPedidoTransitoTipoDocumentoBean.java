@@ -94,7 +94,7 @@ public class ImprimirPedidoTransitoTipoDocumentoBean extends MetodosDialogBean {
 		try {
 			boolean temPai = (this.pedido.getRecuperando().getPessoa().getNomePai() != null);
 			StringBuilder buildResultado = new StringBuilder();
-			buildResultado.append("Em atenção aos termos de Ofício [numeroDocumento], datado de [dataDocumento], apresento o(a) interno(a) [nome]"
+			buildResultado.append("Em atenção aos termos de Ofício [numeroDocumento], datado de [dataDocumento], apresento o(a) interno(a) [nome], que atende pelo nome social, [nomeSocial]"
 					+ ", prontuário número [recuperandoId], filho(a) de [nomeMae]");
 			
 			if (temPai)
@@ -105,6 +105,7 @@ public class ImprimirPedidoTransitoTipoDocumentoBean extends MetodosDialogBean {
 			String resultado = buildResultado.toString();
 			resultado = resultado.replace("[numeroDocumento]", this.pedido.getNumeroDocumento());
 			resultado = resultado.replace("[nome]", this.pedido.getRecuperando().getPessoa().getNome().toUpperCase());
+			resultado = resultado.replace("[nomeSocial]", this.pedido.getRecuperando().getPessoa().getNomeSocial().toUpperCase());
 			resultado = resultado.replace("[recuperandoId]", String.valueOf(this.pedido.getRecuperando().getId()));
 			resultado = resultado.replace("[nomeMae]", this.pedido.getRecuperando().getPessoa().getNomeMae().toUpperCase());
 			resultado = resultado.replace("[dataNascimento]", MaskUtil.getFormatoData().format(this.pedido.getRecuperando().getPessoa().getDataNascimento()));
@@ -139,7 +140,7 @@ public class ImprimirPedidoTransitoTipoDocumentoBean extends MetodosDialogBean {
 			boolean temPai = (this.pedido.getRecuperando().getPessoa().getNomePai() != null);
 			boolean temEstabelecimento = (this.pedido.getEstabelecimento() != null);
 			StringBuilder buildResultado = new StringBuilder();
-			buildResultado.append("Autorizo o interno(a), [nome], prontuário número [recuperandoId], filho(a) de [nomeMae]");
+			buildResultado.append("Autorizo o interno(a), [nome], que atende pelo nome social, [nomeSocial], prontuário número [recuperandoId], filho(a) de [nomeMae]");
 			
 			if (temPai)
 				buildResultado.append(" e de [nomePai]");
@@ -153,6 +154,7 @@ public class ImprimirPedidoTransitoTipoDocumentoBean extends MetodosDialogBean {
 			
 			String resultado = buildResultado.toString();
 			resultado = resultado.replace("[nome]", this.pedido.getRecuperando().getPessoa().getNome().toUpperCase());
+			resultado = resultado.replace("[nomeSocial]", this.pedido.getRecuperando().getPessoa().getNomeSocial().toUpperCase());
 			resultado = resultado.replace("[recuperandoId]", String.valueOf(this.pedido.getRecuperando().getId()));
 			resultado = resultado.replace("[nomeMae]", this.pedido.getRecuperando().getPessoa().getNomeMae().toUpperCase());
 			
