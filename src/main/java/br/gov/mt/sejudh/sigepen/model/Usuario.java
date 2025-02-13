@@ -77,33 +77,33 @@ public class Usuario implements Serializable {
 	private Boolean primeiroAcesso;
 	
 	@Column(name = "IS_RESET_SENHA", nullable = false)
-	private Boolean resetSenha;
-	
+	private boolean resetSenha;
+
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_SOLICITACAO_RESET_SENHA")
 	private Date  dataSolicitacaoResetSenha;
-	
+
 	@Column(name = "UNIDADE_PERFIL_SOLICITADA_RESET_SENHA")
 	private String unidadePerfilSolicitadaResetSenha;
-	
+
 	@Column(name = "RESET_SENHA_JUSTIFICATIVA")
 	private String resetSenhaJustificativa;
-	
+
 	@OneToMany(mappedBy = "usuario", orphanRemoval=true, fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-	@Fetch(FetchMode.SUBSELECT)	
+	@Fetch(FetchMode.SUBSELECT)
 	private List<Acesso> acessos;
-	
+
 	@Transient
 	private AutoriaRegistro autorRegistro;
-	
+
 	@Transient
 	private AutoriaRegistro autorUltimaAlteracao;
-	
+
 	public Usuario(Status status) {
 		this.status = status;
 		this.acessos = new ArrayList<Acesso>();
 	}
-	
+
 	public Usuario() {
 		this.acessos = new ArrayList<Acesso>();
 	}
@@ -139,7 +139,7 @@ public class Usuario implements Serializable {
 	public void setSalt(String salt) {
 		this.salt = salt;
 	}
-	
+
 	public Status getStatus() {
 		return status;
 	}
@@ -180,11 +180,11 @@ public class Usuario implements Serializable {
 		this.primeiroAcesso = primeiroAcesso;
 	}
 
-	public Boolean getResetSenha() {
+	public boolean getResetSenha() {
 		return resetSenha;
 	}
 
-	public void setResetSenha(Boolean resetSenha) {
+	public void setResetSenha(boolean resetSenha) {
 		this.resetSenha = resetSenha;
 	}
 	

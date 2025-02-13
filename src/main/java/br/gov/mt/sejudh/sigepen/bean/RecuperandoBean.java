@@ -1826,6 +1826,11 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		return service.habilitaAlteracaoParente(this.recuperando);
 	}
 
+	public void abrirRollParentes() throws Exception {
+		service.abrirRollParentes(this.recuperando);
+		facesUtil.exibirMensagemInfo("Roll de parente Habilitado! ", true);
+	}
+
 	public Foto getFotoDoFormulario() {
 		return fotoDoFormulario;
 	}
