@@ -7,9 +7,17 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 
+import org.hibernate.NullPrecedence;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.sql.JoinType;
+
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
+import br.gov.mt.sejudh.sigepen.util.RestrictionsSigepen;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 public class FiltroMovimentacaoInterna extends FiltroConsulta {
@@ -27,6 +35,17 @@ public class FiltroMovimentacaoInterna extends FiltroConsulta {
 	private StatusMovimentacao status;
 	
 	public UnidadePrisional unidadeOrigem;
+	
+	//private String nomeSocial;
+	
+/*
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
+	}*/
 
 	public Date getDataInicio() {
 		return dataInicio;
@@ -106,7 +125,23 @@ public class FiltroMovimentacaoInterna extends FiltroConsulta {
 		
 		if(this.getStatus() != null){
 			getCriteria().add(Restrictions.eq("status", this.getStatus()));
-		}		
+		}
+		
+		// Adicionando filtros para nome social
+		/*
+	    getCriteria()
+	        .createAlias("unidadeOrigem.contatos", "contatos", JoinType.LEFT_OUTER_JOIN)
+	        .createAlias("contatos.pessoa", "pessoa", JoinType.LEFT_OUTER_JOIN)
+	        .setProjection(Projections.projectionList()
+	            .add(Projections.property("id").as("id"))
+	            .add(Projections.property("unidadeOrigem.id").as("unidadeOrigemId"))
+	            .add(Projections.property("pessoa.nomeSocial").as("nomeSocial")));
+
+	    if (this.getNomeSocial() != null && !this.getNomeSocial().equalsIgnoreCase("")) {
+	        getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("pessoa.nomeSocial", this.getNomeSocial(), MatchMode.ANYWHERE));
+	    }*/
+		
+		
 		
 	}
 }

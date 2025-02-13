@@ -63,7 +63,10 @@ public class PedidoTransitoDTO {
 	
 	@SuppressWarnings("unused")
 	private String destinoParaExibicaoDataTable;
+	
+	private String nomeSocial;
 
+	
 	public String getEstruturaNomeCompleto() {
 		return estruturaNomeCompleto;
 	}
@@ -289,5 +292,14 @@ public class PedidoTransitoDTO {
 	public void setFiltro(FiltroPedTransito filtro) {
 		this.filtro = filtro;
 	}
+
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
+	}
+		
 
 }

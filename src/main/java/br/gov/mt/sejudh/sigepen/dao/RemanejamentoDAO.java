@@ -13,6 +13,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.sql.JoinType;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRemanejamento;
 import br.gov.mt.sejudh.sigepen.model.Remanejamento;
@@ -50,9 +51,10 @@ public class RemanejamentoDAO {
 		
 	@SuppressWarnings("unchecked")
 	public List<RemanejamentoDTO> buscaPorFiltro(FiltroRemanejamento filtro) {
-		Criteria criteria = filtro.criarCriteriaParaBusca(Remanejamento.class, entityManager);	
+		Criteria criteria = filtro.criarCriteriaParaBusca(Remanejamento.class, entityManager);		
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(RemanejamentoDTO.class));
+		
 		return criteria.list();
 	}	
 	
@@ -86,5 +88,10 @@ public class RemanejamentoDAO {
 			return null;
 		}
 	}
+	
+	private boolean existeAlias(Criteria criteria, String alias) {
+	    return criteria.toString().contains(alias);
+	}
+
 
 }

@@ -31,6 +31,7 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
     private UnidadePrisional unidadePrisional;
     private List<UnidadePrisional> unidades;
     private boolean listarTodasUnidades;
+    private String nomeSocial;
 
     @Override
     public void configurarFiltros() {
@@ -49,6 +50,7 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
                 .add(Projections.property("solicitacoes.status").as("status"))
                 .add(Projections.property("pessoaSolicitacao.nome").as("nomeSolicitante"))
                 .add(Projections.property("nome").as("nomeRecuperando"))
+                .add(Projections.property("nomeSocial").as("nomeSocial"))
                 .add(Projections.property("parentesco.descricao").as("parentesco"))));
                 
         getCriteria().setProjection(proj);
@@ -67,6 +69,10 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
 
         if (this.getRecuperandoO() != null) {
             getCriteria().add(Restrictions.eq("pessoa.nome", this.getRecuperandoO()));
+        }
+        
+        if (this.getNomeSocial() != null) {
+            getCriteria().add(Restrictions.eq("pessoa.nomeSocial", this.getNomeSocial()));
         }
         
         if(this.isListarTodasUnidades()) {
@@ -168,5 +174,13 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
 	public void setListarTodasUnidades(boolean listarTodasUnidades) {
 		this.listarTodasUnidades = listarTodasUnidades;
 	}
-	
+
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
+	}
+
 }
