@@ -12,24 +12,24 @@ import java.util.Date;
 
 @Audited
 @Entity
-@Table(name = "PEDIDO_ALIMENTO", schema = Sigepen.SEJUDH_SCHEMA)
+@Table(name = "SIGEPEN_PEDIDO_ALIMENTO", schema = Sigepen.SEJUDH_SCHEMA)
 public class PedidoAlimento extends BaseModel<Long> {
 
     private static final long serialVersionUID = 123456789L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PEDIDO_ALIMENTO_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SIGEPEN_S_PEDIDO_ALIMENTO_GEN")
     @SequenceGenerator(
-            name = "SEQ_PEDIDO_ALIMENTO_GENERATOR",
-            sequenceName = "SEQ_PEDIDO_ALIMENTO",
+            name = "SIGEPEN_S_PEDIDO_ALIMENTO_GEN",
+            sequenceName = "SIGEPEN_S_PEDIDO_ALIMENTO_GEN",
             allocationSize = 1,
             schema = Sigepen.SEJUDH_SCHEMA
     )
-    @Column(name = "ID")
+    @Column(name = "ID_PEDIDO_ALIMENTO")
     private Long id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "DATA_EMISSAO", nullable = false)
+    @Column(name = "DATA_EMISSAO_PEDIDO", nullable = false)
     private Date dataEmissao;
 
     @Column(name = "DATA_PEDIDO", nullable = false)
@@ -48,11 +48,11 @@ public class PedidoAlimento extends BaseModel<Long> {
     private Long idTipoRefeicao;
 
     @Lob
-    @Column(name = "JSON_CONTEUDO", nullable = false)
+    @Column(name = "JSON_CONTEUDO_PEDIDO", nullable = false)
     private String jsonConteudo;
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "STATUS", nullable = false)
+    @Column(name = "STAT_PEDIDO", nullable = false)
     private Status status;
 
     private PedidoAlimento(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato, Long idTipoRefeicao, String jsonConteudo) {
