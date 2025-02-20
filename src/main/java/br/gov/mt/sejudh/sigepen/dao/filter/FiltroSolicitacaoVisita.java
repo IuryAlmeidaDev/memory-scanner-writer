@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +32,7 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
     private UnidadePrisional unidadePrisional;
     private List<UnidadePrisional> unidades;
     private boolean listarTodasUnidades;
+    private Date dataNascimento;
 
     @Override
     public void configurarFiltros() {
@@ -86,6 +88,11 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
         if (StringUtils.isNotBlank(this.getRecuperando())) {
             getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nome", this.getRecuperando(), MatchMode.ANYWHERE));
         }
+
+        if (this.getDataNascimento() != null) {
+            getCriteria().add(Restrictions.le("pessoaSolicitacao.dataNascimento", this.getDataNascimento()));
+        }
+
     }
 
     private void configurarFiltrosPessoa() {
@@ -168,5 +175,12 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
 	public void setListarTodasUnidades(boolean listarTodasUnidades) {
 		this.listarTodasUnidades = listarTodasUnidades;
 	}
-	
+
+    public Date getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(Date dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
 }
