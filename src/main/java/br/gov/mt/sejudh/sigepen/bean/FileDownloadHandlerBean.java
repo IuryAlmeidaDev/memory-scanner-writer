@@ -1,26 +1,17 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-
-import java.io.FileInputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
@@ -68,8 +59,6 @@ public class FileDownloadHandlerBean {
     		throw new RuntimeException("Arquivo ou nome do arquivo está nulo.");
     	}
     }
-
-
 
     public void prepararArquivo(Arquivo arquivo) {
     	byte[] bytesNovo = null;

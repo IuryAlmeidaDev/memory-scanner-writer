@@ -203,6 +203,7 @@ public class FiltroPedTransito extends FiltroConsulta {
 				.add(Projections.property("id").as("id"))
 				.add(Projections.property("recuperando.id").as("idRec"))
 				.add(Projections.property("pessoa.nome").as("recuperando"))
+				.add(Projections.property("pessoa.nomeSocial").as("nomeSocial"))
 				.add(Projections.property("tipoTransito").as("tipoTransito"))
 				.add(Projections.property("dataPrevista").as("dataPrevista"))
 	            .add(Projections.property("status").as("status"))
