@@ -2173,6 +2173,12 @@
 							converterData="true"
 							rendered="#{!recuperandoBean.alterarParentes()}" />
 
+						<p:commandButton title="Abrir Rol" icon="pi pi-print"
+										 value="Abrir Rol" action="#{recuperandoBean.abrirRollParentes()}"
+										 update=":tabView:formParente"
+										 rendered="#{(securityUtil.possuiPermissao('CadastrarRecuperando') or securityUtil.possuiPermissao('AlterarRecuperando')) and securityUtil.possuiPermissao('AbrirRollParente')}" />
+
+
 						<br />
 						<p:dataTable id="parentes" var="parente"
 							emptyMessage="Nenhum parente adicionado."

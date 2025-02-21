@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.gov.mt.sejudh.sigepen</groupId>
     <artifactId>sigepen</artifactId>
-    <version>1.23.8</version>
+    <version>1.25.0</version>
     <packaging>war</packaging>
     <name>sigepen Webapp</name>
     <description>sigepen Webapp</description>
@@ -21,6 +21,13 @@
 
 
     <dependencies>
+
+    	<dependency>
+            <groupId>br.gov.mt.seguranca</groupId>
+            <artifactId>sesp-audit-report</artifactId>
+            <version>0.0.3</version>
+        </dependency>
+
         <!-- Apache Commons BeanUtils -->
         <dependency>
             <groupId>commons-beanutils</groupId>
