@@ -8,6 +8,7 @@ import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
@@ -204,6 +205,12 @@ public class LoggerUtil implements Serializable {
 		
 		ThreadContext.put("loginUser", String.valueOf(SecurityUtil.getUsuario().getId()));
 		ThreadContext.put("ipOrigem", getIp());
+
+		if (acao.equals(Acao.IMPRIMIR)) {
+			ThreadContext.put("hashImpressao", getHashImpressao());
+
+		}
+
 		String mensagem = configuraMensagem(acao, severidade, objeto);
 		
 		switch(severidade) {
@@ -219,6 +226,17 @@ public class LoggerUtil implements Serializable {
 				log.error(mensagem + " " + e.getMessage(), e);
 				break;
 		}
+	}
+	
+	public static  String getHashImpressao() {
+		//set session em: FileDownloadHandlerBean.prepararArquivo
+		String hashImpressao = "HashNaoGerador";
+		FacesUtil facesUtil = new FacesUtil();
+		if(facesUtil != null) {
+			hashImpressao = (String) facesUtil.getObjetoSessao("hashImpressao");
+		}
+		
+		return hashImpressao;
 	}
 	
 	public static String getIp() {	

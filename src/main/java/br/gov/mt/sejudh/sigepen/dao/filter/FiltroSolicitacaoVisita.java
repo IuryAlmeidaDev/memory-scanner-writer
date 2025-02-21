@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +32,8 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
     private UnidadePrisional unidadePrisional;
     private List<UnidadePrisional> unidades;
     private boolean listarTodasUnidades;
+    private String nomeSocial;
+    private Date dataNascimento;
     private String nomeSocial;
 
     @Override
@@ -74,7 +77,7 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
         if (this.getNomeSocial() != null) {
             getCriteria().add(Restrictions.eq("pessoa.nomeSocial", this.getNomeSocial()));
         }
-        
+
         if(this.isListarTodasUnidades()) {
             if (this.getUnidadePrisional() == null) {
             	List<Long> lista = new ArrayList<Long>();
@@ -92,6 +95,11 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
         if (StringUtils.isNotBlank(this.getRecuperando())) {
             getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("nome", this.getRecuperando(), MatchMode.ANYWHERE));
         }
+
+        if (this.getDataNascimento() != null) {
+            getCriteria().add(Restrictions.le("pessoaSolicitacao.dataNascimento", this.getDataNascimento()));
+        }
+
     }
 
     private void configurarFiltrosPessoa() {
@@ -174,6 +182,23 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
 	public void setListarTodasUnidades(boolean listarTodasUnidades) {
 		this.listarTodasUnidades = listarTodasUnidades;
 	}
+
+    public Date getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(Date dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
+	}
+
 
 	public String getNomeSocial() {
 		return nomeSocial;

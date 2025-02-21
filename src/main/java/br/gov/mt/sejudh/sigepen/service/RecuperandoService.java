@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
+import javax.xml.crypto.Data;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.CredenciamentoDAO;
@@ -179,6 +180,21 @@ public class RecuperandoService {
 		}
 		
 		return recuperando;
+	}
+
+	public void abrirRollParentes(Recuperando recuperando){
+
+		Calendar calendar = Calendar.getInstance();
+
+		calendar.add(Calendar.MONTH, 4);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		recuperando.setAlteracaoParentes(calendar.getTime());
+
+		dao.salvar(recuperando);
 	}
 	
 	@Interceptors(EJBExcInterceptor.class)
