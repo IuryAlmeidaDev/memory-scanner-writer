@@ -34,7 +34,6 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
     private boolean listarTodasUnidades;
     private String nomeSocial;
     private Date dataNascimento;
-    private String nomeSocial;
 
     @Override
     public void configurarFiltros() {
@@ -190,15 +189,6 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
     public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
-
-	public String getNomeSocial() {
-		return nomeSocial;
-	}
-
-	public void setNomeSocial(String nomeSocial) {
-		this.nomeSocial = nomeSocial;
-	}
-
 
 	public String getNomeSocial() {
 		return nomeSocial;
