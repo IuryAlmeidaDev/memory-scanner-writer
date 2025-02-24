@@ -21,10 +21,10 @@ import br.gov.mt.sejudh.sigepen.model.Usuario;
 
 public class EmailService {
 
-	private static final String SMTP_HOST = "srv-smtp-dev-hmg.seguranca.local";
-	private static final String SMTP_PORT = "587";
-	private static final String USERNAME = "sistemas.homolog@sesp.mt.gov.br";
-	private static final String PASSWORD = "hzljkaunxezqltof";
+	private static final String SMTP_HOST = System.getenv("SMTP_HOST");//"srv-smtp.seguranca.local";
+	private static final String SMTP_PORT = System.getenv("SMTP_PORT");//"587";
+	private static final String USERNAME_EMAIL = System.getenv("USERNAME_EMAIL");//"sistemas@sesp.mt.gov.br";
+	private static final String PASSWORD_EMAIL = System.getenv("PASSWORD_EMAIL");//"O@bM9TUn";
 	private static final String TEMPLATE_PATH = "/WEB-INF/pages/_templates/EmailResetSenha.xhtml";
 
 	private static void sendEmail(String destinatario, String assunto, String body) throws MessagingException {
@@ -38,12 +38,12 @@ public class EmailService {
 		Session session = Session.getInstance(props, new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(USERNAME, PASSWORD);
+				return new PasswordAuthentication(USERNAME_EMAIL, PASSWORD_EMAIL);
 			}
 		});
 
 		Message message = new MimeMessage(session);
-		message.setFrom(new InternetAddress(USERNAME));
+		message.setFrom(new InternetAddress(USERNAME_EMAIL));
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
 		message.setSubject(assunto);
 		message.setContent(body, "text/html; charset=utf-8");
