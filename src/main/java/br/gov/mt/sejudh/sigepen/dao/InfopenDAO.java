@@ -256,8 +256,7 @@ public class InfopenDAO {
 					" AND r.id = pro.recuperando_id " +
 					" AND R.CONDICAO_ATUAL = 'CONDENADO'" + 
 					" AND PRO.STATUS_PROCESSO <> 'FINALIZADO'" +
-					" AND r.ID = p2.RECUPERANDO_ID" +
-					" AND (p2.DATA_SAIDA BETWEEN :DATA_ENTRADA AND :DATA_SAIDA OR p2.DATA_SAIDA IS NULL)";										
+					" AND r.ID = p2.RECUPERANDO_ID" ;										
 		} else if(filtro.getPopulacaoFeminino() != null && (PopulacaoFeminino.C.equals(filtro.getPopulacaoFeminino()) || PopulacaoFeminino.D.equals(filtro.getPopulacaoFeminino()))) {
 			sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL,  \r\n" + 
 					"   CASE R.STATUS \r\n" + 
@@ -275,8 +274,7 @@ public class InfopenDAO {
 					"   AND r.PESSOA_ID = p.id\r\n" +
 					" AND na.id = p.nacionalidade_id " +
 					" and par.recuperando_id = r.id" +
-					" AND r.ID = p2.RECUPERANDO_ID" +
-					" AND (p2.DATA_SAIDA BETWEEN :DATA_ENTRADA AND :DATA_SAIDA OR p2.DATA_SAIDA IS NULL)";					
+					" AND r.ID = p2.RECUPERANDO_ID" ;					
 		} else {
 			sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL,  \r\n" + 
 					"   CASE R.STATUS \r\n" + 
@@ -295,9 +293,16 @@ public class InfopenDAO {
 					"   and r.status = 1\r\n" + 
 					"   AND r.PESSOA_ID = p.id\r\n" +
 					" AND na.id = p.nacionalidade_id " +
-					" AND r.ID = p2.RECUPERANDO_ID" +
-				    " AND (p2.DATA_SAIDA BETWEEN :DATA_ENTRADA AND :DATA_SAIDA OR p2.DATA_SAIDA IS NULL)";															
+					" AND r.ID = p2.RECUPERANDO_ID";															
 		}
+		
+		if(filtro.getDataInicial() != null || filtro.getDataFinal() != null) {
+			sql += " AND (p2.DATA_SAIDA BETWEEN :DATA_ENTRADA AND :DATA_SAIDA OR p2.DATA_SAIDA IS NULL)";
+		} else {
+			sql += " AND (p2.DATA_SAIDA IS NULL)";
+			
+		}
+		
 		
 		if(filtro.getNacionalidade() != null) {
 			sql += " AND NA.ID = :NACIONALIDADE ";
