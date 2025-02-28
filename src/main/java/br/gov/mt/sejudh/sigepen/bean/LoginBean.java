@@ -303,7 +303,7 @@ public class LoginBean {
 	}
 
 	public void resetSenha() {
-		
+
 		Usuario usuario = this.usuarioService.buscarUsuariosPorCpfAndNascimento(this.usuarioResetSenhaDTO.getCpf(),
 				this.usuarioResetSenhaDTO.getNascimento());
 
@@ -342,9 +342,12 @@ public class LoginBean {
 	}
 
 	private void limparResetSenha() {
-		
-		this.usuarioResetSenhaDTO.getMatriculaList().clear();
-		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
+
+		if(this.usuarioResetSenhaDTO != null) {
+
+			this.usuarioResetSenhaDTO.getMatriculaList().clear();
+			this.usuarioResetSenhaDTO.getNomeMaeList().clear();
+		}
 		this.unidadeErrada = false;
 
 		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
@@ -365,6 +368,7 @@ public class LoginBean {
 		if (MatriculaSelecionado.equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula())) {
 
 			this.enviarResetSenha();
+			return;
 
 		}
 
@@ -416,7 +420,8 @@ public class LoginBean {
 		}
 
 		Random random = new Random();
-		
+
+		servidorDTOs.removeIf(servidorDTO -> servidorDTO.getMatricula() == this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula());
 		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario());
 		
 		this.usuarioResetSenhaDTO.getMatriculaList().clear();
@@ -448,7 +453,7 @@ public class LoginBean {
 		}
 
 		Random random = new Random();
-		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario().getServidor());
+		servidorDTOs.removeIf(servidorDTO -> servidorDTO.getMae().equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae()));
 		
 		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
 		

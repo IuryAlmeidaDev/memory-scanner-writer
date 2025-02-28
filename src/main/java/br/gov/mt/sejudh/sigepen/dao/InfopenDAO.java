@@ -258,27 +258,27 @@ public class InfopenDAO {
 					" AND PRO.STATUS_PROCESSO <> 'FINALIZADO'" +
 					" AND r.ID = p2.RECUPERANDO_ID" +
 					" AND (:DATA_PESQUISA BETWEEN p2.DATA_ENTRADA AND COALESCE(p2.DATA_SAIDA, :DATA_PESQUISA))";
-			
+
 		} else if(filtro.getPopulacaoFeminino() != null && (PopulacaoFeminino.C.equals(filtro.getPopulacaoFeminino()) || PopulacaoFeminino.D.equals(filtro.getPopulacaoFeminino()))) {
 			sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL,  \r\n" + 
-				  "   CASE R.STATUS \r\n" + 
-				  "   WHEN 1 THEN 'ATIVO'\r\n" + 
-				  "   WHEN 0 THEN 'INATIVO'\r\n" + 
-				  "   WHEN 2 THEN 'INATIVO_PARCIAL'\r\n" + 
+				  "   CASE R.STATUS \r\n" +
+				  "   WHEN 1 THEN 'ATIVO'\r\n" +
+				  "   WHEN 0 THEN 'INATIVO'\r\n" +
+				  "   WHEN 2 THEN 'INATIVO_PARCIAL'\r\n" +
 				  "  END AS STATUS, \r\n" +
 				  "  l.estrutura \r\n " +
 				  "  from " + Sigepen.SEJUDH_SCHEMA + ".recuperando r, " + Sigepen.SEJUDH_SCHEMA + ".regime re, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos l, " + Sigepen.SEJUDH_SCHEMA + ".pessoa p, \r\n" +
 				  " " +Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " + Sigepen.SEJUDH_SCHEMA + ".parente par "  +Sigepen.SEJUDH_SCHEMA + ".PASSAGEM p2 " +
-			      " where r.regime_atual_id = re.id\r\n" + 
-				  "   and r.id = l.matricula\r\n" + 
-				  "   and l.id_unidade = :UNIDADE \r\n" + 
-				  "   and r.status = 1\r\n" + 
+			      " where r.regime_atual_id = re.id\r\n" +
+				  "   and r.id = l.matricula\r\n" +
+				  "   and l.id_unidade = :UNIDADE \r\n" +
+				  "   and r.status = 1\r\n" +
 				  "   AND r.PESSOA_ID = p.id\r\n" +
 				  " AND na.id = p.nacionalidade_id " +
 				  " and par.recuperando_id = r.id" +
 				  " AND r.ID = p2.RECUPERANDO_ID" +
-				  " AND (:DATA_PESQUISA BETWEEN p2.DATA_ENTRADA AND COALESCE(p2.DATA_SAIDA, :DATA_PESQUISA))"; 
-					
+				  " AND (:DATA_PESQUISA BETWEEN p2.DATA_ENTRADA AND COALESCE(p2.DATA_SAIDA, :DATA_PESQUISA))";
+
 		} else  if (filtro.getTipoRelatorio() == 1 && filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
 			sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL, " +
 			      "   CASE R.STATUS " +
@@ -288,7 +288,7 @@ public class InfopenDAO {
 			      "  END AS STATUS, " +
 			      "  l.estrutura, " +
 			      "  p2.DATA_ENTRADA, " +
-			      "  p2.DATA_SAIDA " +                  
+			      "  p2.DATA_SAIDA " +
 			      "  from " + Sigepen.SEJUDH_SCHEMA + ".recuperando r, " + Sigepen.SEJUDH_SCHEMA + ".regime re, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos l, " + Sigepen.SEJUDH_SCHEMA + ".pessoa p, " +
 			      Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM p2 " +
 			      " where r.regime_atual_id = re.id " +
@@ -299,9 +299,9 @@ public class InfopenDAO {
 			      "   AND na.id = p.nacionalidade_id " +
 			      "   AND r.ID = p2.RECUPERANDO_ID " +
 			      "   AND (:DATA_PESQUISA BETWEEN p2.DATA_ENTRADA AND COALESCE(p2.DATA_SAIDA, :DATA_PESQUISA))";
-			    
-			    
-		/* Infopen Sequenciado Detalhado*/	    
+
+
+		/* Infopen Sequenciado Detalhado*/
 		} else if( filtro.getTipoRelatorio() == 4 && filtro.getDataInicial() == null && filtro.getDataFinal() == null) {
 			sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL, " +
 			      "   CASE R.STATUS " +
@@ -311,7 +311,7 @@ public class InfopenDAO {
 			      "  END AS STATUS, " +
 			      "  l.estrutura, " +
 			      "  p2.DATA_ENTRADA, " +
-			      "  p2.DATA_SAIDA " +                  
+			      "  p2.DATA_SAIDA " +
 			      "  from " + Sigepen.SEJUDH_SCHEMA + ".recuperando r, " + Sigepen.SEJUDH_SCHEMA + ".regime re, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos l, " + Sigepen.SEJUDH_SCHEMA + ".pessoa p, " +
 			      Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM p2 " +
 			      " where r.regime_atual_id = re.id " +
@@ -321,9 +321,9 @@ public class InfopenDAO {
 			      "   AND r.PESSOA_ID = p.id " +
 			      "   AND na.id = p.nacionalidade_id " +
 			      "   AND r.ID = p2.RECUPERANDO_ID";
-		
-			
-		  /* Infopen Sequenciado Por Data*/									
+
+
+		  /* Infopen Sequenciado Por Data*/
 		  } else if( filtro.getTipoRelatorio() == 4 && filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
 			 sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL, " +
 				      "   CASE R.STATUS " +
@@ -333,7 +333,7 @@ public class InfopenDAO {
 				      "  END AS STATUS, " +
 				      "  l.estrutura, " +
 				      "  p2.DATA_ENTRADA, " +
-				      "  p2.DATA_SAIDA " +                  
+				      "  p2.DATA_SAIDA " +
 				      "  from " + Sigepen.SEJUDH_SCHEMA + ".recuperando r, " + Sigepen.SEJUDH_SCHEMA + ".regime re, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos l, " + Sigepen.SEJUDH_SCHEMA + ".pessoa p, " +
 				      Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM p2 " +
 				      " where r.regime_atual_id = re.id " +
@@ -342,10 +342,10 @@ public class InfopenDAO {
 				      "   and r.status = 1 " +
 				      "   AND r.PESSOA_ID = p.id " +
 				      "   AND na.id = p.nacionalidade_id " +
-				      "   AND r.ID = p2.RECUPERANDO_ID" +				      
+				      "   AND r.ID = p2.RECUPERANDO_ID" +
 				      "   AND (:DATA_PESQUISA BETWEEN p2.DATA_ENTRADA AND COALESCE(p2.DATA_SAIDA, :DATA_PESQUISA))";
 
-			 
+
 		    /* Infopen Unioficado*/
 			} else if( filtro.getTipoRelatorio() == 5 && filtro.getDataInicial() == null && filtro.getDataFinal() == null) {
 				sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL, " +
@@ -356,18 +356,18 @@ public class InfopenDAO {
 				      "  END AS STATUS, " +
 				      "  l.estrutura, " +
 				      "  p2.DATA_ENTRADA, " +
-				      "  p2.DATA_SAIDA " +                  
+				      "  p2.DATA_SAIDA " +
 				      "  from " + Sigepen.SEJUDH_SCHEMA + ".recuperando r, " + Sigepen.SEJUDH_SCHEMA + ".regime re, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos l, " + Sigepen.SEJUDH_SCHEMA + ".pessoa p, " +
 				      Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM p2 " +
 				      " where r.regime_atual_id = re.id " +
-				      "   and r.id = l.matricula " +				      
+				      "   and r.id = l.matricula " +
 				      "   and r.status = 1 " +
 				      "   AND r.PESSOA_ID = p.id " +
 				      "   AND na.id = p.nacionalidade_id " +
 				      "   AND r.ID = p2.RECUPERANDO_ID";
-			
-				
-			/* Infopen Unioficado Por Data*/									
+
+
+			/* Infopen Unioficado Por Data*/
 			} else if( filtro.getTipoRelatorio() == 5 && filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
 				sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL, " +
 					      "   CASE R.STATUS " +
@@ -377,17 +377,17 @@ public class InfopenDAO {
 					      "  END AS STATUS, " +
 					      "  l.estrutura, " +
 					      "  p2.DATA_ENTRADA, " +
-					      "  p2.DATA_SAIDA " +                  
+					      "  p2.DATA_SAIDA " +
 					      "  from " + Sigepen.SEJUDH_SCHEMA + ".recuperando r, " + Sigepen.SEJUDH_SCHEMA + ".regime re, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos l, " + Sigepen.SEJUDH_SCHEMA + ".pessoa p, " +
 					      Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM p2 " +
 					      " where r.regime_atual_id = re.id " +
-					      "   and r.id = l.matricula " +				      
+					      "   and r.id = l.matricula " +
 					      "   and r.status = 1 " +
 					      "   AND r.PESSOA_ID = p.id " +
 					      "   AND na.id = p.nacionalidade_id " +
 					      "   AND r.ID = p2.RECUPERANDO_ID" +
 					      "   AND (:DATA_PESQUISA BETWEEN p2.DATA_ENTRADA AND COALESCE(p2.DATA_SAIDA, :DATA_PESQUISA))";
-													
+
 				}
 			else {
 			    sql = "select DISTINCT R.ID, P.NOME, P.NOME_MAE AS NOMEMAE, RE.DESCRICAO AS REGIME, R.CONDICAO_ATUAL AS CONDICAOATUAL, " +
@@ -398,7 +398,7 @@ public class InfopenDAO {
 			          "  END AS STATUS, " +
 			          "  l.estrutura, " +
 			          "  p2.DATA_ENTRADA, " +
-			          "  p2.DATA_SAIDA " +                  
+			          "  p2.DATA_SAIDA " +
 			          "  from " + Sigepen.SEJUDH_SCHEMA + ".recuperando r, " + Sigepen.SEJUDH_SCHEMA + ".regime re, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos l, " + Sigepen.SEJUDH_SCHEMA + ".pessoa p, " +
 			          Sigepen.SEJUDH_SCHEMA + ".nacionalidade na, " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM p2 " +
 			          " where r.regime_atual_id = re.id " +
@@ -408,7 +408,7 @@ public class InfopenDAO {
 			          "   AND r.PESSOA_ID = p.id " +
 			          "   AND na.id = p.nacionalidade_id " +
 			          "   AND r.ID = p2.RECUPERANDO_ID";
-			
+
 		}
 		
 		if(filtro.getNacionalidade() != null) {
@@ -459,21 +459,21 @@ public class InfopenDAO {
 		List<InfopenRecuperandoDTO> recs = new ArrayList<InfopenRecuperandoDTO>();
 		
 		Query query = this.em.createNativeQuery(sql);
-		
-		if(filtro.getTipoRelatorio() != 5 
-				&& filtro.getDataInicial() == null 
-				&& filtro.getDataFinal() == null  
-				
-				|| filtro.getTipoRelatorio() != 5 
-				
-				&& filtro.getDataInicial() != null 
+
+		if(filtro.getTipoRelatorio() != 5
+				&& filtro.getDataInicial() == null
+				&& filtro.getDataFinal() == null
+
+				|| filtro.getTipoRelatorio() != 5
+
+				&& filtro.getDataInicial() != null
 				&& filtro.getDataFinal() != null) {
-			
+
 			query.setParameter("UNIDADE", filtro.getUnidade());
 		}
-		
+
 		//query.setParameter("UNIDADE", filtro.getUnidade());
-		
+
 		if(filtro.getNacionalidade() != null) {
 			query.setParameter("NACIONALIDADE", filtro.getNacionalidade().getId());
 		}
@@ -504,7 +504,7 @@ public class InfopenDAO {
 		if(filtro.getAposentado() != null) {
 			query.setParameter("APOSENTADO", SimNao.N.equals(filtro.getAposentado()) ? 0 : 1);
 		}
-
+		
 		if(filtro.getDataInicial() != null) {
 			query.setParameter("DATA_PESQUISA", filtro.getDataInicial());
 		}
@@ -535,7 +535,8 @@ public class InfopenDAO {
 	        String dataEntrada = record[7] != null ? sdf.format((Date) record[7]) : "";
 	        String dataSaida = record[8] != null ? sdf.format((Date) record[8]) : "";
 	        
-				        
+			
+	        
 	        InfopenRecuperandoDTO r = new InfopenRecuperandoDTO(id, nome, nomeMae, regime, condicao, status, filtro, descricaoFiltro, descricaoTitulo, estrutura, dataEntrada, dataSaida);
 			recs.add(r);
 		});
