@@ -34,7 +34,10 @@
 				<textFieldExpression><![CDATA["<b>Unidade: </b>" + $P{UNIDADE_LOGADA}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="73" width="555" height="20" uuid="0c7f9214-faeb-4ad4-b25b-90365d6aeefd"/>
+				<reportElement x="0" y="73" width="555" height="20" uuid="0c7f9214-faeb-4ad4-b25b-90365d6aeefd">
+					<printWhenExpression><![CDATA[!$P{NOME_DO_RELATORIO}.equals("Relatório Estatístico Infopen Unificado") ||
+!$P{NOME_DO_RELATORIO}.equals("Relatório Estatístico InfopenUnificado Por Data")]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>

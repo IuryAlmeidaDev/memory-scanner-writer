@@ -18,6 +18,7 @@ import br.gov.mt.sejudh.sigepen.service.PedidoService;
 public class ExtratoRecuperandoDTO {
 
 	String nome;
+	String nomeSocial;
 	Long matricula;
 	String nomeMae;
 	Date dataNascimento;
@@ -30,6 +31,7 @@ public class ExtratoRecuperandoDTO {
 	
 	public ExtratoRecuperandoDTO(Recuperando r) {
 		this.nome = r.getPessoa().getNome();
+		this.nomeSocial = r.getPessoa().getNomeSocial();
 		this.matricula = r.getId();
 		this.nomeMae = r.getPessoa().getNomeMae();
 		this.dataNascimento = r.getPessoa().getDataNascimento();

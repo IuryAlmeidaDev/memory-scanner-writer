@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RegistroRecebimentoTransferencia" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.3995221406292102"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="300"/>
+	<property name="ireport.y" value="252"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -46,6 +46,7 @@
 	<field name="dataCancelamento" class="java.util.Date"/>
 	<field name="estruturaDestino.nomeCompleto" class="java.lang.String"/>
 	<field name="resultado" class="java.lang.String"/>
+	<field name="recuperando.pessoa.nomeSocial" class="java.lang.String"/>
 	<pageHeader>
 		<band height="106" splitType="Stretch">
 			<subreport isUsingCache="false">
@@ -126,45 +127,45 @@
 				<textFieldExpression><![CDATA[$F{transferencia.dataInicio}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="111" y="176" width="289" height="20" uuid="45e5dc42-f541-4ddc-a33d-e3458888e224"/>
+				<reportElement x="111" y="169" width="289" height="20" uuid="45e5dc42-f541-4ddc-a33d-e3458888e224"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{recuperando.pessoa.nome}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="136" width="105" height="20" uuid="53456875-1378-4722-b55b-27d119c599f2"/>
+				<reportElement x="7" y="129" width="105" height="20" uuid="53456875-1378-4722-b55b-27d119c599f2"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nº Pedido:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="111" y="156" width="117" height="20" uuid="ac768849-fcd3-4db8-8f56-95363df21259"/>
+				<reportElement x="111" y="149" width="117" height="20" uuid="ac768849-fcd3-4db8-8f56-95363df21259"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{recuperando.id}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="176" width="105" height="20" uuid="682c78e5-fa83-4d87-b11a-5fd6c7641d54"/>
+				<reportElement x="7" y="169" width="105" height="20" uuid="682c78e5-fa83-4d87-b11a-5fd6c7641d54"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="7" y="196" width="105" height="20" uuid="7be4c614-0c0f-4ba7-b0d9-10a75bb83e83"/>
+				<reportElement x="7" y="212" width="105" height="20" uuid="7be4c614-0c0f-4ba7-b0d9-10a75bb83e83"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome da Mãe:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="7" y="156" width="105" height="20" uuid="5f4fe345-8320-49c7-bf9f-c3eef0d8ccd8"/>
+				<reportElement x="7" y="149" width="105" height="20" uuid="5f4fe345-8320-49c7-bf9f-c3eef0d8ccd8"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Matricula:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="111" y="196" width="288" height="20" uuid="6aa07056-e98d-4367-8c3a-a0b13a7e8aa3"/>
+				<reportElement x="111" y="212" width="288" height="20" uuid="6aa07056-e98d-4367-8c3a-a0b13a7e8aa3"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{recuperando.pessoa.nomeMae}]]></textFieldExpression>
 			</textField>
@@ -173,7 +174,7 @@
 				<imageExpression><![CDATA[new ByteArrayInputStream((byte[])$F{foto.imagem.arquivo})]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="111" y="136" width="117" height="20" uuid="9679387f-e96d-457f-afb9-f12390a20539"/>
+				<reportElement x="111" y="129" width="117" height="20" uuid="9679387f-e96d-457f-afb9-f12390a20539"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
@@ -226,7 +227,7 @@
 				<text><![CDATA[Recebido por:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="7" y="237" width="105" height="20" uuid="91890bdb-9fc2-4770-82f6-d548963f6fa4"/>
+				<reportElement x="7" y="253" width="105" height="20" uuid="91890bdb-9fc2-4770-82f6-d548963f6fa4"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -260,7 +261,7 @@
 				<text><![CDATA[Data Cancelamento:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
-				<reportElement x="112" y="237" width="421" height="20" uuid="d64777da-3f85-4848-be4a-c6694ab7a9a0"/>
+				<reportElement x="112" y="253" width="421" height="20" uuid="d64777da-3f85-4848-be4a-c6694ab7a9a0"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
@@ -270,14 +271,14 @@
 				<reportElement x="5" y="103" width="540" height="1" uuid="72bc79f4-2134-4c4a-9a65-adcbee5557ef"/>
 			</line>
 			<staticText>
-				<reportElement x="7" y="216" width="105" height="20" uuid="b30a2c58-a5a0-4768-831a-eec69e378122"/>
+				<reportElement x="7" y="232" width="105" height="20" uuid="b30a2c58-a5a0-4768-831a-eec69e378122"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Data Nasc.:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="112" y="216" width="178" height="20" uuid="c3a5ab60-7ce2-4b03-8443-8ef6908bbafd"/>
+				<reportElement x="112" y="232" width="178" height="20" uuid="c3a5ab60-7ce2-4b03-8443-8ef6908bbafd"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{recuperando.pessoa.dataNascimento}]]></textFieldExpression>
 			</textField>
@@ -361,6 +362,18 @@
 				</textElement>
 				<text><![CDATA[Data Conclusão:]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="7" y="190" width="105" height="20" uuid="3fc78bb2-cfe8-4d9a-84ad-a58f00d8215b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Social:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="112" y="190" width="289" height="20" uuid="0b75769a-1fb2-4500-9878-a9e5ee0dc4be"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{recuperando.pessoa.nomeSocial}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>

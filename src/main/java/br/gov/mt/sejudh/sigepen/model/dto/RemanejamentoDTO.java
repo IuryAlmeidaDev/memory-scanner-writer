@@ -1,16 +1,18 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRemanejamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
+import br.gov.mt.sejudh.sigepen.model.Contato;
 import br.gov.mt.sejudh.sigepen.model.Foto;
+import br.gov.mt.sejudh.sigepen.model.Remanejamento;
 
 
 public class RemanejamentoDTO {
-
-
+		
 	private long id;
 	
 	private long pedidoId;
@@ -48,7 +50,10 @@ public class RemanejamentoDTO {
 	private TipoTransito tipoTransito;
 	
 	private FiltroRemanejamento filtro;
-
+	
+	 private String nomeSocial;	 	
+	
+	
 	public long getId() {
 		return id;
 	}
@@ -205,4 +210,16 @@ public class RemanejamentoDTO {
 	public void setFiltro(FiltroRemanejamento filtro) {
 		this.filtro = filtro;
 	}
+
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
+	}
+
+	
+	
+	
 }

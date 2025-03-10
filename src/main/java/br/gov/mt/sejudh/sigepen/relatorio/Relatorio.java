@@ -47,8 +47,6 @@ public enum Relatorio {
 	ListaDeChamadaComFotoNovo("LISTA DE CHAMADA"),
 	ListarDietaEspecialRecuperando("Listar Dieta Especial Recuperando"),
 	ExtratoRecuperando("EXTRATO DO RECUPERANDO", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
-	EstatisticoInfopen("Relatório Estatístico Infopen"),
-	EstatisticoInfopenPorData("Relatório Estatístico Infopen Por Data"),
 	ListaDeConfere("LISTA DE CHAMADA"),
 	ListaVisitantes("Credenciamentos"),
 	HistoricoCredenciamentos("HISTÓRICO DO CREDENCIAMENTO"),
@@ -63,8 +61,32 @@ public enum Relatorio {
 	FichaVisitante("", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
 	ListarEntradaSaida("CONSULTAR VISITAS", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
 	HistoricoRecuperando("HISTÓRICO RECUPERANDO"),
+
+	/* Relatórios Infopen Estatístico */
+
+	EstatisticoInfopen("Relatório Estatístico Infopen"),
+	EstatisticoInfopenPorData("Relatório Estatístico Infopen Por Data"),
+
+	EstatisticoInfopenUnificado("Relatório Estatístico Infopen Unificado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
+	EstatisticoInfopenUnificadoPorData("Relatório Estatístico Infopen Unificado Por Data", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
+
+	EstatisticoInfopenSequenciado("Relatório Estatístico Infopen Sequenciado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
+	EstatisticoInfopenSequenciadoPorData("Relatório Estatístico Infopen Sequenciado Por Data", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO),
+
+
+	/* Relatórios Infopen Detalhado */
+
 	InfopenDetalhado("Relatório de Recuperandos Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
-	InfopenDetalhadoPorData("Relatório de Recuperandos Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
+	InfopenDetalhadoPorData("Relatório de Recuperandos Infopen Detalhado Por Data", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
+
+	InfopenDetalhadoSequenciado("Relatório de Recuperandos Infopen Detalhado Sequenciado", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM),
+	InfopenDetalhadoSequenciadoPorData("Relatório de Recuperandos Infopen Detalhado Sequenciado Por Data", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM),
+
+	InfopenDetalhadoUnificado("Relatório de Recuperandos Infopen Detalhado Unificado", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM),
+	InfopenDetalhadoUnificadoPorData("Relatório de Recuperandos Infopen Detalhado Unificado Por Data", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM),
+
+
+
 	Biometrias("Biometrias");
 	
 	private Relatorio(String nome) {

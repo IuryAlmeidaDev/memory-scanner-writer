@@ -18,6 +18,8 @@ public class FaltaDisciplinarDTO {
 	private Date data;
 
 	private SituacaoFaltaDisciplinar situacao;
+	
+	private String nomeSocial;
 
 	public long getId() {
 		return id;
@@ -65,6 +67,14 @@ public class FaltaDisciplinarDTO {
 
 	public void setSituacao(SituacaoFaltaDisciplinar situacao) {
 		this.situacao = situacao;
+	}		
+
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
 	}
 
 	@Override

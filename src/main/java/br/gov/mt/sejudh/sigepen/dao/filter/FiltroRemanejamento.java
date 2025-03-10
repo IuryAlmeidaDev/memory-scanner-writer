@@ -50,6 +50,8 @@ public class FiltroRemanejamento extends FiltroConsulta {
 	
 	private String unidadeRecuperando;
 	
+	 private String nomeSocial;
+	
 	public Long getId() {
 		return id;
 	}
@@ -177,8 +179,15 @@ public class FiltroRemanejamento extends FiltroConsulta {
 	public void setUnidadeRecuperando(String unidadeRecuperando) {
 		this.unidadeRecuperando = unidadeRecuperando;
 	}
-
 		
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
+	}
+
 	@Override
 	public void configurarFiltros() {
 		
@@ -210,7 +219,8 @@ public class FiltroRemanejamento extends FiltroConsulta {
 				.add(Projections.property("unidadeDestino.nome").as("nomeUnidadeDestino"))
 				.add(Projections.property("pedido.motivo").as("motivo"))
 				.add(Projections.property("foto").as("foto"))
-				.add(Projections.property("resultado").as("resultado"));
+				.add(Projections.property("resultado").as("resultado"))
+				.add(Projections.property("pessoa.nomeSocial").as("nomeSocial"));
 	            
 		
 		getCriteria().setProjection(proj);	
@@ -280,7 +290,11 @@ public class FiltroRemanejamento extends FiltroConsulta {
 		if(this.getUnidadeRecuperando() !=null) {
 			getCriteria().add(Restrictions.eq("unidadeRecuperando", this.getUnidadeRecuperando()));
 		}
-				
+		
+		if(this.getNomeSocial() !=null && !this.getNomeSocial().equalsIgnoreCase("")) {
+			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("pessoa.nomeSocial", this.getNomeSocial(), MatchMode.ANYWHERE));
+		}
+			
 		
 	}
 
