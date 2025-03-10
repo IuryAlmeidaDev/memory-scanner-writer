@@ -12,6 +12,8 @@ public class Arquivo {
 	private byte[] bytes;
 	
 	private TipoArquivo tipo;
+	
+	private String caminho;
 
 	public String getContentType() {
 		return contentType;
@@ -22,6 +24,11 @@ public class Arquivo {
 	}
 
 	public String getNome() {
+	
+		if (nome == null) { 
+			throw new NullPointerException("Nome do arquivo está nulo."); 
+		}
+		
 		return this.nome + "." + this.tipo.toString().toLowerCase();
 	}
 
@@ -44,4 +51,14 @@ public class Arquivo {
 	public void setTipo(TipoArquivo tipo) {
 		this.tipo = tipo;
 	}
+
+	public String getCaminho() {
+		return caminho;
+	}
+
+	public void setCaminho(String caminho) {
+		this.caminho = caminho;
+	}
+	
+	
 }

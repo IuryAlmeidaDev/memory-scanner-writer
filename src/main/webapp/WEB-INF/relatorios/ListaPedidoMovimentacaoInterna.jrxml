@@ -31,7 +31,7 @@
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="30" y="0" width="50" height="15" uuid="b80f1008-f813-40a7-8366-a12a25f6b477"/>
+				<reportElement x="30" y="0" width="38" height="15" uuid="b80f1008-f813-40a7-8366-a12a25f6b477"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -39,7 +39,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Matricula]]></text>
 			</staticText>
@@ -52,12 +52,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nº]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="485" y="0" width="70" height="15" uuid="5c812074-056d-4391-99fc-04feaf7d3ec7"/>
+				<reportElement x="496" y="0" width="59" height="15" uuid="5c812074-056d-4391-99fc-04feaf7d3ec7"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -65,12 +65,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Situação]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="80" y="0" width="225" height="15" uuid="4a88b89f-1fc3-4fe7-a9cf-cced682e57b8"/>
+				<reportElement x="68" y="0" width="131" height="15" uuid="4a88b89f-1fc3-4fe7-a9cf-cced682e57b8"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -78,12 +78,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome Recuperando]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="305" y="0" width="180" height="15" uuid="1f0baca1-67d1-4e6c-9b6a-3a2b454f8b30"/>
+				<reportElement x="326" y="0" width="170" height="15" uuid="1f0baca1-67d1-4e6c-9b6a-3a2b454f8b30"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -91,9 +91,22 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Destino]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="199" y="0" width="127" height="15" uuid="1538f923-ae95-4c8e-80ad-36ec85ed0113"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Social]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -113,49 +126,59 @@
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="30" y="0" width="50" height="15" uuid="9315b647-92ad-4a8a-828c-999c5432d06f"/>
+				<reportElement stretchType="RelativeToBandHeight" x="30" y="0" width="38" height="15" uuid="9315b647-92ad-4a8a-828c-999c5432d06f"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{recuperando.id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="80" y="0" width="225" height="15" uuid="0a364e15-ac83-496e-b828-9233b41ab0ae"/>
+				<reportElement stretchType="RelativeToBandHeight" x="68" y="0" width="131" height="15" uuid="0a364e15-ac83-496e-b828-9233b41ab0ae"/>
 				<box leftPadding="2" rightPadding="2">
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{recuperando.pessoa.nome}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="305" y="0" width="180" height="15" uuid="e739b00f-d5af-4f73-9d83-da24648670f1"/>
+				<reportElement stretchType="RelativeToBandHeight" x="326" y="0" width="170" height="15" uuid="e739b00f-d5af-4f73-9d83-da24648670f1"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{estruturaDestino.nomeCompleto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="485" y="0" width="70" height="15" uuid="bb72b2b0-3359-4cb2-9785-51f487a640e7"/>
+				<reportElement stretchType="RelativeToBandHeight" x="496" y="0" width="59" height="15" uuid="bb72b2b0-3359-4cb2-9785-51f487a640e7"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{status.descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="199" y="0" width="127" height="15" uuid="df593a3c-0079-419c-8c10-d41048db4e64"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recuperando.pessoa.nome}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -15,7 +15,9 @@ public class PedidoTransitoDTO {
 
 	private long idRec;
 	
-	private String recuperando;	
+	private String recuperando;
+
+	private String nomeSocial;
 	
 	private Date dataPrevista;
 		
@@ -63,7 +65,7 @@ public class PedidoTransitoDTO {
 	
 	@SuppressWarnings("unused")
 	private String destinoParaExibicaoDataTable;
-
+	
 	public String getEstruturaNomeCompleto() {
 		return estruturaNomeCompleto;
 	}
@@ -102,6 +104,14 @@ public class PedidoTransitoDTO {
 
 	public void setRecuperando(String recuperando) {
 		this.recuperando = recuperando;
+	}
+
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
 	}
 
 	public Date getDataPrevista() {

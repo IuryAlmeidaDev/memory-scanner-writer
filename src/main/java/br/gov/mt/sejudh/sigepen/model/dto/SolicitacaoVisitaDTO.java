@@ -18,6 +18,8 @@ public class SolicitacaoVisitaDTO {
     private String nomeRecuperando;
 
     private String parentesco;
+    
+    private String nomeSocial;
 
 	public Long getId() {
 		return id;
@@ -75,5 +77,12 @@ public class SolicitacaoVisitaDTO {
 		this.parentesco = parentesco;
 	}
 
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
+	}
 
 }
