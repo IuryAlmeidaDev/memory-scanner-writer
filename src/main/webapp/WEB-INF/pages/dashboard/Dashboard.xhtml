@@ -146,5 +146,16 @@
 				
 			</p:dashboard>
 		</h:form>
+
+		<h:form>
+
+			<!-- Dialog -->
+			<p:dialog id="dialog" header="Solicitação de senha" widgetVar="dlg" visible="#{dashboardBean.solicitacaoResetSenha > 0}" modal="true" resizable="false">
+				<br />
+				<h:outputText value="Existem #{dashboardBean.solicitacaoResetSenha}Solititações de reset de senha." />
+				<br />
+			</p:dialog>
+		</h:form>
+
 	</ui:define>
 </ui:composition>

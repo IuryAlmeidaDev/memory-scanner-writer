@@ -17,7 +17,7 @@ public class FiltroUsuario extends FiltroConsulta {
 	private String cpf;
 	private String login;
 	private String email;
-	private Boolean resetSenha;
+	private Boolean resetSenha = false;
 
 	public String getNome() {
 		return nome;
