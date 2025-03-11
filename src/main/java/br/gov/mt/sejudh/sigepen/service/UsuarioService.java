@@ -143,4 +143,13 @@ public class UsuarioService {
 	public Usuario buscarUsuarioPorLogin(String loginUsuarioAutorizador) {
 		return dao.buscarUsuarioPorLogin(loginUsuarioAutorizador);
 	}
+
+	public int conutSolicitacaoSenha(){
+
+		FiltroUsuario filtroUsuario = new FiltroUsuario();
+
+		filtroUsuario.setResetSenha(true);
+
+		return dao.buscarQuantidadeFiltrada(filtroUsuario);
+	}
 }
