@@ -1,6 +1,8 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -163,6 +165,13 @@ public class DashboardBean {
 				break;	
 		}
 	}
+
+	private Date calculaDataLimiteMaiorDeIdade() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.YEAR, -18);
+
+		return calendar.getTime();
+	}
 	
 	private void configurarDashboard() {
 		org.primefaces.component.dashboard.Dashboard das = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:dash");
@@ -277,6 +286,7 @@ public class DashboardBean {
 			case SOLICITACAO_VISITA_PENDENTE:
 				filtroSolicitacaoVisita.setStatus(SgpStatusAlternativo.P);
 				filtroSolicitacaoVisita.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+				filtroSolicitacaoVisita.setDataNascimento(calculaDataLimiteMaiorDeIdade());
 				facesUtil.setFlashParameter("filtroSolicitacaoVisitaDash", filtroSolicitacaoVisita);
 				return "pretty:ListarSolicitacaoVisita";
 				
