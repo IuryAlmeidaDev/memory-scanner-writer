@@ -9,6 +9,8 @@ import javax.persistence.TypedQuery;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
@@ -70,7 +72,9 @@ public class SolicitacaoVisitaDAO extends BaseDAO<SolicitacaoVisita, Long> {
 	public int buscarQuantidadeFiltrada(FiltroSolicitacaoVisita filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(Pessoa.class, em);
 		criteria.setProjection(Projections.rowCount());
-		return ((Number) criteria.uniqueResult()).intValue();
+
+		int teste = ((Number) criteria.uniqueResult()).intValue();
+        return teste;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -78,8 +82,9 @@ public class SolicitacaoVisitaDAO extends BaseDAO<SolicitacaoVisita, Long> {
 		Criteria criteria = filtro.criarCriteriaParaBusca(Pessoa.class, em, isBuscaRelatorio);
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(SolicitacaoVisitaDTO.class));
-		return criteria.list();
-		
+
+        return (List<SolicitacaoVisitaDTO>) criteria.list();
+
 	}
 	
     public List<SolicitacaoVisita> buscarPorParente2(Parente parente) {

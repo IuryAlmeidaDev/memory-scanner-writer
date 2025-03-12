@@ -276,9 +276,8 @@ public class SolicitacaoVisitaBean extends MetodosDePaginaBean {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            	
-            	List<SolicitacaoVisitaDTO> solicitacoes = service.buscarSolicitacoesPorFiltro(getFiltro(), false);
-				return solicitacoes;
+
+                return service.buscarSolicitacoesPorFiltro(getFiltro(), false);
             }
     	};
     }
