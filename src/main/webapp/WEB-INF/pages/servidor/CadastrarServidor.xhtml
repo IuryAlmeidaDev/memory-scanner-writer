@@ -240,8 +240,77 @@
 					</sgp:formSelectOneMenu>
 				</h:panelGroup>
 					
-				<sgp:formSelectOneMenu id="status" labelValue="Status" value="#{servidorBean.servidor.status}" itemsValue="#{comboHelperBean.status}" itemValue="#{item}" 
-					itemLabel="#{item.descricao}" disabled="#{servidorBean.isVisualizacao}"/>
+				<sgp:formSelectOneMenu id="status" labelValue="Status" 
+				    value="#{servidorBean.servidor.status}" 
+				    itemsValue="#{comboHelperBean.status}" 
+				    itemValue="#{item}" 
+				    itemLabel="#{item.descricao}" 
+				    disabled="#{servidorBean.isVisualizacao}">
+				
+				    <p:ajax event="change" listener="#{servidorBean.verificarStatus}" 
+				    	update="servidorForm:dialogDesligamento" 
+				    	oncomplete="if (args.openDialog) PF('dlgDesligamento').show();" />
+				    	
+				</sgp:formSelectOneMenu>
+				
+				
+				<!-- Novo Dialog para o campo status quando estiver inativo -->				
+				<p:dialog header="Justificativa" widgetVar="dlgDesligamento" modal="true" id="dialogDesligamento" closable="true">
+				    <h:panelGrid columns="1" cellpadding="5" style="width: 100%">
+				
+				        <!-- Data do Desligamento -->
+				        <sgp:formCalendar 
+				            labelValue="Data do Desligamento"
+				            value="#{servidorBean.servidor.dataDesligamento}"
+				            validationRequired="true"
+				            disabled="#{servidorBean.isVisualizacao}"
+				            display="text" 
+				            dataMaxima="#{comboHelperBean.maxDate}" />
+				
+				        <!-- Motivo do Desligamento -->
+				        <sgp:formSelectOneMenu 
+				            id="motivoDesligamento"
+				            labelValue="Motivo do Desligamento"
+				            value="#{servidorBean.servidor.motivoDesligamento}"
+				            disabled="#{servidorBean.isVisualizacao}">
+				            
+				            <f:selectItem itemLabel="Selecione" itemValue="" />
+				            <f:selectItem itemLabel="Óbito" itemValue="OBITO" />
+				            <f:selectItem itemLabel="Exoneração a Pedido" itemValue="EXONERACAO_PEDIDO" />
+				            <f:selectItem itemLabel="Exoneração de Ofício" itemValue="EXONERACAO_OFICIO" />
+				            <f:selectItem itemLabel="Aposentadoria" itemValue="APOSENTADORIA" />
+				            <f:selectItem itemLabel="Vacância" itemValue="VACANCIA" />
+				        </sgp:formSelectOneMenu>
+				
+				        <!-- Justificativa -->
+				        <sgp:formInputTextarea
+						    id="justificativaDesligamento"
+						    labelValue="Justificativa"
+						    value="#{servidorBean.servidor.justificativa}"
+						    disabled="#{servidorBean.isVisualizacao}"
+						    validationRequired="true"
+						    rows="10"
+						    columns="100"
+						    maxlength="250"
+						    autoResize="true"
+						    size="#{servidorBean.servidor.justificativa.length() + 5}"
+						    display="text" />
+				            
+				    </h:panelGrid>
+				    
+				    	<br/><br/>
+				    
+				    <!-- Botão Salvar -->
+				    <p:commandButton 
+				        value="Salvar" 
+				        action="#{servidorBean.salvar()}" 
+				        update="@form :mensagens" 
+				        icon="ui-icon-disk" 
+				        rendered="#{(securityUtil.possuiPermissao('CadastrarServidor') 
+				        or securityUtil.possuiPermissao('AlterarServidor')) and !servidorBean.isVisualizacao}" />
+
+				</p:dialog>				
+								
 			
 				<br/>
 				<br/>
@@ -274,6 +343,10 @@
 							</h:outputText>
 						</p:column>
 						
+						<p:column headerText="Plantão">						
+							<h:outputText value="#{lot.plantao}" />						
+						</p:column>
+						
 						<p:column style="text-align:center" width="90">
 							<p:commandButton title="Alterar" icon="ui-icon-pencil" rendered="#{!servidorBean.isVisualizacao and securityUtil.possuiPermissao('AdicionarLotacaoServidor')}" disabled="#{lot.dataFim != null and servidorBean.validarLotacaoBloqueada(lot)}" actionListener="#{servidorBean.alterarLotacao(lot)}" update=":formDlg"/>
 						</p:column>
@@ -303,6 +376,25 @@
 					<sgp:formCalendar labelValue="Data Início" value="#{servidorBean.lotacao.dataInicio}" validationRequired="true" display="text" requiredMessage="*" dataMinima="#{servidorBean.dataMinimaLotacao}" dataMaxima="#{servidorBean.dataMaximaLotacao}"
 						disabled="#{(servidorBean.lotacao.id gt 0)}"/>					
 					<sgp:formCalendar labelValue="Data Fim" value="#{servidorBean.lotacao.dataFim}" dataMinima="#{servidorBean.dataMinimaLotacao}" dataMaxima="#{servidorBean.dataMaximaLotacao}"/>
+					
+					
+					<p:column headerText="Plantão" 
+						rendered="#{securityUtil.possuiPermissao('PermiteCadastrarPlantao')}">
+					    <sgp:formSelectOneMenu 
+					        id="plantao" 
+					        labelValue="Plantão"
+					        value="#{servidorBean.lotacao.plantao}"					        
+					        temSelecione="true"
+					        disabled="#{bean.isVisualizacao}" 
+					        display="text">
+					        
+					        <f:selectItem itemLabel="A" itemValue="A" />
+					        <f:selectItem itemLabel="B" itemValue="B" />
+					        <f:selectItem itemLabel="C" itemValue="C" />
+					        <f:selectItem itemLabel="D" itemValue="D" />
+					    </sgp:formSelectOneMenu>
+					</p:column>
+					
 					
 					<br/>
 					<br/>

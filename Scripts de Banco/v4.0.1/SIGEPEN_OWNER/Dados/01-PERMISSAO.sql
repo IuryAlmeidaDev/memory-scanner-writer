@@ -1,0 +1,1 @@
+INSERT INTO PERMISSAO (ID,NOME,DESCRICAO,FUNCIONALIDADE_ID) values (290,'PermiteCadastrarPlantao',	'Permite acesso a cadastrar o plantão do servidor.',2);
