@@ -93,6 +93,10 @@
 				<p:menuitem value="Sair" action="#{loginBean.logout()}" icon="ui-icon-power" />
 			</p:submenu>
 			
+			<p:submenu label="Plantão">
+				<p:menuitem value="Livro PLantão" icon="fa fa-file" />				
+			</p:submenu>
+			
             <p:submenu label="Administrador" rendered="#{securityUtil.getLoginUsuario().equals('ADMIN')}">
                 <p:menuitem value="Parametros" outcome="pretty:Parametro" />
                 <p:menuitem value="NServer" outcome="pretty:NServer" />
