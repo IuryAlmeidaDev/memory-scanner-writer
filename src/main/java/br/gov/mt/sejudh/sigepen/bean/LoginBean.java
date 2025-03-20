@@ -18,6 +18,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.service.*;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -44,12 +45,6 @@ import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UsuarioResetSenhaDTO;
 import br.gov.mt.sejudh.sigepen.realm.SigepenRealm;
-import br.gov.mt.sejudh.sigepen.service.LogAcessoBO;
-import br.gov.mt.sejudh.sigepen.service.LoginService;
-import br.gov.mt.sejudh.sigepen.service.ParametroUnidadeService;
-import br.gov.mt.sejudh.sigepen.service.ServidorService;
-import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
-import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -390,6 +385,9 @@ public class LoginBean {
 		}
 
 		this.usuarioService.salvar(usuario);
+
+		EmailService.sendEmailTISegepen(usuario);
+
 		this.isRedirectResetSenha = true;
 
 		SecurityUtils.getSubject().getSession().setAttribute("usuario", null);

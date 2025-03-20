@@ -25,7 +25,9 @@ public class EmailService {
 	private static final String SMTP_PORT = System.getenv("SMTP_PORT");//"587";
 	private static final String USERNAME_EMAIL = System.getenv("USERNAME_EMAIL");//"sistemas@sesp.mt.gov.br";
 	private static final String PASSWORD_EMAIL = System.getenv("PASSWORD_EMAIL");//"O@bM9TUn";
-	private static final String TEMPLATE_PATH = "/WEB-INF/pages/_templates/EmailResetSenha.xhtml";
+	private static final String TEMPLATE_PATH_USUARIO_RESET_SENHA = "/WEB-INF/pages/_templates/EmailResetSenha.xhtml";
+	private static final String TEMPLATE_PATH_SOLICITACAO_RESET_SENHA = "/WEB-INF/pages/_templates/SolicitacaoResetSenha.xhtml";
+	private static final String EMAIL_TI_SIGEPEN = "sigepen@sesp.mt.gov.br";
 
 	private static void sendEmail(String destinatario, String assunto, String body) throws MessagingException {
 		Properties props = new Properties();
@@ -64,12 +66,41 @@ public class EmailService {
 
 			String content = "";
 			try {				
-				content = loadTemplate(TEMPLATE_PATH, placeholders);
+				content = loadTemplate(TEMPLATE_PATH_USUARIO_RESET_SENHA, placeholders);
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
 
 			sendEmail(usuario.getEmail(), subject, content);
+
+			System.out.println("E-mail enviado com sucesso!");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void sendEmailTISegepen(Usuario usuario) {
+		try {
+			String subject = "Reset de senha!";
+			Map<String, String> placeholders = new HashMap<String, String>();
+
+			String nomeUnidade = "";
+
+			if(!usuario.getAcessos().isEmpty()){
+				nomeUnidade = usuario.getAcessos().get(0).getUnidade().getNome();
+			}
+
+			placeholders.put("{{nome}}", usuario.getServidor().getNome());
+			placeholders.put("{{unidade}}", nomeUnidade);
+
+			String content = "";
+			try {
+				content = loadTemplate(TEMPLATE_PATH_SOLICITACAO_RESET_SENHA, placeholders);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			sendEmail(EMAIL_TI_SIGEPEN, subject, content);
 
 			System.out.println("E-mail enviado com sucesso!");
 		} catch (Exception e) {
