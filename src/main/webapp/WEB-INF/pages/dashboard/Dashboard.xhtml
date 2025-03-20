@@ -146,5 +146,41 @@
 				
 			</p:dashboard>
 		</h:form>
+
+		<h:form>
+			<!-- Dialog -->
+			<p:dialog id="solicitacaoResetSenha" header="Solicitação de senha" widgetVar="solicitacaoResetSenha" visible="#{dashboardBean.solicitacaoResetSenha > 0}" modal="true" resizable="false">
+				<br />
+				<h:outputText value="Existem #{dashboardBean.solicitacaoResetSenha} Solititações de reset de senha." />
+				<br /><br />
+			</p:dialog>
+		</h:form>
+
+		<h:form>
+			<!-- Dialog -->
+			<p:dialog id="movimentacaoInterna" header="Movimentação interna" widgetVar="movimentacaoInterna" visible="#{dashboardBean.movimentacaoInternaPendente > 0 || dashboardBean.movimentacaoInternaEmAndamento > 0 || dashboardBean.movimentacaoInternaAguardandoFinalizar > 0}" modal="true" resizable="false">
+				<br />
+				<h:outputText rendered="#{dashboardBean.movimentacaoInternaPendente > 0}" value="Existem #{dashboardBean.movimentacaoInternaPendente} movimentações interna pendente." />
+				<br />
+				<h:outputText rendered="#{dashboardBean.movimentacaoInternaEmAndamento > 0}" value="Existem #{dashboardBean.movimentacaoInternaEmAndamento} movimentações interna em andamento." />
+				<br />
+				<h:outputText rendered="#{dashboardBean.movimentacaoInternaAguardandoFinalizar > 0}" value="Existem #{dashboardBean.movimentacaoInternaAguardandoFinalizar} movimentações interna aguardando finalizar." />
+				<br /><br />
+			</p:dialog>
+		</h:form>
+
+		<h:form>
+			<!-- Dialog -->
+			<p:dialog id="movimentacaoExterna" header="Movimentação Externa" widgetVar="movimentacaoExterna" visible="#{dashboardBean.movimentacaoExternaPendente > 0 || dashboardBean.movimentacaoExternaEmAndamento > 0 || dashboardBean.movimentacaoExternaAguardandoFinalizar > 0}" modal="true" resizable="false">
+				<br />
+				<h:outputText rendered="#{dashboardBean.movimentacaoExternaPendente > 0}" value="Existem #{dashboardBean.movimentacaoExternaPendente} movimentações externa pendente." />
+				<br />
+				<h:outputText rendered="#{dashboardBean.movimentacaoExternaEmAndamento > 0}" value="Existem #{dashboardBean.movimentacaoExternaEmAndamento} movimentações externa em andamento." />
+				<br />
+				<h:outputText rendered="#{dashboardBean.movimentacaoExternaAguardandoFinalizar > 0}" value="Existem #{dashboardBean.movimentacaoExternaAguardandoFinalizar} movimentações externa aguardando finalizar." />
+				<br /><br />
+			</p:dialog>
+		</h:form>
+
 	</ui:define>
 </ui:composition>

@@ -13,6 +13,11 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.*;
+import br.gov.mt.sejudh.sigepen.enumerator.*;
+import br.gov.mt.sejudh.sigepen.service.MovimentacaoExternaService;
+import br.gov.mt.sejudh.sigepen.service.MovimentacaoInternaService;
+import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import org.primefaces.component.panel.Panel;
 import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
@@ -21,14 +26,6 @@ import org.primefaces.model.DefaultDashboardModel;
 
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroSolicitacaoVisita;
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVwVisitante;
-import br.gov.mt.sejudh.sigepen.enumerator.Dashboard;
-import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
-import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.service.DashboardService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -73,6 +70,15 @@ public class DashboardBean {
 	
 	@Inject
 	private FacesUtil facesUtil;
+
+	@Inject
+	private UsuarioService usuarioService;
+
+	@Inject
+	private MovimentacaoInternaService movimentacaoInternaService;
+
+	@Inject
+	private MovimentacaoExternaService movimentacaoExternaService;
 
 	@PostConstruct
 	public void init() {
@@ -329,6 +335,86 @@ public class DashboardBean {
 		
 		facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 		return "pretty:ListarRecuperando";
+	}
+
+	public int getSolicitacaoResetSenha(){
+		if(!securityUtil.possuiPermissao("ListarUsuarioResetSenha")){
+			return 0;
+		}
+			return this.usuarioService.conutSolicitacaoSenha();
+	}
+
+	public int getMovimentacaoInternaPendente(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+		filtro.setStatus(StatusMovimentacao.PENDENTE);
+
+		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
+
+	}
+
+	public int getMovimentacaoInternaEmAndamento(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
+			return 0;
+		}
+		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+		filtro.setStatus(StatusMovimentacao.EM_ANDAMENTO);
+
+		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
+	}
+
+	public int getMovimentacaoInternaAguardandoFinalizar(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
+			return 0;
+		}
+		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+		filtro.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
+
+		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
+	}
+
+	public int getMovimentacaoExternaPendente(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoExterna")){
+			return 0;
+		}
+		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setStatus(StatusMovimentacao.PENDENTE);
+
+		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
+	}
+
+	public int getMovimentacaoExternaEmAndamento(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoExterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setStatus(StatusMovimentacao.EM_ANDAMENTO);
+
+		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
+	}
+
+	public int getMovimentacaoExternaAguardandoFinalizar(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoExterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
+
+		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
 	}
 	
 	public DashboardModel getDashModel() {
