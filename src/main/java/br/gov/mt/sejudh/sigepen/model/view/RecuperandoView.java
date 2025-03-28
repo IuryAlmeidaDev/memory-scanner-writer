@@ -109,6 +109,10 @@ public class RecuperandoView {
 	
 	@Transient
 	private List<OutroNome> outrosNomes;
+	
+	@Column(name = "PERICULOSIDADE_ADAPTATIVA")
+	private Integer periculosidadeAdaptativa;
+		
 
 	public RecuperandoView() {
 
@@ -382,8 +386,20 @@ public class RecuperandoView {
 	public void setPossuiAtestadoUnidade(Boolean possuiAtestadoUnidade) {
 		this.possuiAtestadoUnidade = possuiAtestadoUnidade;
 	}
-	
-    @Override
+
+	public Integer getPericulosidadeAdaptativa() {
+		return periculosidadeAdaptativa;
+	}
+
+
+
+	public void setPericulosidadeAdaptativa(Integer periculosidadeAdaptativa) {
+		this.periculosidadeAdaptativa = periculosidadeAdaptativa;
+	}
+
+
+
+	@Override
     public String toString() {
         return "Recuperando [id=" + id + ", nome=" + getNome() + "]";
     }

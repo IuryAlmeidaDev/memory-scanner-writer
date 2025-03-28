@@ -222,7 +222,7 @@ public class CadastrarProcessoBean extends MetodosDePaginaBean {
 			
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir processo (" + processo.getNumeroProcesso() + "): " + e.getMessage());
-			LoggerUtil.logErro(Acao.EXCLUIR, recuperando, e, log);
+			LoggerUtil.logErro(Acao.EXCLUIR, processo.getRecuperando(), e, log);
 		}
 	}
 

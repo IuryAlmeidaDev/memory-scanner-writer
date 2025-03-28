@@ -26,6 +26,14 @@ import org.primefaces.model.DefaultDashboardModel;
 
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroSolicitacaoVisita;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVwVisitante;
+import br.gov.mt.sejudh.sigepen.enumerator.Dashboard;
+import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
+import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.service.DashboardService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -178,7 +186,7 @@ public class DashboardBean {
 
 		return calendar.getTime();
 	}
-	
+
 	private void configurarDashboard() {
 		org.primefaces.component.dashboard.Dashboard das = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:dash");
 		List<Dashboard> lista = new ArrayList<Dashboard>();
@@ -416,7 +424,7 @@ public class DashboardBean {
 
 		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
 	}
-	
+
 	public DashboardModel getDashModel() {
 		return dashModel;
 	}
