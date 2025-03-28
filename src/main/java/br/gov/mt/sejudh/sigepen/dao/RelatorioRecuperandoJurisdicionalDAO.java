@@ -60,6 +60,7 @@ public class RelatorioRecuperandoJurisdicionalDAO {
 		Projection proj = Projections.projectionList()
 				.add(Projections.property("id").as("matricula"))
 				.add(Projections.property("pessoa.nome").as("nome"))
+				.add(Projections.property("pessoa.nomeSocial").as("nomeSocial"))
 				.add(Projections.property("pessoa.nomeMae").as("nomeMae"))
 				.add(Projections.property("regimeAtual").as("regimeAtual"))
 				.add(Projections.property("condicaoAtual").as("condicaoAtual"))

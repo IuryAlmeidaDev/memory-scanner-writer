@@ -43,7 +43,7 @@ public class Atestados {
 		boolean isRecuperandoAtivoNaMesmaUnidadeLogada = isRecuperandoAtivoNaMesmaUnidadeLogada(rec);
 		StringBuilder buildResultado = new StringBuilder();
 		
-		buildResultado.append("\tATESTAMOS para os devidos fins, que o(a) recuperando(a) [nome], matrícula n° [matricula], "
+		buildResultado.append("\tATESTAMOS para os devidos fins, que o(a) recuperando(a) [nome], nome social [nomeSocial], matrícula n° [matricula], "
 				+ "filho(a) de ");
 		
 		if (temPai)
@@ -62,6 +62,7 @@ public class Atestados {
 
 		String resultado = buildResultado.toString();
 		resultado = resultado.replace("[nome]", rec.getPessoa().getNome().toUpperCase());
+		resultado = resultado.replace("[nomeSocial]", rec.getPessoa().getNomeSocial().toUpperCase());
 		resultado = resultado.replace("[matricula]", String.valueOf(rec.getId()));
 		resultado = resultado.replace("[nomeMae]", rec.getPessoa().getNomeMae().toUpperCase());
 		resultado = resultado.replace("[estabelecimento]", rec.getUltimaPassagem().getPassagemProcedencia().getProcedencia().getNome());
@@ -95,7 +96,7 @@ public class Atestados {
 		boolean isRecuperandoAtivoNaMesmaUnidadeLogada = isRecuperandoAtivoNaMesmaUnidadeLogada(rec);
 		StringBuilder buildResultado = new StringBuilder();
 		
-		buildResultado.append("\tATESTO para os devidos fins, que o(a) recuperando(a) [nome], matrícula n° [matricula], "
+		buildResultado.append("\tATESTO para os devidos fins, que o(a) recuperando(a) [nome], nome social [nomeSocial], matrícula n° [matricula], "
 				+ "filho(a) de ");
 		
 		if (temPai)
@@ -119,6 +120,7 @@ public class Atestados {
 		
 		String resultado = buildResultado.toString();
 		resultado = resultado.replace("[nome]", rec.getPessoa().getNome().toUpperCase());
+		resultado = resultado.replace("[nomeSocial]", rec.getPessoa().getNome().toUpperCase());
 		resultado = resultado.replace("[matricula]", String.valueOf(rec.getId()));
 		resultado = resultado.replace("[nomeMae]", rec.getPessoa().getNomeMae().toUpperCase());
 		resultado = resultado.replace("[dataNascimento]", MaskUtil.getFormatoData().format(rec.getPessoa().getDataNascimento()));

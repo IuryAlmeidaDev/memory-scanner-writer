@@ -15,6 +15,7 @@ public class RelatorioRecuperandoJurisdicionalDTO {
 
 	private long matricula;
 	private String nome;
+	private String nomeSocial;
 	private String nomeMae;
 	private Regime regimeAtual;
 	private Condicao condicaoAtual;
@@ -41,7 +42,7 @@ public class RelatorioRecuperandoJurisdicionalDTO {
 		List<Long> idsRecuperandos = lista.stream().map(r -> r.getMatricula()).distinct().collect(Collectors.toList());
 		
 		idsRecuperandos.forEach(i -> {
-			Optional<RecuperandoJurisdicionalDTO> optRec = lista.stream().filter(r -> r.getMatricula() == i).map(r -> r.new RecuperandoJurisdicionalDTO(r.getMatricula(), r.getNome(), r.getNomeMae(), r.getRegimeAtual(), r.getCondicaoAtual())).findFirst();
+			Optional<RecuperandoJurisdicionalDTO> optRec = lista.stream().filter(r -> r.getMatricula() == i).map(r -> r.new RecuperandoJurisdicionalDTO(r.getMatricula(), r.getNome(), r.getNomeMae(), r.getRegimeAtual(), r.getCondicaoAtual(), r.getNomeSocial())).findFirst();
 			RecuperandoJurisdicionalDTO recuperando = optRec.get();
 		
 			List<PassagemJurisdicionalDTO> passagens = lista.stream().filter(r -> r.getMatricula() == i).map(r -> r.new PassagemJurisdicionalDTO(r.getIdPassagem(), r.getPassagemProcedencia(), r.getPassagemDataEntrada(), r.getPassagemDataSaida())).distinct().collect(Collectors.toList());
@@ -58,10 +59,19 @@ public class RelatorioRecuperandoJurisdicionalDTO {
 			recuperandos.add(recuperando);
 		});
 	}
-	
-	public class RecuperandoJurisdicionalDTO {
+
+    public String getNomeSocial() {
+        return nomeSocial;
+    }
+
+    public void setNomeSocial(String nomeSocial) {
+        this.nomeSocial = nomeSocial;
+    }
+
+    public class RecuperandoJurisdicionalDTO {
 		private long matricula;
 		private String nome;
+		private String nomeSocial;
 		private String nomeMae;
 		private Regime regimeAtual;
 		private Condicao condicaoAtual;
@@ -69,10 +79,11 @@ public class RelatorioRecuperandoJurisdicionalDTO {
 		private List<PassagemJurisdicionalDTO> passagens;
 		private List<ProcessoJurisdicionalDTO> processos;
 		
-		public RecuperandoJurisdicionalDTO(long matricula, String nome, String nomeMae, Regime regimeAtual, Condicao condicaoAtual) {
+		public RecuperandoJurisdicionalDTO(long matricula, String nome, String nomeMae, Regime regimeAtual, Condicao condicaoAtual, String nomeSocial) {
 			super();
 			this.matricula = matricula;
 			this.nome = nome;
+			this.nomeSocial = nomeSocial;
 			this.nomeMae = nomeMae;
 			this.regimeAtual = regimeAtual;
 			this.condicaoAtual = condicaoAtual;
@@ -133,7 +144,15 @@ public class RelatorioRecuperandoJurisdicionalDTO {
 				return false;
 			return true;
 		}
-	}
+
+        public String getNomeSocial() {
+            return nomeSocial;
+        }
+
+        public void setNomeSocial(String nomeSocial) {
+            this.nomeSocial = nomeSocial;
+        }
+    }
 	
 	public class PassagemJurisdicionalDTO {
 		private long passagemId;

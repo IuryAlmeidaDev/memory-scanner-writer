@@ -7,6 +7,7 @@ public class MapaConsolidadoRecuperandoDTO {
 	
 	private Integer numero;
 	private String nomeRecuperando;
+	private String nomeSocialRecuperando;
 	private String matriculaRecuperando;
 	private Date entradaRecuperando;
 	private Date saidaRecuperando;
@@ -32,16 +33,17 @@ public class MapaConsolidadoRecuperandoDTO {
 	private Integer diasRecuperandoJantaEspecial= 0;
 	
 	public MapaConsolidadoRecuperandoDTO() {
-		
+
 	}
 
 	public MapaConsolidadoRecuperandoDTO(String nomeUnidade, Date virgenciaContartoInicio, Date virgenciaContartoFim,
-			String numeroContrato, String nomeFornecedor, String mesReferencia, String valorRefeicao,
-			String nomeRecuperando, String matriculaRecuperando, Date entradaRecuperando, Date saidaRecuperando,
-			Integer diasRecuperando, Double cafeManha, Double almoco, Double janta, Double cafeManhaEspecial,
-			Double almocoEspecial, Double jantaEspecial, Double soma) {
+                                         String numeroContrato, String nomeFornecedor, String mesReferencia, String valorRefeicao,
+                                         String nomeRecuperando, String matriculaRecuperando, Date entradaRecuperando, Date saidaRecuperando,
+                                         Integer diasRecuperando, Double cafeManha, Double almoco, Double janta, Double cafeManhaEspecial,
+                                         Double almocoEspecial, Double jantaEspecial, Double soma, String nomeSocialRecuperando) {
 		this.nomeRecuperando = nomeRecuperando;
-		this.matriculaRecuperando = matriculaRecuperando;
+        this.nomeSocialRecuperando = nomeSocialRecuperando;
+        this.matriculaRecuperando = matriculaRecuperando;
 		this.entradaRecuperando = entradaRecuperando;
 		this.saidaRecuperando = saidaRecuperando;
 		this.diasRecuperandoNormal = diasRecuperando;
@@ -277,4 +279,11 @@ public class MapaConsolidadoRecuperandoDTO {
 				+ almocoEspecial + ", jantaEspecial=" + jantaEspecial + ", soma=" + soma + "]";
 	}
 
+    public String getNomeSocialRecuperando() {
+        return nomeSocialRecuperando;
+    }
+
+    public void setNomeSocialRecuperando(String nomeSocialRecuperando) {
+        this.nomeSocialRecuperando = nomeSocialRecuperando;
+    }
 }
