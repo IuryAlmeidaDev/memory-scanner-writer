@@ -60,7 +60,7 @@ public class MapaConsolidadoDAO {
 		String dataFim = obterDataFim(mes.getId().intValue(), Integer.parseInt(ano));
 
 		StringBuilder sql = new StringBuilder(
-				"SELECT p2.NOME, r.ID AS matricula, l.DATA_ENTRADA , l.DATA_SAIDA,SUM(CASE WHEN dr.ID IS null THEN 1 ELSE 0 END) AS QTD_padrao,SUM(CASE WHEN dr.ID IS not null THEN 1 ELSE 0 END) AS QTD_especial,dr.INICIO, dr.FIM ");
+				"SELECT p2.NOME, r.ID AS matricula, l.DATA_ENTRADA , l.DATA_SAIDA,SUM(CASE WHEN dr.ID IS null THEN 1 ELSE 0 END) AS QTD_padrao,SUM(CASE WHEN dr.ID IS not null THEN 1 ELSE 0 END) AS QTD_especial,dr.INICIO, dr.FIM, p2.NOME_SOCIAL ");
 		sql.append("FROM " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM PAS ");
 		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".RECUPERANDO r ON r.id = pas.RECUPERANDO_ID ");
 		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".PESSOA p2 ON p2.ID = r.PESSOA_ID ");
@@ -71,7 +71,7 @@ public class MapaConsolidadoDAO {
 				+ ".estrutura e START WITH id = :id CONNECT BY PRIOR id = ESTRUTURAPAI_ID) ");
 		sql.append("AND l.DATA_ENTRADA <= TO_DATE(:dataFim, 'DD/MM/YYYY') ");
 		sql.append("AND (l.DATA_SAIDA >= TO_DATE(:dataInicio, 'DD/MM/YYYY')	OR l.DATA_SAIDA IS null) ");
-		sql.append("GROUP BY p2.NOME, r.ID, l.DATA_ENTRADA , l.DATA_SAIDA,dr.INICIO, dr.FIM ");
+		sql.append("GROUP BY p2.NOME, p2.NOME_SOCIAL, r.ID, l.DATA_ENTRADA , l.DATA_SAIDA,dr.INICIO, dr.FIM ");
 		sql.append("ORDER BY matricula, l.DATA_ENTRADA, QTD_especial desc ");
 
 		Query query = entityManager.createNativeQuery(sql.toString());
@@ -87,7 +87,7 @@ public class MapaConsolidadoDAO {
 			LocalDate dataInicio, LocalDate dataFim) {
 
 		StringBuilder sql = new StringBuilder(
-				"SELECT p2.NOME, r.ID AS matricula, l.DATA_ENTRADA , l.DATA_SAIDA,SUM(CASE WHEN dr.ID IS null THEN 1 ELSE 0 END) AS QTD_padrao,SUM(CASE WHEN dr.ID IS not null THEN 1 ELSE 0 END) AS QTD_especial,dr.INICIO, dr.FIM ");
+				"SELECT p2.NOME, r.ID AS matricula, l.DATA_ENTRADA , l.DATA_SAIDA,SUM(CASE WHEN dr.ID IS null THEN 1 ELSE 0 END) AS QTD_padrao,SUM(CASE WHEN dr.ID IS not null THEN 1 ELSE 0 END) AS QTD_especial,dr.INICIO, dr.FIM, p2.NOME_SOCIAL ");
 		sql.append("FROM " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM PAS ");
 		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".RECUPERANDO r ON r.id = pas.RECUPERANDO_ID ");
 		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".PESSOA p2 ON p2.ID = r.PESSOA_ID ");
@@ -98,7 +98,7 @@ public class MapaConsolidadoDAO {
 				+ ".estrutura e START WITH id = :id CONNECT BY PRIOR id = ESTRUTURAPAI_ID) ");
 		sql.append("AND l.DATA_ENTRADA <= TO_DATE(:dataFim, 'DD/MM/YYYY') ");
 		sql.append("AND (l.DATA_SAIDA >= TO_DATE(:dataInicio, 'DD/MM/YYYY')	OR l.DATA_SAIDA IS null) ");
-		sql.append("GROUP BY p2.NOME, r.ID, l.DATA_ENTRADA , l.DATA_SAIDA,dr.INICIO, dr.FIM ");
+		sql.append("GROUP BY p2.NOME, p2.NOME_SOCIAL, r.ID, l.DATA_ENTRADA , l.DATA_SAIDA,dr.INICIO, dr.FIM ");
 		sql.append("ORDER BY matricula, l.DATA_ENTRADA, QTD_especial desc ");
 
 		Query query = entityManager.createNativeQuery(sql.toString());

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarRelatorioSecaoJurisdicionalNovo" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.5394743546921297"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="15"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["\\subrelatorios\\ListarRelatorioSecaoJurisdicionalNovo\\"]]></defaultValueExpression>
 	</parameter>
@@ -32,6 +32,7 @@
 	<field name="condicaoAtual.descricao" class="java.lang.String"/>
 	<field name="passagens" class="java.util.Collection"/>
 	<field name="processos" class="java.util.Collection"/>
+	<field name="nomeSocial" class="java.lang.String"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{matricula}]]></variableExpression>
 	</variable>
@@ -90,7 +91,7 @@
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="675" y="10" width="127" height="15" uuid="c5acf895-d6bc-4f7d-9756-ae7f7b3dfb24"/>
+				<reportElement x="725" y="10" width="77" height="15" uuid="c5acf895-d6bc-4f7d-9756-ae7f7b3dfb24"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -103,7 +104,7 @@
 				<text><![CDATA[Condição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="330" y="10" width="220" height="15" uuid="ccd5bfc3-04e9-4073-ad89-34c7dc9a97a9"/>
+				<reportElement x="416" y="10" width="188" height="15" uuid="ccd5bfc3-04e9-4073-ad89-34c7dc9a97a9"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -116,7 +117,7 @@
 				<text><![CDATA[Nome da Mãe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="110" y="10" width="220" height="15" uuid="7b7d2765-609a-4475-bf5a-bd13a2bdf520"/>
+				<reportElement x="50" y="10" width="197" height="15" uuid="7b7d2765-609a-4475-bf5a-bd13a2bdf520"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -129,7 +130,7 @@
 				<text><![CDATA[Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="550" y="10" width="125" height="15" uuid="1344849a-de28-4f6e-8c27-3477c086b22c"/>
+				<reportElement x="604" y="10" width="121" height="15" uuid="1344849a-de28-4f6e-8c27-3477c086b22c"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -142,7 +143,7 @@
 				<text><![CDATA[Regime]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="10" width="110" height="15" uuid="8dd8f66d-172b-4f53-9516-2c35a55fed15"/>
+				<reportElement x="0" y="10" width="50" height="15" uuid="8dd8f66d-172b-4f53-9516-2c35a55fed15"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -155,7 +156,7 @@
 				<text><![CDATA[Matrícula]]></text>
 			</staticText>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="25" width="110" height="15" uuid="d6c7087f-332f-46d7-968a-6e12e9ad6b77"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="25" width="50" height="15" uuid="d6c7087f-332f-46d7-968a-6e12e9ad6b77"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -165,7 +166,7 @@
 				<textFieldExpression><![CDATA[$F{matricula}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="110" y="25" width="220" height="15" uuid="3568b584-6f37-441c-8ba7-4d8a279a9d93"/>
+				<reportElement stretchType="RelativeToBandHeight" x="50" y="25" width="197" height="15" uuid="3568b584-6f37-441c-8ba7-4d8a279a9d93"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -175,7 +176,7 @@
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="330" y="25" width="220" height="15" uuid="3538f736-7bf7-4b8d-ba45-88f30008dea4"/>
+				<reportElement stretchType="RelativeToBandHeight" x="416" y="25" width="188" height="15" uuid="3538f736-7bf7-4b8d-ba45-88f30008dea4"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -185,7 +186,7 @@
 				<textFieldExpression><![CDATA[$F{nomeMae}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="550" y="25" width="125" height="15" uuid="eaa151a7-762f-4af8-94c0-2942935ee502"/>
+				<reportElement stretchType="RelativeToBandHeight" x="604" y="25" width="121" height="15" uuid="eaa151a7-762f-4af8-94c0-2942935ee502"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -195,7 +196,7 @@
 				<textFieldExpression><![CDATA[$F{regimeAtual.descricao}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="675" y="25" width="127" height="15" uuid="a76851a7-3078-4839-b863-63eebb1a2adf"/>
+				<reportElement stretchType="RelativeToBandHeight" x="725" y="25" width="77" height="15" uuid="a76851a7-3078-4839-b863-63eebb1a2adf"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -203,6 +204,29 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{condicaoAtual.descricao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="247" y="10" width="169" height="15" uuid="5d4754c1-c9bf-4631-acfd-9ffa85908263"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Social]]></text>
+			</staticText>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="247" y="25" width="169" height="15" uuid="9b851f6d-2047-444e-9941-21aeea1a0365"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeSocial}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

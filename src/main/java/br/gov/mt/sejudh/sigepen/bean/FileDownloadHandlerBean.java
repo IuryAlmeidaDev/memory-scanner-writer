@@ -59,7 +59,7 @@ public class FileDownloadHandlerBean {
     		throw new RuntimeException("Arquivo ou nome do arquivo está nulo.");
     	}
     }
-    
+
     public void prepararArquivo(Arquivo arquivo) {
     	byte[] bytesNovo = null;
 		String loginUser = String.valueOf(SecurityUtil.getUsuario().getId());
