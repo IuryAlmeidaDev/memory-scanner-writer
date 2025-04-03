@@ -11,6 +11,7 @@ public class DietaEspecialDTO {
 	private Date inicio;
 	private Date fim;
 	private String nomeRecuperando;
+	private String nomeSocialRecuperando;
 	private String nomeUnidadePrisional;
 	private String tipoDieta;
 	
@@ -68,4 +69,12 @@ public class DietaEspecialDTO {
 				.append("dataEntrada", dataEntrada)
 				.toString();
 	}
+
+    public String getNomeSocialRecuperando() {
+        return nomeSocialRecuperando;
+    }
+
+    public void setNomeSocialRecuperando(String nomeSocialRecuperando) {
+        this.nomeSocialRecuperando = nomeSocialRecuperando;
+    }
 }

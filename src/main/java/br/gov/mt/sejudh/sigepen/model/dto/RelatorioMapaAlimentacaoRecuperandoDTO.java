@@ -6,6 +6,7 @@ import java.util.Date;
 public class RelatorioMapaAlimentacaoRecuperandoDTO {
 	
 	private String nomeRecuperando;
+	private String nomeSocialRecuperando;
 	private String matriculaRecuperando;
 	private Date entradaRecuperando;
 	private Date saidaRecuperando;
@@ -23,6 +24,7 @@ public class RelatorioMapaAlimentacaoRecuperandoDTO {
 		this.saidaRecuperando = (Date) row[3];
 		this.inicioEspecial = (Date) row[6];
 		this.fimEspecial = (Date) row[7];
+		this.nomeSocialRecuperando = (String) row[8];
 	}
 	
 	
@@ -92,4 +94,11 @@ public class RelatorioMapaAlimentacaoRecuperandoDTO {
 				+ saidaRecuperando + ", inicioEspecial=" + inicioEspecial + ", fimEspecial=" + fimEspecial + "]";
 	}
 
+    public String getNomeSocialRecuperando() {
+        return nomeSocialRecuperando;
+    }
+
+    public void setNomeSocialRecuperando(String nomeSocialRecuperando) {
+        this.nomeSocialRecuperando = nomeSocialRecuperando;
+    }
 }

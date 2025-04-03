@@ -318,12 +318,12 @@ public class LoginBean {
 
 	public void verificaNomeMae() {
 		int index = this.usuarioResetSenhaDTO.getIndexNomeMaeSelecionada();
-		
+
 		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
 				.getAttribute("usuarioResertSenhaDTO");
-		
+
 		String nomeMaeSelecionado = this.usuarioResetSenhaDTO.getNomeMaeList().get(index);
-		
+
 		if (nomeMaeSelecionado.equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae())) {
 			this.setListaMatricula(String.valueOf(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()));
 			return;
@@ -347,17 +347,17 @@ public class LoginBean {
 
 		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
 		SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
-		
+
 		this.usuarioResetSenhaDTO = null;
 	}
 
 	public void verificaMatricula() throws Exception {
 
 		int index = this.usuarioResetSenhaDTO.getIndexMatriculaSelecionada();
-		
+
 		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
 				.getAttribute("usuarioResertSenhaDTO");
-		
+
 		Long MatriculaSelecionado = this.usuarioResetSenhaDTO.getMatriculaList().get(index);
 
 		if (MatriculaSelecionado.equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula())) {
@@ -368,7 +368,7 @@ public class LoginBean {
 		}
 
 		this.limparResetSenha();
-		
+
 		faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
 				"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
 	}
@@ -421,9 +421,9 @@ public class LoginBean {
 
 		servidorDTOs.removeIf(servidorDTO -> servidorDTO.getMatricula() == this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula());
 		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario());
-		
+
 		this.usuarioResetSenhaDTO.getMatriculaList().clear();
-		
+
 		while (list.size() < 2) {
 			int index = random.nextInt(servidorDTOs.size());
 			list.add(servidorDTOs.get(index).getMatricula());
@@ -452,16 +452,16 @@ public class LoginBean {
 
 		Random random = new Random();
 		servidorDTOs.removeIf(servidorDTO -> servidorDTO.getMae().equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae()));
-		
+
 		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
-		
+
 		while (list.size() < 2) {
 			int index = random.nextInt(servidorDTOs.size());
 			list.add(servidorDTOs.get(index).getMae());
 		}
-		
+
 		list.add(this.usuarioResetSenhaDTO.getNomeMae());
-		
+
 		this.usuarioResetSenhaDTO.getNomeMaeList().addAll(list);
 		Collections.shuffle(this.usuarioResetSenhaDTO.getNomeMaeList());
 

@@ -385,6 +385,61 @@
 					<br />
 					<br />
 				</p:tab>
+
+				<p:tab title="Gerenciar Assinaturas"
+					   rendered="#{securityUtil.possuiPermissao('VisualizarParametrosUnidade')}">
+
+					<p:commandButton icon="ui-icon-plus" value="Adicionar"
+									 immediate="true" oncomplete="PF('dialogGerenciarAssinatura').show()"
+									 update=":formGerenciarAssinatura" process="@this"
+									 rendered="#{securityUtil.possuiPermissao('CadastrarUnidade')}"
+									 actionListener="#{unidadePrisionalBean.limparDialogoGerenciarAssinatura}"/>
+
+					<br/><br/>
+
+					<p:dataTable id="tabGerenciarAssinatura" var="gerenciar"
+								 emptyMessage="Nenhuma assinatura adicionado."
+								 value="#{unidadePrisionalBean.gerenciarAssinaturas}" rows="5"
+								 paginator="true" paginatorAlwaysVisible="false"
+								 paginatorPosition="bottom" sortBy="#{gerenciar.id}">
+						<p:column headerText="Descrição">
+							<h:outputText value="#{gerenciar.descricao}" />
+						</p:column>
+						<p:column headerText="Relatório">
+							<h:outputText value="#{gerenciar.relatorio}" />
+						</p:column>
+						<p:column headerText="Situação">
+							<h:outputText value="#{gerenciar.status}" />
+						</p:column>
+						<p:column width="220">
+							<center>
+								<p:commandButton title="Visualizar" icon="ui-icon-document"
+												 immediate="true" outcome="pretty:VisualizarUnidade"
+												 oncomplete="PF('dialogGerenciarAssinatura').show()"
+												 action="#{unidadePrisionalBean.abrirDialogVisualizarGerenciamentoAssinatura(gerenciar)}"
+												 update=":formGerenciarAssinatura"
+												 rendered="#{securityUtil.possuiPermissao('VisualizarUnidade')}">
+								</p:commandButton>
+								<p:commandButton title="Alterar" icon="ui-icon-pencil"
+												 immediate="true"
+												 oncomplete="PF('dialogGerenciarAssinatura').show()"
+												 action="#{unidadePrisionalBean.abrirDialogAlterarGerenciamentoAssinatura(gerenciar)}"
+												 update=":formGerenciarAssinatura"
+								/>
+                                <p:commandButton
+                                        action="#{unidadePrisionalBean.excluirGerenciamentoAssinatura(gerenciar)}"
+                                        immediate="true" icon="ui-icon-trash" title="Excluir"
+                                        update="formGerenciarAssinatura"
+                                        rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}">
+                                    <p:confirm header="Confirmação"
+                                               message="Deseja excluir o gerenciamento e assinatura?" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+							</center>
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+
 			</p:tabView>
 		</h:form>
 	
@@ -756,5 +811,119 @@
 								</p:dataTable>
 			</h:form>
 		</p:dialog>
-    </ui:define>
+		<p:dialog id="dialogGerenciarAssinatura" header="Gerenciar Assinatura"
+				  dynamic="true"  closable="true" width="1300" height="700"
+				  showEffect="fade" widgetVar="dialogGerenciarAssinatura" modal="true" draggable="false" resizable="false" closeOnEscape="true">
+			<h:form prependId="false" id="formGerenciarAssinatura">
+				<p:panel>
+					<sgp:formInputText
+							id="descricaoGerenciarAssinatura"
+							labelValue="Descricao"
+							value="#{unidadePrisionalBean.gerenciarAssinatura.descricao}"
+							validationRequired="true"
+							maxlength="60"
+							display="text"
+							disabled="#{unidadePrisionalBean.visualizacaoGerenciarAssinatura}"
+                    />
+
+					<sgp:formSelectOneMenu display="text" requiredMessage="*"
+										   id="situacaoGerenciarAssinatura" labelValue="Situação" itemValue="#{item}"
+										   value="#{unidadePrisionalBean.gerenciarAssinatura.status}"
+										   itemsValue="#{comboHelperBean.status}"
+										   itemLabel="#{item.descricao}" converter="SimpleEntityConverter"
+										   disabled="#{unidadePrisionalBean.visualizacaoGerenciarAssinatura}"
+                    />
+
+					<sgp:formSelectOneMenu display="text" requiredMessage="*"
+										   id="relatorio" labelValue="Relatório" itemValue="#{item}"
+										   value="#{unidadePrisionalBean.gerenciarAssinatura.relatorio}"
+										   itemsValue="#{comboHelperBean.relatorio}"
+										   itemLabel="#{item}" converter="SimpleEntityConverter"
+										   disabled="#{unidadePrisionalBean.visualizacaoGerenciarAssinatura}"
+					/>
+
+					<br/><br/>
+
+					<p:panel header="Servidor Responsável" id="associarServidorGerenciarAssinatura">
+
+						<h:outputText value="ordem" style="margin-right: 1%;" />
+
+						<p:selectOneMenu id="dropdown" value="#{unidadePrisionalBean.ordem}" disabled="#{unidadePrisionalBean.visualizacaoGerenciarAssinatura}" validationRequired="true">
+							<f:selectItem itemLabel="Selecione" itemValue="" />
+							<f:selectItems value="#{unidadePrisionalBean.orders}" var="option" itemLabel="#{option}" itemValue="#{option}" />
+							<p:ajax event="change" listener="#{unidadePrisionalBean.addOrdemServidor}" update=":associarServidorGerenciarAssinatura" />
+						</p:selectOneMenu>
+
+						<br/>
+
+						<p:commandButton
+								disabled="#{unidadePrisionalBean.visualizacaoGerenciarAssinatura}" style="margin-left: 1%;"
+								icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{unidadePrisionalBean.abrirDialogServidor}"
+										 rendered="#{securityUtil.possuiPermissao('CadastrarUnidade')}">
+							<p:ajax event="dialogReturn" listener="#{unidadePrisionalBean.addServidor}" update=":associarServidorGerenciarAssinatura" />
+						</p:commandButton>
+
+						<br /><br />
+
+						<p:dataTable id="tabServidor" var="s" emptyMessage="Nenhum servidor adicionado."
+									 value="#{unidadePrisionalBean.gerenciarAssinatura.gerenciarAssinaturaServidores}"
+									 rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{s.id}">
+							<p:column headerText="Matricula">
+								<h:outputText value="#{s.servidor.matricula}" />
+							</p:column>
+							<p:column headerText="Nome">
+								<h:outputText value="#{s.servidor.nome}" />
+							</p:column>
+							<p:column headerText="Cargo">
+								<h:outputText value="#{s.servidor.cargo.nome}" />
+							</p:column>
+							<p:column headerText="Função">
+								<h:outputText value="#{s.servidor.funcao.nome}" />
+							</p:column>
+							<p:column headerText="Ordem">
+								<h:outputText value="#{s.ordem}" />
+							</p:column>
+
+							<p:column width="120">
+								<center>
+									<p:commandButton
+											disabled="#{unidadePrisionalBean.visualizacaoGerenciarAssinatura}"
+											action="#{unidadePrisionalBean.removeServidor(s.servidor)}"
+											immediate="true" icon="ui-icon-trash" title="Excluir"
+											update="tabServidor">
+										<p:confirm header="Confirmação"
+												   message="Deseja remover o servidor?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</center>
+							</p:column>
+						</p:dataTable>
+
+						<p:confirmDialog global="true">
+							<p:commandButton value="Sim" type="button"
+											 styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							<p:commandButton value="Não" type="button"
+											 styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+						</p:confirmDialog>
+					</p:panel>
+
+
+
+					<br/><br/>
+
+					<p:commandButton
+							title="Salvar"
+							value="Salvar"
+							update="@form :unidadeForm:tabView:tabGerenciarAssinatura" action="#{unidadePrisionalBean.salvarAssinatura()}"
+							disabled="#{unidadePrisionalBean.visualizacaoGerenciarAssinatura}" >
+					</p:commandButton>
+					<p:commandButton
+							value="Fechar"
+							onclick="PF('dialogGerenciarAssinatura').hide()"
+							process="@this" />
+
+					<br/><br/>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+	</ui:define>
 </ui:composition>
