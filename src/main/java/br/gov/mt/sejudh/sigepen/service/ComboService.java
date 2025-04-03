@@ -70,6 +70,7 @@ import br.gov.mt.sejudh.sigepen.model.TipoServidor;
 import br.gov.mt.sejudh.sigepen.model.TipoUnidade;
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 
 
 @Stateless
@@ -379,4 +380,6 @@ public class ComboService {
 	public UnidadeMedida[] getUnidadesMedida() {
 		return UnidadeMedida.values();
 	}
+
+	public Relatorio[] getRelatorio() {return Relatorio.values();}
 }

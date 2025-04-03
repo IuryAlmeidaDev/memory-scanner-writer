@@ -87,6 +87,7 @@
 	<field name="diasRecuperandoAlmocoEspecial" class="java.lang.Integer"/>
 	<field name="diasRecuperandoJantaNormal" class="java.lang.Integer"/>
 	<field name="diasRecuperandoJantaEspecial" class="java.lang.Integer"/>
+	<field name="nomeSocialRecuperando" class="java.lang.String"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count"/>
 	<variable name="variable1" class="java.lang.String"/>
 	<pageHeader>
@@ -95,7 +96,7 @@
 	<columnHeader>
 		<band height="29">
 			<staticText>
-				<reportElement x="0" y="0" width="32" height="29" uuid="165c39f6-e697-40ad-abc8-804b71a2884e"/>
+				<reportElement x="0" y="0" width="21" height="29" uuid="165c39f6-e697-40ad-abc8-804b71a2884e"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -105,7 +106,7 @@
 				<text><![CDATA[Nº]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="32" y="0" width="228" height="29" uuid="bef5b619-4bf9-40d6-9934-e6babc7bddcd"/>
+				<reportElement x="21" y="0" width="137" height="29" uuid="bef5b619-4bf9-40d6-9934-e6babc7bddcd"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -115,7 +116,7 @@
 				<text><![CDATA[Nome Recuperando]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="260" y="0" width="62" height="29" uuid="57af2b4d-4410-4b61-b1cb-054fdfa7088a"/>
+				<reportElement x="276" y="0" width="46" height="29" uuid="57af2b4d-4410-4b61-b1cb-054fdfa7088a"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -255,6 +256,16 @@
 				<textElement markup="none"/>
 				<text><![CDATA[CA]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="158" y="0" width="118" height="29" uuid="15b710e5-7549-44d7-b20a-270c03aaa2d5"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<text><![CDATA[Nome Social]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
@@ -268,7 +279,7 @@
 				</graphicElement>
 			</rectangle>
 			<textField>
-				<reportElement x="32" y="0" width="228" height="15" uuid="31b5275b-58a0-4276-b4d9-a6e6b3fe3687"/>
+				<reportElement x="21" y="0" width="137" height="15" uuid="31b5275b-58a0-4276-b4d9-a6e6b3fe3687"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -411,7 +422,7 @@
 				<textFieldExpression><![CDATA[$F{diasRecuperando}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="260" y="0" width="62" height="15" uuid="3036e654-ac39-4b0a-bf75-c1b7d7610e5b"/>
+				<reportElement x="276" y="0" width="46" height="15" uuid="3036e654-ac39-4b0a-bf75-c1b7d7610e5b"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -424,7 +435,7 @@
 				<textFieldExpression><![CDATA[$F{matriculaRecuperando}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="32" height="15" uuid="c0081b99-9303-4edd-a82c-258775cd939e"/>
+				<reportElement x="0" y="0" width="21" height="15" uuid="c0081b99-9303-4edd-a82c-258775cd939e"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -435,6 +446,19 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="158" y="0" width="118" height="15" uuid="77c4e886-8138-4320-b52b-d51335bcc461"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeSocialRecuperando}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -71,6 +71,7 @@ import br.gov.mt.sejudh.sigepen.model.TipoSanguineo;
 import br.gov.mt.sejudh.sigepen.model.TipoServidor;
 import br.gov.mt.sejudh.sigepen.model.TipoUnidade;
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.service.ComboService;
 
 @ManagedBean(eager=true)
@@ -201,6 +202,8 @@ public class ComboHelperBean {
 
 	private UnidadeMedida[] unidadesMedida;
 
+	private Relatorio[] relatorio;
+
 
 	@Inject
 	private ComboService comboService;	
@@ -269,6 +272,7 @@ public class ComboHelperBean {
 		populacaoFeminino = comboService.getPopulacaoFeminino();
 		tipoVisitaObrigatoriedade = comboService.getTipoVisitaObrigatoriedade();
 		unidadesMedida = comboService.getUnidadesMedida();
+		relatorio = comboService.getRelatorio();
 	}
 
 	public NaturezaFaltaDisciplinar[] getNaturezaFaltaDisciplinar(){
@@ -779,4 +783,12 @@ public class ComboHelperBean {
 	public void setUnidadesMedida(UnidadeMedida[] unidadesMedida) {
 		this.unidadesMedida = unidadesMedida;
 	}
+
+    public Relatorio[] getRelatorio() {
+        return relatorio;
+    }
+
+    public void setRelatorio(Relatorio[] relatorio) {
+        this.relatorio = relatorio;
+    }
 }

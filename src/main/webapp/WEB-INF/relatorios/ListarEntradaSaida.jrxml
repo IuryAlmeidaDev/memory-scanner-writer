@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarEntradaSaida" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.6934217901613384"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="12"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
@@ -41,6 +41,7 @@
 	<field name="siglaUnidade" class="java.lang.String"/>
 	<field name="nomeUnidade" class="java.lang.String"/>
 	<field name="idUnidade" class="java.lang.Long"/>
+	<field name="nomeSocialVisitante" class="java.lang.String"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{id}]]></variableExpression>
 	</variable>
@@ -55,7 +56,7 @@
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="94" y="15" width="110" height="15" uuid="3c9f702f-71e5-46e8-ad52-d7b81ba8093a"/>
+					<reportElement x="94" y="15" width="93" height="15" uuid="3c9f702f-71e5-46e8-ad52-d7b81ba8093a"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 						<leftPen lineWidth="0.5"/>
@@ -68,7 +69,7 @@
 					<text><![CDATA[Visitante]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="204" y="15" width="110" height="15" uuid="e1640968-c5e6-4cbc-829e-a278f9270745"/>
+					<reportElement x="267" y="15" width="98" height="15" uuid="e1640968-c5e6-4cbc-829e-a278f9270745"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 						<leftPen lineWidth="0.5"/>
@@ -94,7 +95,7 @@
 					<text><![CDATA[Tipo de Visita]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="314" y="15" width="120" height="15" uuid="75fd0cd5-27ae-4fba-90d6-b428f90f9dc9"/>
+					<reportElement x="365" y="15" width="92" height="15" uuid="75fd0cd5-27ae-4fba-90d6-b428f90f9dc9"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 						<leftPen lineWidth="0.5"/>
@@ -107,7 +108,7 @@
 					<text><![CDATA[Parentesco/Profissão]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="434" y="15" width="110" height="15" uuid="766ba0e8-1cdf-4f0b-94c6-0005a7da2a01"/>
+					<reportElement x="457" y="15" width="112" height="15" uuid="766ba0e8-1cdf-4f0b-94c6-0005a7da2a01"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 						<leftPen lineWidth="0.5"/>
@@ -159,7 +160,7 @@
 					<text><![CDATA[Situação]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="544" y="15" width="78" height="15" uuid="59d14c1d-5e4b-4c59-b870-0d5da8f1a9c5"/>
+					<reportElement x="569" y="15" width="53" height="15" uuid="59d14c1d-5e4b-4c59-b870-0d5da8f1a9c5"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 						<leftPen lineWidth="0.5"/>
@@ -178,6 +179,19 @@
 					</textElement>
 					<textFieldExpression><![CDATA["Unidade Prisional: " + $F{nomeUnidade}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement x="187" y="15" width="80" height="15" uuid="9313a3ff-4797-45bd-825e-70052e4f90f3"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[Nome Social]]></text>
+				</staticText>
 			</band>
 		</groupHeader>
 		<groupFooter>
@@ -233,7 +247,7 @@
 				<textFieldExpression><![CDATA[$F{tipoVisita}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="94" y="0" width="110" height="15" uuid="b2ba4966-5b22-4cfb-9349-eb980b8ce8b6"/>
+				<reportElement stretchType="RelativeToBandHeight" x="94" y="0" width="93" height="15" uuid="b2ba4966-5b22-4cfb-9349-eb980b8ce8b6"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -243,7 +257,7 @@
 				<textFieldExpression><![CDATA[$F{nomeVisitante}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="204" y="0" width="110" height="15" uuid="150f613a-7fab-42d4-9e3b-0a9489f93c87"/>
+				<reportElement stretchType="RelativeToBandHeight" x="267" y="0" width="98" height="15" uuid="150f613a-7fab-42d4-9e3b-0a9489f93c87"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -253,7 +267,7 @@
 				<textFieldExpression><![CDATA[$F{nomeResponsavel}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="314" y="0" width="120" height="15" uuid="04ae12f9-cb35-49c0-80ba-bf2d2532d7a9"/>
+				<reportElement stretchType="RelativeToBandHeight" x="365" y="0" width="92" height="15" uuid="04ae12f9-cb35-49c0-80ba-bf2d2532d7a9"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -263,7 +277,7 @@
 				<textFieldExpression><![CDATA[$F{parentesco} != null ? $F{parentesco} : $F{profissao}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="434" y="0" width="110" height="15" uuid="ab291cbb-e59b-4cd0-a625-3c9eb7bad779"/>
+				<reportElement stretchType="RelativeToBandHeight" x="457" y="0" width="112" height="15" uuid="ab291cbb-e59b-4cd0-a625-3c9eb7bad779"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -303,7 +317,7 @@
 				<textFieldExpression><![CDATA[$F{situacao.descricao}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="544" y="0" width="78" height="15" uuid="13a4cc02-b3a3-459b-b62f-6ac4cfbbf913"/>
+				<reportElement stretchType="RelativeToBandHeight" x="569" y="0" width="53" height="15" uuid="13a4cc02-b3a3-459b-b62f-6ac4cfbbf913"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -311,6 +325,16 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{siglaUnidade}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="187" y="0" width="80" height="15" uuid="765a53ea-6842-44f9-bb75-672f805c83a6"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeSocialVisitante}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
