@@ -70,16 +70,49 @@ public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
 		return result;
 	}
 
-	public GerenciarAssinatura buscarGerenciarAssinatura(GerenciarAssinatura gerenciarAssinatura) {
+	public List<GerenciarAssinatura> listarTodos(UnidadePrisional unidade) {
 
-		String jpql="select ga from GerenciarAssinatura ga " +
-				"where ga.unidadePrisional.id = :unidadePrisionalId " +
-				"AND ga.status = :status and ga.relatorio = :relatorio";
+		String jpql="select ga from GerenciarAssinatura ga where ga.unidadePrisional.id = :idUnidadePrisional";
 
 		TypedQuery<GerenciarAssinatura> query = em.createQuery(jpql, GerenciarAssinatura.class);
+
+		query.setParameter("idUnidadePrisional", unidade.getId());
+
+		List<GerenciarAssinatura> result = query.getResultList();
+
+		for(GerenciarAssinatura gerenciarAssinatura : result){
+			Hibernate.initialize(gerenciarAssinatura.getGerenciarAssinaturaServidores());
+			for(GerenciarAssinaturaServidor gerenciarAssinaturaServidor : gerenciarAssinatura.getGerenciarAssinaturaServidores()){
+				Hibernate.initialize(gerenciarAssinaturaServidor.getServidor());
+
+				Hibernate.initialize(gerenciarAssinaturaServidor.getServidor().getCargo());
+				Hibernate.initialize(gerenciarAssinaturaServidor.getServidor().getFuncao());
+			}
+		}
+
+		return result;
+	}
+
+	public GerenciarAssinatura buscarGerenciarAssinatura(GerenciarAssinatura gerenciarAssinatura) {
+
+		StringBuilder jpql= new StringBuilder("select ga from GerenciarAssinatura ga " +
+				"where ga.unidadePrisional.id = :unidadePrisionalId " +
+				"AND ga.status = :status and ga.relatorio = :relatorio "
+				);
+
+		if(gerenciarAssinatura.getId() != null){
+			jpql.append("AND ga.id != :id ");
+		}
+
+		TypedQuery<GerenciarAssinatura> query = em.createQuery(jpql.toString(), GerenciarAssinatura.class);
 		query.setParameter("unidadePrisionalId", gerenciarAssinatura.getUnidadePrisional().getId());
-		query.setParameter("status", gerenciarAssinatura.getStatus());
+		query.setParameter("status", Status.ATIVO);
 		query.setParameter("relatorio", gerenciarAssinatura.getRelatorio());
+
+		if(gerenciarAssinatura.getId() != null){
+			query.setParameter("id", gerenciarAssinatura.getId());
+		}
+
 
 		try{
 			return query.getSingleResult();
@@ -91,4 +124,5 @@ public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
 
 
 	}
+
 }

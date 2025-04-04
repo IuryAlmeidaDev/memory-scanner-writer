@@ -359,6 +359,8 @@ public class DashboardBean {
 		}
 
 		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
 		filtro.setStatus(StatusMovimentacao.PENDENTE);
 
 		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
@@ -371,6 +373,8 @@ public class DashboardBean {
 			return 0;
 		}
 		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
 		filtro.setStatus(StatusMovimentacao.EM_ANDAMENTO);
 
 		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
@@ -381,7 +385,10 @@ public class DashboardBean {
 		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
 			return 0;
 		}
+
 		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
 		filtro.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
 
 		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
@@ -393,6 +400,8 @@ public class DashboardBean {
 			return 0;
 		}
 		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
 
 		filtro.setStatus(StatusMovimentacao.PENDENTE);
 
@@ -407,6 +416,7 @@ public class DashboardBean {
 
 		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
 
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
 		filtro.setStatus(StatusMovimentacao.EM_ANDAMENTO);
 
 		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
@@ -420,6 +430,7 @@ public class DashboardBean {
 
 		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
 
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
 		filtro.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
 
 		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
