@@ -45,7 +45,12 @@ public class GerenciarAssinaturaService extends BaseService<GerenciarAssinatura,
 		return this.gerenciarAssinaturaDAO.listarTodos();
 	}
 
+	public List<GerenciarAssinatura> listar(UnidadePrisional unidade) {
+		return this.gerenciarAssinaturaDAO.listarTodos(unidade);
+	}
+
 	public boolean verificaGerenciarAssinaturaExistente(GerenciarAssinatura gerenciarAssinatura) {
 		return gerenciarAssinaturaDAO.buscarGerenciarAssinatura(gerenciarAssinatura) != null;
 	}
+
 }

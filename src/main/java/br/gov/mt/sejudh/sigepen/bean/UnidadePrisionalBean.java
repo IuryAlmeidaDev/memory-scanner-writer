@@ -160,7 +160,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 					
 				case VISUALIZAR:
 				case ALTERAR:
-					this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar();
+
 					long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
 					
 					if (!buscarUnidade(id)) {
@@ -173,6 +173,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 						return "pretty:ListarUnidade";
 					}
 
+					this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar(this.unidade);
 					logDeAcesso(log, this.unidade);
 					break;
 					
@@ -875,6 +876,10 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Permitido apenas 4 servidores.");
 			return false;
 		}
+		if(this.gerenciarAssinatura.getGerenciarAssinaturaServidores().isEmpty()){
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Informe pelo menos 1 servidores.");
+			return false;
+		}
 		return true;
 	}
 
@@ -887,6 +892,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 		}
 
 		gerenciarAssinaturaService.salvar(gerenciarAssinatura);
+		this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar();
 		facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "Sucesso", "Gerenciamento Salvo");
 	}
 
@@ -897,6 +903,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 
     public void excluirGerenciamentoAssinatura(GerenciarAssinatura gerenciarAssinatura) throws ValidacaoException {
         gerenciarAssinaturaService.excluir(gerenciarAssinatura);
+		this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar();
         facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "", "Assinaturas excluída com sucesso!");
     }
 
@@ -968,7 +975,6 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 			this.gerenciarAssinatura.getGerenciarAssinaturaServidores().add(gerenciarAssinaturaServidor);
 			gerenciarAssinaturaServidor.setGerenciarAssinatura(this.gerenciarAssinatura);
 
-			this.getOrders().remove(ordem);
 			this.setOrdem(null);
 
 		} catch (Exception e) {
