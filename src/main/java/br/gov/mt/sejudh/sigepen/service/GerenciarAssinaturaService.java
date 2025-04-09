@@ -15,6 +15,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
 import br.gov.mt.sejudh.sigepen.model.view.AssociarVisitanteResponsavelView;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -51,6 +52,10 @@ public class GerenciarAssinaturaService extends BaseService<GerenciarAssinatura,
 
 	public boolean verificaGerenciarAssinaturaExistente(GerenciarAssinatura gerenciarAssinatura) {
 		return gerenciarAssinaturaDAO.buscarGerenciarAssinatura(gerenciarAssinatura) != null;
+	}
+
+	public GerenciarAssinatura buscar(UnidadePrisional unidade, Relatorio relatorio) {
+		return this.gerenciarAssinaturaDAO.buscar(unidade,relatorio);
 	}
 
 }
