@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Atestado" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.693421790161336"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="284"/>
+	<property name="ireport.y" value="538"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
 	</parameter>
@@ -22,6 +22,14 @@
 	</parameter>
 	<parameter name="RESPONSAVEL" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="UNIDADE_CIDADE_UF" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ASSINATURA_1" class="java.lang.String"/>
+	<parameter name="CARGO_1" class="java.lang.String"/>
+	<parameter name="ASSINATURA_2" class="java.lang.String"/>
+	<parameter name="CARGO_2" class="java.lang.String"/>
+	<parameter name="ASSINATURA_3" class="java.lang.String"/>
+	<parameter name="CARGO_3" class="java.lang.String"/>
+	<parameter name="ASSINATURA_4" class="java.lang.String"/>
+	<parameter name="CARGO_4" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -91,4 +99,64 @@
 			</subreport>
 		</band>
 	</pageFooter>
+	<lastPageFooter>
+		<band height="131">
+			<textField>
+				<reportElement x="96" y="0" width="179" height="20" uuid="7adc23ce-15de-43d2-81c3-4876705ffff2"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ASSINATURA_1} != null ? $P{ASSINATURA_1} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="96" y="20" width="179" height="20" uuid="ce785812-374d-4f2d-989e-1f2107b763ba"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CARGO_1} != null ? $P{CARGO_1} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="291" y="0" width="179" height="20" uuid="2bbd0b0f-387b-4f53-b77e-7d682c308967"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ASSINATURA_2} != null ? $P{ASSINATURA_2} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="291" y="20" width="179" height="20" uuid="cc03fb12-beb4-4165-9288-ac1163b2d73d"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CARGO_2} != null ? $P{CARGO_2} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="96" y="71" width="179" height="20" uuid="2ae059fa-78e2-4467-a0ee-fdda106f4f2e"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ASSINATURA_3} != null ? $P{ASSINATURA_3} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="96" y="91" width="179" height="20" uuid="5ab1723c-c575-4f19-a7f7-5318be9ad322"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CARGO_3} != null ? $P{CARGO_3} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="291" y="71" width="179" height="20" uuid="82bd8f05-921a-4ad5-9ddf-d7bef4b4e114"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ASSINATURA_4} != null ? $P{ASSINATURA_4} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="291" y="91" width="179" height="20" uuid="4b090e25-7d18-4d6f-a21c-2004074ff65c"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CARGO_4} != null ? $P{CARGO_4} : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
 </jasperReport>

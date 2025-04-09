@@ -14,11 +14,15 @@ import java.util.Properties;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
+import br.gov.mt.sejudh.sigepen.dao.GerenciarAssinaturaDAO;
+import br.gov.mt.sejudh.sigepen.model.GerenciarAssinatura;
+import br.gov.mt.sejudh.sigepen.service.GerenciarAssinaturaService;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -38,6 +42,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 public class RelatorioUtil {
 	
 	private static String dataSource;
+
 	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, Map<String, Object> parameters) throws JRException, NamingException, SQLException {
 		
 		Properties properties = new Properties();
@@ -93,6 +98,34 @@ public class RelatorioUtil {
 	public static <T> Arquivo gerarRelatorio(T valor, Relatorio relatorio, Map<String, Object> parameters) throws JRException {
 		return gerarRelatorio(Arrays.asList(valor), relatorio, parameters);
 	}
+
+	public static void setAssinatura(Map<String, Object> parameters,Relatorio relatorio, GerenciarAssinaturaService gerenciarAssinaturaService){
+
+		GerenciarAssinatura gerenciarAssinatura = gerenciarAssinaturaService.buscar(SecurityUtil.getUnidadeSelecionada(),relatorio);
+
+		if(gerenciarAssinatura != null && !gerenciarAssinatura.getGerenciarAssinaturaServidores().isEmpty()){
+
+			gerenciarAssinatura.getGerenciarAssinaturaServidores().forEach(  gerenciarAssinaturaServidor -> {
+				if(gerenciarAssinaturaServidor.getOrdem().equals("1")){
+					parameters.put("ASSINATURA_".concat("1"),gerenciarAssinaturaServidor.getServidor().getNome());
+					parameters.put("CARGO_".concat("1"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+				}
+				if(gerenciarAssinaturaServidor.getOrdem().equals("2")){
+					parameters.put("ASSINATURA_".concat("2"),gerenciarAssinaturaServidor.getServidor().getNome());
+					parameters.put("CARGO_".concat("2"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+				}
+				if(gerenciarAssinaturaServidor.getOrdem().equals("3")){
+					parameters.put("ASSINATURA_".concat("3"),gerenciarAssinaturaServidor.getServidor().getNome());
+					parameters.put("CARGO_".concat("3"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+				}
+				if(gerenciarAssinaturaServidor.getOrdem().equals("4")){
+					parameters.put("ASSINATURA_".concat("4"),gerenciarAssinaturaServidor.getServidor().getNome());
+					parameters.put("CARGO_".concat("4"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+				}
+			});
+		}
+
+ 	}
 	
 	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio, Map<String, Object> parameters) throws JRException {
 		Arquivo arquivo;
@@ -104,7 +137,7 @@ public class RelatorioUtil {
         parameters.put("UNIDADE_LOGADA", SecurityUtil.getUnidadeSelecionada().getNome());
         parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
 
-        if (!parameters.containsKey("NOME_DO_RELATORIO")) {
+		if (!parameters.containsKey("NOME_DO_RELATORIO")) {
             parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
         }
 
@@ -125,6 +158,15 @@ public class RelatorioUtil {
 	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo) throws JRException, NamingException, SQLException {
 		return gerarRelatorio(relatorio, conteudo, new HashMap<String, Object>());
 	}
+
+	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo, Map<String, Object> parameters,GerenciarAssinaturaService gerenciarAssinaturaService) throws JRException, NamingException, SQLException {
+		List<TextoDoRelatorio> lista = new ArrayList<TextoDoRelatorio>();
+		lista.add(conteudo);
+
+		setAssinatura(parameters, relatorio,gerenciarAssinaturaService);
+
+		return gerarRelatorio(lista, relatorio, parameters);
+	}
 	
 	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo, Map<String, Object> parameters) throws JRException, NamingException, SQLException {		
 		List<TextoDoRelatorio> lista = new ArrayList<TextoDoRelatorio>();
@@ -133,6 +175,12 @@ public class RelatorioUtil {
 		return gerarRelatorio(lista, relatorio, parameters);
 	}
 	
+	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio, GerenciarAssinaturaService gerenciarAssinaturaService) throws JRException {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		setAssinatura(parameters, relatorio,gerenciarAssinaturaService);
+		return gerarRelatorio(valores, relatorio, parameters);
+	}
+
 	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio) throws JRException {
 		return gerarRelatorio(valores, relatorio, new HashMap<String, Object>());
 	}

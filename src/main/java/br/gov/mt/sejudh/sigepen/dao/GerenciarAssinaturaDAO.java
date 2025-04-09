@@ -12,6 +12,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.VisitanteListaDTO;
 import br.gov.mt.sejudh.sigepen.model.view.AssociarVisitanteResponsavelView;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.service.VisitanteResponsavelService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
@@ -55,6 +56,10 @@ public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
 
 		TypedQuery<GerenciarAssinatura> query = em.createQuery("FROM " + GerenciarAssinatura.class.getName(), GerenciarAssinatura.class);
 
+		return getGerenciarAssinaturas(query);
+	}
+
+	private List<GerenciarAssinatura> getGerenciarAssinaturas(TypedQuery<GerenciarAssinatura> query) {
 		List<GerenciarAssinatura> result = query.getResultList();
 
 		for(GerenciarAssinatura gerenciarAssinatura : result){
@@ -78,19 +83,7 @@ public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
 
 		query.setParameter("idUnidadePrisional", unidade.getId());
 
-		List<GerenciarAssinatura> result = query.getResultList();
-
-		for(GerenciarAssinatura gerenciarAssinatura : result){
-			Hibernate.initialize(gerenciarAssinatura.getGerenciarAssinaturaServidores());
-			for(GerenciarAssinaturaServidor gerenciarAssinaturaServidor : gerenciarAssinatura.getGerenciarAssinaturaServidores()){
-				Hibernate.initialize(gerenciarAssinaturaServidor.getServidor());
-
-				Hibernate.initialize(gerenciarAssinaturaServidor.getServidor().getCargo());
-				Hibernate.initialize(gerenciarAssinaturaServidor.getServidor().getFuncao());
-			}
-		}
-
-		return result;
+		return getGerenciarAssinaturas(query);
 	}
 
 	public GerenciarAssinatura buscarGerenciarAssinatura(GerenciarAssinatura gerenciarAssinatura) {
@@ -121,8 +114,34 @@ public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
 			return null;
 		}
 
-
-
 	}
 
+    public GerenciarAssinatura buscar(UnidadePrisional unidade, Relatorio relatorio) {
+
+		StringBuilder jpql= new StringBuilder("select ga from GerenciarAssinatura ga " +
+				"where ga.unidadePrisional.id = :unidadePrisionalId " +
+				"AND ga.status = :status and ga.relatorio = :relatorio "
+		);
+
+		TypedQuery<GerenciarAssinatura> query = em.createQuery(jpql.toString(), GerenciarAssinatura.class);
+		query.setParameter("unidadePrisionalId", unidade.getId());
+		query.setParameter("status", Status.ATIVO);
+		query.setParameter("relatorio", relatorio);
+
+
+		try{
+			GerenciarAssinatura result = query.getSingleResult();
+			for(GerenciarAssinaturaServidor gerenciarAssinaturaServidor : result.getGerenciarAssinaturaServidores()){
+				Hibernate.initialize(gerenciarAssinaturaServidor.getServidor());
+
+				Hibernate.initialize(gerenciarAssinaturaServidor.getServidor().getCargo());
+				Hibernate.initialize(gerenciarAssinaturaServidor.getServidor().getFuncao());
+			}
+
+			return result;
+		} catch (NoResultException e) {
+			e.printStackTrace();
+			return null;
+		}
+    }
 }
