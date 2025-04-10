@@ -248,100 +248,115 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	@URLAction(onPostback = false)
 	public String init() {
 		this.listarEtnias();
-		
+
 		try {
 			switch (this.getAcaoDeTela()) {
-			case CADASTRAR:
-				boolean tornar = false;
-				long pessoaId = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
-				Pessoa p = null;
-				Long idPessoa = (Long) facesUtil.getObjetoSessao("idPessoa");
-				if (pessoaId == 0 && idPessoa != null) {
-					pessoaId = idPessoa;
-					tornar = true;
-				}
-				// A pessoa pode já existir no sistema como visitante ou outros...
-				if (pessoaId > 0) {
-					p = pessoaService.buscarPessoaPorId(pessoaId);
+				case CADASTRAR:
+					boolean tornar = false;
+					long pessoaId = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
+					Pessoa p = null;
+					Long idPessoa = (facesUtil != null) ? (Long) facesUtil.getObjetoSessao("idPessoa") : null;
+					
+					if (pessoaId == 0 && idPessoa != null) {
+						pessoaId = idPessoa;
+						tornar = true;
+					}
 
-					if (p == null) {
-						facesUtil.exibirMensagemErro("Pessoa não encontrada.", true);
+					if (pessoaId > 0 && pessoaService != null) {
+						p = pessoaService.buscarPessoaPorId(pessoaId);
+
+						if (p == null) {
+							if (facesUtil != null) {
+								facesUtil.exibirMensagemErro("Pessoa não encontrada.", true);
+							}
+							return "pretty:ListarRecuperando";
+						}
+					} else {
+						p = new Pessoa();
+						p.setNaturalidade(new Cidade());
+					}
+
+					Visitante v = null;
+					Long idVisitante = null;
+					Long tornarRecuperandoIdVisitante = (facesUtil != null) ? (Long) facesUtil.getObjetoSessao("tornarRecuperandoIdVisitante") : null;
+
+					if (tornarRecuperandoIdVisitante != null && visitanteService != null) {
+						idVisitante = tornarRecuperandoIdVisitante;
+						v = visitanteService.buscarPorId(idVisitante);
+					}
+
+					this.recuperando = new Recuperando(StatusRecuperando.INATIVO_PARCIAL);
+					this.recuperando.setPessoa(p);
+					this.recuperando.setTornarRecuperando(tornar);
+					this.recuperando.setTornarRecuperandoIdVisitante(idVisitante);
+
+					if (v != null && tornarRecuperandoIdVisitante != null && v.getFotoFrenteAtual() != null && v.getFotoFrenteAtual().getImagem() != null) {
+						Foto foto = new Foto();
+						foto.setIsAtual(true);
+						foto.setRecuperando(this.recuperando);
+						foto.setDataInclusao(new Date());
+						foto.setTipo(TipoFoto.FRENTE);
+
+						Imagem imagem = new Imagem();
+						imagem.setDataInclusao(new Date());
+						imagem.setArquivo(v.getFotoFrenteAtual().getImagem().getArquivo());
+						foto.setImagem(imagem);
+
+						this.recuperando.setFotos(new ArrayList<>());
+						this.recuperando.getFotos().add(foto);
+					}
+
+					inicializarVariaveis();
+					break;
+
+				case ALTERAR:
+				case VISUALIZAR:
+					long id = Sigepen.converteStringEmLong(facesUtil != null ? facesUtil.getQueryParameter("id") : null);
+
+					if (!buscarRecuperando(id)) {
+						if (facesUtil != null) {
+							facesUtil.exibirMensagemErro("Recuperando não encontrado.", true);
+						}
 						return "pretty:ListarRecuperando";
 					}
-				} else {
-					p = new Pessoa();
-					p.setNaturalidade(new Cidade());
-				}
 
-				Visitante v = null;
-				Long idVisitante = null;
-				Long tornarRecuperandoIdVisitante = (Long) facesUtil.getObjetoSessao("tornarRecuperandoIdVisitante");
-				if (tornarRecuperandoIdVisitante != null) {
-					idVisitante = tornarRecuperandoIdVisitante;
-					v = visitanteService.buscarPorId(idVisitante);
-				}
+					if (!validarRecuperando()) {
+						if (facesUtil != null) {
+							facesUtil.exibirMensagemErro("Operação não permitida.", true);
+						}
+						return "pretty:ListarRecuperando";
+					}
 
-				this.recuperando = new Recuperando(StatusRecuperando.INATIVO_PARCIAL);
-				this.recuperando.setPessoa(p);
-				this.recuperando.setTornarRecuperando(tornar);
-				this.recuperando.setTornarRecuperandoIdVisitante(idVisitante);
+					inicializarVariaveis();
+					carregarStatusMovimentacao();
+					logDeAcesso(log, this.recuperando);
 
-				if (v != null && tornarRecuperandoIdVisitante != null) {
-					Foto foto = new Foto();
-					foto.setIsAtual(true);
-					foto.setRecuperando(this.recuperando);
-					foto.setDataInclusao(new Date());
-					foto.setTipo(TipoFoto.FRENTE);
-					Imagem imagem = new Imagem();
-					imagem.setDataInclusao(new Date());
-					imagem.setArquivo(v.getFotoFrenteAtual().getImagem().getArquivo());
-					foto.setImagem(imagem);
-					this.recuperando.setFotos(new ArrayList<Foto>());
-					this.recuperando.getFotos().add(foto);
-				}
+					if (verificarSeBiometriaEhObrigatoria()) {
+						validarBiometriaAtualizada();
+					}
+					break;
 
-				inicializarVariaveis();
-				break;
+				case LISTAR:
+					if (unidadeService != null) {
+						unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
+					}
+					pesquisar();
+					logDeAcesso(log, "Recuperandos");
+					break;
 
-			case ALTERAR:
-			case VISUALIZAR:
-				long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
-
-				if (!buscarRecuperando(id)) {
-					facesUtil.exibirMensagemErro("Recuperando não encontrado.", true);
-					return "pretty:ListarRecuperando";
-				}
-
-				if (!validarRecuperando()) {
-					facesUtil.exibirMensagemErro("Operação não permitida.", true);
-					return "pretty:ListarRecuperando";
-				}
-
-				inicializarVariaveis();
-				carregarStatusMovimentacao();
-				logDeAcesso(log, this.recuperando);
-
-				if (verificarSeBiometriaEhObrigatoria()) {
-					validarBiometriaAtualizada();
-				}
-				break;
-
-			case LISTAR:
-				unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
-				pesquisar();
-				logDeAcesso(log, "Recuperandos");
-				break;
-
-			default:
-				break;
+				default:
+					break;
 			}
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
+			if (facesUtil != null) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
+			}
 			LoggerUtil.logErro(e, log);
 		}
 
 		return null;
 	}
+
 
 	public Boolean verificarSeBiometriaEhObrigatoria() {
 		return unidadeService.verificarSeBiometriaEhObrigatoria(SecurityUtil.getUnidadeSelecionada().getId());
