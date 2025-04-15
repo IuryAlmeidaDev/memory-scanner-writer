@@ -518,28 +518,35 @@ public class InfopenDAO {
         
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         
-		results.stream().forEach((record) -> {
-	        Long id = ((BigDecimal) record[0]).longValue();
-	        String nome = (String) record[1];
-	        String nomeMae = (String) record[2];
-	        String regime = (String) record[3];
-	        String condicao = (String) record[4];
-	        String status = (String) record[5];
-	        String estrutura = (String) record[6];
-	        String descricaoFiltro = filtro.getNacionalidade() == null ? null : filtro.getNacionalidade().getDescricao();
-	       
-	        
-	        //String dataEntrada = sdf.format((Date) record[7]);
-	        //String dataSaida = sdf.format((Date) record[8]);
-	        
-	        String dataEntrada = record[7] != null ? sdf.format((Date) record[7]) : "";
-	        String dataSaida = record[8] != null ? sdf.format((Date) record[8]) : "";
-	        
-			
-	        
-	        InfopenRecuperandoDTO r = new InfopenRecuperandoDTO(id, nome, nomeMae, regime, condicao, status, filtro, descricaoFiltro, descricaoTitulo, estrutura, dataEntrada, dataSaida);
-			recs.add(r);
-		});
+        results.stream().forEach((record) -> {
+            Long id = ((BigDecimal) record[0]).longValue();
+            String nome = (String) record[1];
+            String nomeMae = (String) record[2];
+            String regime = (String) record[3];
+            String condicao = (String) record[4];
+            String status = (String) record[5];
+            String estrutura = (String) record[6];
+            String descricaoFiltro = filtro.getNacionalidade() == null ? null : filtro.getNacionalidade().getDescricao();
+
+            String dataEntrada = "";
+            String dataSaida = "";
+
+            if (record.length > 7 && record[7] != null) {
+                dataEntrada = sdf.format((Date) record[7]);
+            }
+
+            if (record.length > 8 && record[8] != null) {
+                dataSaida = sdf.format((Date) record[8]);
+            }
+
+            InfopenRecuperandoDTO r = new InfopenRecuperandoDTO(
+                id, nome, nomeMae, regime, condicao, status, 
+                filtro, descricaoFiltro, descricaoTitulo, estrutura, 
+                dataEntrada, dataSaida
+            );
+            recs.add(r);
+        });
+
 		return recs;
 	}
 	

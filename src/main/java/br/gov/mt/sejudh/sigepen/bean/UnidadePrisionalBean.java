@@ -876,15 +876,17 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Permitido apenas 4 servidores.");
 			return false;
 		}
-		if(this.gerenciarAssinatura.getGerenciarAssinaturaServidores().isEmpty()){
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Informe pelo menos 1 servidores.");
-			return false;
-		}
+
 		return true;
 	}
 
 	public void salvarAssinatura() throws ValidacaoException {
 		gerenciarAssinatura.setUnidadePrisional(this.unidade);
+
+		if(this.gerenciarAssinatura.getGerenciarAssinaturaServidores().isEmpty()){
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Informe pelo menos 1 servidores.");
+			return;
+		}
 
 		if(gerenciarAssinaturaService.verificaGerenciarAssinaturaExistente(gerenciarAssinatura)){
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "", "Existe um gerenciamento ativo para essa unidade com o mesmo relatorio");

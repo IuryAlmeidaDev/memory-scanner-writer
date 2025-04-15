@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 
 import br.gov.mt.sejudh.sigepen.dao.GerenciarAssinaturaDAO;
 import br.gov.mt.sejudh.sigepen.model.GerenciarAssinatura;
+import br.gov.mt.sejudh.sigepen.model.dto.MapaConsolidadoDTO;
 import br.gov.mt.sejudh.sigepen.service.GerenciarAssinaturaService;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -105,6 +106,17 @@ public class RelatorioUtil {
 
 		if(gerenciarAssinatura != null && !gerenciarAssinatura.getGerenciarAssinaturaServidores().isEmpty()){
 
+			ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+
+			String pathAssinatura = ctx.getRealPath("WEB-INF" + File.separator + "relatorios" + File.separator + "cabecalhos" + File.separator + "Assinatura.jasper");
+
+			if(relatorio.getRodape().equals(ModeloRodape.PADRAO_PAISAGEM)){
+
+				pathAssinatura = ctx.getRealPath("WEB-INF" + File.separator + "relatorios" + File.separator + "cabecalhos" + File.separator + "AssinaturaPassagem.jasper");
+			}
+
+			parameters.put("REPORT_ASSINATURA", pathAssinatura);
+
 			gerenciarAssinatura.getGerenciarAssinaturaServidores().forEach(  gerenciarAssinaturaServidor -> {
 				if(gerenciarAssinaturaServidor.getOrdem().equals("1")){
 					parameters.put("ASSINATURA_".concat("1"),gerenciarAssinaturaServidor.getServidor().getNome());
@@ -167,8 +179,13 @@ public class RelatorioUtil {
 
 		return gerarRelatorio(lista, relatorio, parameters);
 	}
+
+	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio, Map<String, Object> parameters,GerenciarAssinaturaService gerenciarAssinaturaService) throws JRException {
+		setAssinatura(parameters, relatorio,gerenciarAssinaturaService);
+		return gerarRelatorio(valores, relatorio, parameters);
+	}
 	
-	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo, Map<String, Object> parameters) throws JRException, NamingException, SQLException {		
+	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo, Map<String, Object> parameters) throws JRException, NamingException, SQLException {
 		List<TextoDoRelatorio> lista = new ArrayList<TextoDoRelatorio>();
 		lista.add(conteudo);
 	
@@ -215,7 +232,7 @@ public class RelatorioUtil {
 				cabecalhoPath = cabecalhoPath + File.separator + "CabecalhoPadraoPaisagemSemUnidadeLogada.jasper";
 				break;
 		}
-		
+
 		return cabecalhoPath;
 	}
 	
@@ -251,4 +268,5 @@ public class RelatorioUtil {
 
 		return new DefaultStreamedContent(new ByteArrayInputStream(JasperExportManager.exportReportToPdf(jasperPrint)), "application/pdf", Relatorio.ListarEntradaSaida.toString()+".pdf", "application/pdf");
 	}
+
 }
