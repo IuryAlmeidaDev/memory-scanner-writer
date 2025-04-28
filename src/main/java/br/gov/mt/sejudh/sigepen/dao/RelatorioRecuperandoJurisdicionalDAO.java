@@ -62,7 +62,9 @@ public class RelatorioRecuperandoJurisdicionalDAO {
 				.add(Projections.property("pessoa.nome").as("nome"))
 				.add(Projections.property("pessoa.nomeSocial").as("nomeSocial"))
 				.add(Projections.property("pessoa.nomeMae").as("nomeMae"))
-				.add(Projections.property("regimeAtual").as("regimeAtual"))
+				//.add(Projections.property("regimeAtual").as("regimeAtual"))
+				.add(Projections.property("regimeAtual.descricao").as("regimeAtualDescricao"))
+
 				.add(Projections.property("condicaoAtual").as("condicaoAtual"))
 				
 				.add(Projections.property("passagem.id").as("idPassagem"))
