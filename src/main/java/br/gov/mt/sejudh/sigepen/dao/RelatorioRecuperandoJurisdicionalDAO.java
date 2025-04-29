@@ -55,7 +55,8 @@ public class RelatorioRecuperandoJurisdicionalDAO {
 			.createAlias("processo.processosRegimeCondicao", "prc", JoinType.INNER_JOIN)
 			.createAlias("prc.estabelecimento", "estab", JoinType.INNER_JOIN)
 			.createAlias("estab.cidade", "cidade", JoinType.INNER_JOIN)
-			.createAlias("cidade.estado", "estado", JoinType.INNER_JOIN);
+			.createAlias("cidade.estado", "estado", JoinType.INNER_JOIN)
+			.createAlias("regimeAtual", "regimeAtual", JoinType.LEFT_OUTER_JOIN);
 		
 		Projection proj = Projections.projectionList()
 				.add(Projections.property("id").as("matricula"))
