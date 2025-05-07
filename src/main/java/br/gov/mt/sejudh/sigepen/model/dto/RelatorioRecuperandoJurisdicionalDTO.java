@@ -13,6 +13,10 @@ import br.gov.mt.sejudh.sigepen.model.Regime;
 
 public class RelatorioRecuperandoJurisdicionalDTO {
 
+		
+		
+	private String regimeAtualDescricao;
+	
 	private long matricula;
 	private String nome;
 	private String nomeSocial;
@@ -530,5 +534,13 @@ public class RelatorioRecuperandoJurisdicionalDTO {
 
 	public void setDocumentoDataSoltura(Date documentoDataSoltura) {
 		this.documentoDataSoltura = documentoDataSoltura;
+	}
+
+	public String getRegimeAtualDescricao() {
+		return regimeAtualDescricao;
+	}
+
+	public void setRegimeAtualDescricao(String regimeAtualDescricao) {
+		this.regimeAtualDescricao = regimeAtualDescricao;
 	}
 }

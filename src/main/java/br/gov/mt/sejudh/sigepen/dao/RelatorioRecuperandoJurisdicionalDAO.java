@@ -55,14 +55,17 @@ public class RelatorioRecuperandoJurisdicionalDAO {
 			.createAlias("processo.processosRegimeCondicao", "prc", JoinType.INNER_JOIN)
 			.createAlias("prc.estabelecimento", "estab", JoinType.INNER_JOIN)
 			.createAlias("estab.cidade", "cidade", JoinType.INNER_JOIN)
-			.createAlias("cidade.estado", "estado", JoinType.INNER_JOIN);
+			.createAlias("cidade.estado", "estado", JoinType.INNER_JOIN)
+			.createAlias("regimeAtual", "regimeAtual", JoinType.LEFT_OUTER_JOIN);
 		
 		Projection proj = Projections.projectionList()
 				.add(Projections.property("id").as("matricula"))
 				.add(Projections.property("pessoa.nome").as("nome"))
 				.add(Projections.property("pessoa.nomeSocial").as("nomeSocial"))
 				.add(Projections.property("pessoa.nomeMae").as("nomeMae"))
-				.add(Projections.property("regimeAtual").as("regimeAtual"))
+				//.add(Projections.property("regimeAtual").as("regimeAtual"))
+				.add(Projections.property("regimeAtual.descricao").as("regimeAtualDescricao"))
+
 				.add(Projections.property("condicaoAtual").as("condicaoAtual"))
 				
 				.add(Projections.property("passagem.id").as("idPassagem"))
