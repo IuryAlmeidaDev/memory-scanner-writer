@@ -89,7 +89,7 @@ code_check:
       - tags
       - main
       - feat-gitlab-ci
-      - gitlab-ci-test
+      - /^test/
   cache:
     - paths:
         - .m2/repository
@@ -107,7 +107,6 @@ build_desenv:
       - gitlab-ci-test
       - feat-gitlab-ci
       - /^test/
-      - gitlab-ci-test
 
 #HOMOLOGAÇÃO
 build_homologa:
