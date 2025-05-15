@@ -80,13 +80,13 @@ public class DashboardBean {
 	private FacesUtil facesUtil;
 
 	@Inject
-	private UsuarioService usuarioService;
-
-	@Inject
 	private MovimentacaoInternaService movimentacaoInternaService;
 
 	@Inject
 	private MovimentacaoExternaService movimentacaoExternaService;
+
+	@Inject
+	private UsuarioService usuarioService;
 
 	@PostConstruct
 	public void init() {
