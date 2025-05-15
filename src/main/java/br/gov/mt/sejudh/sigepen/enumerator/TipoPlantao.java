@@ -1,11 +1,24 @@
 package br.gov.mt.sejudh.sigepen.enumerator;
 
 public enum TipoPlantao {
-	A,
-	B,
-	C,
-	D;
+	A("A", 1),
+	B("B", 2),
+	C("C", 3),
+	D("D", 4),
+	ADMINIDTRATIIVO("Administrativo", 5),
+	GESTAO("Gestão", 6);
+		
+	
+	private String descricao;
+	private Integer id;
+	
+	private TipoPlantao(String descricao, Integer id) {
+		this.descricao = descricao;
+		this.id = id;
+	}
 
+	
+	
 	public String getName() {
 		return name();
 	}
@@ -19,4 +32,23 @@ public enum TipoPlantao {
 		
 		return null;
 	}
+
+
+
+	
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}	
 }

@@ -62,8 +62,10 @@ import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
 import br.gov.mt.sejudh.sigepen.model.OrientacaoSexual;
 import br.gov.mt.sejudh.sigepen.model.Pais;
 import br.gov.mt.sejudh.sigepen.model.Parentesco;
+import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.Raca;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.RegistroPlantao;
 import br.gov.mt.sejudh.sigepen.model.Religiao;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
@@ -72,6 +74,7 @@ import br.gov.mt.sejudh.sigepen.model.TipoServidor;
 import br.gov.mt.sejudh.sigepen.model.TipoUnidade;
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.service.ComboService;
 
 @ManagedBean(eager=true)
@@ -128,6 +131,12 @@ public class ComboHelperBean {
 
 	private List<Estado> estados;
 
+	private List<UnidadePrisional> unidadesPrisionais;
+	
+	//private List<RegistroPlantao> registroPlantaos;
+	
+	private List<Plantao> registroPlantaos;
+
 	private List<TipoUnidade> tipoUnidades;
 	
 	private List<TipoDocumento> tipoDocumento;
@@ -163,8 +172,6 @@ public class ComboHelperBean {
 	private PronomeTratamento[] pronomeTratamento;
 	
 	private Esfera[] esfera;
-	
-	private TipoPlantao[] plantoes;
 	
 	private TipoAtestado[] atestados;
 
@@ -202,6 +209,12 @@ public class ComboHelperBean {
 
 	private UnidadeMedida[] unidadesMedida;
 
+	private UnidadePrisional unidadePrisional;
+
+	private TipoPlantao[] tipoPlantoes;
+	
+	//private TipoPlantao[] plantoes;
+
 	private Relatorio[] relatorio;
 
 
@@ -232,6 +245,9 @@ public class ComboHelperBean {
 		tipoServidor 	 	 		= comboService.listarTipoServidor();
 		tipoHistorico 	 	 		= comboService.listarTipoHistorico();
 		estados			 	 		= comboService.listarEstado();
+		unidadesPrisionais 	 		= comboService.listarUnidades();
+		registroPlantaos 	 		= comboService.listarPlantoesCadastrados();
+		
 		funcionalidades  	 		= comboService.listarFuncionalidades();
 		tipoUnidades	 	 		= comboService.listarTipoUnidade();
 		tipoDocumento	 	 		= comboService.listarTipoDocumento();
@@ -251,8 +267,7 @@ public class ComboHelperBean {
 		acao				 		= comboService.getAcao();
 		pronomeTratamento	 		= comboService.getPronomeTratamento();
 		tipoDocumentoPedidoTransito = comboService.getTipoDocumentoPedidoTransito();
-		esfera						= comboService.getEsfera();
-		plantoes					= comboService.getPlantoes();
+		esfera						= comboService.getEsfera();	
 		atestados					= comboService.getAtestados();
 		tipoEntrada					= comboService.getTipoEntrada();
 		simNao						= comboService.getSimNao();
@@ -273,6 +288,10 @@ public class ComboHelperBean {
 		tipoVisitaObrigatoriedade = comboService.getTipoVisitaObrigatoriedade();
 		unidadesMedida = comboService.getUnidadesMedida();
 		relatorio = comboService.getRelatorio();
+		
+		unidadePrisional = new UnidadePrisional();		
+		tipoPlantoes = comboService.getTipoPlantao();
+		//plantoes     = comboService.getPlantoes();
 	}
 
 	public NaturezaFaltaDisciplinar[] getNaturezaFaltaDisciplinar(){
@@ -432,6 +451,25 @@ public class ComboHelperBean {
 		this.estados = estados;
 	}
 	
+	public List<UnidadePrisional> getUnidadesPrisionais() {
+		return unidadesPrisionais;
+	}
+
+	public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
+		this.unidadesPrisionais = unidadesPrisionais;
+	}
+	
+	
+	//registro plantao
+	public List<Plantao> getRegistroPlantaos() {
+		return registroPlantaos;
+	}
+
+	public void setRegistroPlantaos(List<Plantao> registroPlantaos) {
+		this.registroPlantaos = registroPlantaos;
+	}
+	
+
 	public List<TipoUnidade> getTipoUnidades() {
 		return tipoUnidades;
 	}
@@ -638,15 +676,7 @@ public class ComboHelperBean {
 
 	public void setEsfera(Esfera[] esfera) {
 		this.esfera = esfera;
-	}
-
-	public TipoPlantao[] getPlantoes() {
-		return plantoes;
-	}
-
-	public void setPlantoes(TipoPlantao[] plantoes) {
-		this.plantoes = plantoes;
-	}
+	}	
 
 	public TipoAtestado[] getAtestados() {
 		return atestados;
@@ -791,4 +821,21 @@ public class ComboHelperBean {
     public void setRelatorio(Relatorio[] relatorio) {
         this.relatorio = relatorio;
     }
+
+	public UnidadePrisional getUnidadePrisional() {
+	    return unidadePrisional;
+	}
+
+	public String getNomeUnidadePrisional() {
+	    return unidadePrisional != null ? unidadePrisional.getNome() : null;
+	}
+
+	public TipoPlantao[] getTipoPlantoes() {
+		return tipoPlantoes;
+	}
+
+	public void setTipoPlantoes(TipoPlantao[] tipoPlantoes) {
+		this.tipoPlantoes = tipoPlantoes;
+	}
+	
 }

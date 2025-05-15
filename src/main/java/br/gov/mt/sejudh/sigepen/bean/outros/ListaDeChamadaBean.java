@@ -226,7 +226,7 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 		Plantao primeiroPlantao = new Plantao(filtroConfere.getPlantaoInicial(), filtroConfere.getDataInicial());
 
 		int dias = getDataIntervalo();
-		int atual = primeiroPlantao.getPlantao().ordinal();
+		int atual = primeiroPlantao.getTipoPlantao().ordinal();
 
 		for (int i = 0; i < dias; i++) {
 			if (atual >= TipoPlantao.values().length) {

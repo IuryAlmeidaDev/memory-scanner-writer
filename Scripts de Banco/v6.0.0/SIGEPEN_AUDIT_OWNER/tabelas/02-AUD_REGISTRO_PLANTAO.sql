@@ -1,0 +1,19 @@
+--------------------------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA TABELA DE AUDITORIA AUD_REGISTRO_PLANTAO
+--------------------------------------------------------------
+
+CREATE TABLE AUD_REGISTRO_PLANTAO 
+(
+  ID                   NUMBER(19,0) NOT NULL,
+  REV                  NUMBER(19) NOT NULL,
+  ACAO                 NUMBER(3),  
+  PLANTAO_ANTERIOR     VARCHAR2(20 CHAR),      
+  DATA_PLANTAO         DATE NOT NULL,
+  HORA_INICIO          VARCHAR2(5),       
+  PLANTAO_ID           NUMBER(19,0),
+  VALIDA_TIPO_PLANTAO  NUMBER(1)
+);
+
+ALTER TABLE AUD_REGISTRO_PLANTAO ADD CONSTRAINT PK_AUD_REGISTRO_PLANTAO  PRIMARY KEY (ID, REV);
+GRANT SELECT, INSERT ON AUD_REGISTRO_PLANTAO TO SIGEPEN_USER;
+
