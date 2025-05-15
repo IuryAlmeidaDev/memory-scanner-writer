@@ -1,0 +1,14 @@
+-------------------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA SEQUENCE SIGEPEN_S_SEQ_REGISTRO_PLANTAO
+-------------------------------------------------------
+
+DROP SEQUENCE SEQ_REGISTRO_PLANTAO
+
+CREATE SEQUENCE SEQ_REGISTRO_PLANTAO
+    START WITH 1
+    INCREMENT BY 1
+    NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+GRANT SELECT ON SEQ_REGISTRO_PLANTAO TO sigepen_user;

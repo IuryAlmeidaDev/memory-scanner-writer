@@ -6,13 +6,36 @@ import br.gov.mt.sejudh.sigepen.enumerator.Status;
 public class ServidorDTO {
 
 	private long id;	
-	private long matricula;	
+	private Long matricula;	
 	private String nome;	
 	private String mae;
 	private String orgao;	
 	private String cargo;	
 	private String tipo;	
 	private Status status;
+	private String funcao;
+	
+	
+	public ServidorDTO() {
+	    // Construtor padrão necessário para o Hibernate
+	}
+
+	public ServidorDTO(String nome, String orgao, String cargo, Long matricula) {
+		super();
+		this.nome = nome;
+		this.orgao = orgao;
+		this.cargo = cargo;
+		this.matricula = matricula;
+	}
+	
+
+	public ServidorDTO(String funcao) {
+		super();		
+		this.funcao = funcao;
+	}
+	
+
+
 
 	public long getId() {
 		return id;
@@ -22,11 +45,11 @@ public class ServidorDTO {
 		this.id = id;
 	}
 
-	public long getMatricula() {
+	public Long getMatricula() {
 		return matricula;
 	}
 
-	public void setMatricula(long matricula) {
+	public void setMatricula(Long matricula) {
 		this.matricula = matricula;
 	}
 
@@ -77,6 +100,16 @@ public class ServidorDTO {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
+
+	public String getFuncao() {
+		return funcao;
+	}
+
+
+	public void setFuncao(String funcao) {
+		this.funcao = funcao;
+	}
+
 
 	@Override
 	public String toString() {

@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		
+		
+		<sgp:validarAcesso />
+
+		<h3>Livro Plantão</h3>
+
+		<h:form>
+
+			<sgp:formSelectOneMenu id="plantao" labelValue="Plantão"
+				value="#{plantaoBean.plantao.plantao}"
+				itemsValue="#{plantaoBean.plantoes}" 
+				itemValue="#{item}"
+				itemLabel="#{item.name}" 
+				temSelecione="true"
+				validationRequired="true" 
+				converter="SimpleEntityConverter"
+				display="text" 
+				disabled="#{plantao.isVisualizacao}" />
+
+
+				<sgp:formSelectOneMenu 
+				    id="unidade"                    
+				    labelValue="Unidade" 
+				    itemValue="#{unidade}" 
+				    itemLabel="#{unidade.nome}"
+				    itemsValue="#{plantaoBean.unidadesPrisionais}" 
+				    value="#{plantaoBean.unidadePrisional}"                                     
+				    validationRequired="true"
+				    display="text" 
+				    temSelecione="true" 
+				    disabled="#{orgaoBean.isVisualizacao}" >
+				</sgp:formSelectOneMenu>
+					
+			
+
+			<sgp:formSelectOneMenu id="status" 
+				labelValue="Status"
+				value="#{plantaoBean.plantao.status}"
+				itemsValue="#{comboHelperBean.status}" 
+				itemValue="#{item}"
+				itemLabel="#{item.descricao}"
+				disabled="#{plantaoBean.isVisualizacao}" 
+				display="text" />
+
+
+			<br />
+			<br />
+
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>

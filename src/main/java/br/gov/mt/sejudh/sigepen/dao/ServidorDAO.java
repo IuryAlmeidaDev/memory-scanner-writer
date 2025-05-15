@@ -1,6 +1,8 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -162,4 +164,24 @@ public class ServidorDAO {
 		
 		return (long) query.getSingleResult() > 0;
 	}
+	
+		
+	public List<Servidor> listarServidoresComPlantaoNaDataAtual() {
+	    String jpql = "SELECT DISTINCT s FROM Servidor s JOIN s.lotacao l " +
+	                  "WHERE l.dataInicio IS NOT NULL " +
+	                  "AND l.dataFim IS NULL " +
+	                  "AND TRUNC(l.dataInicio) = :hoje"; 
+	    
+	    Query query = entityManager.createQuery(jpql, Servidor.class);
+	    	    
+	    LocalDate hojeLocalDate = LocalDate.now();
+	    Date hojeDate = Date.from(hojeLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+	    
+	    query.setParameter("hoje", hojeDate); 
+	    return query.getResultList();
+	}
+
+
+
+
 }

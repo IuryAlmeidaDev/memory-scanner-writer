@@ -1,0 +1,449 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>Registro Plantão</h3>
+		
+		
+		<!-- Iniciar Plantao -->
+	
+		
+		<h:form id="meuFormulario">
+			<p:panel header="Início do PLantão" style="margin-top: 20px;">
+
+				<!-- Plantão Anterior -->
+				<h:panelGroup style="margin-bottom: 15px;">
+					<sgp:formInputText id="plantaoAnterior"
+						labelValue="Plantão Anterior"
+						value="#{registroPlantaoBean.registroPlantao.plantaoAnterior}"
+						display="text" style="width:200px"
+						styleInput="width:200px; margin-bottom:15px;" />
+				</h:panelGroup>
+
+			<br /><br />
+
+			<h:panelGroup style="margin-bottom: 15px; display: flex; align-items: center;">
+				    <!-- Label ao lado do select -->
+				    <h:outputLabel for="slPlantaoIniciado" value="Plantão Iniciado:" 
+				        style="margin-right: 35px; font-weight: bold;"/>
+				
+				    <p:selectOneMenu id="slPlantaoIniciado"
+				        value="#{registroPlantaoBean.registroPlantao.plantao}"
+				        style="width: 200px;"
+				        disabled="#{registroPlantaoBean.isVisualizacao}"
+				        converter="SimpleEntityConverter">
+				
+				        <!-- Item inicial para exibir "Selecione" -->
+				        <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/>
+				
+				        <!-- Garantindo conversão correta -->
+				        <f:selectItems 
+				            value="#{registroPlantaoBean.plantoes}" 
+				            var="plantao"
+				            itemLabel="#{plantao.tipoPlantao} - #{plantao.unidadePrisional.nome} - #{plantao.dataPlantao}" 
+				            itemValue="#{plantao}" />
+								        
+				    </p:selectOneMenu>
+				</h:panelGroup>				
+
+				<!-- Data do Registro -->
+				<h:panelGroup style="margin-bottom: 15px;">
+					<sgp:formCalendar id="dataPlantao" labelValue="Data do Plantão"
+						value="#{registroPlantaoBean.registroPlantao.dataPlantao}"
+						pattern="dd/MM/yyyy" validationRequired="true" requiredMessage="*"
+						style="width:200px" styleInput="width:200px; margin-bottom:15px;">
+						<p:ajax event="dateSelect" />
+					</sgp:formCalendar>
+				</h:panelGroup>
+
+
+				<!-- Hora de Início -->
+				<h:panelGroup style="margin-bottom: 15px;">
+					<sgp:formInputText id="horaInicio" labelValue="Hora de Início"
+						value="#{registroPlantaoBean.registroPlantao.horaInicio}"
+						maxlength="80" display="text" validationRequired="true"
+						requiredMessage="*" style="width:200px"
+						styleInput="width:200px; margin-bottom:15px;" />
+				</h:panelGroup>
+
+				<br />
+				<br />
+
+
+				<!-- Botões -->
+				<h:panelGroup style="text-align: center; margin-top: 20px;">
+					<p:commandButton value="Registrar Início" icon="ui-icon-disk"
+						action="#{registroPlantaoBean.salvar}" update="meuFormulario"
+						style="margin-right: 15px;" />
+				</h:panelGroup>
+
+			</p:panel>
+		</h:form>   
+		
+		<!-- Fim Iniciar Plantao -->
+
+
+		<h:form id="registrosForm" prependId="false">
+			<p:tabView id="tabViewPai" effect="fade" effectDuration="fast"
+				widgetVar="abaPrincipal">
+
+				<!-- Aba Principal - Item Servidores -->
+				<p:tab title="Servidores" id="tabServidores">
+
+					<p:panel id="panelServidores">
+
+						<!-- TabView Filho -->
+						<p:tabView id="tabViewFilho" effect="fade" effectDuration="fast"
+							widgetVar="abaFilho" dynamic="false">							
+							
+							<!-- tab Equipe de Gestão -->
+							<p:tab title="Equipe de Gestão" id="tabGestao">							
+								<p:panel header="Equipe de Gestão" id="panelEquipeGestao">
+
+									<!-- Data Table Listar Servidores e os demais campos -->
+									<p:dataTable id="dataTableGestao" var="servidor"
+										value="#{registroPlantaoBean.listaGestao}" rows="10"
+										paginator="true" paginatorPosition="bottom" lazy="true"
+										emptyMessage="Nenhum registro encontrado.">
+
+
+										<!-- Nome Servidor  -->
+										<p:column headerText="Nome do Servidor" width="140">
+											<h:outputText value="#{servidor.nomeServidor}" />
+										</p:column>
+
+
+										<!-- Atividade do Servidor  -->
+										<p:column headerText="Atividade" width="120">
+											<sgp:formSelectOneMenu
+												value="#{servidor.atividadeSelecionada}"
+												id="slAtividadeGestao" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{servidor.atividades}"
+													var="atividade" itemLabel="#{atividade.descricao}"
+													itemValue="#{atividade.descricao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+
+
+										<!-- Situaçao do Servidor  -->
+										<p:column headerText="Situação" width="120">
+											<sgp:formSelectOneMenu
+												value="#{servidor.situacaoSelecionada}"
+												id="slSituacaoGestao" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{registroPlantaoBean.situacoes}"
+													var="situacao" itemLabel="#{situacao.descricao}"
+													itemValue="#{situacao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+																				
+										<!-- Dialgo Suspenso  -->										
+										<p:column headerText="Ações" width="40">
+											<center>
+												<p:commandButton title="Alterar" icon="ui-icon-pencil"
+													actionListener="#{registroPlantaoBean.prepararEdicao(servidor)}"
+													oncomplete="PF('dialogAlteracao').show()"
+													update=":registrosForm:dialogAlteracao"/>
+											</center>
+										</p:column>
+
+									</p:dataTable>
+									
+									<br />
+									
+									<!-- Botão Salvar abaixo da tabela, garantindo que sua ação atualize a tabela -->
+									<p:commandButton value="Salvar"
+										action="#{registroPlantaoBean.salvarEquipe(registroPlantaoBean.listaGestao)}"										
+										icon="ui-icon-disk" />
+								</p:panel>
+							</p:tab>
+							
+							<p:tab title="Equipe de Plantão" id="tabPlantao">
+
+								<p:panel header="Equipe de Plantão" id="panelEquipePlantao">
+
+									<!-- Data Table Listar Servidores e os demais campos -->
+									<p:dataTable id="dataTableEquipePlantao" var="servidor"
+										value="#{registroPlantaoBean.listaPlantao}" rows="10"
+										paginator="true" paginatorPosition="bottom" lazy="true"
+										emptyMessage="Nenhum registro encontrado.">
+
+										<!-- Nome Servidor  -->
+										<p:column headerText="Nome do Servidor" width="140">
+											<h:outputText value="#{servidor.nomeServidor}" />
+										</p:column>
+
+										<!-- Atividade do Servidor  -->
+										<p:column headerText="Atividade" width="120">
+											
+											<sgp:formSelectOneMenu
+												value="#{servidor.atividadeSelecionada}"
+												id="slAtividadeEquipePlantao" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{servidor.atividades}"
+													var="atividade" itemLabel="#{atividade.descricao}"
+													itemValue="#{atividade.descricao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+
+										<!-- Situaçao do Servidor  -->
+										<p:column headerText="Situação" width="120">
+											<sgp:formSelectOneMenu
+												value="#{servidor.situacaoSelecionada}"
+												id="slSituacaoEquipePlantao" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{registroPlantaoBean.situacoes}"
+													var="situacao" itemLabel="#{situacao.descricao}"
+													itemValue="#{situacao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+										
+										<!-- Dialgo Suspenso  -->										
+										<p:column headerText="Ações" width="40">
+											<center>
+												<p:commandButton title="Alterar" icon="ui-icon-pencil"
+													actionListener="#{registroPlantaoBean.prepararEdicao(servidor)}"
+													oncomplete="PF('dialogAlteracao').show()"
+													update=":registrosForm:dialogAlteracao"/>
+											</center>
+										</p:column>
+										
+									</p:dataTable>	
+									
+									<br />
+									
+									<!-- Botão Salvar abaixo da tabela, garantindo que sua ação atualize a tabela -->
+									<p:commandButton value="Salvar"
+										action="#{registroPlantaoBean.salvarEquipe(registroPlantaoBean.listaPlantao)}" 
+										icon="ui-icon-disk" />								
+								</p:panel>
+							</p:tab>
+							
+							<!-- tab Equipe Administrativa -->
+							<p:tab title="Equipe Administrativa" id="tabAdministrativa">
+								<p:panel header="Equipe Administrativa"
+									id="panelEquipeAdministrativa">
+
+									<!-- Data Table Listar Servidores e os demais campos -->
+									<p:dataTable id="dataTableAdministrativa" var="servidor"
+										value="#{registroPlantaoBean.listaAdministrativa}" rows="10"
+										paginator="true" paginatorPosition="bottom" lazy="true"
+										emptyMessage="Nenhum registro encontrado.">
+
+
+										<!-- Nome Servidor  -->
+										<p:column headerText="Nome do Servidor" width="140">
+											<h:outputText value="#{servidor.nomeServidor}" />
+										</p:column>
+
+
+										<!-- Atividade do Servidor  -->
+										<p:column headerText="Atividade" width="120">
+											
+											<sgp:formSelectOneMenu
+												value="#{servidor.atividadeSelecionada}"
+												id="slAtividadeAdministrativa" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{servidor.atividades}"
+													var="atividade" itemLabel="#{atividade.descricao}"
+													itemValue="#{atividade.descricao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+
+
+										<!-- Situaçao do Servidor  -->
+										<p:column headerText="Situação" width="120">
+											<sgp:formSelectOneMenu
+												value="#{servidor.situacaoSelecionada}"
+												id="slSituacaoAdministrativa" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{registroPlantaoBean.situacoes}"
+													var="situacao" itemLabel="#{situacao.descricao}"
+													itemValue="#{situacao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+										
+										
+										<!-- Dialgo Suspenso  -->										
+										<p:column headerText="Ações" width="40">
+											<center>
+												<p:commandButton title="Alterar" icon="ui-icon-pencil"
+													actionListener="#{registroPlantaoBean.prepararEdicao(servidor)}"
+													oncomplete="PF('dialogAlteracao').show()"
+													update=":registrosForm:dialogAlteracao"/>
+											</center>
+										</p:column>
+
+									</p:dataTable>
+									
+									<br />
+									
+									<!-- Botão Salvar abaixo da tabela, garantindo que sua ação atualize a tabela -->
+									<p:commandButton value="Salvar"
+										action="#{registroPlantaoBean.salvarEquipe(registroPlantaoBean.listaAdministrativa)}" 
+										icon="ui-icon-disk" />
+								</p:panel>
+							</p:tab>
+
+						</p:tabView> <!-- Fim tabView Filho -->
+
+
+					</p:panel>				
+				</p:tab>
+				
+				
+				<!-- Aba Principal - Item Alimentos -->
+				<p:tab title="Alimentos" id="tabAlimentos">
+					<p:panel id="panelAlimentos">
+					</p:panel>
+				</p:tab>
+
+				<!-- Aba Principal - Item Visitas -->
+				<p:tab title="Visitas" id="tabVisitas">
+					<p:panel id="panelVisitas">
+					</p:panel>
+				</p:tab>
+
+
+				<!-- Aba Principal - Item Movimentações -->
+				<p:tab title="Movimentações" id="tabMovimentacoes">
+					<p:panel id="panelMovimentacoes">
+					</p:panel>
+				</p:tab>
+
+
+				<!-- Aba Principal - Item Ocorrencias -->
+				<p:tab title="Ocorrencias" id="tabOcorrencias">
+					<p:panel id="panelOcorrencias">
+					</p:panel>
+				</p:tab>
+
+			</p:tabView>
+			
+			
+			<!-- Dialog  -->
+			<p:dialog header="Plantão" widgetVar="dialogAlteracao"
+				modal="true" resizable="false" id="dialogAlteracao">
+				<h:panelGrid columns="2">
+				
+					<h:outputLabel for="nomeServidor" value="Nome do Servidor:" />					
+					<h:outputText id="nomeServidor" value="#{registroPlantaoBean.servidorSelecionado.nomeServidor}" />
+																					
+
+					<h:outputLabel for="matricula" value="Matrícula:" />
+					<h:outputText id="matricula" value="#{registroPlantaoBean.servidorSelecionado.matricula}" readonly="true" />
+
+
+					<h:outputLabel for="ocorrencia" value="Ocorrência:" />					
+					<h:selectOneMenu id="ocorrencia" value="#{registroPlantaoBean.servidorSelecionado.ocorrenciaSelecionada}">
+									
+						<f:selectItem itemLabel="Troca de posto" itemValue="TROCA_DE_POSTO" />
+						<f:selectItem itemLabel="Falta Não Justificada" itemValue="FALTA_NAO_JUSTIFICADA" />
+						<f:selectItem itemLabel="Férias" itemValue="FERIAS" />
+						<f:selectItem itemLabel="Licença Médica" itemValue="LICENCA_MEDICA" />
+						<f:selectItem itemLabel="Licença Premium" itemValue="LICENCA_PREMIUM" />
+						<f:selectItem itemLabel="Entrou Atrasado" itemValue="ENTROU_ATRASADO" />						
+					</h:selectOneMenu>
+
+					<h:outputLabel for="justificativa" value="Justificativa:" />										
+					<h:inputTextarea id="justificativa"  value="#{registroPlantaoBean.servidorSelecionado.justificativa}"/>
+										
+				</h:panelGrid>				
+				
+					
+				<p:commandButton value="Salvar" 
+					action="#{registroPlantaoBean.atualizarRegistroPlantaoServidor()}" 
+					update="@form" 
+					 process="@form" />
+				
+			</p:dialog>
+
+		</h:form>
+		
+		
+		
+		<!-- Encerrar Plantao -->		
+		<h:form id="encerrarPLantao">
+			<p:panel header="Encerrar PLantão" style="margin-top: 20px;">
+
+				<!-- Plantão Anterior -->
+				<h:panelGroup style="margin-bottom: 15px;">
+					<sgp:formInputText id="plantaoAtual" labelValue="Plantão Atual"
+						value="#{registroPlantaoBean.registroPlantao.plantaoAnterior}"
+						display="text" style="width:200px"
+						styleInput="width:200px; margin-bottom:15px;" />					
+				</h:panelGroup>
+				<br /><br />
+				
+				<!-- Próximo Plantão -->			
+				<h:panelGroup style="margin-bottom: 15px; display: flex; align-items: center;">
+				    
+				    <h:outputLabel for="slPlantaoIniciado" value="Próximo Plantao:" 
+				        style="margin-right: 35px; font-weight: bold;"/>
+				
+				    <p:selectOneMenu id="slproximoPlantao"
+				        value="#{registroPlantaoBean.registroPlantao.plantao}"
+				        style="width: 200px;"
+				        disabled="#{registroPlantaoBean.isVisualizacao}"
+				        converter="SimpleEntityConverter">
+				
+				        <!-- Item inicial para exibir "Selecione" -->
+				        <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/>
+				
+				        <!-- Garantindo conversão correta -->
+				        <f:selectItems 
+				            value="#{registroPlantaoBean.plantoes}" 
+				            var="plantao"
+				            itemLabel="#{plantao.tipoPlantao} - #{plantao.unidadePrisional.nome} - #{plantao.dataPlantao}" 
+				            itemValue="#{plantao}" />
+								        
+				    </p:selectOneMenu>
+				</h:panelGroup>
+
+
+				<!-- Data do Registro -->
+				<h:panelGroup style="margin-bottom: 15px;">
+					<sgp:formCalendar id="dataPlantao" labelValue="Data do Plantão"
+						value="#{registroPlantaoBean.registroPlantao.dataPlantao}"
+						pattern="dd/MM/yyyy" validationRequired="true" requiredMessage="*"
+						style="width:200px" styleInput="width:200px; margin-bottom:15px;">
+						<p:ajax event="dateSelect" />
+					</sgp:formCalendar>
+				</h:panelGroup>
+
+
+				<!-- Hora de Início -->
+				<h:panelGroup style="margin-bottom: 15px;">
+					<sgp:formInputText id="horaTermino" labelValue="Hora de Término"
+						value="#{registroPlantaoBean.registroPlantao.horaInicio}"
+						maxlength="80" display="text" validationRequired="true"
+						requiredMessage="*" style="width:200px"
+						styleInput="width:200px; margin-bottom:15px;" />
+				</h:panelGroup>
+
+				<br />
+				<br />
+
+
+				<!-- Botões -->
+				<h:panelGroup style="text-align: center; margin-top: 20px;">
+					<p:commandButton value="Registrar Encerramento" icon="ui-icon-disk"
+						action="#{registroPlantaoBean.salvar}" update="meuFormulario"
+						style="margin-right: 15px;" />
+				</h:panelGroup>
+
+			</p:panel>
+		</h:form>
+
+		
+
+	</ui:define>
+</ui:composition>

@@ -146,6 +146,14 @@ public class SecurityUtil implements Serializable {
 			case "servidor":
 				resultado = this.possuiPermissao("PermiteCadastrarPlantao");
 				break;
+				
+			case "plantao":
+				resultado = this.possuiPermissao("CadastrarPlantao")
+				|| this.possuiPermissao("ListarPlantao")
+				|| this.possuiPermissao("ExcluirPlantao")
+				|| this.possuiPermissao("CadastrarRegistroPlantao")
+				|| this.possuiPermissao("ListarRegistroPlantao");
+				break;	
 		}
 		
 		return resultado;
