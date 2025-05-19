@@ -93,7 +93,7 @@
 				<p:menuitem value="Sair" action="#{loginBean.logout()}" icon="ui-icon-power" />
 			</p:submenu>
 			
-			<p:submenu label="Plantão">				
+			<p:submenu label="Plantão" rendered="#{securityUtil.exibeCategoriaMenu('plantao')}">				
 				<p:menuitem value="Livro PLantão" outcome="pretty:ListarPlantao" icon="fa fa-file" rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}"/>	
 				<p:menuitem value="Registro PLantão" outcome="pretty:ListarRegistroPlantao" icon="fa fa-file" rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}"/>														
 																	
