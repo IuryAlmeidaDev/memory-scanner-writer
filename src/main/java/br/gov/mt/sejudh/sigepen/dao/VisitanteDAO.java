@@ -1122,7 +1122,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 
 
 	public boolean verificaResponsavelPossiCredenciamentoParaRecuperando(List<Visitante> responsavel, Recuperando recuperandoSelecionado) {
-		String jpql = "SELECT c.statusCredenciamento FROM Pessoa p " +
+		String jpql = "SELECT COUNT(c) FROM Pessoa p " +
 				"INNER JOIN p.visitante v " +
 				"INNER JOIN v.credenciamentos c " +
 				"WHERE p.nome in :visitante " +

@@ -276,7 +276,41 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	}
 	
 	
-	public void atualizarRegistroPlantaoServidor() {
+	public String atualizarRegistroPlantaoServidor() {
+	    String retorno = null;
+
+	    try {
+	        if (servidorSelecionado.getNomeServidor() != null) {
+	            RegistroPlantaoServidor registroPlantaoServidor = 
+	                registroPlantaoService.buscarPorNome(servidorSelecionado.getNomeServidor());
+
+	            if (registroPlantaoServidor != null) {                   
+	                registroPlantaoServidor.setOcorrenciaSelecionada(servidorSelecionado.getOcorrenciaSelecionada());
+	                registroPlantaoServidor.setJustificativa(servidorSelecionado.getJustificativa());   
+
+	                registroPlantaoService.atualizar(registroPlantaoServidor);
+	                
+	                facesUtil.exibirMensagemInfo("Registro atualizado com sucesso!", true);
+	                
+	                retorno = "pretty:ListarRegistroPlantao";
+	            } else {
+	                facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Aviso", 
+	                    "Registro não encontrado para o servidor: " + servidorSelecionado.getNomeServidor());
+	            }
+	        }
+	    } catch (Exception e) {
+	        facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "Erro ao atualizar registro", e.getMessage());
+	        LoggerUtil.logErro(e, log);
+	    }
+
+	    return retorno;
+	}
+
+	
+	/*
+	public String atualizarRegistroPlantaoServidor() {
+		   String retorno = null;
+		
 	    try {
 	        if (servidorSelecionado.getNomeServidor() != null) {
 	        	RegistroPlantaoServidor registroPlantaoServidor = 
@@ -289,7 +323,8 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
 	                registroPlantaoService.atualizar(registroPlantaoServidor);
 	                
-	                facesUtil.exibirMensagemInfo("Registro atualizado com sucesso!", true);
+	                facesUtil.exibirMensagemInfo("Registro salvo com sucesso!", true);	                
+	    	        retorno = "pretty:ListarRegistroPlantao";
 	            } else {
 	                facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Aviso", "Registro não encontrado para o servidor: " + servidorSelecionado.getNomeServidor());
 	            }
@@ -298,7 +333,8 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	        facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "Erro ao atualizar registro", e.getMessage());
 	        LoggerUtil.logErro(e, log);
 	    }
-	}
+		return retorno;
+	}*/
 	
 
 	
