@@ -296,13 +296,25 @@ public class InfopenDAO {
 					" AND r.ID = p2.RECUPERANDO_ID";															
 		}
 		
-		if(filtro.getDataInicial() != null || filtro.getDataFinal() != null) {
-			sql += " AND (p2.DATA_SAIDA BETWEEN :DATA_ENTRADA AND :DATA_SAIDA OR p2.DATA_SAIDA IS NULL)";
+		Date dataInicial = filtro.getDataInicial();
+		Date dataFinal = filtro.getDataFinal();
+
+		if (dataInicial != null || dataFinal != null) {
+		    sql += " AND (";
+
+		    if (dataInicial != null) {
+		        sql += "p2.DATA_SAIDA >= :DATA_ENTRADA";
+		    }
+
+		    if (dataFinal != null) {
+		        if (dataInicial != null) sql += " AND ";
+		        sql += "p2.DATA_SAIDA <= :DATA_SAIDA";
+		    }
+
+		    sql += " OR p2.DATA_SAIDA IS NULL)";
 		} else {
-			sql += " AND (p2.DATA_SAIDA IS NULL)";
-			
+		    sql += " AND p2.DATA_SAIDA IS NULL";
 		}
-		
 		
 		if(filtro.getNacionalidade() != null) {
 			sql += " AND NA.ID = :NACIONALIDADE ";
