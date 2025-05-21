@@ -453,12 +453,18 @@ public class EntradaSaidaDAO {
 		List<Visitante> visitantes = criteria.list();
 		for(Visitante v : visitantes) {
 			Hibernate.initialize(v.getEntradas());
+			Hibernate.initialize(v.getCredenciamentos());
+			Hibernate.initialize(v.getOcorrencias());
+			for(Ocorrencia o : v.getOcorrencias()) {
+				Hibernate.initialize(o.getTipoOcorrencia());
+			}
+
 			for(EntradaSaida e : v.getEntradas()) {
 				Hibernate.initialize(e.getUnidadePrisional());
 				Hibernate.initialize(e.getVisitante().getIdentidadeDeGenero());
 				Hibernate.initialize(e.getVisitante());
 				Hibernate.initialize(e.getRecuperandos());
-	        	Hibernate.initialize(e.getVisitante().getFotos());
+	         	Hibernate.initialize(e.getVisitante().getFotos());
 	        	Hibernate.initialize(e.getVisitante().getPessoa().getNacionalidade());
 	        	Hibernate.initialize(e.getVisitante().getPessoa().getNaturalidade());
 	        	Hibernate.initialize(e.getVisitante().getPessoa().getPais());
@@ -499,11 +505,13 @@ public class EntradaSaidaDAO {
 	            	}
 	        		
 	        	}
-	             
+
 	        	Hibernate.initialize(e.getVisitante().getCredenciamentos());
 	        	for(Credenciamento vr : e.getVisitante().getCredenciamentos()) {
 		    		Hibernate.initialize(vr.getFasesDoCredenciamento());
+		    		Hibernate.initialize(vr.getTipoVisita());
 		    		if(vr.getRecuperando() != null) {
+			    		Hibernate.initialize(vr.getRecuperando().getPessoa());
 			    		Hibernate.initialize(vr.getRecuperando().getFaltas());
 			    		Hibernate.initialize(vr.getRecuperando().getPassagens());
 			    		for(Passagem p : vr.getRecuperando().getPassagens()) {
@@ -518,6 +526,7 @@ public class EntradaSaidaDAO {
 				
 			}
 		}
+
 		return visitantes;
 	}
 
