@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -221,36 +222,40 @@ public class EstruturaDAO {
 				.append("        es.id AS estrutura_id, ")
 				.append("        es.nome AS estrutura_nome, ")
 				.append("        td.descricao AS tipo_dieta, ")
-				.append("        ( ")
-				.append("            SELECT COUNT(DISTINCT pas2.recuperando_id) ") // Conta recuperandos por estrutura
-				.append("            FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM pas2 ")
-				.append("            JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM_LOTACAO l2 ")
-				.append("                   ON l2.PASSAGEM_ID = pas2.ID ")
-				.append("            JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".DIETA_RECUPERANDO dr2 ")
-				.append("                   ON dr2.RECUPERANDO_ID = pas2.RECUPERANDO_ID ")
-				.append("                  AND dr2.STATUS = 1 ")
-				.append("                  AND (dr2.FIM IS NULL OR dr2.FIM > TO_DATE(:DATA, 'DD/MM/YYYY HH24:MI:SS')) ") // Dieta ativa na data
-				.append("            JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".TIPO_DIETA td2 ")
-				.append("                   ON td2.ID = dr2.TIPO_DIETA_ID ")
-				.append("                  AND td2.ESPECIAL = 1 ") // Filtra apenas dietas especiais
-				.append("            WHERE TO_DATE(:DATA, 'DD/MM/YYYY HH24:MI:SS') >= l2.DATA_ENTRADA ")
-				.append("              AND (TO_DATE(:DATA, 'DD/MM/YYYY HH24:MI:SS') <= l2.DATA_SAIDA OR l2.DATA_SAIDA IS NULL) ") // Recuperandos presentes
-				.append("              AND TO_DATE(:DATA, 'DD/MM/YYYY HH24:MI:SS') >= dr2.INICIO ")
-				.append("              AND l2.ESTRUTURA_ID IN ( ") // Apenas descendentes da estrutura atual
-				.append("                  SELECT e4.ID ")
-				.append("                  FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA e4 ")
-				.append("                  START WITH e4.ID = es.ID ")
-				.append("                  CONNECT BY PRIOR e4.ID = e4.ESTRUTURAPAI_ID ")
-				.append("              ) ")
-				.append("              AND td2.DESCRICAO = td.DESCRICAO ") // Filtra dietas do mesmo tipo
-				.append("        ) AS qtd_recuperando ")
+				.append("        COUNT(DISTINCT pas2.recuperando_id) as qtd_recuperando, ") // Conta recuperandos por estrutura
+				.append("        LISTAGG(p.nome, ',') WITHIN GROUP (ORDER BY p.nome) as nomes_recuperandos ")
 				.append("    FROM estrutura_subtree es ")
 				.append("    JOIN ( ") // Lista de tipos de dietas especiais conhecidos
 				.append("        SELECT DISTINCT ttd.descricao ")
 				.append("        FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".TIPO_DIETA ttd ")
 				.append("        WHERE ttd.ESPECIAL = 1 ")
 				.append("    ) td ON 1 = 1 ") // Garante o CROSS JOIN para todas as dietas especiais
+				.append("    LEFT JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM pas2 ON 1=1 ")
+				.append("    LEFT JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM_LOTACAO l2 ")
+				.append("           ON l2.PASSAGEM_ID = pas2.ID ")
+				.append("    LEFT JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".DIETA_RECUPERANDO dr2 ")
+				.append("           ON dr2.RECUPERANDO_ID = pas2.RECUPERANDO_ID ")
+				.append("          AND dr2.STATUS = 1 ")
+				.append("          AND (dr2.FIM IS NULL OR dr2.FIM > TO_DATE(:DATA, 'DD/MM/YYYY HH24:MI:SS')) ") // Dieta ativa na data
+				.append("    LEFT JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".TIPO_DIETA td2 ")
+				.append("           ON td2.ID = dr2.TIPO_DIETA_ID ")
+				.append("          AND td2.ESPECIAL = 1 ") // Filtra apenas dietas especiais
+				.append("    LEFT JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".RECUPERANDO r ")
+				.append("           ON r.ID = pas2.RECUPERANDO_ID ")
+				.append("    LEFT JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PESSOA p ")
+				.append("           ON p.ID = r.PESSOA_ID ")
 				.append("    WHERE es.nivel = 2 ") // Filtro para exibir apenas estruturas no nível 2
+				.append("      AND TO_DATE(:DATA, 'DD/MM/YYYY HH24:MI:SS') >= l2.DATA_ENTRADA ")
+				.append("      AND (TO_DATE(:DATA, 'DD/MM/YYYY HH24:MI:SS') <= l2.DATA_SAIDA OR l2.DATA_SAIDA IS NULL) ") // Recuperandos presentes
+				.append("      AND TO_DATE(:DATA, 'DD/MM/YYYY HH24:MI:SS') >= dr2.INICIO ")
+				.append("      AND l2.ESTRUTURA_ID IN ( ") // Apenas descendentes da estrutura atual
+				.append("          SELECT e4.ID ")
+				.append("          FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA e4 ")
+				.append("          START WITH e4.ID = es.ID ")
+				.append("          CONNECT BY PRIOR e4.ID = e4.ESTRUTURAPAI_ID ")
+				.append("      ) ")
+				.append("      AND td2.DESCRICAO = td.DESCRICAO ") // Filtra dietas do mesmo tipo
+				.append("    GROUP BY es.nivel, es.id, es.nome, td.descricao ")
 				.append(") resultado ")
 				.append("WHERE resultado.qtd_recuperando > 0 ") // Filtra apenas estruturas com recuperandos
 				.append("ORDER BY resultado.estrutura_id, resultado.tipo_dieta");
@@ -260,7 +265,14 @@ public class EstruturaDAO {
 		query.setParameter("DATA", dataHora);
 
 		return (List<DietaEspecialEstruturaDTO>) query.getResultList().stream()
-				.map(row -> new DietaEspecialEstruturaDTO((Object[]) row))
+				.map(row -> {
+					DietaEspecialEstruturaDTO dto = new DietaEspecialEstruturaDTO((Object[]) row);
+					String nomesString = (String) ((Object[]) row)[5];
+					if (nomesString != null) {
+						dto.setNomesRecuperandos(Arrays.asList(nomesString.split(",")));
+					}
+					return dto;
+				})
 				.collect(Collectors.toList());
 	}
 
