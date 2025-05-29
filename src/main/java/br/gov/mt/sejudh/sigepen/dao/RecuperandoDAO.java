@@ -202,6 +202,7 @@ public class RecuperandoDAO {
 			Hibernate.initialize(r.getDocumentos());
 			Hibernate.initialize(r.getParentes());
 			Hibernate.initialize(r.getHistoricos());
+			Hibernate.initialize(r.getRegimeAtual());
 			if(r.getParentes() != null) {
 				for(Parente p : r.getParentes()) {
 					Hibernate.initialize(p.getCredenciamentos());
