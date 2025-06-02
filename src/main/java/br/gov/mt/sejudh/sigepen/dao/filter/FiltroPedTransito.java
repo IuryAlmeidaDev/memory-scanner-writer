@@ -54,6 +54,8 @@ public class FiltroPedTransito extends FiltroConsulta {
 	
 	private Boolean isExtratoRecuperando;
 	
+	private String nomeSocial;
+	
 	public FiltroPedTransito() {
 		listaTipoTransito = new ArrayList<TipoTransito>();
 		this.isExtratoRecuperando = false;
@@ -170,6 +172,14 @@ public class FiltroPedTransito extends FiltroConsulta {
 
 	public void setIsExtratoRecuperando(Boolean isExtratoRecuperando) {
 		this.isExtratoRecuperando = isExtratoRecuperando;
+	}		
+
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
 	}
 
 	@Override
@@ -193,6 +203,7 @@ public class FiltroPedTransito extends FiltroConsulta {
 				.add(Projections.property("id").as("id"))
 				.add(Projections.property("recuperando.id").as("idRec"))
 				.add(Projections.property("pessoa.nome").as("recuperando"))
+				.add(Projections.property("pessoa.nomeSocial").as("nomeSocial"))
 				.add(Projections.property("tipoTransito").as("tipoTransito"))
 				.add(Projections.property("dataPrevista").as("dataPrevista"))
 	            .add(Projections.property("status").as("status"))
@@ -204,7 +215,8 @@ public class FiltroPedTransito extends FiltroConsulta {
 	            .add(Projections.property("transferencia.id").as("idTransferencia"))
 	            .add(Projections.property("dataInicio").as("dataInicio"))
 	            .add(Projections.property("dataConclusao").as("dataConclusao"))
-	            .add(Projections.property("observacao").as("observacao"));
+	            .add(Projections.property("observacao").as("observacao"))
+				.add(Projections.property("pessoa.nomeSocial").as("nomeSocial"));
 		
 		ProjectionList projectionList = (ProjectionList) proj;
 		
@@ -275,6 +287,10 @@ public class FiltroPedTransito extends FiltroConsulta {
 		
 		if (this.getStatus() != null) {
 			getCriteria().add(Restrictions.eq("status", this.getStatus()));
+		}
+		
+		if (this.getNomeSocial()!= null && !this.getNomeSocial().equalsIgnoreCase("")) {
+			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("pessoa.nomeSocial", this.getNomeSocial(), MatchMode.ANYWHERE));
 		}
 						
 	}

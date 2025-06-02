@@ -34,6 +34,8 @@ public class FiltroFaltaDisciplinar extends FiltroConsulta {
 	private Status status;
 
 	private SituacaoFaltaDisciplinar situacao;
+	
+	private String nomeSocial;
 
 	public FiltroFaltaDisciplinar() {
 	}
@@ -101,6 +103,14 @@ public class FiltroFaltaDisciplinar extends FiltroConsulta {
 	public void setSituacao(SituacaoFaltaDisciplinar situacao) {
 		this.situacao = situacao;
 	}
+	
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
+	}
 
 	@Override
 	public void configurarFiltros() {
@@ -118,7 +128,8 @@ public class FiltroFaltaDisciplinar extends FiltroConsulta {
 				.add(Projections.property("pessoa.nome").as("recuperando"))
 				.add(Projections.property("tipo.descricao").as("tipoFalta"))
 				.add(Projections.property("data").as("data"))
-	            .add(Projections.property("situacao").as("situacao"));
+	            .add(Projections.property("situacao").as("situacao"))
+	            .add(Projections.property("pessoa.nomeSocial").as("nomeSocial"));
 
 
 		
@@ -154,6 +165,10 @@ public class FiltroFaltaDisciplinar extends FiltroConsulta {
 
 		if (this.getSituacao() != null) {
 			getCriteria().add(Restrictions.eq("situacao", this.getSituacao()));
+		}
+		
+		if(this.getNomeSocial() !=null && !this.getNomeSocial().equalsIgnoreCase("")) {
+			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("pessoa.nomeSocial", this.getNomeSocial(), MatchMode.ANYWHERE));
 		}
 
 	}

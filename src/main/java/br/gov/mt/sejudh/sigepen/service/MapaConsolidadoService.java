@@ -111,6 +111,7 @@ public class MapaConsolidadoService {
 			mapaConsolidadoRecuperando.setNumero(numero);
 			numero++;
 			mapaConsolidadoRecuperando.setNomeRecuperando(mapaRecuperando.getNomeRecuperando());
+			mapaConsolidadoRecuperando.setNomeSocialRecuperando(mapaRecuperando.getNomeSocialRecuperando());
 			mapaConsolidadoRecuperando.setMatriculaRecuperando(mapaRecuperando.getMatriculaRecuperando());
 			mapaConsolidadoRecuperando.setEntradaRecuperando(mapaRecuperando.getEntradaRecuperando());
 			mapaConsolidadoRecuperando.setSaidaRecuperando(mapaRecuperando.getSaidaRecuperando());

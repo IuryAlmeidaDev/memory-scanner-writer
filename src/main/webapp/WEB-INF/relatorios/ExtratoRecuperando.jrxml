@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ExtratoRecuperando" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="2.049040366095226"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="294"/>
+	<property name="ireport.y" value="198"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -47,7 +47,7 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="105" splitType="Immediate">
+		<band height="124" splitType="Immediate">
 			<staticText>
 				<reportElement x="5" y="5" width="85" height="20" uuid="23339737-97fa-4638-932e-d87ea5d70cec"/>
 				<textElement verticalAlignment="Middle">
@@ -73,49 +73,61 @@
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="5" y="45" width="85" height="20" uuid="9452e450-01f5-4bf7-996d-59ca4c9ddec1"/>
+				<reportElement x="5" y="63" width="85" height="20" uuid="9452e450-01f5-4bf7-996d-59ca4c9ddec1"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dt Nascimento:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="90" y="45" width="225" height="20" uuid="2141baf7-afcd-4eaa-8152-205003778cfc"/>
+				<reportElement x="90" y="63" width="225" height="20" uuid="2141baf7-afcd-4eaa-8152-205003778cfc"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{dataNascimento}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="5" y="65" width="85" height="20" uuid="d927bee3-1953-45fe-9d5a-a583adebbbda"/>
+				<reportElement x="5" y="83" width="85" height="20" uuid="d927bee3-1953-45fe-9d5a-a583adebbbda"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Regime Atual:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="90" y="65" width="225" height="20" uuid="6476f0ff-96b0-4aa3-ba05-405892a62182"/>
+				<reportElement x="90" y="83" width="225" height="20" uuid="6476f0ff-96b0-4aa3-ba05-405892a62182"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{regime}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="5" y="85" width="85" height="20" uuid="b367bbe4-b5d1-4dfa-a7a9-f18aade00708"/>
+				<reportElement x="5" y="103" width="85" height="20" uuid="b367bbe4-b5d1-4dfa-a7a9-f18aade00708"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Condição Atual:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="90" y="85" width="225" height="20" uuid="cc72ce6e-fa6e-4638-ae2f-01e6efc50112"/>
+				<reportElement x="90" y="103" width="225" height="20" uuid="cc72ce6e-fa6e-4638-ae2f-01e6efc50112"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{condicao}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="5" y="43" width="85" height="20" uuid="781d86be-7116-4fd7-ba2b-6122c78b041a"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Social:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="90" y="45" width="460" height="20" uuid="6adb12ca-3725-48dd-869d-277861bcc939"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
 		</band>
-		<band height="20" splitType="Stretch">
+		<band height="36" splitType="Stretch">
 			<printWhenExpression><![CDATA[$F{lotacao} != null]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
 				<reportElement x="90" y="0" width="460" height="20" uuid="390a030e-448f-49a1-8ec7-3bdf444b34a7"/>
@@ -133,7 +145,7 @@
 			</staticText>
 		</band>
 		<band height="5"/>
-		<band height="55" splitType="Stretch">
+		<band height="61" splitType="Stretch">
 			<subreport isUsingCache="false">
 				<reportElement x="0" y="0" width="802" height="37" uuid="a2875ccf-9009-4304-89db-937d408d7043"/>
 				<subreportParameter name="SUBREPORT_DIR"/>
