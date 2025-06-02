@@ -32,6 +32,7 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
     private UnidadePrisional unidadePrisional;
     private List<UnidadePrisional> unidades;
     private boolean listarTodasUnidades;
+    private String nomeSocial;
     private Date dataNascimento;
 
     @Override
@@ -51,6 +52,7 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
                 .add(Projections.property("solicitacoes.status").as("status"))
                 .add(Projections.property("pessoaSolicitacao.nome").as("nomeSolicitante"))
                 .add(Projections.property("nome").as("nomeRecuperando"))
+                .add(Projections.property("nomeSocial").as("nomeSocial"))
                 .add(Projections.property("parentesco.descricao").as("parentesco"))));
                 
         getCriteria().setProjection(proj);
@@ -71,6 +73,10 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
             getCriteria().add(Restrictions.eq("pessoa.nome", this.getRecuperandoO()));
         }
         
+        if (this.getNomeSocial() != null) {
+            getCriteria().add(Restrictions.eq("pessoa.nomeSocial", this.getNomeSocial()));
+        }
+
         if(this.isListarTodasUnidades()) {
             if (this.getUnidadePrisional() == null) {
             	List<Long> lista = new ArrayList<Long>();
@@ -183,4 +189,13 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
     public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
+
+	public String getNomeSocial() {
+		return nomeSocial;
+	}
+
+	public void setNomeSocial(String nomeSocial) {
+		this.nomeSocial = nomeSocial;
+	}
+
 }

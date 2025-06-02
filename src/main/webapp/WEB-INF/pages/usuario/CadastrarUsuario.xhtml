@@ -58,13 +58,13 @@
 					<p:ajax event="dateSelect"
 						listener="#{usuarioBean.dataExpiracaoListener}" />
 				</sgp:formCalendar>
-				
+
 				<sgp:formInputTextarea labelValue="Justificativa"
 					value="#{usuarioBean.usuario.resetSenhaJustificativa}"
 					validationRequired="true"
 					requiredMessage="Justificativa é obrigatória." maxlength="2000"
 					rows="10" columns="100" rendered="#{usuarioBean.usuario.resetSenha}" />
-					
+
 				<sgp:formCheckbox labelValue="Reiniciar Senha"
 					value="#{usuarioBean.usuario.primeiroAcesso}"
 					disabled="#{usuarioBean.isVisualizacao}" />
@@ -78,7 +78,7 @@
 							value="** A senha inicial do usuário será o seu próprio cpf. **" />
 					</div>
 				</p:row>
-				<p:panel header="Permissões de Acesso">
+				<p:panel header="Permissões de Acesso"  id="printArea">
 					<p:commandButton icon="ui-icon ui-icon-plusthick"
 						value="Adicionar Unidade" immediate="true"
 						actionListener="#{usuarioBean.abrirDialogUnidade}"
@@ -139,6 +139,9 @@
 					icon="ui-icon-arrowreturnthick-1-w">
 					<f:param name="list" value="1" />
 				</p:button>
+				<p:commandButton value="Imprimir" icon="pi pi-print" type="button">
+					<p:printer target="printArea" />
+				</p:commandButton>
 			</p:panel>
 		</h:form>
 

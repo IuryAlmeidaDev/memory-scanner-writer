@@ -18,8 +18,11 @@ public class VersionBean {
 	public void init() {
 		try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("META-INF/maven/br.gov.mt.sejudh.sigepen/sigepen/pom.properties")) {
 			Properties p = new Properties();
+			if (inputStream == null) {
+				versao = "";
+				return;
+			}
 			p.load(inputStream);
-			
 			versao = p.getProperty("version");
 		} catch (IOException e) {
 			e.printStackTrace();

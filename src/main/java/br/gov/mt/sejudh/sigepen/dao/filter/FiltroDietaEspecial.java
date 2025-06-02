@@ -45,6 +45,7 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 				.add(Projections.property("fim").as("fim"))
 				.add(Projections.property("tipoDieta.descricao").as("tipoDieta"))
 				.add(Projections.property("pessoa.nome").as("nomeRecuperando"))
+						.add(Projections.property("pessoa.nomeSocial").as("nomeSocialRecuperando"))
 				.add(Projections.property("unidade.nome").as("nomeUnidadePrisional"))
 				.add(Projections.property("passagem_.dataEntrada").as("dataEntrada"))
 				);

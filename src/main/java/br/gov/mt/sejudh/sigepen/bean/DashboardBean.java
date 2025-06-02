@@ -13,6 +13,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import org.primefaces.component.panel.Panel;
 import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
@@ -73,6 +74,9 @@ public class DashboardBean {
 	
 	@Inject
 	private FacesUtil facesUtil;
+
+	@Inject
+	private UsuarioService usuarioService;
 
 	@PostConstruct
 	public void init() {
@@ -329,6 +333,10 @@ public class DashboardBean {
 		
 		facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 		return "pretty:ListarRecuperando";
+	}
+
+	public int getSolicitacaoResetSenha(){
+		return this.usuarioService.conutSolicitacaoSenha();
 	}
 	
 	public DashboardModel getDashModel() {

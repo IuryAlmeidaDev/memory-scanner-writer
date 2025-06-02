@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RegistroPedido" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.862763969177474"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="144"/>
+	<property name="ireport.y" value="409"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
 	</parameter>
@@ -45,6 +45,7 @@
 	<field name="dataCancelamento" class="java.sql.Timestamp"/>
 	<field name="estruturaOrigem.nomeCompleto" class="java.lang.String"/>
 	<field name="unidadeOrigem.nome" class="java.lang.String"/>
+	<field name="recuperando.pessoa.nomeSocial" class="java.lang.String"/>
 	<pageHeader>
 		<band height="106" splitType="Stretch">
 			<subreport isUsingCache="false">
@@ -124,7 +125,7 @@
 				<textFieldExpression><![CDATA[$F{tipoTransito.descricao}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="90">
+		<band height="109">
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="20" forecolor="#000000" backcolor="#CCCCCC" uuid="bbfe14a8-709f-4b0f-87b0-368ad6adb5f6"/>
 				<box>
@@ -163,16 +164,28 @@
 				<textFieldExpression><![CDATA[$F{recuperando.pessoa.nome}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="5" y="64" width="105" height="20" uuid="cc901b85-6e35-4991-9e7b-df6c0e3820a1"/>
+				<reportElement x="5" y="87" width="105" height="20" uuid="cc901b85-6e35-4991-9e7b-df6c0e3820a1"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome da Mãe:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="110" y="64" width="440" height="20" uuid="11339312-70b6-4c78-9f91-c6d86d28c7bb"/>
+				<reportElement x="110" y="87" width="440" height="20" uuid="11339312-70b6-4c78-9f91-c6d86d28c7bb"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{recuperando.pessoa.nomeMae}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="6" y="66" width="104" height="20" uuid="ebd0620e-448b-4d6e-a0f3-1f8727bc14a9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Social:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="110" y="66" width="440" height="20" uuid="d1febf9d-475b-4fc6-af2b-301f449d6965"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{recuperando.pessoa.nomeSocial}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="65">

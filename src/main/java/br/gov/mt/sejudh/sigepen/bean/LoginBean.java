@@ -18,6 +18,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.service.*;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -44,12 +45,6 @@ import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UsuarioResetSenhaDTO;
 import br.gov.mt.sejudh.sigepen.realm.SigepenRealm;
-import br.gov.mt.sejudh.sigepen.service.LogAcessoBO;
-import br.gov.mt.sejudh.sigepen.service.LoginService;
-import br.gov.mt.sejudh.sigepen.service.ParametroUnidadeService;
-import br.gov.mt.sejudh.sigepen.service.ServidorService;
-import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
-import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -71,6 +66,7 @@ public class LoginBean {
 	private UsuarioResetSenhaDTO usuarioResetSenhaDTO;
 	private boolean resetSenha;
 	private boolean unidadeErrada;
+	private boolean isRedirectResetSenha;
 
 	@Inject
 	private FacesUtil faces;
@@ -99,6 +95,9 @@ public class LoginBean {
 	@PostConstruct
 	public void init() {
 		UnidadePrisional uni = SecurityUtil.getUnidadeSelecionada();
+		if(SecurityUtils.getSubject().getSession().getAttribute("unidadeErrada") != null) {
+			this.unidadeErrada = (boolean) SecurityUtils.getSubject().getSession().getAttribute("unidadeErrada");
+		}
 
 		if (this.usuarioResetSenhaDTO == null) {
 			this.usuarioResetSenhaDTO = new UsuarioResetSenhaDTO();
@@ -145,6 +144,14 @@ public class LoginBean {
 		return resetSenha;
 	}
 
+	public void setUnidadesResetSenha(List<UnidadePrisional> unidadesResetSenha) {
+		this.unidadesResetSenha = unidadesResetSenha;
+	}
+
+	public boolean getIsRedirectResetSenha(){
+		return this.isRedirectResetSenha;
+	}
+
 	public void setResetSenha(boolean resetSenha) {
 		this.resetSenha = resetSenha;
 	}
@@ -154,6 +161,7 @@ public class LoginBean {
 	}
 
 	public void setUnidadeErrada(boolean unidadeErrada) {
+		SecurityUtils.getSubject().getSession().setAttribute("unidadeErrada", unidadeErrada);
 		this.unidadeErrada = unidadeErrada;
 	}
 
@@ -310,9 +318,12 @@ public class LoginBean {
 
 	public void verificaNomeMae() {
 		int index = this.usuarioResetSenhaDTO.getIndexNomeMaeSelecionada();
+
 		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
 				.getAttribute("usuarioResertSenhaDTO");
+
 		String nomeMaeSelecionado = this.usuarioResetSenhaDTO.getNomeMaeList().get(index);
+
 		if (nomeMaeSelecionado.equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae())) {
 			this.setListaMatricula(String.valueOf(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()));
 			return;
@@ -326,47 +337,69 @@ public class LoginBean {
 	}
 
 	private void limparResetSenha() {
-		
-		this.usuarioResetSenhaDTO.getMatriculaList().clear();
-		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
+
+		if(this.usuarioResetSenhaDTO != null) {
+
+			this.usuarioResetSenhaDTO.getMatriculaList().clear();
+			this.usuarioResetSenhaDTO.getNomeMaeList().clear();
+		}
+		this.unidadeErrada = false;
 
 		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
-		
-		this.usuarioResetSenhaDTO = null;
+		SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
 
-		return;
+		this.usuarioResetSenhaDTO = null;
 	}
 
 	public void verificaMatricula() throws Exception {
 
 		int index = this.usuarioResetSenhaDTO.getIndexMatriculaSelecionada();
+
 		this.usuarioResetSenhaDTO = (UsuarioResetSenhaDTO) SecurityUtils.getSubject().getSession()
 				.getAttribute("usuarioResertSenhaDTO");
+
 		Long MatriculaSelecionado = this.usuarioResetSenhaDTO.getMatriculaList().get(index);
 
-		if (MatriculaSelecionado == this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula()) {
-			
-			Usuario usuario = this.usuarioResetSenhaDTO.getUsuario();
-			usuario.setResetSenha(true);
-			usuario.setDataSolicitacaoResetSenha(new Date());
-			
-			SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
-			
-			this.usuarioService.salvar(usuario);
-			
-			SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
+		if (MatriculaSelecionado.equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula())) {
 
-			faces.exibirMensagem(FacesMessage.SEVERITY_INFO, "Solicitação realizada com sucesso!",
-					"Usuário, aguarde instruções de acesso no e-mail cadastrado na base.");
-			
-			return ;
+			this.enviarResetSenha();
+			return;
 
 		}
 
 		this.limparResetSenha();
-		
+
 		faces.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro na solicitação!",
 				"Usuário, os dados informados não correspondem com a base de dados. Entre em contato com o adminstrador do sistema.");
+	}
+
+	private void enviarResetSenha() throws Exception {
+		Usuario usuario = this.usuarioResetSenhaDTO.getUsuario();
+		usuario.setResetSenha(true);
+		usuario.setDataSolicitacaoResetSenha(new Date());
+
+		SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
+
+		if(!this.unidadeErrada){
+			usuario.setUnidadePerfilSolicitadaResetSenha(null);
+		}
+
+		this.usuarioService.salvar(usuario);
+
+		EmailService.sendEmailTISegepen(usuario);
+
+		this.isRedirectResetSenha = true;
+
+		SecurityUtils.getSubject().getSession().setAttribute("usuario", null);
+		SecurityUtils.getSubject().getSession().setAttribute("usuarioResertSenhaDTO", null);
+
+		this.limparResetSenha();
+
+		return ;
+	}
+
+	public void redirectLogin() throws IOException {
+		FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_LOGIN_URL);
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
@@ -385,8 +418,12 @@ public class LoginBean {
 		}
 
 		Random random = new Random();
-		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula());
+
+		servidorDTOs.removeIf(servidorDTO -> servidorDTO.getMatricula() == this.usuarioResetSenhaDTO.getUsuario().getServidor().getMatricula());
+		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario());
+
 		this.usuarioResetSenhaDTO.getMatriculaList().clear();
+
 		while (list.size() < 2) {
 			int index = random.nextInt(servidorDTOs.size());
 			list.add(servidorDTOs.get(index).getMatricula());
@@ -414,13 +451,17 @@ public class LoginBean {
 		}
 
 		Random random = new Random();
-		servidorDTOs.remove(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae());
+		servidorDTOs.removeIf(servidorDTO -> servidorDTO.getMae().equals(this.usuarioResetSenhaDTO.getUsuario().getServidor().getMae()));
+
 		this.usuarioResetSenhaDTO.getNomeMaeList().clear();
+
 		while (list.size() < 2) {
 			int index = random.nextInt(servidorDTOs.size());
 			list.add(servidorDTOs.get(index).getMae());
 		}
+
 		list.add(this.usuarioResetSenhaDTO.getNomeMae());
+
 		this.usuarioResetSenhaDTO.getNomeMaeList().addAll(list);
 		Collections.shuffle(this.usuarioResetSenhaDTO.getNomeMaeList());
 
@@ -435,10 +476,6 @@ public class LoginBean {
 		}
 
 		return string;
-	}
-
-	public void setUnidadesResetSenha(List<UnidadePrisional> unidadesResetSenha) {
-		this.unidadesResetSenha = unidadesResetSenha;
 	}
 
 }

@@ -1,232 +1,234 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
 
 <h:head>
-	<h:outputStylesheet library="css" name="main.css" />
-	<h:outputStylesheet library="css" name="normalize.css" />
+    <h:outputStylesheet library="css" name="main.css"/>
+    <h:outputStylesheet library="css" name="normalize.css"/>
 
-	<h:outputStylesheet value="/resources/css/bootstrap.css.map" />
-	<h:outputStylesheet library="css" name="bootstrap.min.css" />
-	<h:outputStylesheet value="/resources/css/bootstrap-theme.css.map" />
-	<h:outputStylesheet library="css" name="bootstrap-theme.min.css" />
+    <h:outputStylesheet value="/resources/css/bootstrap.css.map"/>
+    <h:outputStylesheet library="css" name="bootstrap.min.css"/>
+    <h:outputStylesheet value="/resources/css/bootstrap-theme.css.map"/>
+    <h:outputStylesheet library="css" name="bootstrap-theme.min.css"/>
 
-	<title>SIGEPEN - Sistema de Gestão Penitenciária do Estado de
-		Mato Grosso - [#{versionBean.versao}]</title>
-	<link rel="icon" type="image/png"
-		href="#{resource['images/favicon.png']}" />
+    <title>SIGEPEN - Sistema de Gestão Penitenciária do Estado de
+        Mato Grosso - [#{versionBean.versao}]</title>
+    <link rel="icon" type="image/png"
+          href="#{resource['images/favicon.png']}"/>
 
-	<style type="text/css">
-html, body {
-	background: radial-gradient(#777, #222);
-	/* para Browser que não suportam o efeito gradiente */
-	background: -webkit-radial-gradient(circle, #777, #222); /* Safari */
-	background: -o-radial-gradient(circle, #777, #222);
-	/* Opera 11.6 to 12.0 */
-	background: -moz-radial-gradient(circle, #777, #222);
-	/* Firefox 3.6 to 15 */
-	background: radial-gradient(circle, #999, #222); /* Standard syntax */
-	height: 100% !important;
-}
+    <style type="text/css">
+        html, body {
+            background: radial-gradient(#777, #222);
+            /* para Browser que não suportam o efeito gradiente */
+            background: -webkit-radial-gradient(circle, #777, #222); /* Safari */
+            background: -o-radial-gradient(circle, #777, #222);
+            /* Opera 11.6 to 12.0 */
+            background: -moz-radial-gradient(circle, #777, #222);
+            /* Firefox 3.6 to 15 */
+            background: radial-gradient(circle, #999, #222); /* Standard syntax */
+            height: 100% !important;
+        }
 
-.ui-panel, .ui-panel-content {
-	padding: 0px !important;
-}
-</style>
+        .ui-panel, .ui-panel-content {
+            padding: 0px !important;
+        }
+    </style>
 </h:head>
 
 <h:body>
-	<div class="container" align="center">
-		<div class="row" style="margin-top: 10%;">
-			<h:form id="formLogin">
-				<p:panel id="panelLogin" style="width:750px; height:550px;">
-					<div class="row"
-						style="background-color: #183664; height: 240px; width: 750px; border: none; padding: 0; margin-top: -1px;">
-						<p:graphicImage
-							name="#{(sigepen.getIsProducao() ? 'sigepen-login.png' : 'sigepen-login-h.png')}"
-							library="images" style="padding-top:10px; height:240px;" />
-					</div>
-					<br />
-					<br />
+    <div class="container" align="center">
+        <div class="row" style="margin-top: 10%;">
+            <p:panel id="panelLogin" style="width:750px;">
+                <h:form id="formLogin">
+                    <div class="row"
+                         style="background-color: #183664; height: 240px; width: 750px; border: none; padding: 0; margin-top: -1px;">
+                        <p:graphicImage
+                                name="#{(sigepen.getIsProducao() ? 'sigepen-login.png' : 'sigepen-login-h.png')}"
+                                library="images" style="padding-top:10px; height:240px;"/>
+                    </div>
+                    <br/>
+                    <br/>
 
-					<div class="col" style="margin-top: 5%;">
+                    <div class="col" style="margin-top: 5%;">
 
-						<div class="row"
-							style="margin-right: 50%; margin-left: 5%; margin-top: -7%;">
-							<h3>Recuperação de acesso:</h3>
-							<p>Por favor insira as seguintes informações.</p>
+                        <div class="row"
+                             style="margin-right: 50%; margin-left: 5%; margin-top: -7%;">
+                            <h3>Recuperação de acesso:</h3>
+                            <p>Por favor insira as seguintes informações.</p>
 
-							<div class="instruction-text">
-								1 - Informar CPF e Data de Nascimento<br /> <br /> 2- Depois
-								da verificação de existencia de usuário com os dados informados,
-								responder campo sortido<br /> <br /> 3- Aguardar e-mail com
-								instruções de acesso. (Será enviado ao e-mail do cadastro, caso
-								não tenha mais acesso, entre em contato com adminstrador do
-								sistema.)
-							</div>
+                            <div class="instruction-text">
+                                1 - Informar CPF e Data de Nascimento<br/> <br/> 2- Depois
+                                da verificação de existencia de usuário com os dados informados,
+                                responder campo sortido<br/> <br/> 3- Aguardar e-mail com
+                                instruções de acesso. (Será enviado ao e-mail do cadastro, caso
+                                não tenha mais acesso, entre em contato com adminstrador do
+                                sistema.)
+                            </div>
 
-							<div class="row"
-								style="width: 380px; height: 160px; margin-left: 100%; margin-top: -50%;">
-								<div
-									style="display: #{empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
-									<sgp:formInputText id="cpf" labelValue="CPF" maxlength="11"
-										minlength="4" value="#{loginBean.usuarioResertSenhaDTO.cpf}"
-										validationRequired="true" display="text" requiredMessage="*" />
+                            <div class="row"
+                                 style="width: 380px; height: 160px; margin-left: 100%; margin-top: -50%;">
+                                <div
+                                        style="display: #{empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+                                    <sgp:formInputText id="cpf" labelValue="CPF" maxlength="11"
+                                                       minlength="4" value="#{loginBean.usuarioResertSenhaDTO.cpf}"
+                                                       validationRequired="true" display="text" requiredMessage="*"/>
 
-									<sgp:formCalendar id="nascimento"
-										labelValue="Data de nascimento"
-										value="#{loginBean.usuarioResertSenhaDTO.nascimento}"
-										validationRequired="true"
-										dataMinima="#{usuarioBean.dataMinima}" display="text" />
+                                    <sgp:formCalendar id="nascimento"
+                                                      labelValue="Data de nascimento"
+                                                      value="#{loginBean.usuarioResertSenhaDTO.nascimento}"
+                                                      validationRequired="true"
+                                                      dataMinima="#{usuarioBean.dataMinima}" display="text"/>
 
-									<br /> <br />
-									<p:commandButton id="verificar"
-										action="#{loginBean.resetSenha()}" value="verificar"
-										update="@form,formLogin-step-1,panelLogin-step-1"
-										icon="ui-icon-key" />
-								</div>
+                                    <br/> <br/>
+                                    <p:commandButton id="verificar"
+                                                     action="#{loginBean.resetSenha()}" value="verificar"
+                                                     update="@form,formLogin-step-1,:formLogin-unidade"
+                                                     icon="ui-icon-key"/>
+                                </div>
 
-								<div>
+                                <div>
+                                    <h:form id="formLogin-step-0"
+                                            style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
 
+                                        <p:outputLabel
+                                                value="Nome do usuario: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.nome}"
+                                                style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};"/>
+                                        <br/>
+                                        <p:outputLabel
+                                                value="CPF:  #{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf}"
+                                                style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};"/>
+                                        <br/>
+                                        <p:outputLabel
+                                                value="Data de nascimento: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento}"
+                                                style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};"/>
+                                        <br/>
+                                        <p:outputLabel
+                                                value="Email: #{loginBean.usuarioResertSenhaDTO.usuario.email}"
+                                                style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};"/>
+                                        <br/>
+                                        <p:outputLabel
+                                                value="Unidade: #{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getUnidade().getNome()}"
+                                                style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};"/>
+                                        <br/>
+                                        <br/>
 
-									<h:form id="formLogin-step-0"
-										style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+                                    </h:form>
 
-										<p:outputLabel
-											value="Nome do usuario: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.nome}"
-											style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};" />
-										<br />
-										<p:outputLabel
-											value="CPF:  #{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf}"
-											style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};" />
-										<br />
-										<p:outputLabel
-											value="Data de nascimento: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento}"
-											style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};" />
-										<br />
-										<p:outputLabel
-											value="Email: #{loginBean.usuarioResertSenhaDTO.usuario.email}"
-											style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};" />
-										<br />
-										<p:outputLabel
-											value="Unidade: #{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getPerfis().get(0).getNome()}"
-											style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};" />
-										<br />
-										<br />
+                                </div>
 
-									</h:form>
+                            </div>
 
-								</div>
+                        </div>
 
-							</div>
+                    </div>
 
-						</div>
+                </h:form>
+                <br/>
+                <br/>
+                <h:form id="formLogin-unidade"
+                        style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+                    <p:outputLabel for="checkbox" value="Unidade de Lotação Errada:"/>
 
-					</div>
+                    <p:selectBooleanCheckbox id="checkbox"
+                                             value="#{loginBean.unidadeErrada}">
+                        <p:ajax event="change"
+                                listener="#{loginBean.getUnidadesResetSenha()}" update="unidade"/>
+                    </p:selectBooleanCheckbox>
+                </h:form>
 
-				</p:panel>
-			</h:form>
+                <h:form id="unidade">
+                    <p:outputLabel
+                            value="Unidade solicitada: #{loginBean.usuarioResertSenhaDTO.usuario.unidadePerfilSolicitadaResetSenha}"
+                            style="display: #{loginBean.usuarioResertSenhaDTO.usuario.unidadePerfilSolicitadaResetSenha != null ? 'block' : 'none'};"/>
 
-			<br /> <br />
-			<p:panel id="panelLogin-step-1"
-				style="width:750px; height:400px; display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+                    <div style="display: #{loginBean.unidadeErrada  ?'block' : 'none'};">
+                        <sgp:formSelectOneMenu
+                                id="unidade" labelValue="Unidade"
+                                value="#{loginBean.unidadeSelecionada}"
+                                itemsValue="#{loginBean.unidadesResetSenha}" itemValue="#{item}"
+                                itemLabel="#{item.nome}" temSelecione="true" requiredMessage="*"
+                                display="text" validationRequired="true"
+                                converter="SimpleEntityConverter"
+                        />
+                        <br/>
+                        <br/>
+                        <p:commandButton id="autenticador"
+                                         action="#{loginBean.setarUnidadeResetSenha}" value="Solicitar"
+                                         update="@form" icon="ui-icon-key"
+                                         style="display: #{loginBean.usuarioResertSenhaDTO.usuario.unidadePerfilSolicitadaResetSenha == null ? 'block' : 'none'};"/>
+                    </div>
+                </h:form>
 
+                <h:form id="formLogin-step-1"
+                        style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
 
-				<h:form
-					style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
-					<p:outputLabel for="checkbox" value="Unidade de Lotação Errada:" />
-					<p:selectBooleanCheckbox id="checkbox"
-						value="#{loginBean.unidadeErrada}">
-						<p:ajax event="change"
-							listener="#{loginBean.getUnidadesResetSenha()}" update="unidade" />
-					</p:selectBooleanCheckbox>
+                    <h6>Assina-le o campo que corresponde ao nome da sua mãe: *</h6>
+                    <p:selectOneRadio id="listMae"
+                                      value="#{loginBean.usuarioResertSenhaDTO.indexNomeMaeSelecionada}"
+                                      layout="pageDirection">
+                        <f:selectItem
+                                itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[0]}"
+                                itemValue="0"/>
+                        <f:selectItem
+                                itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[1]}"
+                                itemValue="1"/>
+                        <f:selectItem
+                                itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[2]}"
+                                itemValue="2"/>
+                    </p:selectOneRadio>
+                    <p:commandButton
+                            style="display: #{empty loginBean.usuarioResertSenhaDTO.matriculaList ? 'block' : 'none'};"
+                            id="verificar-step-1"
+                            action="#{loginBean.verificaNomeMae()}" value="Solicitar"
+                            update="@form,formLogin-step-1,panelLogin-step-2,formLogin,formLogin-unidade,unidade"
+                            icon="ui-icon-key"/>
 
-				</h:form>
+                </h:form>
 
-				<h:form id="unidade"
-					style="display: #{loginBean.unidadeErrada ? 'block' : 'none'};">
+                <h:form id="panelLogin-step-2"
+                        style="display: #{not empty loginBean.usuarioResertSenhaDTO.matriculaList ? 'block' : 'none'};">
+                    <h6>Assina-le o campo que corresponde a sua matricula:</h6>
+                    <p:selectOneRadio id="listMatricula"
+                                      value="#{loginBean.usuarioResertSenhaDTO.indexMatriculaSelecionada}"
+                                      layout="pageDirection">
+                        <f:selectItem
+                                itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[0]}"
+                                itemValue="0"/>
+                        <f:selectItem
+                                itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[1]}"
+                                itemValue="1"/>
+                        <f:selectItem
+                                itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[2]}"
+                                itemValue="2"/>
+                    </p:selectOneRadio>
 
-					<p:panel id="basic" header="Selecione uma unidade para acessar"
-						style="margin-top:20px; width:650px;"
-						styleClass="ui-tds-panel-conteudo">
+                    <p:commandButton id="verificar-step-2"
+                                     action="#{loginBean.verificaMatricula()}" value="Solicitar"
+                                     update="@form,formLogin-step-1,panelLogin-step-2,formLogin,formLogin-unidade,unidade,redirectLogin"
+                                     icon="ui-icon-key"/>
+                </h:form>
+                <br/>
+                <br/>
 
-						<sgp:formSelectOneMenu id="unidade" labelValue="Unidade"
-							value="#{loginBean.unidadeSelecionada}"
-							itemsValue="#{loginBean.unidadesResetSenha}" itemValue="#{item}"
-							itemLabel="#{item.nome}" temSelecione="true" requiredMessage="*"
-							display="text" validationRequired="true"
-							converter="SimpleEntityConverter" />
+                <p:dialog id="redirectLogin" header="Solicitação realizada com sucesso!" widgetVar="myDialog"
+                          modal="true"
+                          showEffect="fade" hideEffect="fade" visible="#{loginBean.isRedirectResetSenha}">
+                    <h:outputText value="Usuário, aguarde instruções de acesso no e-mail cadastrado na base"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton value="Sim"
+                                     oncomplete="PF('myDialog').hide();">
+                        <p:ajax event="click"
+                                listener="#{loginBean.redirectLogin()}" update="unidade"/>
+                    </p:commandButton>
+                </p:dialog>
 
-						<br />
-						<br />
-						<p:commandButton id="autenticador"
-							action="#{loginBean.setarUnidadeResetSenha}" value="Solicitar"
-							update="@form" icon="ui-icon-key" />
-					</p:panel>
-				</h:form>
-
-
-				<div class="row"
-					style="width: 380px; height: 160px; margin-top: 8%;">
-
-
-					<h:form id="formLogin-step-1"
-						style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
-
-						<h6>Assina-le o campo que corresponde ao nome da sua mãe: *</h6>
-						<p:selectOneRadio id="listMae"
-							value="#{loginBean.usuarioResertSenhaDTO.indexNomeMaeSelecionada}"
-							layout="pageDirection">
-							<f:selectItem
-								itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[0]}"
-								itemValue="0" />
-							<f:selectItem
-								itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[1]}"
-								itemValue="1" />
-							<f:selectItem
-								itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[2]}"
-								itemValue="2" />
-						</p:selectOneRadio>
-						<p:commandButton id="verificar-step-1"
-							action="#{loginBean.verificaNomeMae()}" value="Solicitar"
-							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1,formLogin"
-							icon="ui-icon-key" />
-
-					</h:form>
-
-					<h:form id="panelLogin-step-2"
-						style="display: #{not empty loginBean.usuarioResertSenhaDTO.matriculaList ? 'block' : 'none'};">
-						<h6>Assina-le o campo que corresponde a sua matricula:</h6>
-						<p:selectOneRadio id="listMatricula"
-							value="#{loginBean.usuarioResertSenhaDTO.indexMatriculaSelecionada}"
-							layout="pageDirection">
-							<f:selectItem
-								itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[0]}"
-								itemValue="0" />
-							<f:selectItem
-								itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[1]}"
-								itemValue="1" />
-							<f:selectItem
-								itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[2]}"
-								itemValue="2" />
-						</p:selectOneRadio>
-
-						<p:commandButton id="verificar-step-2"
-							action="#{loginBean.verificaMatricula()}" value="Solicitar"
-							update="@form,formLogin-step-1,panelLogin-step-2,panelLogin-step-1,formLogin"
-							icon="ui-icon-key" />
-					</h:form>
-
-				</div>
-
-
-			</p:panel>
-
-		</div>
-	</div>
+            </p:panel>
+        </div>
+    </div>
 </h:body>
 </html>

@@ -1,18 +1,17 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
@@ -44,7 +43,7 @@ public class FileDownloadHandlerBean {
     	ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
     	Arquivo arquivo = (Arquivo) facesUtil.getObjetoSessao("arquivo", true);
     	
-    	if (arquivo != null) {
+    	if (arquivo != null && arquivo.getNome() != null) {
 	    	HttpServletResponse response = (HttpServletResponse) ec.getResponse();
 	
 	        response.setContentType(arquivo.getContentType());
@@ -56,25 +55,27 @@ public class FileDownloadHandlerBean {
 	        os.flush();
 	        os.close();
 	        FacesContext.getCurrentInstance().responseComplete();
+    	} else {
+    		throw new RuntimeException("Arquivo ou nome do arquivo está nulo.");
     	}
     }
-    
+
     public void prepararArquivo(Arquivo arquivo) {
     	byte[] bytesNovo = null;
-		String loginUser = String.valueOf(SecurityUtil.getUsuario().getId());    		
+		String loginUser = String.valueOf(SecurityUtil.getUsuario().getId());
 
     	ProcessarPDFService service = new ProcessarPDFService();
 
     	String hashImpressao = service.geraHashImpressaoRelatorio(loginUser);
-    	
+
 
 		bytesNovo = service.processarPdfByte(hashImpressao, arquivo.getBytes());
     	facesUtil.setObjetoSessao("hashImpressao", hashImpressao);
     	arquivo.setBytes(bytesNovo);
     	facesUtil.setObjetoSessao("arquivo", arquivo);
     }
-    
-    
+
+
     public byte[] enviarPDFParaAdicionarMarcaDagua(byte[] inputPdfBytes, String watermarkText) throws IOException {
         HttpURLConnection connection = null;
         ByteArrayOutputStream responseOutputStream = new ByteArrayOutputStream();
@@ -87,9 +88,9 @@ public class FileDownloadHandlerBean {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         String boundary = "boundary"; // sem os traços `--`
-            
+
         try {
             // Configuração da conexão HTTP
             URL url = new URL(requestUrl);
@@ -141,10 +142,10 @@ public class FileDownloadHandlerBean {
 
 
     public  String geraHashImpressaoRelatorio() {
-    	
-    	
-    	String loginUser = String.valueOf(SecurityUtil.getUsuario().getId());    		
-    	
+
+
+    	String loginUser = String.valueOf(SecurityUtil.getUsuario().getId());
+
         // Captura a data e hora atual
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
@@ -170,5 +171,45 @@ public class FileDownloadHandlerBean {
             throw new RuntimeException("Erro ao gerar o hash", e);
         }
     }
-    
+
+
+    public void prepararArquivo2(File zipFile) throws IOException {
+        Arquivo arquivo = converterFileParaArquivo(zipFile);
+        facesUtil.setObjetoSessao("arquivo", arquivo);
+    }
+
+
+    public Arquivo converterFileParaArquivo(File file) throws IOException {
+        Arquivo arquivo = new Arquivo();
+        arquivo.setNome(file.getName());
+        arquivo.setContentType("application/zip"); // Ou o tipo de conteúdo apropriado
+        arquivo.setBytes(Files.readAllBytes(file.toPath()));
+        arquivo.setCaminho(file.getAbsolutePath());
+        return arquivo;
+    }
+
+    public void prepararArquivo22(File zipFile) throws IOException {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+
+        externalContext.setResponseContentType("application/zip");
+        externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + zipFile.getName() + "\"");
+
+        try (InputStream inputStream = new FileInputStream(zipFile);
+             OutputStream outputStream = externalContext.getResponseOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            Logger.getLogger(FileDownloadHandlerBean.class.getName()).log(Level.SEVERE, "Erro ao preparar o arquivo para download", e);
+            throw e;
+        } finally {
+            facesContext.responseComplete();
+        }
+    }
+
+
+
 }
