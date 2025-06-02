@@ -30,7 +30,7 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         consultaSQL.append(subselectDadosPessoas);
         consultaSQL.append(subselectVisitantes);
 
-        if (subselectRecuperando != null) {
+        if (subselectRecuperando != null && (filtro.getRecuperando() == null || filtro.getRecuperando().isEmpty())) {
             consultaSQL.append(" UNION ALL ");
             consultaSQL.append(subselectRecuperando);
         }
@@ -146,8 +146,11 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
             subselect.append("  AND V.STAT_VISITANTE = :statusVisitante");
         }
 
-        if(filtro.getRecuperando() != null && !filtro.getRecuperando().isEmpty() && recuperando) {
-            subselect.append("  AND P.NOME LIKE '%' || :recuperando || '%' ");
+        if(filtro.getRecuperando() != null && !filtro.getRecuperando().isEmpty() && !recuperando) {
+            subselect.append("  AND EXISTS (SELECT 1 FROM SIGEPEN_OWNER.RECUPERANDO R ")
+                    .append("              INNER JOIN SIGEPEN_OWNER.PESSOA PR ON PR.ID = R.PESSOA_ID ")
+                    .append("              WHERE R.ID = CRE.ID_RECUPERANDO ")
+                    .append("              AND PR.NOME LIKE '%' || :recuperando || '%') ");
         }
 
     }
