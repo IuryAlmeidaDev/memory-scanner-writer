@@ -110,7 +110,7 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
 
         subselect.append(" SELECT ");
         if (contar) {
-            subselect.append(" count(p.id) credenciamentosAtivos ");
+            subselect.append(" count(distinct p.id) credenciamentosAtivos ");
         } else {
             subselect.append(criarCamposVisitantes());
         }
