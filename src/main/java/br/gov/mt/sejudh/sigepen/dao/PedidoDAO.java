@@ -501,6 +501,7 @@ public class PedidoDAO {
                     "LEFT JOIN FETCH p.estruturaDestino " +
                     "LEFT JOIN FETCH p.transferencia " +
                     "LEFT JOIN FETCH p.recuperando r " +
+                    "LEFT JOIN FETCH r.pessoa ps " +
                     "LEFT JOIN FETCH r.passagens pa " +
                     "LEFT JOIN FETCH pa.lotacao " +
                     "LEFT JOIN FETCH p.estruturaOrigem " +
