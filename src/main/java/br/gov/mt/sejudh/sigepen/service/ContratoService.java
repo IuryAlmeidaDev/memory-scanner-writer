@@ -12,10 +12,13 @@ import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.ContratoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroContrato;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.exception.MultiplosResultadosException;
+import br.gov.mt.sejudh.sigepen.exception.NaoEncontradoException;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.dto.ContratoDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
+import org.hibernate.Hibernate;
 
 @Stateless
 public class ContratoService {
@@ -63,27 +66,15 @@ public class ContratoService {
 
 	public boolean validarContratoUnidade(Contrato contrato) {
 		List<Contrato> contratos = dao.validarContratoUnidade(contrato);
-		if (contratos.isEmpty()) {
-			return true;
-		}
+        return contratos.isEmpty();
+    }
 
-		return false;
-	}
-
-	public List<Contrato> buscarAtivosUnidade(long id) {
-		return dao.buscarAtivosUnidade(id);
-	}
-	
 	public Contrato buscarContratoPorNumero(String numeroContrato) {
 		return dao.buscarContratoPorNumero(numeroContrato);
 	}
 	
 	public void inativarContratosPorFornecedor(long idFornecedor){
 		dao.inativarContratosPorFornecedor(idFornecedor);
-	}
-	
-	public void ativarContratosPorFornecedor(long idFornecedor){
-		dao.ativarContratosPorFornecedor(idFornecedor);
 	}
 	
 	public String buscarHorarioRefeiracao(Long idUnidade,Long tipoRefeiracao) {
@@ -118,14 +109,20 @@ public class ContratoService {
 		return dao.horarioRefeiracaoPorContratoUnidade(idUnidade, tipoRefeiracao);
 	}
 	
-	public Contrato buscarContratoPorUnidade(long id, Date data) {
-		return dao.buscarContratoPorUnidade(id,data);
+	public Contrato buscarContratoVigenteEAtivoPorUnidade(long id, Date data) throws RuntimeException {
+		List<Contrato> contratos = dao.buscarContratoVigenteEAtivoPorUnidade(id, data);
+		if (contratos.isEmpty()) {
+			throw new NaoEncontradoException("Nenhum contrato vigente e ativo encontrado para a unidade na data específicada.");
+		} else if (contratos.size() > 1) {
+			throw new MultiplosResultadosException("Múltiplos contratos vigentes e ativos encontrados para a unidade na data específicada. Esperado apenas um.");
+		} else {
+			Contrato contrato = contratos.get(0);
+			Hibernate.initialize(contrato.getFornecedor());
+			Hibernate.initialize(contrato.getUnidades());
+			return contrato;
+		}
 	}
-	
-	public Contrato buscarContratoVigente(long idUnidade, String data) throws ParseException {
-		return dao.buscarContratoVigente(idUnidade, data);
-	}
-	
+
 	public List<Contrato> buscarContratoVigente(long idUnidade, String dataInicio, String dataFim) throws ParseException {
 		return dao.buscarContratoVigente(idUnidade, dataInicio, dataFim);
 	}
