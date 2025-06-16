@@ -296,7 +296,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	public void imprimir(final String data, final FiltroGerarPedido filtroGerarPedido) {
 		try {
 			configurarDadosRelatorio();
-			validarVigenciaContrato(this.unidade.getId());
+			final Contrato contrato = contratoService.buscarContratoVigenteEAtivoPorUnidade(this.unidade.getId(), filtroGerarPedido.getDataInicio());
 
 			final long idEstrutura = gerarPedidoEstruturaDTO.getId();
 
@@ -310,8 +310,6 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			final List<DietaEspecialEstruturaDTO> refeicoesEspeciais = estruturaService.buscarDietasEspeciais(idEstrutura, data);
 
 			validarCardapio(itemCardapioPorEstrutura);
-
-			final Contrato contrato = contratoService.buscarContratoPorUnidade(this.unidade.getId(), filtroGerarPedido.getDataInicio());
 
 			String jsonDadosRelatorio = criarJsonRelatorio(itemCardapioPorEstrutura, refeicoesEspeciais);
 			PedidoAlimento pedidoAlimento = PedidoAlimento.create(
@@ -366,21 +364,14 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	}
 
 	private void tratarErroGeracaoRelatorio(Exception e) {
-		facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
+		String message = e.getCause() != null ? e.getCause().getMessage() : e.getMessage().substring(e.getMessage().indexOf(":") + 1);
+		facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", message);
 		LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
-	}
-
-	private void validarVigenciaContrato(long id) {
-		Contrato contrato = contratoService.buscarContratoPorUnidade(id, this.filtroPedido.getDataInicio());
-		if (contrato == null) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-					"O contrato está fora do período de vigência!");
-		}
 	}
 
 	private <T> void validarCardapio(List<T> cardapios) throws Exception {
 		if (cardapios.isEmpty()) {
-			throw new Exception("Não existe um cardápio para esse tipo de refeição!");
+			throw new Exception("Não existe um cardápio para esse tipo de refeição");
 		}
 	}
 
