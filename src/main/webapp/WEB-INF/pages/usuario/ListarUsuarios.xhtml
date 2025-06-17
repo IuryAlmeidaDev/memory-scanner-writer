@@ -19,9 +19,21 @@
 				<p:outputLabel value="Consulta"/>
 				<sgp:formInputText labelValue="Nome" value="#{usuarioBean.filtro.nome}" />
 				<sgp:formInputText labelValue="CPF" value="#{usuarioBean.filtro.cpf}" />
-				<sgp:formInputText labelValue="Login" value="#{usuarioBean.filtro.login}" />
-				
+				<sgp:formInputText labelValue="Login" value="#{usuarioBean.filtro.login}" />				
 				<sgp:formInputText labelValue="Email" value="#{usuarioBean.filtro.email}" permiteCaracterEspecial="true"/>
+				<sgp:formInputText labelValue="Email" value="#{usuarioBean.filtro.email}" permiteCaracterEspecial="true"/>
+				<sgp:formSelectOneMenu 
+					id="unidadePrisional"
+					labelValue="Unidade Prisional"
+					itemValue="#{item}" 
+					itemLabel="#{item.nome}"
+					itemsValue="#{usuarioBean.unidadesPrisionais}"
+					value="#{usuarioBean.filtro.unidadePrisional}" 
+					converter="SimpleEntityConverter"
+					temSelecione="true"
+					filter="true" filterMatchMode="custom"					
+				/>
+				
 
 				<br />
 				<br />
@@ -29,6 +41,8 @@
 					update=":registrosForm"
 					process="@form"
 					icon="ui-icon-search" />
+
+					<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{usuarioBean.imprimir()}"/>
 
 			</p:panel>
 		</h:form>
