@@ -1,83 +1,83 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:sgp="http://sejudh.mt.gov.br/components"
-	template="/WEB-INF/pages/_templates/principal.xhtml">
-	
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:sgp="http://sejudh.mt.gov.br/components"
+				template="/WEB-INF/pages/_templates/principal.xhtml">
+
 	<ui:define name="footer">
 		<h:outputScript library="js" name="selectOneMenuFilter.js" />
 	</ui:define>
-	
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
-		
+
 		<h3>#{servidorBean.tituloPagina} Servidor</h3>
-		
+
 		<h:form id="servidorForm">
 			<p:panel id="painelForm" header="Dados Pessoais" footer="Cadastrado por: #{servidorBean.servidor.autorRegistro.usuario} em #{servidorBean.servidor.autorRegistro.data} | Última alteração: #{servidorBean.servidor.autorUltimaAlteracao.usuario} em #{servidorBean.servidor.autorUltimaAlteracao.data}">
 				<p:focus context="painelForm"/>
-				
+
 				<sgp:formInputText id="nome" labelValue="Nome" value="#{servidorBean.servidor.nome}" validationRequired="true" maxlength="100"
-					disabled="#{servidorBean.isVisualizacao}" display="text" size="40"/>
-					
+								   disabled="#{servidorBean.isVisualizacao}" display="text" size="40"/>
+
 				<sgp:formInputText id="mae" labelValue="Nome da Mãe" value="#{servidorBean.servidor.mae}" validationRequired="true" maxlength="100"
-					disabled="#{servidorBean.isVisualizacao}" display="text" size="40"/>
-					
+								   disabled="#{servidorBean.isVisualizacao}" display="text" size="40"/>
+
 				<sgp:formInputText id="pai" labelValue="Nome do Pai" value="#{servidorBean.servidor.pai}" maxlength="100" disabled="#{servidorBean.isVisualizacao}"
-					display="text" size="40"/>
-					
+								   display="text" size="40"/>
+
 				<sgp:formCalendar labelValue="Nascimento" value="#{servidorBean.servidor.dataNascimento}" validationRequired="true" disabled="#{servidorBean.isVisualizacao}"
-					display="text" dataMaxima="#{comboHelperBean.maxDate}" />				
-					
-				<sgp:formSelectOneMenu id="sexo" labelValue="Sexo" value="#{servidorBean.servidor.sexo}" itemsValue="#{comboHelperBean.sexos}" itemValue="#{item}" 
-					itemLabel="#{item.descricao}" temSelecione="true" disabled="#{servidorBean.isVisualizacao}" display="text" />
-					
+								  display="text" dataMaxima="#{comboHelperBean.maxDate}" />
+
+				<sgp:formSelectOneMenu id="sexo" labelValue="Sexo" value="#{servidorBean.servidor.sexo}" itemsValue="#{comboHelperBean.sexos}" itemValue="#{item}"
+									   itemLabel="#{item.descricao}" temSelecione="true" disabled="#{servidorBean.isVisualizacao}" display="text" />
+
 				<sgp:formSelectOneMenu id="estadoCivil" labelValue="Estado Civil" value="#{servidorBean.servidor.estadoCivil}" itemsValue="#{comboHelperBean.estadoCivil}"
-					itemValue="#{item}" itemLabel="#{item.descricao}" temSelecione="true" converter="SimpleEntityConverter" disabled="#{servidorBean.isVisualizacao}"
-					display="text" />
-					
+									   itemValue="#{item}" itemLabel="#{item.descricao}" temSelecione="true" converter="SimpleEntityConverter" disabled="#{servidorBean.isVisualizacao}"
+									   display="text" />
+
 				<br/>
-				<br/>			
+				<br/>
 			</p:panel>
 			<br />
-			
+
 			<p:panel header="Informações Adicionais">
 				<sgp:formSelectOneMenu id="tipoSanguineo" labelValue="Tipo Sanguineo" value="#{servidorBean.servidor.tipoSanguineo}" itemsValue="#{comboHelperBean.tipoSanguineo}"
-					itemValue="#{item}" itemLabel="#{item.descricao}" temSelecione="true" disabled="#{servidorBean.isVisualizacao}" converter="SimpleEntityConverter"
-					display="text" />
-						
+									   itemValue="#{item}" itemLabel="#{item.descricao}" temSelecione="true" disabled="#{servidorBean.isVisualizacao}" converter="SimpleEntityConverter"
+									   display="text" />
+
 				<sgp:formSelectOneMenu id="Raca" labelValue="Raça" value="#{servidorBean.servidor.raca}" itemsValue="#{comboHelperBean.racas}" itemValue="#{item}"
-					itemLabel="#{item.descricao}" disabled="#{servidorBean.isVisualizacao}" converter="SimpleEntityConverter" temSelecione="true" display="text" />
+									   itemLabel="#{item.descricao}" disabled="#{servidorBean.isVisualizacao}" converter="SimpleEntityConverter" temSelecione="true" display="text" />
 
 				<sgp:formSelectOneMenu id="Escolaridade" labelValue="Escolaridade" value="#{servidorBean.servidor.escolaridade}" itemsValue="#{comboHelperBean.escolaridades}"
-					itemValue="#{item}" itemLabel="#{item.descricao}" disabled="#{servidorBean.isVisualizacao}" converter="SimpleEntityConverter" temSelecione="true"
-					display="text" />
-						
-								
+									   itemValue="#{item}" itemLabel="#{item.descricao}" disabled="#{servidorBean.isVisualizacao}" converter="SimpleEntityConverter" temSelecione="true"
+									   display="text" />
+
+
 				<sgp:formSelectOneMenu id="religiao" labelValue="Religião" value="#{servidorBean.servidor.religiao}" itemsValue="#{comboHelperBean.religioes}"
-					itemValue="#{item}" itemLabel="#{item.descricao}" disabled="#{servidorBean.isVisualizacao}" converter="SimpleEntityConverter" temSelecione="true" 
-					display="text" />			
-					
+									   itemValue="#{item}" itemLabel="#{item.descricao}" disabled="#{servidorBean.isVisualizacao}" converter="SimpleEntityConverter" temSelecione="true"
+									   display="text" />
+
 				<br/>
 				<br/>
 			</p:panel>
 			<br />
-			
+
 			<p:panel header="Documentos">
-			    <sgp:formInputMask id="cpf" labelValue="CPF" value="#{servidorBean.servidor.cpf}" validationRequired="true" mask="999.999.999-99" converter="CpfConverter"
-                    validatorId="CpfValidator" disabled="#{servidorBean.isVisualizacao}" display="text" maxlength="11"/>
-			<br/>
-			<br/>
-			
+				<sgp:formInputMask id="cpf" labelValue="CPF" value="#{servidorBean.servidor.cpf}" validationRequired="true" mask="999.999.999-99" converter="CpfConverter"
+								   validatorId="CpfValidator" disabled="#{servidorBean.isVisualizacao}" display="text" maxlength="11"/>
+				<br/>
+				<br/>
+
 				<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{servidorBean.abrirDialogDocumento}" rendered="#{!servidorBean.isVisualizacao}">
 					<p:ajax event="dialogReturn" listener="#{servidorBean.incluirDocumento}" update="documentos"/>
 				</p:commandButton>
-					
+
 				<br/>
 				<br/>
-				
+
 				<p:dataTable id="documentos" var="doc" emptyMessage="Nenhum documento adicionado." value="#{servidorBean.servidor.documentos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{doc.id}">
 					<p:column headerText="Tipo">
 						<h:outputText value="#{doc.tipoDocumento.descricao}" />
@@ -97,34 +97,34 @@
 						<h:outputText value="#{doc.dataValidade}">
 							<f:convertDateTime pattern="dd/MM/yyyy" />
 						</h:outputText>
-					</p:column>									
+					</p:column>
 					<p:column width="90">
 						<center>
 							<p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{servidorBean.abrirDialogAlterarDocumento(doc)}" rendered="#{!servidorBean.isVisualizacao}">
 								<p:ajax event="dialogReturn" listener="#{servidorBean.incluirDocumento}" update="documentos"/>
 							</p:commandButton>
 							<p:commandButton action="#{servidorBean.excluirDocumento(doc)}" immediate="true" icon="ui-icon-trash" title="Excluir" rendered="#{!servidorBean.isVisualizacao}" update=":servidorForm:documentos :mensagens">
-						 		<p:confirm header="Confirmação" message="Deseja excluir o documento?" icon="ui-icon-alert" />
+								<p:confirm header="Confirmação" message="Deseja excluir o documento?" icon="ui-icon-alert" />
 							</p:commandButton>
 						</center>
 					</p:column>
 				</p:dataTable>
-				
+
 				<p:confirmDialog global="true">
 					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 				</p:confirmDialog>
 			</p:panel>
 			<br/>
-			
+
 			<p:panel header="Endereços">
 				<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{servidorBean.abrirDialogEndereco}" rendered="#{!servidorBean.isVisualizacao}">
 					<p:ajax event="dialogReturn" listener="#{servidorBean.incluirEndereco}" update="enderecos"/>
 				</p:commandButton>
-					
+
 				<br/>
 				<br/>
-				
+
 				<p:dataTable id="enderecos" var="endereco" emptyMessage="Nenhum endereço adicionado." value="#{servidorBean.servidor.enderecos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{endereco.id}">
 					<p:column headerText="Logradouro">
 						<h:outputText value="#{endereco.logradouro}" />
@@ -150,27 +150,27 @@
 								<p:ajax event="dialogReturn" listener="#{servidorBean.incluirEndereco}" update="enderecos"/>
 							</p:commandButton>
 							<p:commandButton action="#{servidorBean.excluirEndereco(endereco)}" immediate="true" icon="ui-icon-trash" title="Excluir" rendered="#{!servidorBean.isVisualizacao}" update=":servidorForm:enderecos :mensagens">
-						 		<p:confirm header="Confirmação" message="Deseja excluir o endereço?" icon="ui-icon-alert" />
+								<p:confirm header="Confirmação" message="Deseja excluir o endereço?" icon="ui-icon-alert" />
 							</p:commandButton>
 						</center>
 					</p:column>
 				</p:dataTable>
-				
+
 				<p:confirmDialog global="true">
 					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 				</p:confirmDialog>
 			</p:panel>
 			<br/>
-			
+
 			<p:panel header="Contatos">
 				<p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{servidorBean.abrirDialogContato}" rendered="#{!servidorBean.isVisualizacao}">
 					<p:ajax event="dialogReturn" listener="#{servidorBean.incluirContato}" update="contatos"/>
 				</p:commandButton>
-					
+
 				<br/>
 				<br/>
-				
+
 				<p:dataTable id="contatos" var="contato" emptyMessage="Nenhum contato adicionado." value="#{servidorBean.servidor.contatos}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{contato.id}">
 					<p:column headerText="Nome">
 						<h:outputText value="#{contato.nome}" />
@@ -190,153 +190,96 @@
 								<p:ajax event="dialogReturn" listener="#{servidorBean.incluirContato}" update="contatos"/>
 							</p:commandButton>
 							<p:commandButton action="#{servidorBean.excluirContato(contato)}" immediate="true" icon="ui-icon-trash" title="Excluir" rendered="#{!servidorBean.isVisualizacao}" update=":servidorForm:contatos :mensagens">
-						 		<p:confirm header="Confirmação" message="Deseja excluir o contato?" icon="ui-icon-alert" />
+								<p:confirm header="Confirmação" message="Deseja excluir o contato?" icon="ui-icon-alert" />
 							</p:commandButton>
 						</center>
 					</p:column>
 				</p:dataTable>
-				
+
 				<p:confirmDialog global="true">
 					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 				</p:confirmDialog>
 			</p:panel>
 			<br/>
-			
+
 			<p:panel id="infoServ" header="Informações do Servidor">
-				<sgp:formInputMask id="matricula" labelValue="Matrícula" mask="?9999999999" validatorRange="1" value="#{servidorBean.servidor.matricula}" validationRequired="true"						
-					disabled="#{servidorBean.isVisualizacao}" display="text" maxlength="10"/>
-					
+				<sgp:formInputMask id="matricula" labelValue="Matrícula" mask="?9999999999" validatorRange="1" value="#{servidorBean.servidor.matricula}" validationRequired="true"
+								   disabled="#{servidorBean.isVisualizacao}" display="text" maxlength="10"/>
+
 				<sgp:formInputText labelValue="Email" value="#{servidorBean.servidor.email}" disabled="#{servidorBean.isVisualizacao}" maxlength="100" size="40"
-					display="text" validatorId="emailValidator" permiteCaracterEspecial="true"/>
-					
-				<sgp:formSelectOneMenu id="orgao" labelValue="Órgão" itemsValue="#{servidorBean.orgaos}" itemValue="#{item}" itemLabel="#{item.nome}" value="#{servidorBean.servidor.orgao}" 
-					validationRequired="true" temSelecione="true" disabled="#{servidorBean.isVisualizacao}" filter="true" converter="SimpleEntityConverter" display="text">
+								   display="text" validatorId="emailValidator" permiteCaracterEspecial="true"/>
+
+				<sgp:formSelectOneMenu id="orgao" labelValue="Órgão" itemsValue="#{servidorBean.orgaos}" itemValue="#{item}" itemLabel="#{item.nome}" value="#{servidorBean.servidor.orgao}"
+									   validationRequired="true" temSelecione="true" disabled="#{servidorBean.isVisualizacao}" filter="true" converter="SimpleEntityConverter" display="text">
 				</sgp:formSelectOneMenu>
-											
-				<sgp:formSelectOneMenu id="tipo" labelValue="Tipo de Vínculo" value="#{servidorBean.servidor.tipoServidor}" itemsValue="#{comboHelperBean.tipoServidor}" 
-					itemValue="#{item}" itemLabel="#{item.descricao}" temSelecione="true" validationRequired="true" display="text" converter="SimpleEntityConverter" 
-					disabled="#{servidorBean.isVisualizacao}" />
-					
-				<sgp:formSelectOneMenu id="categoria" labelValue="Categoria" itemsValue="#{servidorBean.categorias}" itemValue="#{item}" itemLabel="#{item.nome}"						
-					value="#{servidorBean.categoria}" temSelecione="true" filter="true" converter="SimpleEntityConverter"
-					disabled="#{servidorBean.isVisualizacao}" validationRequired="true" display="text">
+
+				<sgp:formSelectOneMenu id="tipo" labelValue="Tipo de Vínculo" value="#{servidorBean.servidor.tipoServidor}" itemsValue="#{comboHelperBean.tipoServidor}"
+									   itemValue="#{item}" itemLabel="#{item.descricao}" temSelecione="true" validationRequired="true" display="text" converter="SimpleEntityConverter"
+									   disabled="#{servidorBean.isVisualizacao}" />
+
+				<sgp:formSelectOneMenu id="categoria" labelValue="Categoria" itemsValue="#{servidorBean.categorias}" itemValue="#{item}" itemLabel="#{item.nome}"
+									   value="#{servidorBean.categoria}" temSelecione="true" filter="true" converter="SimpleEntityConverter"
+									   disabled="#{servidorBean.isVisualizacao}" validationRequired="true" display="text">
 					<f:ajax event="change" listener="#{servidorBean.configurarCargoFuncao}" render="servidorForm:grupoCargo servidorForm:grupoFuncao servidorForm:addLotacao" />
 				</sgp:formSelectOneMenu>
-					
+
 				<h:panelGroup id="grupoCargo">
 					<sgp:formSelectOneMenu id="cargo" labelValue="Cargo" value="#{servidorBean.servidor.cargo}" itemsValue="#{servidorBean.cargos}" itemValue="#{item}"
-						itemLabel="#{item.nome}" temSelecione="true" filter="true" converter="SimpleEntityConverter" disabled="#{servidorBean.isVisualizacao}"
-						validationRequired="true" display="text">
+										   itemLabel="#{item.nome}" temSelecione="true" filter="true" converter="SimpleEntityConverter" disabled="#{servidorBean.isVisualizacao}"
+										   validationRequired="true" display="text">
 						<f:ajax event="change" listener="#{servidorBean.configurarFuncao}" render="servidorForm:grupoFuncao servidorForm:addLotacao" />
 					</sgp:formSelectOneMenu>
 				</h:panelGroup>
-					
+
 				<h:panelGroup id="grupoFuncao">
 					<sgp:formSelectOneMenu id="funcao" labelValue="Função" value="#{servidorBean.servidor.funcao}" itemsValue="#{servidorBean.funcoes}" itemValue="#{item}"
-						itemLabel="#{item.nome}" temSelecione="true" filter="true" converter="SimpleEntityConverter" disabled="#{servidorBean.isVisualizacao}"
-						validationRequired="true" display="text">
+										   itemLabel="#{item.nome}" temSelecione="true" filter="true" converter="SimpleEntityConverter" disabled="#{servidorBean.isVisualizacao}"
+										   validationRequired="true" display="text">
 						<f:ajax event="change" listener="#{servidorBean.configurarLotacao}" render="servidorForm:addLotacao" />
 					</sgp:formSelectOneMenu>
 				</h:panelGroup>
-					
-				<sgp:formSelectOneMenu id="status" labelValue="Status"
-				    value="#{servidorBean.servidor.status}"
-				    itemsValue="#{comboHelperBean.status}"
-				    itemValue="#{item}"
-				    itemLabel="#{item.descricao}"
-				    disabled="#{servidorBean.isVisualizacao}">
 
-				    <p:ajax event="change" listener="#{servidorBean.verificarStatus}"
-				    	update="servidorForm:dialogDesligamento"
-				    	oncomplete="if (args.openDialog) PF('dlgDesligamento').show();" />
+				<sgp:formSelectOneMenu id="status" labelValue="Status"
+									   value="#{servidorBean.servidor.status}"
+									   itemsValue="#{comboHelperBean.status}"
+									   itemValue="#{item}"
+									   itemLabel="#{item.descricao}"
+									   disabled="#{servidorBean.isVisualizacao}">
+
+					<p:ajax event="change" listener="#{servidorBean.verificarStatus}"
+							update=":formDlgDesligamento"
+							oncomplete="if (args.openDialog) PF('dlgDesligamento').show();" />
 
 				</sgp:formSelectOneMenu>
 
 
-				<!-- Novo Dialog para o campo status quando estiver inativo -->
-				<p:dialog header="Justificativa" widgetVar="dlgDesligamento" modal="true" id="dialogDesligamento" closable="true">
-				    <h:panelGrid columns="1" cellpadding="5" style="width: 100%">
 
-				        <!-- Data do Desligamento -->
-				        <sgp:formCalendar
-				            labelValue="Data do Desligamento"
-				            value="#{servidorBean.servidor.dataDesligamento}"
-				            validationRequired="true"
-				            disabled="#{servidorBean.isVisualizacao}"
-				            display="text"
-				            dataMaxima="#{comboHelperBean.maxDate}" />
-
-				        <!-- Motivo do Desligamento -->
-				        <sgp:formSelectOneMenu
-				            id="motivoDesligamento"
-				            labelValue="Motivo do Desligamento"
-				            value="#{servidorBean.servidor.motivoDesligamento}"
-				            disabled="#{servidorBean.isVisualizacao}">
-
-				            <f:selectItem itemLabel="Selecione" itemValue="" />
-				            <f:selectItem itemLabel="Óbito" itemValue="OBITO" />
-				            <f:selectItem itemLabel="Exoneração a Pedido" itemValue="EXONERACAO_PEDIDO" />
-				            <f:selectItem itemLabel="Exoneração de Ofício" itemValue="EXONERACAO_OFICIO" />
-				            <f:selectItem itemLabel="Aposentadoria" itemValue="APOSENTADORIA" />
-				            <f:selectItem itemLabel="Vacância" itemValue="VACANCIA" />
-				        </sgp:formSelectOneMenu>
-
-				        <!-- Justificativa -->
-				        <sgp:formInputTextarea
-						    id="justificativaDesligamento"
-						    labelValue="Justificativa"
-						    value="#{servidorBean.servidor.justificativa}"
-						    disabled="#{servidorBean.isVisualizacao}"
-						    validationRequired="true"
-						    rows="10"
-						    columns="100"
-						    maxlength="250"
-						    autoResize="true"
-						    size="#{servidorBean.servidor.justificativa.length() + 5}"
-						    display="text" />
-
-				    </h:panelGrid>
-
-				    	<br/><br/>
-
-				    <!-- Botão Salvar -->
-				    <p:commandButton
-				        value="Salvar"
-				        action="#{servidorBean.salvar()}"
-				        update="@form :mensagens"
-				        icon="ui-icon-disk"
-				        rendered="#{(securityUtil.possuiPermissao('CadastrarServidor')
-				        or securityUtil.possuiPermissao('AlterarServidor')) and !servidorBean.isVisualizacao}" />
-
-				</p:dialog>
-
-			
 				<br/>
 				<br/>
 				<br/>
 				<br/>
-				
+
 				<h:panelGroup id="addLotacao">
 					<p:commandButton icon="ui-icon-plus" id="adicionarLotacao" value="Adicionar Lotação" actionListener="#{servidorBean.configurarDialogLotacao}" immediate="true" rendered="#{!servidorBean.isVisualizacao and securityUtil.possuiPermissao('AdicionarLotacaoServidor')}"
-						oncomplete="PF('dlg').show();" update=":formDlg" disabled="#{!servidorBean.servidor.funcao.lotacaoObrigatoria}">
+									 oncomplete="PF('dlg').show();" update=":formDlg" disabled="#{!servidorBean.servidor.funcao.lotacaoObrigatoria}">
 						<p:ajax event="dialogReturn" listener="#{servidorBean.adicionarLotacao}" update="lotacao"/>
 					</p:commandButton>
-				
-					<br/>	
+
 					<br/>
-					<p:dataTable id="lotacao" var="lot" emptyMessage="Nenhuma lotação adicionada." value="#{servidorBean.servidor.lotacao}" sortBy="#{lot.dataInicio}" sortOrder="descending" rows="5" paginator="true" paginatorAlwaysVisible="false" 
-						paginatorPosition="bottom">
+					<br/>
+					<p:dataTable id="lotacao" var="lot" emptyMessage="Nenhuma lotação adicionada." value="#{servidorBean.servidor.lotacao}" sortBy="#{lot.dataInicio}" sortOrder="descending" rows="5" paginator="true" paginatorAlwaysVisible="false"
+								 paginatorPosition="bottom">
 						<p:column headerText="Unidade">
 							<h:outputText value="#{lot.unidade.nome}" />
 						</p:column>
-						
+
 						<p:column headerText="Data do Início">
 							<h:outputText value="#{lot.dataInicio}">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</h:outputText>
 						</p:column>
-						
+
 						<p:column headerText="Data do Fim">
 							<h:outputText value="#{lot.dataFim}">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
@@ -356,47 +299,47 @@
 				</h:panelGroup>
 			</p:panel>
 			<br/>
-			
+
 			<p:commandButton value="Salvar" action="#{servidorBean.salvar()}" update="@form :mensagens" icon="ui-icon-disk" rendered="#{(securityUtil.possuiPermissao('CadastrarServidor') or securityUtil.possuiPermissao('AlterarServidor')) and !servidorBean.isVisualizacao}" />
 			<p:button outcome="pretty:ListarServidor" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
 				<f:param name="list" value="1" />
 			</p:button>
 		</h:form>
-		
+
 		<h:form id="formDlg">
-			<p:dialog dynamic="true" modal="true" id="dialog" closeOnEscape="true" closable="true" width="466" height="275" widgetVar="dlg" resizable="false" draggable="false" 
-				header="Adicionar Lotação ao Servidor" focus="texto">
+			<p:dialog dynamic="true" modal="true" id="dialog" closeOnEscape="true" closable="true" width="466" height="275" widgetVar="dlg" resizable="false" draggable="false"
+					  header="Adicionar Lotação ao Servidor" focus="texto">
 				<h:panelGroup id="panel">
 					<sgp:formInputText id="unidade" labelValue="Unidade" value="#{servidorBean.lotacao.unidade.nome}" validationRequired="true" display="" size="30" disabled="true"/>
 					<p:commandButton style="margin-top: -5px" icon="ui-icon ui-icon-search" title="Associar Unidade" immediate="true" actionListener="#{servidorBean.abrirDialogUnidade}"
-						rendered="#{(servidorBean.lotacao.id le 0)}">
+									 rendered="#{(servidorBean.lotacao.id le 0)}">
 						<p:ajax event="dialogReturn" listener="#{servidorBean.associarUnidade}" update=":formDlg:unidade:input" />
 					</p:commandButton>
-					
+
 					<sgp:formCalendar labelValue="Data Início" value="#{servidorBean.lotacao.dataInicio}" validationRequired="true" display="text" requiredMessage="*" dataMinima="#{servidorBean.dataMinimaLotacao}" dataMaxima="#{servidorBean.dataMaximaLotacao}"
-						disabled="#{(servidorBean.lotacao.id gt 0)}"/>					
+									  disabled="#{(servidorBean.lotacao.id gt 0)}"/>
 					<sgp:formCalendar labelValue="Data Fim" value="#{servidorBean.lotacao.dataFim}" dataMinima="#{servidorBean.dataMinimaLotacao}" dataMaxima="#{servidorBean.dataMaximaLotacao}"/>
-					
+
 
 					<p:column headerText="Plantão"
-						rendered="#{securityUtil.possuiPermissao('PermiteCadastrarPlantao')}">
-					    <sgp:formSelectOneMenu
-					        id="plantao"
-					        labelValue="Plantão"
-					        value="#{servidorBean.lotacao.plantao}"
-					        temSelecione="true"
-					        disabled="#{bean.isVisualizacao}"
-					        display="text">
+							  rendered="#{securityUtil.possuiPermissao('PermiteCadastrarPlantao')}">
+						<sgp:formSelectOneMenu
+								id="plantao"
+								labelValue="Plantão"
+								value="#{servidorBean.lotacao.plantao}"
+								temSelecione="true"
+								disabled="#{bean.isVisualizacao}"
+								display="text">
 
-					        <f:selectItem itemLabel="A" itemValue="A" />
-					        <f:selectItem itemLabel="B" itemValue="B" />
-					        <f:selectItem itemLabel="C" itemValue="C" />
-					        <f:selectItem itemLabel="D" itemValue="D" />					        					        
-					        <f:selectItem itemLabel="Gestão" itemValue="GESTAO" />
-					        <f:selectItem itemLabel="Administrativa" itemValue="ADMINISTRATIVA" />
+							<f:selectItem itemLabel="A" itemValue="A" />
+							<f:selectItem itemLabel="B" itemValue="B" />
+							<f:selectItem itemLabel="C" itemValue="C" />
+							<f:selectItem itemLabel="D" itemValue="D" />
+							<f:selectItem itemLabel="Gestão" itemValue="GESTAO" />
+							<f:selectItem itemLabel="Administrativa" itemValue="ADMINISTRATIVA" />
 
 
-					    </sgp:formSelectOneMenu>
+						</sgp:formSelectOneMenu>
 					</p:column>
 
 
@@ -416,11 +359,70 @@
 						<p:commandButton value="Fechar" immediate="true" onclick="PF('dlg').hide()" />
 					</div>
 				</h:panelGroup>
-				
+
 				<p:confirmDialog global="true">
 					<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 					<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 				</p:confirmDialog>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formDlgDesligamento">
+			<!-- Novo Dialog para o campo status quando estiver inativo -->
+			<p:dialog header="Justificativa" widgetVar="dlgDesligamento" modal="true" id="dialogDesligamento" closable="true">
+				<h:panelGrid columns="1" cellpadding="5" style="width: 100%">
+
+					<!-- Data do Desligamento -->
+					<sgp:formCalendar
+							labelValue="Data do Desligamento"
+							value="#{servidorBean.servidor.dataDesligamento}"
+							validationRequired="true"
+							disabled="#{servidorBean.isVisualizacao}"
+							display="text"
+							dataMaxima="#{comboHelperBean.maxDate}" />
+
+					<!-- Motivo do Desligamento -->
+					<sgp:formSelectOneMenu
+							id="motivoDesligamento"
+							labelValue="Motivo do Desligamento"
+							value="#{servidorBean.servidor.motivoDesligamento}"
+							disabled="#{servidorBean.isVisualizacao}">
+
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItem itemLabel="Óbito" itemValue="OBITO" />
+						<f:selectItem itemLabel="Exoneração a Pedido" itemValue="EXONERACAO_PEDIDO" />
+						<f:selectItem itemLabel="Exoneração de Ofício" itemValue="EXONERACAO_OFICIO" />
+						<f:selectItem itemLabel="Aposentadoria" itemValue="APOSENTADORIA" />
+						<f:selectItem itemLabel="Vacância" itemValue="VACANCIA" />
+					</sgp:formSelectOneMenu>
+
+					<!-- Justificativa -->
+					<sgp:formInputTextarea
+							id="justificativaDesligamento"
+							labelValue="Justificativa"
+							value="#{servidorBean.servidor.justificativa}"
+							disabled="#{servidorBean.isVisualizacao}"
+							validationRequired="true"
+							rows="10"
+							columns="100"
+							maxlength="250"
+							autoResize="true"
+							size="#{servidorBean.servidor.justificativa.length() + 5}"
+							display="text" />
+
+				</h:panelGrid>
+
+				<br/><br/>
+
+				<!-- Botão Salvar -->
+				<p:commandButton
+						value="Salvar"
+						action="#{servidorBean.salvar()}"
+						update="@form :mensagens"
+						icon="ui-icon-disk"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarServidor')
+					or securityUtil.possuiPermissao('AlterarServidor')) and !servidorBean.isVisualizacao}" />
+
 			</p:dialog>
 		</h:form>
 	</ui:define>

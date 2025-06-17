@@ -10,6 +10,7 @@ public enum Relatorio {
 	RegistroPedido("PEDIDO DE TRÂNSITO"),
 	ListarCargos("RELATÓRIO DE CARGOS"),
 	ListarCategorias("RELATÓRIO DE CATEGORIAS"),
+	ListarPerfilUsuario("RELATÓRIO PERFIL USUARIO"),
 	ListarCertidao("RELATÓRIO DE CERTIDÃO"),
 	ListarTipoVisita("RELATÓRIO DE TIPO VISITA"),
 	ListarVisitante("LISTA DE VISITANTES", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM),
