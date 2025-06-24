@@ -6,7 +6,9 @@ import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.model.Arquivo;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
+import br.gov.mt.sejudh.sigepen.model.DietaEspecialPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.ItemPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
@@ -280,7 +282,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		facesUtil.setObjetoSessao("estrutura", estrutura);
 		facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
 	}
-	
+
 	public void selecionarEstruturaChamada(UnidadePrisionalDTO unidade,String data, FiltroGerarPedido tipoRefeicao) {
 		facesUtil.setObjetoSessao("unidade", unidade);
 		facesUtil.setObjetoSessao("tipo_relatorio", "unidade");
@@ -311,14 +313,39 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 
 			validarCardapio(itemCardapioPorEstrutura);
 
-			String jsonDadosRelatorio = criarJsonRelatorio(itemCardapioPorEstrutura, refeicoesEspeciais);
 			PedidoAlimento pedidoAlimento = PedidoAlimento.create(
 					data,
 					SecurityUtil.getUsuario().getId(),
 					idEstrutura, contrato.getId(),
-					filtroGerarPedido.getTipoRefeicao().getId(),
-					jsonDadosRelatorio
+					filtroGerarPedido.getTipoRefeicao().getId()
 			);
+
+			for (DetalheItemEstruturaCardapioDTO itemDTO : itemCardapioPorEstrutura) {
+				ItemPedidoAlimento item = new ItemPedidoAlimento();
+				item.setPedidoAlimento(pedidoAlimento);
+				item.setItem(itemDTO.getItem());
+				item.setQtdPorItem(itemDTO.getQtdPorItem());
+				item.setQtdRecuperando(itemDTO.getQtdRecuperando());
+				item.setSiglaUnidadeMedida(itemDTO.getSiglaUnidadeMedida());
+				item.setNomeEstrutura(itemDTO.getNomeEstrutura());
+				item.setNivelEstrutura(itemDTO.getNivelEstrutura());
+				item.setItemCardapioId(itemDTO.getItemCardapioId());
+				item.setEstruturaId(itemDTO.getEstruturaId());
+				pedidoAlimento.getItensPedido().add(item);
+			}
+
+			for (DietaEspecialEstruturaDTO dietaDTO : refeicoesEspeciais) {
+				DietaEspecialPedidoAlimento dieta = new DietaEspecialPedidoAlimento();
+				dieta.setPedidoAlimento(pedidoAlimento);
+				dieta.setNomeEstrutura(dietaDTO.getNomeEstrutura());
+				dieta.setTipoDieta(dietaDTO.getTipoDieta());
+				dieta.setQtdRecuperando(dietaDTO.getQtdRecuperando());
+				dieta.setEstruturaId(dietaDTO.getEstruturaId());
+				if (dietaDTO.getNomesRecuperandos() != null) {
+					dieta.setNomesRecuperandos(String.join(",", dietaDTO.getNomesRecuperandos()));
+				}
+				pedidoAlimento.getDietasEspeciais().add(dieta);
+			}
 
 			pedidoAlimentoService.salvarRegistroRelatorio(pedidoAlimento);
 
@@ -333,13 +360,6 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
-	private String criarJsonRelatorio(List<DetalheItemEstruturaCardapioDTO> itemCardapioPorEstrutura, List<DietaEspecialEstruturaDTO> refeicoesEspeciais) {
-		final Map<String, Object> dadosRelatorio = new HashMap<>();
-		dadosRelatorio.put("itensCardapio", itemCardapioPorEstrutura);
-		dadosRelatorio.put("refeicoesEspeciais", refeicoesEspeciais);
-		final Gson gson = new Gson();
-		return gson.toJson(dadosRelatorio);
-	}
 
 	private List<PedidoEstruturaDTO> getEstruturasDeNivel2(List<PedidoEstruturaDTO> estruturaPedido) {
 		return estruturaPedido.stream()

@@ -17,14 +17,18 @@ public class DetalheItemEstruturaCardapioDTO {
     private String siglaUnidadeMedida;
     private String nomeEstrutura;
     private Integer nivelEstrutura;
+    private Long itemCardapioId;
+    private Long estruturaId;
 
-    public DetalheItemEstruturaCardapioDTO(String item, double qtdPorItem, Integer qtdRecuperando, String siglaUnidadeMedida, String nomeEstrutura, Integer nivelEstrutura) {
+    public DetalheItemEstruturaCardapioDTO(String item, double qtdPorItem, Integer qtdRecuperando, String siglaUnidadeMedida, String nomeEstrutura, Integer nivelEstrutura, Long itemCardapioId, Long estruturaId) {
         this.item = item;
         this.qtdPorItem = qtdPorItem;
         this.qtdRecuperando = qtdRecuperando;
         this.siglaUnidadeMedida = siglaUnidadeMedida;
         this.nomeEstrutura = nomeEstrutura;
         this.nivelEstrutura = nivelEstrutura;
+        this.itemCardapioId = itemCardapioId;
+        this.estruturaId = estruturaId;
     }
 
     public String getItem() {
@@ -67,6 +71,22 @@ public class DetalheItemEstruturaCardapioDTO {
         this.nivelEstrutura = nivelEstrutura;
     }
 
+    public Long getItemCardapioId() {
+        return itemCardapioId;
+    }
+
+    public void setItemCardapioId(Long itemCardapioId) {
+        this.itemCardapioId = itemCardapioId;
+    }
+
+    public Long getEstruturaId() {
+        return estruturaId;
+    }
+
+    public void setEstruturaId(Long estruturaId) {
+        this.estruturaId = estruturaId;
+    }
+
     public static List<DetalheItemEstruturaCardapioDTO> combinarPedidos(List<PedidoEstruturaDTO> estruturas, List<RefeicaoDetalhadaDTO> pedidosConsulta) {
         List<DetalheItemEstruturaCardapioDTO> combinados = new ArrayList<>();
         for (RefeicaoDetalhadaDTO pedido : pedidosConsulta) {
@@ -105,7 +125,9 @@ public class DetalheItemEstruturaCardapioDTO {
                 estrutura.getQtdPadrao(),
                 unidadeMedidaSigla,
                 nomeEstrutura,
-                nivel
+                nivel,
+                pedido.getItemCardapioId(),
+                estrutura.getEstruturaId() != null ? estrutura.getEstruturaId().longValue() : null
         );
     }
 
@@ -118,7 +140,8 @@ public class DetalheItemEstruturaCardapioDTO {
                 .append("siglaUnidadeMedida", siglaUnidadeMedida)
                 .append("nomeEstrutura", nomeEstrutura)
                 .append("nivelEstrutura", nivelEstrutura)
+                .append("itemCardapioId", itemCardapioId)
+                .append("estruturaId", estruturaId)
                 .toString();
     }
 }
-

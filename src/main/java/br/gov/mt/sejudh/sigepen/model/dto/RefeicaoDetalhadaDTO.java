@@ -15,11 +15,12 @@ public class RefeicaoDetalhadaDTO {
 	private String nomeEstrutura;
 	private String sexo;
 	private String siglaUnidadeMedida;
+	private Long itemCardapioId;
 
 	public RefeicaoDetalhadaDTO(Object[] row) {
 		this.montarCardapio(row);
 	}
-	
+
 	private void montarCardapio(Object[] row) {
 		this.recuperandoTotal = ((BigDecimal) row[0]).longValue();
 		this.item = (String) row[1];
@@ -28,6 +29,7 @@ public class RefeicaoDetalhadaDTO {
 		this.refeicao = (String) row[4];
 		this.setSexo((String) row[5]);
 		this.siglaUnidadeMedida = UnidadeMedida.getSiglaPorId(((BigDecimal) row[6]).intValue());
+		this.itemCardapioId = row.length > 7 ? ((BigDecimal) row[7]).longValue() : null;
 	}
 
 	public String getRefeicao() {
@@ -53,23 +55,23 @@ public class RefeicaoDetalhadaDTO {
 	public void setRecuperandoTotal(Long recuperandoTotal) {
 		this.recuperandoTotal = recuperandoTotal;
 	}
-	
+
 	public double getMasc() {
 		return masc;
 	}
-	
+
 	public void setMasc(double masc) {
 		this.masc = masc;
 	}
-	
+
 	public double getFem() {
 		return fem;
 	}
-	
+
 	public void setFem(double fem) {
 		this.fem = fem;
 	}
-	
+
 	public String getNomeEstrutura() {
 		return nomeEstrutura;
 	}
@@ -77,7 +79,7 @@ public class RefeicaoDetalhadaDTO {
 	public void setNomeEstrutura(String nomeEstrutura) {
 		this.nomeEstrutura = nomeEstrutura;
 	}
-	
+
 	public String getSexo() {
 		return sexo;
 	}
@@ -94,6 +96,14 @@ public class RefeicaoDetalhadaDTO {
 		this.siglaUnidadeMedida = siglaUnidadeMedida;
 	}
 
+	public Long getItemCardapioId() {
+		return itemCardapioId;
+	}
+
+	public void setItemCardapioId(Long itemCardapioId) {
+		this.itemCardapioId = itemCardapioId;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
@@ -105,6 +115,7 @@ public class RefeicaoDetalhadaDTO {
 				.append("nomeEstrutura", nomeEstrutura)
 				.append("sexo", sexo)
 				.append("unidadeMedida", siglaUnidadeMedida)
+				.append("itemCardapioId", itemCardapioId)
 				.toString();
 	}
 }
