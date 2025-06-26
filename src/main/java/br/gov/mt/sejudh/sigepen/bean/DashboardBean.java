@@ -392,7 +392,13 @@ public class DashboardBean {
 		if(!securityUtil.possuiPermissao("ListarUsuarioResetSenha")){
 			return 0;
 		}
-			return this.usuarioService.conutSolicitacaoSenha();
+
+		FiltroUsuario filtroUsuario = new FiltroUsuario();
+
+		filtroUsuario.setResetSenha(true);
+		filtroUsuario.setUnidadePrisional(securityUtil.getUnidadeSelecionada());
+
+		return this.usuarioService.conutSolicitacaoSenha(filtroUsuario);
 	}
 
 	public int getMovimentacaoInternaPendente(){
