@@ -12,6 +12,7 @@ import br.gov.mt.sejudh.sigepen.dao.UsuarioDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUsuario;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Acesso;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.dto.UsuarioDTO;
 import br.gov.mt.sejudh.sigepen.security.HashedPassSaltGenerator;
@@ -157,12 +158,7 @@ public class UsuarioService {
 		return dao.buscarUsuarioPorLogin(loginUsuarioAutorizador);
 	}
 
-	public int conutSolicitacaoSenha(){
-
-		FiltroUsuario filtroUsuario = new FiltroUsuario();
-
-		filtroUsuario.setResetSenha(true);
-
+	public int conutSolicitacaoSenha(FiltroUsuario filtroUsuario){
 		return dao.buscarQuantidadeFiltrada(filtroUsuario);
 	}
 }
