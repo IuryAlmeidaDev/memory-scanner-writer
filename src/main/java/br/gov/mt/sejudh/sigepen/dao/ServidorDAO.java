@@ -180,6 +180,19 @@ public class ServidorDAO {
 	    query.setParameter("hoje", hojeDate); 
 	    return query.getResultList();
 	}
+	
+	
+	public List<Servidor> listarServidoresPorTipoPlantao(String tipoPlantao) {
+	    String jpql = "SELECT DISTINCT s FROM Servidor s JOIN s.lotacao l " +
+	                  "WHERE l.dataInicio IS NOT NULL " +
+	                  "AND l.dataFim IS NULL " +
+	                  "AND l.plantao = :tipoPlantao";
+
+	    TypedQuery<Servidor> query = entityManager.createQuery(jpql, Servidor.class);
+	    query.setParameter("tipoPlantao", tipoPlantao);
+	    return query.getResultList();
+	}
+
 
 
 

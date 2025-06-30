@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import br.gov.mt.sejudh.sigepen.base.service.BaseService;
 import br.gov.mt.sejudh.sigepen.dao.RegistroPlantaoDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPlantao;
 import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.RegistroPlantao;
 import br.gov.mt.sejudh.sigepen.model.RegistroPlantaoServidor;
@@ -31,6 +32,11 @@ public class RegistroPlantaoService extends BaseService<RegistroPlantao, Long>{
 	
 	/* ------------------------- Métodos ------------------------- */
 	
+	public List<RegistroPlantao> listarRegistroPlantaoPorStatus() {
+        return dao.listarRegistroPlantaoPorStatus(StatusPlantao.ANDAMENTO);
+    }
+	
+	
 	public List<Plantao> listarPlantaoPorStatus() {
         return dao.listarPlantaoPorStatus(Status.ATIVO);
     }
@@ -49,6 +55,10 @@ public class RegistroPlantaoService extends BaseService<RegistroPlantao, Long>{
 	
 	public RegistroPlantaoServidor buscarPorNome(String nomeServidor) {
 	    return dao.buscarPorNome(nomeServidor);
+	}
+	
+	public RegistroPlantao buscarUltimoRegistroPlantao() {
+	    return dao.buscarUltimoRegistroPlantao();
 	}
 	
 	public RegistroPlantao buscarUltimoRegistroPlantaoComPlantao() {

@@ -85,7 +85,10 @@ public enum Relatorio {
 	InfopenDetalhadoUnificado("Relatório de Recuperandos Infopen Detalhado Unificado", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM, 72),
 	InfopenDetalhadoUnificadoPorData("Relatório de Recuperandos Infopen Detalhado Unificado Por Data", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM, 73),
 
-	Biometrias("Biometrias", 74);
+	Biometrias("Biometrias", 74),
+
+    /* Relatórios de Plantoes */
+    ListarPlantoes("Relatório de Plantões", 75);
 
 
 	private Relatorio(String nome) {

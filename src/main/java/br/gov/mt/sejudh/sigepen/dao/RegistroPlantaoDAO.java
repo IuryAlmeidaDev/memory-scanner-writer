@@ -14,6 +14,7 @@ import javax.persistence.Query;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPlantao;
 import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.RegistroPlantao;
 import br.gov.mt.sejudh.sigepen.model.RegistroPlantaoServidor;
@@ -41,6 +42,13 @@ public class RegistroPlantaoDAO extends BaseDAO<RegistroPlantao, Long>{
 	/* ------------------------  Métodos  ------------------------ */
 		
 	
+	
+	public List<RegistroPlantao> listarRegistroPlantaoPorStatus(StatusPlantao statusPlantao) {
+	    String jpql = "SELECT p FROM RegistroPlantao p WHERE p.statusPlantao = :statusPlantao"; 
+	    Query query = entityManager.createQuery(jpql, RegistroPlantao.class);
+	    query.setParameter("statusPlantao", StatusPlantao.ANDAMENTO);
+	    return query.getResultList();
+	}
 	
 	public List<Plantao> listarPlantaoPorStatus(Status status) {
 	    String jpql = "SELECT p FROM Plantao p WHERE p.status = :status"; 
@@ -106,7 +114,20 @@ public class RegistroPlantaoDAO extends BaseDAO<RegistroPlantao, Long>{
 
 	
 	
+	public RegistroPlantao buscarUltimoRegistroPlantao() {
+	    String jpql = "SELECT r FROM RegistroPlantao r ORDER BY r.id DESC";
+
+	    try {
+	        return entityManager.createQuery(jpql, RegistroPlantao.class)
+	                            .setMaxResults(1)
+	                            .getSingleResult();
+	    } catch (NoResultException e) {
+	        return null; 
+	    }
+	}
+
 	
+	//nao sera mas necessaqrio
 	public RegistroPlantao buscarUltimoRegistroPlantaoComPlantao() {
 	    String jpql = "SELECT r FROM RegistroPlantao r " +
 	                  "JOIN FETCH r.plantao " +
@@ -138,7 +159,7 @@ public class RegistroPlantaoDAO extends BaseDAO<RegistroPlantao, Long>{
 	    }
 	}
 
-	
+	/*
 	public Plantao buscarPlantaoAnterior3(Long idPlantaoAtual) {
 	    try {
 	        RegistroPlantao registroPlantaoAnterior = entityManager.createQuery(
@@ -182,7 +203,7 @@ public class RegistroPlantaoDAO extends BaseDAO<RegistroPlantao, Long>{
 	    } catch (NoResultException e) {
 	        return null;
 	    }
-	}
+	}*/
 	
 	
 		

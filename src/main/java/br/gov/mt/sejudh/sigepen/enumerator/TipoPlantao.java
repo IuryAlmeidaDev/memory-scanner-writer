@@ -1,12 +1,12 @@
 package br.gov.mt.sejudh.sigepen.enumerator;
 
 public enum TipoPlantao {
-	A("A", 1),
-	B("B", 2),
-	C("C", 3),
-	D("D", 4),
-	ADMINIDTRATIIVO("Administrativo", 5),
-	GESTAO("Gestão", 6);
+	A("A", 0),
+	B("B", 1),
+	C("C", 2),
+	D("D", 3),
+	ADMINISTRATIVO("ADMINISTRATIVO", 4),
+	GESTAO("GESTAO", 5);
 		
 	
 	private String descricao;
