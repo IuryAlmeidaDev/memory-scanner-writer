@@ -115,5 +115,20 @@ public class ServidorService {
 	                     ))
 	                     .collect(Collectors.toList());
 	}
+	
+	
+	
+	public List<ServidorDTO> listarServidoresPorTipoPlantao(String tipoPlantao) {
+	    List<Servidor> servidores = dao.listarServidoresPorTipoPlantao(tipoPlantao);
+	    return servidores.stream()
+	        .map(s -> new ServidorDTO(
+	            s.getNome(),
+	            s.getFuncao() != null ? s.getFuncao().getNome() : null,
+	            s.getCargo() != null ? s.getCargo().getNome() : null,
+	            s.getMatricula()
+	        ))
+	        .collect(Collectors.toList());
+	}
+
 
 }

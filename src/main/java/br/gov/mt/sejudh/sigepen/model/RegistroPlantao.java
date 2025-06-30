@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,6 +19,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPlantao;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
@@ -40,17 +44,33 @@ public class RegistroPlantao extends BaseModel<Long>  {
     @Temporal(TemporalType.TIMESTAMP)
 	private Date dataPlantao;
 	
-	@Column(name = "HORA_INICIO")
-	private String horaInicio; 
+	@Column(name = "DATA_PLANTAO_ENCERRAMENTO")
+    @Temporal(TemporalType.TIMESTAMP)
+	private Date dataPlantaoEncerramento;
+		
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "TIPO_PLANTAO")
+	private TipoPlantao tipoPlantao;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "PLANTAO_ID")
-	private Plantao plantao;
+	@JoinColumn(name = "UNIDADE_PRISIONAL_ID")
+	private UnidadePrisional unidadePrisional;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_PLANTAO")
+	private StatusPlantao statusPlantao;
+		
+	@Column(name = "OCORRENCIA")
+	private String ocorrencia; 	
 	
 
 	
 	/*---------------------------------------------------------------- */
-	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -75,26 +95,45 @@ public class RegistroPlantao extends BaseModel<Long>  {
 		this.dataPlantao = dataPlantao;
 	}
 
-	public String getHoraInicio() {
-		return horaInicio;
+	public Date getDataPlantaoEncerramento() {
+		return dataPlantaoEncerramento;
 	}
 
-	public void setHoraInicio(String horaInicio) {
-		this.horaInicio = horaInicio;
+	public void setDataPlantaoEncerramento(Date dataPlantaoEncerramento) {
+		this.dataPlantaoEncerramento = dataPlantaoEncerramento;
 	}
 
-	public Plantao getPlantao() {
-		return plantao;
+	public TipoPlantao getTipoPlantao() {
+		return tipoPlantao;
 	}
 
-	public void setPlantao(Plantao plantao) {
-		this.plantao = plantao;
-	}		
+	public void setTipoPlantao(TipoPlantao tipoPlantao) {
+		this.tipoPlantao = tipoPlantao;
+	}
 
+	public UnidadePrisional getUnidadePrisional() {
+		return unidadePrisional;
+	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
+	public void setUnidadePrisional(UnidadePrisional unidadePrisional) {
+		this.unidadePrisional = unidadePrisional;
+	}
+
+	public StatusPlantao getStatusPlantao() {
+		return statusPlantao;
+	}
+
+	public void setStatusPlantao(StatusPlantao statusPlantao) {
+		this.statusPlantao = statusPlantao;
+	}
+		
+
+	public String getOcorrencia() {
+		return ocorrencia;
+	}
+
+	public void setOcorrencia(String ocorrencia) {
+		this.ocorrencia = ocorrencia;
 	}
 
 	@Override

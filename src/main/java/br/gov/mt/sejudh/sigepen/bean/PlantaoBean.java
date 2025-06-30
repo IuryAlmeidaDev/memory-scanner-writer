@@ -20,12 +20,14 @@ import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPLantao;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPlantao;
 import br.gov.mt.sejudh.sigepen.model.Plantao;
+import br.gov.mt.sejudh.sigepen.model.RegistroPlantao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.PlantaoService;
+import br.gov.mt.sejudh.sigepen.service.RegistroPlantaoService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
@@ -33,21 +35,28 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ManagedBean
 @ViewScoped
 @URLMappings(mappings = {
-@URLMapping(id = "ListarPlantao", pattern = "/plantao/listarPlantao", viewId = "/WEB-INF/pages/plantao/ListarPlantao.xhtml")
-,@URLMapping(id = "CadastrarPlantao", pattern = "/plantao/cadastrar", viewId = "/WEB-INF/pages/plantao/CadastrarPlantao.xhtml")
+		@URLMapping(id = "CadastrarPlantao",  pattern = "/plantao/cadastrar", viewId = "/WEB-INF/pages/plantao/CadastrarRegistroPlantao.xhtml")
+
 })
 public class PlantaoBean extends MetodosDePaginaBean {
 
 	private FiltroPLantao filtro = new FiltroPLantao();
+	//private FiltroRegistroPLantao filtroRegistro = new FiltroRegistroPLantao();
 
 	private Plantao plantao;
+	private RegistroPlantao registroPlantao;
+	private UnidadePrisional unidadePrisional;
 	
 	private List<UnidadePrisional> unidadesPrisionais;
-	 
-	private UnidadePrisional unidadePrisional;
-
 	private LazyDataModel<Plantao> plantoes;
-
+	private LazyDataModel<RegistroPlantao> registroPlantoes;
+		
+	private StatusPlantao statusPlantao;
+	
+	
+	@Inject
+	private RegistroPlantaoService registroPlantaoService;
+	
 	@Inject
 	private PlantaoService plantaoService;
 
@@ -71,23 +80,23 @@ public class PlantaoBean extends MetodosDePaginaBean {
 		try {
 			switch (this.getAcaoDeTela()) {
 			case CADASTRAR:
-				this.plantao = new Plantao();
+				this.registroPlantao = new RegistroPlantao();
 				break;
 
 			case ALTERAR:
 			case VISUALIZAR:
 				long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
-
+								
 				if (!buscarPLantao(id)) {
 					facesUtil.exibirMensagemErro("Plantão não encontrado.", true);
 					return "pretty:ListarPlantao";
 				}
 
-				logDeAcesso(log, this.plantao);
+				logDeAcesso(log, this.registroPlantao);
 				break;
 
 			case LISTAR:
-				pesquisar();
+				pesquisar();				
 				logDeAcesso(log, "Plantoes");
 				break;
 
@@ -107,61 +116,24 @@ public class PlantaoBean extends MetodosDePaginaBean {
 			return false;
 		}
 
-		this.plantao = plantaoService.buscarPorId(id);
+		this.registroPlantao = registroPlantaoService.buscarPorId(id);
 
-		if (this.plantao == null) {
+		if (this.registroPlantao == null) {
 			return false;
 		}
 
 		return true;
 	}
-
-	public String salvar() {
-		String retorno = null;
-
-		try {
-			plantaoService.salvar(this.plantao);	        
-			facesUtil.exibirMensagemInfo("Plantão " + this.plantao.getId() + " salvo com sucesso!", true);
-			retorno = "pretty:ListarPlantao";
-			LoggerUtil.logInfo(Acao.SALVAR, this.plantao, log);
-
-		} catch (ValidacaoException e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
-
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-					"Erro ao salvar plantao (" + this.plantao.getId() + "): " + e.getMessage());
-			LoggerUtil.logErro(Acao.SALVAR, this.plantao, e, log);
-		}
-
-		return retorno;
-	}
-
-	public void excluir(Plantao plantao) {
-		try {
-
-			plantaoService.excluir(plantao);
-			facesUtil.exibirMensagemInfo("Plantão " + plantao.getId() + " excluído com sucesso!", false);
-			LoggerUtil.logInfo(Acao.EXCLUIR, plantao, log);
-
-		} catch (ValidacaoException e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
-
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-					"Erro ao excluir orgão (" + plantao.getId() + "): " + e.getMessage());
-			LoggerUtil.logErro(Acao.EXCLUIR, plantao, e, log);
-		}
-	}
-
+	
+	
 	public void pesquisar() {
-		this.plantoes = new LazyDataModel<Plantao>() {
+		this.registroPlantoes = new LazyDataModel<RegistroPlantao>() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public List<Plantao> load(int first, int pageSize, String sortField, SortOrder sortOrder,
+			public List<RegistroPlantao> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
-				setRowCount(plantaoService.quantidadeFiltrados(getFiltro()));
+				setRowCount(registroPlantaoService.quantidadeFiltrados(getFiltro()));
 
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
@@ -169,7 +141,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 					e.printStackTrace();
 				}
 
-				return plantaoService.buscaPorFiltro(getFiltro(), false);
+				return registroPlantaoService.buscaPorFiltro(getFiltro(), false);
 			}
 		};
 	}
@@ -239,8 +211,38 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
 		this.unidadesPrisionais = unidadesPrisionais;
 	}
+
+
+	public LazyDataModel<RegistroPlantao> getRegistroPlantoes() {
+		return registroPlantoes;
+	}
+
+
+	public void setRegistroPlantoes(LazyDataModel<RegistroPlantao> registroPlantoes) {
+		this.registroPlantoes = registroPlantoes;
+	}
+
+
+	public RegistroPlantao getRegistroPlantao() {
+		return registroPlantao;
+	}
+
+
+	public void setRegistroPlantao(RegistroPlantao registroPlantao) {
+		this.registroPlantao = registroPlantao;
+	}
 	
 	
+	public StatusPlantao getStatusPlantao() {
+		return statusPlantao;
+	}
+
+	public void setStatusPlantao(StatusPlantao statusPlantao) {
+		this.statusPlantao = statusPlantao;
+	}
 	
+	public StatusPlantao[] getStatusPlantoes() {
+        return StatusPlantao.values();
+    }
 
 }
