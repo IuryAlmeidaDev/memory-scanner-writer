@@ -47,6 +47,9 @@ public class Lotacao {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_FIM")
 	private Date dataFim;
+	
+	@Column(name = "PLANTAO", length = 50)
+	private String plantao;
 
 	public long getId() {
 		return id;
@@ -86,6 +89,15 @@ public class Lotacao {
 
 	public void setDataFim(Date dataFim) {
 		this.dataFim = dataFim;
+	}
+		
+
+	public String getPlantao() {
+		return plantao;
+	}
+
+	public void setPlantao(String plantao) {
+		this.plantao = plantao;
 	}
 
 	@Override

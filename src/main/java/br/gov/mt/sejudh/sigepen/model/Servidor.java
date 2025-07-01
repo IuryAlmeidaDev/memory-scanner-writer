@@ -142,6 +142,17 @@ public class Servidor implements Serializable {
 	@Transient
 	private AutoriaRegistro autorUltimaAlteracao;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_DESLIGAMENTO")
+	private Date dataDesligamento;
+	
+	@Column(name = "MOTIVO_DESLIGAMENTO", length = 50)
+	private String motivoDesligamento;
+	
+	@Column(name = "JUSTIFICATIVA", length = 250)
+	private String justificativa;
+	
+	
 	public Servidor(){
 		this.documentos = new ArrayList<Documento>();
 		this.contatos = new ArrayList<Contato>();
@@ -367,6 +378,30 @@ public class Servidor implements Serializable {
 
 	public void setAutorUltimaAlteracao(AutoriaRegistro autorUltimaAlteracao) {
 		this.autorUltimaAlteracao = autorUltimaAlteracao;
+	}		
+
+	public Date getDataDesligamento() {
+		return dataDesligamento;
+	}
+
+	public void setDataDesligamento(Date dataDesligamento) {
+		this.dataDesligamento = dataDesligamento;
+	}
+
+	public String getMotivoDesligamento() {
+		return motivoDesligamento;
+	}
+
+	public void setMotivoDesligamento(String motivoDesligamento) {
+		this.motivoDesligamento = motivoDesligamento;
+	}
+
+	public String getJustificativa() {
+		return justificativa;
+	}
+
+	public void setJustificativa(String justificativa) {
+		this.justificativa = justificativa;
 	}
 
 	@Override

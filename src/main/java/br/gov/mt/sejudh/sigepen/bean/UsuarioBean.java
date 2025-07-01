@@ -1,9 +1,6 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -11,7 +8,11 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.model.*;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
+import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
@@ -27,11 +28,6 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUsuario;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
-import br.gov.mt.sejudh.sigepen.model.Acesso;
-import br.gov.mt.sejudh.sigepen.model.Perfil;
-import br.gov.mt.sejudh.sigepen.model.Servidor;
-import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UsuarioDTO;
@@ -66,6 +62,8 @@ public class UsuarioBean extends MetodosDePaginaBean {
 	private UnidadePrisional unidadeDoUsuario;
 	
 	private DualListModel<Perfil> perfisModel;
+
+	private List<UnidadePrisional> unidadesPrisionais;
 	
 	@Inject
 	private PerfilService perfilService;
@@ -84,6 +82,10 @@ public class UsuarioBean extends MetodosDePaginaBean {
 	
 	@Inject
 	private Logger log;
+
+	@Inject
+	private FileDownloadHandlerBean fileDownload;
+
 	
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
@@ -111,6 +113,7 @@ public class UsuarioBean extends MetodosDePaginaBean {
 					break;
 					
 				case LISTAR:
+					unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
 					pesquisar();
 					logDeAcesso(log, "Usuários");
 					break;
@@ -159,6 +162,34 @@ public class UsuarioBean extends MetodosDePaginaBean {
 				return usuarioService.buscarUsuariosPorFiltro(getFiltro());
 			}
 		});
+	}
+
+	public void imprimir() {
+		try {
+
+			if (getFiltro().getUnidadePrisional() == null) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Para impressão é necessário selecionar uma unidade");
+				return;
+			}
+
+			List<UsuarioDTO> lista = usuarioService.buscarUsuariosPorFiltro(getFiltro());
+
+			if (lista.size() == 0) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
+				return;
+			}
+
+			Map<String, Object> parameters = new HashMap<>();
+
+			parameters.put("UNIDADE_FILTRO", getFiltro().getUnidadePrisional().getNome());
+
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.ListarPerfilUsuario,parameters));
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Perfis", log);
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir lista de Perfis: " + e.getMessage());
+			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Perfis", e, log);
+		}
 	}
 
 	public void salvar() {
@@ -407,4 +438,12 @@ public class UsuarioBean extends MetodosDePaginaBean {
 	public void setPerfisModel(DualListModel<Perfil> perfisModel) {
 		this.perfisModel = perfisModel;
 	}
+
+    public List<UnidadePrisional> getUnidadesPrisionais() {
+        return unidadesPrisionais;
+    }
+
+    public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
+        this.unidadesPrisionais = unidadesPrisionais;
+    }
 }

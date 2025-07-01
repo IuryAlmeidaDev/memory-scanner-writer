@@ -1,8 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.NullPrecedence;
@@ -20,6 +18,7 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 
 	private static final long serialVersionUID = 3929832042968725424L;
 	private String nome;
+	private String nomeRecuperando;
 	private Date data;
 	private List<Long> pessoasIds;
 	private StatusCredenciamentosVisita statusCredenciamento;
@@ -28,6 +27,9 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 	private Boolean somenteEntradas;
 	private Long idVisitante;
 
+	private Long idEstrutura;
+	private Set<Long> idsEstruturas = new HashSet<>();
+
 	@Override
 	public void configurarFiltros() {
 
@@ -35,6 +37,7 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 				JoinType.LEFT_OUTER_JOIN);
 
 		if (StringUtils.isNotBlank(this.getNome())
+				|| StringUtils.isNotBlank(this.getNomeRecuperando())
 				|| (this.getPessoasIds() != null && this.getPessoasIds().size() > 0)
 				|| (this.getIdVisitante() != null)) {
 			if (StringUtils.isNotBlank(this.getNome())) {
@@ -45,11 +48,36 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 			if (this.getPessoasIds() != null && this.getPessoasIds().size() > 0) {
 				getCriteria().add(Restrictions.in("pessoa.id", this.getPessoasIds()));
 			}
-			
+
 			if(this.getIdVisitante() != null) {
 				getCriteria().add(Restrictions.eq("id", this.getIdVisitante()));
 			}
-			
+
+			if (StringUtils.isNotBlank(this.getNomeRecuperando()) || !this.getIdsEstruturas().isEmpty()) {
+				getCriteria().createAlias("credenciamentos", "c", JoinType.INNER_JOIN)
+						.createAlias("c.recuperando", "r", JoinType.INNER_JOIN);
+			}
+
+			if (StringUtils.isNotBlank(this.getNomeRecuperando())) {
+				getCriteria().createAlias("r.pessoa", "p"); // Pessoa do Recuperando
+				getCriteria()
+						.add(RestrictionsSigepen.ignoraAcentoLike("p.nome", this.getNomeRecuperando(), MatchMode.ANYWHERE));
+			}
+
+			if(!this.getIdsEstruturas().isEmpty()) {
+
+				getCriteria()
+						.createAlias("r.passagens", "passagem", JoinType.INNER_JOIN)
+						.createAlias("passagem.lotacao", "lotacao", JoinType.INNER_JOIN)
+						.createAlias("lotacao.estrutura", "estrutura", JoinType.INNER_JOIN)
+				;
+
+				getCriteria().add(Restrictions.isNull("passagem.dataSaida"));
+				getCriteria().add(Restrictions.isNull("lotacao.dataSaida"));
+				getCriteria().add(Restrictions.in("estrutura.id", this.getIdsEstruturas()));
+
+			}
+
 		} else {
 			if (this.getData() != null) {
 				Date di = Sigepen.getDataConsultaMaiorIgual(this.getData());
@@ -65,6 +93,7 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 				getCriteria().add(Restrictions.eq("entradas.situacao", SituacaoVisita.EM_ANDAMENTO));
 			}
 		}
+
 	}
 
 	public FiltroEntradaVisitante() {
@@ -78,6 +107,8 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+
+
 
 	public Date getData() {
 		return data;
@@ -147,4 +178,28 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 			}
 		}
 	}
+
+    public String getNomeRecuperando() {
+        return nomeRecuperando;
+    }
+
+    public void setNomeRecuperando(String nomeRecuperando) {
+        this.nomeRecuperando = nomeRecuperando;
+    }
+
+    public Long getIdEstrutura() {
+        return idEstrutura;
+    }
+
+    public void setIdEstrutura(Long idEstrutura) {
+        this.idEstrutura = idEstrutura;
+    }
+
+    public Set<Long> getIdsEstruturas() {
+        return idsEstruturas;
+    }
+
+    public void setIdsEstruturas(Set<Long> idsEstruturas) {
+        this.idsEstruturas = idsEstruturas;
+    }
 }

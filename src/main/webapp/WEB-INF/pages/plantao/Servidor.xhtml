@@ -1,0 +1,205 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	
+	
+		<p:tab title="Servidores" id="tabServidores">
+					<p:panel id="panelServidores">
+
+						<!-- TabView Filho -->
+						<p:tabView id="tabViewFilho" effect="fade" effectDuration="fast"
+							widgetVar="abaFilho" dynamic="false">							
+							
+							<!-- tab Equipe de Gestão -->
+							<p:tab title="Equipe de Gestão" id="tabGestao">
+																
+								<p:panel header="Equipe de Gestão" id="panelEquipeGestao">
+
+									<!-- Data Table Listar Servidores e os demais campos -->
+									<p:dataTable id="dataTableGestao" var="servidor"
+										value="#{registroPlantaoBean.listaGestao}" rows="10"
+										paginator="true" paginatorPosition="bottom" lazy="true"
+										emptyMessage="Nenhum registro encontrado.">
+
+
+										<!-- Nome Servidor  -->
+										<p:column headerText="Nome do Servidor" width="140">
+											<h:outputText value="#{servidor.nomeServidor}" />
+										</p:column>
+
+
+										<!-- Atividade do Servidor  -->
+										<p:column headerText="Atividade" width="120">
+											<sgp:formSelectOneMenu
+												value="#{servidor.atividadeSelecionada}"
+												id="slAtividadeGestao" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{servidor.atividades}"
+													var="atividade" itemLabel="#{atividade.descricao}"
+													itemValue="#{atividade.descricao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+
+
+										<!-- Situaçao do Servidor  -->
+										<p:column headerText="Situação" width="120">
+											<sgp:formSelectOneMenu
+												value="#{servidor.situacaoSelecionada}"
+												id="slSituacaoGestao" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{registroPlantaoBean.situacoes}"
+													var="situacao" itemLabel="#{situacao.descricao}"
+													itemValue="#{situacao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+																				
+										<!-- Dialgo Suspenso  -->										
+										<p:column headerText="Ações" width="40">
+											<center>
+												<p:commandButton title="Alterar" icon="ui-icon-pencil"
+													actionListener="#{registroPlantaoBean.prepararEdicao(servidor)}"
+													oncomplete="PF('dialogAlteracao').show()"
+													update=":registrosForm:dialogAlteracao"/>
+											</center>
+										</p:column>
+
+									</p:dataTable>
+									
+									<br />																	
+								</p:panel>
+							</p:tab>
+							
+							
+							<p:tab title="Equipe de Plantão" id="tabPlantao">
+
+								<p:panel header="Equipe de Plantão" id="panelEquipePlantao">
+
+									<!-- Data Table Listar Servidores e os demais campos -->
+									<p:dataTable id="dataTableEquipePlantao" var="servidor"
+										value="#{registroPlantaoBean.listaPlantao}" rows="10"
+										paginator="true" paginatorPosition="bottom" lazy="true"
+										emptyMessage="Nenhum registro encontrado.">
+
+										<!-- Nome Servidor  -->
+										<p:column headerText="Nome do Servidor" width="140">
+											<h:outputText value="#{servidor.nomeServidor}" />
+										</p:column>
+
+										<!-- Atividade do Servidor  -->
+										<p:column headerText="Atividade" width="120">
+											
+											<sgp:formSelectOneMenu
+												value="#{servidor.atividadeSelecionada}"
+												id="slAtividadeEquipePlantao" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{servidor.atividades}"
+													var="atividade" itemLabel="#{atividade.descricao}"
+													itemValue="#{atividade.descricao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+
+										<!-- Situaçao do Servidor  -->
+										<p:column headerText="Situação" width="120">
+											<sgp:formSelectOneMenu
+												value="#{servidor.situacaoSelecionada}"
+												id="slSituacaoEquipePlantao" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{registroPlantaoBean.situacoes}"
+													var="situacao" itemLabel="#{situacao.descricao}"
+													itemValue="#{situacao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+										
+										<!-- Dialgo Suspenso  -->										
+										<p:column headerText="Ações" width="40">
+											<center>
+												<p:commandButton title="Alterar" icon="ui-icon-pencil"
+													actionListener="#{registroPlantaoBean.prepararEdicao(servidor)}"
+													oncomplete="PF('dialogAlteracao').show()"
+													update=":registrosForm:dialogAlteracao"/>
+											</center>
+										</p:column>
+										
+									</p:dataTable>										
+									<br />
+																								
+								</p:panel>
+							</p:tab>
+							
+							<!-- tab Equipe Administrativa -->
+							<p:tab title="Equipe Administrativa" id="tabAdministrativa">							       
+								<p:panel header="Equipe Administrativa"
+									id="panelEquipeAdministrativa">
+
+									<!-- Data Table Listar Servidores e os demais campos -->
+									<p:dataTable id="dataTableAdministrativa" var="servidor"
+										value="#{registroPlantaoBean.listaAdministrativa}" rows="10"
+										paginator="true" paginatorPosition="bottom" lazy="true"
+										emptyMessage="Nenhum registro encontrado.">
+
+
+										<!-- Nome Servidor  -->
+										<p:column headerText="Nome do Servidor" width="140">
+											<h:outputText value="#{servidor.nomeServidor}" />
+										</p:column>
+
+
+										<!-- Atividade do Servidor  -->
+										<p:column headerText="Atividade" width="120">
+											
+											<sgp:formSelectOneMenu
+												value="#{servidor.atividadeSelecionada}"
+												id="slAtividadeAdministrativa" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{servidor.atividades}"
+													var="atividade" itemLabel="#{atividade.descricao}"
+													itemValue="#{atividade.descricao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+
+
+										<!-- Situaçao do Servidor  -->
+										<p:column headerText="Situação" width="120">
+											<sgp:formSelectOneMenu
+												value="#{servidor.situacaoSelecionada}"
+												id="slSituacaoAdministrativa" temSelecione="true"
+												style="width:230px">
+												<f:selectItems value="#{registroPlantaoBean.situacoes}"
+													var="situacao" itemLabel="#{situacao.descricao}"
+													itemValue="#{situacao}" />
+											</sgp:formSelectOneMenu>
+										</p:column>
+										
+										
+										<!-- Dialgo Suspenso  -->										
+										<p:column headerText="Ações" width="40">
+											<center>
+												<p:commandButton title="Alterar" icon="ui-icon-pencil"
+													actionListener="#{registroPlantaoBean.prepararEdicao(servidor)}"
+													oncomplete="PF('dialogAlteracao').show()"
+													update=":registrosForm:dialogAlteracao"/>
+											</center>
+										</p:column>
+
+									</p:dataTable>									
+									<br />			
+																								
+								</p:panel>
+							</p:tab>
+
+						</p:tabView> <!-- Fim tabView Filho -->
+						
+						<p:separator style="margin-top:20px" />
+
+						<p:commandButton value="Salvar Todas as Equipes" 
+						action="#{registroPlantaoBean.salvarTodasEquipes}" 
+						icon="ui-icon-disk" style="margin-top:10px" 
+						update="tabServidores" />
+
+
+
+					</p:panel>				
+				</p:tab>
+	
+	</ui:composition>

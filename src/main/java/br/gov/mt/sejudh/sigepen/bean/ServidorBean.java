@@ -141,6 +141,18 @@ public class ServidorBean extends MetodosDePaginaBean {
 	
 	@Inject
 	private ComboService comboService;
+	
+	private boolean abrirDialogDesligamento;
+	
+	public void verificarStatus() {
+	    if (servidor.getStatus() != null && servidor.getStatus().getDescricao().equals("Inativo")) {
+	        abrirDialogDesligamento = true;
+	        RequestContext.getCurrentInstance().addCallbackParam("openDialog", true);
+	    } else {
+	        abrirDialogDesligamento = false;
+	        RequestContext.getCurrentInstance().addCallbackParam("openDialog", false);
+	  }
+	}
 
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
@@ -708,6 +720,8 @@ public class ServidorBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.IMPRIMIR, servidor, e, log);
 		}
 	}
+	
+		    
 	
 	public FiltroServidor getFiltro() {
 		return filtro;

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Atestado" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.693421790161336"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="284"/>
+	<property name="ireport.y" value="589"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
 	</parameter>
@@ -22,6 +22,17 @@
 	</parameter>
 	<parameter name="RESPONSAVEL" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="UNIDADE_CIDADE_UF" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ASSINATURA_1" class="java.lang.String"/>
+	<parameter name="CARGO_1" class="java.lang.String"/>
+	<parameter name="ASSINATURA_2" class="java.lang.String"/>
+	<parameter name="CARGO_2" class="java.lang.String"/>
+	<parameter name="ASSINATURA_3" class="java.lang.String"/>
+	<parameter name="CARGO_3" class="java.lang.String"/>
+	<parameter name="ASSINATURA_4" class="java.lang.String"/>
+	<parameter name="CARGO_4" class="java.lang.String"/>
+	<parameter name="REPORT_ASSINATURA" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadraoPaisagem.jasper"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -58,20 +69,7 @@
 				<textFieldExpression><![CDATA[$P{UNIDADE_CIDADE_UF} + ", " + new java.text.SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("pt", "BR")).format(new java.util.Date())]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="200">
-			<textField isBlankWhenNull="true">
-				<reportElement x="37" y="140" width="480" height="20" uuid="8bc6cb7a-d907-49da-84ab-53450d6a10d5"/>
-				<textElement textAlignment="Center">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{RESPONSAVEL}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="202" y="160" width="150" height="20" uuid="158f0680-7564-4124-8c54-9313b779027e"/>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[Diretor(a)]]></text>
-			</staticText>
-		</band>
+		<band height="200"/>
 	</detail>
 	<pageFooter>
 		<band height="51" splitType="Stretch">
@@ -91,4 +89,40 @@
 			</subreport>
 		</band>
 	</pageFooter>
+	<lastPageFooter>
+		<band height="131">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="131" uuid="12bdafc3-3f6f-4167-8d85-91578d503af3"/>
+				<subreportParameter name="EMISSOR">
+					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ASSINATURA_1">
+					<subreportParameterExpression><![CDATA[$P{ASSINATURA_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CARGO_1">
+					<subreportParameterExpression><![CDATA[$P{CARGO_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ASSINATURA_2">
+					<subreportParameterExpression><![CDATA[$P{ASSINATURA_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CARGO_2">
+					<subreportParameterExpression><![CDATA[$P{CARGO_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ASSINATURA_3">
+					<subreportParameterExpression><![CDATA[$P{ASSINATURA_3}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CARGO_3">
+					<subreportParameterExpression><![CDATA[$P{CARGO_3}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ASSINATURA_4">
+					<subreportParameterExpression><![CDATA[$P{ASSINATURA_4}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CARGO_4">
+					<subreportParameterExpression><![CDATA[$P{CARGO_4}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{REPORT_ASSINATURA}]]></subreportExpression>
+			</subreport>
+		</band>
+	</lastPageFooter>
 </jasperReport>

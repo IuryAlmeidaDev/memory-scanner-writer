@@ -13,6 +13,10 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.*;
+import br.gov.mt.sejudh.sigepen.enumerator.*;
+import br.gov.mt.sejudh.sigepen.service.MovimentacaoExternaService;
+import br.gov.mt.sejudh.sigepen.service.MovimentacaoInternaService;
 import br.gov.mt.sejudh.sigepen.service.UsuarioService;
 import org.primefaces.component.panel.Panel;
 import org.primefaces.model.DashboardColumn;
@@ -65,6 +69,14 @@ public class DashboardBean {
 	private Long totalCredenciamentoConferenciaPendente;
 	private Long totalCredenciamentoAnalisePendente;
 	private Long totalCredenciamentoAprovacaoPendente;
+
+	private Integer totalMovimentacaoInternaPendente;
+	private Integer totalMovimentacaoInternaEmAndamento;
+	private Integer totalMovimentacaoInternaAguardandoFinalizar;
+
+	private Integer totalMovimentacaoExternaPendente;
+	private Integer totalMovimentacaoExternaEmAndamento;
+	private Integer totalMovimentacaoExternaAguardandoFinalizar;
 	
 	@Inject
 	private DashboardService service;
@@ -74,6 +86,12 @@ public class DashboardBean {
 	
 	@Inject
 	private FacesUtil facesUtil;
+
+	@Inject
+	private MovimentacaoInternaService movimentacaoInternaService;
+
+	@Inject
+	private MovimentacaoExternaService movimentacaoExternaService;
 
 	@Inject
 	private UsuarioService usuarioService;
@@ -164,6 +182,30 @@ public class DashboardBean {
 			case TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE:
 				this.totalCredenciamentoAprovacaoPendente = service.totalCredenciamentoAprovacaoPendente(SecurityUtil.getUnidadeSelecionada().getId());
 				break;
+
+			case TOTAL_MOVIMENTACAO_INTERNA_PENDENTE:
+				this.totalMovimentacaoInternaPendente = getMovimentacaoInternaPendente();
+				break;
+
+			case TOTAL_MOVIMENTACAO_INTERNA_EM_ANDAMENTO:
+				this.totalMovimentacaoInternaEmAndamento = getMovimentacaoInternaEmAndamento();
+				break;
+
+			case TOTAL_MOVIMENTACAO_INTERNA_AGUARDANDO_FINALIZAR:
+				this.totalMovimentacaoInternaAguardandoFinalizar = getMovimentacaoInternaAguardandoFinalizar();
+				break;
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_PENDENTE:
+				this.totalMovimentacaoExternaPendente = getMovimentacaoExternaPendente();
+				break;
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_EM_ANDAMENTO:
+				this.totalMovimentacaoExternaEmAndamento = getMovimentacaoExternaEmAndamento();
+				break;
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_AGUARDANDO_FINALIZAR:
+				this.totalMovimentacaoExternaAguardandoFinalizar = getMovimentacaoExternaAguardandoFinalizar();
+				break;
 				
 			default:
 				break;	
@@ -176,11 +218,22 @@ public class DashboardBean {
 
 		return calendar.getTime();
 	}
-	
+
 	private void configurarDashboard() {
-		org.primefaces.component.dashboard.Dashboard das = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:dash");
+		org.primefaces.component.dashboard.Dashboard dashRecuperando = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("formDashRecuperando:dashRecuperando");
+		configurarDashboard(dashRecuperando);
+
+		org.primefaces.component.dashboard.Dashboard dashMovimentacao = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("formDashMovimentacao:dashMovimentacao");
+		configurarDashboard(dashMovimentacao);
+
+		org.primefaces.component.dashboard.Dashboard dashVisitante = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("formDashVisitante:dashVisitante");
+		configurarDashboard(dashVisitante);
+	}
+
+	private void configurarDashboard(UIComponent das) {
+
 		List<Dashboard> lista = new ArrayList<Dashboard>();
-		
+
 		if (das != null) {
 			for (UIComponent componente : das.getChildren()) {
 				if (componente instanceof Panel) {
@@ -188,11 +241,11 @@ public class DashboardBean {
 					lista.add(painel);
 				}
 			}
-			
+
 			int aux = 0;
 			double result = (double)lista.size() / NUM_COLUNAS_DASHBOARD;
 			double rowsceil = Math.ceil(result);
-			
+
 			for(int j=0; j<rowsceil; j++) {
 				loopColuna:
 				for (DashboardColumn coluna : dashModel.getColumns()) {
@@ -202,10 +255,10 @@ public class DashboardBean {
 							aux = i;
 							continue;
 						}
-						
+
 						atribuirValores(lista.get(i));
 						coluna.addWidget(lista.get(i).getDescricao());
-						
+
 						i++;
 						aux = i;
 						continue loopColuna;
@@ -336,9 +389,102 @@ public class DashboardBean {
 	}
 
 	public int getSolicitacaoResetSenha(){
-		return this.usuarioService.conutSolicitacaoSenha();
+		if(!securityUtil.possuiPermissao("ListarUsuarioResetSenha")){
+			return 0;
+		}
+
+		FiltroUsuario filtroUsuario = new FiltroUsuario();
+
+		filtroUsuario.setResetSenha(true);
+		filtroUsuario.setUnidadePrisional(securityUtil.getUnidadeSelecionada());
+
+		return this.usuarioService.conutSolicitacaoSenha(filtroUsuario);
 	}
-	
+
+	public int getMovimentacaoInternaPendente(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.PENDENTE);
+
+		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
+
+	}
+
+	public int getMovimentacaoInternaEmAndamento(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
+			return 0;
+		}
+		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.EM_ANDAMENTO);
+
+		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
+	}
+
+	public int getMovimentacaoInternaAguardandoFinalizar(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
+
+		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
+	}
+
+	public int getMovimentacaoExternaPendente(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoExterna")){
+			return 0;
+		}
+		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+
+		filtro.setStatus(StatusMovimentacao.PENDENTE);
+
+		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
+	}
+
+	public int getMovimentacaoExternaEmAndamento(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoExterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.EM_ANDAMENTO);
+
+		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
+	}
+
+	public int getMovimentacaoExternaAguardandoFinalizar(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoExterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
+
+		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
+	}
+
 	public DashboardModel getDashModel() {
 		return dashModel;
 	}
@@ -402,6 +548,28 @@ public class DashboardBean {
 	public Long getTotalCredenciamentoAprovacaoPendente() {
 		return totalCredenciamentoAprovacaoPendente;
 	}
-	
-	
+
+    public Integer getTotalMovimentacaoInternaPendente() {
+        return totalMovimentacaoInternaPendente;
+    }
+
+	public Integer getTotalMovimentacaoInternaEmAndamento() {
+		return totalMovimentacaoInternaEmAndamento;
+	}
+
+	public Integer getTotalMovimentacaoInternaAguardandoFinalizar() {
+		return totalMovimentacaoInternaAguardandoFinalizar;
+	}
+
+	public Integer getTotalMovimentacaoExternaPendente() {
+		return totalMovimentacaoExternaPendente;
+	}
+
+	public Integer getTotalMovimentacaoExternaEmAndamento() {
+		return totalMovimentacaoExternaEmAndamento;
+	}
+
+	public Integer getTotalMovimentacaoExternaAguardandoFinalizar() {
+		return totalMovimentacaoExternaAguardandoFinalizar;
+	}
 }

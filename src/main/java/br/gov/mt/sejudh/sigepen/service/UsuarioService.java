@@ -12,6 +12,7 @@ import br.gov.mt.sejudh.sigepen.dao.UsuarioDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUsuario;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Acesso;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.dto.UsuarioDTO;
 import br.gov.mt.sejudh.sigepen.security.HashedPassSaltGenerator;
@@ -26,6 +27,9 @@ public class UsuarioService {
 	
 	@Inject
 	private AuditoriaDAO auditDAO;
+
+	@Inject
+	private AcessoService acessoService;
 	
 	private Usuario configurarUsuario(Usuario usuario, boolean senhaMudou) {
 		if (usuario.getId() <= 0) {
@@ -124,7 +128,17 @@ public class UsuarioService {
 	}
 
 	public List<UsuarioDTO> buscarUsuariosPorFiltro(FiltroUsuario filtro) {
-		return dao.buscarUsuariosPorFiltro(filtro);
+		List<UsuarioDTO> usuarioDTOS = dao.buscarUsuariosPorFiltro(filtro);
+
+		for (UsuarioDTO dto : usuarioDTOS) {
+			if(filtro.getUnidadePrisional() != null ){
+				dto.setAcessos(acessoService.buscarAcessosPorUsuarioIdAndUnidadeId(dto.getId(),filtro.getUnidadePrisional().getId()));
+			}else{
+				dto.setAcessos(acessoService.buscarAcessosPorUsuarioId(dto.getId()));
+			}
+		}
+
+		return usuarioDTOS;
 	}
 	
 	public Usuario buscarUsuariosPorCpfAndNascimento(String cpf, Date nascimento) {
@@ -142,6 +156,10 @@ public class UsuarioService {
 
 	public Usuario buscarUsuarioPorLogin(String loginUsuarioAutorizador) {
 		return dao.buscarUsuarioPorLogin(loginUsuarioAutorizador);
+	}
+
+	public int conutSolicitacaoSenha(FiltroUsuario filtroUsuario){
+		return dao.buscarQuantidadeFiltrada(filtroUsuario);
 	}
 
 	public int conutSolicitacaoSenha(){

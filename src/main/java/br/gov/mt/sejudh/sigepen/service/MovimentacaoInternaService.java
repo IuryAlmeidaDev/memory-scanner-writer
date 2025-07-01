@@ -192,4 +192,8 @@ public class MovimentacaoInternaService {
 			throw new ValidacaoException("Recuperando não se encontra mais na mesma estrutura de origem, CANCELE o pedido de trânsito!");
 		}
 	}
+
+    public int countMovimentacaoInterna(FiltroMovimentacaoInterna filtro) {
+		return dao.quantidadeFiltrados(filtro);
+    }
 }

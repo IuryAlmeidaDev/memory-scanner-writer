@@ -4,11 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -166,7 +162,8 @@ public class EstruturaDAO {
 						" ic.FEM_MG," +
 						" td.DESCRICAO AS cardapio," +
 						" p.SEXO," +
-						" a.UNIDADE_MEDIDA ")
+						" a.UNIDADE_MEDIDA," +
+						" ic.ID AS item_cardapio_id ")
 				.append("FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".PASSAGEM pas ")
 				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".RECUPERANDO r ON r.ID = pas.RECUPERANDO_ID ")
 				.append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".PESSOA p ON p.ID = r.PESSOA_ID ")
@@ -189,7 +186,7 @@ public class EstruturaDAO {
 				.append("AND TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') >= l.DATA_ENTRADA ")
 				.append("AND (TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS') <= l.DATA_SAIDA OR l.DATA_SAIDA IS NULL) ")
 				.append("AND pas.RECUPERANDO_ID NOT IN (SELECT dr1.recuperando_id FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".DIETA_RECUPERANDO dr1 WHERE dr1.STATUS = 1 AND (dr1.FIM IS NULL OR dr1.FIM > SYSDATE)) ")
-				.append("GROUP BY a.DESCRICAO, ic.MASC_MG, ic.FEM_MG, td.DESCRICAO, tr.DESCRICAO, p.SEXO, a.UNIDADE_MEDIDA ");
+				.append("GROUP BY a.DESCRICAO, ic.MASC_MG, ic.FEM_MG, td.DESCRICAO, tr.DESCRICAO, p.SEXO, a.UNIDADE_MEDIDA, ic.ID ");
 
 		final Query query = entityManager.createNativeQuery(sql.toString());
 		query.setParameter("id", id);

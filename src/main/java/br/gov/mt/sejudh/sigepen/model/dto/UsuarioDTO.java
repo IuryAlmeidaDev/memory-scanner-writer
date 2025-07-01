@@ -1,8 +1,12 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.model.Acesso;
+import br.gov.mt.sejudh.sigepen.model.Perfil;
 
 public class UsuarioDTO {
 
@@ -13,6 +17,8 @@ public class UsuarioDTO {
 	private Status status;
 	private String unidadePerfilSolicitadaResetSenha;
 	private Date dataSolicitacaoResetSenha;
+	private List<Acesso> acessos = new ArrayList<Acesso>();
+	private String perfisToString;
 
 	public long getId() {
 		return id;
@@ -58,6 +64,15 @@ public class UsuarioDTO {
 		return unidadePerfilSolicitadaResetSenha;
 	}
 
+	public List<Acesso> getAcessos() {
+		return acessos;
+	}
+
+	public void setAcessos(List<Acesso> acessos) {
+		setPerfisToStrig(acessos);
+		this.acessos = acessos;
+	}
+
 	public void setUnidadePerfilSolicitadaResetSenha(String unidadePerfilSolicitadaResetSenha) {
 		this.unidadePerfilSolicitadaResetSenha = unidadePerfilSolicitadaResetSenha;
 	}
@@ -73,5 +88,27 @@ public class UsuarioDTO {
 	@Override
 	public String toString() {
 		return "Usuario [id=" + id + ", login=" + login + "]";
+	}
+
+    public String getPerfisToString() {
+        return perfisToString;
+    }
+
+    public void setPerfisToString(String perfisToStrig) {
+        this.perfisToString = perfisToStrig;
+    }
+
+	public void setPerfisToStrig(List<Acesso> acessos) {
+
+		StringBuilder perfisToString = new StringBuilder();
+
+		for(Acesso acesso : acessos){
+			for(Perfil perfil : acesso.getPerfis()){
+				perfisToString.append(perfil.getNome());
+				perfisToString.append(" | ");
+			}
+		}
+
+		this.perfisToString = perfisToString.toString();
 	}
 }

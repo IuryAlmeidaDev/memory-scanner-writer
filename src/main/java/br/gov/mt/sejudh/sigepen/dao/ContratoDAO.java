@@ -24,7 +24,6 @@ import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.ContratoDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
@@ -56,20 +55,6 @@ public class ContratoDAO {
 		return contrato;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Contrato> buscarAtivosUnidade(long id) {
-		StringBuilder s = new StringBuilder("select c from Contrato c ");
-		s.append("join fetch c.unidade u ");
-		s.append("where u.id = :id");
-		// TODO: Buscar apenas ativos.
-		Query query = entityManager.createQuery(s.toString(), Contrato.class);
-		query.setParameter("id", id);
-
-		List<Contrato> contratos = query.getResultList();
-
-		return contratos;
-	}
-
 	public int quantidadeFiltrados(FiltroContrato filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(Contrato.class, entityManager);
 		criteria.setProjection(Projections.rowCount());
@@ -99,18 +84,13 @@ public class ContratoDAO {
 		return query.getResultList();
 	}
 
-	public Contrato buscarContratoPorUnidade(long idUnidade, Date data) {
-
+	public List<Contrato> buscarContratoVigenteEAtivoPorUnidade(long idUnidade, Date data) {
 		String jpql = "select c from Contrato c left join fetch c.fornecedor f left join fetch c.unidades u where u.id = :idUnidade and c.status = 1 and c.vigenciaContratoInicio <= :data and c.vigenciaContratoFim >= :data ";
 		Query query = entityManager.createQuery(jpql, Contrato.class);
 		query.setParameter("idUnidade", idUnidade);
 		query.setParameter("data", data);
 
-		Contrato contrato = (Contrato) query.getSingleResult();
-		Hibernate.initialize(contrato.getFornecedor());
-		Hibernate.initialize(contrato.getUnidades());
-
-		return contrato;
+		return query.getResultList();
 	}
 
 	public Contrato buscarContratoPorNumero(String numeroContrato) {
@@ -139,8 +119,7 @@ public class ContratoDAO {
 		Query query = entityManager.createQuery(s.toString(), Contrato.class);
 		query.setParameter("idFornecedor", idFornecedor);
 
-		List<Contrato> contratos = query.getResultList();
-		return contratos;
+        return (List<Contrato>) query.getResultList();
 	}
 
 	public void inativarContratosPorFornecedor(long idFornecedor) {
@@ -152,28 +131,19 @@ public class ContratoDAO {
 		});
 	}
 
-	public void ativarContratosPorFornecedor(long idFornecedor) {
-		List<Contrato> contratos = buscarContratoPoFornecedor(idFornecedor);
-		contratos.forEach(contrato -> {
-			contrato.setStatus(Status.ATIVO);
-			salvar(contrato);
-		});
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<Contrato> validarContratoUnidade(Contrato contrato) {
 		StringBuilder s = new StringBuilder("select c from Contrato c ");
 		s.append("join fetch c.unidades u ");
 		s.append("where (c.status = 1 AND c.vigenciaContratoFim >= SYSDATE) and c.id != :id and u.id in(");
 		for (UnidadePrisional unidade : contrato.getUnidades()) {
-			s.append(String.valueOf(unidade.getId()) + ",");
+			s.append(unidade.getId()).append(",");
 		}
 		s.append("0)");
 		Query query = entityManager.createQuery(s.toString(), Contrato.class);
 		query.setParameter("id", contrato.getId());
 
-		List<Contrato> contratos = query.getResultList();
-		return contratos;
+        return (List<Contrato>) query.getResultList();
 	}
 
 	public String horarioRefeiracaoPorUnidade(Long idUnidade, Long tipoRefeiracao) {
@@ -249,27 +219,6 @@ public class ContratoDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Contrato buscarContratoVigente(long idUnidade, String data) throws ParseException {
-
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
-		String jpql = "select c from Contrato c left join fetch c.fornecedor f left join fetch c.unidades u where c.status = 1 and u.id = :idUnidade and c.vigenciaContratoInicio <= :data and c.vigenciaContratoFim >= :data";
-		Query query = entityManager.createQuery(jpql, Contrato.class);
-		query.setParameter("idUnidade", idUnidade);
-		query.setParameter("data", dateFormat.parse(data));
-		Contrato contrato = new Contrato();
-		try {
-			contrato = (Contrato) query.getSingleResult();
-			Hibernate.initialize(contrato.getFornecedor());
-			Hibernate.initialize(contrato.getUnidades());
-		} catch (NoResultException e) {
-			return null;
-		}
-
-		return contrato;
-	}
-
-	@SuppressWarnings("unchecked")
 	public List<Contrato> buscarContratoVigente(long idUnidade, String dataInicio, String dataFim)
 			throws ParseException {
 
@@ -280,7 +229,7 @@ public class ContratoDAO {
 		query.setParameter("idUnidade", idUnidade);
 		query.setParameter("dataInicio", dateFormat.parse(dataInicio));
 		query.setParameter("dataFim", dateFormat.parse(dataFim));
-		List<Contrato> contratos = new ArrayList<Contrato>();
+		List<Contrato> contratos = new ArrayList<>();
 		try {
 			contratos = (List<Contrato>) query.getResultList();
 		} catch (NoResultException e) {

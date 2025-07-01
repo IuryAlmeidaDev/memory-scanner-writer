@@ -223,6 +223,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	@Inject
 	private HistoricoRecuperandoService historicoService;
 
+	@Inject
+	private GerenciarAssinaturaService gerenciarAssinaturaService;
+
 	private List<Etnia> etnias;
 
 	private Foto fotoSubstituida;
@@ -1702,7 +1705,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			r.setQuantFilhos(i);
 			recs.add(r);
 
-			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(recs, Relatorio.RegistroRecuperando));
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(recs, Relatorio.RegistroRecuperando,this.gerenciarAssinaturaService));
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, recuperando, log);
 		} catch (Exception e) {

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RegistroRecuperando" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.6934217901613435"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="442"/>
+	<property name="ireport.y" value="298"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -60,6 +60,7 @@
 	<field name="orientacaoSexual.descricao" class="java.lang.String"/>
 	<field name="identidadeDeGenero.descricao" class="java.lang.String"/>
 	<field name="historicos" class="java.util.Collection"/>
+	<field name="periculosidadeAdaptativa" class="java.lang.Number"/>
 	<pageHeader>
 		<band height="106" splitType="Stretch">
 			<subreport isUsingCache="false">
@@ -164,6 +165,18 @@
 				<reportElement x="84" y="25" width="466" height="20" uuid="54f2899e-29d3-4517-b62d-41df1cbfbe20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{unidadeAtual}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="113" y="65" width="10" height="20" uuid="7bbc2423-7dae-4ffb-9b6f-bcb7383c12ad"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ -]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="125" y="65" width="161" height="20" uuid="66a61b59-638a-4e77-a53b-e3cff3be16e6"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{periculosidadeAdaptativa}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="20" splitType="Stretch">

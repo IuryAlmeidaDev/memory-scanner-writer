@@ -13,6 +13,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.service.*;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 
@@ -29,10 +30,6 @@ import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.MapaConsolidadoDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
-import br.gov.mt.sejudh.sigepen.service.ApostilamentoService;
-import br.gov.mt.sejudh.sigepen.service.ContratoService;
-import br.gov.mt.sejudh.sigepen.service.MapaConsolidadoService;
-import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 
@@ -77,6 +74,9 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 	
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
+
+	@Inject
+	private GerenciarAssinaturaService gerenciarAssinaturaService;
 
 	public List<UnidadePrisional> getUnidadesPrisionais() {
 		return unidadesPrisionais;
@@ -219,7 +219,7 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 			
 			try {
 
-				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(mapaConsolidados,Relatorio.ListaConsolidadoMensal, parameters));
+				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(mapaConsolidados,Relatorio.ListaConsolidadoMensal, parameters, this.gerenciarAssinaturaService));
 				RequestContext.getCurrentInstance().execute("download()");
 				LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Consolidado do Mês", log);
 			} catch (Exception e) {
