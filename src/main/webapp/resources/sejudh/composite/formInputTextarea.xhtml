@@ -6,7 +6,9 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:cc="http://java.sun.com/jsf/composite"
 	xmlns:p="http://primefaces.org/ui"
-    xmlns:c="http://java.sun.com/jsp/jstl/core">
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+>
 <cc:interface>
 	<cc:attribute name="labelValue" required="true" />
 	<cc:attribute name="minlength" default="1" />
@@ -23,6 +25,7 @@
 	<cc:attribute name="style" required="false" />
 	<cc:attribute name="display" required="false" />
 	<cc:attribute name="styleFormLabelColumn" required="false"/>
+	<cc:clientBehavior name="blur" event="blur" targets="input" />
 </cc:interface>
 
 <cc:implementation>
@@ -51,7 +54,7 @@
 						<f:attribute name="requiredMessage" value="#{cc.attrs.requiredMessage}" />
 					</c:when>
 				</c:choose>
-			
+				<composite:insertChildren />
 			</p:inputTextarea>
 				<br/><h:outputText id="display" />
 		</div>

@@ -1,0 +1,278 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>Registro Plantão</h3>
+		
+		
+		<!-- Iniciar Plantao -->
+	
+		
+		<h:form id="meuFormulario">
+			<p:panel header="Início do PLantão" style="margin-top: 20px;">
+			
+			<h:panelGroup style="margin-bottom: 15px;">
+				<sgp:formInputText 
+					labelValue="Plantão Anterior"
+					id="plantaoAnterior"
+					value="#{registroPlantaoBean.registroPlantao.plantaoAnterior}"
+					disabled="#{registroPlantaoBean.isVisualizacao}"
+					display="text" 
+					style="width:200px"
+					styleInput="width:200px; margin-bottom:15px;" />
+			</h:panelGroup>	
+
+			<br /><br />
+				
+				<sgp:formSelectOneMenu
+					id="slPlantaoIniciado"
+					labelValue="Plantão Iniciado" 					
+					value="#{registroPlantaoBean.plantaoSelecionado}"
+					disabled="#{registroPlantaoBean.isVisualizacao}" 					
+					style="width:200px"  
+                    styleInput="width:200px; margin-bottom:15px;">
+										
+					<f:selectItem 
+						itemLabel="Selecione" 
+						itemValue="" noSelectionOption="true"/>
+																					    				   
+					 <f:selectItems 
+        				value="#{registroPlantaoBean.tiposPlantao}" 
+        				disabled="#{registroPlantaoBean.isVisualizacao}"
+        				var="p" itemLabel="#{p.descricao}" 
+       					itemValue="#{p}" />
+				    	
+				    <p:ajax listener="#{registroPlantaoBean.atualizarPlantaoSelecionado}"
+				     update="tabViewPai" />
+
+				</sgp:formSelectOneMenu>
+								
+
+				<br />
+				<br />
+
+				<sgp:formSelectOneMenu
+					labelValue="Unidade Prisional" 
+					id="slUnidadePrisionall" 
+					value="#{registroPlantaoBean.registroPlantao.unidadePrisional}"
+					disabled="#{registroPlantaoBean.isVisualizacao}"
+					style="width:200px"  
+                    styleInput="width:200px; margin-bottom:15px;"
+                    converter="SimpleEntityConverter">					
+					
+					<f:selectItem 
+						itemLabel="Selecione" 
+						itemValue="" noSelectionOption="true"/>
+										    				   
+					<f:selectItems 
+						value="#{registroPlantaoBean.unidadesPrisionais}" 
+						var="u" itemLabel="#{u.nome}" 
+						itemValue="#{u}"/>
+
+				</sgp:formSelectOneMenu>
+				
+
+			    
+				<sgp:formCalendar 
+					id="dataPlantao" 
+					labelValue="Data do Plantão"
+					value="#{registroPlantaoBean.registroPlantao.dataPlantao}"
+					disabled="#{registroPlantaoBean.isVisualizacao ? 'false' : 'true'}"					
+					pattern="dd-MM-yyyy HH:mm:ss.SSS" 																	
+					style="width:200px" 
+					styleInput="width:200px; margin-bottom:15px;">
+					<p:ajax event="dateSelect" />
+				</sgp:formCalendar>
+				
+				
+				
+				<sgp:formSelectOneMenu
+				    labelValue="Status Plantão" 
+				    id="slTipoPlantao"
+				    value="#{registroPlantaoBean.registroPlantao.statusPlantao}"
+				    disabled="#{registroPlantaoBean.isVisualizacao ? 'false' : 'true'}"	
+				    style="width:200px"  
+				    styleInput="width:200px; margin-bottom:15px;">
+				    
+				    <f:selectItem itemLabel="Não Iniciado" itemValue="#{null}" noSelectionOption="true" />
+				    
+				    <f:selectItems 
+				        value="#{registroPlantaoBean.statusPlantoes}" 
+				        var="status" 
+				        itemValue="#{status}" 
+				        itemLabel="#{status.descricao}" />
+				</sgp:formSelectOneMenu>
+
+				
+				
+
+				<br />
+				<br />
+
+
+				<!-- Botões update="meuFormulario"  -->
+				<h:panelGroup style="text-align: center; margin-top: 20px;">
+					<p:commandButton action="#{registroPlantaoBean.salvar}" 
+						value="Registrar Início" icon="ui-icon-disk"						
+						style="margin-right: 15px;" 						 						
+						update="@form" 
+    					process="@form"						
+						/>
+						
+				</h:panelGroup>
+
+			</p:panel>
+		</h:form>   
+		
+		<!-- Fim Iniciar Plantao -->
+
+
+		<h:form id="registrosForm" prependId="false">
+			<p:tabView id="tabViewPai" effect="fade" effectDuration="fast"
+				widgetVar="abaPrincipal">
+
+				<!-- Aba Principal - Item Servidores -->
+				<ui:include src="Servidor.xhtml" />
+				
+				
+				<!-- Aba Principal - Item Alimentos -->				
+				<ui:include src="Alimentacao.xhtml" />
+				
+
+				<!-- Aba Principal - Item Visitas -->
+				<ui:include src="Visita.xhtml" />
+
+
+				<!-- Aba Principal - Item Movimentações -->
+				<ui:include src="Movimentacao.xhtml" />
+
+
+				<!-- Aba Principal - Item Ocorrencias -->
+				<ui:include src="Ocorrencia.xhtml" />
+
+			</p:tabView>
+			
+			
+			<!-- Dialog  -->
+			<p:dialog header="Plantão" widgetVar="dialogAlteracao"
+				modal="true" resizable="false" id="dialogAlteracao">
+				<h:panelGrid columns="2">
+				
+					<h:outputLabel for="nomeServidor" value="Nome do Servidor:" />					
+					<h:outputText id="nomeServidor" value="#{registroPlantaoBean.servidorSelecionado.nomeServidor}" />
+																					
+
+					<h:outputLabel for="matricula" value="Matrícula:" />
+					<h:outputText id="matricula" value="#{registroPlantaoBean.servidorSelecionado.matricula}" readonly="true" />
+
+
+					<h:outputLabel for="ocorrencia" value="Ocorrência:" />					
+					<h:selectOneMenu id="ocorrencia" value="#{registroPlantaoBean.servidorSelecionado.ocorrenciaSelecionada}">
+									
+						<f:selectItem itemLabel="Troca de posto" itemValue="TROCA_DE_POSTO" />
+						<f:selectItem itemLabel="Falta Não Justificada" itemValue="FALTA_NAO_JUSTIFICADA" />
+						<f:selectItem itemLabel="Férias" itemValue="FERIAS" />
+						<f:selectItem itemLabel="Licença Médica" itemValue="LICENCA_MEDICA" />
+						<f:selectItem itemLabel="Licença Premium" itemValue="LICENCA_PREMIUM" />
+						<f:selectItem itemLabel="Entrou Atrasado" itemValue="ENTROU_ATRASADO" />						
+					</h:selectOneMenu>
+
+					<h:outputLabel for="justificativa" value="Justificativa:" />										
+					<h:inputTextarea id="justificativa"  value="#{registroPlantaoBean.servidorSelecionado.justificativa}"/>
+										
+				</h:panelGrid>				
+				
+					
+				<p:commandButton value="Salvar" 
+					action="#{registroPlantaoBean.atualizarRegistroPlantaoServidor()}" 
+					update="@form" 
+					 process="@form" />
+				
+			</p:dialog>
+
+		</h:form>
+		
+		
+		
+		<!-- Encerrar Plantao -->		
+		<h:form id="encerrarPLantao">
+			<p:panel header="Encerrar PLantão" style="margin-top: 20px;">
+
+				<!-- Próximo Plantão -->										    				        				        
+				    <sgp:formSelectOneMenu
+						labelValue="Próximo Plantao" 
+						id="slproximoPlantao"
+						value="#{registroPlantaoBean.plantaoSelecionado}" 					
+						style="width:200px"  
+	                    styleInput="width:200px; margin-bottom:15px;">
+											
+						<f:selectItem 
+							itemLabel="Selecione" 
+							itemValue="" noSelectionOption="true"/>
+																						    				   
+						 <f:selectItems 
+	        				value="#{registroPlantaoBean.tiposPlantao}" 
+	        				var="p" itemLabel="#{p.descricao}" 
+	       					itemValue="#{p}" />					    						   
+					</sgp:formSelectOneMenu>
+		
+				<!-- Data do Registro -->				
+					<sgp:formCalendar id="dataEncerramento" labelValue="Data Encerramento"
+						value="#{registroPlantaoBean.registroPlantao.dataPlantaoEncerramento}"
+						pattern="dd/MM/yyyy" 
+						style="width:200px" 
+						styleInput="width:200px; margin-bottom:15px;">
+						<p:ajax event="dateSelect" />
+					</sgp:formCalendar>
+				
+				<!-- Ocorrencia -->		
+					<sgp:formInputTextarea 
+                      id="ocorrencia"
+                      labelValue="Ocorrencia"
+                      value="#{registroPlantaoBean.registroPlantao.ocorrencia}"                       
+                      rows="5"
+                      columns="100"
+                      maxlength="250"
+                      autoResize="true"                      
+                      display="text"/>
+                      
+                    <br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					
+					
+					    
+								
+
+				<!-- Botões -->
+				<h:panelGroup style="text-align: center; margin-top: 20px;">
+					<p:commandButton value="Registrar Encerramento" 
+						icon="ui-icon-disk"
+						action="#{registroPlantaoBean.salvar}" 
+						update="meuFormulario"
+						style="margin-right: 15px;" />
+				</h:panelGroup>
+				
+				
+				<br />
+				<br />
+
+
+				
+			</p:panel>
+			
+		</h:form>					
+
+	</ui:define>
+</ui:composition>

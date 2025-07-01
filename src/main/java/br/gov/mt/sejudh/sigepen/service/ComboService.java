@@ -59,8 +59,10 @@ import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
 import br.gov.mt.sejudh.sigepen.model.OrientacaoSexual;
 import br.gov.mt.sejudh.sigepen.model.Pais;
 import br.gov.mt.sejudh.sigepen.model.Parentesco;
+import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.Raca;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.RegistroPlantao;
 import br.gov.mt.sejudh.sigepen.model.Religiao;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
@@ -70,6 +72,7 @@ import br.gov.mt.sejudh.sigepen.model.TipoServidor;
 import br.gov.mt.sejudh.sigepen.model.TipoUnidade;
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 
 
 @Stateless
@@ -189,6 +192,24 @@ public class ComboService {
 		return dao.listarEstado();
 	}
 	
+	//Lista Unidade Prisional
+	public List<UnidadePrisional> listarUnidades(){
+		return dao.listarUnidadesPrisionais();
+	}
+	
+	//Lista Registro PLantao
+	public List<RegistroPlantao> listarRegistroPLantao(){
+		return dao.listarRegistrosPlantao();
+	}
+	
+	public List<Plantao> listarPlantoesCadastrados(){
+		return dao.listarPlantoesCadastrados();
+	}
+
+	
+	
+	
+	
 	public List<Cidade> listarCidade(Estado estado){
 		return dao.listarCidade(estado);
 	}
@@ -296,11 +317,7 @@ public class ComboService {
 
 	public Esfera[] getEsfera() {
 		return Esfera.values();
-	}
-
-	public TipoPlantao[] getPlantoes() {
-		return TipoPlantao.values();
-	}
+	}	
 
 	public TipoAtestado[] getAtestados() {
 		return TipoAtestado.values();
@@ -379,4 +396,18 @@ public class ComboService {
 	public UnidadeMedida[] getUnidadesMedida() {
 		return UnidadeMedida.values();
 	}
+	
+	
+	public TipoPlantao[] getTipoPlantao() {
+		return TipoPlantao.values();
+	}	
+	
+		/*
+		public TipoPlantao[] getPlantoes() {
+			return TipoPlantao.values();
+		}
+		}*/
+
+
+	public Relatorio[] getRelatorio() {return Relatorio.values();}
 }

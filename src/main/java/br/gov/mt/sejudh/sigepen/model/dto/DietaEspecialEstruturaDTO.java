@@ -11,11 +11,13 @@ public class DietaEspecialEstruturaDTO {
 	private final String tipoDieta;
 	private final Integer qtdRecuperando;
 	private List<String> nomesRecuperandos;
+	private final Long estruturaId;
 
 	public DietaEspecialEstruturaDTO(final Object[] row) {
+		this.estruturaId = ((BigDecimal) row[1]).longValue();
 		this.nomeEstrutura = (String) row[2];
 		this.tipoDieta = (String) row[3];
-        this.qtdRecuperando = ((BigDecimal) row[4]).intValue();
+		this.qtdRecuperando = ((BigDecimal) row[4]).intValue();
     }
 
 	public String getTipoDieta() {
@@ -38,6 +40,10 @@ public class DietaEspecialEstruturaDTO {
 		this.nomesRecuperandos = nomesRecuperandos;
 	}
 
+	public Long getEstruturaId() {
+		return estruturaId;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
@@ -45,6 +51,7 @@ public class DietaEspecialEstruturaDTO {
 				.append("tipoDieta", tipoDieta)
 				.append("qtdRecuperando", qtdRecuperando)
 				.append("nomes", nomesRecuperandos)
+				.append("estruturaId", estruturaId)
 				.toString();
 	}
 

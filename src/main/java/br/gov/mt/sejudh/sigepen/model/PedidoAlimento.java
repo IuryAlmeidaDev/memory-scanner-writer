@@ -8,7 +8,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Audited
 @Entity
@@ -47,6 +49,11 @@ public class PedidoAlimento extends BaseModel<Long> {
     @Column(name = "ID_TIPO_REFEICAO", nullable = false)
     private Long idTipoRefeicao;
 
+    @OneToMany(mappedBy = "pedidoAlimento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemPedidoAlimento> itensPedido = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pedidoAlimento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DietaEspecialPedidoAlimento> dietasEspeciais = new ArrayList<>();
     @Lob
     @Column(name = "JSON_CONTEUDO_PEDIDO", nullable = false)
     private String jsonConteudo;
@@ -55,21 +62,20 @@ public class PedidoAlimento extends BaseModel<Long> {
     @Column(name = "STAT_PEDIDO", nullable = false)
     private Status status;
 
-    private PedidoAlimento(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato, Long idTipoRefeicao, String jsonConteudo) {
+    private PedidoAlimento(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato, Long idTipoRefeicao) {
         this.dataEmissao = new Date();
         this.dataPedido = dataPedido;
         this.idUsuario = idUsuario;
         this.idUnidadePrisional = idUnidadePrisional;
         this.idContrato = idContrato;
         this.idTipoRefeicao = idTipoRefeicao;
-        this.jsonConteudo = jsonConteudo;
         this.status = Status.ATIVO;
     }
 
     public PedidoAlimento() {}
 
-    public static PedidoAlimento create(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato, Long idTipoRefeicao, String jsonConteudo) {
-        return new PedidoAlimento(dataPedido, idUsuario, idUnidadePrisional, idContrato, idTipoRefeicao, jsonConteudo);
+    public static PedidoAlimento create(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato, Long idTipoRefeicao) {
+        return new PedidoAlimento(dataPedido, idUsuario, idUnidadePrisional, idContrato, idTipoRefeicao);
     }
 
     @Override
@@ -113,10 +119,26 @@ public class PedidoAlimento extends BaseModel<Long> {
         return idTipoRefeicao;
     }
 
+
+    public List<ItemPedidoAlimento> getItensPedido() {
+        return itensPedido;
+    }
+
+    public void setItensPedido(List<ItemPedidoAlimento> itensPedido) {
+        this.itensPedido = itensPedido;
+    }
+
+    public List<DietaEspecialPedidoAlimento> getDietasEspeciais() {
+        return dietasEspeciais;
+    }
+
+    public void setDietasEspeciais(List<DietaEspecialPedidoAlimento> dietasEspeciais) {
+        this.dietasEspeciais = dietasEspeciais;
+    }
+
     public String getJsonConteudo() {
         return jsonConteudo;
     }
-
     public Status getStatus() {
         return status;
     }
@@ -153,6 +175,8 @@ public class PedidoAlimento extends BaseModel<Long> {
                 .append("idUnidadePrisional", idUnidadePrisional)
                 .append("idContrato", idContrato)
                 .append("idTipoRefeicao", idTipoRefeicao)
+                .append("itensPedido", itensPedido)
+                .append("dietasEspeciais", dietasEspeciais)
                 .append("jsonConteudo", jsonConteudo)
                 .append("status", status)
                 .toString();

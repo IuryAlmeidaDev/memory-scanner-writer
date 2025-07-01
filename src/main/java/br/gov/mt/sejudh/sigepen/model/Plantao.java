@@ -1,25 +1,87 @@
 package br.gov.mt.sejudh.sigepen.model;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.envers.Audited;
+
+import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
+import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
-public class Plantao {
+@Audited
+@Entity
+@Table(name = "PLANTAO", schema = Sigepen.SEJUDH_SCHEMA)
+public class Plantao extends BaseModel<Long> {
 
-	private TipoPlantao plantao;
+	private static final long serialVersionUID = -2841675579819366317L;
+
+	@SequenceGenerator(name = "SEQ_PLANTAO_GENERATOR", sequenceName = "SEQ_PLANTAO", allocationSize = 1, initialValue = 1, schema = Sigepen.SEJUDH_SCHEMA)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PLANTAO_GENERATOR")
+	@Id
+	@Column(name = "ID")
+	private Long id;	
+
+	@Enumerated
+	@Column(name = "PLANTAO")
+	private TipoPlantao tipoPlantao;
+
+	@Column(name = "DATA_PLANTAO")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataPlantao;
-	
-	public Plantao(TipoPlantao plantao, Date dataPlantao) {
-		this.plantao = plantao;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "UNIDADE_PRISIONAL_ID")
+	private UnidadePrisional unidadePrisional;
+
+	@Enumerated
+	@Column(name = "STATUS")
+	private Status status;
+
+	public Plantao() {
+
+	}
+
+	public Plantao(Status status) {
+		this.status = status;
+	}
+
+	public Plantao(TipoPlantao tipoPlantao, Date dataPlantao) {
+		this.tipoPlantao = tipoPlantao;
 		this.dataPlantao = dataPlantao;
 	}
 
-	public TipoPlantao getPlantao() {
-		return plantao;
+	public Long getId() {
+		return id;
 	}
 
-	public void setPlantao(TipoPlantao plantao) {
-		this.plantao = plantao;
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public TipoPlantao getTipoPlantao() {
+		return tipoPlantao;
+	}
+
+	public void setTipoPlantao(TipoPlantao tipoPlantao) {
+		this.tipoPlantao = tipoPlantao;
 	}
 
 	public Date getDataPlantao() {
@@ -29,4 +91,38 @@ public class Plantao {
 	public void setDataPlantao(Date dataPlantao) {
 		this.dataPlantao = dataPlantao;
 	}
+
+	public UnidadePrisional getUnidadePrisional() {
+		return unidadePrisional;
+	}
+
+	public void setUnidadePrisional(UnidadePrisional unidadePrisional) {
+		this.unidadePrisional = unidadePrisional;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Plantao other = (Plantao) obj;
+		return id == other.id;
+	}
+
 }

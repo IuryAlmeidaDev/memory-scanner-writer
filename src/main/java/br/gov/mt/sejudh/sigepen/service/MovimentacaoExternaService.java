@@ -11,6 +11,7 @@ import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.MovimentacaoExternaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroMovimentacaoExterna;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroMovimentacaoInterna;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
 import br.gov.mt.sejudh.sigepen.model.Escolta;
@@ -131,4 +132,8 @@ public class MovimentacaoExternaService {
 		movimentacao.setDataConclusao(new Date());		
 		dao.salvar(movimentacao);
 	}
+
+    public int countMovimentacaoExterna(FiltroMovimentacaoExterna filtro) {
+		return quantidadeFiltrados(filtro);
+    }
 }

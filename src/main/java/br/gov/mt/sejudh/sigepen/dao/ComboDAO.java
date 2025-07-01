@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -13,6 +14,7 @@ import javax.persistence.TypedQuery;
 import org.hibernate.annotations.QueryHints;
 
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatus;
+import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.model.Certidao;
 import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
@@ -24,8 +26,10 @@ import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
 import br.gov.mt.sejudh.sigepen.model.OrientacaoSexual;
 import br.gov.mt.sejudh.sigepen.model.Pais;
 import br.gov.mt.sejudh.sigepen.model.Parentesco;
+import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.Raca;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.RegistroPlantao;
 import br.gov.mt.sejudh.sigepen.model.Religiao;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
@@ -217,6 +221,38 @@ public class ComboDAO {
 			return null;
 		}
 	}
+	
+	public List<RegistroPlantao> listarRegistrosPlantao() {
+	    try {
+	        String jpql = "SELECT rp FROM RegistroPlantao rp "
+	                    + "JOIN FETCH rp.plantao p " // se quiser garantir o fetch de dados relacionados
+	                    + "ORDER BY rp.dataPlantao DESC";
+	                    
+	        TypedQuery<RegistroPlantao> query = entityManager.createQuery(jpql, RegistroPlantao.class);
+	        query.setHint(QueryHints.READ_ONLY, true);
+	        return query.getResultList();
+	    } catch (NoResultException e) {
+	        return null;
+	    }
+	}
+	
+	public List<Plantao> listarPlantoesCadastrados() {
+	    try {
+	        String jpql = "SELECT p FROM Plantao p "
+	                    + "WHERE p.status = :status " // opcional: apenas os ativos
+	                    + "ORDER BY p.dataPlantao DESC";
+
+	        TypedQuery<Plantao> query = entityManager.createQuery(jpql, Plantao.class);
+	        query.setParameter("status", Status.ATIVO); // ajuste conforme sua enum
+	        query.setHint(QueryHints.READ_ONLY, true);
+	        return query.getResultList();
+	        
+	    } catch (NoResultException e) {
+	        return Collections.emptyList();
+	    }
+	}
+
+
 
     public List<TipoVisita> listarTipoVisitas() {
         TypedQuery<TipoVisita> query = entityManager

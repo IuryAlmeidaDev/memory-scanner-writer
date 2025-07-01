@@ -474,4 +474,8 @@ public class EstruturaService {
 	public List<DietaEspecialEstruturaDTO> buscarDietasEspeciais(long idEstrutura, String data) {
 		return dao.buscarDietasEspeciaisPorEstrutura(idEstrutura, data);
 	}
+
+	public String buscarNomeEstrutura(Long idEstrutura){
+		return dao.buscarNomeEstrutura(idEstrutura);
+	}
 }

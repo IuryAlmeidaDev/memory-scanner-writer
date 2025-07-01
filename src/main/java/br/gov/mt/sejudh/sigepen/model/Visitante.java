@@ -116,6 +116,9 @@ public class Visitante extends BaseModel<Long> {
     @OneToMany(orphanRemoval = true, mappedBy = "visitante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<EntradaSaida> entradas = new ArrayList<>();
 
+    @OneToMany(orphanRemoval = true, mappedBy = "visitante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>();
+
     @Column(name = "CODG_FASE_ATUAL")
     private Integer faseAtual;
 
@@ -494,4 +497,12 @@ public class Visitante extends BaseModel<Long> {
 	public void setAutorizacaoCadastroSemBiometria(AutorizacaoCadastroSemBiometria autorizacaoCadastroSemBiometria) {
 		this.autorizacaoCadastroSemBiometria = autorizacaoCadastroSemBiometria;
 	}
+
+    public List<Ocorrencia> getOcorrencias() {
+        return ocorrencias;
+    }
+
+    public void setOcorrencias(List<Ocorrencia> ocorrencias) {
+        this.ocorrencias = ocorrencias;
+    }
 }
