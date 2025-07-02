@@ -30,7 +30,7 @@ public class UsuarioService {
 
 	@Inject
 	private AcessoService acessoService;
-	
+
 	private Usuario configurarUsuario(Usuario usuario, boolean senhaMudou) {
 		if (usuario.getId() <= 0) {
 			usuario.setLogin(usuario.getServidor().getCpf());
