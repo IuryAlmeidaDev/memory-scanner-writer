@@ -53,6 +53,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoVisitaObrigatoriedade;
 import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
+import br.gov.mt.sejudh.sigepen.enumerator.VencimentoCredenciamento;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
 import br.gov.mt.sejudh.sigepen.model.Estado;
 import br.gov.mt.sejudh.sigepen.model.EstadoCivil;
@@ -209,6 +210,8 @@ public class ComboHelperBean {
 
 	private UnidadeMedida[] unidadesMedida;
 
+	private VencimentoCredenciamento[] vencimentoCredenciamentos;
+
 	private UnidadePrisional unidadePrisional;
 
 	private TipoPlantao[] tipoPlantoes;
@@ -287,11 +290,15 @@ public class ComboHelperBean {
 		populacaoFeminino = comboService.getPopulacaoFeminino();
 		tipoVisitaObrigatoriedade = comboService.getTipoVisitaObrigatoriedade();
 		unidadesMedida = comboService.getUnidadesMedida();
+<<<<<<< src/main/java/br/gov/mt/sejudh/sigepen/bean/ComboHelperBean.java
+		vencimentoCredenciamentos = comboService.getVencimentoCredenciamento();
+=======
 		relatorio = comboService.getRelatorio();
 		
 		unidadePrisional = new UnidadePrisional();		
 		tipoPlantoes = comboService.getTipoPlantao();
 		//plantoes     = comboService.getPlantoes();
+>>>>>>> src/main/java/br/gov/mt/sejudh/sigepen/bean/ComboHelperBean.java
 	}
 
 	public NaturezaFaltaDisciplinar[] getNaturezaFaltaDisciplinar(){
@@ -814,6 +821,15 @@ public class ComboHelperBean {
 		this.unidadesMedida = unidadesMedida;
 	}
 
+<<<<<<< src/main/java/br/gov/mt/sejudh/sigepen/bean/ComboHelperBean.java
+	public VencimentoCredenciamento[] getVencimentoCredenciamentos() {
+		return vencimentoCredenciamentos;
+	}
+
+	public void setVencimentoCredenciamentos(VencimentoCredenciamento[] vencimentoCredenciamentos) {
+		this.vencimentoCredenciamentos = vencimentoCredenciamentos;
+	}
+=======
     public Relatorio[] getRelatorio() {
         return relatorio;
     }
@@ -838,4 +854,5 @@ public class ComboHelperBean {
 		this.tipoPlantoes = tipoPlantoes;
 	}
 	
+>>>>>>> src/main/java/br/gov/mt/sejudh/sigepen/bean/ComboHelperBean.java
 }
