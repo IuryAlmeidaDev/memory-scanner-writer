@@ -133,8 +133,8 @@ public class ComboService {
 		return dao.listarTipoHistorico();
 	}
 
-	public List<TipoHistorico> listarTipoHistoricoParaAdicionar(){
-		return dao.listarTipoHistoricoParaAdicionar();
+	public List<TipoHistorico> listarTipoHistoricoPermitidoParaCadastrar(){
+		return dao.listarTipoHistoricoPermitidoParaCadastrar();
 	}
 
 	public List<TipoHistorico> listarTipoHistoricoParaVisualizar(){

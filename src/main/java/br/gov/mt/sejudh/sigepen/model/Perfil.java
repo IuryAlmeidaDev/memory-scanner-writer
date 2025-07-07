@@ -18,6 +18,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
@@ -57,6 +59,7 @@ public class Perfil implements Serializable{
 	
     @Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
     @OrderBy(value = "nome ASC")
+	@Fetch(FetchMode.SUBSELECT)
 	private List<Permissao> permissoes;
 	
 	@Transient

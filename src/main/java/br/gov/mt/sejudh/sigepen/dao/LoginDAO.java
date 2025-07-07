@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import org.apache.shiro.authc.UnknownAccountException;
 import org.hibernate.Hibernate;
@@ -30,5 +31,23 @@ public class LoginDAO {
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+
+	@Transactional
+	public Usuario buscarUsuarioPorLoginComPermissoes(String login) {
+		TypedQuery<Usuario> query = em.createQuery(
+				"SELECT u FROM Usuario u " +
+						"JOIN FETCH u.acessos a " +
+						"WHERE u.login = :login", Usuario.class
+		);
+		query.setParameter("login", login);
+		Usuario usuario = query.getSingleResult();
+
+		usuario.getAcessos().forEach(acesso -> {
+			acesso.getPerfis().size();
+			acesso.getPerfis().forEach(perfil -> perfil.getPermissoes().size());
+		});
+
+		return usuario;
 	}
 }

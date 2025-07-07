@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.persistence.QueryHint;
 import javax.persistence.TypedQuery;
 
 import org.apache.shiro.SecurityUtils;
@@ -157,11 +156,11 @@ public class ComboDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<TipoHistorico> listarTipoHistoricoParaAdicionar() {
+	public List<TipoHistorico> listarTipoHistoricoPermitidoParaCadastrar() {
 		String jpql = "select th from TipoHistorico th " +
 				"join th.funcionalidade f " +
 				"join f.permissoes p " +
-				"where p.nome like 'Adicionar%'";
+				"where p.nome like 'CadastrarHistoricoRecuperando%'";
 		Query query = entityManager.createQuery(jpql, TipoHistorico.class);
 		List<TipoHistorico> tipoHistorico = query.getResultList();
 
@@ -171,7 +170,7 @@ public class ComboDAO {
 			if (tipo.getFuncionalidade() != null && 
 				tipo.getFuncionalidade().getPermissoes() != null) {
 				for (Permissao permissao : tipo.getFuncionalidade().getPermissoes()) {
-					if (permissao.getNome().startsWith("Adicionar") && 
+					if (permissao.getNome().startsWith("CadastrarHistoricoRecuperando") &&
 						SecurityUtils.getSubject().isPermitted(permissao.getNome())) {
 						tipoHistoricoFiltrado.add(tipo);
 						break;

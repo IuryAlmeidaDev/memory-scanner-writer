@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.service;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import br.gov.mt.sejudh.sigepen.dao.LoginDAO;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
@@ -14,5 +15,10 @@ public class LoginService {
 
 	public Usuario buscarUsuario(String loginUsuario) {
 		return dao.buscarUsuario(loginUsuario);
+	}
+
+	@Transactional
+	public Usuario buscarUsuarioPorLoginComPermissoes(String login) {
+		return dao.buscarUsuarioPorLoginComPermissoes(login);
 	}
 }

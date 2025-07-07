@@ -57,7 +57,7 @@ public class HistoricoRecuperandoDAO {
 
 			if (h.getTipoHistorico() != null && h.getTipoHistorico().getFuncionalidade() != null) {
 				boolean temPermissao = h.getTipoHistorico().getFuncionalidade().getPermissoes().stream()
-						.filter(permissao -> permissao.getNome().startsWith("Visualizar"))
+						.filter(permissao -> permissao.getNome().startsWith("VisualizarHistoricoRecuperando"))
 						.anyMatch(permissao -> SecurityUtils.getSubject().isPermitted(permissao.getNome()));
 
 				if (temPermissao) {

@@ -200,7 +200,7 @@
 							<f:param name="id" value="#{rec.id}"/>
 						</p:button>
 						<p:commandButton title="Histórico Recuperando" oncomplete="PF('dialogHistoricoRecuperando').show()" icon="ui-icon-clock" action="#{historicoRecuperandoBean.cadastrarHistoricoRecuperando(rec)}"
-										 rendered="#{securityUtil.possuiPermissao('VisualizarHistoricoRecuperando') and (rec.unidadeId == securityUtil.getUnidadeSelecionada().id)}" update="formHistoricoRecuperando"/>
+										 rendered="#{securityUtil.possuiPermissaoNaUnidadeLogada('VisualizarHistoricoRecuperando') and (rec.unidadeId == securityUtil.getUnidadeSelecionada().id)}" update="formHistoricoRecuperando"/>
 						<p:commandButton action="#{recuperandoBean.excluir(rec)}" icon="ui-icon-trash" title="Excluir" update=":registrosForm :mensagens" rendered="#{securityUtil.possuiPermissao('ExcluirRecuperando') and rec.isRecuperandoParcial}">
 							<p:confirm header="Confirmação" message="Deseja excluir o recuperando?" icon="ui-icon-alert" />
 						</p:commandButton>
@@ -385,7 +385,7 @@
 							display="text"
 							validationRequired="true"
 							pattern="dd/MM/yyyy HH:mm"
-							disabled="#{!securityUtil.possuiPermissao('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.recuperandoView.isRecuperandoInativo or !historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
+							disabled="#{!securityUtil.possuiPermissaoNaUnidadeLogada('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.recuperandoView.isRecuperandoInativo or !historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
 
 					<sgp:formInputTextarea
 							id="observacao"
@@ -396,7 +396,7 @@
 							maxlength="250"
 							display="text"
 							size="#{historicoRecuperandoBean.historicoRecuperando.observacao.length()}"
-							disabled="#{!securityUtil.possuiPermissao('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.recuperandoView.isRecuperandoInativo or !historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
+							disabled="#{!securityUtil.possuiPermissaoNaUnidadeLogada('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.recuperandoView.isRecuperandoInativo or !historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
 
 					<sgp:formSelectOneMenu
 							id="tipoHistorico"
@@ -409,7 +409,7 @@
 							converter="SimpleEntityConverter"
 							temSelecione="true"
 							display="text"
-							disabled="#{!securityUtil.possuiPermissao('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.recuperandoView.isRecuperandoInativo or !historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
+							disabled="#{!securityUtil.possuiPermissaoNaUnidadeLogada('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.recuperandoView.isRecuperandoInativo or !historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
 					<br/>
 					<br/>
 					<p:commandButton value="Detalhamento"
@@ -417,7 +417,7 @@
 									 icon="ui-icon-plus"
 									 process="@this"
 									 actionListener="#{historicoRecuperandoBean.adicionarDetalhamento()}"
-									 disabled="#{!securityUtil.possuiPermissao('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.recuperandoView.isRecuperandoInativo}"  />
+									 disabled="#{!securityUtil.possuiPermissaoNaUnidadeLogada('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.recuperandoView.isRecuperandoInativo}"  />
 
 					<br/>
 					<br/>
@@ -427,7 +427,7 @@
 									 icon="ui-icon-plus"
 									 update="formHistoricoRecuperando:dataTableHistoricoRecuperando"
 									 process="@form"
-									 rendered="#{securityUtil.possuiPermissao('CadastrarHistoricoRecuperando') and !historicoRecuperandoBean.recuperandoView.isRecuperandoInativo and historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
+									 rendered="#{securityUtil.possuiPermissaoNaUnidadeLogada('CadastrarHistoricoRecuperando') and !historicoRecuperandoBean.recuperandoView.isRecuperandoInativo and historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
 
 					<br/>
 					<br/>
