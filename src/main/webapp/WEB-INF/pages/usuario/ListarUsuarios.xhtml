@@ -21,7 +21,13 @@
 				<sgp:formInputText labelValue="CPF" value="#{usuarioBean.filtro.cpf}" />
 				<sgp:formInputText labelValue="Login" value="#{usuarioBean.filtro.login}" />				
 				<sgp:formInputText labelValue="Email" value="#{usuarioBean.filtro.email}" permiteCaracterEspecial="true"/>
-				<sgp:formInputText labelValue="Email" value="#{usuarioBean.filtro.email}" permiteCaracterEspecial="true"/>
+				<sgp:formSelectOneMenu
+						id="status" labelValue="Status"
+						value="#{usuarioBean.filtro.status}"
+						itemsValue="#{comboHelperBean.status}"
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}"
+						temSelecione="true"/>
 				<sgp:formSelectOneMenu 
 					id="unidadePrisional"
 					labelValue="Unidade Prisional"
@@ -32,6 +38,17 @@
 					converter="SimpleEntityConverter"
 					temSelecione="true"
 					filter="true" filterMatchMode="custom"					
+				/>
+				<sgp:formSelectOneMenu
+						id="perfil"
+						labelValue="Perfil"
+						itemValue="#{item}"
+						itemLabel="#{item.nome}"
+						itemsValue="#{usuarioBean.perfils}"
+						value="#{usuarioBean.filtro.perfil}"
+						converter="SimpleEntityConverter"
+						temSelecione="true"
+						filter="true" filterMatchMode="custom"
 				/>
 				
 
