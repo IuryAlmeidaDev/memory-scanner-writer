@@ -437,14 +437,7 @@ public class ComboHelperBean {
 	}
 
 	public List<TipoHistorico> getTipoHistoricoAdd() {
-		if (tipoHistoricoAdd == null) {
-			try {
-				tipoHistoricoAdd = comboService.listarTipoHistoricoPermitidoParaCadastrar();
-			} catch (Exception e) {
-				tipoHistoricoAdd = new ArrayList<>();
-			}
-		}
-		return tipoHistoricoAdd;
+		return tipoHistoricoAdd = comboService.listarTipoHistoricoPermitidoParaCadastrar();
 	}
 
 	public void setTipoHistoricoAdd(List<TipoHistorico> tipoHistoricoAdd) {
