@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,10 +12,12 @@ import javax.persistence.Query;
 import javax.persistence.QueryHint;
 import javax.persistence.TypedQuery;
 
+import org.apache.shiro.SecurityUtils;
 import org.hibernate.annotations.QueryHints;
 
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatus;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.model.Permissao;
 import br.gov.mt.sejudh.sigepen.model.Certidao;
 import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
@@ -88,7 +91,7 @@ public class ComboDAO {
 		List<Raca> racas = query.getResultList();
 		return racas;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<EstadoCivil> listarEstadoCivil() {
 		String jpql = "select e from EstadoCivil e";
@@ -96,7 +99,7 @@ public class ComboDAO {
 		List<EstadoCivil> estadoCivil = query.getResultList();
 		return estadoCivil;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<OrientacaoSexual> listarOrientacaoSexual() {
 		String jpql = "select o from OrientacaoSexual o ";
@@ -104,7 +107,7 @@ public class ComboDAO {
 		List<OrientacaoSexual> orientacaoSexual = query.getResultList();
 		return orientacaoSexual;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<IdentidadeDeGenero> listarIdentidadeDeGenero() {
 		String jpql = "select i from IdentidadeDeGenero i ";
@@ -154,6 +157,60 @@ public class ComboDAO {
 	}
 
 	@SuppressWarnings("unchecked")
+	public List<TipoHistorico> listarTipoHistoricoParaAdicionar() {
+		String jpql = "select th from TipoHistorico th " +
+				"join th.funcionalidade f " +
+				"join f.permissoes p " +
+				"where p.nome like 'Adicionar%'";
+		Query query = entityManager.createQuery(jpql, TipoHistorico.class);
+		List<TipoHistorico> tipoHistorico = query.getResultList();
+
+		// Filtrar apenas os tipos de histórico para os quais o usuário tem permissão de adicionar
+		List<TipoHistorico> tipoHistoricoFiltrado = new ArrayList<>();
+		for (TipoHistorico tipo : tipoHistorico) {
+			if (tipo.getFuncionalidade() != null && 
+				tipo.getFuncionalidade().getPermissoes() != null) {
+				for (Permissao permissao : tipo.getFuncionalidade().getPermissoes()) {
+					if (permissao.getNome().startsWith("Adicionar") && 
+						SecurityUtils.getSubject().isPermitted(permissao.getNome())) {
+						tipoHistoricoFiltrado.add(tipo);
+						break;
+					}
+				}
+			}
+		}
+
+		return tipoHistoricoFiltrado;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<TipoHistorico> listarTipoHistoricoParaVisualizar() {
+		String jpql = "select th from TipoHistorico th " +
+				"join th.funcionalidade f " +
+				"join f.permissoes p " +
+				"where p.nome like 'Visualizar%'";
+		Query query = entityManager.createQuery(jpql, TipoHistorico.class);
+		List<TipoHistorico> tipoHistorico = query.getResultList();
+
+		// Filtrar apenas os tipos de histórico para os quais o usuário tem permissão de visualizar
+		List<TipoHistorico> tipoHistoricoFiltrado = new ArrayList<>();
+		for (TipoHistorico tipo : tipoHistorico) {
+			if (tipo.getFuncionalidade() != null && 
+				tipo.getFuncionalidade().getPermissoes() != null) {
+				for (Permissao permissao : tipo.getFuncionalidade().getPermissoes()) {
+					if (permissao.getNome().startsWith("Visualizar") && 
+						SecurityUtils.getSubject().isPermitted(permissao.getNome())) {
+						tipoHistoricoFiltrado.add(tipo);
+						break;
+					}
+				}
+			}
+		}
+
+		return tipoHistoricoFiltrado;
+	}
+
+	@SuppressWarnings("unchecked")
 	public List<Estado> listarEstado() {
 		String jpql = "select e from Estado e where e.status = :status  order by e.nome";
 		Query query = entityManager.createQuery(jpql, Estado.class);
@@ -161,7 +218,7 @@ public class ComboDAO {
 		List<Estado> estados = query.getResultList();
 		return estados;
 	}
-	
+
 	public Estado buscarEstado(String nomeEstado) {
 		String jpql = "select e from Estado e where e.nome = :nome";
 		Query query = entityManager.createQuery(jpql, Estado.class);
@@ -187,7 +244,7 @@ public class ComboDAO {
 		List<TipoUnidade> tipoUnidades = query.getResultList();
 		return tipoUnidades;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<TipoDocumento> listarTipoDocumento() {
 		String jpql = "select t from TipoDocumento t where t.status = :status order by t.descricao desc";
@@ -196,7 +253,7 @@ public class ComboDAO {
 		List<TipoDocumento> tipoDocumentos = query.getResultList();
 		return tipoDocumentos;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<Nacionalidade> listarNacionalidades() {
 		String jpql = "select n from Nacionalidade n";
@@ -221,13 +278,13 @@ public class ComboDAO {
 			return null;
 		}
 	}
-	
+
 	public List<RegistroPlantao> listarRegistrosPlantao() {
 	    try {
 	        String jpql = "SELECT rp FROM RegistroPlantao rp "
 	                    + "JOIN FETCH rp.plantao p " // se quiser garantir o fetch de dados relacionados
 	                    + "ORDER BY rp.dataPlantao DESC";
-	                    
+
 	        TypedQuery<RegistroPlantao> query = entityManager.createQuery(jpql, RegistroPlantao.class);
 	        query.setHint(QueryHints.READ_ONLY, true);
 	        return query.getResultList();
@@ -235,7 +292,7 @@ public class ComboDAO {
 	        return null;
 	    }
 	}
-	
+
 	public List<Plantao> listarPlantoesCadastrados() {
 	    try {
 	        String jpql = "SELECT p FROM Plantao p "
@@ -246,7 +303,7 @@ public class ComboDAO {
 	        query.setParameter("status", Status.ATIVO); // ajuste conforme sua enum
 	        query.setHint(QueryHints.READ_ONLY, true);
 	        return query.getResultList();
-	        
+
 	    } catch (NoResultException e) {
 	        return Collections.emptyList();
 	    }
