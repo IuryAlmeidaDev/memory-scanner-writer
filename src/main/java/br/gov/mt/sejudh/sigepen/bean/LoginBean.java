@@ -211,7 +211,7 @@ public class LoginBean {
 			SecurityUtils.getSubject().login(new UsernamePasswordToken(usuario, senha));
 			clearCache();
 			SecurityUtils.getSubject().getSession().setAttribute("usuario",
-					service.buscarUsuario(SecurityUtil.getLoginUsuario()));
+					service.buscarUsuarioPorLoginComPermissoes(SecurityUtil.getLoginUsuario()));
 			LoggerUtil.logInfo(Acao.LOGAR, usuario, log);
 			FacesContext.getCurrentInstance().getExternalContext().redirect(Sigepen.APPLICATION_DASHBOARD_URL);
 			gravarLogAcesso(TipoAcessoLog.SUCESSO_LOGIN, TipoBloqueioLog.NENHUM, usuario);

@@ -57,21 +57,21 @@ BEGIN
 END;
 /
 
--- Criar novas funcionalidades para cada departamento
+-- Criar novas funcionalidades para cada departamento com os nomes ajustados
 INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
-VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Segurança e Disciplina');
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Seguranca e Disciplina');
 INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
-VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Saúde');
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Saude');
 INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
-VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Assistência Social');
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Assistencia Social');
 INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
 VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Psicologia');
 INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
-VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Produção');
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Producao');
 INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
-VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Educação');
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Educacao');
 INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
-VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Jurídico');
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Juridico');
 INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
 VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Trabalho');
 
@@ -87,78 +87,85 @@ DECLARE
     v_trabalho_id      NUMBER;
 BEGIN
     -- Obter os IDs das novas funcionalidades
-    SELECT ID INTO v_seg_disc_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Segurança e Disciplina';
-    SELECT ID INTO v_saude_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Saúde';
-    SELECT ID INTO v_assist_social_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Assistência Social';
+    SELECT ID INTO v_seg_disc_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Seguranca e Disciplina';
+    SELECT ID INTO v_saude_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Saude';
+    SELECT ID INTO v_assist_social_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Assistencia Social';
     SELECT ID INTO v_psicologia_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Psicologia';
-    SELECT ID INTO v_producao_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Produção';
-    SELECT ID INTO v_educacao_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Educação';
-    SELECT ID INTO v_juridico_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Jurídico';
+    SELECT ID INTO v_producao_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Producao';
+    SELECT ID INTO v_educacao_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Educacao';
+    SELECT ID INTO v_juridico_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Juridico';
     SELECT ID INTO v_trabalho_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Trabalho';
 
-    -- Criar permissões para cada funcionalidade
-    -- Segurança e Disciplina
+    -- Criar permissões para cada funcionalidade com os novos nomes ajustados
+    -- Seguranca e Disciplina
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarSegDiscHistorico', 'Adicionar histórico de Segurança e Disciplina',
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'CadastrarHistoricoRecuperandoSegurancaEDisciplina',
+            'Permite cadastrar um historico de Seguranca e Disciplina do recuperando',
+            v_seg_disc_id);
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarHistoricoRecuperandoSegurancaEDisciplina',
+            'Permite visualizar o historico de Seguranca e Disciplina do recuperando',
             v_seg_disc_id);
 
+    -- Saude
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarSegDiscHistorico', 'Visualizar histórico de Segurança e Disciplina',
-            v_seg_disc_id);
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'CadastrarHistoricoRecuperandoSaude',
+            'Permite cadastrar um historico de Saude do recuperando', v_saude_id);
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarHistoricoRecuperandoSaude',
+            'Permite visualizar o historico de Saude do recuperando', v_saude_id);
 
-    -- Saúde
+    -- Assistencia Social
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarSaudeHistorico', 'Adicionar histórico de Saúde', v_saude_id);
-
-    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarSaudeHistorico', 'Visualizar histórico de Saúde', v_saude_id);
-
-    -- Assistência Social
-    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarAssistSocialHistorico', 'Adicionar histórico de Assistência Social',
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'CadastrarHistoricoRecuperandoAssistenciaSocial',
+            'Permite cadastrar um historico de Assistencia Social do recuperando',
             v_assist_social_id);
-
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarAssistSocialHistorico', 'Visualizar histórico de Assistência Social',
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarHistoricoRecuperandoAssistenciaSocial',
+            'Permite visualizar o historico de Assistencia Social do recuperando',
             v_assist_social_id);
 
     -- Psicologia
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarPsicologiaHistorico', 'Adicionar histórico de Psicologia',
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'CadastrarHistoricoRecuperandoPsicologia',
+            'Permite cadastrar um historico de Psicologia do recuperando',
+            v_psicologia_id);
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarHistoricoRecuperandoPsicologia',
+            'Permite visualizar o historico de Psicologia do recuperando',
             v_psicologia_id);
 
+    -- Producao
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarPsicologiaHistorico', 'Visualizar histórico de Psicologia',
-            v_psicologia_id);
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'CadastrarHistoricoRecuperandoProducao',
+            'Permite cadastrar um historico de Producao do recuperando', v_producao_id);
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarHistoricoRecuperandoProducao',
+            'Permite visualizar o historico de Producao do recuperando', v_producao_id);
 
-    -- Produção
+    -- Educacao
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarProducaoHistorico', 'Adicionar histórico de Produção', v_producao_id);
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'CadastrarHistoricoRecuperandoEducacao',
+            'Permite cadastrar um historico de Educacao do recuperando', v_educacao_id);
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarHistoricoRecuperandoEducacao',
+            'Permite visualizar o historico de Educacao do recuperando', v_educacao_id);
 
+    -- Juridico
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarProducaoHistorico', 'Visualizar histórico de Produção', v_producao_id);
-
-    -- Educação
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'CadastrarHistoricoRecuperandoJuridico',
+            'Permite cadastrar um historico Juridico do recuperando', v_juridico_id);
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarEducacaoHistorico', 'Adicionar histórico de Educação', v_educacao_id);
-
-    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarEducacaoHistorico', 'Visualizar histórico de Educação', v_educacao_id);
-
-    -- Jurídico
-    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarJuridicoHistorico', 'Adicionar histórico de Jurídico', v_juridico_id);
-
-    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarJuridicoHistorico', 'Visualizar histórico de Jurídico', v_juridico_id);
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarHistoricoRecuperandoJuridico',
+            'Permite visualizar o historico Juridico do recuperando', v_juridico_id);
 
     -- Trabalho
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarTrabalhoHistorico', 'Adicionar histórico de Trabalho', v_trabalho_id);
-
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'CadastrarHistoricoRecuperandoTrabalho',
+            'Permite cadastrar um historico de Trabalho do recuperando', v_trabalho_id);
     INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
-    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarTrabalhoHistorico', 'Visualizar histórico de Trabalho', v_trabalho_id);
-
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarHistoricoRecuperandoTrabalho',
+            'Permite visualizar o historico de Trabalho do recuperando', v_trabalho_id);
     -- Vincular TipoHistorico com Funcionalidade
     UPDATE SIGEPEN_OWNER.TIPO_HISTORICO SET FUNCIONALIDADE_ID = v_seg_disc_id WHERE ID = 1;
     UPDATE SIGEPEN_OWNER.TIPO_HISTORICO SET FUNCIONALIDADE_ID = v_saude_id WHERE ID = 2;

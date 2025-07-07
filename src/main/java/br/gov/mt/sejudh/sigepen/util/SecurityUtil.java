@@ -3,11 +3,13 @@ package br.gov.mt.sejudh.sigepen.util;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+import br.gov.mt.sejudh.sigepen.model.Permissao;
 import org.apache.shiro.SecurityUtils;
 
 import br.gov.mt.sejudh.sigepen.enumerator.Dashboard;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -38,6 +40,25 @@ public class SecurityUtil implements Serializable {
 		return usuario;
 	}
 
+	public static boolean possuiPermissaoNaUnidadeLogada(String permissao) {
+		Usuario usuario = (Usuario) SecurityUtils.getSubject().getSession().getAttribute("usuario");
+		UnidadePrisional unidade = (UnidadePrisional) SecurityUtils.getSubject().getSession().getAttribute("unidadeSelecionada");
+
+		if (usuario == null || unidade == null) {
+			return false;
+		}
+
+		// Filtra os acessos do usuário pela unidade corrente, acessa os perfis e verifica se alguma permissão se aplica
+		return usuario.getAcessos()
+				.stream()
+				.filter(acesso -> acesso.getUnidade().getId() == unidade.getId())
+				.flatMap(acesso -> acesso.getPerfis().stream())
+				.flatMap(perfil -> perfil.getPermissoes().stream())
+				.map(Permissao::getNome)
+				.anyMatch(nomePermissao -> nomePermissao.contains(permissao));
+	}
+
+
 	public static UnidadePrisional getUnidadeSelecionada() {
 		UnidadePrisional unidade = (UnidadePrisional) SecurityUtils.getSubject().getSession().getAttribute("unidadeSelecionada");
 		return unidade;
@@ -66,29 +87,28 @@ public class SecurityUtil implements Serializable {
 		}
 
 		// Caso especial para visibilidade do botão HistoricoRecuperando
-		if(permissao.equals("VisualizarHistoricoRecuperando")) {
+		if(permissao.contains("VisualizarHistoricoRecuperando")) {
 			// Verifica se o usuário tem alguma permissão de adição relacionada ao histórico
-			return SecurityUtils.getSubject().isPermitted("VisualizarSegDiscHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("VisualizarSaudeHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("VisualizarAssistSocialHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("VisualizarPsicologiaHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("VisualizarProducaoHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("VisualizarEducacaoHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("VisualizarJuridicoHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("VisualizarTrabalhoHistorico");
+			return SecurityUtils.getSubject().isPermitted("VisualizarHistoricoRecuperandoSegurancaEDisciplina") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarHistoricoRecuperandoSaude") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarHistoricoRecuperandoAssistenciaSocial") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarHistoricoRecuperandoPsicologia") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarHistoricoRecuperandoProducao") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarHistoricoRecuperandoEducacao") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarHistoricoRecuperandoJuridico") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarHistoricoRecuperandoTrabalho");
 		}
 
 		// Caso especial para permissão CadastrarHistoricoRecuperando
-		if(permissao.equals("CadastrarHistoricoRecuperando")) {
-			// Verifica se o usuário tem alguma permissão de adição relacionada ao histórico
-			return SecurityUtils.getSubject().isPermitted("AdicionarSegDiscHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("AdicionarSaudeHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("AdicionarAssistSocialHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("AdicionarPsicologiaHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("AdicionarProducaoHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("AdicionarEducacaoHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("AdicionarJuridicoHistorico") ||
-				   SecurityUtils.getSubject().isPermitted("AdicionarTrabalhoHistorico");
+		if(permissao.contains("CadastrarHistoricoRecuperando")) {
+			return SecurityUtils.getSubject().isPermitted("CadastrarHistoricoRecuperandoSegurancaEDisciplina") ||
+				   SecurityUtils.getSubject().isPermitted("CadastrarHistoricoRecuperandoSaude") ||
+				   SecurityUtils.getSubject().isPermitted("CadastrarHistoricoRecuperandoAssistenciaSocial") ||
+				   SecurityUtils.getSubject().isPermitted("CadastrarHistoricoRecuperandoPsicologia") ||
+				   SecurityUtils.getSubject().isPermitted("CadastrarHistoricoRecuperandoProducao") ||
+				   SecurityUtils.getSubject().isPermitted("CadastrarHistoricoRecuperandoEducacao") ||
+				   SecurityUtils.getSubject().isPermitted("CadastrarHistoricoRecuperandoJuridico") ||
+				   SecurityUtils.getSubject().isPermitted("CadastrarHistoricoRecuperandoTrabalho");
 		}
 
 		return SecurityUtils.getSubject().isPermitted(permissao);
