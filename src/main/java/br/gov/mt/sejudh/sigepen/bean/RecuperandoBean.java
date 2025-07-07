@@ -96,7 +96,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ManagedBean
 @ViewScoped
 @URLMappings(mappings = {
-		@URLMapping(id = "ListarRecuperando", pattern = "/recuperando", viewId = "/WEB-INF/pages/recuperando/ListarRecuperandoNovo.xhtml"),
+		@URLMapping(id = "ListarRecuperando", pattern = "/recuperando", viewId = "/WEB-INF/pages/recuperando/ListarRecuperando.xhtml"),
 		@URLMapping(id = "CadastrarRecuperando", pattern = "/recuperando/cadastrar", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),	
 		@URLMapping(id = "AlterarRecuperando", pattern = "/recuperando/alterar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "VisualizarRecuperando", pattern = "/recuperando/visualizar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),

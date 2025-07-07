@@ -77,42 +77,42 @@ import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 
 @Stateless
 public class ComboService {
-	
+
 	@Inject
 	private ComboDAO dao;
-	
+
 	public ComboService() {
-		
-	}	
-	
+
+	}
+
 	public List<Regime> listarRegime() {
 		return dao.listarRegime();
 	}
-	
+
 	public List<Pais> listarPais() {
 		return dao.listarPais();
 	}
-	
+
 	public List<Religiao> listarReligiao() {
 		return dao.listarReligiao();
 	}
-	
+
 	public List<Raca> listarRaca() {
 		return dao.listarRaca();
 	}
-	
+
 	public List<EstadoCivil> listarEstadoCivil() {
 		return dao.listarEstadoCivil();
 	}
-	
+
 	public List<OrientacaoSexual> listarOrientacaoSexual() {
 		return dao.listarOrientacaoSexual();
 	}
-	
+
 	public List<IdentidadeDeGenero> listarIdentidadeDeGenero() {
 		return dao.listarIdentidadeDeGenero();
 	}
-	
+
 	public List<TipoSanguineo> listarTipoSanguineo() {
 		return dao.listarTipoSanguineo();
 	}
@@ -124,42 +124,50 @@ public class ComboService {
 	public List<Parentesco> listarParentesco() {
 		return dao.listarParentesco();
 	}
-	
+
 	public List<TipoServidor> listarTipoServidor(){
 		return dao.listarTipoServidor();
 	}
-	
+
 	public List<TipoHistorico> listarTipoHistorico(){
 		return dao.listarTipoHistorico();
 	}
-	
+
+	public List<TipoHistorico> listarTipoHistoricoParaAdicionar(){
+		return dao.listarTipoHistoricoParaAdicionar();
+	}
+
+	public List<TipoHistorico> listarTipoHistoricoParaVisualizar(){
+		return dao.listarTipoHistoricoParaVisualizar();
+	}
+
 	public Status[] getStatus() {
 		return Status.values();
 	}
-	
+
 	public Sexo[] getSexo() {
 		return Sexo.values();
 	}
-	
+
 	public CorOlho[] getCorOlho() {
 		return CorOlho.values();
 	}
-	
+
 	public CorCabelo[] getCorCabelo() {
 		return CorCabelo.values();
 	}
-	
+
 	public Periculosidade[] getPericulosidade() {
 		return Periculosidade.values();
 	}
-	
+
 	public StatusProcesso[] getStatusProcesso() {
 		return StatusProcesso.values();
 	}
-	
+
 	public SituacaoUnidade[] getSituacaoUnidade() {
 		SituacaoUnidade[] situacoes = SituacaoUnidade.values();
-		
+
 		//Remove o item "Interditado Parcial" para não aparecer no combo de seleção
 		for(int i = 0; i < situacoes.length; i++){
 			if (situacoes[i] == SituacaoUnidade.INTERDITADO_PARCIAL){
@@ -171,57 +179,57 @@ public class ComboService {
 		}
 		return situacoes;
 	}
-	
+
 	public SituacaoUnidade[] getSituacaoUnidadeTodas() {
 		return SituacaoUnidade.values();
 	}
-	
+
 	public TipoContato[] getTipoContato() {
 		return TipoContato.values();
 	}
-	
+
 	public TipoInterdicao[] getTipoInterdicao(){
 		return TipoInterdicao.values();
 	}
-	
+
 	public TipoDeficiencia[] getTipoDeficiencia(){
 		return TipoDeficiencia.values();
 	}
-	
+
 	public List<Estado> listarEstado(){
 		return dao.listarEstado();
 	}
-	
+
 	//Lista Unidade Prisional
 	public List<UnidadePrisional> listarUnidades(){
 		return dao.listarUnidadesPrisionais();
 	}
-	
+
 	//Lista Registro PLantao
 	public List<RegistroPlantao> listarRegistroPLantao(){
 		return dao.listarRegistrosPlantao();
 	}
-	
+
 	public List<Plantao> listarPlantoesCadastrados(){
 		return dao.listarPlantoesCadastrados();
 	}
 
-	
-	
-	
-	
+
+
+
+
 	public List<Cidade> listarCidade(Estado estado){
 		return dao.listarCidade(estado);
 	}
-	
+
 	public List<TipoUnidade> listarTipoUnidade(){
 		return dao.listarTipoUnidade();
 	}
-	
+
 	public List<TipoDocumento> listarTipoDocumento(){
 		return dao.listarTipoDocumento();
 	}
-	
+
 	public List<Nacionalidade> listarNacionalidades(){
 		return dao.listarNacionalidades();
 	}
@@ -233,7 +241,7 @@ public class ComboService {
 	public StatusRecuperando[] getStatusRecuperando() {
 		return StatusRecuperando.values();
 	}
-	
+
 	public TipoFoto[] getTipoFoto() {
 		return TipoFoto.values();
 	}
@@ -241,7 +249,7 @@ public class ComboService {
 	public TipoProcesso[] getTipoProcesso() {
 		return TipoProcesso.values();
 	}
-	
+
 	public List<TipoTransito> getTipoTransito() {
 		TipoTransito[] tipos = TipoTransito.values();
 		List<TipoTransito> tiposTransito = new ArrayList<TipoTransito>();
@@ -262,7 +270,7 @@ public class ComboService {
 	public SituacaoFaltaDisciplinar[] getSituacaoFaltaDisciplinar(){
 		return SituacaoFaltaDisciplinar.values();
 	}
-	
+
 	public Modalidade[] getModalidade() {
 		return Modalidade.values();
 	}
@@ -270,31 +278,31 @@ public class ComboService {
 	public TipoParticularidade[] getTipoParticularidade() {
 		return TipoParticularidade.values();
 	}
-	
+
 	public StatusPedido[] getStatusPedido() {
 		return StatusPedido.values();
 	}
-	
+
 	public StatusMovimentacao[] getStatusMovimentacao() {
 		return StatusMovimentacao.values();
 	}
-	
+
 	public TipoDesligamento[] getTipoDesligamento() {
 		return TipoDesligamento.values();
 	}
-	
+
 	public Acao[] getAcao() {
 		return Acao.values();
 	}
-	
+
 	public PronomeTratamento[] getPronomeTratamento() {
 		return PronomeTratamento.values();
 	}
-	
+
 	public TipoDocumentoPedidoTransito[] getTipoDocumentoPedidoTransito() {
 		return TipoDocumentoPedidoTransito.values();
 	}
-	
+
 	public Estado buscarEstado(String nomeEstado){
 		return dao.buscarEstado(nomeEstado);
 	}
@@ -317,7 +325,7 @@ public class ComboService {
 
 	public Esfera[] getEsfera() {
 		return Esfera.values();
-	}	
+	}
 
 	public TipoAtestado[] getAtestados() {
 		return TipoAtestado.values();
@@ -338,11 +346,11 @@ public class ComboService {
 	public StatusCredenciamento[] getSituacaoCredenciamento(){
 		return StatusCredenciamento.values();
 	}
-	
+
 	public StatusCredenciamentosVisita[] getSituacaoCredenciamentoVisita(){
 		return StatusCredenciamentosVisita.values();
 	}
-	
+
 	public StatusCredenciamentosVisita[] getFiltroSituacaoCredenciamentoVisita(){
 		StatusCredenciamentosVisita[] retorno = {
 				StatusCredenciamentosVisita.DISPONIVEL,
@@ -351,9 +359,9 @@ public class ComboService {
 				};
 		return retorno;
 	}
-	
-	
-	
+
+
+
 	public StatusCredenciamento[] getFiltroSituacaoCredenciamento(){
 		StatusCredenciamento[] retorno = {
 				StatusCredenciamento.PENDENTE,
@@ -363,7 +371,7 @@ public class ComboService {
 				};
 		return retorno;
 	}
-	
+
 	public SituacaoVisita[] getSituacaoVisita() {
 		return SituacaoVisita.values();
 
@@ -372,7 +380,7 @@ public class ComboService {
 	public IdadeRecuperando[] getIdadeRecuperando() {
 		return IdadeRecuperando.values();
 	}
-	
+
 	public TempoCondenacao[] getTempoCondenacao() {
 		return TempoCondenacao.values();
 	}
@@ -380,7 +388,7 @@ public class ComboService {
 	public Lgbt[] getLgbt() {
 		return Lgbt.values();
 	}
-	
+
 	public TipoRelatorioEntradaSaidaRec[] getTipoRelatorioEntradaSaidaRec(){
 		return TipoRelatorioEntradaSaidaRec.values();
 	}
@@ -388,7 +396,7 @@ public class ComboService {
 	public PopulacaoFeminino[] getPopulacaoFeminino() {
 		return PopulacaoFeminino.values();
 	}
-	
+
 	public TipoVisitaObrigatoriedade[] getTipoVisitaObrigatoriedade() {
 		return TipoVisitaObrigatoriedade.values();
 	}
@@ -396,12 +404,12 @@ public class ComboService {
 	public UnidadeMedida[] getUnidadesMedida() {
 		return UnidadeMedida.values();
 	}
-	
-	
+
+
 	public TipoPlantao[] getTipoPlantao() {
 		return TipoPlantao.values();
-	}	
-	
+	}
+
 		/*
 		public TipoPlantao[] getPlantoes() {
 			return TipoPlantao.values();

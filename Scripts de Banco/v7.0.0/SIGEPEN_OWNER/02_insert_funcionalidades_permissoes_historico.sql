@@ -1,0 +1,174 @@
+-- Criar sequência para a tabela FUNCIONALIDADE
+DECLARE
+    v_max_func_id NUMBER;
+BEGIN
+    SELECT NVL(MAX(ID), 0) INTO v_max_func_id FROM SIGEPEN_OWNER.FUNCIONALIDADE;
+    EXECUTE IMMEDIATE 'DROP SEQUENCE SIGEPEN_OWNER.SEQ_FUNCIONALIDADE';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -2289 THEN
+            RAISE;
+        END IF;
+END;
+/
+
+CREATE SEQUENCE SIGEPEN_OWNER.SEQ_FUNCIONALIDADE
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
+-- Criar sequência para a tabela PERMISSAO 
+DECLARE
+    v_max_perm_id NUMBER;
+BEGIN
+    SELECT NVL(MAX(ID), 0) INTO v_max_perm_id FROM SIGEPEN_OWNER.PERMISSAO;
+    EXECUTE IMMEDIATE 'DROP SEQUENCE SIGEPEN_OWNER.SEQ_PERMISSAO';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -2289 THEN
+            RAISE;
+        END IF;
+END;
+/
+
+CREATE SEQUENCE SIGEPEN_OWNER.SEQ_PERMISSAO
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
+-- Definir valores das sequências para iniciar após os IDs máximos
+DECLARE
+    v_max_func_id NUMBER;
+    v_max_perm_id NUMBER;
+    v_dummy       NUMBER;
+BEGIN
+    SELECT NVL(MAX(ID), 0) INTO v_max_func_id FROM SIGEPEN_OWNER.FUNCIONALIDADE;
+    SELECT NVL(MAX(ID), 0) INTO v_max_perm_id FROM SIGEPEN_OWNER.PERMISSAO;
+
+    EXECUTE IMMEDIATE 'ALTER SEQUENCE SIGEPEN_OWNER.SEQ_FUNCIONALIDADE INCREMENT BY ' || v_max_func_id;
+    SELECT SEQ_FUNCIONALIDADE.NEXTVAL INTO v_dummy FROM DUAL;
+    EXECUTE IMMEDIATE 'ALTER SEQUENCE SIGEPEN_OWNER.SEQ_FUNCIONALIDADE INCREMENT BY 1';
+
+    EXECUTE IMMEDIATE 'ALTER SEQUENCE SIGEPEN_OWNER.SEQ_PERMISSAO INCREMENT BY ' || v_max_perm_id;
+    SELECT SEQ_PERMISSAO.NEXTVAL INTO v_dummy FROM DUAL;
+    EXECUTE IMMEDIATE 'ALTER SEQUENCE SIGEPEN_OWNER.SEQ_PERMISSAO INCREMENT BY 1';
+END;
+/
+
+-- Criar novas funcionalidades para cada departamento
+INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Segurança e Disciplina');
+INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Saúde');
+INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Assistência Social');
+INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Psicologia');
+INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Produção');
+INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Educação');
+INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Jurídico');
+INSERT INTO SIGEPEN_OWNER.FUNCIONALIDADE (ID, NOME)
+VALUES (SEQ_FUNCIONALIDADE.NEXTVAL, 'Trabalho');
+
+-- Criar variáveis para armazenar os IDs das novas funcionalidades
+DECLARE
+    v_seg_disc_id      NUMBER;
+    v_saude_id         NUMBER;
+    v_assist_social_id NUMBER;
+    v_psicologia_id    NUMBER;
+    v_producao_id      NUMBER;
+    v_educacao_id      NUMBER;
+    v_juridico_id      NUMBER;
+    v_trabalho_id      NUMBER;
+BEGIN
+    -- Obter os IDs das novas funcionalidades
+    SELECT ID INTO v_seg_disc_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Segurança e Disciplina';
+    SELECT ID INTO v_saude_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Saúde';
+    SELECT ID INTO v_assist_social_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Assistência Social';
+    SELECT ID INTO v_psicologia_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Psicologia';
+    SELECT ID INTO v_producao_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Produção';
+    SELECT ID INTO v_educacao_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Educação';
+    SELECT ID INTO v_juridico_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Jurídico';
+    SELECT ID INTO v_trabalho_id FROM SIGEPEN_OWNER.FUNCIONALIDADE WHERE NOME = 'Trabalho';
+
+    -- Criar permissões para cada funcionalidade
+    -- Segurança e Disciplina
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarSegDiscHistorico', 'Adicionar histórico de Segurança e Disciplina',
+            v_seg_disc_id);
+
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarSegDiscHistorico', 'Visualizar histórico de Segurança e Disciplina',
+            v_seg_disc_id);
+
+    -- Saúde
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarSaudeHistorico', 'Adicionar histórico de Saúde', v_saude_id);
+
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarSaudeHistorico', 'Visualizar histórico de Saúde', v_saude_id);
+
+    -- Assistência Social
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarAssistSocialHistorico', 'Adicionar histórico de Assistência Social',
+            v_assist_social_id);
+
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarAssistSocialHistorico', 'Visualizar histórico de Assistência Social',
+            v_assist_social_id);
+
+    -- Psicologia
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarPsicologiaHistorico', 'Adicionar histórico de Psicologia',
+            v_psicologia_id);
+
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarPsicologiaHistorico', 'Visualizar histórico de Psicologia',
+            v_psicologia_id);
+
+    -- Produção
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarProducaoHistorico', 'Adicionar histórico de Produção', v_producao_id);
+
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarProducaoHistorico', 'Visualizar histórico de Produção', v_producao_id);
+
+    -- Educação
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarEducacaoHistorico', 'Adicionar histórico de Educação', v_educacao_id);
+
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarEducacaoHistorico', 'Visualizar histórico de Educação', v_educacao_id);
+
+    -- Jurídico
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarJuridicoHistorico', 'Adicionar histórico de Jurídico', v_juridico_id);
+
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarJuridicoHistorico', 'Visualizar histórico de Jurídico', v_juridico_id);
+
+    -- Trabalho
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'AdicionarTrabalhoHistorico', 'Adicionar histórico de Trabalho', v_trabalho_id);
+
+    INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+    VALUES (SEQ_PERMISSAO.NEXTVAL, 'VisualizarTrabalhoHistorico', 'Visualizar histórico de Trabalho', v_trabalho_id);
+
+    -- Vincular TipoHistorico com Funcionalidade
+    UPDATE SIGEPEN_OWNER.TIPO_HISTORICO SET FUNCIONALIDADE_ID = v_seg_disc_id WHERE ID = 1;
+    UPDATE SIGEPEN_OWNER.TIPO_HISTORICO SET FUNCIONALIDADE_ID = v_saude_id WHERE ID = 2;
+    UPDATE SIGEPEN_OWNER.TIPO_HISTORICO SET FUNCIONALIDADE_ID = v_assist_social_id WHERE ID = 3;
+    UPDATE SIGEPEN_OWNER.TIPO_HISTORICO SET FUNCIONALIDADE_ID = v_psicologia_id WHERE ID = 4;
+    UPDATE SIGEPEN_OWNER.TIPO_HISTORICO SET FUNCIONALIDADE_ID = v_producao_id WHERE ID = 5;
+    UPDATE SIGEPEN_OWNER.TIPO_HISTORICO SET FUNCIONALIDADE_ID = v_educacao_id WHERE ID = 6;
+    UPDATE SIGEPEN_OWNER.TIPO_HISTORICO SET FUNCIONALIDADE_ID = v_juridico_id WHERE ID = 7;
+    UPDATE SIGEPEN_OWNER.TIPO_HISTORICO SET FUNCIONALIDADE_ID = v_trabalho_id WHERE ID = 8;
+END;
+/
+
+COMMIT;

@@ -9,6 +9,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.Dashboard;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.Usuario;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Named
 @SessionScoped
@@ -19,19 +20,19 @@ public class SecurityUtil implements Serializable {
 	public static String getLoginUsuario() {
 		return SecurityUtils.getSubject().getPrincipal().toString();
 	}
-	
+
 	public static String getNomeUsuario() {
 		return (getUsuario().getServidor() == null) ? "Administrador" : getUsuario().getServidor().getNome();
 	}
-	
+
 	public static String getMatriculaUsuario() {
 		return (getUsuario().getServidor() == null) ? "0" : String.valueOf(getUsuario().getServidor().getMatricula());
 	}
-	
+
 	public static String getNomeUnidadeUsuario() {
 		return (getUnidadeSelecionada() == null) ? "SEJUDH" : getUnidadeSelecionada().getNome();
 	}
-	
+
 	public static Usuario getUsuario() {
 		Usuario usuario = (Usuario) SecurityUtils.getSubject().getSession().getAttribute("usuario");
 		return usuario;
@@ -41,35 +42,61 @@ public class SecurityUtil implements Serializable {
 		UnidadePrisional unidade = (UnidadePrisional) SecurityUtils.getSubject().getSession().getAttribute("unidadeSelecionada");
 		return unidade;
 	}
-	
+
 	public static void setUnidadeSelecionada(UnidadePrisional unidade) {
 		SecurityUtils.getSubject().getSession().setAttribute("unidadeSelecionada", unidade);
 	}
-	
+
 	public boolean isAutenticado() {
 		return SecurityUtils.getSubject().isAuthenticated();
 	}
-	
+
 	public boolean possuiPerfil(String perfil) {
 		return SecurityUtils.getSubject().hasRole(perfil);
 	}
-	
+
 	public boolean isAtivarModuloVisitantes() {
 		UnidadePrisional unidade = (UnidadePrisional) SecurityUtils.getSubject().getSession().getAttribute("unidadeSelecionada");
 		return unidade.getAtivaModuloVisitante();
 	}
 
 	public boolean possuiPermissao(String permissao) {
-		if(permissao == Dashboard.SOLICITACAO_VISITA_PENDENTE.getDescricao() && !this.isAtivarModuloVisitantes()) {
+		if(Objects.equals(permissao, Dashboard.SOLICITACAO_VISITA_PENDENTE.getDescricao()) && !this.isAtivarModuloVisitantes()) {
 			return false;
+		}
+
+		// Caso especial para visibilidade do botão HistoricoRecuperando
+		if(permissao.equals("VisualizarHistoricoRecuperando")) {
+			// Verifica se o usuário tem alguma permissão de adição relacionada ao histórico
+			return SecurityUtils.getSubject().isPermitted("VisualizarSegDiscHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarSaudeHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarAssistSocialHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarPsicologiaHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarProducaoHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarEducacaoHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarJuridicoHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("VisualizarTrabalhoHistorico");
+		}
+
+		// Caso especial para permissão CadastrarHistoricoRecuperando
+		if(permissao.equals("CadastrarHistoricoRecuperando")) {
+			// Verifica se o usuário tem alguma permissão de adição relacionada ao histórico
+			return SecurityUtils.getSubject().isPermitted("AdicionarSegDiscHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("AdicionarSaudeHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("AdicionarAssistSocialHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("AdicionarPsicologiaHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("AdicionarProducaoHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("AdicionarEducacaoHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("AdicionarJuridicoHistorico") ||
+				   SecurityUtils.getSubject().isPermitted("AdicionarTrabalhoHistorico");
 		}
 
 		return SecurityUtils.getSubject().isPermitted(permissao);
 	}
-	
+
 	public boolean exibeCategoriaMenu(String categoria) {		
 		boolean resultado = false;
-		
+
 		switch (categoria.toLowerCase()) {
 			case "tabelasauxiliares":
 				resultado =		this.possuiPermissao("ListarCategoria") ||
@@ -94,20 +121,20 @@ public class SecurityUtil implements Serializable {
 							this.possuiPermissao("ListarUsuarioResetSenha")  || 
 							this.possuiPermissao("ListarPermissao");
 				break;
-							
+
 			case "crime":
 				resultado = this.possuiPermissao("CadastrarCrime") ||
 						this.possuiPermissao("AlterarCrime") || 
 						this.possuiPermissao("ExcluirCrime");
 				break;
-				
+
 			case "recuperando":
 				resultado = this.possuiPermissao("ListarRecuperando") || 
 							this.possuiPermissao("ListarFaltaDisciplinar") || 
 							this.possuiPermissao("UnificarRecuperando") ||
 							this.possuiPermissao("ExcluirProcesso");
 				break;
-				
+
 			case "movimentacoes":
 				resultado = this.possuiPermissao("ListarPedidoTransito") ||
 							this.possuiPermissao("ListarMovimentacaoExterna") ||
@@ -116,7 +143,7 @@ public class SecurityUtil implements Serializable {
 							this.possuiPermissao("ListarReceberTransferencia") ||
 							this.possuiPermissao("ListarRemanejamento");
 				break;
-				
+
 			case "auditoria":
 				resultado = this.possuiPermissao("ListarLog");
 				break;
@@ -142,11 +169,11 @@ public class SecurityUtil implements Serializable {
 				|| this.possuiPermissao("ListarGerarPedidoEstrutura")
 				|| this.possuiPermissao("ListarMapaConsolidado");
 				break;
-				
+
 			case "servidor":
 				resultado = this.possuiPermissao("PermiteCadastrarPlantao");
 				break;
-				
+
 			case "plantao":
 				resultado = this.possuiPermissao("CadastrarPlantao")
 				|| this.possuiPermissao("ListarPlantao")
@@ -155,7 +182,7 @@ public class SecurityUtil implements Serializable {
 				|| this.possuiPermissao("ListarRegistroPlantao");
 				break;	
 		}
-		
+
 		return resultado;
 	}
 }
