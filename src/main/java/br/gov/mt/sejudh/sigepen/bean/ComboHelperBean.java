@@ -225,7 +225,7 @@ public class ComboHelperBean {
 
 
 	@Inject
-	private ComboService comboService;	
+	private ComboService comboService;
 
 	@PostConstruct
 	public void init() {
@@ -292,12 +292,13 @@ public class ComboHelperBean {
 		populacaoFeminino = comboService.getPopulacaoFeminino();
 		tipoVisitaObrigatoriedade = comboService.getTipoVisitaObrigatoriedade();
 		unidadesMedida = comboService.getUnidadesMedida();
+		vencimentoCredenciamentos = comboService.getVencimentoCredenciamento();
 		relatorio = comboService.getRelatorio();
 		unidadePrisional = new UnidadePrisional();
 		tipoPlantoes = comboService.getTipoPlantao();
 
 	}
-	
+
 	public NaturezaFaltaDisciplinar[] getNaturezaFaltaDisciplinar(){
 		return this.naturezaFaltaDisciplinar;
 	}
@@ -699,7 +700,7 @@ public class ComboHelperBean {
 	public void setEsfera(Esfera[] esfera) {
 		this.esfera = esfera;
 	}
-	
+
 	public TipoAtestado[] getAtestados() {
 		return atestados;
 	}

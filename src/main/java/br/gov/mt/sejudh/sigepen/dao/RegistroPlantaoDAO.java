@@ -95,6 +95,16 @@ public class RegistroPlantaoDAO extends BaseDAO<RegistroPlantao, Long>{
 	    }
 	}
 	
+	public boolean existeMaisDeUmRegistro(LocalDate dataRegistro) {
+	    Long count = entityManager.createQuery(
+	            "SELECT COUNT(r) FROM RegistroPlantaoServidor r WHERE r.dataRegistroPlantaoServidor = :dataRegistro", 
+	            Long.class)
+	            .setParameter("dataRegistro", Date.from(dataRegistro.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+	            .getSingleResult();
+
+	    return count > 0;
+	}
+
 	public boolean existeRegistro(String nomeServidor, LocalDate dataRegistro) {
 	    try {	        
 	        RegistroPlantaoServidor registro = entityManager.createQuery(

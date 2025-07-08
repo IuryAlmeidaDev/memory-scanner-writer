@@ -1,179 +1,174 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:sgp="http://sejudh.mt.gov.br/components"
-	template="/WEB-INF/pages/_templates/principal.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui" xmlns:sgp="http://sejudh.mt.gov.br/components"
+				template="/WEB-INF/pages/_templates/principal.xhtml">
 
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
-		
+
 		<h3>Livro Plantão</h3>
 
-        <!-- Botão Cadastrar -->
-        <h:form>
-            <h:panelGroup style="text-align: center; margin-bottom: 15px;">
-                <p:button 
-                    value="Cadastrar" 
-                    outcome="pretty:CadastrarPlantao" 
-                    icon="ui-icon-plus" 
-                    rendered="#{securityUtil.possuiPermissao('CadastrarPlantao')}" 
-                    style="margin-right: 15px;" />
-            </h:panelGroup>
-        </h:form>
+		<!-- Botão Cadastrar -->
+		<!-- <h:form>
+			<h:panelGroup style="text-align: center; margin-bottom: 15px;">
+				<p:button value="Cadastrar" outcome="pretty:CadastrarPlantao" icon="ui-icon-plus"
+					rendered="#{securityUtil.possuiPermissao('CadastrarPlantao')}" style="margin-right: 15px;" />
+			</h:panelGroup>
+		</h:form> -->
 
-        <!-- Formulário de Consulta -->
-        <h:form>
-            <h:panelGroup style="margin-top: 20px;">
+		<h:form id="formDialog">
+			<!-- Botão para abrir o diálogo -->
+			<p:commandButton value="Cadastrar" onclick="PF('dlg').show();" type="button" icon="ui-icon-plus" />
 
-                <!-- Tipo Plantão -->
-                <sgp:formSelectOneMenu
-                	value="#{registroPlantaoBean.filtro.tipoPlantao}"
-                    labelValue="Plantão"
-                    id="plantao"
-                    display="text"
-                    temSelecione="true"                                                           
-		            style="width:200px"  
-                    styleInput="width:200px; margin-bottom:15px;">
-                    
-                    <f:selectItem itemLabel="A" itemValue="A" />
-                    <f:selectItem itemLabel="B" itemValue="B" />
-                    <f:selectItem itemLabel="C" itemValue="C" />
-                    <f:selectItem itemLabel="D" itemValue="D" />
-                    <f:selectItem itemLabel="E" itemValue="E" />
-                    <f:selectItem itemLabel="GESTAO" itemValue="GESTAO" />
-                    <f:selectItem itemLabel="ADMINISTRATIVA" itemValue="ADMINISTRATIVA" />
-                </sgp:formSelectOneMenu>
-                
-                 				
-                <!-- Data -->
-                <sgp:formCalendar
-                    labelValue="Data"
-                    id="dataPlantao"
-                    value="#{registroPlantaoBean.filtro.dataPlantao}"
-                    pattern="dd/MM/yyyy"                                  
-		            style="width:200px"  
-                    styleInput="width:200px; margin-bottom:15px;">
-                    <p:ajax event="dateSelect" />
-                </sgp:formCalendar>
+			<!-- Diálogo -->
+			<p:dialog header="Escolha uma opção" widgetVar="dlg" modal="true" closable="false" draggable="false">
+				<h:panelGrid columns="1" cellpadding="5">
+					<sgp:formSelectOneMenu id="slPlantaoIniciado" labelValue="Plantão Iniciado"
+										   value="#{registroPlantaoBean.plantaoSelecionado}"
+										   disabled="#{registroPlantaoBean.isVisualizacao}" style="width:200px"
+										   styleInput="width:200px; margin-bottom:15px;">
 
-                <!-- Unidade -->
-                <sgp:formSelectOneMenu
-                    labelValue="Unidade"
-                    id="unidade"
-                    value="#{registroPlantaoBean.filtro.unidadePrisional}"
-                    itemsValue="#{comboHelperBean.unidadesPrisionais}"
-                    itemValue="#{item}"
-                    itemLabel="#{item.nome}"
-                    display="text"
-                    converter="SimpleEntityConverter"
-                    temSelecione="true"                                       
-		            style="width:200px"  
-                    styleInput="width:200px; margin-bottom:15px;" />  
-                    
-                  
-                <!-- Situaão -->
-                <sgp:formSelectOneMenu
-					labelValue="Situação" 
-					id="slTipoPlantao"
-					value="#{registroPlantaoBean.filtro.statusPlantao}"
-					style="width:200px"  
-                    styleInput="width:200px; margin-bottom:15px;">
-					
-					<f:selectItem 
-						itemLabel="Selecione" 
-						itemValue="" noSelectionOption="true"/>
-					
-					<f:selectItems 
-						value="#{registroPlantaoBean.statusPlantoes}" 
-						var="status" itemValue="#{status}" 
-						 itemLabel="#{status.descricao}" />				
+						<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
+
+						<f:selectItems value="#{registroPlantaoBean.tiposPlantao}"
+									   disabled="#{registroPlantaoBean.isVisualizacao}" var="p" itemLabel="#{p.descricao}"
+									   itemValue="#{p}" />
+
+						<p:ajax listener="#{registroPlantaoBean.atualizarPlantaoSelecionado}" />
+
+					</sgp:formSelectOneMenu>
+
+					<!-- Botão para redirecionar -->
+					<p:commandButton value="Registrar" action="#{registroPlantaoBean.salvar}" ajax="false" />
+					<p:commandButton value="Fechar" onclick="PF('dlg').hide();" type="button" />
+				</h:panelGrid>
+			</p:dialog>
+		</h:form>
+
+		<!-- Formulário de Consulta -->
+		<h:form>
+			<h:panelGroup style="margin-top: 20px;">
+
+				<!-- Tipo Plantão -->
+				<sgp:formSelectOneMenu value="#{registroPlantaoBean.filtro.tipoPlantao}" labelValue="Plantão"
+									   id="plantao" display="text" temSelecione="true" style="width:200px"
+									   styleInput="width:200px; margin-bottom:15px;">
+
+					<f:selectItem itemLabel="A" itemValue="A" />
+					<f:selectItem itemLabel="B" itemValue="B" />
+					<f:selectItem itemLabel="C" itemValue="C" />
+					<f:selectItem itemLabel="D" itemValue="D" />
 				</sgp:formSelectOneMenu>
-				                                      
 
-            </h:panelGroup>
-            
-            <br /><br />
 
-            <!-- Botões de Ação -->
-            <h:panelGroup style="text-align: center; margin-top: 20px;">
-                <p:commandButton value="Pesquisar" update=":registrosForm" icon="ui-icon-search" style="margin-right: 15px;" />
-                <p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{registroPlantaoBean.imprimir()}"/>
-            </h:panelGroup>
-        </h:form>
-		
+				<!-- Data -->
+				<sgp:formCalendar labelValue="Data" id="dataPlantao" value="#{registroPlantaoBean.filtro.dataPlantao}"
+								  pattern="dd/MM/yyyy" style="width:200px" styleInput="width:200px; margin-bottom:15px;">
+					<p:ajax event="dateSelect" />
+				</sgp:formCalendar>
+
+				<!-- Unidade -->
+				<sgp:formSelectOneMenu labelValue="Unidade" id="unidade"
+									   value="#{registroPlantaoBean.filtro.unidadePrisional}"
+									   itemsValue="#{comboHelperBean.unidadesPrisionais}" itemValue="#{item}" itemLabel="#{item.nome}"
+									   display="text" converter="SimpleEntityConverter" temSelecione="true" style="width:200px"
+									   styleInput="width:200px; margin-bottom:15px;" />
+
+
+				<!-- Situaão -->
+				<sgp:formSelectOneMenu labelValue="Situação" id="slTipoPlantao"
+									   value="#{registroPlantaoBean.filtro.statusPlantao}" style="width:200px"
+									   styleInput="width:200px; margin-bottom:15px;">
+
+					<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
+
+					<f:selectItems value="#{registroPlantaoBean.statusPlantoes}" var="status" itemValue="#{status}"
+								   itemLabel="#{status.descricao}" />
+				</sgp:formSelectOneMenu>
+
+
+			</h:panelGroup>
+
+			<br /><br />
+
+			<!-- Botões de Ação -->
+			<h:panelGroup style="text-align: center; margin-top: 20px;">
+				<p:commandButton value="Pesquisar" update=":registrosForm" icon="ui-icon-search"
+								 style="margin-right: 15px;" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
+								 actionListener="#{registroPlantaoBean.imprimir()}" />
+			</h:panelGroup>
+		</h:form>
+
 		<h:form id="registrosForm">
-		<p:dataTable id="dataTable" var="plantao" value="#{registroPlantaoBean.registroPlantoes}"
-		        rows="10" paginator="true" paginatorPosition="bottom" lazy="true"
-		        sortBy="#{plantao.id}" emptyMessage="Nenhum registro encontrado."
-		        style="width: 100%;" responsiveLayout="scroll"
-		        rowStyleClass="tabela-linha">
-	
-	 	  		<!-- Código -->
-		        <p:column headerText="Código" style="width: 8%; text-align: center;" sortBy="#{plantao.id}">
-		            <h:outputText value="#{plantao.id}" />
-		        </p:column>
-		
-		        <!-- Data -->
-		        <p:column headerText="Data/Hora" style="width: 20%; text-align: center;" sortBy="#{plantao.dataPlantao}">
-				    <h:outputText value="#{plantao.dataPlantao}">
-				        <f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss.SSS" timeZone="America/Cuiaba" />
-				    </h:outputText>
+			<p:dataTable id="dataTable" var="plantao" value="#{registroPlantaoBean.plantoes}" rows="10" paginator="true"
+						 paginatorPosition="bottom" lazy="true" sortBy="#{plantao.id}" emptyMessage="Nenhum registro encontrado."
+						 style="width: 100%;" responsiveLayout="scroll" rowStyleClass="tabela-linha">
+
+				<!-- Código -->
+				<p:column headerText="Código" style="width: 8%; text-align: center;" sortBy="#{plantao.id}">
+					<h:outputText value="#{plantao.id}" />
 				</p:column>
-		        
-		
-		        <!-- Plantão -->
-		        <p:column headerText="Plantão" style="width: 10%; text-align: center;">
-		            <h:outputText value="#{plantao.tipoPlantao.descricao}" />
-		        </p:column>
-		
-		        <!-- Unidade -->
-		        <p:column headerText="Unidade" style="width: 34%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-		            <h:outputText value="#{plantao.unidadePrisional.nome}" />
-		        </p:column>
-		
-		        <!-- Situação -->
-		        <p:column headerText="Situação" style="width: 15%; text-align: center;">
-		            <h:outputText value="#{plantao.statusPlantao.descricao}" />
-		        </p:column>
-		        
-		         <!-- Ações -->
-		        <p:column headerText="Ações" style="width: 25%; text-align: center;">
-		        
-		            <p:button title="Visualizar" icon="ui-icon-document" 
-		            		style="margin-right: 5px;"
-		            		outcome="pretty:VisualizarPlantao" 
-		            		rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}">		            		  
-		                <f:param name="id" value="#{plantao.id}" />
-		            </p:button>
-		            		    
-		            		            		            				         
-		            <p:button title="Alterar" icon="ui-icon-pencil">
+
+				<!-- Data -->
+				<p:column headerText="Data/Hora" style="width: 20%; text-align: center;"
+						  sortBy="#{plantao.dataPlantao}">
+					<h:outputText value="#{plantao.dataPlantao}">
+						<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss.SSS" timeZone="America/Cuiaba" />
+					</h:outputText>
+				</p:column>
+
+
+				<!-- Plantão -->
+				<p:column headerText="Plantão" style="width: 10%; text-align: center;">
+					<h:outputText value="#{plantao.tipoPlantao.descricao}" />
+				</p:column>
+
+				<!-- Unidade -->
+				<p:column headerText="Unidade"
+						  style="width: 34%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+					<h:outputText value="#{plantao.unidadePrisional.nome}" />
+				</p:column>
+
+				<!-- Situação -->
+				<p:column headerText="Situação" style="width: 15%; text-align: center;">
+					<h:outputText value="#{plantao.statusPlantao.descricao}" />
+				</p:column>
+
+				<!-- Ações -->
+				<p:column headerText="Ações" style="width: 25%; text-align: center;">
+
+					<p:button title="Visualizar" icon="ui-icon-document" style="margin-right: 5px;"
+							  outcome="pretty:VisualizarPlantao"
+							  rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}">
 						<f:param name="id" value="#{plantao.id}" />
 					</p:button>
-															
-					 <p:button title="Historico" icon="ui-icon-clock" />					 					 					 
-    					
-    				 <p:commandButton title="Imprimir" icon="fa fa-print" 
-    					actionListener="#{registroPlantaoBean.imprimirId(plantao)}" 
-    					rendered="#{plantao.id != null}"/>
-		                
-		            		            		            
-		        </p:column> 
-		        
-		        <!-- Rodapé -->
-		        <f:facet name="footer">
-		            Total de registros: #{registroPlantaoBean.registroPlantoes.rowCount}
-		        </f:facet>       
-		        
-		</p:dataTable> 	
+
+
+					<p:button title="Alterar" icon="ui-icon-pencil">
+						<f:param name="id" value="#{plantao.id}" />
+					</p:button>
+
+					<p:button title="Historico" icon="ui-icon-clock" />
+
+					<p:commandButton title="Imprimir" icon="fa fa-print"
+									 actionListener="#{registroPlantaoBean.imprimirId(plantao)}" rendered="#{plantao.id != null}" />
+
+
+				</p:column>
+
+				<!-- Rodapé -->
+				<f:facet name="footer">
+					Total de registros: #{registroPlantaoBean.plantoes.rowCount}
+				</f:facet>
+
+			</p:dataTable>
 		</h:form>
-		
+
 		<br /><br />
-		
-		
-		
-			
+
+
+
+
 	</ui:define>
 </ui:composition>

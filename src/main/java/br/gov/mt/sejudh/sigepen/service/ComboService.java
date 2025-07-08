@@ -415,12 +415,8 @@ public class ComboService {
 		return TipoPlantao.values();
 	}
 
-		/*
-		public TipoPlantao[] getPlantoes() {
-			return TipoPlantao.values();
-		}
-		}*/
+	public Relatorio[] getRelatorio() {
+	    return new Relatorio[] { Relatorio.Atestado };
+	}
 
-
-	public Relatorio[] getRelatorio() {return Relatorio.values();}
 }

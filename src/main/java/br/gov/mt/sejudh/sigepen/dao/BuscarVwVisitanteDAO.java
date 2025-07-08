@@ -34,14 +34,14 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         consultaSQL.append(subselectDadosPessoas);
         consultaSQL.append(subselectVisitantes);
 
-        if (subselectRecuperando != null) {
+        if (subselectRecuperando != null && (filtro.getRecuperando() == null || filtro.getRecuperando().isEmpty())) {
             consultaSQL.append(" UNION ALL ");
             consultaSQL.append(subselectRecuperando);
         }
 
         StringBuilder sqlFinal = new StringBuilder();
         if (!contar) {
-            sqlFinal.append("SELECT * FROM ( ").append(consultaSQL.toString()).append(" ) ");
+            sqlFinal.append("SELECT DISTINCT * FROM ( ").append(consultaSQL.toString()).append(" ) ");
             if (ordemSQL.name().equals("DESCENDING")) {
                 sqlFinal.append("ORDER BY ").append(campoOrdenacao).append(" DESC ");
             } else {
@@ -114,7 +114,7 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
 
         subselect.append(" SELECT ");
         if (contar) {
-            subselect.append(" count(p.id) credenciamentosAtivos ");
+            subselect.append(" count(distinct p.id) credenciamentosAtivos ");
         } else {
             subselect.append(criarCamposVisitantes());
         }

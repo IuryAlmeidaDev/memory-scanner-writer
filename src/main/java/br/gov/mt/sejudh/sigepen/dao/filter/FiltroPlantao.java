@@ -6,7 +6,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.StatusPlantao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 
-public class FiltroPLantao extends FiltroConsulta {
+public class FiltroPlantao extends FiltroConsulta {
 
 	private static final long serialVersionUID = 1L;
 
