@@ -30,7 +30,6 @@ import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamentosVisita;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TempoCondenacao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado;
@@ -60,10 +59,8 @@ import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
 import br.gov.mt.sejudh.sigepen.model.OrientacaoSexual;
 import br.gov.mt.sejudh.sigepen.model.Pais;
 import br.gov.mt.sejudh.sigepen.model.Parentesco;
-import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.Raca;
 import br.gov.mt.sejudh.sigepen.model.Regime;
-import br.gov.mt.sejudh.sigepen.model.RegistroPlantao;
 import br.gov.mt.sejudh.sigepen.model.Religiao;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
@@ -130,17 +127,14 @@ public class ComboService {
 		return dao.listarTipoServidor();
 	}
 
-	public List<TipoHistorico> listarTipoHistorico(){
-		return dao.listarTipoHistorico();
+	public List<TipoHistorico> listarTipoHistoricoPermitidoParaCadastrar() {
+		return dao.listarTipoHistoricoPorPermissao("CadastrarHistoricoRecuperando");
 	}
 
-	public List<TipoHistorico> listarTipoHistoricoPermitidoParaCadastrar(){
-		return dao.listarTipoHistoricoPermitidoParaCadastrar();
+	public List<TipoHistorico> listarTipoHistoricoParaVisualizar() {
+		return dao.listarTipoHistoricoPorPermissao("VisualizarHistoricoRecuperando");
 	}
 
-	public List<TipoHistorico> listarTipoHistoricoParaVisualizar(){
-		return dao.listarTipoHistoricoParaVisualizar();
-	}
 
 	public Status[] getStatus() {
 		return Status.values();
@@ -160,10 +154,6 @@ public class ComboService {
 
 	public Periculosidade[] getPericulosidade() {
 		return Periculosidade.values();
-	}
-
-	public StatusProcesso[] getStatusProcesso() {
-		return StatusProcesso.values();
 	}
 
 	public SituacaoUnidade[] getSituacaoUnidade() {
@@ -201,23 +191,9 @@ public class ComboService {
 		return dao.listarEstado();
 	}
 
-	//Lista Unidade Prisional
 	public List<UnidadePrisional> listarUnidades(){
 		return dao.listarUnidadesPrisionais();
 	}
-
-	//Lista Registro PLantao
-	public List<RegistroPlantao> listarRegistroPLantao(){
-		return dao.listarRegistrosPlantao();
-	}
-
-	public List<Plantao> listarPlantoesCadastrados(){
-		return dao.listarPlantoesCadastrados();
-	}
-
-
-
-
 
 	public List<Cidade> listarCidade(Estado estado){
 		return dao.listarCidade(estado);
@@ -253,7 +229,7 @@ public class ComboService {
 
 	public List<TipoTransito> getTipoTransito() {
 		TipoTransito[] tipos = TipoTransito.values();
-		List<TipoTransito> tiposTransito = new ArrayList<TipoTransito>();
+		List<TipoTransito> tiposTransito = new ArrayList<>();
 		for(int i = 2; i < tipos.length; i++){
 			tiposTransito.add(tipos[i]);
 		}
@@ -304,10 +280,6 @@ public class ComboService {
 		return TipoDocumentoPedidoTransito.values();
 	}
 
-	public Estado buscarEstado(String nomeEstado){
-		return dao.buscarEstado(nomeEstado);
-	}
-
 	public List<UnidadePrisional> getUnidadesPrisionais() {
 		return dao.listarUnidadesPrisionais();
 	}
@@ -353,24 +325,20 @@ public class ComboService {
 	}
 
 	public StatusCredenciamentosVisita[] getFiltroSituacaoCredenciamentoVisita(){
-		StatusCredenciamentosVisita[] retorno = {
-				StatusCredenciamentosVisita.DISPONIVEL,
-				StatusCredenciamentosVisita.INDISPONIVEL,
-				StatusCredenciamentosVisita.FALTA_DISCIPLINAR
-				};
-		return retorno;
+        return new StatusCredenciamentosVisita[]{
+                StatusCredenciamentosVisita.DISPONIVEL,
+                StatusCredenciamentosVisita.INDISPONIVEL,
+                StatusCredenciamentosVisita.FALTA_DISCIPLINAR
+                };
 	}
 
-
-
 	public StatusCredenciamento[] getFiltroSituacaoCredenciamento(){
-		StatusCredenciamento[] retorno = {
-				StatusCredenciamento.PENDENTE,
-				StatusCredenciamento.APROVADO,
-				StatusCredenciamento.NAO_APROVADO,
-				StatusCredenciamento.INATIVO
-				};
-		return retorno;
+        return new StatusCredenciamento[]{
+                StatusCredenciamento.PENDENTE,
+                StatusCredenciamento.APROVADO,
+                StatusCredenciamento.NAO_APROVADO,
+                StatusCredenciamento.INATIVO
+                };
 	}
 
 	public SituacaoVisita[] getSituacaoVisita() {
