@@ -2,10 +2,10 @@ package br.gov.mt.sejudh.sigepen.enumerator;
 
 public enum StatusPlantao {
 	
-	INICIADO("Iniciado"),	
+	INICIADO("Iniciado"),
 	ANDAMENTO("Em andamento"),
 	CONCLUIDO("Concluido");
-	
+
 	
 	private String descricao;
 

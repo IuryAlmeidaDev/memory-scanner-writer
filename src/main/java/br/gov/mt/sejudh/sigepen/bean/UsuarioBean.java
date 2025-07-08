@@ -171,7 +171,10 @@ public class UsuarioBean extends MetodosDePaginaBean {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Para impressão é necessário selecionar uma unidade");
 				return;
 			}
-
+					
+			getFiltro().setQuantidadeRegistros(Integer.MAX_VALUE);
+			getFiltro().setPrimeiroRegistro(0);
+	        
 			List<UsuarioDTO> lista = usuarioService.buscarUsuariosPorFiltro(getFiltro());
 
 			if (lista.size() == 0) {

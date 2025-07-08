@@ -108,6 +108,7 @@ public class ServidorService {
 	    
 	    return servidores.stream()
 	                     .map(servidor -> new ServidorDTO(
+							 servidor.getId(),
 	                         servidor.getNome(),
 	                         servidor.getFuncao() != null ? servidor.getFuncao().getNome() : null,
 	                         servidor.getCargo() != null ? servidor.getCargo().getNome() : null,
@@ -122,6 +123,7 @@ public class ServidorService {
 	    List<Servidor> servidores = dao.listarServidoresPorTipoPlantao(tipoPlantao);
 	    return servidores.stream()
 	        .map(s -> new ServidorDTO(
+				s.getId(),
 	            s.getNome(),
 	            s.getFuncao() != null ? s.getFuncao().getNome() : null,
 	            s.getCargo() != null ? s.getCargo().getNome() : null,

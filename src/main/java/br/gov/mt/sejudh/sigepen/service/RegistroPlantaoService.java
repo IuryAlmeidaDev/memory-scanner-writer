@@ -65,6 +65,10 @@ public class RegistroPlantaoService extends BaseService<RegistroPlantao, Long>{
 	    return dao.buscarUltimoRegistroPlantaoComPlantao();
 	}
 	
+	public boolean existeMaisDeUmRegistro(LocalDate dataRegistro) {
+	    return dao.existeMaisDeUmRegistro(dataRegistro);
+	}
+	
 	public boolean existeRegistro(String nomeServidor, LocalDate dataRegistro) {
 	    return dao.existeRegistro(nomeServidor, dataRegistro);
 	}

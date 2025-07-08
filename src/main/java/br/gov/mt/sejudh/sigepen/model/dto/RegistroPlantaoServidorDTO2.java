@@ -10,6 +10,7 @@ import javax.persistence.TemporalType;
 
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoPlantao;
 import br.gov.mt.sejudh.sigepen.model.Atividade;
+import br.gov.mt.sejudh.sigepen.model.PlantaoServidor;
 
 
 public class RegistroPlantaoServidorDTO2 {
@@ -17,6 +18,8 @@ public class RegistroPlantaoServidorDTO2 {
 	private Long id;
 	
 	private String nomeServidor;
+
+	private ServidorDTO servidorDTO;
 	
 	private String atividadeSelecionada;
 	
@@ -29,6 +32,8 @@ public class RegistroPlantaoServidorDTO2 {
 	private List<ServidorDTO> equipeServidores; // Preenchido no init
 	
 	private LocalDate dataRegistroPlantaoServidor = LocalDate.now();
+
+	private PlantaoServidor plantaoServidor;
 	
 	private Long registroPlantaoId;
 	
@@ -37,10 +42,34 @@ public class RegistroPlantaoServidorDTO2 {
 	// Novos campos, inicializados como null
     private String ocorrenciaSelecionada;    
     private String justificativa;
-	
-	
-		
-	
+
+	public RegistroPlantaoServidorDTO2() {
+	}
+
+	public RegistroPlantaoServidorDTO2(PlantaoServidor plantaoServidor,List<Atividade> atividadesGestao) {
+		this.plantaoServidor = plantaoServidor;
+		this.servidorDTO = new ServidorDTO(plantaoServidor.getServidor());
+		this.atividadeSelecionada = plantaoServidor.getAtividae();
+		this.situacaoSelecionada = plantaoServidor.getSituacao();
+		this.atividades = atividadesGestao;
+	}
+
+	public RegistroPlantaoServidorDTO2(Long id, String nomeServidor, ServidorDTO servidorDTO, String atividadeSelecionada, List<Atividade> atividades, String situacaoSelecionada, SituacaoPlantao situacaoPlantao, List<ServidorDTO> equipeServidores, LocalDate dataRegistroPlantaoServidor, Long registroPlantaoId, Long matricula, String ocorrenciaSelecionada, String justificativa) {
+		this.id = id;
+		this.nomeServidor = nomeServidor;
+		this.servidorDTO = servidorDTO;
+		this.atividadeSelecionada = atividadeSelecionada;
+		this.atividades = atividades;
+		this.situacaoSelecionada = situacaoSelecionada;
+		this.situacaoPlantao = situacaoPlantao;
+		this.equipeServidores = equipeServidores;
+		this.dataRegistroPlantaoServidor = dataRegistroPlantaoServidor;
+		this.registroPlantaoId = registroPlantaoId;
+		this.matricula = matricula;
+		this.ocorrenciaSelecionada = ocorrenciaSelecionada;
+		this.justificativa = justificativa;
+	}
+
 	/* ------------------------  Getts e Setts  ------------------------ */
 	
 	
@@ -141,9 +170,20 @@ public class RegistroPlantaoServidorDTO2 {
 		this.justificativa = justificativa;
 	}
 
-	
-	
-	
-	
 
+    public ServidorDTO getServidorDTO() {
+        return servidorDTO;
+    }
+
+    public void setServidorDTO(ServidorDTO servidorDTO) {
+        this.servidorDTO = servidorDTO;
+    }
+
+	public PlantaoServidor getPlantaoServidor() {
+		return plantaoServidor;
+	}
+
+	public void setPlantaoServidor(PlantaoServidor plantaoServidor) {
+		this.plantaoServidor = plantaoServidor;
+	}
 }
