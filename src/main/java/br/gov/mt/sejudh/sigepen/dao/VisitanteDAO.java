@@ -1,6 +1,8 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -18,6 +20,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 
+import br.gov.mt.sejudh.sigepen.enumerator.*;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
@@ -263,6 +266,15 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
   		if(filtro.getStatus() != null) {
   			 sql.append("AND v.STAT_VISITANTE = :status_visitante ");
   		}
+
+		if (filtro.getVencimentoCredenciamento() != null ) {
+			VencimentoCredenciamento venc = filtro.getVencimentoCredenciamento();
+			if (venc == VencimentoCredenciamento.VENCIDOS) {
+				sql.append(" AND c.DATA_VALIDADE < :dataValidadeFim ");
+			} else {
+				sql.append(" AND c.DATA_VALIDADE BETWEEN :dataValidadeInicio AND :dataValidadeFim ");
+			}
+		}
   		
   		if(filtro.getUnidadePrisional() != null) {
   			 sql.append("AND up.ID = :unidade ");
@@ -323,6 +335,20 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
   		if(filtro.getFaseCredenciamento() != null) {
   			query.setParameter("CODG_FASE_CREDENCIAL", filtro.getFaseCredenciamento().getId());
   		}
+
+		if (filtro.getVencimentoCredenciamento() != null) {
+			VencimentoCredenciamento venc = filtro.getVencimentoCredenciamento();
+			LocalDate hoje = LocalDate.now();
+			if (venc == VencimentoCredenciamento.VENCIDOS) {
+				Date dataValidadeFim = Date.from(hoje.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				query.setParameter("dataValidadeFim", dataValidadeFim);
+			} else {
+				Date dataValidadeInicio = Date.from(hoje.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				Date dataValidadeFim = Date.from(hoje.plusDays(venc.getDias()).atStartOfDay(ZoneId.systemDefault()).toInstant());
+				query.setParameter("dataValidadeInicio", dataValidadeInicio);
+				query.setParameter("dataValidadeFim", dataValidadeFim);
+			}
+		}
   		
   		query.setResultTransformer(Transformers.aliasToBean(VisitanteListaDTO.class));
 

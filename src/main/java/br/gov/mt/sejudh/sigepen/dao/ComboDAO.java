@@ -1,6 +1,5 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import org.hibernate.annotations.QueryHints;
 
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatus;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
-import br.gov.mt.sejudh.sigepen.model.Permissao;
 import br.gov.mt.sejudh.sigepen.model.Certidao;
 import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
@@ -167,7 +165,7 @@ public class ComboDAO {
 		// Filtrar apenas os tipos de histórico para os quais o usuário tem permissão de adicionar
 		List<TipoHistorico> tipoHistoricoFiltrado = new ArrayList<>();
 		for (TipoHistorico tipo : tipoHistorico) {
-			if (tipo.getFuncionalidade() != null && 
+			if (tipo.getFuncionalidade() != null &&
 				tipo.getFuncionalidade().getPermissoes() != null) {
 				for (Permissao permissao : tipo.getFuncionalidade().getPermissoes()) {
 					if (permissao.getNome().startsWith("CadastrarHistoricoRecuperando") &&
@@ -194,10 +192,10 @@ public class ComboDAO {
 		// Filtrar apenas os tipos de histórico para os quais o usuário tem permissão de visualizar
 		List<TipoHistorico> tipoHistoricoFiltrado = new ArrayList<>();
 		for (TipoHistorico tipo : tipoHistorico) {
-			if (tipo.getFuncionalidade() != null && 
+			if (tipo.getFuncionalidade() != null &&
 				tipo.getFuncionalidade().getPermissoes() != null) {
 				for (Permissao permissao : tipo.getFuncionalidade().getPermissoes()) {
-					if (permissao.getNome().startsWith("Visualizar") && 
+					if (permissao.getNome().startsWith("Visualizar") &&
 						SecurityUtils.getSubject().isPermitted(permissao.getNome())) {
 						tipoHistoricoFiltrado.add(tipo);
 						break;

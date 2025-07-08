@@ -100,6 +100,16 @@
                         itemLabel="#{item.descricao}"
                         style="width: 200px;"
                         temSelecione="true"/>
+
+                <sgp:formSelectOneMenu
+                        styleFormLabelColumn="width:180px"
+                        id="vencimentoCredenciamento" labelValue="Vencimento Credenciamento"
+                        value="#{visitanteBean.filtro.vencimentoCredenciamento}"
+                        itemsValue="#{comboHelperBean.vencimentoCredenciamentos}"
+                        itemValue="#{item}"
+                        itemLabel="#{item.descricao}"
+                        style="width: 200px;"
+                        temSelecione="true"/>
                         
                 <br/>
                 <br/>

@@ -34,6 +34,20 @@ public class TipoOcorrencia extends BaseModel<Long> {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "tipoOcorrencia", orphanRemoval = true)
     private List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>();
+    
+    @Column(name = "TIPO")
+    private String tipo;
+
+    @Enumerated
+	@Column(name = "STATUS")
+	private Status status;
+
+    @Transient
+	private AutoriaRegistro autorRegistro;
+
+	@Transient
+	private AutoriaRegistro autorUltimaAlteracao;
+
 
     public TipoOcorrencia() {}
 
@@ -41,6 +55,10 @@ public class TipoOcorrencia extends BaseModel<Long> {
         this.id = id;
         this.descricao = descricao;
         this.ocorrencias = ocorrencias;
+    }
+    
+    public TipoOcorrencia(Status status) {
+    	this.setStatus(status);
     }
 
     public TipoOcorrencia(Long id) {
@@ -71,6 +89,39 @@ public class TipoOcorrencia extends BaseModel<Long> {
     public void setOcorrencias(List<Ocorrencia> ocorrencias) {
         this.ocorrencias = ocorrencias;
     }
+    
+    public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public AutoriaRegistro getAutorRegistro() {
+		return autorRegistro;
+	}
+
+	public void setAutorRegistro(AutoriaRegistro autorRegistro) {
+		this.autorRegistro = autorRegistro;
+	}
+
+	public AutoriaRegistro getAutorUltimaAlteracao() {
+		return autorUltimaAlteracao;
+	}
+
+	public void setAutorUltimaAlteracao(AutoriaRegistro autorUltimaAlteracao) {
+		this.autorUltimaAlteracao = autorUltimaAlteracao;
+	}
+
 
     @Override
     public String toString() {

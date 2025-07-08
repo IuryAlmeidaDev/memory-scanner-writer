@@ -200,7 +200,7 @@ public class SecurityUtil implements Serializable {
 				|| this.possuiPermissao("ExcluirPlantao")
 				|| this.possuiPermissao("CadastrarRegistroPlantao")
 				|| this.possuiPermissao("ListarRegistroPlantao");
-				break;	
+				break;
 		}
 
 		return resultado;

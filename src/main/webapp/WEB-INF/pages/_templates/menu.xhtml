@@ -24,6 +24,7 @@
 				<p:menuitem value="Tipo Impedimento" outcome="pretty:ListarTipoImpedimento" icon="fa fa-ban" rendered="#{securityUtil.possuiPermissao('ListarTipoImpedimento')}"/>
 				<p:menuitem value="Certidão" outcome="pretty:ListarCertidao" icon="fa fa-archive" rendered="#{securityUtil.possuiPermissao('ListarCertidao')}"/>
 			 	<p:menuitem value="Tipo Falta Disciplinar" outcome="pretty:ListarTipoFaltaDisciplinar" icon="fa fa-cog" rendered="#{securityUtil.possuiPermissao('ListarTipoFaltaDisciplinar')}" />
+			 	<p:menuitem value="Tipo Ocorrênica" outcome="pretty:ListarOcorrencia" icon="fa fa-cog" rendered="#{securityUtil.possuiPermissao('ListarOcorrencia')}" />
 			</p:submenu>
 			
 			<p:submenu label="Recuperando" rendered="#{securityUtil.exibeCategoriaMenu('Recuperando')}">
