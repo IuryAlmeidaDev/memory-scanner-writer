@@ -10,6 +10,7 @@ import br.gov.mt.sejudh.sigepen.model.DietaEspecialPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.ItemPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
+import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.DetalheItemEstruturaCardapioDTO;
@@ -360,6 +361,14 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
+
+	private String criarJsonRelatorio(List<DetalheItemEstruturaCardapioDTO> itemCardapioPorEstrutura, List<DietaEspecialEstruturaDTO> refeicoesEspeciais) {
+		final Map<String, Object> dadosRelatorio = new HashMap<>();
+		dadosRelatorio.put("itensCardapio", itemCardapioPorEstrutura);
+		dadosRelatorio.put("refeicoesEspeciais", refeicoesEspeciais);
+		final Gson gson = new Gson();
+		return gson.toJson(dadosRelatorio);
+	}
 
 	private List<PedidoEstruturaDTO> getEstruturasDeNivel2(List<PedidoEstruturaDTO> estruturaPedido) {
 		return estruturaPedido.stream()

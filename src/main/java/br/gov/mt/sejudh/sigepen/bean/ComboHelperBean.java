@@ -54,6 +54,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoVisitaObrigatoriedade;
 import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
+import br.gov.mt.sejudh.sigepen.enumerator.VencimentoCredenciamento;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
 import br.gov.mt.sejudh.sigepen.model.Estado;
 import br.gov.mt.sejudh.sigepen.model.EstadoCivil;
@@ -66,6 +67,7 @@ import br.gov.mt.sejudh.sigepen.model.Parentesco;
 import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.Raca;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.RegistroPlantao;
 import br.gov.mt.sejudh.sigepen.model.Religiao;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
@@ -211,6 +213,8 @@ public class ComboHelperBean {
 
 	private UnidadeMedida[] unidadesMedida;
 
+	private VencimentoCredenciamento[] vencimentoCredenciamentos;
+
 	private UnidadePrisional unidadePrisional;
 
 	private TipoPlantao[] tipoPlantoes;
@@ -268,7 +272,7 @@ public class ComboHelperBean {
 		acao				 		= comboService.getAcao();
 		pronomeTratamento	 		= comboService.getPronomeTratamento();
 		tipoDocumentoPedidoTransito = comboService.getTipoDocumentoPedidoTransito();
-		esfera						= comboService.getEsfera();	
+		esfera						= comboService.getEsfera();
 		atestados					= comboService.getAtestados();
 		tipoEntrada					= comboService.getTipoEntrada();
 		simNao						= comboService.getSimNao();
@@ -289,12 +293,11 @@ public class ComboHelperBean {
 		tipoVisitaObrigatoriedade = comboService.getTipoVisitaObrigatoriedade();
 		unidadesMedida = comboService.getUnidadesMedida();
 		relatorio = comboService.getRelatorio();
-
-		unidadePrisional = new UnidadePrisional();		
+		unidadePrisional = new UnidadePrisional();
 		tipoPlantoes = comboService.getTipoPlantao();
-		//plantoes     = comboService.getPlantoes();
-	}
 
+	}
+	
 	public NaturezaFaltaDisciplinar[] getNaturezaFaltaDisciplinar(){
 		return this.naturezaFaltaDisciplinar;
 	}
@@ -695,8 +698,8 @@ public class ComboHelperBean {
 
 	public void setEsfera(Esfera[] esfera) {
 		this.esfera = esfera;
-	}	
-
+	}
+	
 	public TipoAtestado[] getAtestados() {
 		return atestados;
 	}
@@ -831,6 +834,15 @@ public class ComboHelperBean {
 
 	public void setUnidadesMedida(UnidadeMedida[] unidadesMedida) {
 		this.unidadesMedida = unidadesMedida;
+	}
+
+
+	public VencimentoCredenciamento[] getVencimentoCredenciamentos() {
+		return vencimentoCredenciamentos;
+	}
+
+	public void setVencimentoCredenciamentos(VencimentoCredenciamento[] vencimentoCredenciamentos) {
+		this.vencimentoCredenciamentos = vencimentoCredenciamentos;
 	}
 
     public Relatorio[] getRelatorio() {

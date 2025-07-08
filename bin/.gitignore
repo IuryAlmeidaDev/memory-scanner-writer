@@ -1,0 +1,25 @@
+# Package Files #
+*.war
+*.ear
+
+### Eclipse ###
+*.pydevproject
+.metadata
+.gradle
+tmp/
+build/
+build/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath 
+
+out/
+/target/
+
+### IntelliJ IDEA
+.idea
+/bin/

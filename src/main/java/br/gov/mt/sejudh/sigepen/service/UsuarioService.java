@@ -30,7 +30,7 @@ public class UsuarioService {
 
 	@Inject
 	private AcessoService acessoService;
-	
+
 	private Usuario configurarUsuario(Usuario usuario, boolean senhaMudou) {
 		if (usuario.getId() <= 0) {
 			usuario.setLogin(usuario.getServidor().getCpf());
@@ -159,6 +159,15 @@ public class UsuarioService {
 	}
 
 	public int conutSolicitacaoSenha(FiltroUsuario filtroUsuario){
+		return dao.buscarQuantidadeFiltrada(filtroUsuario);
+	}
+
+	public int conutSolicitacaoSenha(){
+
+		FiltroUsuario filtroUsuario = new FiltroUsuario();
+
+		filtroUsuario.setResetSenha(true);
+
 		return dao.buscarQuantidadeFiltrada(filtroUsuario);
 	}
 }

@@ -88,7 +88,9 @@ public enum Relatorio {
 	Biometrias("Biometrias", 74),
 
     /* Relatórios de Plantoes */
-    ListarPlantoes("Relatório de Plantões", 75);
+    ListarPlantoes("Relatório de Plantões", 75),
+	
+    ListarTipoOcorrencia("Relatório Tipo Ocorrência", 76);
 
 
 	private Relatorio(String nome) {
