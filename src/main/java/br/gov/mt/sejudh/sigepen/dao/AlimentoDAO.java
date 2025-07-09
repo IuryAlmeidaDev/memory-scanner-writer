@@ -28,12 +28,11 @@ public class AlimentoDAO extends BaseDAO<Alimento, Long> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Alimento> listarAtivos() {
-		String jpql = "select a from Alimento a where status = :status";
+		String jpql = "select a from Alimento a where status = :status order by descricao asc";
 		Query query = em.createQuery(jpql, Alimento.class);
 		query.setParameter("status", Status.ATIVO);
-		List<Alimento> alimentos = query.getResultList();
 
-		return alimentos;
+        return (List<Alimento>) query.getResultList();
 	}
 
 	public Alimento buscarAlimento(Alimento alimento) {

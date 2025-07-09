@@ -17,9 +17,11 @@
                    labelValue="Alimento" itemValue="#{item}" itemLabel="#{item.descricao}"
                    itemsValue="#{associarItemCardapioBean.alimentos}"
                    value="#{associarItemCardapioBean.itemCardapio.alimento}"
-                   validationRequired="true" 
-                   converter="SimpleEntityConverter"/>
-                   
+                   validationRequired="true"
+				   converter="SimpleEntityConverter"
+				   filter="true"
+				   filterMatchMode="contains"/>
+
                 <sgp:formInputNumber
 						id="masc"
 						labelValue="Masculino"
