@@ -22,16 +22,16 @@
 				   filter="true"
 				   filterMatchMode="contains"/>
 
-                <sgp:formInputNumber
+				<sgp:formInputNumber
 						id="masc"
 						labelValue="Masculino"
 						validationRequired="true"
 						value="#{associarItemCardapioBean.itemCardapio.masc}"
-						decimalPlaces="1"
-						maxValue="999.9"
+						decimalPlaces="2"
+						maxValue="999.99"
 						decimalSeparator="."
 						toolTip="Informe o valor masculino com uma casa decimal."
-						maxlength="80" />
+						maxlength="6"/>
 
 
 				<sgp:formInputNumber
@@ -39,12 +39,12 @@
 						labelValue="Feminino"
 						validationRequired="true"
 						value="#{associarItemCardapioBean.itemCardapio.fem}"
-						decimalPlaces="1"
-						maxValue="999.9"
+						decimalPlaces="2"
+						maxValue="999.99"
 						decimalSeparator="."
 						toolTip="Informe o valor feminino com uma casa decimal."
-						maxlength="80" />
-					
+						maxlength="6"/>
+
 				<sgp:formSelectOneMenu 
 					id="status" labelValue="Status"
 					value="#{associarItemCardapioBean.itemCardapio.status}"
