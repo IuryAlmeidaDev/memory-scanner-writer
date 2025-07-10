@@ -32,10 +32,10 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ManagedBean
 @ViewScoped
 @URLMappings(mappings = {
-@URLMapping(id = "ListarOcorrencia", pattern = "/tipoOcorrencia", viewId = "/WEB-INF/pages/tipoOcorrencia/ListarOcorrencia.xhtml")
-,@URLMapping(id = "CadastrarOcorrencia", pattern = "/tipoOcorrencia/cadastrar", viewId = "/WEB-INF/pages/tipoOcorrencia/CadastrarOcorrencia.xhtml")
-,@URLMapping(id = "AlterarOcorrencia", pattern = "/tipoOcorrencia/alterar/#{id}", viewId = "/WEB-INF/pages/tipoOcorrencia/CadastrarOcorrencia.xhtml")
-,@URLMapping(id = "VisualizarOcorrencia", pattern = "/tipoOcorrencia/visualizar/#{id}", viewId = "/WEB-INF/pages/tipoOcorrencia/CadastrarOcorrencia.xhtml")
+@URLMapping(id = "ListarTipoOcorrencia", pattern = "/tipoOcorrencia", viewId = "/WEB-INF/pages/tipoOcorrencia/ListarTipoOcorrencia.xhtml")
+,@URLMapping(id = "CadastrarTipoOcorrencia", pattern = "/tipoOcorrencia/cadastrar", viewId = "/WEB-INF/pages/tipoOcorrencia/CadastrarTipoOcorrencia.xhtml")
+,@URLMapping(id = "AlterarTipoOcorrencia", pattern = "/tipoOcorrencia/alterar/#{id}", viewId = "/WEB-INF/pages/tipoOcorrencia/CadastrarTipoOcorrencia.xhtml")
+,@URLMapping(id = "VisualizarTipoOcorrencia", pattern = "/tipoOcorrencia/visualizar/#{id}", viewId = "/WEB-INF/pages/tipoOcorrencia/CadastrarTipoOcorrencia.xhtml")
 })
 public class TipoOcorrenciaBean extends MetodosDePaginaBean {
 
@@ -76,7 +76,7 @@ public class TipoOcorrenciaBean extends MetodosDePaginaBean {
 					
 					if (!buscarTipoOcorrencia(id)) {
 						facesUtil.exibirMensagemErro("Tipo ocorrencia não encontrada.", true);
-						return "pretty:ListarOcorrencia";
+						return "pretty:ListarTipoOcorrencia";
 					}
 					
 					logDeAcesso(log, this.tipoOcorrencia);
@@ -118,7 +118,7 @@ public class TipoOcorrenciaBean extends MetodosDePaginaBean {
 		try	{
 			service.salvar(this.tipoOcorrencia);
 			facesUtil.exibirMensagemInfo("Tipo Ocorrencia " + this.tipoOcorrencia.getDescricao() + " salva com sucesso!", true);
-			retorno = "pretty:ListarOcorrencia";
+			retorno = "pretty:ListarTipoOcorrencia";
 			LoggerUtil.logInfo(Acao.SALVAR, this.tipoOcorrencia, log);
 			
 		} catch(ValidacaoException e) {

@@ -12,7 +12,7 @@
 		<h3>Tipo Ocorrencia</h3>
 
 		<h:form>
-			<p:button value="Cadastrar" outcome="pretty:CadastrarOcorrencia" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarOcorrencia')}"/>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarTipoOcorrencia" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarTipoOcorrencia')}"/>
 		</h:form>		
 			
 		<h:form id="meuFormulario">
@@ -25,6 +25,13 @@
 					labelValue="Tipo" 
 					maxlength="50" 
 					style="width:300px;" />
+				
+				<sgp:formInputText 					
+					id="classificacao"
+					value="#{tipoOcorrenciaBean.filtro.classificacao}"					 
+					labelValue="Classificação" 
+					maxlength="50" 
+					style="width:300px;" />	
 					
 				<sgp:formInputText 					
 					id="descricao"
@@ -63,6 +70,10 @@
 						<h:outputText value="#{tipoOcorrencia.tipo}" />
 					</p:column>
 					
+					<p:column headerText="Classificacao" sortBy="#{tipoOcorrencia.classificacao}">
+						<h:outputText value="#{tipoOcorrencia.classificacao}" />
+					</p:column>
+					
 					<p:column headerText="Descrição" sortBy="#{tipoOcorrencia.descricao}">
 						<h:outputText value="#{tipoOcorrencia.descricao}" />
 					</p:column>
@@ -75,11 +86,11 @@
 					<p:column headerText="Ações" width="120">
 						<center>
 						
-							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarOcorrencia" rendered="#{securityUtil.possuiPermissao('VisualizarOcorrencia')}">
+							<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarTipoOcorrencia" rendered="#{securityUtil.possuiPermissao('VisualizarTipoOcorrencia')}">
 								<f:param name="id" value="#{tipoOcorrencia.id}" />
 							</p:button>
 							
-							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarOcorrencia" rendered="#{securityUtil.possuiPermissao('AlterarOcorrencia')}">
+							<p:button title="Alterar" icon="ui-icon-pencil" outcome="pretty:AlterarTipoOcorrencia" rendered="#{securityUtil.possuiPermissao('AlterarTipoOcorrencia')}">
 								<f:param name="id" value="#{tipoOcorrencia.id}" />
 							</p:button>
 														
