@@ -2,7 +2,6 @@ package br.gov.mt.sejudh.sigepen.model;
 
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
-import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.hibernate.envers.Audited;
 
@@ -41,6 +40,9 @@ public class TipoOcorrencia extends BaseModel<Long> {
     @Enumerated
 	@Column(name = "STATUS")
 	private Status status;
+    
+    @Column(name = "CLASSIFICACAO")
+    private String classificacao;
 
     @Transient
 	private AutoriaRegistro autorRegistro;
@@ -104,6 +106,14 @@ public class TipoOcorrencia extends BaseModel<Long> {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}	
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
 	}
 
 	public AutoriaRegistro getAutorRegistro() {

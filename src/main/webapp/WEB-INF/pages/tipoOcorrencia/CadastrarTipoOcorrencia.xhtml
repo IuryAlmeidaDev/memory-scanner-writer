@@ -29,7 +29,23 @@
 	                    <f:selectItem itemLabel="Servidor" itemValue="SERVIDOR" />
 	                    <f:selectItem itemLabel="Visita" itemValue="VISITA" />
 	                     				    					   
-				    </sgp:formSelectOneMenu>	
+				    </sgp:formSelectOneMenu>
+				    
+				    
+				    <sgp:formSelectOneMenu
+						id="classificacao"
+						labelValue="classificacao" 					
+						value="#{tipoOcorrenciaBean.tipoOcorrencia.classificacao}"
+						disabled="#{tipoOcorrenciaBean.isVisualizacao}" 					
+						style="width:200px"  
+	                    styleInput="width:200px; margin-bottom:15px;">					
+											
+						<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/>					
+						<f:selectItem itemLabel="Ocorrência" itemValue="OCORRENCIA" />
+	                    <f:selectItem itemLabel="Comunicado" itemValue="COMUNICADO" />	                    
+	                     				    					   
+				    </sgp:formSelectOneMenu>
+				    	
 					<sgp:formInputText 
 						id="descricao" 
 						labelValue="Descrição"
@@ -54,9 +70,9 @@
 					<br />
 
 					<p:commandButton value="Salvar" action="#{tipoOcorrenciaBean.salvar()}" update="@form" icon="ui-icon-disk" 
-						rendered="#{(securityUtil.possuiPermissao('CadastrarOcorrencia') and !tipoOcorrenciaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarOcorrencia') and !tipoOcorrenciaBean.isVisualizacao)}"/>
+						rendered="#{(securityUtil.possuiPermissao('CadastrarTipoOcorrencia') and !tipoOcorrenciaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarTipoOcorrencia') and !tipoOcorrenciaBean.isVisualizacao)}"/>
 						
-					<p:button outcome="pretty:ListarOcorrencia" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+					<p:button outcome="pretty:ListarTipoOcorrencia" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
 						<f:param name="list" value="1" />
 					</p:button>
 				</p:panel>
