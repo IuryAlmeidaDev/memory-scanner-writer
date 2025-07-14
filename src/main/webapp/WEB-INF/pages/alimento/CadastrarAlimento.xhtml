@@ -11,7 +11,8 @@
 
         <h3>#{alimentoBean.tituloPagina} Alimento</h3>
         <h:form>
-            <p:panel footer="Cadastrado por: #{alimentoBean.alimento.autorRegistro.usuario} em #{alimentoBean.alimento.autorRegistro.data} | Última alteração: #{alimentoBean.alimento.autorUltimaAlteracao.usuario} em #{alimentoBean.alimento.autorUltimaAlteracao.data}">
+            <p:panel
+                    footer="Cadastrado por: #{alimentoBean.alimento.autorRegistro.usuario} em #{alimentoBean.alimento.autorRegistro.data} | Última alteração: #{alimentoBean.alimento.autorUltimaAlteracao.usuario} em #{alimentoBean.alimento.autorUltimaAlteracao.data}">
 
                 <sgp:formInputText
                         id="nomeAlimento"
@@ -42,10 +43,16 @@
                         disabled="#{alimentoBean.isVisualizacao}"
                         display="text"/>
 
+                <sgp:formCheckbox
+                        id="proteico"
+                        labelValue="Proteico"
+                        value="#{alimentoBean.alimento.proteico}"
+                        disabled="#{alimentoBean.isVisualizacao}"/>
                 <br/>
                 <br/>
 
                 <p:commandButton value="Salvar" action="#{alimentoBean.salvar()}" update="@form"
+                                 process="@form"
                                  icon="ui-icon-disk"
                                  rendered="#{(securityUtil.possuiPermissao('CadastrarAlimento') and !alimentoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarAlimento') and !alimentoBean.isVisualizacao)}"/>
                 <p:button outcome="pretty:ListarAlimento" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">

@@ -13,6 +13,8 @@ import javax.persistence.Table;
 
 import br.gov.mt.sejudh.sigepen.conversores.EnumCustomConverter;
 import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.envers.Audited;
 
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
@@ -25,7 +27,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 public class Alimento extends BaseModel<Long>{
 
 	private static final long serialVersionUID = 3553305530826660461L;
-	
+
 	@SequenceGenerator(name = "SEQ_ALIMENTO_GENERATOR", sequenceName = "SEQ_ALIMENTO", allocationSize = 1, initialValue = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ALIMENTO_GENERATOR")
@@ -39,20 +41,23 @@ public class Alimento extends BaseModel<Long>{
 	@Convert(converter = EnumCustomConverter.class, disableConversion=true)
 	@Column(name = "UNIDADE_MEDIDA", nullable = false)
 	private UnidadeMedida unidadeMedida;
-	
+
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "STATUS", nullable = false)
 	private Status status;
-	
+
+	@Column(name = "PROTEICO", nullable = false)
+	private boolean proteico;
+
 	@Override
 	public Long getId() {
 		return id;
 	}
-	
+
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public String getDescricao() {
 		return descricao;
 	}
@@ -76,16 +81,25 @@ public class Alimento extends BaseModel<Long>{
 	public void setStatus(Status status) {
 		this.status = status;
 	}
-	
+
+	public boolean isProteico() {
+		return proteico;
+	}
+
+	public void setProteico(boolean proteico) {
+		this.proteico = proteico;
+	}
+
 	public Alimento() {
 		this.status = Status.ATIVO;
+		this.proteico = false;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + Long.hashCode(id);
 		return result;
 	}
 
@@ -110,11 +124,17 @@ public class Alimento extends BaseModel<Long>{
 				return false;
 		} else if (!status.equals(other.status))
 			return false;
-		return true;
-	}
+        return proteico == other.proteico;
+    }
 
 	@Override
 	public String toString() {
-		return "TipoDieta [id=" + id + ", descricao=" + descricao + ", status=" + status + "]";
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("id", id)
+				.append("descricao", descricao)
+				.append("unidadeMedida", unidadeMedida)
+				.append("status", status)
+				.append("proteico", proteico)
+				.toString();
 	}
 }

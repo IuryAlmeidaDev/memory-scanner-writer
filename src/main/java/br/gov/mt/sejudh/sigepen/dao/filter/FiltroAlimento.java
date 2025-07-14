@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
+import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
@@ -14,13 +15,15 @@ public class FiltroAlimento extends FiltroConsulta{
 	private String descricao;
 	private UnidadeMedida unidadeMedida;
 	private Status status;
+	private SimNao proteico;
 
 	@Override
 	public void configurarFiltros() {
 		Projection proj = Projections.projectionList().add(Projections.property("id").as("id"))
 				.add(Projections.property("descricao").as("descricao"))
 				.add(Projections.property("unidadeMedida").as("unidadeMedida"))
-				.add(Projections.property("status").as("status"));
+				.add(Projections.property("status").as("status"))
+				.add(Projections.property("proteico").as("proteico"));
 
 		getCriteria().setProjection(proj);
 		
@@ -34,6 +37,10 @@ public class FiltroAlimento extends FiltroConsulta{
 		
 		if (this.getStatus() != null) {
 			getCriteria().add(Restrictions.eq("status", this.getStatus()));
+		}
+
+		if (this.getProteico() != null) {
+			getCriteria().add(Restrictions.eq("proteico", this.getProteico().equals(SimNao.S)));
 		}
 	}
 
@@ -59,5 +66,13 @@ public class FiltroAlimento extends FiltroConsulta{
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public SimNao getProteico() {
+		return proteico;
+	}
+
+	public void setProteico(SimNao proteico) {
+		this.proteico = proteico;
 	}
 }
