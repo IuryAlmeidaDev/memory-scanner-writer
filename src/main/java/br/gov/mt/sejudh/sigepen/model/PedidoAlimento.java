@@ -50,10 +50,10 @@ public class PedidoAlimento extends BaseModel<Long> {
     private Long idTipoRefeicao;
 
     @OneToMany(mappedBy = "pedidoAlimento", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemPedidoAlimento> itensPedido = new ArrayList<>();
+    private final List<ItemPedidoAlimento> itensPedido = new ArrayList<>();
 
     @OneToMany(mappedBy = "pedidoAlimento", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DietaEspecialPedidoAlimento> dietasEspeciais = new ArrayList<>();
+    private final List<DietaEspecialPedidoAlimento> dietasEspeciais = new ArrayList<>();
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "STAT_PEDIDO", nullable = false)
@@ -120,16 +120,8 @@ public class PedidoAlimento extends BaseModel<Long> {
         return itensPedido;
     }
 
-    public void setItensPedido(List<ItemPedidoAlimento> itensPedido) {
-        this.itensPedido = itensPedido;
-    }
-
     public List<DietaEspecialPedidoAlimento> getDietasEspeciais() {
         return dietasEspeciais;
-    }
-
-    public void setDietasEspeciais(List<DietaEspecialPedidoAlimento> dietasEspeciais) {
-        this.dietasEspeciais = dietasEspeciais;
     }
 
     public Status getStatus() {

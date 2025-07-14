@@ -10,18 +10,22 @@
 		<sgp:validarAcesso />
 
 		<h3>Gerar Pedido</h3>
-		
+
+		<!-- Form para receber as atualizações do botão de imprimir -->
+		<h:form id="formListaChamadas">
+		</h:form>
+
 		<h:form id="meuFormulario">
 			<p:panel>
                 <p:outputLabel value="Consulta"/>
-                
+
                	<sgp:formCalendar labelValue="Data Inicio" 
 					value="#{gerarPedidoBean.filtroPedido.dataInicio}" display="text"
 					validationRequired="true" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 170px">
 					<p:ajax event="dateSelect" />
 					<p:ajax event="change"  />
 				</sgp:formCalendar>
-                
+
                  <sgp:formSelectOneMenu 
                 		id="tipoRefeicao" 
                 		validationRequired="true"
@@ -35,7 +39,7 @@
 						converter="SimpleEntityConverter" 
 						display="text"
 				/>
-                
+
                 <br/> <br/>
                 <p:commandButton value="Pesquisar" update=":unidadeForm" action="#{gerarPedidoBean.montarEstrutura()}" icon="ui-icon-search"/>
         	</p:panel>
@@ -60,7 +64,7 @@
 								</p:column>
 								<p:column headerText="Ações" style="width:120px;">
 									<center>
-										<p:commandButton title="Imprimir Lista de pedido"
+										<p:commandButton title="Gerar e Imprimir Pedido"
 											icon="fa fa-print"
 											update=":formListaChamadas" process="@this"
 											action="#{gerarPedidoBean.selecionarEstruturaChamada(est,gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}"
@@ -75,6 +79,30 @@
 								<p:commandButton value="Não" type="button"
 									styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 							</p:confirmDialog>
+
+							<!-- Diálogo informativo sobre pedido existente -->
+							<p:dialog header="Pedido já existente" widgetVar="confirmSubstituirPedidoDialog"
+									  modal="true" resizable="false" closeOnEscape="true">
+								<p:outputPanel style="text-align:center;">
+									<p:panelGrid columns="1" styleClass="ui-noborder">
+										<h:outputText value="Já existe um pedido para esta data, tipo de refeição e unidade prisional." />
+										<h:outputText value="Você deseja substituir o pedido existente?" />
+									</p:panelGrid>
+
+									<p:commandButton value="Confirmar"
+													 action="#{gerarPedidoBean.confirmarSubstituicaoPedido()}"
+													 oncomplete="PF('confirmSubstituirPedidoDialog').hide()"
+													 update=":unidadeForm :formListaChamadas"
+													 styleClass="ui-button-primary"
+													 icon="ui-icon-check" />
+
+									<p:commandButton value="Cancelar"
+													 oncomplete="PF('confirmSubstituirPedidoDialog').hide()"
+													 styleClass="ui-button-secondary"
+													 icon="ui-icon-close" />
+								</p:outputPanel>
+							</p:dialog>
+
 						</p:panel>
 					</h:form>
 					<p:button outcome="pretty:ListarGerarPedido" value="Voltar"
@@ -85,18 +113,5 @@
 
 			</p:tabView>
 		</h:form>
-
-		<p:dialog id="dialogListaDeChamada" header="Pedido"
-			showEffect="fade" widgetVar="dlgListaDeChamada" modal="true"
-			draggable="false" resizable="false" closeOnEscape="true">
-			<h:form prependId="false" id="formListaChamadas">
-				<p:panel>
-					<p:commandButton value="Quantitativo" icon="ui-icon-plus"
-						oncomplete="PF('dlgListaDeChamada').hide()"
-						actionListener="#{gerarPedidoBean.imprimir(gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}" />
-				</p:panel>
-			</h:form>
-		</p:dialog>
-
 	</ui:define>
 </ui:composition>
