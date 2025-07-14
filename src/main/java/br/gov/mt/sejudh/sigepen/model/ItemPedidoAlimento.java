@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.model;
 
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.model.dto.DetalheItemEstruturaCardapioDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -66,6 +67,24 @@ public class ItemPedidoAlimento extends BaseModel<Long> {
         this.status = Status.ATIVO;
     }
 
+    private ItemPedidoAlimento(Long id, PedidoAlimento pedidoAlimento, String item, Double qtdPorItem, Integer qtdRecuperando, String siglaUnidadeMedida, String nomeEstrutura, Integer nivelEstrutura, Long itemCardapioId, Long estruturaId, Status status) {
+        this.id = id;
+        this.pedidoAlimento = pedidoAlimento;
+        this.item = item;
+        this.qtdPorItem = qtdPorItem;
+        this.qtdRecuperando = qtdRecuperando;
+        this.siglaUnidadeMedida = siglaUnidadeMedida;
+        this.nomeEstrutura = nomeEstrutura;
+        this.nivelEstrutura = nivelEstrutura;
+        this.itemCardapioId = itemCardapioId;
+        this.estruturaId = estruturaId;
+        this.status = status;
+    }
+
+    public static ItemPedidoAlimento newInstance(PedidoAlimento pedidoAlimento, DetalheItemEstruturaCardapioDTO itemDTO) {
+        return new ItemPedidoAlimento(null, pedidoAlimento, itemDTO.getItem(), itemDTO.getQtdPorItem(), itemDTO.getQtdRecuperando(), itemDTO.getSiglaUnidadeMedida(), itemDTO.getNomeEstrutura(), itemDTO.getNivelEstrutura(), itemDTO.getItemCardapioId(), itemDTO.getEstruturaId(), Status.ATIVO);
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -79,80 +98,40 @@ public class ItemPedidoAlimento extends BaseModel<Long> {
         return pedidoAlimento;
     }
 
-    public void setPedidoAlimento(PedidoAlimento pedidoAlimento) {
-        this.pedidoAlimento = pedidoAlimento;
-    }
-
     public String getItem() {
         return item;
-    }
-
-    public void setItem(String item) {
-        this.item = item;
     }
 
     public Double getQtdPorItem() {
         return qtdPorItem;
     }
 
-    public void setQtdPorItem(Double qtdPorItem) {
-        this.qtdPorItem = qtdPorItem;
-    }
-
     public Integer getQtdRecuperando() {
         return qtdRecuperando;
-    }
-
-    public void setQtdRecuperando(Integer qtdRecuperando) {
-        this.qtdRecuperando = qtdRecuperando;
     }
 
     public String getSiglaUnidadeMedida() {
         return siglaUnidadeMedida;
     }
 
-    public void setSiglaUnidadeMedida(String siglaUnidadeMedida) {
-        this.siglaUnidadeMedida = siglaUnidadeMedida;
-    }
-
     public String getNomeEstrutura() {
         return nomeEstrutura;
-    }
-
-    public void setNomeEstrutura(String nomeEstrutura) {
-        this.nomeEstrutura = nomeEstrutura;
     }
 
     public Integer getNivelEstrutura() {
         return nivelEstrutura;
     }
 
-    public void setNivelEstrutura(Integer nivelEstrutura) {
-        this.nivelEstrutura = nivelEstrutura;
-    }
-
     public Long getItemCardapioId() {
         return itemCardapioId;
-    }
-
-    public void setItemCardapioId(Long itemCardapioId) {
-        this.itemCardapioId = itemCardapioId;
     }
 
     public Long getEstruturaId() {
         return estruturaId;
     }
 
-    public void setEstruturaId(Long estruturaId) {
-        this.estruturaId = estruturaId;
-    }
-
     public Status getStatus() {
         return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     @Override

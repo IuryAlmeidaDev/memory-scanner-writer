@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.model;
 
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -70,56 +71,43 @@ public class DietaEspecialPedidoAlimento extends BaseModel<Long> {
         return pedidoAlimento;
     }
 
-    public void setPedidoAlimento(PedidoAlimento pedidoAlimento) {
-        this.pedidoAlimento = pedidoAlimento;
-    }
-
     public String getNomeEstrutura() {
         return nomeEstrutura;
-    }
-
-    public void setNomeEstrutura(String nomeEstrutura) {
-        this.nomeEstrutura = nomeEstrutura;
     }
 
     public String getTipoDieta() {
         return tipoDieta;
     }
 
-    public void setTipoDieta(String tipoDieta) {
-        this.tipoDieta = tipoDieta;
-    }
-
     public Integer getQtdRecuperando() {
         return qtdRecuperando;
-    }
-
-    public void setQtdRecuperando(Integer qtdRecuperando) {
-        this.qtdRecuperando = qtdRecuperando;
     }
 
     public String getNomesRecuperandos() {
         return nomesRecuperandos;
     }
 
-    public void setNomesRecuperandos(String nomesRecuperandos) {
-        this.nomesRecuperandos = nomesRecuperandos;
-    }
-
     public Long getEstruturaId() {
         return estruturaId;
-    }
-
-    public void setEstruturaId(Long estruturaId) {
-        this.estruturaId = estruturaId;
     }
 
     public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    private DietaEspecialPedidoAlimento(Long id, PedidoAlimento pedidoAlimento, String nomeEstrutura, String tipoDieta, Integer qtdRecuperando, String nomesRecuperandos, Long estruturaId, Status status) {
+        this.id = id;
+        this.pedidoAlimento = pedidoAlimento;
+        this.nomeEstrutura = nomeEstrutura;
+        this.tipoDieta = tipoDieta;
+        this.qtdRecuperando = qtdRecuperando;
+        this.nomesRecuperandos = nomesRecuperandos;
+        this.estruturaId = estruturaId;
         this.status = status;
+    }
+
+    public static DietaEspecialPedidoAlimento newInstance(PedidoAlimento pedidoAlimento, DietaEspecialEstruturaDTO dietaEspecialEstruturaDTO) {
+        return new DietaEspecialPedidoAlimento(null, pedidoAlimento, dietaEspecialEstruturaDTO.getNomeEstrutura(), dietaEspecialEstruturaDTO.getTipoDieta(), dietaEspecialEstruturaDTO.getQtdRecuperando(), String.join(",", dietaEspecialEstruturaDTO.getNomesRecuperandos()), dietaEspecialEstruturaDTO.getEstruturaId(), Status.ATIVO);
     }
 
     @Override
