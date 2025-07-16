@@ -41,7 +41,7 @@
 				/>
 
                 <br/> <br/>
-                <p:commandButton value="Pesquisar" update=":unidadeForm" action="#{gerarPedidoBean.montarEstrutura()}" icon="ui-icon-search"/>
+                <p:commandButton value="Pesquisar" update=":unidadeForm :meuFormulario" action="#{gerarPedidoBean.montarEstrutura()}" icon="ui-icon-search" process="@form"/>
         	</p:panel>
         </h:form>
 		<h:form id="unidadeForm">
