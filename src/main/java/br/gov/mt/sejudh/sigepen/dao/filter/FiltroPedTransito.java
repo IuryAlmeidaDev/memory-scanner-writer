@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.FetchMode;
 import org.hibernate.NullPrecedence;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -188,6 +189,7 @@ public class FiltroPedTransito extends FiltroConsulta {
 		getCriteria()
 		.createAlias("recuperando", "recuperando", JoinType.LEFT_OUTER_JOIN)
 		.createAlias("recuperando.pessoa", "pessoa", JoinType.LEFT_OUTER_JOIN)
+		.setFetchMode("recuperando.pessoa", FetchMode.JOIN)
 		.createAlias("unidadeOrigem", "unidadeOrigem", JoinType.LEFT_OUTER_JOIN)
 		.createAlias("unidadeDestino", "unidadeDestino", JoinType.LEFT_OUTER_JOIN)
 		.createAlias("estabelecimento", "estabelecimento", JoinType.LEFT_OUTER_JOIN)
