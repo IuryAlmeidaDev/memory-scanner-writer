@@ -1,9 +1,12 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
+import br.gov.mt.sejudh.sigepen.dao.CardapioDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroGerarPedido;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnidadePrisional;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
+import br.gov.mt.sejudh.sigepen.exception.MultiplosResultadosException;
+import br.gov.mt.sejudh.sigepen.exception.NaoEncontradoException;
 import br.gov.mt.sejudh.sigepen.model.Arquivo;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.DietaEspecialPedidoAlimento;
@@ -40,6 +43,7 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
+import javax.ejb.EJBException;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -49,6 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 @ManagedBean
 @ViewScoped
@@ -92,6 +98,9 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private FacesUtil facesUtil;
+
+	@Inject
+	private CardapioDAO cardapioDAO;
 
 	@Inject
 	private Logger log;
@@ -236,25 +245,53 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	}
 
 	public void montarEstrutura() {
+		root = new DefaultTreeNode();
 		Long tipoRefeicao = this.filtroPedido.getTipoRefeicao().getId();
 		if (this.unidade != null) {
 			if (this.unidade.getId() > 0) {
-				root = new DefaultTreeNode(new GerarPedidoEstruturaDTO(), null);
-				root.setExpanded(true);
-				estruturaService.montarArvoreEstruturaGerarPedido(
-						GerarPedidoEstruturaDTO.from(unidade.getEstrutura()),
-						root,
-						montarFiltroData(),
-						tipoRefeicao
-				);
-				estruturaService.capacidadeTotalEstruturaGerarPedido(root);
-				estruturaService.capacidadeTotalDietaPadrao(root);
-				estruturaService.capacidadeTotalDietaEspecial(root);
-				GerarPedidoEstruturaDTO e = (GerarPedidoEstruturaDTO) root.getData();
-				this.unidade.setCapacidadeTotal(e.getCapacidadeTotal());
+				String dataFormatada = montarFiltroData();
+				try {
+					this.contrato = contratoService.buscarContratoVigenteEAtivoPorUnidade(
+							this.unidade.getId(),
+							this.filtroPedido.getDataInicio()
+					);
+
+					boolean existeCardapio = cardapioDAO.existeCardapioPara(
+							dataFormatada,
+							tipoRefeicao,
+							contrato.getId()
+					);
+
+					if (existeCardapio) {
+						// Se existe contrato e cardápio, montar a estrutura
+						root = new DefaultTreeNode(new GerarPedidoEstruturaDTO(), null);
+						root.setExpanded(true);
+						estruturaService.montarArvoreEstruturaGerarPedido(
+								GerarPedidoEstruturaDTO.from(unidade.getEstrutura()),
+								root,
+								dataFormatada,
+								tipoRefeicao
+						);
+						estruturaService.capacidadeTotalEstruturaGerarPedido(root);
+						estruturaService.capacidadeTotalDietaPadrao(root);
+						estruturaService.capacidadeTotalDietaEspecial(root);
+						GerarPedidoEstruturaDTO e = (GerarPedidoEstruturaDTO) root.getData();
+						this.unidade.setCapacidadeTotal(e.getCapacidadeTotal());
+					} else {
+						facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Não existe cardápio cadastrado para esta data e tipo de refeição");
+						root = new DefaultTreeNode();
+					}
+				} catch (EJBException e) {
+					Throwable cause = e.getCause();
+					if (cause instanceof NaoEncontradoException || cause instanceof MultiplosResultadosException) {
+						facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", e.getMessage().substring(e.getMessage().indexOf(":") + 1));
+					} else {
+						throw e;
+					}
+					root = new DefaultTreeNode();
+				}
 			}
 		}
-
 		estrutura = new Estrutura();
 	}
 
@@ -284,8 +321,6 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	public void selecionarEstruturaChamada(GerarPedidoEstruturaDTO estrutura, String data, FiltroGerarPedido tipoRefeicao) {
 		facesUtil.setObjetoSessao("estrutura", estrutura);
 		facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
-
-		this.contrato = contratoService.buscarContratoVigenteEAtivoPorUnidade(this.unidade.getId(), tipoRefeicao.getDataInicio());
 
 		boolean pedidoExistente = pedidoAlimentoService.verificarExistenciaPedido(
 				data,
