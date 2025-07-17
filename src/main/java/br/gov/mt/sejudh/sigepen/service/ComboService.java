@@ -48,6 +48,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoVisitaObrigatoriedade;
 import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
+import br.gov.mt.sejudh.sigepen.enumerator.VencimentoCredenciamento;
 import br.gov.mt.sejudh.sigepen.model.Certidao;
 import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
@@ -395,6 +396,10 @@ public class ComboService {
 
 	public UnidadeMedida[] getUnidadesMedida() {
 		return UnidadeMedida.values();
+	}
+
+	public VencimentoCredenciamento[] getVencimentoCredenciamento() {
+		return VencimentoCredenciamento.values();
 	}
 	
 	
