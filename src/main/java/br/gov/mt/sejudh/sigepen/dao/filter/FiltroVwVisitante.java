@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.gov.mt.sejudh.sigepen.enumerator.VencimentoCredenciamento;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
@@ -38,6 +39,7 @@ public class FiltroVwVisitante extends FiltroConsulta {
     private List<Long> pessoasIds;
 	private boolean ehRelatorio;
 	private Boolean isPesquisaFonetica = false;
+    private VencimentoCredenciamento vencimentoCredenciamento;
 
     public FiltroVwVisitante() {
         this.pessoasIds = new ArrayList<>();
@@ -292,4 +294,11 @@ public class FiltroVwVisitante extends FiltroConsulta {
 		this.faseCredenciamento = faseCredenciamento;
 	}
 
+    public VencimentoCredenciamento getVencimentoCredenciamento() {
+        return vencimentoCredenciamento;
+    }
+
+    public void setVencimentoCredenciamento(VencimentoCredenciamento vencimentoCredenciamento) {
+        this.vencimentoCredenciamento = vencimentoCredenciamento;
+    }
 }
