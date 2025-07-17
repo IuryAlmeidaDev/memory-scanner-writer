@@ -2,10 +2,8 @@ package br.gov.mt.sejudh.sigepen.service;
 
 import br.gov.mt.sejudh.sigepen.base.service.BaseService;
 import br.gov.mt.sejudh.sigepen.dao.OcorrenciaDAO;
-import br.gov.mt.sejudh.sigepen.dao.TipoOcorrenciaDAO;
 import br.gov.mt.sejudh.sigepen.model.Ocorrencia;
-import br.gov.mt.sejudh.sigepen.model.TipoOcorrencia;
-
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -23,5 +21,18 @@ public class OcorrenciaService extends BaseService<Ocorrencia, Long> {
 		this.ocorrenciaDAO = ocorrenciaDAO;
 		this.setDao(ocorrenciaDAO);
 	}
+	
+	
+/* ------------------------- Métodos ------------------------- */
+	
+	public List<Ocorrencia> listarTodasOcorrencias() {
+        return ocorrenciaDAO.listarTodasOcorrencias();
+    }
+	
+	public Ocorrencia buscarPorIdComTipo(Long id)  {
+		return ocorrenciaDAO.buscarPorIdComTipo(id);	
+	}
+	
+	
 
 }

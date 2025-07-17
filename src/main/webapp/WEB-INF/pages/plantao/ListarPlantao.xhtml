@@ -4,6 +4,14 @@
 				template="/WEB-INF/pages/_templates/principal.xhtml">
 
 	<ui:define name="conteudo">
+	
+	<!-- Estilos personalizados -->
+        <h:outputStylesheet>
+            .botoes-dialogo {display: flex; justify-content: center; gap: 15px; margin-top: 20px;}
+            .botoes-dialogo .ui-button {width: 100px; height: 30px; font-weight: bold; border-radius: 3px;}
+        </h:outputStylesheet>
+        
+        
 		<sgp:validarAcesso />
 
 		<h3>Livro Plantão</h3>
@@ -17,33 +25,33 @@
 		</h:form> -->
 
 		<h:form id="formDialog">
-			<!-- Botão para abrir o diálogo -->
-			<p:commandButton value="Cadastrar" onclick="PF('dlg').show();" type="button" icon="ui-icon-plus" />
+            <!-- Botão para abrir o diálogo -->
+            <p:commandButton value="Cadastrar" onclick="PF('dlg').show();" type="button" icon="ui-icon-plus" />
 
-			<!-- Diálogo -->
-			<p:dialog header="Escolha uma opção" widgetVar="dlg" modal="true" closable="false" draggable="false">
-				<h:panelGrid columns="1" cellpadding="5">
-					<sgp:formSelectOneMenu id="slPlantaoIniciado" labelValue="Plantão Iniciado"
-										   value="#{registroPlantaoBean.plantaoSelecionado}"
-										   disabled="#{registroPlantaoBean.isVisualizacao}" style="width:200px"
-										   styleInput="width:200px; margin-bottom:15px;">
+            <!-- Diálogo -->
+                       
+            <p:dialog header="Escolha uma opção" widgetVar="dlg" modal="true" closable="false" draggable="false">
+            	
+                <h:panelGrid columns="1" cellpadding="5">
+                    <sgp:formSelectOneMenu id="slPlantaoIniciado" labelValue="Plantão Iniciado"
+                                           value="#{registroPlantaoBean.plantaoSelecionado}"
+                                           disabled="#{registroPlantaoBean.isVisualizacao}" style="width:200px"
+                                           styleInput="width:200px; margin-bottom:15px;">
 
-						<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
+                        <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{registroPlantaoBean.tiposPlantao}"
+                                       var="p" itemLabel="#{p.descricao}" itemValue="#{p}" />
+                        <p:ajax listener="#{registroPlantaoBean.atualizarPlantaoSelecionado}" />
+                    </sgp:formSelectOneMenu>
 
-						<f:selectItems value="#{registroPlantaoBean.tiposPlantao}"
-									   disabled="#{registroPlantaoBean.isVisualizacao}" var="p" itemLabel="#{p.descricao}"
-									   itemValue="#{p}" />
-
-						<p:ajax listener="#{registroPlantaoBean.atualizarPlantaoSelecionado}" />
-
-					</sgp:formSelectOneMenu>
-
-					<!-- Botão para redirecionar -->
-					<p:commandButton value="Registrar" action="#{registroPlantaoBean.salvar}" ajax="false" />
-					<p:commandButton value="Fechar" onclick="PF('dlg').hide();" type="button" />
-				</h:panelGrid>
-			</p:dialog>
-		</h:form>
+                    <!-- Botões estilizados -->
+                    <h:panelGroup layout="block" styleClass="botoes-dialogo">
+                        <p:commandButton value="Registrar" action="#{registroPlantaoBean.salvar}" ajax="false" styleClass="ui-button" />
+                        <p:commandButton value="Fechar" onclick="PF('dlg').hide();" type="button" styleClass="ui-button" />
+                    </h:panelGroup>
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
 
 		<!-- Formulário de Consulta -->
 		<h:form>
