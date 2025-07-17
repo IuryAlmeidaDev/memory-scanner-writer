@@ -894,7 +894,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 		}
 
 		gerenciarAssinaturaService.salvar(gerenciarAssinatura);
-		this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar();
+		this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar(this.unidade);
 		facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "Sucesso", "Gerenciamento Salvo");
 	}
 
@@ -905,7 +905,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 
     public void excluirGerenciamentoAssinatura(GerenciarAssinatura gerenciarAssinatura) throws ValidacaoException {
         gerenciarAssinaturaService.excluir(gerenciarAssinatura);
-		this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar();
+		this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar(this.unidade);
         facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "", "Assinaturas excluída com sucesso!");
     }
 

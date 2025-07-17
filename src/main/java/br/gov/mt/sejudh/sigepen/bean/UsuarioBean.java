@@ -8,6 +8,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPerfil;
 import br.gov.mt.sejudh.sigepen.model.*;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
@@ -64,6 +65,8 @@ public class UsuarioBean extends MetodosDePaginaBean {
 	private DualListModel<Perfil> perfisModel;
 
 	private List<UnidadePrisional> unidadesPrisionais;
+
+	private List<Perfil> perfils = new ArrayList<>();
 	
 	@Inject
 	private PerfilService perfilService;
@@ -76,7 +79,7 @@ public class UsuarioBean extends MetodosDePaginaBean {
 	
 	@Inject
 	private UnidadePrisionalService unidadeService;
-	
+
 	@Inject
 	private FacesUtil facesUtil;
 	
@@ -113,7 +116,8 @@ public class UsuarioBean extends MetodosDePaginaBean {
 					break;
 					
 				case LISTAR:
-					unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
+					this.unidadesPrisionais = this.unidadeService.listarUnidadesNaoInativas();
+					this.perfils = this.perfilService.buscarPerfisPorFiltro(new FiltroPerfil());
 					pesquisar();
 					logDeAcesso(log, "Usuários");
 					break;
@@ -171,7 +175,10 @@ public class UsuarioBean extends MetodosDePaginaBean {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Para impressão é necessário selecionar uma unidade");
 				return;
 			}
-
+					
+			getFiltro().setQuantidadeRegistros(Integer.MAX_VALUE);
+			getFiltro().setPrimeiroRegistro(0);
+	        
 			List<UsuarioDTO> lista = usuarioService.buscarUsuariosPorFiltro(getFiltro());
 
 			if (lista.size() == 0) {
@@ -445,5 +452,13 @@ public class UsuarioBean extends MetodosDePaginaBean {
 
     public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
         this.unidadesPrisionais = unidadesPrisionais;
+    }
+
+    public List<Perfil> getPerfils() {
+        return perfils;
+    }
+
+    public void setPerfils(List<Perfil> perfils) {
+        this.perfils = perfils;
     }
 }

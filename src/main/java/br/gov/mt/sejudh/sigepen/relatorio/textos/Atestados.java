@@ -39,56 +39,66 @@ public class Atestados {
 	}
 	
 	private static TextoDoRelatorio getTextoComportamento(TipoAtestado tipoAtestado, Recuperando rec, PassagemLotacao lotacao, String comportamento) {
-		boolean temPai = (rec.getPessoa().getNomePai() != null);
-		boolean isRecuperandoAtivoNaMesmaUnidadeLogada = isRecuperandoAtivoNaMesmaUnidadeLogada(rec);
-		StringBuilder buildResultado = new StringBuilder();
-		
-		buildResultado.append("\tATESTAMOS para os devidos fins, que o(a) recuperando(a) [nome], nome social [nomeSocial], matrícula n° [matricula], "
-				+ "filho(a) de ");
-		
-		if (temPai)
-			buildResultado.append("[nomePai] e ");
+	    boolean temPai = (rec.getPessoa().getNomePai() != null);
+	    boolean isRecuperandoAtivoNaMesmaUnidadeLogada = isRecuperandoAtivoNaMesmaUnidadeLogada(rec);
+	    StringBuilder buildResultado = new StringBuilder();
 
-		buildResultado.append("[nomeMae], data de nascimento [dataNascimento], oriundo de [estabelecimento], ");
-		
-		
-		if (isRecuperandoAtivoNaMesmaUnidadeLogada) {
-			buildResultado.append("deu entrada nesta Unidade Prisional no dia [dataEntrada], possui [comportamento] "
-					+ "Comportamento Carcerário, uma vez que, [nao] cometeu falta de natureza leve, média ou grave.");
-		} else {
-			buildResultado.append("deu entrada nesta Unidade Prisional em [dataEntrada] e permaneceu até a data [dataSaida], "
-					+ "possuindo [comportamento] Comportamento Carcerário, uma vez que, [nao] cometeu falta de natureza leve, média ou grave.");
-		}
+	    String nomeSocial = rec.getPessoa().getNomeSocial();
 
-		String resultado = buildResultado.toString();
-		resultado = resultado.replace("[nome]", rec.getPessoa().getNome().toUpperCase());
-		resultado = resultado.replace("[nomeSocial]", rec.getPessoa().getNomeSocial().toUpperCase());
-		resultado = resultado.replace("[matricula]", String.valueOf(rec.getId()));
-		resultado = resultado.replace("[nomeMae]", rec.getPessoa().getNomeMae().toUpperCase());
-		resultado = resultado.replace("[estabelecimento]", rec.getUltimaPassagem().getPassagemProcedencia().getProcedencia().getNome());
-		resultado = resultado.replace("[dataNascimento]", MaskUtil.getFormatoData().format(rec.getPessoa().getDataNascimento()));
-		resultado = resultado.replace("[comportamento]", comportamento.toUpperCase());
-		
-		if (comportamento.equals("MAU")) {
-			resultado = resultado.replace("[nao] ", StringUtils.EMPTY);
-		} else {
-			resultado = resultado.replace("[nao]", "não");
-		}
-		
-		
-		
-		if (temPai)
-			resultado = resultado.replace("[nomePai]", rec.getPessoa().getNomePai().toUpperCase());
-		
-		if (isRecuperandoAtivoNaMesmaUnidadeLogada) {
-			resultado = resultado.replace("[dataEntrada]", MaskUtil.getFormatoDataHora().format(lotacao.getDataEntrada()));
-		} else {
-			resultado = resultado.replace("[dataEntrada]", MaskUtil.getFormatoDataHora().format(lotacao.getDataEntrada()));
-			resultado = resultado.replace("[dataSaida]", MaskUtil.getFormatoDataHora().format(lotacao.getDataSaida()));
-		}
-		
-		return new TextoDoRelatorio(resultado);
+	    // Frase inicial condicional com ou sem nome social
+	    if (nomeSocial != null && !nomeSocial.trim().isEmpty()) {
+	        buildResultado.append("\tATESTAMOS para os devidos fins, que o(a) recuperando(a) [nome], nome social [nomeSocial], matrícula n° [matricula], filho(a) de ");
+	    } else {
+	        buildResultado.append("\tATESTAMOS para os devidos fins, que o(a) recuperando(a) [nome], matrícula n° [matricula], filho(a) de ");
+	    }
+
+	    if (temPai)
+	        buildResultado.append("[nomePai] e ");
+
+	    buildResultado.append("[nomeMae], data de nascimento [dataNascimento], oriundo de [estabelecimento], ");
+
+	    if (isRecuperandoAtivoNaMesmaUnidadeLogada) {
+	        buildResultado.append("deu entrada nesta Unidade Prisional no dia [dataEntrada], possui [comportamento] Comportamento Carcerário, uma vez que, [nao] cometeu falta de natureza leve, média ou grave.");
+	    } else {
+	        buildResultado.append("deu entrada nesta Unidade Prisional em [dataEntrada] e permaneceu até a data [dataSaida], possuindo [comportamento] Comportamento Carcerário, uma vez que, [nao] cometeu falta de natureza leve, média ou grave.");
+	    }
+
+	    String resultado = buildResultado.toString();	
+	    
+	    resultado = resultado.replace("[nome]", rec.getPessoa().getNome().toUpperCase());
+
+	    if (nomeSocial != null && !nomeSocial.trim().isEmpty()) {
+	        resultado = resultado.replace("[nomeSocial]", nomeSocial.toUpperCase());
+	    } else {
+	        resultado = resultado.replace("[nomeSocial]", "");
+	    }
+
+	    resultado = resultado.replace("[matricula]", String.valueOf(rec.getId()));
+	    resultado = resultado.replace("[nomeMae]", rec.getPessoa().getNomeMae().toUpperCase());
+	    resultado = resultado.replace("[estabelecimento]", rec.getUltimaPassagem().getPassagemProcedencia().getProcedencia().getNome());
+	    resultado = resultado.replace("[dataNascimento]", MaskUtil.getFormatoData().format(rec.getPessoa().getDataNascimento()));
+	    resultado = resultado.replace("[comportamento]", comportamento.toUpperCase());
+
+	    if (comportamento.equals("MAU")) {
+	        resultado = resultado.replace("[nao] ", StringUtils.EMPTY);
+	    } else {
+	        resultado = resultado.replace("[nao]", "não");
+	    }
+
+	    if (temPai) {
+	        resultado = resultado.replace("[nomePai]", rec.getPessoa().getNomePai().toUpperCase());
+	    }
+
+	    if (isRecuperandoAtivoNaMesmaUnidadeLogada) {
+	        resultado = resultado.replace("[dataEntrada]", MaskUtil.getFormatoDataHora().format(lotacao.getDataEntrada()));
+	    } else {
+	        resultado = resultado.replace("[dataEntrada]", MaskUtil.getFormatoDataHora().format(lotacao.getDataEntrada()));
+	        resultado = resultado.replace("[dataSaida]", MaskUtil.getFormatoDataHora().format(lotacao.getDataSaida()));
+	    }
+
+	    return new TextoDoRelatorio(resultado);
 	}
+
 	
 	private static TextoDoRelatorio getTextoPermanencia(TipoAtestado tipoAtestado, Recuperando rec, PassagemLotacao lotacao) {
 		boolean temPai = (rec.getPessoa().getNomePai() != null);
@@ -96,8 +106,14 @@ public class Atestados {
 		boolean isRecuperandoAtivoNaMesmaUnidadeLogada = isRecuperandoAtivoNaMesmaUnidadeLogada(rec);
 		StringBuilder buildResultado = new StringBuilder();
 		
-		buildResultado.append("\tATESTO para os devidos fins, que o(a) recuperando(a) [nome], nome social [nomeSocial], matrícula n° [matricula], "
-				+ "filho(a) de ");
+		
+		String nomeSocial = rec.getPessoa().getNomeSocial();
+	    
+	    if (nomeSocial != null && !nomeSocial.trim().isEmpty()) {
+	        buildResultado.append("\tATESTAMOS para os devidos fins, que o(a) recuperando(a) [nome], nome social [nomeSocial], matrícula n° [matricula], filho(a) de ");
+	    } else {
+	        buildResultado.append("\tATESTAMOS para os devidos fins, que o(a) recuperando(a) [nome], matrícula n° [matricula], filho(a) de ");
+	    }	    
 		
 		if (temPai)
 			buildResultado.append("[nomePai] e ");
@@ -117,10 +133,15 @@ public class Atestados {
 			buildResultado.append("deu entrada nesta Unidade Prisional em [dataEntrada] e permaneceu até a data [dataSaida], "
 					+ "onde permaneceu detido em Regime Fechado à disposição da Justiça.");
 		}
-		
+					
 		String resultado = buildResultado.toString();
 		resultado = resultado.replace("[nome]", rec.getPessoa().getNome().toUpperCase());
-		resultado = resultado.replace("[nomeSocial]", rec.getPessoa().getNome().toUpperCase());
+
+	    if (nomeSocial != null && !nomeSocial.trim().isEmpty()) {
+	        resultado = resultado.replace("[nomeSocial]", nomeSocial.toUpperCase());
+	    } else {
+	        resultado = resultado.replace("[nomeSocial]", "");
+	    }
 		resultado = resultado.replace("[matricula]", String.valueOf(rec.getId()));
 		resultado = resultado.replace("[nomeMae]", rec.getPessoa().getNomeMae().toUpperCase());
 		resultado = resultado.replace("[dataNascimento]", MaskUtil.getFormatoData().format(rec.getPessoa().getDataNascimento()));
