@@ -290,15 +290,11 @@ public class ComboHelperBean {
 		populacaoFeminino = comboService.getPopulacaoFeminino();
 		tipoVisitaObrigatoriedade = comboService.getTipoVisitaObrigatoriedade();
 		unidadesMedida = comboService.getUnidadesMedida();
-<<<<<<< src/main/java/br/gov/mt/sejudh/sigepen/bean/ComboHelperBean.java
 		vencimentoCredenciamentos = comboService.getVencimentoCredenciamento();
-=======
 		relatorio = comboService.getRelatorio();
 		
 		unidadePrisional = new UnidadePrisional();		
 		tipoPlantoes = comboService.getTipoPlantao();
-		//plantoes     = comboService.getPlantoes();
->>>>>>> src/main/java/br/gov/mt/sejudh/sigepen/bean/ComboHelperBean.java
 	}
 
 	public NaturezaFaltaDisciplinar[] getNaturezaFaltaDisciplinar(){
@@ -821,7 +817,6 @@ public class ComboHelperBean {
 		this.unidadesMedida = unidadesMedida;
 	}
 
-<<<<<<< src/main/java/br/gov/mt/sejudh/sigepen/bean/ComboHelperBean.java
 	public VencimentoCredenciamento[] getVencimentoCredenciamentos() {
 		return vencimentoCredenciamentos;
 	}
@@ -829,7 +824,7 @@ public class ComboHelperBean {
 	public void setVencimentoCredenciamentos(VencimentoCredenciamento[] vencimentoCredenciamentos) {
 		this.vencimentoCredenciamentos = vencimentoCredenciamentos;
 	}
-=======
+
     public Relatorio[] getRelatorio() {
         return relatorio;
     }
@@ -853,6 +848,5 @@ public class ComboHelperBean {
 	public void setTipoPlantoes(TipoPlantao[] tipoPlantoes) {
 		this.tipoPlantoes = tipoPlantoes;
 	}
-	
->>>>>>> src/main/java/br/gov/mt/sejudh/sigepen/bean/ComboHelperBean.java
+
 }

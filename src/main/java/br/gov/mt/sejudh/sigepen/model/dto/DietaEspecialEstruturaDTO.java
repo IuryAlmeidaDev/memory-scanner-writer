@@ -54,5 +54,4 @@ public class DietaEspecialEstruturaDTO {
 				.append("estruturaId", estruturaId)
 				.toString();
 	}
-
 }
