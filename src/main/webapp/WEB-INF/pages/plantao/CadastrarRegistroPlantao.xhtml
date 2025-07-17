@@ -7,6 +7,9 @@
 				template="/WEB-INF/pages/_templates/principal.xhtml">
 
 	<ui:define name="conteudo">
+	
+	 	<p:growl id="growl" showDetail="true" life="4000" sticky="false" />
+	 
 		<sgp:validarAcesso />
 
 		<h3>Registro Plantão</h3>
@@ -15,7 +18,8 @@
 		<!-- Iniciar Plantao -->
 
 
-		<h:form id="meuFormulario">
+		<h:form id="meuFormulario">				    		    
+		    
 			<p:panel header="Início do PLantão" style="margin-top: 20px;">
 
 				<br /><br />
@@ -122,9 +126,98 @@
 
 
 				<!-- Aba Principal - Item Ocorrencias -->
-				<!--				<ui:include src="Ocorrencia.xhtml" />-->
+				<ui:include src="Ocorrencia.xhtml" />
 
 			</p:tabView>
+			
+			
+			<!-- Dialog ocorrencia -->
+			<p:dialog header="Ocorrência" widgetVar="dialogOcorrencia" 
+			          modal="true" resizable="false" id="dialogOcorrencia">
+			    			    
+			    <h:panelGroup id="grupoDialogOcorrencia" layout="block">
+			        <h:panelGrid columns="1">
+			
+			            <sgp:formSelectOneMenu 
+			                id="slTipoOcorrencia" labelValue="Tipo da Ocorrência"
+			                value="#{registroPlantaoBean.ocorrencia.tipoOcorrencia}"
+			                converter="SimpleEntityConverter"
+			                disabled="#{registroPlantaoBean.modoVisualizacao}"
+			                style="width: 250px; margin-bottom: 15px;">
+			                			                			
+			                <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
+			
+			                <f:selectItems value="#{registroPlantaoBean.tipoOcorrencias}"
+			                               disabled="#{registroPlantaoBean.isVisualizacao}" 
+			                               var="t" itemLabel="#{t.tipo}" itemValue="#{t}" />
+			
+			                <p:ajax event="change" listener="#{registroPlantaoBean.preencherDescricao}" update="descricao" />                           
+			            </sgp:formSelectOneMenu>
+			
+			            <h:outputLabel for="descricao" value="Descrição" />
+			            <p:inputText id="descricao" 			            	
+			            	value="#{registroPlantaoBean.ocorrencia.descricao}"
+			            	disabled="#{registroPlantaoBean.modoVisualizacao}"
+			            	style="width: 400px; margin-bottom: 15px;" />
+			
+			            <h:outputLabel for="dataOcorrencia" value="Data/Hora" />
+			            <p:calendar id="dataOcorrencia"
+			            	value="#{registroPlantaoBean.ocorrencia.dataOcorrencia}" 
+			                pattern="dd/MM/yyyy HH:mm" showTime="true" 
+			                disabled="#{registroPlantaoBean.modoVisualizacao}"/><br/>
+			            
+			            <h:panelGroup rendered="#{not registroPlantaoBean.modoNovo}">
+						    <h:outputLabel for="statusOcorrencia" value="Status Ocorrência" /><br />    
+						    <p:selectOneMenu id="statusOcorrencia"
+						        value="#{registroPlantaoBean.ocorrencia.statusOcorrencia}"
+						        disabled="#{registroPlantaoBean.modoVisualizacao}"> 
+						    
+						        <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
+						        <f:selectItems value="#{registroPlantaoBean.statusOcorrencias}"
+						            var="status"
+						            itemLabel="#{status}" 
+						            itemValue="#{status}" />
+						    </p:selectOneMenu>
+						</h:panelGroup> <br />   
+			            
+			            <h:outputLabel for="resumo" value="Resumo" />            
+			            <p:inputTextarea id="resumo" rows="6" cols="80" 
+			            	value="#{registroPlantaoBean.ocorrencia.resumo}"
+			            	disabled="#{registroPlantaoBean.modoVisualizacao}"
+			            	style="margin-bottom: 15px;"/>
+						            
+			            <h:panelGroup id="panelDetalhamento" layout="block" rendered="#{registroPlantaoBean.exibirDetalhamento}">
+			                <h:outputLabel for="detalhamento" value="Detalhamento:" /><br />
+			                <p:inputTextarea id="detalhamento" rows="6" cols="80" 
+			                	value="#{registroPlantaoBean.ocorrencia.detalhamento}" 
+			                	disabled="#{registroPlantaoBean.modoVisualizacao}"
+			                	style="margin-bottom: 15px;"/>
+			            </h:panelGroup>
+			
+			        </h:panelGrid>
+			    </h:panelGroup>
+			
+			    <f:facet name="footer">
+			        
+			        <p:commandButton value="Detalhamento"
+			           actionListener="#{registroPlantaoBean.mostrarDetalhamento}"
+			           update="grupoDialogOcorrencia"
+			           process="@this" 
+			           rendered="#{registroPlantaoBean.modoEdicao}"/>
+			
+			        <p:commandButton 
+					    value="Salvar" 
+					    action="#{registroPlantaoBean.salvarOcorrencia}"					    					    					    					    
+					    update="@form growl" 
+					    oncomplete="PF('dialogOcorrencia').hide()" 
+					    rendered="#{registroPlantaoBean.modoEdicao}"/>
+					    			        
+			        <p:commandButton value="Fechar" 
+			            onclick="PF('dialogOcorrencia').hide();" type="button" />
+			    </f:facet>
+			
+			</p:dialog>
+
 
 
 			<!-- Dialog  -->

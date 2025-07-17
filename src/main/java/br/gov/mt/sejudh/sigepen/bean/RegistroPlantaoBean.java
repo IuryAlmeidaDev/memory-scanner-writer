@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -62,37 +63,52 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
     private String plantaoSelecionado;
 
-	private List<Atividade> atividades;
+	
+    private List<TipoOcorrencia> tipoOcorrencias;
+    private List<Ocorrencia> ocorrencias;
+    private List<Atividade> atividades;
 //	private List<Plantao> plantoes;
 	private List<ServidorDTO> servidores;
 	private List<UnidadePrisional> unidadesPrisionais;
-
 	private List<RegistroPlantao> plantoesEmAndamento;
+	
+	private TipoOcorrencia tipoOcorrencia;
 	private RegistroPlantao registroPlantaoSelecionado;
-
 	private UnidadePrisional unidadePrisional;
 	private RegistroPlantaoServidor registroPlantaoServidor;
-
+	private Ocorrencia ocorrencia;
 	private Plantao plantao = new Plantao();
-
 	private RegistroPlantao registroPlantao;
-
 	private SituacaoPlantao situacaoSelecionada;
-	
 	private Atividade atividade;
 	private Atividade atividadeSelecionada;
 		
 	private RegistroPlantaoServidorDTO2 servidorSelecionado = new RegistroPlantaoServidorDTO2();
 
 	private StatusPlantao statusPlantao;
+	
 	private TipoPlantao tipoPlantao;
 	
+	private StatusOcorrencia statusOcorrencia;   
+	
 	private LazyDataModel<Plantao> plantoes;
+	
+	private boolean exibirDetalhamento = false;
+	
+	private boolean modoVisualizacao;
+	
+	private boolean modoEdicao;
+	
+	private boolean modoNovo;
+
 
 	//private LazyDataModel<RegistroPlantao> registroPlantoesss;
 	//private List<RegistroPlantao> registroPlantoess;
 
 
+	@Inject
+	private TipoOcorrenciaService tipoOcorrenciaService;
+	
 	@Inject
 	private RegistroPlantaoService registroPlantaoService;
 
@@ -110,6 +126,9 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private PlantaoServidorService plantaoServidorService;
+	
+	@Inject
+	private OcorrenciaService ocorrenciaService;
 
 	private List<RegistroPlantaoServidorDTO2> listaGestao = new ArrayList<RegistroPlantaoServidorDTO2>();
 	private List<RegistroPlantaoServidorDTO2> listaPlantao = new ArrayList<RegistroPlantaoServidorDTO2>();
@@ -131,6 +150,13 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	public void configurarFiltroPaginacao() throws Exception {
 		super.carregarFiltroPaginacao(FiltroPlantao.class, this);
 	}
+	
+	
+	@PostConstruct
+	public void inicializar() {
+		inicializarListas();	
+	}
+		
 
 	@URLAction(onPostback = false)
 	public String init() {
@@ -153,7 +179,7 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
 			case LISTAR:
 				pesquisar();
-
+				
 				//pesquisar2();
 				//logDeAcesso(log, this.registroPlantao);
 				break;
@@ -222,6 +248,49 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	}
 
 	/* ------------------------- Métodos ------------------------- */
+	
+	public void novaOcorrenciaa() {
+	    this.ocorrencia = new Ocorrencia();
+	    //this.exibirDetalhamento = false; // Se desejar resetar o campo também
+	}
+	
+	public void novaOcorrencia() {
+	    this.ocorrencia = new Ocorrencia(); 
+	    this.modoVisualizacao = false;
+	    this.modoEdicao = true;
+	    this.modoNovo = true;
+	}
+	
+	public void selecionarParaVisualizacao(Ocorrencia ocorrenciaSelecionada) {
+	    this.ocorrencia = ocorrenciaService.buscarPorIdComTipo(ocorrenciaSelecionada.getId());
+	    this.modoVisualizacao = true;
+	    this.modoEdicao = false;
+	    this.modoNovo = false;
+	}
+
+	public void selecionarParaEdicao(Ocorrencia ocorrenciaSelecionada) {
+	    this.ocorrencia = ocorrenciaService.buscarPorIdComTipo(ocorrenciaSelecionada.getId());
+	    this.modoVisualizacao = false;
+	    this.modoEdicao = true;
+	    this.modoNovo = false;
+	}
+
+	
+	public void selecionarOcorrencia(Ocorrencia ocorrenciaSelecionada) {
+	    this.ocorrencia = ocorrenciaService.buscarPorIdComTipo(ocorrenciaSelecionada.getId());
+	}
+
+
+	public void mostrarDetalhamento() {
+	    this.exibirDetalhamento = true;
+	}
+	
+	
+	private void inicializarListas() {
+		this.ocorrencias = ocorrenciaService.listarTodasOcorrencias();
+		this.tipoOcorrencias = tipoOcorrenciaService.listar();
+		novaOcorrencia(); 	    
+	}
 	
 	public void atualizarPlantaoSelecionado() {
 	    if (plantaoSelecionado != null && !plantaoSelecionado.isEmpty()) {
@@ -512,6 +581,44 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
 	    return retorno;
 	}
+	
+	public void preencherDescricao() {
+	    if (this.ocorrencia != null && this.ocorrencia.getTipoOcorrencia() != null) {
+	        String texto = this.ocorrencia.getTipoOcorrencia().getDescricao(); 
+	        this.ocorrencia.setDescricao(texto);
+	    }
+	}
+
+	public void salvarOcorrencia() {
+		
+		try {
+			
+			if (ocorrencia.getVisitante() == null) {
+	            Visitante visitantePadrao = new Visitante();
+	            visitantePadrao.setId(1L); 
+	            ocorrencia.setVisitante(visitantePadrao);
+	        }
+			
+			if (ocorrencia.getStatusOcorrencia() == null) {
+				ocorrencia.setStatusOcorrencia(StatusOcorrencia.ANDAMENTO);				
+			}
+
+			ocorrenciaService.salvar(ocorrencia);
+
+	        FacesContext.getCurrentInstance().addMessage(null,
+	            new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Ocorrência registrada com sucesso!"));
+
+	        this.ocorrencias = ocorrenciaService.listarTodasOcorrencias();
+	        
+	        novaOcorrencia(); 			
+			
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(
+					null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Falha ao salvar ocorrência."));
+			e.printStackTrace();
+		}
+		
+	}
 		
 	public String salvar() {
 	    String retorno = null;
@@ -564,8 +671,7 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	public void prepararEdicao(RegistroPlantaoServidorDTO2 servidor) {
 	    this.servidorSelecionado = servidor;
 	}
-	
-	
+
 	public String atualizarRegistroPlantaoServidor() {
 	    String retorno = null;
 
@@ -874,4 +980,92 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	public LazyDataModel<Plantao> getPlantoes() {
 		return plantoes;
 	}
+
+	public List<Ocorrencia> getOcorrencias() {
+		return ocorrencias;
+	}
+
+	public void setOcorrencias(List<Ocorrencia> ocorrencias) {
+		this.ocorrencias = ocorrencias;
+	}
+
+
+	public Ocorrencia getOcorrencia() {
+		return ocorrencia;
+	}
+
+	public void setOcorrencia(Ocorrencia ocorrencia) {
+		this.ocorrencia = ocorrencia;
+	}
+
+
+	public List<TipoOcorrencia> getTipoOcorrencias() {
+		return tipoOcorrencias;
+	}
+
+
+	public void setTipoOcorrencias(List<TipoOcorrencia> tipoOcorrencias) {
+		this.tipoOcorrencias = tipoOcorrencias;
+	}
+
+
+	public TipoOcorrencia getTipoOcorrencia() {
+		return tipoOcorrencia;
+	}
+
+
+	public void setTipoOcorrencia(TipoOcorrencia tipoOcorrencia) {
+		this.tipoOcorrencia = tipoOcorrencia;
+	}
+	
+	public boolean isExibirDetalhamento() {
+	    return exibirDetalhamento;
+	}
+
+
+	public boolean isModoVisualizacao() {
+		return modoVisualizacao;
+	}
+
+
+	public void setModoVisualizacao(boolean modoVisualizacao) {
+		this.modoVisualizacao = modoVisualizacao;
+	}
+
+
+	public boolean isModoEdicao() {
+		return modoEdicao;
+	}
+
+
+	public void setModoEdicao(boolean modoEdicao) {
+		this.modoEdicao = modoEdicao;
+	}
+
+
+	public boolean isModoNovo() {
+		return modoNovo;
+	}
+
+
+	public void setModoNovo(boolean modoNovo) {
+		this.modoNovo = modoNovo;
+	}
+
+
+	public StatusOcorrencia getStatusOcorrencia() {
+		return statusOcorrencia;
+	}
+
+
+	public void setStatusOcorrencia(StatusOcorrencia statusOcorrencia) {
+		this.statusOcorrencia = statusOcorrencia;
+	}
+	
+	public StatusOcorrencia[] getStatusOcorrencias() {
+	    return StatusOcorrencia.values();
+	}
+	
+	
+	
 }
