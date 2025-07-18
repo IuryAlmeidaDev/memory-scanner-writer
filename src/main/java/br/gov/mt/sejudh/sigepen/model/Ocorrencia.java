@@ -34,7 +34,7 @@ public class Ocorrencia extends BaseModel<Long> {
     @Column(name = "DATA_OCORRENCIA", nullable = false)
     private Date dataOcorrencia = new Date();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_TIPO_OCORRENCIA")
     private TipoOcorrencia tipoOcorrencia;
 
