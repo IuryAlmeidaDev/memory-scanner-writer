@@ -143,13 +143,16 @@
 			                value="#{registroPlantaoBean.ocorrencia.tipoOcorrencia}"
 			                converter="SimpleEntityConverter"
 			                disabled="#{registroPlantaoBean.modoVisualizacao}"
-			                style="width: 250px; margin-bottom: 15px;">
+			                style="width: 300px; margin-bottom: 15px;">
 			                			                			
 			                <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
 			
 			                <f:selectItems value="#{registroPlantaoBean.tipoOcorrencias}"
 			                               disabled="#{registroPlantaoBean.isVisualizacao}" 
-			                               var="t" itemLabel="#{t.tipo}" itemValue="#{t}" />
+			                               var="t"
+										   itemValue="#{t}"
+										   itemLabel="#{t.tipo} - #{t.descricao}" />
+
 			
 			                <p:ajax event="change" listener="#{registroPlantaoBean.preencherDescricao}" update="descricao" />                           
 			            </sgp:formSelectOneMenu>
