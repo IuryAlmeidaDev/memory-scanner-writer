@@ -182,14 +182,16 @@ public class ServidorDAO {
 	}
 	
 	
-	public List<Servidor> listarServidoresPorTipoPlantao(String tipoPlantao) {
+	public List<Servidor> listarServidoresPorTipoPlantao(String tipoPlantao, UnidadePrisional unidade) {
 	    String jpql = "SELECT DISTINCT s FROM Servidor s JOIN s.lotacao l " +
 	                  "WHERE l.dataInicio IS NOT NULL " +
 	                  "AND l.dataFim IS NULL " +
-	                  "AND l.plantao = :tipoPlantao";
+	                  "AND l.plantao = :tipoPlantao " +
+				      " AND l.unidade = :unidade";
 
 	    TypedQuery<Servidor> query = entityManager.createQuery(jpql, Servidor.class);
 	    query.setParameter("tipoPlantao", tipoPlantao);
+	    query.setParameter("unidade", unidade);
 	    return query.getResultList();
 	}
 

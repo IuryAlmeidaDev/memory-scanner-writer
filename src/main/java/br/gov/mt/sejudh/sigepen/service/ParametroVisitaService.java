@@ -12,6 +12,7 @@ import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
 import br.gov.mt.sejudh.sigepen.model.ParametroVisitaEstrutura;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 
 
 @Stateless
@@ -45,5 +46,9 @@ public class ParametroVisitaService {
 	public List<ParametroVisitaEstrutura> listarEstruturas(ParametroVisita p) {
 		return dao.listarEstruturas(p);
 		
+	}
+
+	public List<ParametroVisita> buscarParametrosVisitaPorUnidadeAndTipoEntrada(ParametroVisita parametroVisita) {
+		return dao.buscarParametrosVisitaPorUnidadeAndTipoEntrada(parametroVisita);
 	}
 }
