@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.*;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
@@ -105,6 +106,18 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 		this.getFiltro().setUnidadeOrigem(SecurityUtil.getUnidadeSelecionada());
 		
 		super.carregarFiltroPaginacao(FiltroTransferencia.class, this, getFiltro());
+
+		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
+			FiltroTransferencia filtroDash = (FiltroTransferencia) facesUtil
+					.getFlashParameter("filtroTransferenciaDash");
+
+			if (filtroDash != null) {
+				setFiltro(filtroDash);
+
+			} else {
+				super.carregarFiltroPaginacao(FiltroTransferencia.class, this);
+			}
+		}
 	}
 	
 	@URLAction(onPostback=false)

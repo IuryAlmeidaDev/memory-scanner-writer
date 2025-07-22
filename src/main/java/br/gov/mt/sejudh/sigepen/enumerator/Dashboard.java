@@ -22,7 +22,15 @@ public enum Dashboard {
 	TOTAL_MOVIMENTACAO_INTERNA_AGUARDANDO_FINALIZAR("TotalMovimentacaoInternaAguardandoFinalizar"),
 	TOTAL_MOVIMENTACAO_EXTERNA_PENDENTE("TotalMovimentacaoExternaPendente"),
 	TOTAL_MOVIMENTACAO_EXTERNA_EM_ANDAMENTO("TotalMovimentacaoExternaEmAndamento"),
-	TOTAL_MOVIMENTACAO_EXTERNA_AGUARDANDO_FINALIZAR("TotalMovimentacaoExternaAguardandoFinalizar");
+	TOTAL_MOVIMENTACAO_EXTERNA_AGUARDANDO_FINALIZAR("TotalMovimentacaoExternaAguardandoFinalizar"),
+	TOTAL_MOVIMENTACAO_INTERNA_FINALIZADO_PARCIAL("TotalMovimentacaoInternaFinalizadoParcial"),
+	TOTAL_MOVIMENTACAO_EXTERNA_FINALIZADO_PARCIAL("TotalMovimentacaoExternaFinalizadoParcial"),
+	TOTAL_TRANSFERENCIA_PENDENTE("TotalTransferenciaPendente"),
+	TOTAL_TRANSFERENCIA_EM_ANDAMENTO("TotalTransferenciaEmAndamento"),
+	TOTAL_TRANSFERENCIA_FINALIZADO_PARCIAL("TotalTransferenciaFinalizadoParcial"),
+	TOTAL_RECEBER_TRANSFERENCIA_VINCULADO("totalReceberTransferenciaViculada"),
+	TOTAL_RECEBER_TRANSFERENCIA_EM_ANDAMENTO("TotalReceberTransferenciaEmAndamento"),
+	TOTAL_REMANEJAMENTO_EM_ANDAMENTO("TotalRemanejamentoEmAndamento");
 
 	private String descricao;
 	
