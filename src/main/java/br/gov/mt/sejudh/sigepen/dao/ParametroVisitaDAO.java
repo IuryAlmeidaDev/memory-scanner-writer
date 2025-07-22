@@ -163,4 +163,43 @@ public class ParametroVisitaDAO {
 		 
 		 return pve;
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<ParametroVisita> buscarParametrosVisitaPorUnidadeAndTipoEntrada(ParametroVisita parametroVisita) {
+		Session session = this.em.unwrap(Session.class);
+		StringBuilder jpql = new StringBuilder("SELECT * FROM sigepen_owner.SGP_PARAMETRO_VISITA p " +
+				"WHERE p.ID_UNIDADE_PRISIONAL = :idUnidade AND p.STATUS = 'A' AND p.ID_TIPO_ENTRADA = :tipoEntrada ");
+
+
+
+		if(parametroVisita.isDomingo())
+			jpql.append(" AND P.DOMINGO = 1");
+		if(parametroVisita.isSegunda())
+			jpql.append(" AND P.SEGUNDA = 1 ");
+		if(parametroVisita.isTerca())
+			jpql.append(" AND P.TERCA = 1 ");
+		if(parametroVisita.isQuarta())
+			jpql.append(" AND P.QUARTA = 1 ");
+		if(parametroVisita.isQuinta())
+			jpql.append(" AND P.QUINTA = 1 ");
+		if(parametroVisita.isSexta())
+			jpql.append(" AND P.SEXTA = 1 ");
+		if(parametroVisita.isSabado())
+			jpql.append(" AND P.SABADO = 1 ");
+
+		List<ParametroVisita> pve = session.createSQLQuery(jpql.toString())
+				.addEntity(ParametroVisita.class)
+				.setParameter("idUnidade", parametroVisita.getUnidade().getId())
+				.setParameter("tipoEntrada", parametroVisita.getTipoEntrada().getId())
+				.list();
+
+		for(ParametroVisita p1 : pve) {
+			Hibernate.initialize(p1.getEstruturas());
+			for(ParametroVisitaEstrutura p2 : p1.getEstruturas()) {
+				Hibernate.initialize(p2.getEstrutura());
+			}
+		}
+
+		return pve;
+	}
 }

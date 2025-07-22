@@ -40,6 +40,10 @@ public class Plantao extends BaseModel<Long> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataPlantao;
 
+	@Column(name = "DATA_PLANTAO_ENCERRAMENTO")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataPlantaoEncerramento;
+
 	@OneToMany(mappedBy = "plantao", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Equipe> equipes = new ArrayList<>();
 
@@ -54,6 +58,9 @@ public class Plantao extends BaseModel<Long> {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_PLANTAO")
 	private StatusPlantao statusPlantao = StatusPlantao.INICIADO;
+
+	@OneToMany(mappedBy = "plantao", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PlantaoVisita> plantaoVisitas = new ArrayList<PlantaoVisita>();
 
 	@PreUpdate
 	@PrePersist
@@ -108,6 +115,14 @@ public class Plantao extends BaseModel<Long> {
 		this.dataPlantao = dataPlantao;
 	}
 
+	public Date getDataPlantaoEncerramento() {
+		return dataPlantaoEncerramento;
+	}
+
+	public void setDataPlantaoEncerramento(Date dataPlantaoEncerramento) {
+		this.dataPlantaoEncerramento = dataPlantaoEncerramento;
+	}
+
 	public UnidadePrisional getUnidadePrisional() {
 		return unidadePrisional;
 	}
@@ -139,6 +154,14 @@ public class Plantao extends BaseModel<Long> {
     public void setPlantaoAnterior(String plantaoAnterior) {
         this.plantaoAnterior = plantaoAnterior;
     }
+
+	public List<PlantaoVisita> getPlantaoVisitas() {
+		return plantaoVisitas;
+	}
+
+	public void setPlantaoVisitas(List<PlantaoVisita> plantaoVisitas) {
+		this.plantaoVisitas = plantaoVisitas;
+	}
 
 	@Override
 	public int hashCode() {
