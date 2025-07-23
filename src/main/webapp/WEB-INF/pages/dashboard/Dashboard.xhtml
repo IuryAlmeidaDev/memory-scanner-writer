@@ -8,10 +8,14 @@
 
         <h3>Dashboard</h3>
 
-        <h:outputText value="Recuperandos(as)" />
 
         <h:form id="formDashRecuperando">
-            ______________________________________________________________________________________________________________
+
+            <p style="display: inline-block;">
+                Recuperandos(as)
+                <br />
+                ______________________________________________________________________________________________________________
+            </p>
             <p:dashboard id="dashRecuperando" model="#{dashboardBean.dashModel}">
                 <p:panel id="#{dash.RECUPERANDOS_ATIVOS_SISTEMA.descricao}" styleClass="ui-dash-panel"
                          style="background-color: #6EAB2E;">
@@ -113,12 +117,13 @@
         </h:form>
 
 
-        <div style="display: inline-block;">
-            <h:outputText value="Recuperandos(as) Ativos(as) em Movimentação(ões)" />
-            ______________________________________________________________________________________________________________
-        </div>
-
         <h:form id="formDashMovimentacao">
+
+            <p style="display: inline-block;">
+                Recuperandos(as) Ativos(as) em Movimentação(ões)
+                <br />
+                ______________________________________________________________________________________________________________
+            </p>
 
             <p:dashboard id="dashMovimentacao" model="#{dashboardBean.dashModel}">
                 <p:panel id="#{dash.TOTAL_MOVIMENTACAO_INTERNA_PENDENTE.descricao}" styleClass="ui-dash-panel"
@@ -150,6 +155,17 @@
                                       styleClass="ui-dash-text-panel-40" />
                         <br />
                         <h:outputText value="Total movimentação interna aguardando finalizar"
+                                      styleClass="ui-dash-text-panel-18" />
+                    </h:commandLink>
+                </p:panel>
+
+                <p:panel id="#{dash.TOTAL_MOVIMENTACAO_INTERNA_FINALIZADO_PARCIAL.descricao}" styleClass="ui-dash-panel"
+                         style="background-color: #CC3300;">
+                    <h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE)}">
+                        <h:outputText value="#{dashboardBean.totalMovimentacaoExternaFinalizadoParcial}"
+                                      styleClass="ui-dash-text-panel-40" />
+                        <br />
+                        <h:outputText value="Total movimentação interna finalizado parcial"
                                       styleClass="ui-dash-text-panel-18" />
                     </h:commandLink>
                 </p:panel>
@@ -186,16 +202,89 @@
                                       styleClass="ui-dash-text-panel-18" />
                     </h:commandLink>
                 </p:panel>
+
+                <p:panel id="#{dash.TOTAL_MOVIMENTACAO_EXTERNA_FINALIZADO_PARCIAL.descricao}" styleClass="ui-dash-panel"
+                         style="background-color: #CC3300;">
+                    <h:commandLink
+                            action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_EXTERNA_FINALIZADO_PARCIAL)}">
+                        <h:outputText value="#{dashboardBean.totalMovimentacaoExternaAguardandoFinalizar}"
+                                      styleClass="ui-dash-text-panel-40" />
+                        <br />
+                        <h:outputText value="Total movimentação externa finalizado parcial"
+                                      styleClass="ui-dash-text-panel-18" />
+                    </h:commandLink>
+                </p:panel>
+                <p:panel id="#{dash.TOTAL_TRANSFERENCIA_PENDENTE.descricao}" styleClass="ui-dash-panel"
+                         style="background-color: #CC3300;">
+                    <h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_TRANSFERENCIA_PENDENTE)}">
+                        <h:outputText value="#{dashboardBean.totalTransferenciaPendente}"
+                                      styleClass="ui-dash-text-panel-40" />
+                        <br />
+                        <h:outputText value="Total transferencia pendente" styleClass="ui-dash-text-panel-18" />
+                    </h:commandLink>
+                </p:panel>
+                <p:panel id="#{dash.TOTAL_TRANSFERENCIA_EM_ANDAMENTO.descricao}" styleClass="ui-dash-panel"
+                         style="background-color: #CC3300;">
+                    <h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_TRANSFERENCIA_EM_ANDAMENTO)}">
+                        <h:outputText value="#{dashboardBean.totalTransferenciaEmAndamento}"
+                                      styleClass="ui-dash-text-panel-40" />
+                        <br />
+                        <h:outputText value="Total transferencia em andamento" styleClass="ui-dash-text-panel-18" />
+                    </h:commandLink>
+                </p:panel>
+                <p:panel id="#{dash.TOTAL_TRANSFERENCIA_FINALIZADO_PARCIAL.descricao}" styleClass="ui-dash-panel"
+                         style="background-color: #CC3300;">
+                    <h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_TRANSFERENCIA_FINALIZADO_PARCIAL)}">
+                        <h:outputText value="#{dashboardBean.totalTransferenciaFinalizadoParcial}"
+                                      styleClass="ui-dash-text-panel-40" />
+                        <br />
+                        <h:outputText value="Total transferencia externa finalizado parcial"
+                                      styleClass="ui-dash-text-panel-18" />
+                    </h:commandLink>
+                </p:panel>
+                <p:panel id="#{dash.TOTAL_RECEBER_TRANSFERENCIA_VINCULADO.descricao}" styleClass="ui-dash-panel"
+                         style="background-color: #CC3300;">
+                    <h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_RECEBER_TRANSFERENCIA_VINCULADO)}">
+                        <h:outputText value="#{dashboardBean.totalReceberTransferenciaViculada}"
+                                      styleClass="ui-dash-text-panel-40" />
+                        <br />
+                        <h:outputText value="Total receber transferencia vinculado"
+                                      styleClass="ui-dash-text-panel-18" />
+                    </h:commandLink>
+                </p:panel>
+                <p:panel id="#{dash.TOTAL_RECEBER_TRANSFERENCIA_EM_ANDAMENTO.descricao}" styleClass="ui-dash-panel"
+                         style="background-color: #CC3300;">
+                    <h:commandLink
+                            action="#{dashboardBean.executarAcao(dash.TOTAL_RECEBER_TRANSFERENCIA_EM_ANDAMENTO)}">
+                        <h:outputText value="#{dashboardBean.totalReceberTransferenciaEmAndamento}"
+                                      styleClass="ui-dash-text-panel-40" />
+                        <br />
+                        <h:outputText value="Total receber transferencia em andamento"
+                                      styleClass="ui-dash-text-panel-18" />
+                    </h:commandLink>
+                </p:panel>
+                <p:panel id="#{dash.TOTAL_REMANEJAMENTO_EM_ANDAMENTO.descricao}" styleClass="ui-dash-panel"
+                         style="background-color: #CC3300;">
+                    <h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_REMANEJAMENTO_EM_ANDAMENTO)}">
+                        <h:outputText value="#{dashboardBean.totalRemanejamentoEmAndamento}"
+                                      styleClass="ui-dash-text-panel-40" />
+                        <br />
+                        <h:outputText value="Visitantes Pendentes" styleClass="ui-dash-text-panel-18" />
+                        <br />
+                        <h:outputText value="Fase de Aprovação" styleClass="ui-dash-text-panel-18" />
+                    </h:commandLink>
+                </p:panel>
+
             </p:dashboard>
+
         </h:form>
 
-        <div style="display: inline-block;">
-            <h:outputText value="Visitantes" />
-            <br/>
-            ______________________________________________________________________________________________________________
-        </div>
-
-        <h:form id="formDashVisitante">
+        <h:form id="formDashVisitante" >
+            <p style="display: inline-block;">
+                Visitantes
+                <br />
+                ______________________________________________________________________________________________________________
+            </p>
 
             <p:dashboard id="dashVisitante" model="#{dashboardBean.dashModel}">
 
@@ -273,6 +362,7 @@
                 </p:panel>
             </p:dashboard>
         </h:form>
+
         <h:form>
             <!-- Dialog -->
             <p:dialog id="solicitacaoResetSenha" header="Solicitação de senha" widgetVar="solicitacaoResetSenha"
@@ -283,7 +373,7 @@
             </p:dialog>
         </h:form>
 
-        <h:form>
+        <h:form rendered="false">
             <!-- Dialog -->
             <p:dialog id="movimentacaoInterna" header="Movimentação interna" widgetVar="movimentacaoInterna"
                       visible="#{dashboardBean.movimentacaoInternaPendente > 0 || dashboardBean.movimentacaoInternaEmAndamento > 0 || dashboardBean.movimentacaoInternaAguardandoFinalizar > 0}"
@@ -301,7 +391,7 @@
             </p:dialog>
         </h:form>
 
-        <h:form>
+        <h:form rendered="false">
             <!-- Dialog -->
             <p:dialog id="movimentacaoExterna" header="Movimentação Externa" widgetVar="movimentacaoExterna"
                       visible="#{dashboardBean.movimentacaoExternaPendente > 0 || dashboardBean.movimentacaoExternaEmAndamento > 0 || dashboardBean.movimentacaoExternaAguardandoFinalizar > 0}"
