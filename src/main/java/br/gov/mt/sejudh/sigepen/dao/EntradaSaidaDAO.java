@@ -2,10 +2,8 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -360,7 +358,7 @@ public class EntradaSaidaDAO {
 			jpql.append(" AND E.DATA_SAIDA IS NULL ");
 			jpql.append(" AND E.DATA_ENTRADA >= TO_DATE('" + data + " 00:00:00','DD/MM/YYYY HH24:MI:SS')");
 			jpql.append(" AND E.DATA_ENTRADA <= TO_DATE('" + data + " 23:59:59','DD/MM/YYYY HH24:MI:SS')");
-			jpql.append(" AND E.ID_VISITANTE = " + f.getResponsavel());
+			jpql.append(" AND E.ID_VISITANTE IN (" + f.getResponsaveis() + ")");
 			Query query = this.em.createNativeQuery(jpql.toString());
 			return ((BigDecimal)query.getSingleResult()).longValue();
 		} catch (Exception e) {
@@ -560,6 +558,30 @@ public class EntradaSaidaDAO {
 			query.setMaxResults(1);
 			EntradaSaida entradaSaida = query.getSingleResult();
 			return entradaSaida.getVisitante();
+		}catch (Exception e){
+			return null;
+		}
+	}
+
+	public Set<Long> responsaveisDeuEntrada(Long id) {
+		try {
+			String jpql = "SELECT DISTINCT ea " +
+					"FROM EntradaSaida ea " +
+					"WHERE ea.visitante.id IN " +
+					"(SELECT vr.visitanteResponsavel.id FROM VisitanteResponsavel vr " +
+					"WHERE vr.visitante.id = :idVisitante " +
+					"AND vr.status = 'A') " +
+					"AND ea.dataSaida IS NULL";
+
+			TypedQuery<EntradaSaida> query = em.createQuery(jpql, EntradaSaida.class);
+			query.setParameter("idVisitante", id);
+			List<EntradaSaida> entradaSaida = query.getResultList();
+			Set<Long> ids = new HashSet<>();
+			for(EntradaSaida e : entradaSaida) {
+				ids.add(e.getVisitante().getId());
+			}
+			return ids;
+
 		}catch (Exception e){
 			return null;
 		}
