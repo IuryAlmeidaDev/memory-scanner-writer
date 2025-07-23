@@ -6,6 +6,10 @@
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
 
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 		<h3>Usuário</h3>
@@ -21,20 +25,39 @@
 				<sgp:formInputText labelValue="CPF" value="#{usuarioBean.filtro.cpf}" />
 				<sgp:formInputText labelValue="Login" value="#{usuarioBean.filtro.login}" />				
 				<sgp:formInputText labelValue="Email" value="#{usuarioBean.filtro.email}" permiteCaracterEspecial="true"/>
-				<sgp:formInputText labelValue="Email" value="#{usuarioBean.filtro.email}" permiteCaracterEspecial="true"/>
-				<sgp:formSelectOneMenu 
-					id="unidadePrisional"
-					labelValue="Unidade Prisional"
-					itemValue="#{item}" 
-					itemLabel="#{item.nome}"
-					itemsValue="#{usuarioBean.unidadesPrisionais}"
-					value="#{usuarioBean.filtro.unidadePrisional}" 
-					converter="SimpleEntityConverter"
-					temSelecione="true"
-					filter="true" filterMatchMode="custom"					
-				/>
-				
+				<sgp:formSelectOneMenu
+						id="status" labelValue="Status"
+						value="#{usuarioBean.filtro.status}"
+						itemsValue="#{comboHelperBean.status}"
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}"
+						temSelecione="true"/>
 
+				<sgp:formSelectOneMenu
+						labelValue="Unidade Prisional"
+						value="#{usuarioBean.filtro.unidadePrisional}"
+						itemsValue="#{usuarioBean.unidadesPrisionais}"
+						itemValue="#{item}"
+						filter="true"  filterMatchMode="custom" filterFunction="removeAcento"
+						itemLabel="#{item.nome}"
+						style="width: 280px;"
+						temSelecione="true"
+						converter="SimpleEntityConverter"
+						display="text"
+				/>
+
+
+				<sgp:formSelectOneMenu
+						id="perfil"
+						labelValue="Perfil"
+						itemValue="#{item}"
+						itemLabel="#{item.nome}"
+						itemsValue="#{usuarioBean.perfils}"
+						value="#{usuarioBean.filtro.perfil}"
+						converter="SimpleEntityConverter"
+						temSelecione="true" filterFunction="removeAcento"
+						filter="true" filterMatchMode="custom"
+				/>
 				<br />
 				<br />
 				<p:commandButton value="Pesquisar"

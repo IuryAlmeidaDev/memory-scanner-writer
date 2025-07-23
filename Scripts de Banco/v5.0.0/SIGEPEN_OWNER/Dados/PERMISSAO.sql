@@ -10,3 +10,14 @@ INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (304, 'Tot
 INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (305, 'TotalMovimentacaoExternaPendente', 'Exibe total de movimentação externa pendente.', 4);
 INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (306, 'TotalMovimentacaoExternaEmAndamento', 'Exibe total de movimentação externa em andamento', 4);
 INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (307, 'TotalMovimentacaoExternaAguardandoFinalizar', 'Exibe total de movimentação externa aguardando finalizar.', 4);
+
+INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (332, 'TotalMovimentacaoInternaFinalizadoParcial', 'Exibe total de movimentação interna finalizado parcial.', 4);
+INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (333, 'TotalMovimentacaoExternaFinalizadoParcial', 'Exibe total de movimentação externa finalizado parcial.', 4);
+
+INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (334, 'TotalTransferenciaPendente', 'Exibe total de tranferencia pendente.', 4);
+INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (335, 'TotalTransferenciaEmAndamento', 'Exibe total de tranferencia em andamento.', 4);
+INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (336, 'TotalTransferenciaFinalizadoParcial', 'Exibe total de tranferencia finalizado parcial.', 4);
+
+INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (337, 'totalReceberTransferenciaViculada', 'Exibe total de transferencia vinculada.', 4);
+INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (338, 'TotalReceberTransferenciaEmAndamento', 'Exibe total de transferencia em andamento.', 4);
+INSERT INTO PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID) VALUES (339, 'TotalRemanejamentoEmAndamento', 'Exibe total de remanejamento em andamento.', 4);
