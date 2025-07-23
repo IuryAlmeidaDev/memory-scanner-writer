@@ -135,6 +135,10 @@ public class EntradaSaidaService {
 		return dao.responsavelDeuEntrada(id);
 	}
 
+	public Set<Long> responsaveisDeuEntrada(Long id) {
+		return dao.responsaveisDeuEntrada(id);
+	}
+
 	public List<RecuperandoVisitanteDTO> agruparPorRecuperando(List<Visitante> visitantes) {
 		Map<Long, RecuperandoVisitanteDTO> mapa = new LinkedHashMap<>();
 
