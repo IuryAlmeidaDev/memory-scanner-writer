@@ -10,6 +10,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRemanejamento;
+import br.gov.mt.sejudh.sigepen.enumerator.*;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -22,10 +24,6 @@ import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
-import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.enumerator.MovimentacaoPassos;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estabelecimento;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
@@ -88,8 +86,20 @@ public class PedidoTransitoBean extends MetodosDePaginaBean {
 	public void carregaFiltros() throws Exception {
 		this.setFiltro(new FiltroPedTransito());
 		this.getFiltro().setUnidadeOrigem(SecurityUtil.getUnidadeSelecionada());
-		
+
 		super.carregarFiltroPaginacao(FiltroPedTransito.class, this, getFiltro());
+
+		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
+			FiltroPedTransito filtroDash = (FiltroPedTransito) facesUtil
+					.getFlashParameter("filtroPedTransitoDash");
+
+			if (filtroDash != null) {
+				setFiltro(filtroDash);
+
+			} else {
+				super.carregarFiltroPaginacao(FiltroPedTransito.class, this);
+			}
+		}
 	}
 	
 	@URLAction(onPostback=false)
