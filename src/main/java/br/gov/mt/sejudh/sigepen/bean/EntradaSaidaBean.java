@@ -1433,7 +1433,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 			return;
 		}
 
-		this.buscarEstruturaComFilho();
+		this.buscarEstruturaComFilho(this.estruturaSelecionada);
 
 		if(this.filtro.getIdsEstruturas().isEmpty()){
 			this.filtro.getIdsEstruturas().add(this.estruturaSelecionada);
@@ -1466,16 +1466,19 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 			}
 		}
 
-		this.buscarEstruturaComFilho();
+
+		if(this.estruturaSelecionada != null){
+			this.buscarEstruturaComFilho(this.estruturaSelecionada);
+		}
 
 		this.estruturas = result;
 	}
 
-	private void buscarEstruturaComFilho(){
+	private void buscarEstruturaComFilho(Long idEstrutura){
 
 		List<Estrutura> estuturas = new ArrayList<>();
 		Estrutura estrutura = new Estrutura();
-		estrutura.setId(this.estruturaSelecionada);
+		estrutura.setId(idEstrutura);
 		this.estruturaService.buscarEstruturasFilhos(estrutura,estuturas);
 
 		this.filtro.getIdsEstruturas().clear();

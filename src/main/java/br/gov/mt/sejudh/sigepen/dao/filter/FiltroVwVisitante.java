@@ -195,6 +195,9 @@ public class FiltroVwVisitante extends FiltroConsulta {
     }
 
     public StatusVisitante getStatus() {
+        if (vencimentoCredenciamento != null && !vencimentoCredenciamento.equals(VencimentoCredenciamento.VENCIDOS)){
+            status = StatusVisitante.A;
+        }
         return status;
     }
 
