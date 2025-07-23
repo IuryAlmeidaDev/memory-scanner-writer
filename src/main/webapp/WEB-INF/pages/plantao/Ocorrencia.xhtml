@@ -6,8 +6,83 @@
 				
 		<p:tab title="Ocorrencias" id="tabOcorrencias">
 			<p:panel id="panelOcorrencias">
-				<!-- Conteúdo da aba Ocorrencia -->
+				<p:panel header="Ocorrência" id="panelOcorrencia">
+				
+								    
+			    <p:commandButton value="Adicionar" 
+	              title="Adicionar" 
+	              icon="ui-icon-pencil"
+	              actionListener="#{registroPlantaoBean.novaOcorrencia}"
+	              update=":registrosForm:grupoDialogOcorrencia"
+	              oncomplete="PF('dialogOcorrencia').show()"
+	              process="@this"/><br /><br />
+                 					
+                 					
+				<p:dataTable id="dataTableOcorrencia" var="ocorrencia"
+					value="#{registroPlantaoBean.ocorrencias}"
+					rows="10" paginator="true" paginatorPosition="bottom" lazy="true"
+					emptyMessage="Nenhum registro encontrado.">
+							 
+					<p:column headerText="Código" width="50" style="text-align: center;">
+						<h:outputText value="#{ocorrencia.id}" />
+					</p:column>
+					
+					<p:column headerText="Data/Hora" width="120">
+						<h:outputText value="#{ocorrencia.dataOcorrencia}">
+							<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss.SSS" timeZone="America/Cuiaba" />
+						</h:outputText>					
+					</p:column>
+					
+					<p:column headerText="Status" width="80">
+						<h:outputText value="#{ocorrencia.statusOcorrencia.descricao}" />
+					</p:column>
+
+					<p:column headerText="Classificação" width="80">
+						<h:outputText value="#{ocorrencia.tipoOcorrencia.classificacao}" />
+					</p:column>
+					
+					<p:column headerText="Descrição" width="140">
+						<h:outputText value="#{ocorrencia.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Resumo" width="140">
+						<h:outputText value="#{ocorrencia.resumo}" />
+					</p:column>
+								
+					<p:column headerText="Ações" width="80" style="text-align: center;">					
+						<p:commandButton 						    
+						    icon="ui-icon-document"                     
+						    actionListener="#{registroPlantaoBean.selecionarParaVisualizacao(ocorrencia)}"
+						    update=":registrosForm:grupoDialogOcorrencia"
+						    oncomplete="PF('dialogOcorrencia').show()"
+						    process="@this"
+						    title="Visualizar" 
+						    rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}" />
+						
+						<p:commandButton 						    
+						    icon="ui-icon-pencil"                     
+						    actionListener="#{registroPlantaoBean.selecionarParaEdicao(ocorrencia)}"
+						    update=":registrosForm:grupoDialogOcorrencia"
+						    oncomplete="PF('dialogOcorrencia').show()"
+						    process="@this"
+						    title="Editar" 
+						    rendered="#{securityUtil.possuiPermissao('CadastrarRegistroPlantao')}" />
+					</p:column>
+							 
+				</p:dataTable>	
+											
+				</p:panel>
 			</p:panel>
 		</p:tab>
+		
+		
+		
+	    
+		
+
+		
+		
+		
+		
 	
 	</ui:composition>

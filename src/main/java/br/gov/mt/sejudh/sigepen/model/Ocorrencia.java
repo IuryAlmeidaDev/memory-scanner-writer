@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model;
 
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusOcorrencia;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.hibernate.envers.Audited;
 
@@ -33,13 +34,23 @@ public class Ocorrencia extends BaseModel<Long> {
     @Column(name = "DATA_OCORRENCIA", nullable = false)
     private Date dataOcorrencia = new Date();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_TIPO_OCORRENCIA")
     private TipoOcorrencia tipoOcorrencia;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SGP_VISITANTE")
     private Visitante visitante;
+    
+    @Column(name = "RESUMO")
+    private String resumo;
+    
+    @Column(name = "DETALHAMENTO")
+    private String detalhamento;
+    
+    @Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_OCORRENCIA")
+	private StatusOcorrencia statusOcorrencia = StatusOcorrencia.ANDAMENTO;
 
     public Ocorrencia() {}
 
@@ -90,8 +101,32 @@ public class Ocorrencia extends BaseModel<Long> {
     public void setVisitante(Visitante visitante) {
         this.visitante = visitante;
     }
+    
+    public String getResumo() {
+		return resumo;
+	}
 
-    @Override
+	public void setResumo(String resumo) {
+		this.resumo = resumo;
+	}
+
+	public String getDetalhamento() {
+		return detalhamento;
+	}
+
+	public void setDetalhamento(String detalhamento) {
+		this.detalhamento = detalhamento;
+	}
+
+	public StatusOcorrencia getStatusOcorrencia() {
+		return statusOcorrencia;
+	}
+
+	public void setStatusOcorrencia(StatusOcorrencia statusOcorrencia) {
+		this.statusOcorrencia = statusOcorrencia;
+	}
+
+	@Override
     public String toString() {
         return "Ocorrencia{" +
                 "id=" + id +

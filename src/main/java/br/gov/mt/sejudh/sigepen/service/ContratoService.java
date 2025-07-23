@@ -109,7 +109,7 @@ public class ContratoService {
 		return dao.horarioRefeiracaoPorContratoUnidade(idUnidade, tipoRefeiracao);
 	}
 	
-	public Contrato buscarContratoVigenteEAtivoPorUnidade(long id, Date data) throws RuntimeException {
+	public Contrato buscarContratoVigenteEAtivoPorUnidade(long id, Date data) {
 		List<Contrato> contratos = dao.buscarContratoVigenteEAtivoPorUnidade(id, data);
 		if (contratos.isEmpty()) {
 			throw new NaoEncontradoException("Nenhum contrato vigente e ativo encontrado para a unidade na data específicada.");

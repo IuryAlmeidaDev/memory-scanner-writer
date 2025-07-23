@@ -3,6 +3,7 @@ package br.gov.mt.sejudh.sigepen.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,6 +21,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.envers.Audited;
@@ -35,7 +38,7 @@ public class Cardapio extends BaseModel<Long> {
 
 	private static final long serialVersionUID = -2841675579819366317L;
 
-	@SequenceGenerator(name = "SEQ_CARDAPIO_GENERATOR", sequenceName = "SEQ_CARDAPIO", allocationSize = 1, initialValue = 1, schema = Sigepen.SEJUDH_SCHEMA)
+	@SequenceGenerator(name = "SEQ_CARDAPIO_GENERATOR", sequenceName = "SEQ_CARDAPIO", allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CARDAPIO_GENERATOR")
 	@Column(name = "ID")
@@ -72,7 +75,7 @@ public class Cardapio extends BaseModel<Long> {
 	private Date data;
 
 	public Cardapio() {
-		this.itensCardapio = new ArrayList<ItemCardapio>();
+		this.itensCardapio = new ArrayList<>();
 	}
 
 	@Override
@@ -152,7 +155,7 @@ public class Cardapio extends BaseModel<Long> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + id.hashCode();
 		return result;
 	}
 
@@ -165,7 +168,7 @@ public class Cardapio extends BaseModel<Long> {
 		if (getClass() != obj.getClass())
 			return false;
 		Cardapio other = (Cardapio) obj;
-		if (id != other.id)
+		if (!Objects.equals(id, other.id))
 			return false;
 		if (semana == null) {
 			if (other.semana != null)
@@ -178,15 +181,22 @@ public class Cardapio extends BaseModel<Long> {
 		} else if (!diaSemana.equals(other.diaSemana))
 			return false;
 		if (festivo == null) {
-			if (other.festivo != null)
-				return false;
-		} else if (!festivo.equals(other.festivo))
-			return false;
-		return true;
-	}
+            return other.festivo == null;
+		} else return festivo.equals(other.festivo);
+    }
 
 	@Override
 	public String toString() {
-		return "Cardapio [id=" + id + ", semana=" + semana + ", diaSemana=" + diaSemana + "]";
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("id", id)
+				.append("semana", semana)
+				.append("diaSemana", diaSemana)
+				.append("tipoRefeicao", tipoRefeicao)
+				.append("contrato", contrato)
+				.append("tipoDieta", tipoDieta)
+				.append("itensCardapio", itensCardapio)
+				.append("festivo", festivo)
+				.append("data", data)
+				.toString();
 	}
 }

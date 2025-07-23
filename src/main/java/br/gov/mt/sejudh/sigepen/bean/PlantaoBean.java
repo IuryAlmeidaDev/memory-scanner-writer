@@ -8,6 +8,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPlantao;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
@@ -18,7 +19,6 @@ import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPLantao;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPlantao;
 import br.gov.mt.sejudh.sigepen.model.Plantao;
@@ -40,7 +40,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 })
 public class PlantaoBean extends MetodosDePaginaBean {
 
-	private FiltroPLantao filtro = new FiltroPLantao();
+	private FiltroPlantao filtro = new FiltroPlantao();
 	//private FiltroRegistroPLantao filtroRegistro = new FiltroRegistroPLantao();
 
 	private Plantao plantao;
@@ -71,7 +71,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
-		super.carregarFiltroPaginacao(FiltroPLantao.class, this);
+		super.carregarFiltroPaginacao(FiltroPlantao.class, this);
 	}
 	
 
@@ -172,11 +172,11 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	/* --------------------------- get & setts -------------------------------------- */
 
 	
-	public FiltroPLantao getFiltro() {
+	public FiltroPlantao getFiltro() {
 		return filtro;
 	}
 
-	public void setFiltro(FiltroPLantao filtro) {
+	public void setFiltro(FiltroPlantao filtro) {
 		this.filtro = filtro;
 	}
 

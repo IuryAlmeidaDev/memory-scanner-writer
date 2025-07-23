@@ -2,7 +2,6 @@ package br.gov.mt.sejudh.sigepen.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -130,11 +129,6 @@ public class UsuarioService {
 
 	public List<UsuarioDTO> buscarUsuariosPorFiltro(FiltroUsuario filtro) {
 		List<UsuarioDTO> usuarioDTOS = dao.buscarUsuariosPorFiltro(filtro);
-
-		if(filtro.getPerfil() != null){
-			usuarioDTOS.forEach(dto -> dto.setPerfisToString(filtro.getPerfil().getNome()));
-			return usuarioDTOS;
-		}
 
 		for (UsuarioDTO dto : usuarioDTOS) {
 			if(filtro.getUnidadePrisional() != null ){

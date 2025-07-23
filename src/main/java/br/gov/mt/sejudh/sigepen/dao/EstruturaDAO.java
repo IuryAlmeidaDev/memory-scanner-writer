@@ -1,9 +1,5 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,6 +15,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RefeicaoDetalhadaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialEstruturaDTO;
+import br.gov.mt.sejudh.sigepen.util.CardapioUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.hibernate.Hibernate;
 
@@ -77,8 +74,8 @@ public class EstruturaDAO {
 	@SuppressWarnings("unchecked")
 	public List<GerarPedidoEstruturaDTO> buscaEstruturaFilhoGerarPedido(GerarPedidoEstruturaDTO estrutura,
 			String dataHora, Long tipoRefeicao) {
-		int numeroSemana = this.obterNumeroSemanaAno(dataHora);
-		int semana = this.obterSemana(numeroSemana);
+		int numeroSemana = CardapioUtil.obterNumeroSemanaAno(dataHora);
+		int semana = CardapioUtil.obterSemana(numeroSemana);
 		StringBuilder where = new StringBuilder("WHERE ");
 		StringBuilder sql = new StringBuilder("SELECT " + "e.id,e.CAPACIDADE,e.cela,e.nome "
 				+ ",SUM(CASE WHEN r.id IS not NULL AND dr.ID IS null THEN 1 ELSE 0 END) "
@@ -110,48 +107,10 @@ public class EstruturaDAO {
 				.map(row -> new GerarPedidoEstruturaDTO((Object[]) row)).collect(Collectors.toList());
 	}
 
-	private int obterNumeroSemanaAno(String dataString) {
-
-		String dataFormatada = formataData(dataString);
-
-		LocalDate data = LocalDate.parse(dataFormatada);
-		int numeroSemana = data.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-
-		return numeroSemana;
-	}
-
-	private String formataData(String dataString) {
-
-		try {
-
-			SimpleDateFormat formatoEntrada = new SimpleDateFormat("dd/MM/yyyy");
-			Date dataConvert = formatoEntrada.parse(dataString);
-			SimpleDateFormat formatoSaida = new SimpleDateFormat("yyyy-MM-dd");
-			return formatoSaida.format(dataConvert);
-		} catch (ParseException e) {
-			return "";
-		}
-	}
-
-	private int obterSemana(int numeroSemana) {
-		if (numeroSemana <= 6) {
-			return numeroSemana;
-		}
-
-		int resultado = numeroSemana;
-		int razao = 6;
-
-		while (resultado > 6) {
-			resultado = resultado - razao;
-		}
-
-		return resultado;
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<RefeicaoDetalhadaDTO> buscaPedidoDetalhado(final String dataHora, final Long id, final Long tipoRefeicao) {
-		final int numeroSemana = obterNumeroSemanaAno(dataHora);
-		final int semana = obterSemana(numeroSemana);
+		final int numeroSemana = CardapioUtil.obterNumeroSemanaAno(dataHora);
+		final int semana = CardapioUtil.obterSemana(numeroSemana);
 
 		final StringBuilder sql = new StringBuilder();
 

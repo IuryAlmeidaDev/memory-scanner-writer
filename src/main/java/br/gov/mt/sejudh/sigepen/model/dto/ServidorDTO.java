@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.model.Servidor;
 
 
 public class ServidorDTO {
@@ -20,12 +21,21 @@ public class ServidorDTO {
 	    // Construtor padrão necessário para o Hibernate
 	}
 
-	public ServidorDTO(String nome, String orgao, String cargo, Long matricula) {
+	public ServidorDTO(Long id, String nome, String orgao, String cargo, Long matricula) {
 		super();
+		this.id = id;
 		this.nome = nome;
 		this.orgao = orgao;
 		this.cargo = cargo;
 		this.matricula = matricula;
+	}
+
+	public ServidorDTO(Servidor servidor){
+		this.id = servidor.getId();
+		this.nome = servidor.getNome();
+		this.orgao = servidor.getFuncao() != null ? servidor.getFuncao().getNome() : null;
+		this.cargo = servidor.getCargo() != null ? servidor.getCargo().getNome() : null;
+		this.matricula = servidor.getMatricula();
 	}
 	
 

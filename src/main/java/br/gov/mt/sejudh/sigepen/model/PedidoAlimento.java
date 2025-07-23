@@ -50,13 +50,10 @@ public class PedidoAlimento extends BaseModel<Long> {
     private Long idTipoRefeicao;
 
     @OneToMany(mappedBy = "pedidoAlimento", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemPedidoAlimento> itensPedido = new ArrayList<>();
+    private final List<ItemPedidoAlimento> itensPedido = new ArrayList<>();
 
     @OneToMany(mappedBy = "pedidoAlimento", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DietaEspecialPedidoAlimento> dietasEspeciais = new ArrayList<>();
-    @Lob
-    @Column(name = "JSON_CONTEUDO_PEDIDO", nullable = false)
-    private String jsonConteudo;
+    private final List<DietaEspecialPedidoAlimento> dietasEspeciais = new ArrayList<>();
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "STAT_PEDIDO", nullable = false)
@@ -119,26 +116,14 @@ public class PedidoAlimento extends BaseModel<Long> {
         return idTipoRefeicao;
     }
 
-
     public List<ItemPedidoAlimento> getItensPedido() {
         return itensPedido;
-    }
-
-    public void setItensPedido(List<ItemPedidoAlimento> itensPedido) {
-        this.itensPedido = itensPedido;
     }
 
     public List<DietaEspecialPedidoAlimento> getDietasEspeciais() {
         return dietasEspeciais;
     }
 
-    public void setDietasEspeciais(List<DietaEspecialPedidoAlimento> dietasEspeciais) {
-        this.dietasEspeciais = dietasEspeciais;
-    }
-
-    public String getJsonConteudo() {
-        return jsonConteudo;
-    }
     public Status getStatus() {
         return status;
     }
@@ -177,7 +162,6 @@ public class PedidoAlimento extends BaseModel<Long> {
                 .append("idTipoRefeicao", idTipoRefeicao)
                 .append("itensPedido", itensPedido)
                 .append("dietasEspeciais", dietasEspeciais)
-                .append("jsonConteudo", jsonConteudo)
                 .append("status", status)
                 .toString();
     }

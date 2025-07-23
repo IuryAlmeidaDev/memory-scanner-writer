@@ -1,13 +1,8 @@
 package br.gov.mt.sejudh.sigepen.service;
 
 import br.gov.mt.sejudh.sigepen.base.service.BaseService;
-import br.gov.mt.sejudh.sigepen.dao.GerenciarAssinaturaDAO;
 import br.gov.mt.sejudh.sigepen.dao.TipoOcorrenciaDAO;
-import br.gov.mt.sejudh.sigepen.model.GerenciarAssinatura;
 import br.gov.mt.sejudh.sigepen.model.TipoOcorrencia;
-import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.List;

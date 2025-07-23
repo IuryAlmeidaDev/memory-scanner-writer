@@ -1,24 +1,14 @@
 package br.gov.mt.sejudh.sigepen.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPlantao;
 import org.hibernate.envers.Audited;
 
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
@@ -26,7 +16,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
-@Audited
+//@Audited
 @Entity
 @Table(name = "PLANTAO", schema = Sigepen.SEJUDH_SCHEMA)
 public class Plantao extends BaseModel<Long> {
@@ -43,9 +33,19 @@ public class Plantao extends BaseModel<Long> {
 	@Column(name = "PLANTAO")
 	private TipoPlantao tipoPlantao;
 
+	@Column(name = "PLANTAO_ANTERIOR")
+	private String plantaoAnterior;
+
 	@Column(name = "DATA_PLANTAO")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataPlantao;
+
+	@Column(name = "DATA_PLANTAO_ENCERRAMENTO")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataPlantaoEncerramento;
+
+	@OneToMany(mappedBy = "plantao", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Equipe> equipes = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "UNIDADE_PRISIONAL_ID")
@@ -55,12 +55,35 @@ public class Plantao extends BaseModel<Long> {
 	@Column(name = "STATUS")
 	private Status status;
 
-	public Plantao() {
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_PLANTAO")
+	private StatusPlantao statusPlantao = StatusPlantao.INICIADO;
 
+	@OneToMany(mappedBy = "plantao", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PlantaoVisita> plantaoVisitas = new ArrayList<PlantaoVisita>();
+
+	@PreUpdate
+	@PrePersist
+	public void prePersist() {
+		this.getEquipes().forEach(e -> e.setPlantao(this));
+	}
+
+	public Plantao() {
 	}
 
 	public Plantao(Status status) {
 		this.status = status;
+	}
+
+	public Plantao(Long id, TipoPlantao tipoPlantao, String plantaoAnterior, Date dataPlantao, List<Equipe> equipes, UnidadePrisional unidadePrisional, Status status, StatusPlantao statusPlantao) {
+		this.id = id;
+		this.tipoPlantao = tipoPlantao;
+		this.plantaoAnterior = plantaoAnterior;
+		this.dataPlantao = dataPlantao;
+		this.equipes = equipes;
+		this.unidadePrisional = unidadePrisional;
+		this.status = status;
+		this.statusPlantao = statusPlantao;
 	}
 
 	public Plantao(TipoPlantao tipoPlantao, Date dataPlantao) {
@@ -92,6 +115,14 @@ public class Plantao extends BaseModel<Long> {
 		this.dataPlantao = dataPlantao;
 	}
 
+	public Date getDataPlantaoEncerramento() {
+		return dataPlantaoEncerramento;
+	}
+
+	public void setDataPlantaoEncerramento(Date dataPlantaoEncerramento) {
+		this.dataPlantaoEncerramento = dataPlantaoEncerramento;
+	}
+
 	public UnidadePrisional getUnidadePrisional() {
 		return unidadePrisional;
 	}
@@ -106,6 +137,30 @@ public class Plantao extends BaseModel<Long> {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+    public List<Equipe> getEquipes() {
+        return equipes;
+    }
+
+    public void setEquipes(List<Equipe> equipes) {
+        this.equipes = equipes;
+    }
+
+    public String getPlantaoAnterior() {
+        return plantaoAnterior;
+    }
+
+    public void setPlantaoAnterior(String plantaoAnterior) {
+        this.plantaoAnterior = plantaoAnterior;
+    }
+
+	public List<PlantaoVisita> getPlantaoVisitas() {
+		return plantaoVisitas;
+	}
+
+	public void setPlantaoVisitas(List<PlantaoVisita> plantaoVisitas) {
+		this.plantaoVisitas = plantaoVisitas;
 	}
 
 	@Override
@@ -125,4 +180,11 @@ public class Plantao extends BaseModel<Long> {
 		return id == other.id;
 	}
 
+	public StatusPlantao getStatusPlantao() {
+		return statusPlantao;
+	}
+
+    public void setStatusPlantao(StatusPlantao statusPlantao) {
+        this.statusPlantao = statusPlantao;
+    }
 }
