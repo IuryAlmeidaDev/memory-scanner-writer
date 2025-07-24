@@ -64,7 +64,7 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
     private String plantaoSelecionado;
 
-	
+
     private List<TipoOcorrencia> tipoOcorrencias;
     private List<Ocorrencia> ocorrencias;
     private List<Atividade> atividades;
@@ -72,13 +72,18 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	private List<ServidorDTO> servidores;
 	private List<UnidadePrisional> unidadesPrisionais;
 	private List<RegistroPlantao> plantoesEmAndamento;
-	
+
 	private TipoOcorrencia tipoOcorrencia;
 	private RegistroPlantao registroPlantaoSelecionado;
 	private UnidadePrisional unidadePrisional;
 	private RegistroPlantaoServidor registroPlantaoServidor;
 	private Ocorrencia ocorrencia;
 	private Plantao plantao = new Plantao();
+
+	private List<PlantaoVisitaEstrutura> plantaoVisitaFamilia = new ArrayList<>();
+	private List<PlantaoVisitaEstrutura> plantaoVisitaEntradaSaida = new ArrayList<>();
+	private List<PlantaoVisitaEstrutura> plantaoVisitaAtendimento = new ArrayList<>();
+
 	private RegistroPlantao registroPlantao;
 	private SituacaoPlantao situacaoSelecionada;
 	private Atividade atividade;
@@ -87,21 +92,20 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	private RegistroPlantaoServidorDTO2 servidorSelecionado = new RegistroPlantaoServidorDTO2();
 
 	private StatusPlantao statusPlantao;
-	
+
 	private TipoPlantao tipoPlantao;
 	
-	private StatusOcorrencia statusOcorrencia;   
-	
-	private LazyDataModel<Plantao> plantoes;
-	
-	private boolean exibirDetalhamento = false;
-	
-	private boolean modoVisualizacao;
-	
-	private boolean modoEdicao;
-	
-	private boolean modoNovo;
+	private StatusOcorrencia statusOcorrencia;
 
+	private LazyDataModel<Plantao> plantoes;
+
+	private boolean exibirDetalhamento = false;
+
+	private boolean modoVisualizacao;
+
+	private boolean modoEdicao;
+
+	private boolean modoNovo;
 
 	private boolean modoVisualizacaoEquipe;
 
@@ -109,14 +113,9 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
 	private boolean modoNovoEquipe;
 
-
-	//private LazyDataModel<RegistroPlantao> registroPlantoesss;
-	//private List<RegistroPlantao> registroPlantoess;
-
-
 	@Inject
 	private TipoOcorrenciaService tipoOcorrenciaService;
-	
+
 	@Inject
 	private RegistroPlantaoService registroPlantaoService;
 
@@ -128,31 +127,22 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	
 	@Inject
 	private ServidorService servidorService;
-	
-	@Inject
-	private UnidadePrisionalService unidadePrisionalService;
 
 	@Inject
 	private PlantaoServidorService plantaoServidorService;
-	
+
 	@Inject
 	private OcorrenciaService ocorrenciaService;
+
+	@Inject
+	private PlantaoVisitaEstruturaService plantaoVisitaEstruturaService;
+
+	@Inject
+	private PlantaoVisitaService plantaoVisitaService;
 
 	private List<RegistroPlantaoServidorDTO2> listaGestao = new ArrayList<RegistroPlantaoServidorDTO2>();
 	private List<RegistroPlantaoServidorDTO2> listaPlantao = new ArrayList<RegistroPlantaoServidorDTO2>();
 	private List<RegistroPlantaoServidorDTO2> listaAdministrativa = new ArrayList<RegistroPlantaoServidorDTO2>();
-
-//	public void definirPlantaoAtual() {
-//	    if (registroPlantaoSelecionado != null) {
-//	        System.out.println("Selecionado: " + registroPlantaoSelecionado.getTipoPlantao().getDescricao());
-//
-//	        registroPlantao.setPlantaoAnterior(
-//	            registroPlantaoSelecionado.getTipoPlantao().getDescricao()
-//	            + " (ID: " + registroPlantaoSelecionado.getId() + ")"
-//	        );
-//	    }
-//	}
-
 
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
@@ -166,15 +156,12 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 		configurarModoVisualizacaoEquipe();
 
 		this.plantao = plantaoService.buscarUltimoPlantao();
-		//this.plantaoSelecionado = this.plantao.getTipoPlantao().name();
 
 		if (this.plantao != null) {
 			this.plantaoSelecionado = this.plantao.getTipoPlantao().name();
 		}
-
-
 	}
-		
+
 
 	@URLAction(onPostback = false)
 	public String init() {
@@ -197,9 +184,6 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
 			case LISTAR:
 				pesquisar();
-				
-				//pesquisar2();
-				//logDeAcesso(log, this.registroPlantao);
 				break;
 
 			default:
@@ -285,12 +269,12 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	}
 
 	public void novaOcorrencia() {
-	    this.ocorrencia = new Ocorrencia(); 
+	    this.ocorrencia = new Ocorrencia();
 	    this.modoVisualizacao = false;
 	    this.modoEdicao = true;
 	    this.modoNovo = true;
 	}
-	
+
 	public void selecionarParaVisualizacao(Ocorrencia ocorrenciaSelecionada) {
 	    this.ocorrencia = ocorrenciaService.buscarPorIdComTipo(ocorrenciaSelecionada.getId());
 	    this.modoVisualizacao = true;
@@ -366,94 +350,18 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
 	}
 
-
 	private void carregarDadosServidores(){
 
-		List<ServidorDTO> servidoresPlantao = servidorService.listarServidoresPorTipoPlantao(plantaoSelecionado);
+		UnidadePrisional unidade = this.plantao.getUnidadePrisional();
+
+		List<ServidorDTO> servidoresPlantao = servidorService.listarServidoresPorTipoPlantao(plantaoSelecionado,unidade);
 		listarPlantao(servidoresPlantao);
-		List<ServidorDTO> servidoresGestao = servidorService.listarServidoresPorTipoPlantao("GESTAO");
+		List<ServidorDTO> servidoresGestao = servidorService.listarServidoresPorTipoPlantao("GESTAO",unidade);
 		listarGestao(servidoresGestao);
-		List<ServidorDTO> servidoresAdmin = servidorService.listarServidoresPorTipoPlantao("ADMINISTRATIVO");
+		List<ServidorDTO> servidoresAdmin = servidorService.listarServidoresPorTipoPlantao("ADMINISTRATIVO",unidade);
 		listarAdministrativa(servidoresAdmin);
 
 	}
-
-
-	@Deprecated
-	private void carregarDadosPorPlantao() {
-	    listaPlantao.clear();
-	    listaAdministrativa.clear();
-	    listaGestao.clear();
-
-	    if (plantaoSelecionado != null && !plantaoSelecionado.isEmpty()) {
-	        List<String> tiposPlantao = Arrays.asList("A", "B", "C", "D");
-
-	        // Sempre que for um plantão A, B, C ou D, carrega os três tipos de equipe
-	        if (tiposPlantao.contains(plantaoSelecionado)) {
-	            // Carregar equipe de plantão
-	            Long tipoPlantao = 1L;
-	            List<Atividade> atividadesPlantao = atividadeService.listarTodasAtividadesPorTipo(tipoPlantao);
-	            List<ServidorDTO> servidoresPlantao = servidorService.listarServidoresPorTipoPlantao(plantaoSelecionado);
-
-	            listaPlantao = servidoresPlantao.stream().map(s -> {
-	                RegistroPlantaoServidorDTO2 dto = new RegistroPlantaoServidorDTO2();
-	                dto.setNomeServidor(s.getNome());
-	                dto.setAtividades(new ArrayList<>(atividadesPlantao));
-	                return dto;
-	            }).collect(Collectors.toList());
-
-	            // Carregar equipe de gestão
-	            Long tipoGestao = 2L;
-	            List<Atividade> atividadesGestao = atividadeService.listarTodasAtividadesPorTipo(tipoGestao);
-	            List<ServidorDTO> servidoresGestao = servidorService.listarServidoresPorTipoPlantao("GESTAO");
-
-	            listaGestao = servidoresGestao.stream().map(s -> {
-	                RegistroPlantaoServidorDTO2 dto = new RegistroPlantaoServidorDTO2();
-	                dto.setNomeServidor(s.getNome());
-	                dto.setAtividades(new ArrayList<>(atividadesGestao));
-	                return dto;
-	            }).collect(Collectors.toList());
-
-	            // Carregar equipe administrativa
-	            Long tipoAdministrativo = 3L;
-	            List<Atividade> atividadesAdministrativo = atividadeService.listarTodasAtividadesPorTipo(tipoAdministrativo);
-	            List<ServidorDTO> servidoresAdmin = servidorService.listarServidoresPorTipoPlantao("ADMINISTRATIVO");
-
-	            listaAdministrativa = servidoresAdmin.stream().map(s -> {
-	                RegistroPlantaoServidorDTO2 dto = new RegistroPlantaoServidorDTO2();
-	                dto.setNomeServidor(s.getNome());
-	                dto.setAtividades(new ArrayList<>(atividadesAdministrativo));
-	                return dto;
-	            }).collect(Collectors.toList());
-	        }
-
-	        // Se selecionar diretamente gestão ou administrativo, continua funcionando como antes
-	        else if (plantaoSelecionado.equals("GESTAO")) {
-	            Long tipoGestao = 2L;
-	            List<Atividade> atividadesGestao = atividadeService.listarTodasAtividadesPorTipo(tipoGestao);
-	            List<ServidorDTO> servidoresGestao = servidorService.listarServidoresPorTipoPlantao("GESTAO");
-
-	            listaGestao = servidoresGestao.stream().map(s -> {
-	                RegistroPlantaoServidorDTO2 dto = new RegistroPlantaoServidorDTO2();
-	                dto.setNomeServidor(s.getNome());
-	                dto.setAtividades(new ArrayList<>(atividadesGestao));
-	                return dto;
-	            }).collect(Collectors.toList());
-	        } else if (plantaoSelecionado.equals("ADMINISTRATIVO")) {
-	            Long tipoAdministrativo = 3L;
-	            List<Atividade> atividadesAdministrativo = atividadeService.listarTodasAtividadesPorTipo(tipoAdministrativo);
-	            List<ServidorDTO> servidoresAdmin = servidorService.listarServidoresPorTipoPlantao("ADMINISTRATIVO");
-
-	            listaAdministrativa = servidoresAdmin.stream().map(s -> {
-	                RegistroPlantaoServidorDTO2 dto = new RegistroPlantaoServidorDTO2();
-	                dto.setNomeServidor(s.getNome());
-	                dto.setAtividades(new ArrayList<>(atividadesAdministrativo));
-	                return dto;
-	            }).collect(Collectors.toList());
-	        }
-	    }
-	}
-
 
 	public void salvarTodasEquipes() throws ValidacaoException {
 		Plantao plantaoComEquipes = this.plantaoService.buscarPorId(this.plantao.getId());
@@ -517,26 +425,26 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
 	    return equipe;
 	}
-	
+
 	public void preencherDescricao() {
 	    if (this.ocorrencia != null && this.ocorrencia.getTipoOcorrencia() != null) {
-	        String texto = this.ocorrencia.getTipoOcorrencia().getDescricao(); 
+	        String texto = this.ocorrencia.getTipoOcorrencia().getDescricao();
 	        this.ocorrencia.setDescricao(texto);
 	    }
 	}
 
 	public void salvarOcorrencia() {
-		
+
 		try {
-			
+
 			if (ocorrencia.getVisitante() == null) {
 	            Visitante visitantePadrao = new Visitante();
-	            visitantePadrao.setId(1L); 
+	            visitantePadrao.setId(1L);
 	            ocorrencia.setVisitante(visitantePadrao);
 	        }
-			
+
 			if (ocorrencia.getStatusOcorrencia() == null) {
-				ocorrencia.setStatusOcorrencia(StatusOcorrencia.ANDAMENTO);				
+				ocorrencia.setStatusOcorrencia(StatusOcorrencia.ANDAMENTO);
 			}
 
 			ocorrenciaService.salvar(ocorrencia);
@@ -545,18 +453,35 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	            new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Ocorrência registrada com sucesso!"));
 
 	        this.ocorrencias = ocorrenciaService.listarTodasOcorrencias();
-	        
-	        novaOcorrencia(); 			
-			
+
+	        novaOcorrencia();
+
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(
 					null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Falha ao salvar ocorrência."));
 			e.printStackTrace();
 		}
-		
+
 	}
 
-	public void salvar() {
+	public void salvarPlantaoVisita() throws ValidacaoException {
+		if(!this.plantaoVisitaAtendimento.isEmpty()){
+			this.plantaoVisitaService.salvar(new PlantaoVisita(TipoEntrada.ATENDIMENTO,this.plantao,this.plantaoVisitaAtendimento));
+		}
+		if(!this.plantaoVisitaFamilia.isEmpty()){
+			this.plantaoVisitaService.salvar(new PlantaoVisita(TipoEntrada.FAMILIA,this.plantao,this.plantaoVisitaFamilia));
+		}
+		if(!this.plantaoVisitaEntradaSaida.isEmpty()){
+			this.plantaoVisitaService.salvar(new PlantaoVisita(TipoEntrada.ENTRADA_SAIDA,this.plantao,this.plantaoVisitaEntradaSaida));
+		}
+	}
+
+	public void encerrar() throws ValidacaoException {
+		this.salvarPlantaoVisita();
+	}
+
+	public String registrar() {
+		String retorno = null;
 		try {
 			Plantao plantaoAnterior = this.plantaoService.buscarUltimoPlantao();
 			Plantao plantaoAtual = new Plantao();
@@ -572,11 +497,12 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
 			this.plantao = this.plantaoService.salvar(plantaoAtual);
 
-			FacesContext context = FacesContext.getCurrentInstance();
-			context.getExternalContext().getFlash().setKeepMessages(true);
+			//FacesContext context = FacesContext.getCurrentInstance();
+			//context.getExternalContext().getFlash().setKeepMessages(true);
 			facesUtil.exibirMensagemInfo("Registro Plantão " + this.plantao.getId() + " salvo com sucesso!", true);
 
-			context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/plantao/cadastrar");
+			//context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/plantao/cadastrar");
+			retorno =  "plantao/cadastrar";
 
 			LoggerUtil.logInfo(Acao.SALVAR, this.plantao, log);
 
@@ -586,6 +512,8 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao salvar plantao (" + (this.plantao != null ? this.plantao.getId() : "") + "): " + e.getMessage());
 			LoggerUtil.logErro(Acao.SALVAR, this.plantao, e, log);
 		}
+
+		return retorno;
 	}
 
 	public void prepararEdicao(RegistroPlantaoServidorDTO2 servidor) {
@@ -646,6 +574,9 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 		}
 
 		this.plantao = plantaoService.buscarPorId(id);
+//		this.plantao.setPlantaoVisitas(buscarVisita());
+
+		buscarVisita();
 
 		if (this.plantao == null) {
 			return false;
@@ -665,6 +596,28 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 
 		return true;
 	}
+
+	public void buscarVisita(){
+
+		this.plantaoVisitaEntradaSaida = buscarPlantaoVisitaEstrutura(TipoEntrada.ENTRADA_SAIDA.getId());
+		this.plantaoVisitaFamilia = buscarPlantaoVisitaEstrutura(TipoEntrada.FAMILIA.getId());
+		this.plantaoVisitaAtendimento = buscarPlantaoVisitaEstrutura(TipoEntrada.ATENDIMENTO.getId());
+
+	}
+
+	public PlantaoVisita montarVisitaPorEntrada(Integer tipoEntrada){
+		PlantaoVisita plantaoVisita = new PlantaoVisita();
+
+		plantaoVisita.setTipoEntrada(TipoEntrada.getValue(tipoEntrada));
+		plantaoVisita.setPlantaoVisitaEstruturas(buscarPlantaoVisitaEstrutura(tipoEntrada));
+
+		return plantaoVisita;
+	}
+
+	public List<PlantaoVisitaEstrutura> buscarPlantaoVisitaEstrutura(Integer tipoEntrada){
+		return this.plantaoVisitaEstruturaService.buscarPlantaoVisitaEstruturaPorUnidadeAndtipoEntrada(tipoEntrada, this.plantao);
+	}
+
 
 	private void buscarGetao(Equipe e){
 		if(e.getTipoEquipe().equals(TipoEquipe.A)){
@@ -937,7 +890,7 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	public void setTipoOcorrencia(TipoOcorrencia tipoOcorrencia) {
 		this.tipoOcorrencia = tipoOcorrencia;
 	}
-	
+
 	public boolean isExibirDetalhamento() {
 	    return exibirDetalhamento;
 	}
@@ -981,9 +934,21 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	public void setStatusOcorrencia(StatusOcorrencia statusOcorrencia) {
 		this.statusOcorrencia = statusOcorrencia;
 	}
-	
+
 	public StatusOcorrencia[] getStatusOcorrencias() {
 	    return StatusOcorrencia.values();
+	}
+
+	public List<PlantaoVisitaEstrutura> getPlantaoVisitaFamilia() {
+		return plantaoVisitaFamilia;
+	}
+
+	public List<PlantaoVisitaEstrutura> getPlantaoVisitaEntradaSaida() {
+		return plantaoVisitaEntradaSaida;
+	}
+
+	public List<PlantaoVisitaEstrutura> getPlantaoVisitaAtendimento() {
+		return plantaoVisitaAtendimento;
 	}
 
 

@@ -10,6 +10,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
+import br.gov.mt.sejudh.sigepen.enumerator.*;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -22,10 +24,6 @@ import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRemanejamento;
-import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.Foto;
@@ -90,10 +88,23 @@ public class RemanejamentoBean extends MetodosDePaginaBean {
 
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
-		this.setFiltro(new FiltroRemanejamento());
+
 		this.getFiltro().setUnidadeRemanejada(SecurityUtil.getUnidadeSelecionada());
-		
+
 		super.carregarFiltroPaginacao(FiltroRemanejamento.class, this, getFiltro());
+
+		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
+			FiltroRemanejamento filtroDash = (FiltroRemanejamento) facesUtil
+					.getFlashParameter("filtroRecuperandoDash");
+
+			if (filtroDash != null) {
+				setFiltro(filtroDash);
+
+			} else {
+				super.carregarFiltroPaginacao(FiltroRemanejamento.class, this);
+			}
+		}
+
 	}
 	
 	@URLAction(onPostback=false)

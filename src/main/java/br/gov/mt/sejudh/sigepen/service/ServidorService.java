@@ -14,6 +14,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroServidor;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Lotacao;
 import br.gov.mt.sejudh.sigepen.model.Servidor;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
@@ -119,8 +120,8 @@ public class ServidorService {
 	
 	
 	
-	public List<ServidorDTO> listarServidoresPorTipoPlantao(String tipoPlantao) {
-	    List<Servidor> servidores = dao.listarServidoresPorTipoPlantao(tipoPlantao);
+	public List<ServidorDTO> listarServidoresPorTipoPlantao(String tipoPlantao, UnidadePrisional unidade) {
+	    List<Servidor> servidores = dao.listarServidoresPorTipoPlantao(tipoPlantao,unidade);
 	    return servidores.stream()
 	        .map(s -> new ServidorDTO(
 				s.getId(),

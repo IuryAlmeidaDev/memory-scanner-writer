@@ -59,8 +59,10 @@ import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
 import br.gov.mt.sejudh.sigepen.model.OrientacaoSexual;
 import br.gov.mt.sejudh.sigepen.model.Pais;
 import br.gov.mt.sejudh.sigepen.model.Parentesco;
+import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.Raca;
 import br.gov.mt.sejudh.sigepen.model.Regime;
+import br.gov.mt.sejudh.sigepen.model.RegistroPlantao;
 import br.gov.mt.sejudh.sigepen.model.Religiao;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
@@ -193,6 +195,10 @@ public class ComboService {
 
 	public List<UnidadePrisional> listarUnidades(){
 		return dao.listarUnidadesPrisionais();
+	}
+
+	public List<Plantao> listarPlantoesCadastrados(){
+		return dao.listarPlantoesCadastrados();
 	}
 
 	public List<Cidade> listarCidade(Estado estado){

@@ -1,13 +1,121 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui" xmlns:sgp="http://sejudh.mt.gov.br/components"
-	xmlns:pe="http://primefaces.org/ui/extensions">
-	
-	
-		<p:tab title="Visitas" id="tabVisitas">
-			<p:panel id="panelVisitas">
-				<!-- Conteúdo da aba Visita -->
-			</p:panel>
-		</p:tab>
-	
-	</ui:composition>
+				xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui" xmlns:sgp="http://sejudh.mt.gov.br/components"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+	<p:tab title="Visitas" id="tabVisitas">
+		<p:tabView id="tabViewPaiVisita" effect="fade" effectDuration="fast" widgetVar="abaVisitante">
+
+			<p:tab title="Familiar" id="abaVisitanteFamiliar">
+
+				<p:dataTable id="dataTableFamiliar" var="familia"
+							 value="#{registroPlantaoBean.plantaoVisitaFamilia}" rows="10" paginator="true"
+							 paginatorPosition="bottom" lazy="true" emptyMessage="Nenhum registro encontrado.">
+
+					<p:column headerText="Estrutura" width="140">
+						<h:outputText value="#{familia.estrutura}" />
+					</p:column>
+
+					<p:column headerText="Homem" width="140">
+						<h:outputText value="#{familia.homem}" />
+					</p:column>
+
+					<p:column headerText="Mulher" width="140">
+						<h:outputText value="#{familia.mulher}" />
+					</p:column>
+
+					<p:column headerText="Menores" width="140">
+						<h:outputText value="#{familia.menor}" />
+					</p:column>
+
+					<p:column headerText="Ocorrência" width="140">
+						<!-- <h:outputText value="#{familia.menor}" /> -->
+					</p:column>
+
+					<p:column headerText="Hora inicio" width="140">
+						<h:outputText value="#{familia.horaInicio}" />
+					</p:column>
+
+					<p:column headerText="Hora fim" width="140">
+						<h:outputText value="#{familia.horaFim}" />
+					</p:column>
+				</p:dataTable>
+			</p:tab>
+
+			<p:tab title="Atendimento" id="abaVisitanteAtendimento">
+
+				<p:dataTable id="dataTableAtendimento" var="atendimento"
+							 value="#{registroPlantaoBean.plantaoVisitaAtendimento}" rows="10" paginator="true"
+							 paginatorPosition="bottom" lazy="true" emptyMessage="Nenhum registro encontrado.">
+
+					<p:column headerText="Estrutura" width="140">
+						<h:outputText value="#{atendimento.estrutura}" />
+					</p:column>
+
+					<p:column headerText="Homem" width="140">
+						<h:outputText value="#{atendimento.homem}" />
+					</p:column>
+
+					<p:column headerText="Mulher" width="140">
+						<h:outputText value="#{atendimento.mulher}" />
+					</p:column>
+
+					<p:column headerText="Menores" width="140">
+						<h:outputText value="#{atendimento.menor}" />
+					</p:column>
+
+					<p:column headerText="Ocorrência" width="140">
+						<!-- <h:outputText value="#{atendimento.menor}" /> -->
+					</p:column>
+
+					<p:column headerText="Hora inicio" width="140">
+						<h:outputText value="#{atendimento.horaInicio}" />
+					</p:column>
+
+					<p:column headerText="Hora fim" width="140">
+						<h:outputText value="#{atendimento.horaFim}" />
+					</p:column>
+				</p:dataTable>
+			</p:tab>
+
+			<p:tab title="Entrada Saida" id="abaVisitanteEntradaSaida">
+
+				<p:dataTable id="dataTableEntradaSaida" var="entradaSaida"
+							 value="#{registroPlantaoBean.plantaoVisitaEntradaSaida}" rows="10" paginator="true"
+							 paginatorPosition="bottom" lazy="true" emptyMessage="Nenhum registro encontrado.">
+
+					<p:column headerText="Estrutura" width="140">
+						<h:outputText value="#{entradaSaida.estrutura}" />
+					</p:column>
+
+					<p:column headerText="Homem" width="140">
+						<h:outputText value="#{entradaSaida.homem}" />
+					</p:column>
+
+					<p:column headerText="Mulher" width="140">
+						<h:outputText value="#{entradaSaida.mulher}" />
+					</p:column>
+
+					<p:column headerText="Menores" width="140">
+						<h:outputText value="#{entradaSaida.menor}" />
+					</p:column>
+
+					<p:column headerText="Ocorrência" width="140">
+						<!-- <h:outputText value="#{entradaSaida.menor}" /> -->
+					</p:column>
+
+					<p:column headerText="Hora inicio" width="140">
+						<h:outputText value="#{entradaSaida.horaInicio}" />
+					</p:column>
+
+					<p:column headerText="Hora fim" width="140">
+						<h:outputText value="#{entradaSaida.horaFim}" />
+					</p:column>
+				</p:dataTable>
+			</p:tab>
+
+		</p:tabView>
+	</p:tab>
+
+</ui:composition>

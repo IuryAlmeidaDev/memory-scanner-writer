@@ -11,6 +11,7 @@ import javax.interceptor.Interceptors;
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoDAO;
 import br.gov.mt.sejudh.sigepen.dao.TransferenciaDAO;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroMovimentacaoExterna;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroTransferencia;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
@@ -161,4 +162,8 @@ public class TransferenciaService {
 	public boolean isTranferenciaEmAndamento(final long transferenciaId){
 		return dao.isTranferenciaEmAndamento(transferenciaId);
 	}
+
+    public int countMovimentacaoExterna(FiltroTransferencia filtro) {
+		return quantidadeFiltrados(filtro);
+    }
 }

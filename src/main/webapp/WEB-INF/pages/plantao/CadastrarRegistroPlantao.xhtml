@@ -7,9 +7,9 @@
 				template="/WEB-INF/pages/_templates/principal.xhtml">
 
 	<ui:define name="conteudo">
-	
+
 	 	<p:growl id="growl" showDetail="true" life="4000" sticky="false" />
-	 
+
 		<sgp:validarAcesso />
 
 		<h3>Registro Plantão</h3>
@@ -90,7 +90,7 @@
 				<!-- <ui:include src="Alimentacao.xhtml" /> -->
 
 				<!-- Aba Principal - Item Visitas -->
-				<!-- <ui:include src="Visita.xhtml" /> -->
+				<ui:include src="Visita.xhtml" />
 
 				<!-- Aba Principal - Item Movimentações -->
 				<!-- <ui:include src="Movimentacao.xhtml" /> -->
@@ -270,7 +270,7 @@
 				<h:panelGroup style="text-align: center; margin-top: 20px;">
 					<p:commandButton value="Registrar Encerramento"
 									 icon="ui-icon-disk"
-									 action="#{registroPlantaoBean.salvar}"
+									 action="#{registroPlantaoBean.encerrar}"
 									 update="meuFormulario"
 									 style="margin-right: 15px;" />
 				</h:panelGroup>

@@ -1168,7 +1168,8 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 				StatusCredenciamento.IRREGULAR.getId(),
 				StatusCredenciamento.REGULAR.getId(),
 				StatusCredenciamento.APROVADO.getId()));
-		int count = (Integer) query.getSingleResult();
+		Number result = (Number) query.getSingleResult();
+		int count = result != null ? result.intValue() : 0;
 
 		return (count > 0);
 	}
