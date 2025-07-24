@@ -89,6 +89,8 @@ public class RemanejamentoBean extends MetodosDePaginaBean {
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
 
+		this.setFiltro(new FiltroRemanejamento());
+
 		this.getFiltro().setUnidadeRemanejada(SecurityUtil.getUnidadeSelecionada());
 
 		super.carregarFiltroPaginacao(FiltroRemanejamento.class, this, getFiltro());

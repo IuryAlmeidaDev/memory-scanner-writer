@@ -72,6 +72,5 @@ public class PlantaoDAO extends BaseDAO<Plantao, Long>{
 			return null;
 		}
 	}
-	
 
 }
