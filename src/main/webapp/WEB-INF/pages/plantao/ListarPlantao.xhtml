@@ -10,43 +10,33 @@
             .botoes-dialogo {display: flex; justify-content: center; gap: 15px; margin-top: 20px;}
             .botoes-dialogo .ui-button {width: 100px; height: 30px; font-weight: bold; border-radius: 3px;}
         </h:outputStylesheet>
-        
-        
+
 		<sgp:validarAcesso />
 
 		<h3>Livro Plantão</h3>
 
-		<!-- Botão Cadastrar -->
-		<!-- <h:form>
-			<h:panelGroup style="text-align: center; margin-bottom: 15px;">
-				<p:button value="Cadastrar" outcome="pretty:CadastrarPlantao" icon="ui-icon-plus"
-					rendered="#{securityUtil.possuiPermissao('CadastrarPlantao')}" style="margin-right: 15px;" />
-			</h:panelGroup>
-		</h:form> -->
-
 		<h:form id="formDialog">
-            <!-- Botão para abrir o diálogo -->
-            <p:commandButton value="Cadastrar" onclick="PF('dlg').show();" type="button" icon="ui-icon-plus" />
 
-            <!-- Diálogo -->
+            <p:commandButton value="Cadastrar" onclick="PF('dlg').show();" type="button" icon="ui-icon-plus" />
                        
             <p:dialog header="Escolha uma opção" widgetVar="dlg" modal="true" closable="false" draggable="false">
             	
                 <h:panelGrid columns="1" cellpadding="5">
                     <sgp:formSelectOneMenu id="slPlantaoIniciado" labelValue="Plantão Iniciado"
-                                           value="#{registroPlantaoBean.plantaoSelecionado}"
-                                           disabled="#{registroPlantaoBean.isVisualizacao}" style="width:200px"
-                                           styleInput="width:200px; margin-bottom:15px;">
+                                           value="#{plantaoBean.plantaoSelecionado}"
+                                           disabled="#{plantaoBean.isVisualizacao}"
+										   style="width:200px"
+										   styleInput="width:200px; margin-bottom:15px;">
 
                         <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
-                        <f:selectItems value="#{registroPlantaoBean.tiposPlantao}"
+                        <f:selectItems value="#{plantaoBean.tiposPlantao}"
                                        var="p" itemLabel="#{p.descricao}" itemValue="#{p}" />
-                        <p:ajax listener="#{registroPlantaoBean.atualizarPlantaoSelecionado}" />
+                        <p:ajax listener="#{plantaoBean.atualizarPlantaoSelecionado}" />
                     </sgp:formSelectOneMenu>
 
                     <!-- Botões estilizados -->
                     <h:panelGroup layout="block" styleClass="botoes-dialogo">
-                        <p:commandButton value="Registrar" action="#{registroPlantaoBean.salvar}" ajax="false" styleClass="ui-button" />
+                        <p:commandButton value="Registrar" action="#{plantaoBean.registrar}" ajax="false" styleClass="ui-button" />
                         <p:commandButton value="Fechar" onclick="PF('dlg').hide();" type="button" styleClass="ui-button" />
                     </h:panelGroup>
                 </h:panelGrid>
@@ -58,7 +48,7 @@
 			<h:panelGroup style="margin-top: 20px;">
 
 				<!-- Tipo Plantão -->
-				<sgp:formSelectOneMenu value="#{registroPlantaoBean.filtro.tipoPlantao}" labelValue="Plantão"
+				<sgp:formSelectOneMenu value="#{plantaoBean.filtro.tipoPlantao}" labelValue="Plantão"
 									   id="plantao" display="text" temSelecione="true" style="width:200px"
 									   styleInput="width:200px; margin-bottom:15px;">
 
@@ -68,57 +58,49 @@
 					<f:selectItem itemLabel="D" itemValue="D" />
 				</sgp:formSelectOneMenu>
 
-
-				<!-- Data -->
-				<sgp:formCalendar labelValue="Data" id="dataPlantao" value="#{registroPlantaoBean.filtro.dataPlantao}"
+				<sgp:formCalendar labelValue="Data" id="dataPlantao" value="#{plantaoBean.filtro.dataPlantao}"
 								  pattern="dd/MM/yyyy" style="width:200px" styleInput="width:200px; margin-bottom:15px;">
 					<p:ajax event="dateSelect" />
 				</sgp:formCalendar>
 
-				<!-- Unidade -->
 				<sgp:formSelectOneMenu labelValue="Unidade" id="unidade"
-									   value="#{registroPlantaoBean.filtro.unidadePrisional}"
+									   value="#{plantaoBean.filtro.unidadePrisional}"
 									   itemsValue="#{comboHelperBean.unidadesPrisionais}" itemValue="#{item}" itemLabel="#{item.nome}"
 									   display="text" converter="SimpleEntityConverter" temSelecione="true" style="width:200px"
 									   styleInput="width:200px; margin-bottom:15px;" />
 
-
-				<!-- Situaão -->
 				<sgp:formSelectOneMenu labelValue="Situação" id="slTipoPlantao"
-									   value="#{registroPlantaoBean.filtro.statusPlantao}" style="width:200px"
+									   value="#{plantaoBean.filtro.statusPlantao}" style="width:200px"
 									   styleInput="width:200px; margin-bottom:15px;">
 
 					<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
 
-					<f:selectItems value="#{registroPlantaoBean.statusPlantoes}" var="status" itemValue="#{status}"
+					<f:selectItems value="#{plantaoBean.statusPlantoes}" var="status" itemValue="#{status}"
 								   itemLabel="#{status.descricao}" />
 				</sgp:formSelectOneMenu>
-
 
 			</h:panelGroup>
 
 			<br /><br />
 
-			<!-- Botões de Ação -->
 			<h:panelGroup style="text-align: center; margin-top: 20px;">
 				<p:commandButton value="Pesquisar" update=":registrosForm" icon="ui-icon-search"
 								 style="margin-right: 15px;" />
+
 				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
-								 actionListener="#{registroPlantaoBean.imprimir()}" />
+								 actionListener="#{plantaoBean.imprimir()}" />
 			</h:panelGroup>
 		</h:form>
 
 		<h:form id="registrosForm">
-			<p:dataTable id="dataTable" var="plantao" value="#{registroPlantaoBean.plantoes}" rows="10" paginator="true"
+			<p:dataTable id="dataTable" var="plantao" value="#{plantaoBean.plantoes}" rows="10" paginator="true"
 						 paginatorPosition="bottom" lazy="true" sortBy="#{plantao.id}" emptyMessage="Nenhum registro encontrado."
 						 style="width: 100%;" responsiveLayout="scroll" rowStyleClass="tabela-linha">
 
-				<!-- Código -->
 				<p:column headerText="Código" style="width: 8%; text-align: center;" sortBy="#{plantao.id}">
 					<h:outputText value="#{plantao.id}" />
 				</p:column>
 
-				<!-- Data -->
 				<p:column headerText="Data/Hora" style="width: 20%; text-align: center;"
 						  sortBy="#{plantao.dataPlantao}">
 					<h:outputText value="#{plantao.dataPlantao}">
@@ -126,25 +108,20 @@
 					</h:outputText>
 				</p:column>
 
-
-				<!-- Plantão -->
 				<p:column headerText="Plantão" style="width: 10%; text-align: center;">
 					<h:outputText value="#{plantao.tipoPlantao.descricao}" />
 				</p:column>
 
-				<!-- Unidade -->
 				<p:column headerText="Unidade"
-						  style="width: 34%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+						  style="width: 44%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
 					<h:outputText value="#{plantao.unidadePrisional.nome}" />
 				</p:column>
 
-				<!-- Situação -->
 				<p:column headerText="Situação" style="width: 15%; text-align: center;">
 					<h:outputText value="#{plantao.statusPlantao.descricao}" />
 				</p:column>
 
-				<!-- Ações -->
-				<p:column headerText="Ações" style="width: 25%; text-align: center;">
+				<p:column headerText="Ações" style="width: 15%; text-align: center;">
 
 					<p:button title="Visualizar" icon="ui-icon-document" style="margin-right: 5px;"
 							  outcome="pretty:VisualizarPlantao"
@@ -152,31 +129,19 @@
 						<f:param name="id" value="#{plantao.id}" />
 					</p:button>
 
-
-					<p:button title="Alterar" icon="ui-icon-pencil">
-						<f:param name="id" value="#{plantao.id}" />
-					</p:button>
-
-					<p:button title="Historico" icon="ui-icon-clock" />
-
 					<p:commandButton title="Imprimir" icon="fa fa-print"
-									 actionListener="#{registroPlantaoBean.imprimirId(plantao)}" rendered="#{plantao.id != null}" />
-
-
+									 actionListener="#{plantaoBean.imprimirId(plantao)}"
+									 rendered="#{plantao.id != null}" />
 				</p:column>
 
-				<!-- Rodapé -->
 				<f:facet name="footer">
-					Total de registros: #{registroPlantaoBean.plantoes.rowCount}
+					Total de registros: #{plantaoBean.plantoes.rowCount}
 				</f:facet>
 
 			</p:dataTable>
 		</h:form>
 
 		<br /><br />
-
-
-
 
 	</ui:define>
 </ui:composition>

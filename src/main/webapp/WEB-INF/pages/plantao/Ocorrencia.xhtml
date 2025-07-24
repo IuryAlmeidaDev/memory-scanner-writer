@@ -12,14 +12,14 @@
 			    <p:commandButton value="Adicionar" 
 	              title="Adicionar" 
 	              icon="ui-icon-pencil"
-	              actionListener="#{registroPlantaoBean.novaOcorrencia}"
+	              actionListener="#{plantaoBean.novaOcorrencia}"
 	              update=":registrosForm:grupoDialogOcorrencia"
 	              oncomplete="PF('dialogOcorrencia').show()"
 	              process="@this"/><br /><br />
                  					
                  					
 				<p:dataTable id="dataTableOcorrencia" var="ocorrencia"
-					value="#{registroPlantaoBean.ocorrencias}"
+					value="#{plantaoBean.ocorrencias}"
 					rows="10" paginator="true" paginatorPosition="bottom" lazy="true"
 					emptyMessage="Nenhum registro encontrado.">
 							 
@@ -52,7 +52,7 @@
 					<p:column headerText="Ações" width="80" style="text-align: center;">					
 						<p:commandButton 						    
 						    icon="ui-icon-document"                     
-						    actionListener="#{registroPlantaoBean.selecionarParaVisualizacao(ocorrencia)}"
+						    actionListener="#{plantaoBean.buscarOcorrencia(ocorrencia, true)}"
 						    update=":registrosForm:grupoDialogOcorrencia"
 						    oncomplete="PF('dialogOcorrencia').show()"
 						    process="@this"
@@ -61,7 +61,7 @@
 						
 						<p:commandButton 						    
 						    icon="ui-icon-pencil"                     
-						    actionListener="#{registroPlantaoBean.selecionarParaEdicao(ocorrencia)}"
+						    actionListener="#{plantaoBean.buscarOcorrencia(ocorrencia, false)}"
 						    update=":registrosForm:grupoDialogOcorrencia"
 						    oncomplete="PF('dialogOcorrencia').show()"
 						    process="@this"

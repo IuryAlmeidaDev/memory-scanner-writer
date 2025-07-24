@@ -31,7 +31,6 @@ import br.gov.mt.sejudh.sigepen.model.Parentesco;
 import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.Raca;
 import br.gov.mt.sejudh.sigepen.model.Regime;
-import br.gov.mt.sejudh.sigepen.model.RegistroPlantao;
 import br.gov.mt.sejudh.sigepen.model.Religiao;
 import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
 import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
@@ -218,20 +217,6 @@ public class ComboDAO {
 		} catch (NoResultException e) {
 			return null;
 		}
-	}
-
-	public List<RegistroPlantao> listarRegistrosPlantao() {
-	    try {
-	        String jpql = "SELECT rp FROM RegistroPlantao rp "
-	                    + "JOIN FETCH rp.plantao p " // se quiser garantir o fetch de dados relacionados
-	                    + "ORDER BY rp.dataPlantao DESC";
-
-	        TypedQuery<RegistroPlantao> query = entityManager.createQuery(jpql, RegistroPlantao.class);
-	        query.setHint(QueryHints.READ_ONLY, true);
-	        return query.getResultList();
-	    } catch (NoResultException e) {
-	        return null;
-	    }
 	}
 
 	public List<Plantao> listarPlantoesCadastrados() {
