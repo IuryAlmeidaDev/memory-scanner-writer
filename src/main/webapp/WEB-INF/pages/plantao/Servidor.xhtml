@@ -10,7 +10,7 @@
 
 				<!-- Data Table Listar Servidores e os demais campos -->
 				<p:dataTable id="dataTableGestao" var="servidor"
-							 value="#{registroPlantaoBean.listaGestao}" rows="10"
+							 value="#{plantaoBean.listaGestao}" rows="10"
 							 paginator="true" paginatorPosition="bottom" lazy="true"
 							 emptyMessage="Nenhum registro encontrado.">
 
@@ -25,7 +25,7 @@
 								value="#{servidor.atividadeSelecionada}"
 								id="slAtividadeGestao" temSelecione="true"
 								style="width:230px"
-								disabled="#{registroPlantaoBean.isVisualizacao}">
+								disabled="#{plantaoBean.isVisualizacao}">
 
 							<f:selectItems value="#{servidor.atividades}"
 										   var="atividade" itemLabel="#{atividade.descricao}"
@@ -39,9 +39,9 @@
 								value="#{servidor.situacaoSelecionada}"
 								id="slSituacaoGestao" temSelecione="true"
 								style="width:230px"
-								disabled="#{registroPlantaoBean.isVisualizacao}">
+								disabled="#{plantaoBean.isVisualizacao}">
 
-							<f:selectItems value="#{registroPlantaoBean.situacoes}"
+							<f:selectItems value="#{plantaoBean.situacoes}"
 										   var="situacao" itemLabel="#{situacao.descricao}"
 										   itemValue="#{situacao}" />
 						</p:selectOneMenu>
@@ -51,7 +51,7 @@
 					<p:column headerText="Ações" width="40">
 						<center>
 							<p:commandButton title="Alterar" icon="ui-icon-pencil"
-											 actionListener="#{registroPlantaoBean.prepararEdicao(servidor)}"
+											 actionListener="#{plantaoBean.prepararEdicao(servidor)}"
 											 oncomplete="PF('dialogAlteracao').show()"
 											 update=":registrosForm:dialogAlteracao"/>
 						</center>
@@ -66,7 +66,7 @@
 
 				<!-- Data Table Listar Servidores e os demais campos -->
 				<p:dataTable id="dataTableEquipePlantao" var="servidor"
-							 value="#{registroPlantaoBean.listaPlantao}" rows="10"
+							 value="#{plantaoBean.listaPlantao}" rows="10"
 							 paginator="true" paginatorPosition="bottom" lazy="true"
 							 emptyMessage="Nenhum registro encontrado.">
 
@@ -81,7 +81,7 @@
 								value="#{servidor.atividadeSelecionada}"
 								id="slAtividadeEquipePlantao" temSelecione="true"
 								style="width:230px"
-								disabled="#{registroPlantaoBean.isVisualizacao}">
+								disabled="#{plantaoBean.isVisualizacao}">
 
 							<f:selectItems value="#{servidor.atividades}"
 										   var="atividade" itemLabel="#{atividade.descricao}"
@@ -95,9 +95,9 @@
 								value="#{servidor.situacaoSelecionada}"
 								id="slSituacaoEquipePlantao" temSelecione="true"
 								style="width:230px"
-								disabled="#{registroPlantaoBean.isVisualizacao}">
+								disabled="#{plantaoBean.isVisualizacao}">
 
-							<f:selectItems value="#{registroPlantaoBean.situacoes}"
+							<f:selectItems value="#{plantaoBean.situacoes}"
 										   var="situacao" itemLabel="#{situacao.descricao}"
 										   itemValue="#{situacao}" />
 						</sgp:formSelectOneMenu>
@@ -107,7 +107,7 @@
 					<p:column headerText="Ações" width="40">
 						<center>
 							<p:commandButton title="Alterar" icon="ui-icon-pencil"
-											 actionListener="#{registroPlantaoBean.prepararEdicao(servidor)}"
+											 actionListener="#{plantaoBean.prepararEdicao(servidor)}"
 											 oncomplete="PF('dialogAlteracao').show()"
 											 update=":registrosForm:dialogAlteracao"/>
 						</center>
@@ -123,7 +123,7 @@
 
 				<!-- Data Table Listar Servidores e os demais campos -->
 				<p:dataTable id="dataTableAdministrativa" var="servidor"
-							 value="#{registroPlantaoBean.listaAdministrativa}" rows="10"
+							 value="#{plantaoBean.listaAdministrativa}" rows="10"
 							 paginator="true" paginatorPosition="bottom" lazy="true"
 							 emptyMessage="Nenhum registro encontrado.">
 
@@ -138,7 +138,7 @@
 								value="#{servidor.atividadeSelecionada}"
 								id="slAtividadeAdministrativa" temSelecione="true"
 								style="width:230px"
-								disabled="#{registroPlantaoBean.isVisualizacao}">
+								disabled="#{plantaoBean.isVisualizacao}">
 
 							<f:selectItems value="#{servidor.atividades}"
 										   var="atividade" itemLabel="#{atividade.descricao}"
@@ -153,9 +153,9 @@
 								value="#{servidor.situacaoSelecionada}"
 								id="slSituacaoAdministrativa" temSelecione="true"
 								style="width:230px"
-								disabled="#{registroPlantaoBean.isVisualizacao}">
+								disabled="#{plantaoBean.isVisualizacao}">
 
-							<f:selectItems value="#{registroPlantaoBean.situacoes}"
+							<f:selectItems value="#{plantaoBean.situacoes}"
 										   var="situacao" itemLabel="#{situacao.descricao}"
 										   itemValue="#{situacao}" />
 						</p:selectOneMenu>
@@ -166,7 +166,7 @@
 					<p:column headerText="Ações" width="40">
 						<center>
 							<p:commandButton title="Alterar" icon="ui-icon-pencil"
-											 actionListener="#{registroPlantaoBean.prepararEdicao(f)}"
+											 actionListener="#{plantaoBean.prepararEdicao(f)}"
 											 oncomplete="PF('dialogAlteracao').show()"
 											 update=":registrosForm:dialogAlteracao"/>
 						</center>
@@ -180,7 +180,7 @@
 			<p:separator style="margin-top:20px" />
 
 			<p:commandButton value="Salvar Equipes"
-							 action="#{registroPlantaoBean.salvarTodasEquipes}"
+							 action="#{plantaoBean.salvarTodasEquipes}"
 							 icon="ui-icon-disk" style="margin-top:10px"
 							 update="tabServidores" />
 
@@ -194,15 +194,15 @@
 		<h:panelGrid columns="2">
 
 			<h:outputLabel for="nomeServidor" value="Nome do Servidor:" />
-			<h:outputText id="nomeServidor" value="#{registroPlantaoBean.servidorSelecionado.nomeServidor}" />
+			<h:outputText id="nomeServidor" value="#{plantaoBean.servidorSelecionado.nomeServidor}" />
 
 
 			<h:outputLabel for="matricula" value="Matrícula:" />
-			<h:outputText id="matricula" value="#{registroPlantaoBean.servidorSelecionado.matricula}" readonly="true" />
+			<h:outputText id="matricula" value="#{plantaoBean.servidorSelecionado.matricula}" readonly="true" />
 
 
 			<h:outputLabel for="ocorrencia" value="Ocorrência:" />
-			<h:selectOneMenu id="ocorrencia" value="#{registroPlantaoBean.servidorSelecionado.ocorrenciaSelecionada}">
+			<h:selectOneMenu id="ocorrencia" value="#{plantaoBean.servidorSelecionado.ocorrenciaSelecionada}">
 
 				<f:selectItem itemLabel="Troca de posto" itemValue="TROCA_DE_POSTO" />
 				<f:selectItem itemLabel="Falta Não Justificada" itemValue="FALTA_NAO_JUSTIFICADA" />
@@ -213,13 +213,13 @@
 			</h:selectOneMenu>
 
 			<h:outputLabel for="justificativa" value="Justificativa:" />
-			<h:inputTextarea id="justificativa"  value="#{registroPlantaoBean.servidorSelecionado.justificativa}"/>
+			<h:inputTextarea id="justificativa"  value="#{plantaoBean.servidorSelecionado.justificativa}"/>
 
 		</h:panelGrid>
 
 
 		<p:commandButton value="Salvar"
-						 action="#{registroPlantaoBean.atualizarRegistroPlantaoServidor()}"
+						 action="#{plantaoBean.atualizarRegistroPlantaoServidor()}"
 						 update="@form"
 						 process="@form" />
 

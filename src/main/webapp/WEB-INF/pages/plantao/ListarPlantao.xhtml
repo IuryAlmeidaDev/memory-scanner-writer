@@ -23,20 +23,20 @@
             	
                 <h:panelGrid columns="1" cellpadding="5">
                     <sgp:formSelectOneMenu id="slPlantaoIniciado" labelValue="Plantão Iniciado"
-                                           value="#{registroPlantaoBean.plantaoSelecionado}"
-                                           disabled="#{registroPlantaoBean.isVisualizacao}"
+                                           value="#{plantaoBean.plantaoSelecionado}"
+                                           disabled="#{plantaoBean.isVisualizacao}"
 										   style="width:200px"
 										   styleInput="width:200px; margin-bottom:15px;">
 
                         <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
-                        <f:selectItems value="#{registroPlantaoBean.tiposPlantao}"
+                        <f:selectItems value="#{plantaoBean.tiposPlantao}"
                                        var="p" itemLabel="#{p.descricao}" itemValue="#{p}" />
-                        <p:ajax listener="#{registroPlantaoBean.atualizarPlantaoSelecionado}" />
+                        <p:ajax listener="#{plantaoBean.atualizarPlantaoSelecionado}" />
                     </sgp:formSelectOneMenu>
 
                     <!-- Botões estilizados -->
                     <h:panelGroup layout="block" styleClass="botoes-dialogo">
-                        <p:commandButton value="Registrar" action="#{registroPlantaoBean.registrar}" ajax="false" styleClass="ui-button" />
+                        <p:commandButton value="Registrar" action="#{plantaoBean.registrar}" ajax="false" styleClass="ui-button" />
                         <p:commandButton value="Fechar" onclick="PF('dlg').hide();" type="button" styleClass="ui-button" />
                     </h:panelGroup>
                 </h:panelGrid>
@@ -48,7 +48,7 @@
 			<h:panelGroup style="margin-top: 20px;">
 
 				<!-- Tipo Plantão -->
-				<sgp:formSelectOneMenu value="#{registroPlantaoBean.filtro.tipoPlantao}" labelValue="Plantão"
+				<sgp:formSelectOneMenu value="#{plantaoBean.filtro.tipoPlantao}" labelValue="Plantão"
 									   id="plantao" display="text" temSelecione="true" style="width:200px"
 									   styleInput="width:200px; margin-bottom:15px;">
 
@@ -58,24 +58,24 @@
 					<f:selectItem itemLabel="D" itemValue="D" />
 				</sgp:formSelectOneMenu>
 
-				<sgp:formCalendar labelValue="Data" id="dataPlantao" value="#{registroPlantaoBean.filtro.dataPlantao}"
+				<sgp:formCalendar labelValue="Data" id="dataPlantao" value="#{plantaoBean.filtro.dataPlantao}"
 								  pattern="dd/MM/yyyy" style="width:200px" styleInput="width:200px; margin-bottom:15px;">
 					<p:ajax event="dateSelect" />
 				</sgp:formCalendar>
 
 				<sgp:formSelectOneMenu labelValue="Unidade" id="unidade"
-									   value="#{registroPlantaoBean.filtro.unidadePrisional}"
+									   value="#{plantaoBean.filtro.unidadePrisional}"
 									   itemsValue="#{comboHelperBean.unidadesPrisionais}" itemValue="#{item}" itemLabel="#{item.nome}"
 									   display="text" converter="SimpleEntityConverter" temSelecione="true" style="width:200px"
 									   styleInput="width:200px; margin-bottom:15px;" />
 
 				<sgp:formSelectOneMenu labelValue="Situação" id="slTipoPlantao"
-									   value="#{registroPlantaoBean.filtro.statusPlantao}" style="width:200px"
+									   value="#{plantaoBean.filtro.statusPlantao}" style="width:200px"
 									   styleInput="width:200px; margin-bottom:15px;">
 
 					<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true" />
 
-					<f:selectItems value="#{registroPlantaoBean.statusPlantoes}" var="status" itemValue="#{status}"
+					<f:selectItems value="#{plantaoBean.statusPlantoes}" var="status" itemValue="#{status}"
 								   itemLabel="#{status.descricao}" />
 				</sgp:formSelectOneMenu>
 
@@ -88,12 +88,12 @@
 								 style="margin-right: 15px;" />
 
 				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
-								 actionListener="#{registroPlantaoBean.imprimir()}" />
+								 actionListener="#{plantaoBean.imprimir()}" />
 			</h:panelGroup>
 		</h:form>
 
 		<h:form id="registrosForm">
-			<p:dataTable id="dataTable" var="plantao" value="#{registroPlantaoBean.plantoes}" rows="10" paginator="true"
+			<p:dataTable id="dataTable" var="plantao" value="#{plantaoBean.plantoes}" rows="10" paginator="true"
 						 paginatorPosition="bottom" lazy="true" sortBy="#{plantao.id}" emptyMessage="Nenhum registro encontrado."
 						 style="width: 100%;" responsiveLayout="scroll" rowStyleClass="tabela-linha">
 
@@ -130,12 +130,12 @@
 					</p:button>
 
 					<p:commandButton title="Imprimir" icon="fa fa-print"
-									 actionListener="#{registroPlantaoBean.imprimirId(plantao)}"
+									 actionListener="#{plantaoBean.imprimirId(plantao)}"
 									 rendered="#{plantao.id != null}" />
 				</p:column>
 
 				<f:facet name="footer">
-					Total de registros: #{registroPlantaoBean.plantoes.rowCount}
+					Total de registros: #{plantaoBean.plantoes.rowCount}
 				</f:facet>
 
 			</p:dataTable>
