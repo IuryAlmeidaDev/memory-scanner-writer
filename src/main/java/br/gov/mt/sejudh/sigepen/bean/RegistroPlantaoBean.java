@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
+import java.io.IOException;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
@@ -30,7 +32,6 @@ import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
 
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRegistroPLantao;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.dto.RegistroPlantaoServidorDTO2;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
@@ -102,6 +103,13 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	private boolean modoNovo;
 
 
+	private boolean modoVisualizacaoEquipe;
+
+	private boolean modoEdicaoEquipe;
+
+	private boolean modoNovoEquipe;
+
+
 	//private LazyDataModel<RegistroPlantao> registroPlantoesss;
 	//private List<RegistroPlantao> registroPlantoess;
 
@@ -150,11 +158,21 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	public void configurarFiltroPaginacao() throws Exception {
 		super.carregarFiltroPaginacao(FiltroPlantao.class, this);
 	}
-	
-	
+
+
 	@PostConstruct
 	public void inicializar() {
-		inicializarListas();	
+		inicializarListas();
+		configurarModoVisualizacaoEquipe();
+
+		this.plantao = plantaoService.buscarUltimoPlantao();
+		//this.plantaoSelecionado = this.plantao.getTipoPlantao().name();
+
+		if (this.plantao != null) {
+			this.plantaoSelecionado = this.plantao.getTipoPlantao().name();
+		}
+
+
 	}
 		
 
@@ -166,7 +184,7 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 				break;
 
 			case ALTERAR:
-			case VISUALIZAR:								
+			case VISUALIZAR:
 				long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
 
 				if (!buscarPLantao(id)) {
@@ -248,12 +266,24 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	}
 
 	/* ------------------------- Métodos ------------------------- */
-	
+	private void inicializarListas() {
+		this.ocorrencias = ocorrenciaService.listarTodasOcorrencias();
+		this.tipoOcorrencias = tipoOcorrenciaService.listar();
+		novaOcorrencia();
+		carregarDadosServidores();
+	}
+
+	private void configurarModoVisualizacaoEquipe() {
+		this.modoVisualizacaoEquipe = true;
+		this.modoEdicaoEquipe = false;
+		this.modoNovoEquipe = false;
+	}
+
 	public void novaOcorrenciaa() {
 	    this.ocorrencia = new Ocorrencia();
 	    //this.exibirDetalhamento = false; // Se desejar resetar o campo também
 	}
-	
+
 	public void novaOcorrencia() {
 	    this.ocorrencia = new Ocorrencia(); 
 	    this.modoVisualizacao = false;
@@ -275,23 +305,14 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	    this.modoNovo = false;
 	}
 
-	
 	public void selecionarOcorrencia(Ocorrencia ocorrenciaSelecionada) {
 	    this.ocorrencia = ocorrenciaService.buscarPorIdComTipo(ocorrenciaSelecionada.getId());
 	}
 
-
 	public void mostrarDetalhamento() {
 	    this.exibirDetalhamento = true;
 	}
-	
-	
-	private void inicializarListas() {
-		this.ocorrencias = ocorrenciaService.listarTodasOcorrencias();
-		this.tipoOcorrencias = tipoOcorrenciaService.listar();
-		novaOcorrencia(); 	    
-	}
-	
+
 	public void atualizarPlantaoSelecionado() {
 	    if (plantaoSelecionado != null && !plantaoSelecionado.isEmpty()) {
 	        carregarDadosServidores();
@@ -433,67 +454,38 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	    }
 	}
 
-	private void carregarDadosPorPlantaoOriginal() {
-	    listaPlantao.clear();
-	    listaAdministrativa.clear();
-	    listaGestao.clear();
 
-	    if (plantaoSelecionado != null && !plantaoSelecionado.isEmpty()) {
-
-
-	        List<String> tiposPlantao = Arrays.asList("A", "B", "C", "D");
-
-	        if (tiposPlantao.contains(plantaoSelecionado)) {
-	            Long tipoPlantao = 1L;
-	            List<Atividade> atividadesPlantao = atividadeService.listarTodasAtividadesPorTipo(tipoPlantao);
-	            List<ServidorDTO> servidoresPlantao = servidorService.listarServidoresPorTipoPlantao(plantaoSelecionado);
-
-	            listaPlantao = servidoresPlantao.stream().map(s -> {
-	                RegistroPlantaoServidorDTO2 dto = new RegistroPlantaoServidorDTO2();
-	                dto.setNomeServidor(s.getNome());
-	                dto.setAtividades(new ArrayList<>(atividadesPlantao));
-	                return dto;
-	            }).collect(Collectors.toList());
-	        }
-
-	        if (plantaoSelecionado.equals("GESTAO")) {
-	            Long tipoGestao = 2L;
-	            List<Atividade> atividadesGestao = atividadeService.listarTodasAtividadesPorTipo(tipoGestao);
-	            List<ServidorDTO> servidoresGestao = servidorService.listarServidoresPorTipoPlantao("GESTAO");
-
-	            listaGestao = servidoresGestao.stream().map(s -> {
-	                RegistroPlantaoServidorDTO2 dto = new RegistroPlantaoServidorDTO2();
-	                dto.setNomeServidor(s.getNome());
-	                dto.setAtividades(new ArrayList<>(atividadesGestao));
-	                return dto;
-	            }).collect(Collectors.toList());
-	        }
-
-	        if (plantaoSelecionado.equals("ADMINISTRATIVO")) {
-	            Long tipoAdministrativo = 3L;
-	            List<Atividade> atividadesAdministrativo = atividadeService.listarTodasAtividadesPorTipo(tipoAdministrativo);
-	            List<ServidorDTO> servidoresAdmin = servidorService.listarServidoresPorTipoPlantao("ADMINISTRATIVO");
-
-	            listaAdministrativa = servidoresAdmin.stream().map(s -> {
-	                RegistroPlantaoServidorDTO2 dto = new RegistroPlantaoServidorDTO2();
-	                dto.setNomeServidor(s.getNome());
-	                dto.setAtividades(new ArrayList<>(atividadesAdministrativo));
-	                return dto;
-	            }).collect(Collectors.toList());
-	        }
-	    }
-	}
-
-	
 	public void salvarTodasEquipes() throws ValidacaoException {
+		Plantao plantaoComEquipes = this.plantaoService.buscarPorId(this.plantao.getId());
 
 		Equipe equipeGestao = montarEquipe(listaGestao, TipoEquipe.A);
 		Equipe equipePlantao = montarEquipe(listaPlantao, TipoEquipe.B);
 		Equipe equipeAdministrativa = montarEquipe(listaAdministrativa, TipoEquipe.C);
 
- 		this.plantao.getEquipes().addAll(Arrays.asList(equipeGestao,equipePlantao,equipeAdministrativa));
+		plantaoComEquipes.getEquipes().addAll(Arrays.asList(equipeGestao, equipePlantao, equipeAdministrativa));
 
-		this.plantaoService.salvar(this.plantao);
+		this.plantaoService.salvar(plantaoComEquipes);
+
+		// Redireciona após salvar
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		try {
+			externalContext.redirect(externalContext.getRequestContextPath() + "/plantao/listarPlantao");
+		} catch (IOException e) {
+			throw new RuntimeException("Erro ao redirecionar para a listagem de plantões", e);
+		}
+	}
+
+	public void salvarTodasEquipesAtual() throws ValidacaoException {
+
+		Plantao plantaoComEquipes = this.plantaoService.buscarPorId(this.plantao.getId());
+		Equipe equipeGestao = montarEquipe(listaGestao, TipoEquipe.A);
+		Equipe equipePlantao = montarEquipe(listaPlantao, TipoEquipe.B);
+		Equipe equipeAdministrativa = montarEquipe(listaAdministrativa, TipoEquipe.C);
+
+		plantaoComEquipes.getEquipes().addAll(Arrays.asList(equipeGestao, equipePlantao, equipeAdministrativa));
+
+		this.plantaoService.salvar(plantaoComEquipes);
 
 	}
 
@@ -524,62 +516,6 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 		equipe.setPlantao(this.plantao);
 
 	    return equipe;
-	}
-	public String salvarEquipe(List<RegistroPlantaoServidorDTO2> itemLista) {
-	    String retorno = null;
-	    boolean algumSalvo = false;
-
-	    RegistroPlantao ultimoRegistro = registroPlantaoService.buscarUltimoRegistro();
-	    if (ultimoRegistro == null) {
-	        facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro ao salvar equipe", "Nenhum registro encontrado.");
-	        return null;
-	    }
-
-	    Long registroPlantaoId = ultimoRegistro.getId();
-
-	    for (RegistroPlantaoServidorDTO2 dto : itemLista) {
-
-	        if (dto.getNomeServidor() != null) {
-
-	            //boolean registroExistente = registroPlantaoService.existeRegistro(dto.getNomeServidor(), dto.getDataRegistroPlantaoServidor());
-	        	boolean registroExistente = registroPlantaoService.existeMaisDeUmRegistro(dto.getDataRegistroPlantaoServidor());
-
-	            if (!registroExistente) {
-
-	                RegistroPlantaoServidor equipe = new RegistroPlantaoServidor();
-
-	                equipe.setNomeServidor(dto.getNomeServidor());
-	                equipe.setAtividadeSelecionada(dto.getAtividadeSelecionada());
-	                equipe.setSituacaoSelecionada(dto.getSituacaoSelecionada());
-
-	                equipe.setDataRegistroPlantaoServidor(
-	                    Date.from(dto.getDataRegistroPlantaoServidor()
-	                        .atStartOfDay(ZoneId.systemDefault()).toInstant()));
-
-	                equipe.setRegistroPlantaoId(registroPlantaoId);
-	                equipe.setOcorrenciaSelecionada(dto.getOcorrenciaSelecionada() != null ? dto.getOcorrenciaSelecionada() : null);
-	                equipe.setJustificativa(dto.getJustificativa() != null ? dto.getJustificativa() : null);
-
-	                registroPlantaoService.salvarEquipePlantao(equipe);
-	                algumSalvo = true;
-
-	            } else {
-	                facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Aviso", "O servidor " + dto.getNomeServidor() + " já tem um registro para esta data.");
-	            }
-
-	        } else {
-	            facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Aviso", "Dados incompletos para alguns servidores.");
-	        }
-	    }
-
-	    if (algumSalvo) {
-	        facesUtil.exibirMensagemInfo("Registro Plantão " + ultimoRegistro.getId() + " salvo com sucesso!", true);
-	        retorno = "pretty:ListarPlantao";
-	    } else {
-	        facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", "Nenhum registro foi salvo. Verifique se os dados não são duplicados ou incompletos.");
-	    }
-
-	    return retorno;
 	}
 	
 	public void preencherDescricao() {
@@ -619,53 +555,37 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 		}
 		
 	}
-		
-	public String salvar() {
-	    String retorno = null;
 
-	    try {
-
+	public void salvar() {
+		try {
 			Plantao plantaoAnterior = this.plantaoService.buscarUltimoPlantao();
 			Plantao plantaoAtual = new Plantao();
 
 			plantaoAtual.setTipoPlantao(TipoPlantao.valueOf(this.plantaoSelecionado));
 			plantaoAtual.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
 			plantaoAtual.setStatusPlantao(StatusPlantao.ANDAMENTO);
-
 			plantaoAtual.setDataPlantao(new Date());
 
-	    	 if (plantaoAnterior != null) {
-//
+			if (plantaoAnterior != null) {
 				plantaoAtual.setPlantaoAnterior(plantaoAnterior.getTipoPlantao().getDescricao());
-////				 plantaoAnterior.setStatusPlantao(StatusPlantao.CONCLUIDO);
-//				 plantaoAtual.setStatusPlantao(StatusPlantao.ANDAMENTO);
-//
-	    	 }
+			}
 
+			this.plantao = this.plantaoService.salvar(plantaoAtual);
 
-//	        this.plantaoService.salvar(plantaoAnterior);
-	        this.plantao = this.plantaoService.salvar(plantaoAtual);
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.getExternalContext().getFlash().setKeepMessages(true);
+			facesUtil.exibirMensagemInfo("Registro Plantão " + this.plantao.getId() + " salvo com sucesso!", true);
 
-	        facesUtil.exibirMensagemInfo("Registro Plantão " + this.plantao.getId() + " salvo com sucesso!", true);
-	        //retorno = "pretty:ListarRegistroPlantao";
+			context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/plantao/cadastrar");
 
+			LoggerUtil.logInfo(Acao.SALVAR, this.plantao, log);
 
-	        retorno = "/sigepen/plantao/visualizar/" + this.plantao.getId();
-
-			FacesContext.getCurrentInstance().getExternalContext()
-					.redirect(retorno);
-	        LoggerUtil.logInfo(Acao.SALVAR, this.plantao, log);
-
-	    } catch (ValidacaoException e) {	        
-	        facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
-
-	    } catch (Exception e) {	        
-	        facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-	                "Erro ao salvar plantao (" + this.plantao.getId() + "): " + e.getMessage());
-	        LoggerUtil.logErro(Acao.SALVAR, this.plantao, e, log);
-	    }
-
-	    return retorno;
+		} catch (ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao salvar plantao (" + (this.plantao != null ? this.plantao.getId() : "") + "): " + e.getMessage());
+			LoggerUtil.logErro(Acao.SALVAR, this.plantao, e, log);
+		}
 	}
 
 	public void prepararEdicao(RegistroPlantaoServidorDTO2 servidor) {
@@ -1065,7 +985,31 @@ public class RegistroPlantaoBean extends MetodosDePaginaBean {
 	public StatusOcorrencia[] getStatusOcorrencias() {
 	    return StatusOcorrencia.values();
 	}
-	
-	
-	
+
+
+
+
+	public boolean isModoVisualizacaoEquipe() {
+		return modoVisualizacaoEquipe;
+	}
+
+	public void setModoVisualizacaoEquipe(boolean modoVisualizacaoEquipe) {
+		this.modoVisualizacaoEquipe = modoVisualizacaoEquipe;
+	}
+
+	public boolean isModoEdicaoEquipe() {
+		return modoEdicaoEquipe;
+	}
+
+	public void setModoEdicaoEquipe(boolean modoEdicaoEquipe) {
+		this.modoEdicaoEquipe = modoEdicaoEquipe;
+	}
+
+	public boolean isModoNovoEquipe() {
+		return modoNovoEquipe;
+	}
+
+	public void setModoNovoEquipe(boolean modoNovoEquipe) {
+		this.modoNovoEquipe = modoNovoEquipe;
+	}
 }

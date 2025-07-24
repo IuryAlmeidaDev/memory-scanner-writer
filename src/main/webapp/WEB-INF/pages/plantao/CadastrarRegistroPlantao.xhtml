@@ -14,22 +14,17 @@
 
 		<h3>Registro Plantão</h3>
 
-
 		<!-- Iniciar Plantao -->
+		<h:form id="meuFormulario">
 
-
-		<h:form id="meuFormulario">				    		    
-		    
-			<p:panel header="Início do PLantão" style="margin-top: 20px;">
-
-				<br /><br />
+			<p:panel header="Início do Plantão">
 
 				<sgp:formSelectOneMenu
 						id="slPlantaoIniciado"
 						labelValue="Plantão Iniciado"
 						value="#{registroPlantaoBean.plantaoSelecionado}"
-						disabled="#{registroPlantaoBean.isVisualizacao}"
-						style="width:200px"
+						disabled="#{registroPlantaoBean.modoVisualizacaoEquipe}"
+						style="width:200px;"
 						styleInput="width:200px; margin-bottom:15px;">
 
 					<f:selectItem
@@ -38,38 +33,35 @@
 
 					<f:selectItems
 							value="#{registroPlantaoBean.tiposPlantao}"
-							disabled="#{registroPlantaoBean.isVisualizacao}"
 							var="p" itemLabel="#{p.descricao}"
 							itemValue="#{p}" />
 
-					<p:ajax listener="#{registroPlantaoBean.atualizarPlantaoSelecionado}"
-							update="tabViewPai" />
-
+					<p:ajax listener="#{registroPlantaoBean.atualizarPlantaoSelecionado}" update="tabViewPai" />
 				</sgp:formSelectOneMenu>
 
 
-				<br />
-				<br />
+				<br /><br />
 
 				<sgp:formCalendar
 						id="dataPlantao"
 						labelValue="Data do Plantão"
 						value="#{registroPlantaoBean.plantao.dataPlantao}"
-						disabled="#{registroPlantaoBean.isVisualizacao ? 'false' : 'true'}"
+						disabled="#{registroPlantaoBean.modoVisualizacaoEquipe}"
 						pattern="dd-MM-yyyy HH:mm:ss.SSS"
-						style="width:200px"
+						style="width:200px;"
 						styleInput="width:200px; margin-bottom:15px;">
+
 					<p:ajax event="dateSelect" />
 				</sgp:formCalendar>
 
-
+				<br /><br />
 
 				<sgp:formSelectOneMenu
 						labelValue="Status Plantão"
 						id="slTipoPlantao"
 						value="#{registroPlantaoBean.plantao.statusPlantao}"
-						disabled="#{registroPlantaoBean.isVisualizacao ? 'false' : 'true'}"
-						style="width:200px"
+						disabled="#{registroPlantaoBean.modoVisualizacaoEquipe}"
+						style="width:200px;"
 						styleInput="width:200px; margin-bottom:15px;">
 
 					<f:selectItem itemLabel="Não Iniciado" itemValue="#{null}" noSelectionOption="true" />
@@ -81,28 +73,10 @@
 							itemLabel="#{status.descricao}" />
 				</sgp:formSelectOneMenu>
 
-
-
-
-				<br />
-				<br />
-
-
-				<!-- Botões update="meuFormulario"  -->
-				<h:panelGroup style="text-align: center; margin-top: 20px;">
-					<p:commandButton action="#{registroPlantaoBean.salvar}"
-									 value="Registrar Início" icon="ui-icon-disk"
-									 style="margin-right: 15px;"
-									 update="@form"
-									 process="@form"
-					/>
-
-				</h:panelGroup>
+				<br /><br />
 
 			</p:panel>
 		</h:form>
-
-		<!-- Fim Iniciar Plantao -->
 
 
 		<h:form id="registrosForm" prependId="false">
@@ -112,18 +86,14 @@
 				<!-- Aba Principal - Item Servidores -->
 				<ui:include src="Servidor.xhtml" />
 
-
 				<!-- Aba Principal - Item Alimentos -->
-				<!--				<ui:include src="Alimentacao.xhtml" />-->
-
+				<!-- <ui:include src="Alimentacao.xhtml" /> -->
 
 				<!-- Aba Principal - Item Visitas -->
-				<!--				<ui:include src="Visita.xhtml" />-->
-
+				<!-- <ui:include src="Visita.xhtml" /> -->
 
 				<!-- Aba Principal - Item Movimentações -->
-				<!--				<ui:include src="Movimentacao.xhtml" />-->
-
+				<!-- <ui:include src="Movimentacao.xhtml" /> -->
 
 				<!-- Aba Principal - Item Ocorrencias -->
 				<ui:include src="Ocorrencia.xhtml" />
@@ -271,7 +241,8 @@
 						id="slproximoPlantao"
 						value="#{registroPlantaoBean.plantaoSelecionado}"
 						style="width:200px"
-						styleInput="width:200px; margin-bottom:15px;">
+						styleInput="width:200px; margin-bottom:15px;"
+						disabled="#{registroPlantaoBean.modoVisualizacaoEquipe}">
 
 					<f:selectItem
 							itemLabel="Selecione"
@@ -282,6 +253,7 @@
 							var="p" itemLabel="#{p.descricao}"
 							itemValue="#{p}" />
 				</sgp:formSelectOneMenu>
+
 				<br />
 				<br />
 				<br />

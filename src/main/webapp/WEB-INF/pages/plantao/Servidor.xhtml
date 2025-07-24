@@ -14,36 +14,37 @@
 							 paginator="true" paginatorPosition="bottom" lazy="true"
 							 emptyMessage="Nenhum registro encontrado.">
 
-
 					<!-- Nome Servidor  -->
 					<p:column headerText="Nome do Servidor" width="140">
 						<h:outputText value="#{servidor.servidorDTO.nome}" />
 					</p:column>
 
-
 					<!-- Atividade do Servidor  -->
 					<p:column headerText="Atividade" width="120">
-						<sgp:formSelectOneMenu
+						<p:selectOneMenu
 								value="#{servidor.atividadeSelecionada}"
 								id="slAtividadeGestao" temSelecione="true"
-								style="width:230px">
+								style="width:230px"
+								disabled="#{registroPlantaoBean.isVisualizacao}">
+
 							<f:selectItems value="#{servidor.atividades}"
 										   var="atividade" itemLabel="#{atividade.descricao}"
 										   itemValue="#{atividade.descricao}" />
-						</sgp:formSelectOneMenu>
+						</p:selectOneMenu>
 					</p:column>
-
 
 					<!-- Situaçao do Servidor  -->
 					<p:column headerText="Situação" width="120">
-						<sgp:formSelectOneMenu
+						<p:selectOneMenu
 								value="#{servidor.situacaoSelecionada}"
 								id="slSituacaoGestao" temSelecione="true"
-								style="width:230px">
+								style="width:230px"
+								disabled="#{registroPlantaoBean.isVisualizacao}">
+
 							<f:selectItems value="#{registroPlantaoBean.situacoes}"
 										   var="situacao" itemLabel="#{situacao.descricao}"
 										   itemValue="#{situacao}" />
-						</sgp:formSelectOneMenu>
+						</p:selectOneMenu>
 					</p:column>
 
 					<!-- Dialgo Suspenso  -->
@@ -76,15 +77,16 @@
 
 					<!-- Atividade do Servidor  -->
 					<p:column headerText="Atividade" width="120">
-
-						<sgp:formSelectOneMenu
+						<p:selectOneMenu
 								value="#{servidor.atividadeSelecionada}"
 								id="slAtividadeEquipePlantao" temSelecione="true"
-								style="width:230px">
+								style="width:230px"
+								disabled="#{registroPlantaoBean.isVisualizacao}">
+
 							<f:selectItems value="#{servidor.atividades}"
 										   var="atividade" itemLabel="#{atividade.descricao}"
 										   itemValue="#{atividade.descricao}" />
-						</sgp:formSelectOneMenu>
+						</p:selectOneMenu>
 					</p:column>
 
 					<!-- Situaçao do Servidor  -->
@@ -92,7 +94,9 @@
 						<sgp:formSelectOneMenu
 								value="#{servidor.situacaoSelecionada}"
 								id="slSituacaoEquipePlantao" temSelecione="true"
-								style="width:230px">
+								style="width:230px"
+								disabled="#{registroPlantaoBean.isVisualizacao}">
+
 							<f:selectItems value="#{registroPlantaoBean.situacoes}"
 										   var="situacao" itemLabel="#{situacao.descricao}"
 										   itemValue="#{situacao}" />
@@ -123,37 +127,38 @@
 							 paginator="true" paginatorPosition="bottom" lazy="true"
 							 emptyMessage="Nenhum registro encontrado.">
 
-
 					<!-- Nome Servidor  -->
 					<p:column headerText="Nome do Servidor" width="140">
 						<h:outputText value="#{servidor.servidorDTO.nome}" />
 					</p:column>
 
-
 					<!-- Atividade do Servidor  -->
 					<p:column headerText="Atividade" width="120">
-
-						<sgp:formSelectOneMenu
+						<p:selectOneMenu
 								value="#{servidor.atividadeSelecionada}"
 								id="slAtividadeAdministrativa" temSelecione="true"
-								style="width:230px">
+								style="width:230px"
+								disabled="#{registroPlantaoBean.isVisualizacao}">
+
 							<f:selectItems value="#{servidor.atividades}"
 										   var="atividade" itemLabel="#{atividade.descricao}"
 										   itemValue="#{atividade.descricao}" />
-						</sgp:formSelectOneMenu>
+						</p:selectOneMenu>
 					</p:column>
 
 
 					<!-- Situaçao do Servidor  -->
 					<p:column headerText="Situação" width="120">
-						<sgp:formSelectOneMenu
+						<p:selectOneMenu
 								value="#{servidor.situacaoSelecionada}"
 								id="slSituacaoAdministrativa" temSelecione="true"
-								style="width:230px">
+								style="width:230px"
+								disabled="#{registroPlantaoBean.isVisualizacao}">
+
 							<f:selectItems value="#{registroPlantaoBean.situacoes}"
 										   var="situacao" itemLabel="#{situacao.descricao}"
 										   itemValue="#{situacao}" />
-						</sgp:formSelectOneMenu>
+						</p:selectOneMenu>
 					</p:column>
 
 
