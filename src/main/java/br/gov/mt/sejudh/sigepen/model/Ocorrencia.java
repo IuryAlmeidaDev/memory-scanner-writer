@@ -4,6 +4,7 @@ import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusOcorrencia;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -51,6 +52,11 @@ public class Ocorrencia extends BaseModel<Long> {
     @Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_OCORRENCIA")
 	private StatusOcorrencia statusOcorrencia = StatusOcorrencia.ANDAMENTO;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PLANTAO")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    private Plantao plantao;
 
     public Ocorrencia() {}
 
@@ -126,7 +132,15 @@ public class Ocorrencia extends BaseModel<Long> {
 		this.statusOcorrencia = statusOcorrencia;
 	}
 
-	@Override
+    public Plantao getPlantao() {
+        return plantao;
+    }
+
+    public void setPlantao(Plantao plantao) {
+        this.plantao = plantao;
+    }
+
+    @Override
     public String toString() {
         return "Ocorrencia{" +
                 "id=" + id +
