@@ -91,7 +91,7 @@
 
 					<!-- Situaçao do Servidor  -->
 					<p:column headerText="Situação" width="120">
-						<sgp:formSelectOneMenu
+						<p:selectOneMenu
 								value="#{servidor.situacaoSelecionada}"
 								id="slSituacaoEquipePlantao" temSelecione="true"
 								style="width:230px"
@@ -100,7 +100,7 @@
 							<f:selectItems value="#{plantaoBean.situacoes}"
 										   var="situacao" itemLabel="#{situacao.descricao}"
 										   itemValue="#{situacao}" />
-						</sgp:formSelectOneMenu>
+						</p:selectOneMenu>
 					</p:column>
 
 					<!-- Dialgo Suspenso  -->

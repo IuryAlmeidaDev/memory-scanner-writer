@@ -63,6 +63,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
     private List<TipoOcorrencia> tipoOcorrencias;
     private List<Ocorrencia> ocorrencias;
+	private List<Ocorrencia> listaOcorrencias ;
     private List<Atividade> atividades;
 	private List<ServidorDTO> servidores;
 	private List<UnidadePrisional> unidadesPrisionais;
@@ -131,19 +132,6 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	}
 
 
-	//@PostConstruct
-	public void inicializar() {
-		inicializarListas();
-		//configurarModoVisualizacaoEquipe();
-
-		this.plantao = plantaoService.buscarUltimoPlantao();
-
-		if (this.plantao != null) {
-			this.plantaoSelecionado = this.plantao.getTipoPlantao().name();
-		}
-	}
-
-
 	@URLAction(onPostback = false)
 	public String init() {
 
@@ -187,6 +175,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
 	/* ------------------------- Métodos ------------------------- */
 	private void inicializarListas() {
+		this.listaOcorrencias = ocorrenciaService.buscarOcorrenciasHoje();
 		this.ocorrencias = ocorrenciaService.listarTodasOcorrencias();
 		this.tipoOcorrencias = tipoOcorrenciaService.listar();
 	}
@@ -361,12 +350,15 @@ public class PlantaoBean extends MetodosDePaginaBean {
 				ocorrencia.setStatusOcorrencia(StatusOcorrencia.ANDAMENTO);
 			}
 
-			ocorrenciaService.salvar(ocorrencia);
+			ocorrencia.setPlantao(this.plantao);
 
-	        FacesContext.getCurrentInstance().addMessage(null,
+			this.ocorrencias.add(ocorrenciaService.salvar(ocorrencia));git 
+
+			//this.ocorrencias = ocorrenciaService.buscarOcorrenciasHoje();
+
+
+			FacesContext.getCurrentInstance().addMessage(null,
 	            new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Ocorrência registrada com sucesso!"));
-
-	        this.ocorrencias = ocorrenciaService.listarTodasOcorrencias();
 
 	        novaOcorrencia();
 
@@ -413,14 +405,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
 			retorno = "/sigepen/plantao/alterar/" + this.plantao.getId();
 			FacesContext.getCurrentInstance().getExternalContext().redirect(retorno);
-
-			//FacesContext context = FacesContext.getCurrentInstance();
-			//context.getExternalContext().getFlash().setKeepMessages(true);
 			facesUtil.exibirMensagemInfo("Registro Plantão " + this.plantao.getId() + " salvo com sucesso!", true);
-
-			//context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/plantao/cadastrar");
-
-
 
 			LoggerUtil.logInfo(Acao.SALVAR, this.plantao, log);
 
@@ -853,30 +838,12 @@ public class PlantaoBean extends MetodosDePaginaBean {
 		return plantaoVisitaAtendimento;
 	}
 
+	public List<Ocorrencia> getListaOcorrencias() {
+		return listaOcorrencias;
+	}
 
+	public void setListaOcorrencias(List<Ocorrencia> listaOcorrencias) {
+		this.listaOcorrencias = listaOcorrencias;
+	}
 
-
-//	public boolean isModoVisualizacaoEquipe() {
-//		return modoVisualizacaoEquipe;
-//	}
-//
-//	public void setModoVisualizacaoEquipe(boolean modoVisualizacaoEquipe) {
-//		this.modoVisualizacaoEquipe = modoVisualizacaoEquipe;
-//	}
-//
-//	public boolean isModoEdicaoEquipe() {
-//		return modoEdicaoEquipe;
-//	}
-//
-//	public void setModoEdicaoEquipe(boolean modoEdicaoEquipe) {
-//		this.modoEdicaoEquipe = modoEdicaoEquipe;
-//	}
-//
-//	public boolean isModoNovoEquipe() {
-//		return modoNovoEquipe;
-//	}
-//
-//	public void setModoNovoEquipe(boolean modoNovoEquipe) {
-//		this.modoNovoEquipe = modoNovoEquipe;
-//	}
 }

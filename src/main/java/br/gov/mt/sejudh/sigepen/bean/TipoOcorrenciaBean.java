@@ -150,17 +150,21 @@ public class TipoOcorrenciaBean extends MetodosDePaginaBean {
 	public void pesquisar() {
 		this.tipoOcorrencias = new LazyDataModel<TipoOcorrencia>() {
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public List<TipoOcorrencia> load(int first, int pageSize, String sortField, SortOrder sortOrder,	Map<String, Object> filters) {
+
+				FiltroTipoOcorrencia filtro = (FiltroTipoOcorrencia) getFiltro(); // Usa a subclasse concreta
+				filtro.setStatus(Status.ATIVO);
+
 				setRowCount(service.quantidadeFiltrados(getFiltro()));
-				
+
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 				return service.buscaPorFiltro(getFiltro(), false);
 			}
 		};

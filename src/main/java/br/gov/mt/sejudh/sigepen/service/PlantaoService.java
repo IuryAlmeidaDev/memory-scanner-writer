@@ -7,6 +7,8 @@ import br.gov.mt.sejudh.sigepen.base.service.BaseService;
 import br.gov.mt.sejudh.sigepen.dao.PlantaoDAO;
 import br.gov.mt.sejudh.sigepen.model.Plantao;
 
+import java.util.List;
+
 @Stateless
 public class PlantaoService extends BaseService<Plantao, Long>{
 
