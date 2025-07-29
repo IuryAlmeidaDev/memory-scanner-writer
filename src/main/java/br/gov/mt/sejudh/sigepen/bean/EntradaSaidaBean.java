@@ -1026,15 +1026,15 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 //			throw new ValidacaoException("É necessário selecionar um Visitante responsável!");
 //		}
 
-		Long entradaResponsavel = service.responsavelDeuEntrada(this.credenciamentos.get(0).getVisitante().getId()).getId();
-		if(entradaResponsavel == null){
+		Set<Long> entradaResponsavel = service.responsaveisDeuEntrada(this.credenciamentos.get(0).getVisitante().getId());
+		if(entradaResponsavel == null || entradaResponsavel.size() == 0) {
 			throw new ValidacaoException("É necessário selecionar um Visitante responsável!");
 		}
 
 		FiltroEntradaSaida fr = new FiltroEntradaSaida();
 		fr.setData(new Date());
 		fr.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
-		fr.setResponsavel(entradaResponsavel);
+		fr.setResponsaveis(entradaResponsavel);
 		return service.buscarEntradaResponsavel(fr) == 0;
 	}
 

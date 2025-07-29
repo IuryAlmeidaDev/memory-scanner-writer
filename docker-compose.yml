@@ -1,0 +1,22 @@
+services:
+  wildfly:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    environment:
+      AMBIENTE: "desenvolvimento"
+      DATASOURCE_URL: "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS = (PROTOCOL = TCP)(HOST=cloudmti-rachd1-crs-scan.seguranca.local)(PORT = 1521))(CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = pdb_dev_sigepen.exacc.mti.infovia-mt)))"
+      DATASOURCE_USER: "SIGEPEN_USER"
+      DATASOURCE_PASS: "SIGEPEN_USER"
+    ports:
+      - "8080:8080"
+      - "8787:8787"  # Porta para o remote debug
+      - "9990:9990"
+    volumes:
+      - ./Resources/neurotec:/opt/jboss/wildfly/modules/system/layers/base/com/neurotec
+      - ./Resources/oracle:/opt/jboss/wildfly/modules/system/layers/base/com/oracle
+      - ./Resources/standalone.xml:/opt/jboss/wildfly/standalone/configuration/standalone.xml
+      - ./Resources/sejudh.p12:/opt/jboss/wildfly/standalone/configuration/sejudh.p12
+      - ./Resources/aplicativo:/opt/jboss/wildfly/sigepen-arquivos/aplicativo
+      - ./target/sigepen.war:/opt/jboss/wildfly/standalone/deployments/sigepen.war
+    command: ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "--debug"]
