@@ -2,6 +2,10 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
 import br.gov.mt.sejudh.sigepen.model.Ocorrencia;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -48,7 +52,18 @@ public class OcorrenciaDAO extends BaseDAO<Ocorrencia, Long> {
 	    return query.getSingleResult();
 	}
 
+	public List<Ocorrencia> listarPorDataPlantao(LocalDate dataPlantao) {
+		ZoneId zone = ZoneId.of("America/Cuiaba");
 
+		Date inicio = Date.from(dataPlantao.atStartOfDay(zone).toInstant());
+		Date fim = Date.from(dataPlantao.plusDays(1).atStartOfDay(zone).toInstant());
 
+		String jpql = "SELECT o FROM Ocorrencia o WHERE o.plantao.dataPlantao >= :inicio AND o.plantao.dataPlantao < :fim";
+
+		return entityManager.createQuery(jpql, Ocorrencia.class)
+				.setParameter("inicio", inicio)
+				.setParameter("fim", fim)
+				.getResultList();
+	}
 
 }

@@ -66,6 +66,10 @@ public class PlantaoDAO extends BaseDAO<Plantao, Long>{
 				}
 			}
 
+			for(PlantaoVisita plantaoVisita : result.getPlantaoVisitas()){
+				Hibernate.initialize(plantaoVisita.getPlantaoVisitaEstruturas());
+			}
+
 			return result;
 		} catch (NoResultException e) {
 			e.printStackTrace();

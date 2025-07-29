@@ -63,6 +63,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
     private List<TipoOcorrencia> tipoOcorrencias;
     private List<Ocorrencia> ocorrencias;
+	private List<Ocorrencia> listaOcorrencias ;
     private List<Atividade> atividades;
 	private List<ServidorDTO> servidores;
 	private List<UnidadePrisional> unidadesPrisionais;
@@ -97,6 +98,14 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	private boolean modoEdicao;
 	private boolean modoNovo;
 
+	private PlantaoVisitaEstrutura plantaoVisitaEstruturaFamilia = new PlantaoVisitaEstrutura();
+	private PlantaoVisitaEstrutura plantaoVisitaEstruturaAtendimento = new PlantaoVisitaEstrutura();
+	private PlantaoVisitaEstrutura plantaoVisitaEstruturaEntradaSaida = new PlantaoVisitaEstrutura();
+
+	private boolean camposDesabilitado = true;
+
+	private PlantaoVisita plantaoVisita;
+
 	@Inject
 	private TipoOcorrenciaService tipoOcorrenciaService;
 
@@ -128,19 +137,6 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
 		super.carregarFiltroPaginacao(FiltroPlantao.class, this);
-	}
-
-
-	//@PostConstruct
-	public void inicializar() {
-		inicializarListas();
-		//configurarModoVisualizacaoEquipe();
-
-		this.plantao = plantaoService.buscarUltimoPlantao();
-
-		if (this.plantao != null) {
-			this.plantaoSelecionado = this.plantao.getTipoPlantao().name();
-		}
 	}
 
 
@@ -187,6 +183,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
 	/* ------------------------- Métodos ------------------------- */
 	private void inicializarListas() {
+		this.listaOcorrencias = ocorrenciaService.buscarOcorrenciasHoje();
 		this.ocorrencias = ocorrenciaService.listarTodasOcorrencias();
 		this.tipoOcorrencias = tipoOcorrenciaService.listar();
 	}
@@ -361,12 +358,11 @@ public class PlantaoBean extends MetodosDePaginaBean {
 				ocorrencia.setStatusOcorrencia(StatusOcorrencia.ANDAMENTO);
 			}
 
-			ocorrenciaService.salvar(ocorrencia);
+			ocorrencia.setPlantao(this.plantao);
+			this.listaOcorrencias.add(ocorrenciaService.salvar(ocorrencia));
 
-	        FacesContext.getCurrentInstance().addMessage(null,
+			FacesContext.getCurrentInstance().addMessage(null,
 	            new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Ocorrência registrada com sucesso!"));
-
-	        this.ocorrencias = ocorrenciaService.listarTodasOcorrencias();
 
 	        novaOcorrencia();
 
@@ -391,7 +387,9 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	}
 
 	public void encerrar() throws ValidacaoException {
-		this.salvarPlantaoVisita();
+		if(SecurityUtil.getUnidadeSelecionada().getAtivaModuloVisitante()){
+			this.salvarPlantaoVisita();
+		}
 	}
 
 	public String registrar() {
@@ -413,14 +411,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
 			retorno = "/sigepen/plantao/alterar/" + this.plantao.getId();
 			FacesContext.getCurrentInstance().getExternalContext().redirect(retorno);
-
-			//FacesContext context = FacesContext.getCurrentInstance();
-			//context.getExternalContext().getFlash().setKeepMessages(true);
 			facesUtil.exibirMensagemInfo("Registro Plantão " + this.plantao.getId() + " salvo com sucesso!", true);
-
-			//context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/plantao/cadastrar");
-
-
 
 			LoggerUtil.logInfo(Acao.SALVAR, this.plantao, log);
 
@@ -516,6 +507,95 @@ public class PlantaoBean extends MetodosDePaginaBean {
 		return true;
 	}
 
+    public void habilitarVisitaFamilia() {
+		this.plantaoVisitaEstruturaFamilia = new PlantaoVisitaEstrutura();
+		this.camposDesabilitado = false;
+	}
+
+	public void habilitarAtendimento() {
+		this.plantaoVisitaEstruturaAtendimento = new PlantaoVisitaEstrutura();
+		this.camposDesabilitado = false;
+	}
+
+	public void habilitarEntradaSaida() {
+		this.plantaoVisitaEstruturaEntradaSaida = new PlantaoVisitaEstrutura();
+		this.camposDesabilitado = false;
+	}
+
+	public void salvarVisitaFamilia() throws ValidacaoException {
+
+		PlantaoVisita plantaoVisitaExistente = this.plantaoVisitaService.buscarPlantaoVisita(this.plantao.getId(),TipoEntrada.FAMILIA);
+
+		PlantaoVisita plantaoVisita = new PlantaoVisita();
+
+		if(plantaoVisitaExistente != null){
+			plantaoVisita = plantaoVisitaExistente;
+		}
+
+		plantaoVisita.setPlantao(this.plantao);
+		plantaoVisita.setTipoEntrada(TipoEntrada.FAMILIA);
+		plantaoVisita.getPlantaoVisitaEstruturas().add(this.plantaoVisitaEstruturaFamilia);
+		this.plantaoVisitaEstruturaFamilia.setPlantaoVisita(plantaoVisita);
+
+		this.plantaoVisitaEstruturaFamilia.validarCamposObrigatorios();
+		this.plantaoVisitaService.salvar(plantaoVisita);
+
+		this.plantaoVisitaFamilia.add(this.plantaoVisitaEstruturaFamilia);
+
+		this.plantaoVisitaEstruturaFamilia = new PlantaoVisitaEstrutura();;
+		this.camposDesabilitado = true;
+
+
+	}
+
+	public void salvarVisitaAtendimento() throws ValidacaoException {
+
+		PlantaoVisita plantaoVisitaExistente = this.plantaoVisitaService.buscarPlantaoVisita(this.plantao.getId(),TipoEntrada.ATENDIMENTO);
+
+		PlantaoVisita plantaoVisita = new PlantaoVisita();
+
+		if(plantaoVisitaExistente != null){
+			plantaoVisita = plantaoVisitaExistente;
+		}
+
+		plantaoVisita.setPlantao(this.plantao);
+		plantaoVisita.setTipoEntrada(TipoEntrada.ATENDIMENTO);
+		plantaoVisita.getPlantaoVisitaEstruturas().add(this.plantaoVisitaEstruturaAtendimento);
+		this.plantaoVisitaEstruturaAtendimento.setPlantaoVisita(plantaoVisita);
+
+		this.plantaoVisitaService.salvar(plantaoVisita);
+
+		this.plantaoVisitaAtendimento.add(this.plantaoVisitaEstruturaAtendimento);
+
+		this.plantaoVisitaEstruturaAtendimento = new PlantaoVisitaEstrutura();;
+		this.camposDesabilitado = true;
+
+	}
+
+	public void salvarVisitaEntradaSaida() throws ValidacaoException {
+
+		PlantaoVisita plantaoVisitaExistente = this.plantaoVisitaService.buscarPlantaoVisita(this.plantao.getId(),TipoEntrada.ENTRADA_SAIDA);
+
+		PlantaoVisita plantaoVisita = new PlantaoVisita();
+
+		if(plantaoVisitaExistente != null){
+			plantaoVisita = plantaoVisitaExistente;
+		}
+
+		plantaoVisita.setPlantao(this.plantao);
+		plantaoVisita.setTipoEntrada(TipoEntrada.ENTRADA_SAIDA);
+		plantaoVisita.getPlantaoVisitaEstruturas().add(this.plantaoVisitaEstruturaEntradaSaida);
+		this.plantaoVisitaEstruturaEntradaSaida.setPlantaoVisita(plantaoVisita);
+
+		this.plantaoVisitaService.salvar(plantaoVisita);
+
+		this.plantaoVisitaEntradaSaida.add(this.plantaoVisitaEstruturaEntradaSaida);
+
+		this.plantaoVisitaEstruturaEntradaSaida = new PlantaoVisitaEstrutura();;
+		this.camposDesabilitado = true;
+
+	}
+
 	public void buscarVisita(){
 
 		this.plantaoVisitaEntradaSaida = buscarPlantaoVisitaEstrutura(TipoEntrada.ENTRADA_SAIDA.getId());
@@ -534,7 +614,21 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	}
 
 	public List<PlantaoVisitaEstrutura> buscarPlantaoVisitaEstrutura(Integer tipoEntrada){
-		return this.plantaoVisitaEstruturaService.buscarPlantaoVisitaEstruturaPorUnidadeAndtipoEntrada(tipoEntrada, this.plantao);
+
+		List<PlantaoVisitaEstrutura> plantaoVisitaEstruturas = new ArrayList<>();
+
+		if(!this.plantao.getPlantaoVisitas().isEmpty()){
+			for(PlantaoVisita plantaoVisita : this.plantao.getPlantaoVisitas()){
+				if(plantaoVisita.getTipoEntrada().getId().equals(tipoEntrada) && !plantaoVisita.getPlantaoVisitaEstruturas().isEmpty()){
+					plantaoVisitaEstruturas = plantaoVisita.getPlantaoVisitaEstruturas();
+				}else if(plantaoVisita.getTipoEntrada().getId().equals(tipoEntrada) && plantaoVisita.getPlantaoVisitaEstruturas().isEmpty()){
+					plantaoVisitaEstruturas = this.plantaoVisitaEstruturaService.buscarPlantaoVisitaEstruturaPorUnidadeAndtipoEntrada(tipoEntrada, this.plantao);
+				}
+			}
+		}
+
+
+		return plantaoVisitaEstruturas;
 	}
 
 
@@ -853,30 +947,51 @@ public class PlantaoBean extends MetodosDePaginaBean {
 		return plantaoVisitaAtendimento;
 	}
 
+	public List<Ocorrencia> getListaOcorrencias() {
+		return listaOcorrencias;
+	}
 
+	public void setListaOcorrencias(List<Ocorrencia> listaOcorrencias) {
+		this.listaOcorrencias = listaOcorrencias;
+	}
 
+	public PlantaoVisitaEstrutura getPlantaoVisitaEstruturaFamilia() {
+		return plantaoVisitaEstruturaFamilia;
+	}
 
-//	public boolean isModoVisualizacaoEquipe() {
-//		return modoVisualizacaoEquipe;
-//	}
-//
-//	public void setModoVisualizacaoEquipe(boolean modoVisualizacaoEquipe) {
-//		this.modoVisualizacaoEquipe = modoVisualizacaoEquipe;
-//	}
-//
-//	public boolean isModoEdicaoEquipe() {
-//		return modoEdicaoEquipe;
-//	}
-//
-//	public void setModoEdicaoEquipe(boolean modoEdicaoEquipe) {
-//		this.modoEdicaoEquipe = modoEdicaoEquipe;
-//	}
-//
-//	public boolean isModoNovoEquipe() {
-//		return modoNovoEquipe;
-//	}
-//
-//	public void setModoNovoEquipe(boolean modoNovoEquipe) {
-//		this.modoNovoEquipe = modoNovoEquipe;
-//	}
+	public void setPlantaoVisitaEstruturaFamilia(PlantaoVisitaEstrutura plantaoVisitaEstruturaFamilia) {
+		this.plantaoVisitaEstruturaFamilia = plantaoVisitaEstruturaFamilia;
+	}
+
+	public PlantaoVisitaEstrutura getPlantaoVisitaEstruturaAtendimento() {
+		return plantaoVisitaEstruturaAtendimento;
+	}
+
+	public void setPlantaoVisitaEstruturaAtendimento(PlantaoVisitaEstrutura plantaoVisitaEstruturaAtendimento) {
+		this.plantaoVisitaEstruturaAtendimento = plantaoVisitaEstruturaAtendimento;
+	}
+
+	public PlantaoVisitaEstrutura getPlantaoVisitaEstruturaEntradaSaida() {
+		return plantaoVisitaEstruturaEntradaSaida;
+	}
+
+	public void setPlantaoVisitaEstruturaEntradaSaida(PlantaoVisitaEstrutura plantaoVisitaEstruturaEntradaSaida) {
+		this.plantaoVisitaEstruturaEntradaSaida = plantaoVisitaEstruturaEntradaSaida;
+	}
+
+	public PlantaoVisita getPlantaoVisita() {
+        return plantaoVisita;
+    }
+
+    public void setPlantaoVisita(PlantaoVisita plantaoVisita) {
+        this.plantaoVisita = plantaoVisita;
+    }
+
+    public boolean getCamposDesabilitado() {
+        return camposDesabilitado;
+    }
+
+	public void setCamposDesabilitado(boolean camposDesabilitado) {
+		this.camposDesabilitado = camposDesabilitado;
+	}
 }

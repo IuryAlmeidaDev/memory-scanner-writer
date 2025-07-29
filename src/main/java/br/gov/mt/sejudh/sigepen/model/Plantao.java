@@ -16,7 +16,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
-//@Audited
+@Audited
 @Entity
 @Table(name = "PLANTAO", schema = Sigepen.SEJUDH_SCHEMA)
 public class Plantao extends BaseModel<Long> {

@@ -4,12 +4,13 @@ package br.gov.mt.sejudh.sigepen.model;
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Audited
 @Entity
 @Table(name = "SIGEPEN_PLANTAO_VISITA", schema = Sigepen.SEJUDH_SCHEMA)
 public class PlantaoVisita extends BaseModel<Long>  {
@@ -42,6 +43,7 @@ public class PlantaoVisita extends BaseModel<Long>  {
 		this.plantaoVisitaEstruturas = plantaoVisitaEstruturas;
 	}
 
+	@PreUpdate
 	@PrePersist
 	public void prePersist(){
 		this.plantaoVisitaEstruturas.forEach(plantaoVisitaEstrutura -> {plantaoVisitaEstrutura.setPlantaoVisita(this);});

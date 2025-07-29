@@ -2,11 +2,14 @@ package br.gov.mt.sejudh.sigepen.model;
 
 
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
+import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import com.sun.istack.internal.NotNull;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
-
+@Audited
 @Entity
 @Table(name = "PLANTAO_VISITA_ESTRUTURA", schema = Sigepen.SEJUDH_SCHEMA)
 public class PlantaoVisitaEstrutura extends BaseModel<Long>  {
@@ -22,19 +25,23 @@ public class PlantaoVisitaEstrutura extends BaseModel<Long>  {
 
 	@Column(name = "ESTRUTURA")
     private String estrutura;
-	
+
+	@NotNull
 	@Column(name = "HOMEM")
 	private Long homem;
 
+	@NotNull
 	@Column(name = "MULHER")
 	private Long mulher;
 
+	@NotNull
 	@Column(name = "MENOR")
 	private Long menor;
 
 	@Column(name = "RECUPERANDO")
 	private Long recuperando;
 
+	@NotNull
 	@Column(name = "OCORRENCIA")
 	private Long ocorrencia;
 
@@ -71,6 +78,32 @@ public class PlantaoVisitaEstrutura extends BaseModel<Long>  {
 		this.estrutura = estrutura;
 		this.estruturaId = estruturaId;
 	}
+
+	public void validarCamposObrigatorios() throws ValidacaoException {
+
+		if (this.getEstrutura() == null || this.getEstrutura().trim().isEmpty()) {
+			throw new ValidacaoException("Nome da estrutura é obrigatório.");
+		}
+
+		if (this.getHomem() == null || this.getHomem() < 0L) {
+			throw new ValidacaoException("Nome do homem é obrigatório.");
+		}
+
+		if (this.getMulher() == null || this.getMulher() < 0L) {
+			throw new ValidacaoException("Nome da mulher é obrigatório.");
+		}
+
+		if (this.getMenor() == null || this.getMenor() < 0L ) {
+			throw new ValidacaoException("Nome do menor é obrigatório.");
+		}
+
+		if (this.getOcorrencia() == null || this.getOcorrencia() < 0L ) {
+			throw new ValidacaoException("Nome da ocorrência é obrigatório.");
+		}
+	}
+
+
+	/*   */
 
 	public String getEstrutura() {
 		return estrutura;

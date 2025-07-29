@@ -111,7 +111,8 @@
 					<h:panelGrid columns="1">
 
 						<sgp:formSelectOneMenu
-								id="slTipoOcorrencia" labelValue="Tipo da Ocorrência"
+								id="slTipoOcorrencia"
+								labelValue="Tipo da Ocorrência"
 								value="#{plantaoBean.ocorrencia.tipoOcorrencia}"
 								converter="SimpleEntityConverter"
 								disabled="#{plantaoBean.modoVisualizacao}"
@@ -121,10 +122,11 @@
 
 							<f:selectItems value="#{plantaoBean.tipoOcorrencias}"
 										   disabled="#{plantaoBean.isVisualizacao}"
-										   var="t" itemLabel="#{t.tipo}" itemValue="#{t}" />
+										   var="t" itemLabel="#{t.tipo} - #{t.descricao}" itemValue="#{t}" />
 
 							<p:ajax event="change" listener="#{plantaoBean.preencherDescricao}" update="descricao" />
 						</sgp:formSelectOneMenu>
+
 
 						<h:outputLabel for="descricao" value="Descrição" />
 						<p:inputText id="descricao"
@@ -137,6 +139,7 @@
 									value="#{plantaoBean.ocorrencia.dataOcorrencia}"
 									pattern="dd/MM/yyyy HH:mm" showTime="true"
 									disabled="#{plantaoBean.modoVisualizacao}"/><br/>
+
 
 						<h:panelGroup rendered="#{not plantaoBean.modoNovo}">
 							<h:outputLabel for="statusOcorrencia" value="Status Ocorrência" /><br />
@@ -152,11 +155,13 @@
 							</p:selectOneMenu>
 						</h:panelGroup> <br />
 
+
 						<h:outputLabel for="resumo" value="Resumo" />
 						<p:inputTextarea id="resumo" rows="6" cols="80"
 										 value="#{plantaoBean.ocorrencia.resumo}"
 										 disabled="#{plantaoBean.modoVisualizacao}"
 										 style="margin-bottom: 15px;"/>
+
 
 						<h:panelGroup id="panelDetalhamento" layout="block" rendered="#{plantaoBean.exibirDetalhamento or plantaoBean.ocorrencia.detalhamento != null}">
 							<h:outputLabel for="detalhamento" value="Detalhamento:" /><br />
@@ -169,14 +174,15 @@
 					</h:panelGrid>
 				</h:panelGroup>
 
+
+				<!-- Botoes de Ações -->
 				<f:facet name="footer">
 
-					<p:commandButton value="Detalhamento"
-									 actionListener="#{plantaoBean.mostrarDetalhamento}"
-									 update="grupoDialogOcorrencia"
-									 process="@this"/>
-
-
+					<p:commandButton
+							value="Detalhamento"
+							actionListener="#{plantaoBean.mostrarDetalhamento}"
+							update="grupoDialogOcorrencia"
+							process="@this"/>
 
 					<p:commandButton
 							value="Salvar"
@@ -190,7 +196,6 @@
 				</f:facet>
 
 			</p:dialog>
-
 
 
 			<!-- Dialog  -->
@@ -223,17 +228,17 @@
 				</h:panelGrid>
 
 
-				<p:commandButton value="Salvar"
-								 action="#{plantaoBean.atualizarRegistroPlantaoServidor()}"
-								 update="@form"
-								 process="@form" />
+				<p:commandButton
+						value="Salvar"
+						action="#{plantaoBean.atualizarRegistroPlantaoServidor()}"
+						update="@form"
+						process="@form" />
 
 			</p:dialog>
 
 		</h:form>
 
-
-
+		
 		<!-- Encerrar Plantao -->
 		<h:form id="encerrarPLantao">
 			<p:panel header="Encerrar PLantão" style="margin-top: 20px;">
@@ -264,10 +269,6 @@
 				<br />
 				<br />
 				<br />
-
-
-
-
 
 				<!-- Botões -->
 				<h:panelGroup style="text-align: center; margin-top: 20px;">
