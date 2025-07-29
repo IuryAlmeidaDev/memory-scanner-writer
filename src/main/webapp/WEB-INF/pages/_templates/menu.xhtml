@@ -95,7 +95,7 @@
 			</p:submenu>
 			
 			<p:submenu label="Plantão" rendered="#{securityUtil.exibeCategoriaMenu('plantao')}">
-				<p:menuitem value="Livro PLantão" outcome="pretty:ListarPlantao" icon="fa fa-file" rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}"/>
+				<p:menuitem value="Livro Plantão" outcome="pretty:ListarPlantao" icon="fa fa-file" rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}"/>
 			</p:submenu>
 
             <p:submenu label="Administrador" rendered="#{securityUtil.getLoginUsuario().equals('ADMIN')}">

@@ -98,6 +98,14 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	private boolean modoEdicao;
 	private boolean modoNovo;
 
+	private PlantaoVisitaEstrutura plantaoVisitaEstruturaFamilia = new PlantaoVisitaEstrutura();
+	private PlantaoVisitaEstrutura plantaoVisitaEstruturaAtendimento = new PlantaoVisitaEstrutura();
+	private PlantaoVisitaEstrutura plantaoVisitaEstruturaEntradaSaida = new PlantaoVisitaEstrutura();
+
+	private boolean camposDesabilitado = true;
+
+	private PlantaoVisita plantaoVisita;
+
 	@Inject
 	private TipoOcorrenciaService tipoOcorrenciaService;
 
@@ -379,7 +387,9 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	}
 
 	public void encerrar() throws ValidacaoException {
-		this.salvarPlantaoVisita();
+		if(SecurityUtil.getUnidadeSelecionada().getAtivaModuloVisitante()){
+			this.salvarPlantaoVisita();
+		}
 	}
 
 	public String registrar() {
@@ -497,6 +507,94 @@ public class PlantaoBean extends MetodosDePaginaBean {
 		return true;
 	}
 
+    public void habilitarVisitaFamilia() {
+		this.plantaoVisitaEstruturaFamilia = new PlantaoVisitaEstrutura();
+		this.camposDesabilitado = false;
+	}
+
+	public void habilitarAtendimento() {
+		this.plantaoVisitaEstruturaAtendimento = new PlantaoVisitaEstrutura();
+		this.camposDesabilitado = false;
+	}
+
+	public void habilitarEntradaSaida() {
+		this.plantaoVisitaEstruturaEntradaSaida = new PlantaoVisitaEstrutura();
+		this.camposDesabilitado = false;
+	}
+
+	public void salvarVisitaFamilia() throws ValidacaoException {
+
+		PlantaoVisita plantaoVisitaExistente = this.plantaoVisitaService.buscarPlantaoVisita(this.plantao.getId(),TipoEntrada.FAMILIA);
+
+		PlantaoVisita plantaoVisita = new PlantaoVisita();
+
+		if(plantaoVisitaExistente != null){
+			plantaoVisita = plantaoVisitaExistente;
+		}
+
+		plantaoVisita.setPlantao(this.plantao);
+		plantaoVisita.setTipoEntrada(TipoEntrada.FAMILIA);
+		plantaoVisita.getPlantaoVisitaEstruturas().add(this.plantaoVisitaEstruturaFamilia);
+		this.plantaoVisitaEstruturaFamilia.setPlantaoVisita(plantaoVisita);
+
+		this.plantaoVisitaService.salvar(plantaoVisita);
+
+		this.plantaoVisitaFamilia.add(this.plantaoVisitaEstruturaFamilia);
+
+		this.plantaoVisitaEstruturaFamilia = new PlantaoVisitaEstrutura();;
+		this.camposDesabilitado = true;
+
+
+	}
+
+	public void salvarVisitaAtendimento() throws ValidacaoException {
+
+		PlantaoVisita plantaoVisitaExistente = this.plantaoVisitaService.buscarPlantaoVisita(this.plantao.getId(),TipoEntrada.ATENDIMENTO);
+
+		PlantaoVisita plantaoVisita = new PlantaoVisita();
+
+		if(plantaoVisitaExistente != null){
+			plantaoVisita = plantaoVisitaExistente;
+		}
+
+		plantaoVisita.setPlantao(this.plantao);
+		plantaoVisita.setTipoEntrada(TipoEntrada.ATENDIMENTO);
+		plantaoVisita.getPlantaoVisitaEstruturas().add(this.plantaoVisitaEstruturaAtendimento);
+		this.plantaoVisitaEstruturaAtendimento.setPlantaoVisita(plantaoVisita);
+
+		this.plantaoVisitaService.salvar(plantaoVisita);
+
+		this.plantaoVisitaAtendimento.add(this.plantaoVisitaEstruturaAtendimento);
+
+		this.plantaoVisitaEstruturaAtendimento = new PlantaoVisitaEstrutura();;
+		this.camposDesabilitado = true;
+
+	}
+
+	public void salvarVisitaEntradaSaida() throws ValidacaoException {
+
+		PlantaoVisita plantaoVisitaExistente = this.plantaoVisitaService.buscarPlantaoVisita(this.plantao.getId(),TipoEntrada.ENTRADA_SAIDA);
+
+		PlantaoVisita plantaoVisita = new PlantaoVisita();
+
+		if(plantaoVisitaExistente != null){
+			plantaoVisita = plantaoVisitaExistente;
+		}
+
+		plantaoVisita.setPlantao(this.plantao);
+		plantaoVisita.setTipoEntrada(TipoEntrada.ENTRADA_SAIDA);
+		plantaoVisita.getPlantaoVisitaEstruturas().add(this.plantaoVisitaEstruturaEntradaSaida);
+		this.plantaoVisitaEstruturaEntradaSaida.setPlantaoVisita(plantaoVisita);
+
+		this.plantaoVisitaService.salvar(plantaoVisita);
+
+		this.plantaoVisitaEntradaSaida.add(this.plantaoVisitaEstruturaEntradaSaida);
+
+		this.plantaoVisitaEstruturaEntradaSaida = new PlantaoVisitaEstrutura();;
+		this.camposDesabilitado = true;
+
+	}
+
 	public void buscarVisita(){
 
 		this.plantaoVisitaEntradaSaida = buscarPlantaoVisitaEstrutura(TipoEntrada.ENTRADA_SAIDA.getId());
@@ -515,7 +613,21 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	}
 
 	public List<PlantaoVisitaEstrutura> buscarPlantaoVisitaEstrutura(Integer tipoEntrada){
-		return this.plantaoVisitaEstruturaService.buscarPlantaoVisitaEstruturaPorUnidadeAndtipoEntrada(tipoEntrada, this.plantao);
+
+		List<PlantaoVisitaEstrutura> plantaoVisitaEstruturas = new ArrayList<>();
+
+		if(!this.plantao.getPlantaoVisitas().isEmpty()){
+			for(PlantaoVisita plantaoVisita : this.plantao.getPlantaoVisitas()){
+				if(plantaoVisita.getTipoEntrada().getId().equals(tipoEntrada) && !plantaoVisita.getPlantaoVisitaEstruturas().isEmpty()){
+					plantaoVisitaEstruturas = plantaoVisita.getPlantaoVisitaEstruturas();
+				}else if(plantaoVisita.getTipoEntrada().getId().equals(tipoEntrada) && plantaoVisita.getPlantaoVisitaEstruturas().isEmpty()){
+					plantaoVisitaEstruturas = this.plantaoVisitaEstruturaService.buscarPlantaoVisitaEstruturaPorUnidadeAndtipoEntrada(tipoEntrada, this.plantao);
+				}
+			}
+		}
+
+
+		return plantaoVisitaEstruturas;
 	}
 
 
@@ -842,4 +954,43 @@ public class PlantaoBean extends MetodosDePaginaBean {
 		this.listaOcorrencias = listaOcorrencias;
 	}
 
+	public PlantaoVisitaEstrutura getPlantaoVisitaEstruturaFamilia() {
+		return plantaoVisitaEstruturaFamilia;
+	}
+
+	public void setPlantaoVisitaEstruturaFamilia(PlantaoVisitaEstrutura plantaoVisitaEstruturaFamilia) {
+		this.plantaoVisitaEstruturaFamilia = plantaoVisitaEstruturaFamilia;
+	}
+
+	public PlantaoVisitaEstrutura getPlantaoVisitaEstruturaAtendimento() {
+		return plantaoVisitaEstruturaAtendimento;
+	}
+
+	public void setPlantaoVisitaEstruturaAtendimento(PlantaoVisitaEstrutura plantaoVisitaEstruturaAtendimento) {
+		this.plantaoVisitaEstruturaAtendimento = plantaoVisitaEstruturaAtendimento;
+	}
+
+	public PlantaoVisitaEstrutura getPlantaoVisitaEstruturaEntradaSaida() {
+		return plantaoVisitaEstruturaEntradaSaida;
+	}
+
+	public void setPlantaoVisitaEstruturaEntradaSaida(PlantaoVisitaEstrutura plantaoVisitaEstruturaEntradaSaida) {
+		this.plantaoVisitaEstruturaEntradaSaida = plantaoVisitaEstruturaEntradaSaida;
+	}
+
+	public PlantaoVisita getPlantaoVisita() {
+        return plantaoVisita;
+    }
+
+    public void setPlantaoVisita(PlantaoVisita plantaoVisita) {
+        this.plantaoVisita = plantaoVisita;
+    }
+
+    public boolean getCamposDesabilitado() {
+        return camposDesabilitado;
+    }
+
+	public void setCamposDesabilitado(boolean camposDesabilitado) {
+		this.camposDesabilitado = camposDesabilitado;
+	}
 }

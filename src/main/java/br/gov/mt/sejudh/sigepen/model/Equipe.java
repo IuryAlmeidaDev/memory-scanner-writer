@@ -3,12 +3,13 @@ package br.gov.mt.sejudh.sigepen.model;
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoEquipe;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Audited
+@Audited
 @Entity
 @Table(name = "SIGEPEN_EQUIPE", schema = Sigepen.SEJUDH_SCHEMA)
 public class Equipe extends BaseModel<Long> {
