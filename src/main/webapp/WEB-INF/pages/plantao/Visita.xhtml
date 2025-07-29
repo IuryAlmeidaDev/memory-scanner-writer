@@ -15,6 +15,9 @@
 
 				<h:panelGroup layout="block" style="margin-bottom:20px;"
 							  rendered="#{!securityUtil.getUnidadeSelecionada().ativaModuloVisitante}" id="tableFamiliar">
+
+					<p:messages autoUpdate="true" />
+
 					<h:form id="formularioFamiliar">
 						<table class="ui-datatable ui-widget" style="width:100%; border-collapse: collapse;">
 							<thead class="ui-datatable-thead ui-widget-header">
@@ -32,36 +35,53 @@
 							<tr>
 								<td>
 									<p:inputText value="#{plantaoBean.plantaoVisitaEstruturaFamilia.estrutura}"
+												 required="true"
+												 requiredMessage = "Por favor, informe o campo 'Estrutura' "
 												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
 								</td>
 								<td>
 									<p:inputText id="homemFamiliar"
 												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.homem}"
+												 required="true"
+												 requiredMessage = "Por favor, informe o campo 'Homem'. Apenas números são permitidos."
 												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
 								</td>
 								<td>
 									<p:inputText id="mulherFamiliar"
 												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.mulher}"
+												 required="true"
+												 requiredMessage = "Por favor, informe o campo 'Mulher'. Apenas números são permitidos."
 												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
 								</td>
 								<td>
 									<p:inputText id="menores"
 												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.menor}"
+												 required="true"
+												 requiredMessage = "Por favor, informe o campo 'Menores'. Apenas números são permitidos."
 												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
 								</td>
 								<td>
 									<p:inputText id="ocorrenciaFamiliar"
 												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.ocorrencia}"
+												 required="true"
+												 requiredMessage = "Por favor, informe o campo 'Ocorrência'. Apenas números são permitidos."
 												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
 								</td>
 								<td>
-									<p:inputText id="horaInicioFamiliar"
+									<p:inputMask id="horaInicioFamiliar"
 												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.horaInicio}"
+												 mask="99:99"
+												 required="true"
+												 requiredMessage = "O campo 'Hora de início' é obrigatório e deve ser informado corretamente."
 												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+
 								</td>
 								<td>
-									<p:inputText id="horaFimFamiliar"
+									<p:inputMask id="horaFimFamiliar"
 												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.horaFim}"
+												 mask="99:99"
+												 required="true"
+												 requiredMessage = "O campo 'Hora de Fim' é obrigatório e deve ser informado corretamente."
 												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
 								</td>
 							</tr>

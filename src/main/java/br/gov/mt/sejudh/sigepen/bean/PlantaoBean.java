@@ -537,6 +537,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 		plantaoVisita.getPlantaoVisitaEstruturas().add(this.plantaoVisitaEstruturaFamilia);
 		this.plantaoVisitaEstruturaFamilia.setPlantaoVisita(plantaoVisita);
 
+		this.plantaoVisitaEstruturaFamilia.validarCamposObrigatorios();
 		this.plantaoVisitaService.salvar(plantaoVisita);
 
 		this.plantaoVisitaFamilia.add(this.plantaoVisitaEstruturaFamilia);
