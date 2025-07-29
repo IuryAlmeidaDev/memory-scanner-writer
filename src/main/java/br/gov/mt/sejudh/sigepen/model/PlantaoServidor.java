@@ -3,12 +3,13 @@ package br.gov.mt.sejudh.sigepen.model;
 
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
 
-
+@Audited
 @Entity
 @Table(name = "SIGEPEN_PLANTAO_SERVIDOR", schema = Sigepen.SEJUDH_SCHEMA)
 public class PlantaoServidor extends BaseModel<Long>  {

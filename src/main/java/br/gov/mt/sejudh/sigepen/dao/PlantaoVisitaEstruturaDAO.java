@@ -32,8 +32,8 @@ public class PlantaoVisitaEstruturaDAO extends BaseDAO<PlantaoVisitaEstrutura, L
 
 	public List<PlantaoVisitaEstrutura> buscarPlantaoVisitaEstruturaPorUnidadeAndtipoEntrada(Integer tipoEntrada, Long idUnidade, Date date) {
 		String sql = "SELECT " +
-				"COUNT(CASE WHEN p.SEXO = 'M' THEN 1 END) AS HOMEM, " +
-				"COUNT(CASE WHEN p.SEXO = 'F' THEN 1 END) AS MULHER, " +
+				"COUNT(CASE WHEN (p.SEXO = 'M' AND e.ID_VISITANTE_RESPONSAVEL IS NULL) THEN 1 END) AS HOMEM, " +
+				"COUNT(CASE WHEN (p.SEXO = 'F' AND e.ID_VISITANTE_RESPONSAVEL IS NULL) THEN 1 END) AS MULHER, " +
 				"COUNT(CASE WHEN e.ID_VISITANTE_RESPONSAVEL IS NOT NULL THEN 1 END) AS MENOR, " +
 				"COUNT(r.MATRICULA) AS RECUPERANDO, " +
 				"r.ESTRUTURA, R.ESTRUTURA_ID " +
@@ -42,7 +42,7 @@ public class PlantaoVisitaEstruturaDAO extends BaseDAO<PlantaoVisitaEstrutura, L
 				"JOIN " + Sigepen.SEJUDH_SCHEMA + ".PESSOA p ON p.ID = v.ID_PESSOA_VISITANTE " +
 				"JOIN " + Sigepen.SEJUDH_SCHEMA + ".SGP_CREDENCIAMENTO c ON c.ID_VISITANTE = e.ID_VISITANTE " +
 				"JOIN " + Sigepen.SEJUDH_SCHEMA + ".LISTA_TODOS_RECUPERANDOS r ON r.MATRICULA = c.ID_RECUPERANDO AND c.ID_UNIDADE_PRISIONAL = :idUnidade " +
-				"JOIN " + Sigepen.SEJUDH_SCHEMA + ".SGP_TIPO_VISITA tp ON tp.CODG_TIPO_ENTRADA = c.ID_TIPO_VISITA " +
+				"JOIN " + Sigepen.SEJUDH_SCHEMA + ".SGP_TIPO_VISITA tp ON tp.ID_TIPO_VISITA = v.ID_TIPO_VISITA " +
 				"WHERE tp.CODG_TIPO_ENTRADA = :tipoEntrada " +
 				"AND e.ID_UNIDADE_PRISIONAL = :idUnidade " +
 				"AND c.CODG_SITUACAO_CREDENCIAL = :situacaoCredencial " +

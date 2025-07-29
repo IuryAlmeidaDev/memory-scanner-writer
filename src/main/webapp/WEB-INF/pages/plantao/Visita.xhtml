@@ -9,9 +9,76 @@
 
 			<p:tab title="Familiar" id="abaVisitanteFamiliar">
 
-				<p:dataTable id="dataTableFamiliar" var="familia"
-							 value="#{plantaoBean.plantaoVisitaFamilia}" rows="10" paginator="true"
-							 paginatorPosition="bottom" lazy="true" emptyMessage="Nenhum registro encontrado.">
+				<p:commandButton value="Habilitar Visita" action="#{plantaoBean.habilitarVisitaFamilia}" update="@form"
+								 process="@form" style="margin-bottom: 1%;"
+								 rendered="#{!securityUtil.getUnidadeSelecionada().ativaModuloVisitante}" />
+
+				<h:panelGroup layout="block" style="margin-bottom:20px;"
+							  rendered="#{!securityUtil.getUnidadeSelecionada().ativaModuloVisitante}" id="tableFamiliar">
+					<h:form id="formularioFamiliar">
+						<table class="ui-datatable ui-widget" style="width:100%; border-collapse: collapse;">
+							<thead class="ui-datatable-thead ui-widget-header">
+							<tr>
+								<th style="width: 140px;">Estrutura</th>
+								<th style="width: 140px;">Homem</th>
+								<th style="width: 140px;">Mulher</th>
+								<th style="width: 140px;">Menores</th>
+								<th style="width: 140px;">Ocorrência</th>
+								<th style="width: 140px;">Hora Início</th>
+								<th style="width: 140px;">Hora Fim</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr>
+								<td>
+									<p:inputText value="#{plantaoBean.plantaoVisitaEstruturaFamilia.estrutura}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="homemFamiliar"
+												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.homem}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="mulherFamiliar"
+												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.mulher}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="menores"
+												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.menor}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="ocorrenciaFamiliar"
+												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.ocorrencia}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="horaInicioFamiliar"
+												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.horaInicio}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="horaFimFamiliar"
+												 value="#{plantaoBean.plantaoVisitaEstruturaFamilia.horaFim}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</h:form>
+				</h:panelGroup>
+
+
+				<p:commandButton value="salvar Visita" action="#{plantaoBean.salvarVisitaFamilia()}"
+								 update="@form tabViewPai:tabViewPaiVisita:dataTableFamilia" process="@form"
+								 style="margin-bottom: 1%; margin-top: 1%" disabled="#{plantaoBean.camposDesabilitado}"
+								 rendered="#{!securityUtil.getUnidadeSelecionada().ativaModuloVisitante}" />
+
+				<p:dataTable var="familia" value="#{plantaoBean.plantaoVisitaFamilia}" rows="10" paginator="true"
+							 paginatorPosition="bottom" lazy="true" emptyMessage="Nenhum registro encontrado."
+							 id="dataTableFamilia">
 
 					<p:column headerText="Estrutura" width="140">
 						<h:outputText value="#{familia.estrutura}" />
@@ -41,13 +108,86 @@
 						<h:outputText value="#{familia.horaFim}" />
 					</p:column>
 				</p:dataTable>
+
 			</p:tab>
 
 			<p:tab title="Atendimento" id="abaVisitanteAtendimento">
 
-				<p:dataTable id="dataTableAtendimento" var="atendimento"
-							 value="#{plantaoBean.plantaoVisitaAtendimento}" rows="10" paginator="true"
-							 paginatorPosition="bottom" lazy="true" emptyMessage="Nenhum registro encontrado.">
+				<p:commandButton value="Habilitar Visita" action="#{plantaoBean.habilitarAtendimento}"
+								 update="@form tabViewPai:tabViewPaiVisita:dataTableAtendimento" process="@form"
+								 style="margin-bottom: 1%;"
+								 rendered="#{!securityUtil.getUnidadeSelecionada().ativaModuloVisitante}" />
+
+				<h:panelGroup layout="block" style="margin-bottom:20px;"
+							  rendered="#{!securityUtil.getUnidadeSelecionada().ativaModuloVisitante}">
+					<h:form id="formularioAtendimento">
+						<table class="ui-datatable ui-widget" style="width:100%; border-collapse: collapse;">
+							<thead class="ui-datatable-thead ui-widget-header">
+							<tr>
+								<th style="width: 140px;">Estrutura</th>
+								<th style="width: 140px;">Homem</th>
+								<th style="width: 140px;">Mulher</th>
+								<th style="width: 140px;">Menores</th>
+								<th style="width: 140px;">Ocorrência</th>
+								<th style="width: 140px;">Hora Início</th>
+								<th style="width: 140px;">Hora Fim</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr>
+								<td>
+									<p:inputText id="estruturaAtendimento"
+												 value="#{plantaoBean.plantaoVisitaEstruturaAtendimento.estrutura}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="homemAtendimento"
+												 value="#{plantaoBean.plantaoVisitaEstruturaAtendimento.homem}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="mulherAtendimento"
+												 value="#{plantaoBean.plantaoVisitaEstruturaAtendimento.mulher}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="menoresAtendimento"
+												 value="#{plantaoBean.plantaoVisitaEstruturaAtendimento.menor}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="ocorrenciaAtendimento"
+												 value="#{plantaoBean.plantaoVisitaEstruturaAtendimento.ocorrencia}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="horaInicioAtendimento"
+												 value="#{plantaoBean.plantaoVisitaEstruturaAtendimento.horaInicio}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="horaFimAtendimento"
+												 value="#{plantaoBean.plantaoVisitaEstruturaAtendimento.horaFim}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+							</tr>
+							</tbody>
+						</table>
+						<p:commandButton value="salvar Visita" action="#{plantaoBean.salvarVisitaAtendimento()}"
+										 update="@form tabViewPai:tabViewPaiVisita:dataTableAtendimento" process="@form" style="margin-bottom: 1%; margin-top: 1%"
+										 disabled="#{plantaoBean.camposDesabilitado}"
+										 rendered="#{!securityUtil.getUnidadeSelecionada().ativaModuloVisitante}">
+						</p:commandButton>
+					</h:form>
+
+				</h:panelGroup>
+
+
+
+
+				<p:dataTable id="dataTableAtendimento" var="atendimento" value="#{plantaoBean.plantaoVisitaAtendimento}"
+							 rows="10" paginator="true" paginatorPosition="bottom" lazy="true"
+							 emptyMessage="Nenhum registro encontrado.">
 
 					<p:column headerText="Estrutura" width="140">
 						<h:outputText value="#{atendimento.estrutura}" />
@@ -80,6 +220,74 @@
 			</p:tab>
 
 			<p:tab title="Entrada Saida" id="abaVisitanteEntradaSaida">
+
+				<p:commandButton value="Habilitar Visita" action="#{plantaoBean.habilitarEntradaSaida}" update="@form"
+								 process="@form" style="margin-bottom: 1%;"
+								 rendered="#{!securityUtil.getUnidadeSelecionada().ativaModuloVisitante}" />
+
+
+				<h:panelGroup layout="block" style="margin-bottom:20px;"
+							  rendered="#{!securityUtil.getUnidadeSelecionada().ativaModuloVisitante}">
+					<h:form id="formularioEntradaSaida">
+						<table class="ui-datatable ui-widget" style="width:100%; border-collapse: collapse;">
+							<thead class="ui-datatable-thead ui-widget-header">
+							<tr>
+								<th style="width: 140px;">Estrutura</th>
+								<th style="width: 140px;">Homem</th>
+								<th style="width: 140px;">Mulher</th>
+								<th style="width: 140px;">Menores</th>
+								<th style="width: 140px;">Ocorrência</th>
+								<th style="width: 140px;">Hora Início</th>
+								<th style="width: 140px;">Hora Fim</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr>
+								<td>
+									<p:inputText id="estruturaEntradaSaida"
+												 value="#{plantaoBean.plantaoVisitaEstruturaEntradaSaida.estrutura}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="homemEntradaSaida"
+												 value="#{plantaoBean.plantaoVisitaEstruturaEntradaSaida.homem}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="mulherEntradaSaida"
+												 value="#{plantaoBean.plantaoVisitaEstruturaEntradaSaida.mulher}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="menoresEntradaSaida"
+												 value="#{plantaoBean.plantaoVisitaEstruturaEntradaSaida.menor}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="ocorrenciaEntradaSaida"
+												 value="#{plantaoBean.plantaoVisitaEstruturaEntradaSaida.ocorrencia}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="horaInicioEntradaSaida"
+												 value="#{plantaoBean.plantaoVisitaEstruturaEntradaSaida.horaInicio}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+								<td>
+									<p:inputText id="horaFimEntradaSaida"
+												 value="#{plantaoBean.plantaoVisitaEstruturaEntradaSaida.horaFim}"
+												 disabled="#{plantaoBean.camposDesabilitado}" style="width: 100%;" />
+								</td>
+							</tr>
+							</tbody>
+						</table>
+						<p:commandButton value="salvar Visita" action="#{plantaoBean.salvarVisitaEntradaSaida()}"
+										 update="@form tabViewPai:tabViewPaiVisita:dataTableEntradaSaida" process="@form"
+										 style="margin-bottom: 1%; margin-top: 1%" disabled="#{plantaoBean.camposDesabilitado}"
+										 rendered="#{!securityUtil.getUnidadeSelecionada().ativaModuloVisitante}" />
+
+					</h:form>
+				</h:panelGroup>
 
 				<p:dataTable id="dataTableEntradaSaida" var="entradaSaida"
 							 value="#{plantaoBean.plantaoVisitaEntradaSaida}" rows="10" paginator="true"
