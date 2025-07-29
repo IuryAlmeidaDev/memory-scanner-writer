@@ -351,7 +351,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 			}
 
 			ocorrencia.setPlantao(this.plantao);
-			this.ocorrencias.add(ocorrenciaService.salvar(ocorrencia));
+			this.listaOcorrencias.add(ocorrenciaService.salvar(ocorrencia));
 
 			FacesContext.getCurrentInstance().addMessage(null,
 	            new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Ocorrência registrada com sucesso!"));
