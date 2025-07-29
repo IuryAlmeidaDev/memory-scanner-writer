@@ -3,6 +3,7 @@ package br.gov.mt.sejudh.sigepen.dao.filter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.MatchMode;
@@ -22,6 +23,7 @@ public class FiltroEntradaSaida extends FiltroConsulta {
 	private StatusCredenciamentosVisita statusCredenciamento;
 	private Long unidade;
 	private Long responsavel;
+	private Set<Long> responsaveis;
 	private Boolean somenteEntradas;
 	
 	@Override
@@ -113,5 +115,16 @@ public class FiltroEntradaSaida extends FiltroConsulta {
 
 	public void setSomenteEntradas(Boolean somenteEntradas) {
 		this.somenteEntradas = somenteEntradas;
+	}
+
+	public String getResponsaveis() {
+		if(responsaveis != null && !responsaveis.isEmpty()) {
+			return StringUtils.join(responsaveis, ",");
+		}
+		return null;
+	}
+
+	public void setResponsaveis(Set<Long> responsaveis) {
+		this.responsaveis = responsaveis;
 	}
 }
