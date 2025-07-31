@@ -688,6 +688,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			cadastrarProcessoBean.excluirProcessoRegimeCondicaoECrime(processo);
 			this.recuperando.getProcessos().remove(processo);
 			
+			this.atualizarProcessos(processo.getNumeroProcesso());
+			
 			facesUtil.exibirMensagemInfo("Processo " + processo.getNumeroProcesso() + " excluído(a) com sucesso!", true);
 			LoggerUtil.logInfo(Acao.EXCLUIR, processo, log);
 			
@@ -848,6 +850,19 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
 					"Erro atualizar processos do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ASSOCIAR, numProc, e, log);
+		}
+	}
+		
+	public void atualizarProcessos(String processo) {
+		try {
+			if (processo != null && !processo.isEmpty()) {
+				this.recuperando = this.service.atualizarRegimeCondicaoAtualRecuperando(recuperando);
+				facesUtil.exibirMensagemInfo("Processo " + processo + " salvo com sucesso!", false);
+			}
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro atualizar processos do recuperando: " + e.getMessage());
+			LoggerUtil.logErro(Acao.ASSOCIAR, processo, e, log);
 		}
 	}
 
