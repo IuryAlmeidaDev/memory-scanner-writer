@@ -1,11 +1,7 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -98,6 +94,8 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	private boolean modoEdicao;
 	private boolean modoNovo;
 
+	private Plantao plantaoEmAberto;
+
 	private PlantaoVisitaEstrutura plantaoVisitaEstruturaFamilia = new PlantaoVisitaEstrutura();
 	private PlantaoVisitaEstrutura plantaoVisitaEstruturaAtendimento = new PlantaoVisitaEstrutura();
 	private PlantaoVisitaEstrutura plantaoVisitaEstruturaEntradaSaida = new PlantaoVisitaEstrutura();
@@ -130,6 +128,13 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	@Inject
 	private PlantaoVisitaService plantaoVisitaService;
 
+	@Inject
+	private SecurityUtil securityUtil;
+
+	@Inject
+	private LoginBean loginBean;
+
+
 	private List<RegistroPlantaoServidorDTO2> listaGestao = new ArrayList<RegistroPlantaoServidorDTO2>();
 	private List<RegistroPlantaoServidorDTO2> listaPlantao = new ArrayList<RegistroPlantaoServidorDTO2>();
 	private List<RegistroPlantaoServidorDTO2> listaAdministrativa = new ArrayList<RegistroPlantaoServidorDTO2>();
@@ -142,6 +147,8 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
 	@URLAction(onPostback = false)
 	public String init() {
+
+		this.plantaoEmAberto = plantaoService.buscarUltimoPlantaoEmAberto();
 
 		inicializarListas();
 		this.ocorrencia = new Ocorrencia();
@@ -178,12 +185,12 @@ public class PlantaoBean extends MetodosDePaginaBean {
 		return null;
 	}
 
-
-
-
 	/* ------------------------- Métodos ------------------------- */
+
 	private void inicializarListas() {
-		this.listaOcorrencias = ocorrenciaService.buscarOcorrenciasHoje();
+
+		UnidadePrisional unidadeLogada = loginBean.getUnidadeSelecionada();
+		this.listaOcorrencias = ocorrenciaService.buscarOcorrenciasHoje(unidadeLogada);
 		this.ocorrencias = ocorrenciaService.listarTodasOcorrencias();
 		this.tipoOcorrencias = tipoOcorrenciaService.listar();
 	}
@@ -362,7 +369,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 			this.listaOcorrencias.add(ocorrenciaService.salvar(ocorrencia));
 
 			FacesContext.getCurrentInstance().addMessage(null,
-	            new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Ocorrência registrada com sucesso!"));
+	            new FacesMessage(FacesMessage.SEVERITY_INFO, "Ocorrência registrada com sucesso!", "Ocorrência registrada com sucesso!"));
 
 	        novaOcorrencia();
 
@@ -387,8 +394,40 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	}
 
 	public void encerrar() throws ValidacaoException {
-		if(SecurityUtil.getUnidadeSelecionada().getAtivaModuloVisitante()){
+		UnidadePrisional unidade = SecurityUtil.getUnidadeSelecionada();
+		Plantao plantaoMaisAntigoAberto = plantaoService.buscarPlantaoMaisAntigoEmAbertoPorUnidade(unidade);
+
+		// Verifica se existe um plantão anterior em aberto que não é o atual
+		if (plantaoMaisAntigoAberto != null && !plantaoMaisAntigoAberto.getId().equals(this.plantao.getId())) {
+			facesUtil.exibirMensagem(
+					FacesMessage.SEVERITY_WARN,
+					"Atenção",
+					"Feche o plantão anterior antes de encerrar este."
+			);
+			return;
+		}
+
+		// Salva visita se módulo estiver ativo
+		if (unidade.getAtivaModuloVisitante()) {
 			this.salvarPlantaoVisita();
+		}
+
+		// Verifica se há plantão atual válido
+		if (this.plantao != null && this.plantao.getId() != null) {
+			this.plantao.setDataPlantaoEncerramento(new Date());
+			this.plantao.setStatusPlantao(StatusPlantao.CONCLUIDO);
+			this.plantaoService.salvar(this.plantao);
+
+			// Redireciona após salvar
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			try {
+				externalContext.redirect(externalContext.getRequestContextPath() + "/plantao/listarPlantao");
+			} catch (IOException e) {
+				throw new RuntimeException("Erro ao redirecionar para a listagem de plantões", e);
+			}
+		} else {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", "Nenhum plantão em andamento para encerrar.");
 		}
 	}
 
@@ -464,6 +503,11 @@ public class PlantaoBean extends MetodosDePaginaBean {
 			@Override
 			public List<Plantao> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
+
+				if (securityUtil.possuiPermissao("ListarTodosPlantoes")) {} else {
+					getFiltro().setUnidadePrisional(loginBean.getUnidadeSelecionada());
+				}
+
 				setRowCount(plantaoService.quantidadeFiltrados(getFiltro()));
 
 				try {
@@ -542,7 +586,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
 		this.plantaoVisitaFamilia.add(this.plantaoVisitaEstruturaFamilia);
 
-		this.plantaoVisitaEstruturaFamilia = new PlantaoVisitaEstrutura();;
+		this.plantaoVisitaEstruturaFamilia = new PlantaoVisitaEstrutura();
 		this.camposDesabilitado = true;
 
 
@@ -567,7 +611,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
 		this.plantaoVisitaAtendimento.add(this.plantaoVisitaEstruturaAtendimento);
 
-		this.plantaoVisitaEstruturaAtendimento = new PlantaoVisitaEstrutura();;
+		this.plantaoVisitaEstruturaAtendimento = new PlantaoVisitaEstrutura();
 		this.camposDesabilitado = true;
 
 	}
@@ -591,7 +635,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
 		this.plantaoVisitaEntradaSaida.add(this.plantaoVisitaEstruturaEntradaSaida);
 
-		this.plantaoVisitaEstruturaEntradaSaida = new PlantaoVisitaEstrutura();;
+		this.plantaoVisitaEstruturaEntradaSaida = new PlantaoVisitaEstrutura();
 		this.camposDesabilitado = true;
 
 	}
@@ -625,6 +669,8 @@ public class PlantaoBean extends MetodosDePaginaBean {
 					plantaoVisitaEstruturas = this.plantaoVisitaEstruturaService.buscarPlantaoVisitaEstruturaPorUnidadeAndtipoEntrada(tipoEntrada, this.plantao);
 				}
 			}
+		} else {
+			plantaoVisitaEstruturas = this.plantaoVisitaEstruturaService.buscarPlantaoVisitaEstruturaPorUnidadeAndtipoEntrada(tipoEntrada, this.plantao);
 		}
 
 
@@ -689,6 +735,67 @@ public class PlantaoBean extends MetodosDePaginaBean {
 
 		}
 	}
+
+	public boolean isPodeEncerrarPlantao() {
+		UnidadePrisional unidadeLogada = SecurityUtil.getUnidadeSelecionada();
+
+		Plantao plantaoEmAberto = plantaoService.obterPlantaoEmAndamento(unidadeLogada);
+
+		if (plantaoEmAberto == null || plantaoEmAberto.getDataPlantaoEncerramento() != null) {
+			return false;
+		}
+
+		Plantao plantaoAnterior = plantaoService.obterPlantaoAnterior(plantaoEmAberto, unidadeLogada);
+		if (plantaoAnterior != null && plantaoAnterior.getDataPlantaoEncerramento() == null) {
+			return true;
+		}
+
+		Calendar calendarioInicio = Calendar.getInstance();
+		calendarioInicio.setTime(plantaoEmAberto.getDataPlantao());
+		calendarioInicio.add(Calendar.DAY_OF_MONTH, 1);
+		calendarioInicio.set(Calendar.HOUR_OF_DAY, 7);
+		calendarioInicio.set(Calendar.MINUTE, 0);
+		calendarioInicio.set(Calendar.SECOND, 0);
+		calendarioInicio.set(Calendar.MILLISECOND, 0);
+		Date horarioLiberacao = calendarioInicio.getTime();
+
+		Calendar calendarioFim = (Calendar) calendarioInicio.clone();
+		calendarioFim.set(Calendar.HOUR_OF_DAY, 11);
+		Date horarioLimite = calendarioFim.getTime();
+
+		Date agora = new Date();
+		return agora.after(horarioLiberacao) && agora.before(horarioLimite);
+	}
+
+	public void excluirLogico() {
+		if (ocorrencia != null) {
+
+			ocorrenciaService.excluirLogico(ocorrencia);
+
+			listaOcorrencias = ocorrenciaService.buscarOcorrenciasHoje(
+					ocorrencia.getPlantao().getUnidadePrisional()
+			);
+
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+
+			// Mantém mensagens após redirecionar
+			externalContext.getFlash().setKeepMessages(true);
+			facesContext.addMessage(
+					null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Ocorrência excluída com sucesso.", "Ocorrência excluída com sucesso.")
+			);
+
+			ocorrencia = null;
+
+			try {
+				externalContext.redirect(externalContext.getRequestContextPath() + "/plantao/listarPlantao");
+			} catch (IOException e) {
+				throw new RuntimeException("Erro ao redirecionar para a listagem de ocorrências", e);
+			}
+		}
+	}
+
 
 	/* ------------------------- Get & Setts ------------------------- */
 
@@ -994,4 +1101,14 @@ public class PlantaoBean extends MetodosDePaginaBean {
 	public void setCamposDesabilitado(boolean camposDesabilitado) {
 		this.camposDesabilitado = camposDesabilitado;
 	}
+
+	public Plantao getPlantaoEmAberto() {
+		return plantaoEmAberto;
+	}
+
+	public void setPlantaoEmAberto(Plantao plantaoEmAberto) {
+		this.plantaoEmAberto = plantaoEmAberto;
+	}
+
 }
+

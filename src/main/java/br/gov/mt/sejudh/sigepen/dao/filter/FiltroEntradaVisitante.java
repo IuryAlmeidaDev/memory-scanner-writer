@@ -33,15 +33,18 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 	@Override
 	public void configurarFiltros() {
 
-		getCriteria().createAlias("pessoa", "pessoa", JoinType.LEFT_OUTER_JOIN).createAlias("entradas", "entradas",
+		getCriteria()
+				.createAlias("entradas", "entradas",
 				JoinType.LEFT_OUTER_JOIN);
 
 		if (StringUtils.isNotBlank(this.getNome())
 				|| StringUtils.isNotBlank(this.getNomeRecuperando())
 				|| (this.getPessoasIds() != null && this.getPessoasIds().size() > 0)
 				|| (this.getIdVisitante() != null)) {
+
 			if (StringUtils.isNotBlank(this.getNome())) {
-				getCriteria()
+
+				getCriteria().createAlias("pessoa", "pessoa", JoinType.LEFT_OUTER_JOIN)
 						.add(RestrictionsSigepen.ignoraAcentoLike("pessoa.nome", this.getNome(), MatchMode.ANYWHERE));
 			}
 
@@ -59,7 +62,7 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 			}
 
 			if (StringUtils.isNotBlank(this.getNomeRecuperando())) {
-				getCriteria().createAlias("r.pessoa", "p"); // Pessoa do Recuperando
+				getCriteria().createAlias("r.pessoa", "p",JoinType.LEFT_OUTER_JOIN); // Pessoa do Recuperando
 				getCriteria()
 						.add(RestrictionsSigepen.ignoraAcentoLike("p.nome", this.getNomeRecuperando(), MatchMode.ANYWHERE));
 			}

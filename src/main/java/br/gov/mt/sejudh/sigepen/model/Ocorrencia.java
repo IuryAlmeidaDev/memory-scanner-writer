@@ -58,6 +58,15 @@ public class Ocorrencia extends BaseModel<Long> {
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Plantao plantao;
 
+    @Column(name = "ATIVO", nullable = false)
+    private Integer ativo = 1;
+
+    @Transient
+    private AutoriaRegistro autorRegistro;
+
+    @Transient
+    private AutoriaRegistro autorUltimaAlteracao;
+
     public Ocorrencia() {}
 
     public Ocorrencia(Long id, String descricao, TipoOcorrencia tipoOcorrencia, Visitante visitante) {
@@ -139,6 +148,39 @@ public class Ocorrencia extends BaseModel<Long> {
     public void setPlantao(Plantao plantao) {
         this.plantao = plantao;
     }
+
+    public boolean isAtivo() {
+        return Integer.valueOf(1).equals(ativo);
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo ? 1 : 0;
+    }
+
+    public Integer getAtivoValue() {
+        return ativo;
+    }
+
+    public void setAtivoValue(Integer ativo) {
+        this.ativo = ativo;
+    }
+
+    public AutoriaRegistro getAutorRegistro() {
+        return autorRegistro;
+    }
+
+    public void setAutorRegistro(AutoriaRegistro autorRegistro) {
+        this.autorRegistro = autorRegistro;
+    }
+
+    public AutoriaRegistro getAutorUltimaAlteracao() {
+        return autorUltimaAlteracao;
+    }
+
+    public void setAutorUltimaAlteracao(AutoriaRegistro autorUltimaAlteracao) {
+        this.autorUltimaAlteracao = autorUltimaAlteracao;
+    }
+
 
     @Override
     public String toString() {

@@ -124,7 +124,7 @@ public class EntradaSaidaService {
 	}
 
 	public List<RecuperandoVisitanteDTO> buscarEntradasPorFiltro(FiltroEntradaVisitante filtro, boolean isRelatorio) {
-		return agruparPorRecuperando(this.dao.buscarEntradasPorFiltro(filtro, isRelatorio));
+		return agruparPorRecuperando(this.dao.buscarEntradasPorFiltro(filtro));
 	}
 
 	public String validarEntrada(FiltroEntradaSaida f, Long unidade) {
