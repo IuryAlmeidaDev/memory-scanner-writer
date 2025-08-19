@@ -3,6 +3,7 @@ package br.gov.mt.sejudh.sigepen.service;
 import br.gov.mt.sejudh.sigepen.base.service.BaseService;
 import br.gov.mt.sejudh.sigepen.dao.OcorrenciaDAO;
 import br.gov.mt.sejudh.sigepen.model.Ocorrencia;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -36,12 +37,16 @@ public class OcorrenciaService extends BaseService<Ocorrencia, Long> {
 		return ocorrenciaDAO.buscarPorIdComTipo(id);	
 	}
 
-	public List<Ocorrencia> buscarOcorrenciasHoje() {
+	public List<Ocorrencia> buscarOcorrenciasHoje(UnidadePrisional unidade) {
 		LocalDate hoje = LocalDate.now(ZoneId.of("America/Cuiaba"));
-		return ocorrenciaDAO.listarPorDataPlantao(hoje);
+		return ocorrenciaDAO.listarPorDataPlantao(hoje, unidade);
 	}
 
-
-
+	public void excluirLogico(Ocorrencia ocorrencia) {
+		if (ocorrencia != null) {
+			ocorrencia.setAtivo(false);
+			ocorrenciaDAO.salvar(ocorrencia);
+		}
+	}
 
 }

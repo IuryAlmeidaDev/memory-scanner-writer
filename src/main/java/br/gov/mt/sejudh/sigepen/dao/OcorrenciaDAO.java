@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
 import br.gov.mt.sejudh.sigepen.model.Ocorrencia;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -36,15 +37,13 @@ public class OcorrenciaDAO extends BaseDAO<Ocorrencia, Long> {
 	
 	
 	/* ------------------------  Métodos  ------------------------ */
-	
-	
+
 	public List<Ocorrencia> listarTodasOcorrencias() {
 	    String jpql = "SELECT o FROM Ocorrencia o ORDER BY o.id";
 	    TypedQuery<Ocorrencia> query = entityManager.createQuery(jpql, Ocorrencia.class);
 	    return query.getResultList();
 	}
 
-	
 	public Ocorrencia buscarPorIdComTipo(Long id) {
 	    TypedQuery<Ocorrencia> query = entityManager.createQuery(
 	        "SELECT o FROM Ocorrencia o JOIN FETCH o.tipoOcorrencia WHERE o.id = :id", Ocorrencia.class);
@@ -52,17 +51,25 @@ public class OcorrenciaDAO extends BaseDAO<Ocorrencia, Long> {
 	    return query.getSingleResult();
 	}
 
-	public List<Ocorrencia> listarPorDataPlantao(LocalDate dataPlantao) {
+
+	public List<Ocorrencia> listarPorDataPlantao(LocalDate dataPlantao, UnidadePrisional unidade) {
 		ZoneId zone = ZoneId.of("America/Cuiaba");
 
 		Date inicio = Date.from(dataPlantao.atStartOfDay(zone).toInstant());
 		Date fim = Date.from(dataPlantao.plusDays(1).atStartOfDay(zone).toInstant());
 
-		String jpql = "SELECT o FROM Ocorrencia o WHERE o.plantao.dataPlantao >= :inicio AND o.plantao.dataPlantao < :fim";
+		String jpql = "SELECT o FROM Ocorrencia o " +
+				"JOIN FETCH o.plantao p " +
+				"JOIN FETCH p.unidadePrisional u " +
+				"WHERE p.dataPlantao >= :inicio " +
+				"AND p.dataPlantao < :fim " +
+				"AND u = :unidade " +
+				"AND o.ativo = 1";
 
 		return entityManager.createQuery(jpql, Ocorrencia.class)
 				.setParameter("inicio", inicio)
 				.setParameter("fim", fim)
+				.setParameter("unidade", unidade)
 				.getResultList();
 	}
 

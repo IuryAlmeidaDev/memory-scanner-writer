@@ -12,6 +12,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import br.gov.mt.sejudh.sigepen.model.*;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -585,5 +586,123 @@ public class EntradaSaidaDAO {
 		}catch (Exception e){
 			return null;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Visitante> buscarEntradasPorFiltro(FiltroEntradaVisitante filtro) {
+
+		String jpql = "SELECT v " +
+				"FROM Visitante v " +
+				"join v.credenciamentos c " +
+				"join c.recuperando r " +
+				"join r.passagens ps " +
+				"join ps.lotacao l ";
+
+		StringBuffer where = new StringBuffer("where l.dataSaida is null and ps.dataSaida is null ");
+
+		StringBuffer queryJpql = new StringBuffer(jpql);
+
+		if(StringUtils.isNotBlank(filtro.getNomeRecuperando())){
+			queryJpql.append("left join r.pessoa rp ");
+			where.append("and UPPER(rp.nome) LIKE UPPER('%"+ filtro.getNomeRecuperando() + "%')");
+		}
+
+		if(StringUtils.isNotBlank(filtro.getNome())){
+			queryJpql.append("left join v.pessoa vp ");
+			where.append("and upper(vp.nome) like upper('%" + filtro.getNome() + "%') ");
+		}
+
+		if(!filtro.getIdsEstruturas().isEmpty()){
+			queryJpql.append("left join l.estrutura e ");
+			String idsEstrutura = filtro.getIdsEstruturas().toString().replace("[", "").replace("]", "");
+			where.append("and e.id in(").append(idsEstrutura).append(")");
+		}
+
+		if(StringUtils.isNotBlank(filtro.getNomeRecuperando()) || StringUtils.isNotBlank(filtro.getNome())){
+			queryJpql.append(where);
+		}else{
+			return new ArrayList<Visitante>();
+		}
+
+		TypedQuery<Visitante> query = em.createQuery(queryJpql.toString(), Visitante.class);
+
+		List<Visitante> visitantes = query.getResultList();
+		for(Visitante v : visitantes) {
+			Hibernate.initialize(v.getEntradas());
+			Hibernate.initialize(v.getCredenciamentos());
+			Hibernate.initialize(v.getOcorrencias());
+			for(Ocorrencia o : v.getOcorrencias()) {
+				Hibernate.initialize(o.getTipoOcorrencia());
+			}
+
+			for(EntradaSaida e : v.getEntradas()) {
+				Hibernate.initialize(e.getUnidadePrisional());
+				Hibernate.initialize(e.getVisitante().getIdentidadeDeGenero());
+				Hibernate.initialize(e.getVisitante());
+				Hibernate.initialize(e.getRecuperandos());
+				Hibernate.initialize(e.getVisitante().getFotos());
+				Hibernate.initialize(e.getVisitante().getPessoa().getNacionalidade());
+				Hibernate.initialize(e.getVisitante().getPessoa().getNaturalidade());
+				Hibernate.initialize(e.getVisitante().getPessoa().getPais());
+				Hibernate.initialize(e.getVisitante().getPessoa().getBiometria());
+				if(e.getVisitante().getPessoa().getBiometria() != null) {
+					Hibernate.initialize(e.getVisitante().getPessoa().getBiometria().getDedos());
+				}
+
+
+				List<VisitanteResponsavel> listaResponsaveis =
+						visitanteResponsavelDAO.buscarListaVisitantesReponsaveis(v);
+
+				List<Visitante> visitantesResponsaveis = new ArrayList<>();
+
+				if(!listaResponsaveis.isEmpty()) {
+					for(VisitanteResponsavel vr : listaResponsaveis) {
+						Visitante vi = new Visitante();
+						vi = visitanteDAO.buscarPorId(vr.getVisitanteResponsavel().getId());
+						visitantesResponsaveis.add(vi);
+					}
+
+					if(!visitantesResponsaveis.isEmpty()) {
+						v.setVisitantesReponsaveis(visitantesResponsaveis);
+					}
+				}
+
+				Hibernate.initialize(e.getVisitante().getResponsavel());
+				if(e.getVisitante().getResponsavel() != null) {
+					Hibernate.initialize(e.getVisitante().getResponsavel().getPessoa());
+					Hibernate.initialize(e.getVisitante().getResponsavel().getFotos());
+					Hibernate.initialize(e.getVisitante().getResponsavel().getIdentidadeDeGenero());
+					Hibernate.initialize(e.getVisitante().getResponsavel().getPessoa().getNacionalidade());
+					Hibernate.initialize(e.getVisitante().getResponsavel().getPessoa().getNaturalidade());
+					Hibernate.initialize(e.getVisitante().getResponsavel().getPessoa().getPais());
+					Hibernate.initialize(e.getVisitante().getResponsavel().getPessoa().getBiometria());
+					if(e.getVisitante().getResponsavel().getPessoa().getBiometria() != null) {
+						Hibernate.initialize(e.getVisitante().getResponsavel().getPessoa().getBiometria().getDedos());
+					}
+
+				}
+
+				Hibernate.initialize(e.getVisitante().getCredenciamentos());
+				for(Credenciamento vr : e.getVisitante().getCredenciamentos()) {
+					Hibernate.initialize(vr.getFasesDoCredenciamento());
+					Hibernate.initialize(vr.getTipoVisita());
+					if(vr.getRecuperando() != null) {
+						Hibernate.initialize(vr.getRecuperando().getPessoa());
+						Hibernate.initialize(vr.getRecuperando().getFaltas());
+						Hibernate.initialize(vr.getRecuperando().getPassagens());
+						for(Passagem p : vr.getRecuperando().getPassagens()) {
+							Hibernate.initialize(p.getLotacao());
+							for(PassagemLotacao l : p.getLotacao()) {
+								Hibernate.initialize(l.getEstrutura());
+								Hibernate.initialize(l.getEstrutura().getUnidadePrisional());
+							}
+						}
+					}
+				}
+
+			}
+		}
+
+		return visitantes;
 	}
 }

@@ -8,14 +8,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
-import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.model.*;
-import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import org.hibernate.Hibernate;
 
 @RequestScoped
 public class PlantaoDAO extends BaseDAO<Plantao, Long>{
-
 	private static final long serialVersionUID = -318366946850533179L;
 	
 	
@@ -29,6 +26,50 @@ public class PlantaoDAO extends BaseDAO<Plantao, Long>{
 
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
+	}
+
+	/*------------------------------------------------- Métodos -----------------------------------------------------*/
+	public Plantao obterPlantaoEmAndamento(UnidadePrisional unidade) {
+		String jpql = "SELECT p FROM Plantao p WHERE p.dataPlantaoEncerramento IS NULL AND p.unidadePrisional = :unidade ORDER BY p.dataPlantao DESC";
+		List<Plantao> resultado = em.createQuery(jpql, Plantao.class)
+				.setParameter("unidade", unidade)
+				.setMaxResults(1)
+				.getResultList();
+
+		return resultado.isEmpty() ? null : resultado.get(0);
+	}
+
+	public Plantao obterPlantaoAnterior(Plantao plantaoAtual, UnidadePrisional unidade) {
+		String jpql = "SELECT p FROM Plantao p WHERE p.dataPlantao < :dataAtual AND p.unidadePrisional = :unidade ORDER BY p.dataPlantao DESC";
+		List<Plantao> resultado = em.createQuery(jpql, Plantao.class)
+				.setParameter("dataAtual", plantaoAtual.getDataPlantao())
+				.setParameter("unidade", unidade)
+				.setMaxResults(1)
+				.getResultList();
+
+		return resultado.isEmpty() ? null : resultado.get(0);
+	}
+
+	public Plantao buscarPlantaoMaisAntigoEmAbertoPorUnidade(UnidadePrisional unidade) {
+		String jpql = "SELECT p FROM Plantao p " +
+				"WHERE p.dataPlantaoEncerramento IS NULL " +
+				"AND p.unidadePrisional = :unidade " +
+				"ORDER BY p.dataPlantao ASC";
+
+		List<Plantao> resultado = em.createQuery(jpql, Plantao.class)
+				.setParameter("unidade", unidade)
+				.setMaxResults(1)
+				.getResultList();
+
+		return resultado.isEmpty() ? null : resultado.get(0);
+	}
+
+	public Plantao buscarUltimoPlantaoEmAberto() {
+		String jpql = "SELECT p FROM Plantao p WHERE p.dataPlantaoEncerramento IS NULL ORDER BY p.dataPlantao DESC";
+		List<Plantao> resultado = em.createQuery(jpql, Plantao.class)
+				.setMaxResults(1)
+				.getResultList();
+		return resultado.isEmpty() ? null : resultado.get(0);
 	}
 
 	public Plantao buscarUltimoPlantao() {

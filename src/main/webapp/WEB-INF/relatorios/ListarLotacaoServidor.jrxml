@@ -20,6 +20,7 @@
 	<field name="unidade.nome" class="java.lang.String"/>
 	<field name="dataInicio" class="java.util.Date"/>
 	<field name="dataFim" class="java.util.Date"/>
+	<field name="plantao" class="java.lang.String"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
@@ -45,7 +46,7 @@
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="0" y="0" width="355" height="16" uuid="a4ee366c-52b7-4ef9-8d5d-f42dce0f2d46"/>
+				<reportElement x="0" y="0" width="254" height="16" uuid="a4ee366c-52b7-4ef9-8d5d-f42dce0f2d46"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -86,6 +87,20 @@
 				</textElement>
 				<text><![CDATA[Data Fim]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="254" y="0" width="101" height="16" uuid="21a88a27-8a6a-4f24-80ec-13f8da10264d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plantão]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
@@ -119,7 +134,7 @@
 				<textFieldExpression><![CDATA[$F{dataFim}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="355" height="15" uuid="628d40be-d73f-4e21-aa18-a80b66a9e6e2"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="254" height="15" uuid="628d40be-d73f-4e21-aa18-a80b66a9e6e2"/>
 				<box leftPadding="2" rightPadding="2">
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -127,6 +142,16 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{unidade.nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="254" y="0" width="101" height="15" uuid="2595b720-7806-4974-8723-e00356aaa90b"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{plantao}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -289,7 +289,10 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 				getFiltro().setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
 				getFiltro().setData(new Date());
 				getFiltro().setSomenteEntradas(true);
-				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
+
+				List<RecuperandoVisitanteDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), false);
+
+				setRowCount(lista.size());
 
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
@@ -297,7 +300,6 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 					e.printStackTrace();
 				}
 
-				List<RecuperandoVisitanteDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), false);
 				RequestContext.getCurrentInstance().update("formStatus");
 
 				return lista;

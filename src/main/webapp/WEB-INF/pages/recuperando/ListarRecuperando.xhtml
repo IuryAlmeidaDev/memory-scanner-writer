@@ -511,32 +511,40 @@
 			</p:confirmDialog>
 		</p:dialog>
 
-		<p:dialog id="dialogFiltroData" header="Filtro de Impressão" widgetVar="dialogFiltroData" modal="true"
-				  resizable="false">
-			<h:form id="formFiltroData">
-				<p:panelGrid columns="2">
-					<p:outputLabel for="dataInicio" value="Data Início:"/>
-					<p:calendar id="dataInicio" value="#{historicoRecuperandoBean.dataInicio}" pattern="dd/MM/yyyy"
-								mask="true" autoShow="false">
-					</p:calendar>
+        <p:dialog id="dialogFiltroData" header="Filtro de Impressão" widgetVar="dialogFiltroData" modal="true" resizable="false">
+            <h:form id="formFiltroData">
 
-					<p:outputLabel for="dataFim" value="Data Fim:"/>
-					<p:calendar id="dataFim" value="#{historicoRecuperandoBean.dataFim}" pattern="dd/MM/yyyy"
-								mask="true" autoShow="false" mindate="#{historicoRecuperandoBean.dataInicio}">
-					</p:calendar>
-				</p:panelGrid>
-				<br/>
-				<p:commandButton
-						value="Gerar Relatório"
-						actionListener="#{historicoRecuperandoBean.imprimirTodosRegistros}"
-						ajax="true"
-						update="formFiltroData mensagens"
-						oncomplete="PF('dialogFiltroData').hide()"
-				/>
+                <h:panelGroup layout="block" style="padding-bottom: 10px;">
 
-				<p:commandButton value="Cancelar" onclick="PF('dialogFiltroData').hide()" type="button"/>
-			</h:form>
-		</p:dialog>
+                    <sgp:formCalendar id="dataInicio"
+                                      labelValue="Data Início"
+                                      value="#{historicoRecuperandoBean.dataInicio}"
+                                      pattern="dd/MM/yyyy HH:mm"
+                                      mask="true"
+                                      showOn="button" />
+
+                    <sgp:formCalendar id="dataFim"
+                                      labelValue="Data Fim"
+                                      value="#{historicoRecuperandoBean.dataFim}"
+                                      pattern="dd/MM/yyyy HH:mm"
+                                      mask="true"
+                                      showOn="button"
+                                      mindate="#{historicoRecuperandoBean.dataInicio}" />
+
+                </h:panelGroup>
+
+                <br/>
+                <p:commandButton
+                        value="Gerar Relatório"
+                        actionListener="#{historicoRecuperandoBean.imprimirTodosRegistros}"
+                        ajax="true"
+                        update="formFiltroData mensagens"
+                        oncomplete="PF('dialogFiltroData').hide()"
+                />
+                <p:commandButton value="Cancelar" onclick="PF('dialogFiltroData').hide()" type="button"/>
+
+            </h:form>
+        </p:dialog>
 
 
 		<p:dialog id="dialogVisitanteRecuperandoDetalhes" header="Detalhes do Visitante" widgetVar="dialogDetalhesVisitanteRecuperando" modal="true" closeOnEscape="true" showEffect="fade" hideEffect="fade" resizable="false"

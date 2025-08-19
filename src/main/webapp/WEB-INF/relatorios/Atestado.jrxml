@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Atestado" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.693421790161336"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="589"/>
+	<property name="ireport.y" value="495"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
 	</parameter>
@@ -72,9 +72,9 @@
 		<band height="200"/>
 	</detail>
 	<pageFooter>
-		<band height="51" splitType="Stretch">
+		<band height="182" splitType="Stretch">
 			<subreport isUsingCache="false" runToBottom="true">
-				<reportElement positionType="Float" x="0" y="0" width="555" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
+				<reportElement positionType="Float" x="0" y="131" width="555" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
 				<subreportParameter name="PAGINA">
 					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -87,10 +87,6 @@
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
 			</subreport>
-		</band>
-	</pageFooter>
-	<lastPageFooter>
-		<band height="131">
 			<subreport>
 				<reportElement x="0" y="0" width="555" height="131" uuid="12bdafc3-3f6f-4167-8d85-91578d503af3"/>
 				<subreportParameter name="EMISSOR">
@@ -124,5 +120,5 @@
 				<subreportExpression><![CDATA[$P{REPORT_ASSINATURA}]]></subreportExpression>
 			</subreport>
 		</band>
-	</lastPageFooter>
+	</pageFooter>
 </jasperReport>
