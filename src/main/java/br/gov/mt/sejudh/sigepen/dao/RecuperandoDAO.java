@@ -191,7 +191,11 @@ public class RecuperandoDAO {
 	
 	public Recuperando buscarRecuperandoPorId(long idRecuperando) {
 		try {
-			String jpql="select r from Recuperando r where r.id = :id";
+			String jpql = "select r from Recuperando r " +
+					"left join fetch r.processos p " +
+					"left join fetch r.regimeAtual " +
+					"where r.id = :id";
+
 			TypedQuery<Recuperando> query = em.createQuery(jpql, Recuperando.class);
 			query.setParameter("id", idRecuperando);			
 			Recuperando r = query.getSingleResult();
