@@ -93,8 +93,6 @@ public class RemanejamentoBean extends MetodosDePaginaBean {
 
 		this.getFiltro().setUnidadeRemanejada(SecurityUtil.getUnidadeSelecionada());
 
-		super.carregarFiltroPaginacao(FiltroRemanejamento.class, this, getFiltro());
-
 		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
 			FiltroRemanejamento filtroDash = (FiltroRemanejamento) facesUtil
 					.getFlashParameter("filtroRecuperandoDash");
@@ -102,11 +100,10 @@ public class RemanejamentoBean extends MetodosDePaginaBean {
 			if (filtroDash != null) {
 				setFiltro(filtroDash);
 
-			} else {
-				super.carregarFiltroPaginacao(FiltroRemanejamento.class, this);
 			}
 		}
 
+		super.carregarFiltroPaginacao(FiltroRemanejamento.class, this, getFiltro());
 	}
 	
 	@URLAction(onPostback=false)

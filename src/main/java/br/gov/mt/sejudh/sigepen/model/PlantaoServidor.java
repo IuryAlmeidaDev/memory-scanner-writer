@@ -6,8 +6,6 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.Objects;
 
 @Audited
 @Entity
@@ -32,15 +30,15 @@ public class PlantaoServidor extends BaseModel<Long>  {
 	private Equipe equipe;
 	
 	@Column(name = "ATIVIDADE")
-    private String atividae;
+    private String atividade;
 	
 	@Column(name = "SITUACAO")
 	private String situacao;
 
-	@Column(name = "OCORRENCIA", nullable = true)
+    @Column(name = "OCORRENCIA")
 	private String ocorrencia;
 
-	@Column(name = "JUSTIFICATIVA", nullable = true)
+    @Column(name = "JUSTIFICATIVA")
 	private String justificativa;
 
 	@Override
@@ -60,12 +58,12 @@ public class PlantaoServidor extends BaseModel<Long>  {
 		this.servidor = servidor;
 	}
 
-	public String getAtividae() {
-		return atividae;
+    public String getAtividade() {
+        return atividade;
 	}
 
-	public void setAtividae(String atividae) {
-		this.atividae = atividae;
+    public void setAtividade(String atividae) {
+        this.atividade = atividae;
 	}
 
 	public String getSituacao() {
@@ -122,7 +120,7 @@ public class PlantaoServidor extends BaseModel<Long>  {
 		return "PlantaoServidor{" +
 				"id=" + id +
 				", servidor=" + servidor +
-				", atividae='" + atividae + '\'' +
+                ", atividae='" + atividade + '\'' +
 				", situacao='" + situacao + '\'' +
 				'}';
 	}

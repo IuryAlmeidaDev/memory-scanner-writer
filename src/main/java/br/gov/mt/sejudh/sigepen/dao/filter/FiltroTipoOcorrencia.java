@@ -20,39 +20,6 @@ public class FiltroTipoOcorrencia extends FiltroConsulta {
 	private String classificacao;
 
 
-	public String getTipo() {
-		return tipo;
-	}
-
-	public void setTipo(String tipo) {		
-		this.tipo = Sigepen.formatarEspacos(tipo);
-	}
-
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {		
-		this.descricao = Sigepen.formatarEspacos(descricao);
-	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-
-	public void setStatus(Status status) {
-		this.status = status;		
-	}
-
-	public String getClassificacao() {
-		return classificacao;
-	}
-
-	public void setClassificacao(String classificacao) {		
-		this.classificacao = Sigepen.formatarEspacos(classificacao);
-	}
-
 	@Override
 	public void configurarFiltros() {		
 				
@@ -63,14 +30,46 @@ public class FiltroTipoOcorrencia extends FiltroConsulta {
 		if(this.getDescricao()!= null && !this.getDescricao().equalsIgnoreCase("") ){
 			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("descricao", this.getDescricao(), MatchMode.ANYWHERE));
 		}
-		
-		if (this.getStatus() != null) {
+
+		if(this.getStatus() != null){
 			getCriteria().add(Restrictions.eq("status", this.getStatus()));
 		}
-		
+
 		if(this.getClassificacao()!= null && !this.getClassificacao().equalsIgnoreCase("") ){
 			getCriteria().add(RestrictionsSigepen.ignoraAcentoLike("classificacao", this.getClassificacao(), MatchMode.ANYWHERE));
 		}
 				
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = Sigepen.formatarEspacos(tipo);
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = Sigepen.formatarEspacos(descricao);
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = Sigepen.formatarEspacos(classificacao);
 	}
 }

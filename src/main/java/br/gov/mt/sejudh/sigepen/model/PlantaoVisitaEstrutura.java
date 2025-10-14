@@ -4,7 +4,6 @@ package br.gov.mt.sejudh.sigepen.model;
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
-//import com.sun.istack.internal.NotNull;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -26,22 +25,18 @@ public class PlantaoVisitaEstrutura extends BaseModel<Long>  {
 	@Column(name = "ESTRUTURA")
     private String estrutura;
 
-//	@NotNull
 	@Column(name = "HOMEM")
 	private Long homem;
 
-//	@NotNull
 	@Column(name = "MULHER")
 	private Long mulher;
 
-//	@NotNull
 	@Column(name = "MENOR")
 	private Long menor;
 
 	@Column(name = "RECUPERANDO")
 	private Long recuperando;
 
-//	@NotNull
 	@Column(name = "OCORRENCIA")
 	private Long ocorrencia;
 

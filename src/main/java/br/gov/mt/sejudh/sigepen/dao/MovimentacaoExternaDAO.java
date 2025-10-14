@@ -1,22 +1,21 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroMovimentacaoExterna;
+import br.gov.mt.sejudh.sigepen.model.MovimentacaoExterna;
+import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroMovimentacaoExterna;
-import br.gov.mt.sejudh.sigepen.model.MovimentacaoExterna;
-import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import java.util.Date;
+import java.util.List;
 
 
 @RequestScoped
@@ -81,4 +80,19 @@ public class MovimentacaoExternaDAO {
 			return null;
 		}
 	}
+
+    public Long countPorUnidadeNaData(Long unidadeId, Date dataInicio, Date dataFim) {
+        String jpql = "SELECT COUNT(m) FROM MovimentacaoExterna m " +
+                "WHERE m.unidadeOrigem.id = :unidadeId " +
+                "AND m.dataInicio BETWEEN :dataInicio AND :dataFim";
+        try {
+            return entityManager.createQuery(jpql, Long.class)
+                    .setParameter("unidadeId", unidadeId)
+                    .setParameter("dataInicio", dataInicio)
+                    .setParameter("dataFim", dataFim)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return 0L;
+        }
+    }
 }

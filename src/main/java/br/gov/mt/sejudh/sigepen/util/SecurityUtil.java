@@ -55,7 +55,7 @@ public class SecurityUtil implements Serializable {
 				.flatMap(acesso -> acesso.getPerfis().stream())
 				.flatMap(perfil -> perfil.getPermissoes().stream())
 				.map(Permissao::getNome)
-				.anyMatch(nomePermissao -> nomePermissao.contains(permissao));
+				.anyMatch(nomePermissao -> nomePermissao.equalsIgnoreCase(permissao));
 	}
 
 

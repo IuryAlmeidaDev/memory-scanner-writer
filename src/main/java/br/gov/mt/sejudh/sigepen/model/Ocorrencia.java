@@ -3,6 +3,8 @@ package br.gov.mt.sejudh.sigepen.model;
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusOcorrencia;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
@@ -60,12 +62,6 @@ public class Ocorrencia extends BaseModel<Long> {
 
     @Column(name = "ATIVO", nullable = false)
     private Integer ativo = 1;
-
-    @Transient
-    private AutoriaRegistro autorRegistro;
-
-    @Transient
-    private AutoriaRegistro autorUltimaAlteracao;
 
     public Ocorrencia() {}
 
@@ -165,31 +161,20 @@ public class Ocorrencia extends BaseModel<Long> {
         this.ativo = ativo;
     }
 
-    public AutoriaRegistro getAutorRegistro() {
-        return autorRegistro;
-    }
-
-    public void setAutorRegistro(AutoriaRegistro autorRegistro) {
-        this.autorRegistro = autorRegistro;
-    }
-
-    public AutoriaRegistro getAutorUltimaAlteracao() {
-        return autorUltimaAlteracao;
-    }
-
-    public void setAutorUltimaAlteracao(AutoriaRegistro autorUltimaAlteracao) {
-        this.autorUltimaAlteracao = autorUltimaAlteracao;
-    }
-
-
     @Override
     public String toString() {
-        return "Ocorrencia{" +
-                "id=" + id +
-                ", descricao='" + descricao + '\'' +
-                ", tipoOcorrencia=" + tipoOcorrencia +
-                ", visitante=" + visitante +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("id", id)
+                .append("descricao", descricao)
+                .append("dataOcorrencia", dataOcorrencia)
+                .append("tipoOcorrencia", tipoOcorrencia)
+                .append("visitante", visitante)
+                .append("resumo", resumo)
+                .append("detalhamento", detalhamento)
+                .append("statusOcorrencia", statusOcorrencia)
+                .append("plantao", plantao)
+                .append("ativo", ativo)
+                .toString();
     }
 
     @Override

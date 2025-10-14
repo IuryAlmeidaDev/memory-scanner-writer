@@ -27,6 +27,7 @@
 	<field name="descricao" class="java.lang.String"/>
 	<field name="status.descricao" class="java.lang.String"/>
 	<field name="tipo" class="java.lang.String"/>
+	<field name="classificacao" class="java.lang.String"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{id}]]></variableExpression>
 	</variable>
@@ -66,7 +67,7 @@
 				<text><![CDATA[Código]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="43" y="0" width="135" height="20" uuid="9fe98fe7-089b-40a6-8904-fe1f1aedb134"/>
+				<reportElement x="43" y="0" width="103" height="20" uuid="9fe98fe7-089b-40a6-8904-fe1f1aedb134"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -92,7 +93,7 @@
 				<text><![CDATA[Situação]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="178" y="0" width="276" height="20" uuid="604eaf14-0ccf-4115-9cc8-74fe36553535"/>
+				<reportElement x="261" y="0" width="193" height="20" uuid="604eaf14-0ccf-4115-9cc8-74fe36553535"/>
 				<box>
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
 					<leftPen lineWidth="0.5" lineStyle="Solid"/>
@@ -103,6 +104,19 @@
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="146" y="0" width="115" height="20" uuid="f0621a33-64bb-434a-a134-69336ea24f9d"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Classificação]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -127,7 +141,7 @@
 				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="43" y="0" width="135" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
+				<reportElement stretchType="RelativeToBandHeight" x="43" y="0" width="103" height="15" uuid="a40d2e60-1b36-434c-9930-501940a15081"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -148,7 +162,7 @@
 				<textFieldExpression><![CDATA[$F{status.descricao}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="178" y="0" width="276" height="15" uuid="7e5276ff-83d9-4658-bd53-258f3c3a9f10"/>
+				<reportElement stretchType="RelativeToBandHeight" x="261" y="0" width="193" height="15" uuid="7e5276ff-83d9-4658-bd53-258f3c3a9f10"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -156,6 +170,16 @@
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="146" y="0" width="115" height="15" uuid="09666ae1-bf67-4c9c-ba07-7e0a38eecac8"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{classificacao}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

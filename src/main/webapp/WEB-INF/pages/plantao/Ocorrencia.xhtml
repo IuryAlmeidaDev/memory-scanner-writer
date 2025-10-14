@@ -62,17 +62,6 @@
 						    process="@this"
 						    rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}" />
 
-						<!--  para o futuro talveis
-						<p:commandButton
-							title="Editar"
-							icon="ui-icon-pencil"
-						    actionListener="#{plantaoBean.buscarOcorrencia(ocorrencia, false)}"
-						    update=":registrosForm:grupoDialogOcorrencia"
-						    oncomplete="PF('dialogOcorrencia').show()"
-						    process="@this"
-						    rendered="#{securityUtil.possuiPermissao('CadastrarRegistroPlantao')}" />
-						-->
-
 						<p:commandButton
 								title="Excluir"
 								action="#{plantaoBean.excluirLogico}"

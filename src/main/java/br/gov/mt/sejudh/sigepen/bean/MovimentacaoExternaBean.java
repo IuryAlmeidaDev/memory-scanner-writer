@@ -109,19 +109,16 @@ public class MovimentacaoExternaBean extends MetodosDePaginaBean {
 		this.setFiltro(new FiltroMovimentacaoExterna());
 		this.getFiltro().setUnidadeOrigem(SecurityUtil.getUnidadeSelecionada());		
 		
-		super.carregarFiltroPaginacao(FiltroMovimentacaoExterna.class, this, getFiltro());
-
 		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
 			FiltroMovimentacaoExterna filtroDash = (FiltroMovimentacaoExterna) facesUtil
 					.getFlashParameter("filtroMovimentacaoExternaDash");
 
 			if (filtroDash != null) {
-				setFiltro(filtroDash);
+				this.setFiltro(filtroDash);
 
-			} else {
-				super.carregarFiltroPaginacao(FiltroMovimentacaoExterna.class, this);
 			}
 		}
+		super.carregarFiltroPaginacao(FiltroMovimentacaoExterna.class, this, getFiltro());
 	}
 	
 	@URLAction(onPostback=false)

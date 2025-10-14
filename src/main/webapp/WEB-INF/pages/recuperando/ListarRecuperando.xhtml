@@ -415,7 +415,8 @@
 					<p:commandButton value="Detalhamento"
 									 oncomplete="PF('dialogTextEditor').show()"
 									 icon="ui-icon-plus"
-									 process="@this"
+                                     process=":formHistoricoRecuperando"
+                                     update=":formdialogTextEditor"
 									 actionListener="#{historicoRecuperandoBean.adicionarDetalhamento()}"
 									 disabled="#{!securityUtil.possuiPermissaoNaUnidadeLogada('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.recuperandoView.isRecuperandoInativo}"  />
 
@@ -423,11 +424,11 @@
 					<br/>
 
 					<p:commandButton value="Adicionar"
-									 action="#{historicoRecuperandoBean.salvar()}"
-									 icon="ui-icon-plus"
-									 update="formHistoricoRecuperando:dataTableHistoricoRecuperando"
-									 process="@form"
-									 rendered="#{securityUtil.possuiPermissaoNaUnidadeLogada('CadastrarHistoricoRecuperando') and !historicoRecuperandoBean.recuperandoView.isRecuperandoInativo and historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
+                                     action="#{historicoRecuperandoBean.salvar()}"
+                                     icon="ui-icon-plus"
+                                     update="formHistoricoRecuperando mensagens"
+                                     process="@form"
+                                     rendered="#{securityUtil.possuiPermissaoNaUnidadeLogada('CadastrarHistoricoRecuperando') and !historicoRecuperandoBean.recuperandoView.isRecuperandoInativo and historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
 
 					<br/>
 					<br/>
@@ -594,22 +595,30 @@
 			</h:form>
 		</p:dialog>
 
-		<p:dialog id="dialogTextEditor"
+        <p:dialog id="dialogTextEditor"
 				  header="Cadastrar Histórico do Recuperando" resizable="false"
 				  widgetVar="dialogTextEditor" modal="true" width="1000" heigth="500">
-			<h:form id="formdialogTextEditor">
-				<p:panel>
-					<p:editor widgetVar="dialogTextEditor" value="#{historicoRecuperandoBean.historicoRecuperando.detalhamento}" height="300" controls="bold italic underline strikethrough font numbering size color print" style="background-color: white;"/>
-					<div>
-						<br/>
-						<p:commandButton value="Salvar" onclick="PF('dialogTextEditor').hide()" icon="ui-icon-disk" rendered="#{historicoRecuperandoBean.opcaoDetalhamento == 0}" />
-						<p:commandButton value="Fechar" onclick="PF('dialogTextEditor').hide()" icon="ui-icon-disk" rendered="#{historicoRecuperandoBean.opcaoDetalhamento == 1}" />
-						<p:commandButton value="Imprimir" onclick="PF('dialogTextEditor').hide()" icon="ui-icon-print" rendered="#{false}"/>
-					</div>
-				</p:panel>
-			</h:form>
-			<p:ajax event="close" listener="#{historicoRecuperandoBean.closeTextEditor}" />
-		</p:dialog>
+            <h:form id="formdialogTextEditor">
+                <p:panel>
+                    <p:editor widgetVar="textEditor"
+                              value="#{historicoRecuperandoBean.historicoRecuperando.detalhamento}" height="300"
+                              controls="bold italic underline strikethrough font numbering size color print"
+                              style="background-color: white;"/>
+                    <div>
+                        <br/>
+                        <p:commandButton value="Salvar" process=":formdialogTextEditor :formHistoricoRecuperando"
+                                         update=":formHistoricoRecuperando mensagens"
+                                         oncomplete="PF('dialogTextEditor').hide()" icon="ui-icon-disk"
+                                         rendered="#{historicoRecuperandoBean.opcaoDetalhamento == 0}"/>
+                        <p:commandButton value="Fechar" onclick="PF('dialogTextEditor').hide()" icon="ui-icon-disk"
+                                         rendered="#{historicoRecuperandoBean.opcaoDetalhamento == 1}"/>
+                        <p:commandButton value="Imprimir" onclick="PF('dialogTextEditor').hide()" icon="ui-icon-print"
+                                         rendered="#{false}"/>
+                    </div>
+                </p:panel>
+            </h:form>
+            <p:ajax event="close" listener="#{historicoRecuperandoBean.closeTextEditor}"/>
+        </p:dialog>
 
 		<style type="text/css">
 			.panelGridSimi.ui-panelgrid>*>tr,

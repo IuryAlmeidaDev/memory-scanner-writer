@@ -44,7 +44,7 @@
 		<variableExpression><![CDATA[$F{matricula}]]></variableExpression>
 	</variable>
 	<pageHeader>
-		<band height="130" splitType="Stretch">
+        <band height="128" splitType="Stretch">
 			<subreport isUsingCache="false">
 				<reportElement positionType="Float" x="0" y="0" width="555" height="106" uuid="e5d91037-92bb-4da7-93b0-b845fc31124c"/>
 				<subreportParameter name="UNIDADE_LOGADA">
@@ -64,86 +64,51 @@
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="15">
+        <band height="20">
 			<rectangle>
-				<reportElement x="0" y="0" width="555" height="15" backcolor="#CCCCCC" uuid="028c9e7e-7abf-4d7c-be95-bdf44488f458"/>
+                <reportElement x="0" y="0" width="555" height="20" backcolor="#CCCCCC"
+                               uuid="028c9e7e-7abf-4d7c-be95-bdf44488f458"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="50" y="0" width="115" height="15" uuid="95b78fe9-6fbe-4d2c-afd0-7f61d4a703c9"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
+                <reportElement x="55" y="0" width="120" height="20" uuid="95b78fe9-6fbe-4d2c-afd0-7f61d4a703c9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[Nome Recuperando]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="385" y="0" width="85" height="15" uuid="7b09b8f4-ad14-4cd3-b429-9f563199ee09"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
+                <reportElement x="385" y="0" width="85" height="20" uuid="7b09b8f4-ad14-4cd3-b429-9f563199ee09"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[Data Entrada]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="50" height="15" uuid="b8865903-6307-485c-984d-6bcaf1b188f8"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
+                <reportElement x="0" y="0" width="55" height="20" uuid="b8865903-6307-485c-984d-6bcaf1b188f8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Matrícula]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="470" y="0" width="85" height="15" uuid="4ce9f3ec-9167-4677-b513-3155dd624f2f"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
+                <reportElement x="470" y="0" width="85" height="20" uuid="4ce9f3ec-9167-4677-b513-3155dd624f2f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[Data Saída]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="275" y="0" width="110" height="15" uuid="6d740ae1-4062-46ad-8548-824db9ea0550"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
+                <reportElement x="265" y="0" width="120" height="20" uuid="6d740ae1-4062-46ad-8548-824db9ea0550"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[Nome Mãe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="165" y="0" width="110" height="15" uuid="bb951469-51ef-4623-bfc8-b807fb4aa0a0"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
+                <reportElement x="175" y="0" width="90" height="20" uuid="bb951469-51ef-4623-bfc8-b807fb4aa0a0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="false"/>
 				</textElement>
@@ -152,10 +117,11 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="15">
+        <band height="20">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="15" uuid="e7722ee2-a8e6-45c3-afd8-09e3951d1f34"/>
-				<box>
+                <reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20"
+                               uuid="e7722ee2-a8e6-45c3-afd8-09e3951d1f34"/>
+                <box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -164,8 +130,9 @@
 				<textFieldExpression><![CDATA[$F{matricula}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="50" y="0" width="115" height="15" uuid="b2ba4966-5b22-4cfb-9349-eb980b8ce8b6"/>
-				<box leftPadding="4">
+                <reportElement stretchType="RelativeToBandHeight" x="55" y="0" width="120" height="20"
+                               uuid="b2ba4966-5b22-4cfb-9349-eb980b8ce8b6"/>
+                <box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
@@ -174,8 +141,9 @@
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="470" y="0" width="85" height="15" uuid="04ae12f9-cb35-49c0-80ba-bf2d2532d7a9"/>
-				<box>
+                <reportElement stretchType="RelativeToBandHeight" x="470" y="0" width="85" height="20"
+                               uuid="04ae12f9-cb35-49c0-80ba-bf2d2532d7a9"/>
+                <box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -184,8 +152,9 @@
 				<textFieldExpression><![CDATA[$F{dataSaida} == null ? "-" : $F{dataSaida}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="385" y="0" width="85" height="15" uuid="150f613a-7fab-42d4-9e3b-0a9489f93c87"/>
-				<box>
+                <reportElement stretchType="RelativeToBandHeight" x="385" y="0" width="85" height="20"
+                               uuid="150f613a-7fab-42d4-9e3b-0a9489f93c87"/>
+                <box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -194,8 +163,9 @@
 				<textFieldExpression><![CDATA[$F{dataEntrada} == null ? "-" : $F{dataEntrada}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="275" y="0" width="110" height="15" uuid="4ed08ba0-019c-4e61-b5e3-962f968143d4"/>
-				<box leftPadding="4">
+                <reportElement stretchType="RelativeToBandHeight" x="265" y="0" width="120" height="20"
+                               uuid="4ed08ba0-019c-4e61-b5e3-962f968143d4"/>
+                <box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
@@ -204,8 +174,9 @@
 				<textFieldExpression><![CDATA[$F{nomeMae}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="165" y="0" width="110" height="15" uuid="12996500-60b3-42a2-9646-1726f0de81d6"/>
-				<box leftPadding="4">
+                <reportElement stretchType="RelativeToBandHeight" x="175" y="0" width="90" height="20"
+                               uuid="12996500-60b3-42a2-9646-1726f0de81d6"/>
+                <box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">

@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.service;
 
 import br.gov.mt.sejudh.sigepen.base.service.BaseService;
 import br.gov.mt.sejudh.sigepen.dao.TipoOcorrenciaDAO;
+import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.model.TipoOcorrencia;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -25,4 +26,12 @@ public class TipoOcorrenciaService extends BaseService<TipoOcorrencia, Long> {
     public List<TipoOcorrencia> listar() {
 		return this.dao.listarTodos();
     }
+
+	public List<TipoOcorrencia> listarAtivos() {
+		return this.dao.buscaPorCampo("status", Status.ATIVO);
+	}
+
+	public List<TipoOcorrencia> listarAtivosPorClassificacao(String classificacao) {
+		return this.tipoOcorrenciaServiceDAO.listarAtivosPorClassificacao(classificacao);
+	}
 }

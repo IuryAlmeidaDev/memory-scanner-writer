@@ -99,8 +99,6 @@ public class MovimentacaoInternaBean extends MetodosDePaginaBean {
 		this.setFiltro(new FiltroMovimentacaoInterna());
 		this.getFiltro().setUnidadeOrigem(SecurityUtil.getUnidadeSelecionada());
 		
-		super.carregarFiltroPaginacao(FiltroMovimentacaoInterna.class, this, getFiltro());
-
 		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
 			FiltroMovimentacaoInterna filtroDash = (FiltroMovimentacaoInterna) facesUtil
 					.getFlashParameter("filtroMovimentacaoInternaDash");
@@ -108,10 +106,10 @@ public class MovimentacaoInternaBean extends MetodosDePaginaBean {
 			if (filtroDash != null) {
 				setFiltro(filtroDash);
 
-			} else {
-				super.carregarFiltroPaginacao(FiltroMovimentacaoInterna.class, this);
 			}
 		}
+
+		super.carregarFiltroPaginacao(FiltroMovimentacaoInterna.class, this, getFiltro());
 	}
 	
 	@URLAction(onPostback=false)
