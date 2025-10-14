@@ -16,8 +16,22 @@ public enum Dashboard {
 	TOTAL_CREDENCIAMENTO_CHECAGEM_PENDENTE("TotalCredenciamentoChecagemPorUnidade"),
 	TOTAL_CREDENCIAMENTO_CONFERENCIA_PENDENTE("TotalCredenciamentoConferenciaPorUnidade"),
 	TOTAL_CREDENCIAMENTO_ANALISE_PENDENTE("TotalCredenciamentoAnalisePorUnidade"),
-	TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE("TotalCredenciamentoAprovacaoPorUnidade");
-	
+	TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE("TotalCredenciamentoAprovacaoPorUnidade"),
+	TOTAL_MOVIMENTACAO_INTERNA_PENDENTE("TotalMovimentacaoInternaPendente"),
+	TOTAL_MOVIMENTACAO_INTERNA_EM_ANDAMENTO("TotalMovimentacaoInternaEmAndamento"),
+	TOTAL_MOVIMENTACAO_INTERNA_AGUARDANDO_FINALIZAR("TotalMovimentacaoInternaAguardandoFinalizar"),
+	TOTAL_MOVIMENTACAO_EXTERNA_PENDENTE("TotalMovimentacaoExternaPendente"),
+	TOTAL_MOVIMENTACAO_EXTERNA_EM_ANDAMENTO("TotalMovimentacaoExternaEmAndamento"),
+	TOTAL_MOVIMENTACAO_EXTERNA_AGUARDANDO_FINALIZAR("TotalMovimentacaoExternaAguardandoFinalizar"),
+	TOTAL_MOVIMENTACAO_INTERNA_FINALIZADO_PARCIAL("TotalMovimentacaoInternaFinalizadoParcial"),
+	TOTAL_MOVIMENTACAO_EXTERNA_FINALIZADO_PARCIAL("TotalMovimentacaoExternaFinalizadoParcial"),
+	TOTAL_TRANSFERENCIA_PENDENTE("TotalTransferenciaPendente"),
+	TOTAL_TRANSFERENCIA_EM_ANDAMENTO("TotalTransferenciaEmAndamento"),
+	TOTAL_TRANSFERENCIA_FINALIZADO_PARCIAL("TotalTransferenciaFinalizadoParcial"),
+	TOTAL_RECEBER_TRANSFERENCIA_VINCULADO("totalReceberTransferenciaViculada"),
+	TOTAL_RECEBER_TRANSFERENCIA_EM_ANDAMENTO("TotalReceberTransferenciaEmAndamento"),
+	TOTAL_REMANEJAMENTO_EM_ANDAMENTO("TotalRemanejamentoEmAndamento");
+
 	private String descricao;
 	
 	Dashboard(String descricao) {

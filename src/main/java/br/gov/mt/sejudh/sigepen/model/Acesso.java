@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
@@ -29,7 +30,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name = "ACESSO", schema = Sigepen.SEJUDH_SCHEMA)
-public class Acesso implements Serializable {
+public class Acesso extends BaseModel<Long>  implements Serializable {
 	
 	private static final long serialVersionUID = 5487435987114310141L;
 
@@ -67,7 +68,7 @@ public class Acesso implements Serializable {
 		
 	}
 	
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

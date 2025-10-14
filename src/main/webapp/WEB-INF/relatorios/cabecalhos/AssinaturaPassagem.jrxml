@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RodapePadrao" pageWidth="842" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.6934217901613318"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<parameter name="ASSINATURA_1" class="java.lang.String"/>
+	<parameter name="CARGO_1" class="java.lang.String"/>
+	<parameter name="ASSINATURA_2" class="java.lang.String"/>
+	<parameter name="CARGO_2" class="java.lang.String"/>
+	<parameter name="ASSINATURA_3" class="java.lang.String"/>
+	<parameter name="CARGO_3" class="java.lang.String"/>
+	<parameter name="ASSINATURA_4" class="java.lang.String"/>
+	<parameter name="CARGO_4" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<lastPageFooter>
+		<band height="131">
+			<textField>
+				<reportElement x="128" y="10" width="179" height="20" uuid="8ad43908-232f-436a-9d52-a620accd9e47"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ASSINATURA_1} != null ? $P{ASSINATURA_1} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="30" width="179" height="20" uuid="35c51db6-c1ea-4f46-8885-6530b2aad52f"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CARGO_1} != null ? $P{CARGO_1} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="81" width="179" height="20" uuid="8ca1761a-d844-4cd5-8e5e-6746892c7f8d"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ASSINATURA_3} != null ? $P{ASSINATURA_3} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="101" width="179" height="20" uuid="8507b787-3387-4646-af8b-f801d20808c0"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CARGO_3} != null ? $P{CARGO_3} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="10" width="179" height="20" uuid="c2ce36a2-a46a-43aa-afab-7f37460b94f8"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ASSINATURA_2} != null ? $P{ASSINATURA_2} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="30" width="179" height="20" uuid="de1441db-03fe-4bdd-ae47-3ff0ad39efc8"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CARGO_2} != null ? $P{CARGO_2} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="81" width="179" height="20" uuid="6300602b-c2fa-4d50-8572-2a44ec0ab523"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ASSINATURA_4} != null ? $P{ASSINATURA_4} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="101" width="179" height="20" uuid="69f67667-f8f4-4c0b-b943-20b70b7bf30e"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CARGO_4} != null ? $P{CARGO_4} : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

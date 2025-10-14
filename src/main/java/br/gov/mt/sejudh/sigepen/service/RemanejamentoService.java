@@ -11,6 +11,7 @@ import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoDAO;
 import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.dao.RemanejamentoDAO;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroPedTransito;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRemanejamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
@@ -93,5 +94,8 @@ public class RemanejamentoService {
 		remanejamento.setStatus(StatusMovimentacao.FINALIZADO);
 		dao.salvar(remanejamento);
 	}
-		
+
+    public int countRecebimentoTransferencia(FiltroRemanejamento filtro) {
+		return quantidadeFiltrados(filtro);
+    }
 }

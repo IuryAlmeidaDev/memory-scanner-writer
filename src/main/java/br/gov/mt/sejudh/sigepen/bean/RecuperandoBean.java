@@ -96,7 +96,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ManagedBean
 @ViewScoped
 @URLMappings(mappings = {
-		@URLMapping(id = "ListarRecuperando", pattern = "/recuperando", viewId = "/WEB-INF/pages/recuperando/ListarRecuperandoNovo.xhtml"),
+		@URLMapping(id = "ListarRecuperando", pattern = "/recuperando", viewId = "/WEB-INF/pages/recuperando/ListarRecuperando.xhtml"),
 		@URLMapping(id = "CadastrarRecuperando", pattern = "/recuperando/cadastrar", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),	
 		@URLMapping(id = "AlterarRecuperando", pattern = "/recuperando/alterar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "VisualizarRecuperando", pattern = "/recuperando/visualizar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
@@ -222,6 +222,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private HistoricoRecuperandoService historicoService;
+
+	@Inject
+	private GerenciarAssinaturaService gerenciarAssinaturaService;
 
 	private List<Etnia> etnias;
 
@@ -685,6 +688,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			cadastrarProcessoBean.excluirProcessoRegimeCondicaoECrime(processo);
 			this.recuperando.getProcessos().remove(processo);
 			
+			this.atualizarProcessos(processo.getNumeroProcesso());
+			
 			facesUtil.exibirMensagemInfo("Processo " + processo.getNumeroProcesso() + " excluído(a) com sucesso!", true);
 			LoggerUtil.logInfo(Acao.EXCLUIR, processo, log);
 			
@@ -845,6 +850,19 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
 					"Erro atualizar processos do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.ASSOCIAR, numProc, e, log);
+		}
+	}
+		
+	public void atualizarProcessos(String processo) {
+		try {
+			if (processo != null && !processo.isEmpty()) {
+				this.recuperando = this.service.atualizarRegimeCondicaoAtualRecuperando(recuperando);
+				facesUtil.exibirMensagemInfo("Processo " + processo + " salvo com sucesso!", false);
+			}
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro atualizar processos do recuperando: " + e.getMessage());
+			LoggerUtil.logErro(Acao.ASSOCIAR, processo, e, log);
 		}
 	}
 
@@ -1702,7 +1720,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			r.setQuantFilhos(i);
 			recs.add(r);
 
-			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(recs, Relatorio.RegistroRecuperando));
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(recs, Relatorio.RegistroRecuperando,this.gerenciarAssinaturaService));
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, recuperando, log);
 		} catch (Exception e) {

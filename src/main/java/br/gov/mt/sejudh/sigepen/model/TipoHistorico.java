@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
@@ -18,9 +20,13 @@ public class TipoHistorico implements Serializable{
 	@Id
 	@Column(name="ID")
 	private long id;
-	
+
 	@Column(name="DESCRICAO", length=80, nullable = false)
 	private String descricao;
+
+	@ManyToOne
+	@JoinColumn(name="FUNCIONALIDADE_ID")
+	private Funcionalidade funcionalidade;
 
 	public long getId() {
 		return id;
@@ -37,7 +43,15 @@ public class TipoHistorico implements Serializable{
 	public void setDescricao(String descricao) {
 		this.descricao = Sigepen.formatarEspacos(descricao);
 	}
-	
+
+	public Funcionalidade getFuncionalidade() {
+		return funcionalidade;
+	}
+
+	public void setFuncionalidade(Funcionalidade funcionalidade) {
+		this.funcionalidade = funcionalidade;
+	}
+
 	@Override
 	public String toString() {
 		return "TipoHistorico [id=" + id + "]";
@@ -71,5 +85,5 @@ public class TipoHistorico implements Serializable{
 			return false;
 		return true;
 	}	
-	
+
 }

@@ -141,6 +141,18 @@ public class ServidorBean extends MetodosDePaginaBean {
 	
 	@Inject
 	private ComboService comboService;
+	
+	private boolean abrirDialogDesligamento;
+	
+	public void verificarStatus() {
+	    if (servidor.getStatus() != null && servidor.getStatus().getDescricao().equals("Inativo")) {
+	        abrirDialogDesligamento = true;
+	        RequestContext.getCurrentInstance().addCallbackParam("openDialog", true);
+	    } else {
+	        abrirDialogDesligamento = false;
+	        RequestContext.getCurrentInstance().addCallbackParam("openDialog", false);
+	  }
+	}
 
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
@@ -200,13 +212,9 @@ public class ServidorBean extends MetodosDePaginaBean {
 		}
 		
 		this.servidor = service.buscarServidorCompletoPorId(id);
-		
-		if (this.servidor == null) {
-			return false;
-		}
-		
-		return true;
-	}
+
+        return this.servidor != null;
+    }
 	
 	private void inicializaListas() {
 		this.orgaos = orgaoService.listarOrgaoAtivo();
@@ -679,7 +687,7 @@ public class ServidorBean extends MetodosDePaginaBean {
 		try {
 			List<ServidorDTO> lista = service.buscaPorFiltro(filtro, true);
 			
-			if (lista.size() == 0) {
+			if (lista.isEmpty()) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
 				return;
 			}
@@ -696,7 +704,7 @@ public class ServidorBean extends MetodosDePaginaBean {
 	
 	public void imprimirRegistro(ServidorDTO servidor) {
 		try {
-			List<Servidor> lista = new ArrayList<Servidor>();
+			List<Servidor> lista = new ArrayList<>();
 			Servidor serv = service.buscarServidorCompletoPorId(servidor.getId());
 			lista.add(serv);
 			
@@ -708,7 +716,7 @@ public class ServidorBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.IMPRIMIR, servidor, e, log);
 		}
 	}
-	
+
 	public FiltroServidor getFiltro() {
 		return filtro;
 	}

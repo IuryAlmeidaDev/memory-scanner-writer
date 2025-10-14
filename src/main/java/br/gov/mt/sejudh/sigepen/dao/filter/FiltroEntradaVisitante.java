@@ -45,11 +45,11 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 			if (this.getPessoasIds() != null && this.getPessoasIds().size() > 0) {
 				getCriteria().add(Restrictions.in("pessoa.id", this.getPessoasIds()));
 			}
-			
+
 			if(this.getIdVisitante() != null) {
 				getCriteria().add(Restrictions.eq("id", this.getIdVisitante()));
 			}
-			
+
 		} else {
 			if (this.getData() != null) {
 				Date di = Sigepen.getDataConsultaMaiorIgual(this.getData());
@@ -57,13 +57,13 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 				getCriteria().add(Restrictions.between("entradas.dataEntrada", di, df));
 			}
 
-			if (this.getUnidade() != null && this.getUnidade() > 0) {
-				getCriteria().add(Restrictions.eq("entradas.unidadePrisional.id", this.getUnidade()));
-			}
-
 			if (this.getSomenteEntradas() != null && this.getSomenteEntradas()) {
 				getCriteria().add(Restrictions.eq("entradas.situacao", SituacaoVisita.EM_ANDAMENTO));
 			}
+		}
+
+		if (this.getUnidade() != null && this.getUnidade() > 0) {
+			getCriteria().add(Restrictions.eq("entradas.unidadePrisional.id", this.getUnidade()));
 		}
 	}
 
@@ -138,10 +138,10 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 	@Override
 	public void configurarOrdenacao() {
 		super.configurarOrdenacao();
-		
+
 		if (this.getOrdenacao() != null) {
 			getCriteria().addOrder((this.getOrdenacao().isAscending() ? Order.asc("entradas.id") : Order.desc("entradas.id")));
-			
+
 			if (this.getPropriedadeOrdenacao().equals("entradas.id")) {
 				this.getOrdenacao().nulls(NullPrecedence.LAST);
 			}

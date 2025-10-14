@@ -1,5 +1,8 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
+import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.model.Perfil;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
@@ -8,6 +11,9 @@ import org.hibernate.sql.JoinType;
 
 import br.gov.mt.sejudh.sigepen.util.RestrictionsSigepen;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class FiltroUsuario extends FiltroConsulta {
 	
@@ -18,6 +24,9 @@ public class FiltroUsuario extends FiltroConsulta {
 	private String login;
 	private String email;
 	private Boolean resetSenha = false;
+	private UnidadePrisional unidadePrisional;
+	private Status status;
+	private Perfil perfil;
 
 	public String getNome() {
 		return nome;
@@ -59,17 +68,44 @@ public class FiltroUsuario extends FiltroConsulta {
 		this.resetSenha = resetSenha;
 	}
 
+	public UnidadePrisional getUnidadePrisional() {
+		return unidadePrisional;
+	}
+
+	public void setUnidadePrisional(UnidadePrisional unidadePrisional) {
+		this.unidadePrisional = unidadePrisional;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public Perfil getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(Perfil perfil) {
+		this.perfil = perfil;
+	}
+
 	@Override
 	public void configurarFiltros() {
 		getCriteria().createAlias("servidor", "servidor", JoinType.LEFT_OUTER_JOIN);
-		
+		getCriteria().createAlias("acessos", "acessos", JoinType.LEFT_OUTER_JOIN);
+		getCriteria().createAlias("acessos.perfis", "perfis", JoinType.LEFT_OUTER_JOIN);
+
 		Projection proj = Projections.projectionList()
 				.add(Projections.distinct(Projections.property("id").as("id"))) 
 				.add(Projections.property("servidor.nome").as("nome"))
 				.add(Projections.property("login").as("login"))
 				.add(Projections.property("unidadePerfilSolicitadaResetSenha").as("unidadePerfilSolicitadaResetSenha"))
 	            .add(Projections.property("dataSolicitacaoResetSenha").as("dataSolicitacaoResetSenha"))
-	            .add(Projections.property("status").as("status"));
+	            .add(Projections.property("status").as("status"))
+				;
 
 		getCriteria().setProjection(proj);
 		
@@ -94,6 +130,18 @@ public class FiltroUsuario extends FiltroConsulta {
 		
 		if (this.getResetSenha() != null) {
 			getCriteria().add(Restrictions.eqOrIsNull("resetSenha", this.getResetSenha()));
+		}
+
+		if(this.getUnidadePrisional() != null){
+			getCriteria().add(Restrictions.eq("acessos.unidade", this.getUnidadePrisional()));
+		}
+
+		if(this.getPerfil() != null){
+			getCriteria().add(Restrictions.in("perfis.id", Collections.singletonList(this.getPerfil().getId())));
+		}
+
+		if(this.getStatus() != null){
+			getCriteria().add(Restrictions.eq("status", this.getStatus()));
 		}
 	}
 

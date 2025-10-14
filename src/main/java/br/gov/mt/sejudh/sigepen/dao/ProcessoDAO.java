@@ -24,9 +24,13 @@ public class ProcessoDAO {
 		}
 		return processo;
 	}
-	
+
 	public List<Processo> processosPorRecuperando(long idRecuperando){
-		TypedQuery<Processo> query = entityManager.createQuery("select p from Processo p where p.recuperando.id = :idRecuperando", Processo.class);
+		String jpql = "select p from Processo p " +
+				"left join fetch p.processosRegimeCondicao prc " +
+				"left join fetch prc.regime " +
+				"where p.recuperando.id = :idRecuperando";
+		TypedQuery<Processo> query = entityManager.createQuery(jpql, Processo.class);
 		query.setParameter("idRecuperando", idRecuperando);
 		return query.getResultList();
 	}

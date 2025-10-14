@@ -466,4 +466,8 @@ public class PedidoService {
 	public List<PedidoTransito> buscarPedidosPorMovimentacaoId(long id) {
 		return this.dao.buscarPedidosPorMovimentacaoId(id);
 	}
+
+	public int countRecebimentoTransferencia(FiltroPedTransito filtro) {
+		return quantidadeFiltrados(filtro);
+	}
 }

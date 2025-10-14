@@ -638,6 +638,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			f.setResponsavel(this.filtro.getResponsavel());
 			f.setPessoasIds(this.filtro.getPessoasIds());
 			f.setIsPesquisaFonetica(this.filtro.getIsPesquisaFonetica());
+            f.setVencimentoCredenciamento(this.filtro.getVencimentoCredenciamento());
 
 			Set<Visitante> lista = new LinkedHashSet<>(service.listarRelatorio(f, true));
 

@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroTransferencia;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -108,6 +109,15 @@ public class MovimentacaoExternaBean extends MetodosDePaginaBean {
 		this.setFiltro(new FiltroMovimentacaoExterna());
 		this.getFiltro().setUnidadeOrigem(SecurityUtil.getUnidadeSelecionada());		
 		
+		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
+			FiltroMovimentacaoExterna filtroDash = (FiltroMovimentacaoExterna) facesUtil
+					.getFlashParameter("filtroMovimentacaoExternaDash");
+
+			if (filtroDash != null) {
+				this.setFiltro(filtroDash);
+
+			}
+		}
 		super.carregarFiltroPaginacao(FiltroMovimentacaoExterna.class, this, getFiltro());
 	}
 	

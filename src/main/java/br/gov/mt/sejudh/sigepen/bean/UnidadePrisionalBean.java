@@ -1,9 +1,6 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -11,6 +8,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.model.*;
+import br.gov.mt.sejudh.sigepen.service.*;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -30,26 +29,10 @@ import br.gov.mt.sejudh.sigepen.enumerator.ParametroVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
-import br.gov.mt.sejudh.sigepen.model.Contato;
-import br.gov.mt.sejudh.sigepen.model.Endereco;
-import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.ParametroUnidade;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisitaBloqueio;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisitaEstrutura;
-import br.gov.mt.sejudh.sigepen.model.Servidor;
-import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
-import br.gov.mt.sejudh.sigepen.service.ContatoService;
-import br.gov.mt.sejudh.sigepen.service.EnderecoService;
-import br.gov.mt.sejudh.sigepen.service.EstruturaService;
-import br.gov.mt.sejudh.sigepen.service.ParametroUnidadeService;
-import br.gov.mt.sejudh.sigepen.service.ParametroVisitaService;
-import br.gov.mt.sejudh.sigepen.service.ServidorService;
-import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -128,9 +111,19 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 	private List<Estrutura> estruturaFilhos;
 	
 	private List<ParametroVisitaEstrutura> parametroVisitaEstrutura;
-	
 
-	public List<ParametroVisitaEstrutura> getParametroVisitaEstrutura() {
+	private List<GerenciarAssinatura> gerenciarAssinaturas = new ArrayList<GerenciarAssinatura>();
+
+	private GerenciarAssinatura gerenciarAssinatura = new GerenciarAssinatura();
+
+	private String ordem;
+	private List<String> orders = new ArrayList<String>(Arrays.asList("1","2","3","4"));
+
+	@Inject
+	private GerenciarAssinaturaService gerenciarAssinaturaService;
+    private boolean visualizacaoGerenciarAssinatura;
+
+    public List<ParametroVisitaEstrutura> getParametroVisitaEstrutura() {
 		return parametroVisitaEstrutura;
 	}
 
@@ -167,6 +160,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 					
 				case VISUALIZAR:
 				case ALTERAR:
+
 					long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
 					
 					if (!buscarUnidade(id)) {
@@ -179,6 +173,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 						return "pretty:ListarUnidade";
 					}
 
+					this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar(this.unidade);
 					logDeAcesso(log, this.unidade);
 					break;
 					
@@ -849,6 +844,173 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 	public void setEstruturaFilhos(List<Estrutura> estruturaFilhos) {
 		this.estruturaFilhos = estruturaFilhos;
 	}
-	
-	
+
+
+    public List<GerenciarAssinatura> getGerenciarAssinaturas() {
+        return gerenciarAssinaturas;
+    }
+
+    public void setGerenciarAssinaturas(List<GerenciarAssinatura> gerenciarAssinaturas) {
+        this.gerenciarAssinaturas = gerenciarAssinaturas;
+    }
+
+    public GerenciarAssinatura getGerenciarAssinatura() {
+        return gerenciarAssinatura;
+    }
+
+    public void setGerenciarAssinatura(GerenciarAssinatura gerenciarAssinatura) {
+        this.gerenciarAssinatura = gerenciarAssinatura;
+    }
+
+	public void addOrdemServidor() {
+		this.setOrdem(ordem);
+	}
+
+	private boolean validaAddServidor(){
+		if(this.ordem == null) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Informe a ordem");
+			return false;
+		}
+
+		if(this.gerenciarAssinatura.getGerenciarAssinaturaServidores().size() > 4){
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Permitido apenas 4 servidores.");
+			return false;
+		}
+
+		return true;
+	}
+
+	public void salvarAssinatura() throws ValidacaoException {
+		gerenciarAssinatura.setUnidadePrisional(this.unidade);
+
+		if(this.gerenciarAssinatura.getGerenciarAssinaturaServidores().isEmpty()){
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Informe pelo menos 1 servidores.");
+			return;
+		}
+
+		if(gerenciarAssinaturaService.verificaGerenciarAssinaturaExistente(gerenciarAssinatura)){
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "", "Existe um gerenciamento ativo para essa unidade com o mesmo relatorio");
+			return;
+		}
+
+		gerenciarAssinaturaService.salvar(gerenciarAssinatura);
+		this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar(this.unidade);
+		facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "Sucesso", "Gerenciamento Salvo");
+	}
+
+    public void abrirDialogVisualizarGerenciamentoAssinatura(GerenciarAssinatura gerenciarAssinatura) {
+		this.gerenciarAssinatura = gerenciarAssinatura;
+        this.visualizacaoGerenciarAssinatura = true;
+    }
+
+    public void excluirGerenciamentoAssinatura(GerenciarAssinatura gerenciarAssinatura) throws ValidacaoException {
+        gerenciarAssinaturaService.excluir(gerenciarAssinatura);
+		this.gerenciarAssinaturas = this.gerenciarAssinaturaService.listar(this.unidade);
+        facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "", "Assinaturas excluída com sucesso!");
+    }
+
+
+	public void removeServidor(Servidor servidor){
+
+		try {
+
+			if (servidor == null) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Servidor não encontrado.");
+				return;
+			}
+
+			GerenciarAssinaturaServidor gerenciarAssinaturaServidor = this.gerenciarAssinatura.getGerenciarAssinaturaServidores().stream().filter(gerenciarServ -> gerenciarServ.getServidor().equals(servidor)).findFirst().orElse(null);
+
+			if (gerenciarAssinaturaServidor == null) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "remover não encontrado.");
+				return;
+			}
+
+			this.gerenciarAssinatura.getGerenciarAssinaturaServidores().remove(gerenciarAssinaturaServidor);
+
+
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao desassociar servidor: " + e.getMessage());
+			LoggerUtil.logErro(Acao.ASSOCIAR, servidor, e, log);
+		}
+	}
+
+	public void limparDialogoGerenciarAssinatura(){
+		this.gerenciarAssinatura = new GerenciarAssinatura();
+	}
+
+	public void addServidor(SelectEvent event) {
+		if(!validaAddServidor()){
+			return;
+		}
+		ServidorDTO s = (ServidorDTO) event.getObject();
+		GerenciarAssinaturaServidor gerenciarAssinaturaServidor = new GerenciarAssinaturaServidor();
+
+		try {
+			if (s == null) {
+				return;
+			}
+
+			Servidor servidor = servidorService.buscarServidorSimplesPorId(s.getId());
+
+			if (servidor == null) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Servidor não encontrado.");
+				return;
+			}
+
+			boolean servidorLista = this.gerenciarAssinatura.getGerenciarAssinaturaServidores().stream().anyMatch(gerenciarServ -> gerenciarServ.getServidor().equals(servidor));
+			boolean ordemLista = this.gerenciarAssinatura.getGerenciarAssinaturaServidores().stream().anyMatch(gerenciarServ -> gerenciarServ.getOrdem().equals(ordem));
+
+			if(servidorLista){
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Servidor já adicionado.");
+				return;
+			}
+
+			if(ordemLista){
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Ordem já adicionado.");
+				return;
+			}
+
+			gerenciarAssinaturaServidor.setOrdem(ordem);
+			gerenciarAssinaturaServidor.setServidor(servidor);
+
+			this.gerenciarAssinatura.getGerenciarAssinaturaServidores().add(gerenciarAssinaturaServidor);
+			gerenciarAssinaturaServidor.setGerenciarAssinatura(this.gerenciarAssinatura);
+
+			this.setOrdem(null);
+
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao desassociar servidor: " + e.getMessage());
+			LoggerUtil.logErro(Acao.ASSOCIAR, s, e, log);
+		}
+	}
+
+	public void abrirDialogAlterarGerenciamentoAssinatura(GerenciarAssinatura gerenciarAssinatura) {
+		this.visualizacaoGerenciarAssinatura = false;
+		this.gerenciarAssinatura = gerenciarAssinatura;
+	}
+
+	public String getOrdem() {
+        return this.ordem;
+    }
+
+	public void setOrdem(String ordem) {
+		this.ordem = ordem;
+	}
+
+    public List<String> getOrders() {
+        return  orders;
+    }
+
+	public void setOrders(List<String> orders) {
+		this.orders = orders;
+	}
+
+    public boolean isVisualizacaoGerenciarAssinatura() {
+        return visualizacaoGerenciarAssinatura;
+    }
+
+    public void setVisualizacaoGerenciarAssinatura(boolean visualizacaoGerenciarAssinatura) {
+        this.visualizacaoGerenciarAssinatura = visualizacaoGerenciarAssinatura;
+    }
 }

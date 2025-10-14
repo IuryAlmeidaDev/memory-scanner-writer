@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
+import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -17,14 +18,39 @@ public class DetalheItemEstruturaCardapioDTO {
     private String siglaUnidadeMedida;
     private String nomeEstrutura;
     private Integer nivelEstrutura;
+    private Long itemCardapioId;
+    private Long estruturaId;
+    private double total;
+    private String unidadeMedidaTotal;
 
-    public DetalheItemEstruturaCardapioDTO(String item, double qtdPorItem, Integer qtdRecuperando, String siglaUnidadeMedida, String nomeEstrutura, Integer nivelEstrutura) {
+    public DetalheItemEstruturaCardapioDTO(String item, double qtdPorItem, Integer qtdRecuperando, String siglaUnidadeMedida, String nomeEstrutura, Integer nivelEstrutura, Long itemCardapioId, Long estruturaId) {
         this.item = item;
         this.qtdPorItem = qtdPorItem;
         this.qtdRecuperando = qtdRecuperando;
         this.siglaUnidadeMedida = siglaUnidadeMedida;
         this.nomeEstrutura = nomeEstrutura;
         this.nivelEstrutura = nivelEstrutura;
+        this.itemCardapioId = itemCardapioId;
+        this.estruturaId = estruturaId;
+        calculaTotalEUnidadeDeMedida();
+    }
+
+    private void calculaTotalEUnidadeDeMedida() {
+        this.total = this.qtdPorItem * (this.qtdRecuperando != null ? this.qtdRecuperando : 0);
+        this.unidadeMedidaTotal = this.siglaUnidadeMedida;
+
+        if (this.total >= 1000) {
+            if (UnidadeMedida.MILIGRAMA.getSigla().equalsIgnoreCase(this.siglaUnidadeMedida)) {
+                this.total = this.total / 1000;
+                this.unidadeMedidaTotal = UnidadeMedida.GRAMA.getSigla();
+            } else if (UnidadeMedida.GRAMA.getSigla().equalsIgnoreCase(this.siglaUnidadeMedida)) {
+                this.total = this.total / 1000;
+                this.unidadeMedidaTotal = UnidadeMedida.KILOGRAMA.getSigla();
+            } else if (UnidadeMedida.MILILITRO.getSigla().equalsIgnoreCase(this.siglaUnidadeMedida)) {
+                this.total = this.total / 1000;
+                this.unidadeMedidaTotal = UnidadeMedida.LITRO.getSigla();
+            }
+        }
     }
 
     public String getItem() {
@@ -67,6 +93,38 @@ public class DetalheItemEstruturaCardapioDTO {
         this.nivelEstrutura = nivelEstrutura;
     }
 
+    public Long getItemCardapioId() {
+        return itemCardapioId;
+    }
+
+    public void setItemCardapioId(Long itemCardapioId) {
+        this.itemCardapioId = itemCardapioId;
+    }
+
+    public Long getEstruturaId() {
+        return estruturaId;
+    }
+
+    public void setEstruturaId(Long estruturaId) {
+        this.estruturaId = estruturaId;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public String getUnidadeMedidaTotal() {
+        return unidadeMedidaTotal;
+    }
+
+    public void setUnidadeMedidaTotal(String unidadeMedidaTotal) {
+        this.unidadeMedidaTotal = unidadeMedidaTotal;
+    }
+
     public static List<DetalheItemEstruturaCardapioDTO> combinarPedidos(List<PedidoEstruturaDTO> estruturas, List<RefeicaoDetalhadaDTO> pedidosConsulta) {
         List<DetalheItemEstruturaCardapioDTO> combinados = new ArrayList<>();
         for (RefeicaoDetalhadaDTO pedido : pedidosConsulta) {
@@ -105,7 +163,9 @@ public class DetalheItemEstruturaCardapioDTO {
                 estrutura.getQtdPadrao(),
                 unidadeMedidaSigla,
                 nomeEstrutura,
-                nivel
+                nivel,
+                pedido.getItemCardapioId(),
+                estrutura.getEstruturaId() != null ? estrutura.getEstruturaId().longValue() : null
         );
     }
 
@@ -118,7 +178,10 @@ public class DetalheItemEstruturaCardapioDTO {
                 .append("siglaUnidadeMedida", siglaUnidadeMedida)
                 .append("nomeEstrutura", nomeEstrutura)
                 .append("nivelEstrutura", nivelEstrutura)
+                .append("itemCardapioId", itemCardapioId)
+                .append("estruturaId", estruturaId)
+                .append("total", total)
+                .append("unidadeMedidaTotal", unidadeMedidaTotal)
                 .toString();
     }
 }
-

@@ -16,8 +16,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
@@ -31,34 +32,34 @@ public class HistoricoRecuperando implements Serializable {
 	private static final long serialVersionUID = 8195563536690216091L;
 
 	@SequenceGenerator(name = "SEQ_HISTORICO_RECUPERANDO_GENERATOR", sequenceName = "SEQ_HISTORICO_RECUPERANDO", initialValue = 1, allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_HISTORICO_RECUPERANDO_GENERATOR")
 	@Column(name = "ID")
 	private long id;
-	
-	@Transient
-	private Long versao;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "RECUPERANDO_ID")
 	private Recuperando recuperando;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_REGISTRO")
 	private Date dataRegistro;
-	
-	@Audited(targetAuditMode=RelationTargetAuditMode.NOT_AUDITED)
+
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne
 	@JoinColumn(name = "TIPO_HISTORICO_ID")
 	private TipoHistorico tipoHistorico;
-	
+
 	@Column(name = "OBSERVACAO")
 	private String observacao;
 
 	@Lob
-    @Column(name="DETALHAMENTO")
+	@Column(name = "DETALHAMENTO")
 	private String detalhamento;
+
+	@ManyToOne
+	@JoinColumn(name = "SERVIDOR_ID")
+	private Servidor servidor;
 
 	public long getId() {
 		return id;
@@ -100,16 +101,33 @@ public class HistoricoRecuperando implements Serializable {
 		this.observacao = Sigepen.formatarEspacos(observacao);
 	}
 
-	@Override
-	public String toString() {
-		return "Historico Recuperando [id=" + id + ", recuperando="+ recuperando +"]";
-	}
-
 	public String getDetalhamento() {
 		return detalhamento;
 	}
 
 	public void setDetalhamento(String detalhamento) {
 		this.detalhamento = detalhamento;
+	}
+
+	public Servidor getServidor() {
+		return servidor;
+	}
+
+	public void setServidor(Servidor servidor) {
+		this.servidor = servidor;
+	}
+
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("id", id)
+				.append("recuperando", recuperando)
+				.append("dataRegistro", dataRegistro)
+				.append("tipoHistorico", tipoHistorico)
+				.append("observacao", observacao)
+				.append("detalhamento", detalhamento)
+				.append("servidor", servidor)
+				.toString();
 	}
 }
