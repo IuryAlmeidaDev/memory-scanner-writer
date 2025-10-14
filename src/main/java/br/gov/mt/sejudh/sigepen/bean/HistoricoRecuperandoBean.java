@@ -1,28 +1,10 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.inject.Inject;
-
-import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
-import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
-import org.apache.logging.log4j.Logger;
-import org.primefaces.context.RequestContext;
-
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.exception.NaoEncontradoException;
 import br.gov.mt.sejudh.sigepen.model.HistoricoRecuperando;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
+import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
 import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
@@ -30,6 +12,17 @@ import br.gov.mt.sejudh.sigepen.service.HistoricoRecuperandoService;
 import br.gov.mt.sejudh.sigepen.service.RecuperandoService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
+import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
+import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @ManagedBean
 @ViewScoped
@@ -75,7 +68,6 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean implements Ser
 			this.historicoRecuperando = new HistoricoRecuperando();
 			facesUtil.exibirMensagemInfo("Histórico salvo com sucesso!", false);
 			RequestContext.getCurrentInstance().update("mensagens");
-			RequestContext.getCurrentInstance().update(DIALOG_TEXT_EDITOR_ID);
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao salvar histórico do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.SALVAR, this.historicoRecuperando, e, log);
@@ -253,15 +245,12 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean implements Ser
 
 	public void adicionarDetalhamento() {
 		this.opcaoDetalhamento = 0;
-		this.historicoRecuperando.setDetalhamento(null);
-		RequestContext.getCurrentInstance().update(DIALOG_TEXT_EDITOR_ID);
 	}
 
 	public void closeTextEditor() {
 		if(this.opcaoDetalhamento == 1) {
 			this.historicoRecuperando = new HistoricoRecuperando();
 		}
-		RequestContext.getCurrentInstance().update(DIALOG_TEXT_EDITOR_ID);
 	}
 
 	public HistoricoRecuperando getHistoricoRecuperando() {

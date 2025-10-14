@@ -154,9 +154,6 @@ public class TipoOcorrenciaBean extends MetodosDePaginaBean {
 			@Override
 			public List<TipoOcorrencia> load(int first, int pageSize, String sortField, SortOrder sortOrder,	Map<String, Object> filters) {
 
-				FiltroTipoOcorrencia filtro = (FiltroTipoOcorrencia) getFiltro(); // Usa a subclasse concreta
-				filtro.setStatus(Status.ATIVO);
-
 				setRowCount(service.quantidadeFiltrados(getFiltro()));
 
 				try {

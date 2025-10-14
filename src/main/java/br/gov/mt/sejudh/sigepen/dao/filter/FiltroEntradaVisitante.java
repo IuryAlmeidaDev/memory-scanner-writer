@@ -1,6 +1,8 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.NullPrecedence;
@@ -18,7 +20,6 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 
 	private static final long serialVersionUID = 3929832042968725424L;
 	private String nome;
-	private String nomeRecuperando;
 	private Date data;
 	private List<Long> pessoasIds;
 	private StatusCredenciamentosVisita statusCredenciamento;
@@ -27,24 +28,17 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 	private Boolean somenteEntradas;
 	private Long idVisitante;
 
-	private Long idEstrutura;
-	private Set<Long> idsEstruturas = new HashSet<>();
-
 	@Override
 	public void configurarFiltros() {
 
-		getCriteria()
-				.createAlias("entradas", "entradas",
+		getCriteria().createAlias("pessoa", "pessoa", JoinType.LEFT_OUTER_JOIN).createAlias("entradas", "entradas",
 				JoinType.LEFT_OUTER_JOIN);
 
 		if (StringUtils.isNotBlank(this.getNome())
-				|| StringUtils.isNotBlank(this.getNomeRecuperando())
 				|| (this.getPessoasIds() != null && this.getPessoasIds().size() > 0)
 				|| (this.getIdVisitante() != null)) {
-
 			if (StringUtils.isNotBlank(this.getNome())) {
-
-				getCriteria().createAlias("pessoa", "pessoa", JoinType.LEFT_OUTER_JOIN)
+				getCriteria()
 						.add(RestrictionsSigepen.ignoraAcentoLike("pessoa.nome", this.getNome(), MatchMode.ANYWHERE));
 			}
 
@@ -56,31 +50,6 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 				getCriteria().add(Restrictions.eq("id", this.getIdVisitante()));
 			}
 
-			if (StringUtils.isNotBlank(this.getNomeRecuperando()) || !this.getIdsEstruturas().isEmpty()) {
-				getCriteria().createAlias("credenciamentos", "c", JoinType.INNER_JOIN)
-						.createAlias("c.recuperando", "r", JoinType.INNER_JOIN);
-			}
-
-			if (StringUtils.isNotBlank(this.getNomeRecuperando())) {
-				getCriteria().createAlias("r.pessoa", "p",JoinType.LEFT_OUTER_JOIN); // Pessoa do Recuperando
-				getCriteria()
-						.add(RestrictionsSigepen.ignoraAcentoLike("p.nome", this.getNomeRecuperando(), MatchMode.ANYWHERE));
-			}
-
-			if(!this.getIdsEstruturas().isEmpty()) {
-
-				getCriteria()
-						.createAlias("r.passagens", "passagem", JoinType.INNER_JOIN)
-						.createAlias("passagem.lotacao", "lotacao", JoinType.INNER_JOIN)
-						.createAlias("lotacao.estrutura", "estrutura", JoinType.INNER_JOIN)
-				;
-
-				getCriteria().add(Restrictions.isNull("passagem.dataSaida"));
-				getCriteria().add(Restrictions.isNull("lotacao.dataSaida"));
-				getCriteria().add(Restrictions.in("estrutura.id", this.getIdsEstruturas()));
-
-			}
-
 		} else {
 			if (this.getData() != null) {
 				Date di = Sigepen.getDataConsultaMaiorIgual(this.getData());
@@ -88,15 +57,14 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 				getCriteria().add(Restrictions.between("entradas.dataEntrada", di, df));
 			}
 
-			if (this.getUnidade() != null && this.getUnidade() > 0) {
-				getCriteria().add(Restrictions.eq("entradas.unidadePrisional.id", this.getUnidade()));
-			}
-
 			if (this.getSomenteEntradas() != null && this.getSomenteEntradas()) {
 				getCriteria().add(Restrictions.eq("entradas.situacao", SituacaoVisita.EM_ANDAMENTO));
 			}
 		}
 
+		if (this.getUnidade() != null && this.getUnidade() > 0) {
+			getCriteria().add(Restrictions.eq("entradas.unidadePrisional.id", this.getUnidade()));
+		}
 	}
 
 	public FiltroEntradaVisitante() {
@@ -110,8 +78,6 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
-
 
 	public Date getData() {
 		return data;
@@ -172,37 +138,13 @@ public class FiltroEntradaVisitante extends FiltroConsulta {
 	@Override
 	public void configurarOrdenacao() {
 		super.configurarOrdenacao();
-		
+
 		if (this.getOrdenacao() != null) {
 			getCriteria().addOrder((this.getOrdenacao().isAscending() ? Order.asc("entradas.id") : Order.desc("entradas.id")));
-			
+
 			if (this.getPropriedadeOrdenacao().equals("entradas.id")) {
 				this.getOrdenacao().nulls(NullPrecedence.LAST);
 			}
 		}
 	}
-
-    public String getNomeRecuperando() {
-        return nomeRecuperando;
-    }
-
-    public void setNomeRecuperando(String nomeRecuperando) {
-        this.nomeRecuperando = nomeRecuperando;
-    }
-
-    public Long getIdEstrutura() {
-        return idEstrutura;
-    }
-
-    public void setIdEstrutura(Long idEstrutura) {
-        this.idEstrutura = idEstrutura;
-    }
-
-    public Set<Long> getIdsEstruturas() {
-        return idsEstruturas;
-    }
-
-    public void setIdsEstruturas(Set<Long> idsEstruturas) {
-        this.idsEstruturas = idsEstruturas;
-    }
 }

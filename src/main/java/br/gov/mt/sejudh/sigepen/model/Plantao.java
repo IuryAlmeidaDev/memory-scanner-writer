@@ -1,20 +1,17 @@
 package br.gov.mt.sejudh.sigepen.model;
 
-import java.io.Serializable;
+import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
+import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPlantao;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import org.hibernate.envers.Audited;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
-import javax.persistence.*;
-
-import br.gov.mt.sejudh.sigepen.enumerator.StatusPlantao;
-import org.hibernate.envers.Audited;
-
-import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
-import br.gov.mt.sejudh.sigepen.enumerator.Status;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoPlantao;
-import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
 @Entity
@@ -60,7 +57,22 @@ public class Plantao extends BaseModel<Long> {
 	private StatusPlantao statusPlantao = StatusPlantao.INICIADO;
 
 	@OneToMany(mappedBy = "plantao", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PlantaoVisita> plantaoVisitas = new ArrayList<PlantaoVisita>();
+    private List<PlantaoVisita> plantaoVisitas = new ArrayList<>();
+
+	@OneToMany(mappedBy = "plantao", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<Ocorrencia> ocorrencias = new ArrayList<>();
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "USUARIO_INICIO_ID")
+	private Usuario usuarioInicioPlantao;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "USUARIO_FIM_ID")
+	private Usuario usuarioFimPlantao;
+
+	@Column(name = "JUSTIFICATIVA_ENCERRAMENTO_PLANTAO")
+	private String justificativaEncerramentoPlantao;
+
 
 	@PreUpdate
 	@PrePersist
@@ -163,6 +175,46 @@ public class Plantao extends BaseModel<Long> {
 		this.plantaoVisitas = plantaoVisitas;
 	}
 
+	public List<Ocorrencia> getOcorrencias() {
+		return ocorrencias;
+	}
+
+	public void setOcorrencias(List<Ocorrencia> ocorrencias) {
+		this.ocorrencias = ocorrencias;
+	}
+
+	public StatusPlantao getStatusPlantao() {
+		return statusPlantao;
+	}
+
+	public void setStatusPlantao(StatusPlantao statusPlantao) {
+		this.statusPlantao = statusPlantao;
+	}
+
+	public Usuario getUsuarioInicioPlantao() {
+		return usuarioInicioPlantao;
+	}
+
+	public void setUsuarioInicioPlantao(Usuario usuarioInicioPlantao) {
+		this.usuarioInicioPlantao = usuarioInicioPlantao;
+	}
+
+	public Usuario getUsuarioFimPlantao() {
+		return usuarioFimPlantao;
+	}
+
+	public void setUsuarioFimPlantao(Usuario usuarioFimPlantao) {
+		this.usuarioFimPlantao = usuarioFimPlantao;
+	}
+
+	public String getJustificativaEncerramentoPlantao() {
+		return justificativaEncerramentoPlantao;
+	}
+
+	public void setJustificativaEncerramentoPlantao(String justificativaEncerramentoPlantao) {
+		this.justificativaEncerramentoPlantao = justificativaEncerramentoPlantao;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -179,12 +231,4 @@ public class Plantao extends BaseModel<Long> {
 		Plantao other = (Plantao) obj;
 		return id == other.id;
 	}
-
-	public StatusPlantao getStatusPlantao() {
-		return statusPlantao;
-	}
-
-    public void setStatusPlantao(StatusPlantao statusPlantao) {
-        this.statusPlantao = statusPlantao;
-    }
 }

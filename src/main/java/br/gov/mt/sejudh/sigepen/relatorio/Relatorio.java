@@ -36,7 +36,6 @@ public enum Relatorio {
 	GerarPedidoUnificado("Pedido de alimentação", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 33),
 	GerarPedidoDetalhado("Pedido detalhado de alimentação", 34),
 	PedidoDetalhado("Pedido detalhado de alimentação", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 35),
-	ConsolidadoMensal("Consolidado Mensal", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA,ModeloRodape.PADRAO_PAISAGEM, 36),
 	ListaConsolidadoMensal("Consolidado Mensal", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA,ModeloRodape.PADRAO_PAISAGEM, 37),
 	PedidoCardapio("Cardapio", 38),
 	ListarRelatorioEntradaSaidaRecuperando("ENTRADA E SAÍDA DE RECUPERANDOS", 39),
@@ -89,30 +88,21 @@ public enum Relatorio {
 
     /* Relatórios de Plantoes */
     ListarPlantoes("Relatório de Plantões", 75),
-	
-    ListarTipoOcorrencia("Relatório Tipo Ocorrência", 76);
+
+    ListarTipoOcorrencia("Relatório Tipo Ocorrência", 76),
+    RegistroPlantao("Livro de Plantão", 78),
+
+	ListarEntradaVisitatnes("Lista Entrada de Visitas", ModeloCabecalho.PADRAO, ModeloRodape.PADRAO, 79);
 
 
-	private Relatorio(String nome) {
-		this.setNome(nome);
-		this.setCabecalho(ModeloCabecalho.PADRAO);
-		this.setRodape(ModeloRodape.PADRAO);
-	}
-
-	private Relatorio(String nome,Integer id) {
+    Relatorio(String nome, Integer id) {
 		this.setNome(nome);
 		this.setCabecalho(ModeloCabecalho.PADRAO);
 		this.setRodape(ModeloRodape.PADRAO);
 		this.setId(id);
 	}
 
-	private Relatorio(String nome, ModeloCabecalho cabecalho, ModeloRodape rodape) {
-		this.setNome(nome);
-		this.setCabecalho(cabecalho);
-		this.setRodape(rodape);
-	}
-
-	private Relatorio(String nome, ModeloCabecalho cabecalho, ModeloRodape rodape, Integer id) {
+    Relatorio(String nome, ModeloCabecalho cabecalho, ModeloRodape rodape, Integer id) {
 		this.setNome(nome);
 		this.setCabecalho(cabecalho);
 		this.setRodape(rodape);

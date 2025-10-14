@@ -32,7 +32,7 @@ public class TipoOcorrencia extends BaseModel<Long> {
     private String descricao;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "tipoOcorrencia", orphanRemoval = true)
-    private List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>();
+    private List<Ocorrencia> ocorrencias = new ArrayList<>();
     
     @Column(name = "TIPO")
     private String tipo;
@@ -50,15 +50,8 @@ public class TipoOcorrencia extends BaseModel<Long> {
 	@Transient
 	private AutoriaRegistro autorUltimaAlteracao;
 
-
     public TipoOcorrencia() {}
 
-    public TipoOcorrencia(Long id, String descricao, List<Ocorrencia> ocorrencias) {
-        this.id = id;
-        this.descricao = descricao;
-        this.ocorrencias = ocorrencias;
-    }
-    
     public TipoOcorrencia(Status status) {
     	this.setStatus(status);
     }

@@ -30,42 +30,43 @@
 	                    <f:selectItem itemLabel="Visita" itemValue="VISITA" />
 	                     				    					   
 				    </sgp:formSelectOneMenu>
-				    
-				    
-				    <sgp:formSelectOneMenu
-						id="classificacao"
-						labelValue="classificacao" 					
-						value="#{tipoOcorrenciaBean.tipoOcorrencia.classificacao}"
-						disabled="#{tipoOcorrenciaBean.isVisualizacao}" 					
-						style="width:200px"  
-	                    styleInput="width:200px; margin-bottom:15px;">					
-											
-						<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/>					
+
+					<sgp:formSelectOneMenu
+							id="classificacao"
+							labelValue="Classificação"
+							value="#{tipoOcorrenciaBean.tipoOcorrencia.classificacao}"
+							disabled="#{tipoOcorrenciaBean.isVisualizacao}"
+							style="width:200px"
+							styleInput="width:200px; margin-bottom:15px;">
+
+						<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/>
 						<f:selectItem itemLabel="Ocorrência" itemValue="OCORRENCIA" />
-	                    <f:selectItem itemLabel="Comunicado" itemValue="COMUNICADO" />	                    
-	                     				    					   
-				    </sgp:formSelectOneMenu>
-				    	
-					<sgp:formInputText 
-						id="descricao" 
-						labelValue="Descrição"
-						value="#{tipoOcorrenciaBean.tipoOcorrencia.descricao}" 
-						validationRequired="true"
-						maxlength="50"
-						disabled="#{tipoOcorrenciaBean.isVisualizacao}"
-						display="text" 						
-						style="width:200px"
-						styleInput="width:200px; margin-bottom:15px;" />
-						
-						<sgp:formSelectOneMenu 
+						<f:selectItem itemLabel="Comunicado" itemValue="COMUNICADO" />
+					</sgp:formSelectOneMenu><br /><br />
+
+					<h:panelGroup>
+						<p:outputLabel for="descricao" value="Descrição" />
+						<p:inputText
+								id="descricao"
+								labelValue="Descrição"
+								value="#{tipoOcorrenciaBean.tipoOcorrencia.descricao}"
+								validationRequired="true"
+								maxlength="50"
+								disabled="#{tipoOcorrenciaBean.isVisualizacao}"
+								display="text"
+
+								style="width:200px; margin-left:80px;" />
+					</h:panelGroup><br />
+
+						<sgp:formSelectOneMenu
 						id="status" labelValue="Status"
 						value="#{tipoOcorrenciaBean.tipoOcorrencia.status}"
-						itemsValue="#{comboHelperBean.status}" 
+						itemsValue="#{comboHelperBean.status}"
 						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
+						itemLabel="#{item.descricao}"
 						disabled="#{tipoOcorrenciaBean.isVisualizacao}"
 						display="text" />
-					
+
 					<br />
 					<br />
 

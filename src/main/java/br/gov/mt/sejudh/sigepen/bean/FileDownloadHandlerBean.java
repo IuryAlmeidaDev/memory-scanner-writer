@@ -1,5 +1,19 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
+import br.gov.mt.seguranca.report.service.ProcessarPDFService;
+import br.gov.mt.sejudh.sigepen.model.Arquivo;
+import br.gov.mt.sejudh.sigepen.util.FacesUtil;
+import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import com.ocpsoft.pretty.faces.annotation.URLMapping;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.faces.bean.ManagedBean;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,24 +26,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.ThreadContext;
-
-import br.gov.mt.seguranca.report.service.ProcessarPDFService;
-import br.gov.mt.sejudh.sigepen.model.Arquivo;
-import br.gov.mt.sejudh.sigepen.util.FacesUtil;
-import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
-import br.gov.mt.sejudh.sigepen.util.Sigepen;
-
-import com.ocpsoft.pretty.faces.annotation.URLMapping;
 
 @ManagedBean
 @ApplicationScoped
@@ -61,7 +57,7 @@ public class FileDownloadHandlerBean {
     }
 
     public void prepararArquivo(Arquivo arquivo) {
-    	byte[] bytesNovo = null;
+        byte[] bytesNovo;
 		String loginUser = String.valueOf(SecurityUtil.getUsuario().getId());
 
     	ProcessarPDFService service = new ProcessarPDFService();

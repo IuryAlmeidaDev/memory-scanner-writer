@@ -1,24 +1,5 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.annotations.QueryHints;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Projections;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperando;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroSolicitacaoVisita;
@@ -27,25 +8,23 @@ import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
-import br.gov.mt.sejudh.sigepen.model.Alcunha;
-import br.gov.mt.sejudh.sigepen.model.Credenciamento;
-import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.EstruturaComplemento;
-import br.gov.mt.sejudh.sigepen.model.Etnia;
-import br.gov.mt.sejudh.sigepen.model.Foto;
-import br.gov.mt.sejudh.sigepen.model.Imagem;
-import br.gov.mt.sejudh.sigepen.model.OutroNome;
-import br.gov.mt.sejudh.sigepen.model.Parente;
-import br.gov.mt.sejudh.sigepen.model.Particularidade;
-import br.gov.mt.sejudh.sigepen.model.Passagem;
-import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
-import br.gov.mt.sejudh.sigepen.model.Pessoa;
-import br.gov.mt.sejudh.sigepen.model.Recuperando;
-import br.gov.mt.sejudh.sigepen.model.Regime;
-import br.gov.mt.sejudh.sigepen.model.Remanejamento;
-import br.gov.mt.sejudh.sigepen.model.SolicitacaoVisita;
+import br.gov.mt.sejudh.sigepen.model.*;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.QueryHints;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Projections;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.util.*;
 
 @RequestScoped
 public class RecuperandoDAO {
@@ -87,8 +66,7 @@ public class RecuperandoDAO {
 	public List<RecuperandoView> buscarRecuperandosPorFiltro(FiltroRecuperandoView filtro, boolean isBuscaRelatorio) {
 		Criteria criteria = filtro.criarCriteriaParaBusca(RecuperandoView.class, em, isBuscaRelatorio);
 		criteria.addQueryHint(QueryHints.READ_ONLY);
-		List<RecuperandoView> list = criteria.list();
-		return list;
+        return (List<RecuperandoView>) criteria.list();
 	}
 
 	public int buscarQuantidadeFiltrada(FiltroUnificarRecuperando filtro) {
@@ -118,14 +96,8 @@ public class RecuperandoDAO {
 	public void excluirUnificacao(Recuperando recuperando) {
 		em.remove(em.getReference(Recuperando.class, recuperando.getId()));
 	}
-	
-	public Recuperando salvarUnificacao(Recuperando recuperando) {
-		em.persist(recuperando);
 
-		return recuperando;
-	}
-	
-	public void excluir(Recuperando recuperando) {
+    public void excluir(Recuperando recuperando) {
 		em.remove(em.merge(recuperando));
 	}
 
@@ -273,9 +245,9 @@ public class RecuperandoDAO {
 	 * Parentes
 	 */
 	public void salvarParente(Parente parente) {
-		if(parente.getId()>0){
-			parente = em.merge(parente);
-		}else{
+        if (parente.getId() > 0) {
+            em.merge(parente);
+        } else {
 			em.persist(parente);	
 		}
 	}
@@ -304,8 +276,8 @@ public class RecuperandoDAO {
 	 */
 	public void salvarOutroNome(OutroNome outroNome) {
 		if(outroNome.getId()>0){
-			outroNome = em.merge(outroNome);
-		}else{
+            em.merge(outroNome);
+        } else {
 			em.persist(outroNome);	
 		}
 	}
@@ -443,7 +415,6 @@ public class RecuperandoDAO {
 		}
 	}
 
-	
 	public boolean fotoVinculada(Foto foto) {
 		Query query = em.createQuery("select count(p) from PedidoTransito p where p.foto.id = :idFoto");
 		query.setParameter("idFoto", foto.getId());
@@ -479,7 +450,7 @@ public class RecuperandoDAO {
 
 			List<Estrutura> list = query.getResultList();
 
-			if (list.size() > 0) {
+            if (!list.isEmpty()) {
 				list.forEach(estrutura -> estruturaDAO.buscarEstruturasCompleta(estrutura));
 				return query.getResultList().get(0);
 			}
@@ -820,4 +791,34 @@ public class RecuperandoDAO {
 			return null;
 		}
 	}
+
+    public long countAtivosPorUnidadeNaData(Long unidadeId, Date dataReferencia) {
+        // Cria um range de 24h para a data de referência
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dataReferencia);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        Date dataInicio = cal.getTime();
+
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        Date dataFim = cal.getTime();
+
+        String jpql = "SELECT COUNT(DISTINCT pl.passagem.recuperando.id) FROM PassagemLotacao pl " +
+                "WHERE pl.estrutura.unidadePrisional.id = :unidadeId " +
+                "AND pl.dataEntrada <= :dataFim " +
+                "AND (pl.dataSaida IS NULL OR pl.dataSaida >= :dataInicio)";
+
+        try {
+            return em.createQuery(jpql, Long.class)
+                    .setParameter("unidadeId", unidadeId)
+                    .setParameter("dataInicio", dataInicio)
+                    .setParameter("dataFim", dataFim)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return 0L;
+        }
+    }
 }

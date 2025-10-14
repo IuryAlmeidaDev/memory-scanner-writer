@@ -1,15 +1,16 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
-import java.util.List;
+import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPlantao;
+import br.gov.mt.sejudh.sigepen.model.Plantao;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-
-import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
-import br.gov.mt.sejudh.sigepen.model.*;
-import org.hibernate.Hibernate;
+import java.util.List;
 
 @RequestScoped
 public class PlantaoDAO extends BaseDAO<Plantao, Long>{
@@ -28,7 +29,19 @@ public class PlantaoDAO extends BaseDAO<Plantao, Long>{
 		this.entityManager = entityManager;
 	}
 
-	/*------------------------------------------------- Métodos -----------------------------------------------------*/
+	public boolean existePlantaoNaDataPorUnidade(UnidadePrisional unidade) {
+		String jpql = "SELECT COUNT(p) FROM Plantao p " +
+				"WHERE p.unidadePrisional = :unidade " +
+				"AND p.statusPlantao = :status";
+
+		Long count = entityManager.createQuery(jpql, Long.class)
+				.setParameter("unidade", unidade)
+				.setParameter("status", StatusPlantao.ANDAMENTO)
+				.getSingleResult();
+
+		return count > 0;
+	}
+
 	public Plantao obterPlantaoEmAndamento(UnidadePrisional unidade) {
 		String jpql = "SELECT p FROM Plantao p WHERE p.dataPlantaoEncerramento IS NULL AND p.unidadePrisional = :unidade ORDER BY p.dataPlantao DESC";
 		List<Plantao> resultado = em.createQuery(jpql, Plantao.class)
@@ -86,36 +99,22 @@ public class PlantaoDAO extends BaseDAO<Plantao, Long>{
 
 	@Override
 	public Plantao buscarPorId(Long id) {
+        String jpql = "SELECT DISTINCT p FROM Plantao p " +
+                "LEFT JOIN FETCH p.unidadePrisional up " +
+                "LEFT JOIN FETCH p.usuarioInicioPlantao ui " +
+                "LEFT JOIN FETCH ui.servidor uis " +
+                "LEFT JOIN FETCH p.usuarioFimPlantao uf " +
+                "LEFT JOIN FETCH uf.servidor ufs " +
+                "WHERE p.id = :id";
 
-		StringBuilder jpql= new StringBuilder("SELECT p FROM Plantao p where p.id = :id");
-
-		TypedQuery<Plantao> query = em.createQuery(jpql.toString(), Plantao.class);
+        TypedQuery<Plantao> query = em.createQuery(jpql, Plantao.class);
 		query.setParameter("id", id);
 
-
-		try{
-			Plantao result = query.getSingleResult();
-			Hibernate.initialize(result.getEquipes());
-
-			for(Equipe equipe : result.getEquipes()){
-				Hibernate.initialize(equipe.getPlantaoServidor());
-				for(PlantaoServidor plantaoServidor : equipe.getPlantaoServidor()){
-					Hibernate.initialize(plantaoServidor);
-					Hibernate.initialize(plantaoServidor.getServidor());
-					Hibernate.initialize(plantaoServidor.getServidor().getFuncao());
-					Hibernate.initialize(plantaoServidor.getServidor().getCargo());
-				}
-			}
-
-			for(PlantaoVisita plantaoVisita : result.getPlantaoVisitas()){
-				Hibernate.initialize(plantaoVisita.getPlantaoVisitaEstruturas());
-			}
-
-			return result;
+		try {
+            return query.getSingleResult();
 		} catch (NoResultException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-
 }

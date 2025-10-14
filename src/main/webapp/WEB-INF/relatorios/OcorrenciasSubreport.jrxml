@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="OcorrenciasSubreport" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0"
+              rightMargin="0" topMargin="0" bottomMargin="0" uuid="8a6b2c6e-1d54-4f3b-8e10-9f3a61d7b1d3">
+    <property name="ireport.zoom" value="2.1435888100000056"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <parameter name="TOTAL_RECUPERANDOS" class="java.lang.Long"/>
+    <parameter name="TOTAL_ENTRADAS" class="java.lang.Long"/>
+    <parameter name="TOTAL_SAIDAS" class="java.lang.Long"/>
+    <parameter name="TOTAL_MOV_INTERNA" class="java.lang.Long"/>
+    <parameter name="TOTAL_MOV_EXTERNA" class="java.lang.Long"/>
+    <parameter name="DATA_HORA_ENCERRAMENTO" class="java.lang.String"/>
+    <parameter name="NOME_SERVIDOR_ENCERRAMENTO" class="java.lang.String"/>
+    <parameter name="MATRICULA_SERVIDOR_ENCERRAMENTO" class="java.lang.Long"/>
+    <field name="codigo" class="java.lang.String"/>
+    <field name="classificacao" class="java.lang.String"/>
+    <field name="dataHora" class="java.util.Date"/>
+    <field name="descricao" class="java.lang.String"/>
+    <field name="resumo" class="java.lang.String"/>
+    <field name="autor" class="java.lang.String"/>
+    <title>
+        <band height="28" splitType="Stretch">
+            <staticText>
+                <reportElement mode="Opaque" x="0" y="0" width="555" height="28" backcolor="#CCCCCC"
+                               uuid="1a5a7536-1c8a-4c2f-93d3-7d22b827e7d0"/>
+                <box leftPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Ocorrências]]></text>
+            </staticText>
+        </band>
+    </title>
+    <columnHeader>
+        <band height="20" splitType="Stretch">
+            <staticText>
+                <reportElement mode="Opaque" x="2" y="0" width="45" height="20" backcolor="#FFFFFF"
+                               uuid="e0114b3d-14a0-4a81-9988-34812a613f18"/>
+                <box rightPadding="0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Código]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="160" y="0" width="86" height="20" backcolor="#FFFFFF"
+                               uuid="0e8d66a6-f13d-4c33-8a3c-b638914b4f0b"/>
+                <box rightPadding="0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Classificação]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="246" y="0" width="90" height="20" backcolor="#FFFFFF"
+                               uuid="2b64433d-73c3-4318-8f83-8418f4a76a59"/>
+                <box rightPadding="0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Data/Hora]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="335" y="0" width="110" height="20" backcolor="#FFFFFF"
+                               uuid="93f55054-f5a6-48c9-8356-9d33a64939a7"/>
+                <box rightPadding="0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Descrição]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="445" y="0" width="110" height="20" backcolor="#FFFFFF"
+                               uuid="70c3605e-a6a3-4b68-8e6d-55e098a72a11"/>
+                <box rightPadding="0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Resumo]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Opaque" x="47" y="0" width="113" height="20" backcolor="#FFFFFF"
+                               uuid="2c5a4684-57b7-4efe-a481-331ff3b14ecf"/>
+                <box rightPadding="0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Autor]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="20" splitType="Stretch">
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement x="2" y="0" width="45" height="20" uuid="e1a3b1e3-4d04-4e2d-9477-90c4273577d3"/>
+                <box topPadding="2" bottomPadding="2">
+                    <topPen lineWidth="0.25"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement x="160" y="0" width="86" height="20" uuid="4c9e8320-8e10-4f51-85e7-6a16c7f9d854"/>
+                <box topPadding="2" bottomPadding="2">
+                    <topPen lineWidth="0.25"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{classificacao}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
+                <reportElement x="246" y="0" width="90" height="20" uuid="0a3f9e20-7f28-406a-81a6-74f079d846b4"/>
+                <box topPadding="2" bottomPadding="2">
+                    <topPen lineWidth="0.25"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{dataHora} != null ? $F{dataHora} : "---"]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement x="335" y="0" width="110" height="20" isPrintInFirstWholeBand="true"
+                               uuid="5d18d8e8-6b83-42e2-9b2f-2d744b15091a"/>
+                <box topPadding="2" leftPadding="6" bottomPadding="2" rightPadding="6">
+                    <topPen lineWidth="0.25"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="445" y="0" width="110" height="20" isPrintInFirstWholeBand="true"
+                               uuid="559d1a3c-b1f4-419b-a3d8-a15d5f2a967f"/>
+                <box topPadding="2" leftPadding="6" bottomPadding="2" rightPadding="6">
+                    <topPen lineWidth="0.25"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{resumo}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement x="47" y="0" width="113" height="20" uuid="8bd36564-9928-4dcd-83e9-b80a51e719b7"/>
+                <box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3">
+                    <topPen lineWidth="0.25"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{autor}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <summary>
+        <band height="246" splitType="Stretch">
+            <staticText>
+                <reportElement mode="Opaque" x="0" y="31" width="555" height="20" backcolor="#CCCCCC"
+                               uuid="f98555e7-4081-432d-8e40-5e5d3269b61d"/>
+                <box leftPadding="6"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Resumo diário]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="0" y="61" width="555" height="15" uuid="e61e680a-9d21-4389-9130-9b6f84d03923"/>
+                <box topPadding="0" leftPadding="12"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Número total de recuperando na unidade: " + $P{TOTAL_RECUPERANDOS}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="76" width="555" height="15" uuid="5d9c72e2-5c9c-4611-a8d6-3d231a4734a7"/>
+                <box leftPadding="12"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Número total de entrada de recuperando na unidade: " + $P{TOTAL_ENTRADAS}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="91" width="555" height="15" uuid="4c5e31e1-e63d-4c3e-b810-74e8992b4506"/>
+                <box leftPadding="12"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Número total de saída de recuperando na unidade: " + $P{TOTAL_SAIDAS}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="106" width="555" height="15" uuid="5b47a3e8-8d26-4d08-a5c6-b9a5286595e1"/>
+                <box leftPadding="12"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Número total de movimentação interna de recuperando na unidade: " + $P{TOTAL_MOV_INTERNA}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="121" width="555" height="15" uuid="6c8e3a5a-8b21-4d33-9e4a-5f9a65d6c8b3"/>
+                <box leftPadding="12"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Número total de movimentação externa de recuperando na unidade: " + $P{TOTAL_MOV_EXTERNA}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement mode="Opaque" x="0" y="159" width="555" height="20" backcolor="#CCCCCC"
+                               uuid="c4d098e9-4e58-4c8d-8a9d-b8d96e5d8a9e"/>
+                <box leftPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Encerramento do Livro]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="0" y="190" width="555" height="15" uuid="3d2b9d29-6e3a-4d2c-8a9b-7c8d9e2a3b4c"/>
+                <box leftPadding="12"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Data/Hora Encerramento: " + $P{DATA_HORA_ENCERRAMENTO}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="0" y="205" width="555" height="15" uuid="1c8a7b6a-5d3c-4b2a-8a9b-8c7d6e5d4c3b"/>
+                <box leftPadding="12"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Encerrado por: " + ($P{MATRICULA_SERVIDOR_ENCERRAMENTO} != null ? $P{MATRICULA_SERVIDOR_ENCERRAMENTO} : "") + " - " + ($P{NOME_SERVIDOR_ENCERRAMENTO} != null ? $P{NOME_SERVIDOR_ENCERRAMENTO} : "")]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport>

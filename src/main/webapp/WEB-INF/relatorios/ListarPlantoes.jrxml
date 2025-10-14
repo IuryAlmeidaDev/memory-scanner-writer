@@ -28,8 +28,7 @@
 	<field name="tipoPlantao.descricao" class="java.lang.String"/>
 	<field name="statusPlantao.descricao" class="java.lang.String"/>
 	<field name="unidadePrisional.nome" class="java.lang.String"/>
-	<field name="horaInicio" class="java.lang.String"/>
-	<field name="plantaoAnterior" class="java.lang.String"/>
+	<field name="dataPlantaoEncerramento" class="java.util.Date"/>
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{id}]]></variableExpression>
 	</variable>
@@ -108,7 +107,7 @@
 				<text><![CDATA[Plantão]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="350" y="0" width="134" height="20" uuid="4ddced60-3cf4-4dbb-a407-4d06b00a3c96"/>
+				<reportElement x="293" y="0" width="191" height="20" uuid="4ddced60-3cf4-4dbb-a407-4d06b00a3c96"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -131,20 +130,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Plantão Anterior]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="293" y="0" width="57" height="20" uuid="932c6eff-034b-482a-aa71-ac36e956e9e5"/>
-				<box>
-					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Hora]]></text>
+				<text><![CDATA[Data Fim]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -200,7 +186,7 @@
 				<textFieldExpression><![CDATA[$F{tipoPlantao.descricao}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="350" y="1" width="134" height="14" uuid="a291cb38-64e9-4c7a-86fd-366be945b8a3"/>
+				<reportElement stretchType="RelativeToBandHeight" x="293" y="1" width="191" height="14" uuid="a291cb38-64e9-4c7a-86fd-366be945b8a3"/>
 				<box>
 					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.5"/>
@@ -211,25 +197,14 @@
 				<textFieldExpression><![CDATA[$F{unidadePrisional.nome}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="293" y="1" width="57" height="14" uuid="90ecb88c-69a7-445c-8012-f856aa2fe46b"/>
-				<box>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{horaInicio}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="105" y="0" width="104" height="15" uuid="7e5276ff-83d9-4658-bd53-258f3c3a9f10"/>
+				<reportElement stretchType="RelativeToBandHeight" x="105" y="0" width="104" height="15" uuid="0887fc2e-e0af-4e5d-a091-bc7caef06d4f"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{plantaoAnterior} == null ? "-" : $F{plantaoAnterior}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{dataPlantaoEncerramento} == null ? "-" : $F{dataPlantaoEncerramento}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

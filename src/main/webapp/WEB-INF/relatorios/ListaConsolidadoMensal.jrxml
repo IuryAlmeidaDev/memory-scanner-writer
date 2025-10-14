@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarConsolidadoMensal" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="173"/>
+    <property name="ireport.x" value="258"/>
+    <property name="ireport.y" value="144"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
 	</parameter>
@@ -33,9 +33,6 @@
 	<parameter name="CARGO_3" class="java.lang.String"/>
 	<parameter name="ASSINATURA_4" class="java.lang.String"/>
 	<parameter name="CARGO_4" class="java.lang.String"/>
-	<parameter name="REPORT_ASSINATURA" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadraoPaisagem.jasper"]]></defaultValueExpression>
-	</parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -205,42 +202,30 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="31" splitType="Stretch"/>
-	</pageFooter>
-	<lastPageFooter>
-		<band height="131">
-			<subreport>
-				<reportElement x="0" y="0" width="801" height="131" uuid="827ec0ad-b559-4435-94cf-64e8fbeb26c4"/>
+        <band height="83" splitType="Stretch">
+            <subreport isUsingCache="false" runToBottom="true">
+                <reportElement x="0" y="0" width="801" height="83" uuid="c1fd89dd-c0f2-4290-ab2d-786fe4c5875d"/>
 				<subreportParameter name="EMISSOR">
 					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="ASSINATURA_1">
-					<subreportParameterExpression><![CDATA[$P{ASSINATURA_1}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="CARGO_1">
-					<subreportParameterExpression><![CDATA[$P{CARGO_1}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="ASSINATURA_2">
-					<subreportParameterExpression><![CDATA[$P{ASSINATURA_2}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="CARGO_2">
-					<subreportParameterExpression><![CDATA[$P{CARGO_2}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="ASSINATURA_3">
-					<subreportParameterExpression><![CDATA[$P{ASSINATURA_3}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="CARGO_3">
-					<subreportParameterExpression><![CDATA[$P{CARGO_3}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="ASSINATURA_4">
-					<subreportParameterExpression><![CDATA[$P{ASSINATURA_4}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="CARGO_4">
-					<subreportParameterExpression><![CDATA[$P{CARGO_4}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{REPORT_ASSINATURA}]]></subreportExpression>
+                <subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
 			</subreport>
+            <textField>
+                <reportElement x="672" y="63" width="80" height="20" uuid="42607cd8-fdaf-4fc2-a3f5-dba39b902617">
+                    <printWhenExpression><![CDATA[$P{TEM_PAGINACAO}]]></printWhenExpression>
+                </reportElement>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+            </textField>
+            <textField evaluationTime="Report">
+                <reportElement x="752" y="63" width="40" height="20" uuid="f0d5bebc-79ab-4ce5-ba25-e7fc6add2d39">
+                    <printWhenExpression><![CDATA[$P{TEM_PAGINACAO}]]></printWhenExpression>
+                </reportElement>
+                <textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
 		</band>
+    </pageFooter>
+    <lastPageFooter>
+        <band height="131"/>
 	</lastPageFooter>
 </jasperReport>

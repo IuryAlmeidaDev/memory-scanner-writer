@@ -1,7 +1,12 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
-import java.util.Arrays;
-import java.util.List;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroMovimentacaoInterna;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
+import br.gov.mt.sejudh.sigepen.model.Escolta;
+import br.gov.mt.sejudh.sigepen.model.MovimentacaoInterna;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Projections;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -9,18 +14,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
-import br.gov.mt.sejudh.sigepen.model.Escolta;
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Projections;
-
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroMovimentacaoInterna;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
-import br.gov.mt.sejudh.sigepen.model.MovimentacaoInterna;
-import br.gov.mt.sejudh.sigepen.model.Passagem;
-import br.gov.mt.sejudh.sigepen.model.PedidoTransito;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 
 @RequestScoped
@@ -102,32 +98,6 @@ public class MovimentacaoInternaDAO {
 			return null;
 		}
 	}
-//	public MovimentacaoInterna buscaMovimentacaoPorId(long id) {
-//		try {
-//			String jpql="select m from MovimentacaoInterna m where m.id = :id";
-//			TypedQuery<MovimentacaoInterna> query = entityManager.createQuery(jpql, MovimentacaoInterna.class);
-//			query.setParameter("id", id);
-//			MovimentacaoInterna m = query.getSingleResult();
-//			Hibernate.initialize(m.getPedidos());
-//			Hibernate.initialize(m.getEscolta());
-//			Hibernate.initialize(m.getUnidadeOrigem());
-//
-//			for (PedidoTransito p : m.getPedidos()) {
-//				Hibernate.initialize(p.getEstruturaDestino());
-//				Hibernate.initialize(p.getRecuperando());
-//				Hibernate.initialize(p.getRecuperando().getPessoa());
-//				Hibernate.initialize(p.getRecuperando().getPassagens());
-//
-//				for (Passagem pa : p.getRecuperando().getPassagens()) {
-//					Hibernate.initialize(pa.getLotacao());
-//				}
-//			}
-//
-//			return m;
-//		} catch (NoResultException e) {
-//			return null;
-//		}
-//	}
 
 	public boolean isPedidoFinalizadoOuCancelado(long pedidoId) {
 		try {
@@ -140,4 +110,19 @@ public class MovimentacaoInternaDAO {
 			return false;
 		}
 	}
+
+    public Long countPorUnidadeNaData(Long unidadeId, Date dataInicio, Date dataFim) {
+        String jpql = "SELECT COUNT(m) FROM MovimentacaoInterna m " +
+                "WHERE m.unidadeOrigem.id = :unidadeId " +
+                "AND m.dataInicio BETWEEN :dataInicio AND :dataFim";
+        try {
+            return entityManager.createQuery(jpql, Long.class)
+                    .setParameter("unidadeId", unidadeId)
+                    .setParameter("dataInicio", dataInicio)
+                    .setParameter("dataFim", dataFim)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return 0L;
+        }
+    }
 }

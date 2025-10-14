@@ -76,8 +76,6 @@ public class ReceberTransferenciaBean extends MetodosDePaginaBean {
 		this.setFiltro(new FiltroPedTransito());
 		this.getFiltro().setUnidadeDestino(SecurityUtil.getUnidadeSelecionada());
 		
-		super.carregarFiltroPaginacao(FiltroPedTransito.class, this, getFiltro());
-
 		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
 			FiltroPedTransito filtroDash = (FiltroPedTransito) facesUtil
 					.getFlashParameter("filtroPedTransitoDash");
@@ -85,10 +83,10 @@ public class ReceberTransferenciaBean extends MetodosDePaginaBean {
 			if (filtroDash != null) {
 				setFiltro(filtroDash);
 
-			} else {
-				super.carregarFiltroPaginacao(FiltroPedTransito.class, this);
 			}
 		}
+
+		super.carregarFiltroPaginacao(FiltroPedTransito.class, this, getFiltro());
 	}
 	
 	@URLAction(onPostback=false)

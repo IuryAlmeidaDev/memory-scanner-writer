@@ -25,7 +25,7 @@
 								value="#{servidor.atividadeSelecionada}"
 								id="slAtividadeGestao" temSelecione="true"
 								style="width:230px"
-								disabled="#{plantaoBean.isVisualizacao}">
+								disabled="#{servidor.plantaoServidor != null}">
 
 							<f:selectItems value="#{servidor.atividades}"
 										   var="atividade" itemLabel="#{atividade.descricao}"
@@ -39,7 +39,7 @@
 								value="#{servidor.situacaoSelecionada}"
 								id="slSituacaoGestao" temSelecione="true"
 								style="width:230px"
-								disabled="#{plantaoBean.isVisualizacao}">
+								disabled="#{servidor.plantaoServidor != null}">
 
 							<f:selectItems value="#{plantaoBean.situacoes}"
 										   var="situacao" itemLabel="#{situacao.descricao}"
@@ -81,7 +81,7 @@
 								value="#{servidor.atividadeSelecionada}"
 								id="slAtividadeEquipePlantao" temSelecione="true"
 								style="width:230px"
-								disabled="#{plantaoBean.isVisualizacao}">
+								disabled="#{servidor.plantaoServidor != null}">
 
 							<f:selectItems value="#{servidor.atividades}"
 										   var="atividade" itemLabel="#{atividade.descricao}"
@@ -95,7 +95,7 @@
 								value="#{servidor.situacaoSelecionada}"
 								id="slSituacaoEquipePlantao" temSelecione="true"
 								style="width:230px"
-								disabled="#{plantaoBean.isVisualizacao}">
+								disabled="#{servidor.plantaoServidor != null}">
 
 							<f:selectItems value="#{plantaoBean.situacoes}"
 										   var="situacao" itemLabel="#{situacao.descricao}"
@@ -138,7 +138,7 @@
 								value="#{servidor.atividadeSelecionada}"
 								id="slAtividadeAdministrativa" temSelecione="true"
 								style="width:230px"
-								disabled="#{plantaoBean.isVisualizacao}">
+								disabled="#{servidor.plantaoServidor != null}">
 
 							<f:selectItems value="#{servidor.atividades}"
 										   var="atividade" itemLabel="#{atividade.descricao}"
@@ -153,7 +153,7 @@
 								value="#{servidor.situacaoSelecionada}"
 								id="slSituacaoAdministrativa" temSelecione="true"
 								style="width:230px"
-								disabled="#{plantaoBean.isVisualizacao}">
+								disabled="#{servidor.plantaoServidor != null}">
 
 							<f:selectItems value="#{plantaoBean.situacoes}"
 										   var="situacao" itemLabel="#{situacao.descricao}"
