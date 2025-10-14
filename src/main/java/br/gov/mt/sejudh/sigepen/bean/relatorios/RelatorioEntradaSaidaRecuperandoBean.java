@@ -1,28 +1,9 @@
 package br.gov.mt.sejudh.sigepen.bean.relatorios;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.inject.Inject;
-
-import org.apache.logging.log4j.Logger;
-import org.primefaces.context.RequestContext;
-
-import com.ocpsoft.pretty.faces.annotation.URLAction;
-import com.ocpsoft.pretty.faces.annotation.URLMapping;
-import com.ocpsoft.pretty.faces.annotation.URLMappings;
-
 import br.gov.mt.sejudh.sigepen.bean.FileDownloadHandlerBean;
 import br.gov.mt.sejudh.sigepen.bean.outros.MetodosDialogBean;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRelatorioEntradaSaidaRecuperando;
-import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.enumerator.CondicaoRelatorio;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamentoRelatorio;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoEntradaRelatorio;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
+import br.gov.mt.sejudh.sigepen.enumerator.*;
 import br.gov.mt.sejudh.sigepen.model.Regime;
 import br.gov.mt.sejudh.sigepen.model.dto.RelatorioEntradaSaidaRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
@@ -31,6 +12,18 @@ import br.gov.mt.sejudh.sigepen.service.RelatorioEntradaSaidaRecuperandoService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
+import com.ocpsoft.pretty.faces.annotation.URLAction;
+import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import com.ocpsoft.pretty.faces.annotation.URLMappings;
+import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
+import java.util.Date;
+import java.util.List;
 
 @ViewScoped
 @ManagedBean
@@ -90,7 +83,7 @@ public class RelatorioEntradaSaidaRecuperandoBean extends MetodosDialogBean {
 			List<RelatorioEntradaSaidaRecuperandoDTO> lista = this.service
 					.buscarRelatorioEntradaSaidaPorFiltro(this.filtro);
 
-			if (lista.size() == 0) {
+            if (lista.isEmpty()) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
 				return;
 			}

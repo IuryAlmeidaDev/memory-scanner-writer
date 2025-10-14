@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVwVisitante;
+import br.gov.mt.sejudh.sigepen.enumerator.VencimentoCredenciamento;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -12,6 +13,9 @@ import org.hibernate.type.LongType;
 import org.primefaces.model.SortOrder;
 
 import javax.enterprise.context.RequestScoped;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @RequestScoped
@@ -30,14 +34,14 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         consultaSQL.append(subselectDadosPessoas);
         consultaSQL.append(subselectVisitantes);
 
-        if (subselectRecuperando != null && (filtro.getRecuperando() == null || filtro.getRecuperando().isEmpty())) {
+        if (subselectRecuperando != null) {
             consultaSQL.append(" UNION ALL ");
             consultaSQL.append(subselectRecuperando);
         }
 
         StringBuilder sqlFinal = new StringBuilder();
         if (!contar) {
-            sqlFinal.append("SELECT DISTINCT * FROM ( ").append(consultaSQL.toString()).append(" ) ");
+            sqlFinal.append("SELECT * FROM ( ").append(consultaSQL.toString()).append(" ) ");
             if (ordemSQL.name().equals("DESCENDING")) {
                 sqlFinal.append("ORDER BY ").append(campoOrdenacao).append(" DESC ");
             } else {
@@ -110,7 +114,7 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
 
         subselect.append(" SELECT ");
         if (contar) {
-            subselect.append(" count(distinct p.id) credenciamentosAtivos ");
+            subselect.append(" count(p.id) credenciamentosAtivos ");
         } else {
             subselect.append(criarCamposVisitantes());
         }
@@ -144,6 +148,15 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
 
         if (filtro.getStatus() != null && !recuperando) {
             subselect.append("  AND V.STAT_VISITANTE = :statusVisitante");
+        }
+
+        if (filtro.getVencimentoCredenciamento() != null && !recuperando) {
+            VencimentoCredenciamento venc = filtro.getVencimentoCredenciamento();
+            if (venc == VencimentoCredenciamento.VENCIDOS) {
+                subselect.append(" AND CRE.DATA_VALIDADE < :dataValidadeFim ");
+            } else {
+                subselect.append(" AND CRE.DATA_VALIDADE BETWEEN :dataValidadeInicio AND :dataValidadeFim ");
+            }
         }
 
         if(filtro.getRecuperando() != null && !filtro.getRecuperando().isEmpty() && !recuperando) {
@@ -270,6 +283,21 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
 
         if (filtro.getFaseCredenciamento() != null) {
             query.setParameter("CODG_FASE_CREDENCIAL", filtro.getFaseCredenciamento().getId());
+        }
+
+
+        if (filtro.getVencimentoCredenciamento() != null && !isRecuperando) {
+            VencimentoCredenciamento venc = filtro.getVencimentoCredenciamento();
+            LocalDate hoje = LocalDate.now();
+            if (venc == VencimentoCredenciamento.VENCIDOS) {
+                Date dataValidadeFim = Date.from(hoje.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                query.setParameter("dataValidadeFim", dataValidadeFim);
+            } else {
+                Date dataValidadeInicio = Date.from(hoje.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                Date dataValidadeFim = Date.from(hoje.plusDays(venc.getDias()).atStartOfDay(ZoneId.systemDefault()).toInstant());
+                query.setParameter("dataValidadeInicio", dataValidadeInicio);
+                query.setParameter("dataValidadeFim", dataValidadeFim);
+            }
         }
 
         if (filtro.getUnidadePrisional() != null) {

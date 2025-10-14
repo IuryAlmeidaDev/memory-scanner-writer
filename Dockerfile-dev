@@ -1,0 +1,22 @@
+FROM jboss/wildfly:8.2.1.Final
+
+ENV BIO_LIB_PATH /opt/jboss/wildfly/modules/system/layers/base/com/neurotec/main/lib/linux_x86_64/
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${BIO_LIB_PATH}
+ENV LD_LIBRARY_PATH=/usr/lib:/usr/lib64:${BIO_LIB_PATH}
+
+ENV AMBIENTE="desenvolvimento"
+
+RUN rm -rf /opt/jboss/wildfly/bin/standalone.conf
+
+COPY Resources/neurotec /opt/jboss/wildfly/modules/system/layers/base/com/neurotec
+COPY Resources/oracle /opt/jboss/wildfly/modules/system/layers/base/com/oracle
+COPY Resources/standalone.xml /opt/jboss/wildfly/standalone/configuration
+COPY Resources/sejudh.p12 /opt/jboss/wildfly/standalone/configuration
+COPY Resources/aplicativo /opt/jboss/wildfly/sigepen-arquivos/aplicativo
+COPY Resources/standalone.conf /opt/jboss/wildfly/bin/standalone.conf
+
+COPY target/sigepen.war /opt/jboss/wildfly/standalone/deployments
+
+RUN /opt/jboss/wildfly/bin/add-user.sh admin GiHbTx29uW --silent
+
+CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]

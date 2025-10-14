@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,6 +14,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroServidor;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Lotacao;
 import br.gov.mt.sejudh.sigepen.model.Servidor;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.ServidorDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 
@@ -100,4 +102,36 @@ public class ServidorService {
 		return dao.servidorEhResponsavelDaUnidade(l);
 	}
 	
+	
+	public List<ServidorDTO> listarServidoresComPlantaoEmLotacao() {        
+	    
+		List<Servidor> servidores = dao.listarServidoresComPlantaoNaDataAtual();
+	    
+	    return servidores.stream()
+	                     .map(servidor -> new ServidorDTO(
+							 servidor.getId(),
+	                         servidor.getNome(),
+	                         servidor.getFuncao() != null ? servidor.getFuncao().getNome() : null,
+	                         servidor.getCargo() != null ? servidor.getCargo().getNome() : null,
+	                         servidor.getMatricula() != null ? servidor.getMatricula() : null
+	                     ))
+	                     .collect(Collectors.toList());
+	}
+	
+	
+	
+	public List<ServidorDTO> listarServidoresPorTipoPlantao(String tipoPlantao, UnidadePrisional unidade) {
+	    List<Servidor> servidores = dao.listarServidoresPorTipoPlantao(tipoPlantao,unidade);
+	    return servidores.stream()
+	        .map(s -> new ServidorDTO(
+				s.getId(),
+	            s.getNome(),
+	            s.getFuncao() != null ? s.getFuncao().getNome() : null,
+	            s.getCargo() != null ? s.getCargo().getNome() : null,
+	            s.getMatricula()
+	        ))
+	        .collect(Collectors.toList());
+	}
+
+
 }

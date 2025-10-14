@@ -13,7 +13,9 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
-import br.gov.mt.sejudh.sigepen.service.UsuarioService;
+import br.gov.mt.sejudh.sigepen.dao.filter.*;
+import br.gov.mt.sejudh.sigepen.enumerator.*;
+import br.gov.mt.sejudh.sigepen.service.*;
 import org.primefaces.component.panel.Panel;
 import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
@@ -30,7 +32,6 @@ import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
-import br.gov.mt.sejudh.sigepen.service.DashboardService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
@@ -65,6 +66,25 @@ public class DashboardBean {
 	private Long totalCredenciamentoConferenciaPendente;
 	private Long totalCredenciamentoAnalisePendente;
 	private Long totalCredenciamentoAprovacaoPendente;
+
+	private Integer totalMovimentacaoInternaPendente;
+	private Integer totalMovimentacaoInternaEmAndamento;
+	private Integer totalMovimentacaoInternaAguardandoFinalizar;
+	private Integer totalMovimentacaoInternaFinalizadoParcial;
+
+	private Integer totalMovimentacaoExternaPendente;
+	private Integer totalMovimentacaoExternaEmAndamento;
+	private Integer totalMovimentacaoExternaAguardandoFinalizar;
+	private Integer totalMovimentacaoExternaFinalizadoParcial;
+
+	private Integer totalTransferenciaPendente;
+	private Integer totalTransferenciaEmAndamento;
+	private Integer totalTransferenciaFinalizadoParcial;
+
+	private Integer totalReceberTransferenciaEmAndamento;
+	private Integer totalReceberTransferenciaViculada;
+
+	private Integer totalRemanejamentoEmAndamento;
 	
 	@Inject
 	private DashboardService service;
@@ -76,7 +96,23 @@ public class DashboardBean {
 	private FacesUtil facesUtil;
 
 	@Inject
+	private MovimentacaoInternaService movimentacaoInternaService;
+
+	@Inject
+	private MovimentacaoExternaService movimentacaoExternaService;
+
+	@Inject
+	private TransferenciaService transferenciaService;
+
+	@Inject
+	private PedidoService pedidoService;
+
+	@Inject
+	private RemanejamentoService remanejamentoService;
+
+	@Inject
 	private UsuarioService usuarioService;
+
 
 	@PostConstruct
 	public void init() {
@@ -164,6 +200,61 @@ public class DashboardBean {
 			case TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE:
 				this.totalCredenciamentoAprovacaoPendente = service.totalCredenciamentoAprovacaoPendente(SecurityUtil.getUnidadeSelecionada().getId());
 				break;
+
+			case TOTAL_MOVIMENTACAO_INTERNA_PENDENTE:
+				this.totalMovimentacaoInternaPendente = getMovimentacaoInternaPendente();
+				break;
+
+			case TOTAL_MOVIMENTACAO_INTERNA_EM_ANDAMENTO:
+				this.totalMovimentacaoInternaEmAndamento = getMovimentacaoInternaEmAndamento();
+				break;
+			case TOTAL_MOVIMENTACAO_INTERNA_AGUARDANDO_FINALIZAR:
+				this.totalMovimentacaoInternaAguardandoFinalizar = getMovimentacaoInternaAguardandoFinalizar();
+				break;
+
+			case TOTAL_MOVIMENTACAO_INTERNA_FINALIZADO_PARCIAL:
+				this.totalMovimentacaoInternaFinalizadoParcial = getMovimentacaoInternaFinalizadoParcial();
+				break;
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_PENDENTE:
+				this.totalMovimentacaoExternaPendente = getMovimentacaoExternaPendente();
+				break;
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_EM_ANDAMENTO:
+				this.totalMovimentacaoExternaEmAndamento = getMovimentacaoExternaEmAndamento();
+				break;
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_FINALIZADO_PARCIAL:
+				this.totalMovimentacaoExternaFinalizadoParcial = getMovimentacaoExternaFinalizadoParcial();
+				break;
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_AGUARDANDO_FINALIZAR:
+				this.totalMovimentacaoExternaAguardandoFinalizar = getMovimentacaoExternaAguardandoFinalizar();
+				break;
+
+			case TOTAL_TRANSFERENCIA_PENDENTE:
+				this.totalTransferenciaPendente = getTransferenciaPendente();
+				break;
+
+			case TOTAL_TRANSFERENCIA_EM_ANDAMENTO:
+				this.totalTransferenciaEmAndamento = getTransferenciaEmAndamento();
+				break;
+
+			case TOTAL_TRANSFERENCIA_FINALIZADO_PARCIAL:
+				this.totalTransferenciaFinalizadoParcial = getTransferenciaFinalizadoParcial();
+				break;
+
+			case TOTAL_RECEBER_TRANSFERENCIA_VINCULADO:
+				this.totalReceberTransferenciaViculada = getRecebimentoTransferenciaVinculado();
+				break;
+
+			case TOTAL_RECEBER_TRANSFERENCIA_EM_ANDAMENTO:
+				this.totalReceberTransferenciaEmAndamento = getRecebimentoTransferenciaEmAndamento();
+				break;
+
+			case TOTAL_REMANEJAMENTO_EM_ANDAMENTO:
+				this.totalRemanejamentoEmAndamento = getRemanejamentoEmAndamento();
+				break;
 				
 			default:
 				break;	
@@ -176,11 +267,22 @@ public class DashboardBean {
 
 		return calendar.getTime();
 	}
-	
+
 	private void configurarDashboard() {
-		org.primefaces.component.dashboard.Dashboard das = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:dash");
+		org.primefaces.component.dashboard.Dashboard dashRecuperando = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("formDashRecuperando:dashRecuperando");
+		configurarDashboard(dashRecuperando);
+
+		org.primefaces.component.dashboard.Dashboard dashMovimentacao = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("formDashMovimentacao:dashMovimentacao");
+		configurarDashboard(dashMovimentacao);
+
+		org.primefaces.component.dashboard.Dashboard dashVisitante = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("formDashVisitante:dashVisitante");
+		configurarDashboard(dashVisitante);
+	}
+
+	private void configurarDashboard(UIComponent das) {
+
 		List<Dashboard> lista = new ArrayList<Dashboard>();
-		
+
 		if (das != null) {
 			for (UIComponent componente : das.getChildren()) {
 				if (componente instanceof Panel) {
@@ -188,11 +290,11 @@ public class DashboardBean {
 					lista.add(painel);
 				}
 			}
-			
+
 			int aux = 0;
 			double result = (double)lista.size() / NUM_COLUNAS_DASHBOARD;
 			double rowsceil = Math.ceil(result);
-			
+
 			for(int j=0; j<rowsceil; j++) {
 				loopColuna:
 				for (DashboardColumn coluna : dashModel.getColumns()) {
@@ -202,10 +304,10 @@ public class DashboardBean {
 							aux = i;
 							continue;
 						}
-						
+
 						atribuirValores(lista.get(i));
 						coluna.addWidget(lista.get(i).getDescricao());
-						
+
 						i++;
 						aux = i;
 						continue loopColuna;
@@ -219,6 +321,11 @@ public class DashboardBean {
 		FiltroRecuperandoView filtro = new FiltroRecuperandoView();
 		FiltroSolicitacaoVisita filtroSolicitacaoVisita = new FiltroSolicitacaoVisita();
 		FiltroVwVisitante filtroVisitante = new FiltroVwVisitante();
+		FiltroRemanejamento filtroRemanejamento = new FiltroRemanejamento();
+		FiltroPedTransito filtroPedTransito = new FiltroPedTransito();
+		FiltroMovimentacaoExterna filtroMovimentacaoExterna = new FiltroMovimentacaoExterna();
+		FiltroMovimentacaoInterna filtroMovimentacaoInterna = new FiltroMovimentacaoInterna();
+		FiltroTransferencia filtroTransferencia = new FiltroTransferencia();
 		
 		switch (dash) {
 			case RECUPERANDOS_ATIVOS_SISTEMA:
@@ -328,6 +435,85 @@ public class DashboardBean {
 				filtroVisitante.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
 				facesUtil.setFlashParameter("filtroVisitanteDash", filtroVisitante);
 				return "pretty:ListarVisitante";
+
+			case TOTAL_MOVIMENTACAO_INTERNA_PENDENTE:
+				filtroMovimentacaoInterna.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroMovimentacaoInterna.setStatus(StatusMovimentacao.PENDENTE);
+				facesUtil.setFlashParameter("filtroMovimentacaoInternaDash", filtroMovimentacaoInterna);
+				return "pretty:ListarMovimentacaoInterna";
+
+			case TOTAL_MOVIMENTACAO_INTERNA_EM_ANDAMENTO:
+				filtroMovimentacaoInterna.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroMovimentacaoInterna.setStatus(StatusMovimentacao.EM_ANDAMENTO);
+				facesUtil.setFlashParameter("filtroMovimentacaoInternaDash", filtroMovimentacaoInterna);
+				return "pretty:ListarMovimentacaoInterna";
+
+			case TOTAL_MOVIMENTACAO_INTERNA_AGUARDANDO_FINALIZAR:
+				filtroMovimentacaoInterna.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroMovimentacaoInterna.setStatus(StatusMovimentacao.PENDENTE);
+				facesUtil.setFlashParameter("filtroMovimentacaoInternaDash", filtroMovimentacaoInterna);
+				return "pretty:ListarMovimentacaoInterna";
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_PENDENTE:
+				filtroMovimentacaoExterna.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroMovimentacaoExterna.setStatus(StatusMovimentacao.PENDENTE);
+				facesUtil.setFlashParameter("filtroMovimentacaoExternaDash", filtroMovimentacaoExterna);
+				return "pretty:ListarMovimentacaoExterna";
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_EM_ANDAMENTO:
+				filtroMovimentacaoExterna.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroMovimentacaoExterna.setStatus(StatusMovimentacao.EM_ANDAMENTO);
+				facesUtil.setFlashParameter("filtroMovimentacaoExternaDash", filtroMovimentacaoExterna);
+				return "pretty:ListarMovimentacaoExterna";
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_AGUARDANDO_FINALIZAR:
+				filtroMovimentacaoExterna.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroMovimentacaoExterna.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
+				facesUtil.setFlashParameter("filtroMovimentacaoExternaDash", filtroMovimentacaoExterna);
+				return "pretty:ListarMovimentacaoExterna";
+
+			case TOTAL_MOVIMENTACAO_EXTERNA_FINALIZADO_PARCIAL:
+				filtroMovimentacaoExterna.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroMovimentacaoExterna.setStatus(StatusMovimentacao.FINALIZADO_PARCIAL);
+				facesUtil.setFlashParameter("filtroMovimentacaoExternaDash", filtroMovimentacaoExterna);
+				return "pretty:ListarMovimentacaoExterna";
+
+			case TOTAL_TRANSFERENCIA_PENDENTE:
+				filtroTransferencia.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroTransferencia.setStatus(StatusMovimentacao.PENDENTE);
+				facesUtil.setFlashParameter("filtroTransferenciaDash", filtroTransferencia);
+				return "pretty:ListarTransferencia";
+
+			case TOTAL_TRANSFERENCIA_EM_ANDAMENTO:
+				filtroTransferencia.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroTransferencia.setStatus(StatusMovimentacao.EM_ANDAMENTO);
+				facesUtil.setFlashParameter("filtroTransferenciaDash", filtroTransferencia);
+				return "pretty:ListarTransferencia";
+
+			case TOTAL_TRANSFERENCIA_FINALIZADO_PARCIAL:
+				filtroTransferencia.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroTransferencia.setStatus(StatusMovimentacao.FINALIZADO_PARCIAL);
+				facesUtil.setFlashParameter("filtroTransferenciaDash", filtroTransferencia);
+				return "pretty:ListarTransferencia";
+
+			case TOTAL_RECEBER_TRANSFERENCIA_EM_ANDAMENTO:
+				filtroPedTransito.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroPedTransito.setStatus(StatusPedido.EM_ANDAMENTO);
+				facesUtil.setFlashParameter("filtroPedTransitoDash", filtroPedTransito);
+				return "pretty:ListarReceberTransferencia";
+
+			case TOTAL_RECEBER_TRANSFERENCIA_VINCULADO:
+				filtroPedTransito.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroPedTransito.setStatus(StatusPedido.VINCULADO);
+				facesUtil.setFlashParameter("filtroPedTransitoDash", filtroPedTransito);
+				return "pretty:ListarReceberTransferencia";
+
+			case TOTAL_REMANEJAMENTO_EM_ANDAMENTO:
+				filtroRemanejamento.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroRemanejamento.setStatus(StatusPedido.EM_ANDAMENTO);
+				facesUtil.setFlashParameter("filtroRemanejamentoDash", filtroRemanejamento);
+				return "pretty:ListarRemanejamento";
+
 				
 		}
 		
@@ -336,9 +522,209 @@ public class DashboardBean {
 	}
 
 	public int getSolicitacaoResetSenha(){
-		return this.usuarioService.conutSolicitacaoSenha();
+		if(!securityUtil.possuiPermissao("ListarUsuarioResetSenha")){
+			return 0;
+		}
+
+		FiltroUsuario filtroUsuario = new FiltroUsuario();
+
+		filtroUsuario.setResetSenha(true);
+		filtroUsuario.setUnidadePrisional(securityUtil.getUnidadeSelecionada());
+
+		return this.usuarioService.conutSolicitacaoSenha(filtroUsuario);
 	}
-	
+
+	public int getMovimentacaoInternaPendente(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.PENDENTE);
+
+		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
+
+	}
+
+	public int getMovimentacaoInternaEmAndamento(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
+			return 0;
+		}
+		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.EM_ANDAMENTO);
+
+		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
+	}
+
+	public int getMovimentacaoInternaFinalizadoParcial(){
+
+		if(!securityUtil.possuiPermissao("MovimentacaoInternaFinalizadoParcial")){
+			return 0;
+		}
+
+		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.FINALIZADO_PARCIAL);
+
+		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
+	}
+
+	public int getMovimentacaoInternaAguardandoFinalizar(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoInterna filtro = new FiltroMovimentacaoInterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
+
+		return this.movimentacaoInternaService.countMovimentacaoInterna(filtro);
+	}
+
+	public int getMovimentacaoExternaPendente(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoExterna")){
+			return 0;
+		}
+		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+
+		filtro.setStatus(StatusMovimentacao.PENDENTE);
+
+		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
+	}
+
+	public int getMovimentacaoExternaEmAndamento(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoExterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.EM_ANDAMENTO);
+
+		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
+	}
+
+	public int getMovimentacaoExternaFinalizadoParcial(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoExterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.FINALIZADO_PARCIAL);
+
+		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
+	}
+
+	public int getMovimentacaoExternaAguardandoFinalizar(){
+
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoExterna")){
+			return 0;
+		}
+
+		FiltroMovimentacaoExterna filtro = new FiltroMovimentacaoExterna();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
+
+		return this.movimentacaoExternaService.countMovimentacaoExterna(filtro);
+	}
+	public int getTransferenciaPendente(){
+
+		if(!securityUtil.possuiPermissao("VisualizarTransferencia")){
+			return 0;
+		}
+
+		FiltroTransferencia filtro = new FiltroTransferencia();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.PENDENTE);
+
+		return this.transferenciaService.countMovimentacaoExterna(filtro);
+	}
+	public int getTransferenciaFinalizadoParcial(){
+
+		if(!securityUtil.possuiPermissao("VisualizarTransferencia")){
+			return 0;
+		}
+
+		FiltroTransferencia filtro = new FiltroTransferencia();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.FINALIZADO_PARCIAL);
+
+		return this.transferenciaService.countMovimentacaoExterna(filtro);
+	}
+	public int getTransferenciaEmAndamento(){
+
+		if(!securityUtil.possuiPermissao("VisualizarTransferencia")){
+			return 0;
+		}
+
+		FiltroTransferencia filtro = new FiltroTransferencia();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusMovimentacao.EM_ANDAMENTO);
+
+		return this.transferenciaService.countMovimentacaoExterna(filtro);
+	}
+	public int getRecebimentoTransferenciaVinculado(){
+
+		if(!securityUtil.possuiPermissao("VisualizarReceberTransferencia")){
+			return 0;
+		}
+
+		FiltroPedTransito filtro = new FiltroPedTransito();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusPedido.VINCULADO);
+
+		return this.pedidoService.countRecebimentoTransferencia(filtro);
+	}
+	public int getRecebimentoTransferenciaEmAndamento(){
+
+		if(!securityUtil.possuiPermissao("VisualizarReceberTransferencia")){
+			return 0;
+		}
+
+		FiltroPedTransito filtro = new FiltroPedTransito();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusPedido.EM_ANDAMENTO);
+
+		return this.pedidoService.countRecebimentoTransferencia(filtro);
+	}
+
+	public int getRemanejamentoEmAndamento(){
+
+		if(!securityUtil.possuiPermissao("VisualizarRemanejamento")){
+			return 0;
+		}
+
+		FiltroRemanejamento filtro = new FiltroRemanejamento();
+
+		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setStatus(StatusPedido.EM_ANDAMENTO);
+
+		return this.remanejamentoService.countRecebimentoTransferencia(filtro);
+	}
+
 	public DashboardModel getDashModel() {
 		return dashModel;
 	}
@@ -402,6 +788,59 @@ public class DashboardBean {
 	public Long getTotalCredenciamentoAprovacaoPendente() {
 		return totalCredenciamentoAprovacaoPendente;
 	}
-	
-	
+
+    public Integer getTotalMovimentacaoInternaPendente() {
+        return totalMovimentacaoInternaPendente;
+    }
+
+	public Integer getTotalMovimentacaoInternaEmAndamento() {
+		return totalMovimentacaoInternaEmAndamento;
+	}
+
+	public Integer getTotalMovimentacaoInternaAguardandoFinalizar() {
+		return totalMovimentacaoInternaAguardandoFinalizar;
+	}
+
+	public Integer getTotalMovimentacaoExternaPendente() {
+		return totalMovimentacaoExternaPendente;
+	}
+
+	public Integer getTotalMovimentacaoExternaEmAndamento() {
+		return totalMovimentacaoExternaEmAndamento;
+	}
+
+	public Integer getTotalMovimentacaoExternaAguardandoFinalizar() {
+		return totalMovimentacaoExternaAguardandoFinalizar;
+	}
+
+    public Integer getTotalMovimentacaoInternaFinalizadoParcial() {
+        return totalMovimentacaoInternaFinalizadoParcial;
+    }
+    public Integer getTotalMovimentacaoExternaFinalizadoParcial() {
+        return totalMovimentacaoExternaFinalizadoParcial;
+    }
+
+    public Integer getTotalTransferenciaPendente() {
+        return totalTransferenciaPendente;
+    }
+
+    public Integer getTotalTransferenciaEmAndamento() {
+        return totalTransferenciaEmAndamento;
+    }
+
+    public Integer getTotalTransferenciaFinalizadoParcial() {
+        return totalTransferenciaFinalizadoParcial;
+    }
+
+    public Integer getTotalReceberTransferenciaEmAndamento() {
+        return totalReceberTransferenciaEmAndamento;
+    }
+
+    public Integer getTotalReceberTransferenciaViculada() {
+        return totalReceberTransferenciaViculada;
+    }
+
+    public Integer getTotalRemanejamentoEmAndamento() {
+        return totalRemanejamentoEmAndamento;
+    }
 }

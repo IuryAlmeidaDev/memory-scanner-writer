@@ -85,6 +85,9 @@
 				</p:commandButton>
 				<br />
 				<br />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{entradaSaidaBean.imprimir()}"/>
+				<br />
+				<br />
 			</p:panel>
 		</h:form>
 
@@ -107,6 +110,10 @@
 				<p:column headerText="Visitante"
 					sortBy="#{visitante.pessoa.nome}" >
 					<h:outputText value="#{entrada.pessoa.nome}" />
+				</p:column>
+
+				<p:column headerText="Recuperando" >
+					<h:outputText value="#{entradaSaidaBean.buscarRecuperandoPorVisitanteCredenciado(entrada.id)}" />
 				</p:column>
 
 				<p:column headerText="Ações" width="25%">

@@ -35,6 +35,8 @@ public class SolicitacaoVisitaService extends BaseService<SolicitacaoVisita, Lon
 	private ComboHelperBean comboHelperBean;
 	@Inject
 	private PessoaService pessoaService;
+	@Inject
+	private RecuperandoService recuperandoService;
 
 	@Inject
 	private SolicitacaoVisitaDAO solicitacaoDAO;
@@ -55,8 +57,12 @@ public class SolicitacaoVisitaService extends BaseService<SolicitacaoVisita, Lon
 			throw new ValidacaoException("Selecione um Recuperando.");
 		}
 
+		Recuperando recuperando = recuperandoService.buscarRecuperandoPorId(solicitacaoVisita.getRecuperando().getId(), false);
+		solicitacaoVisita.setRecuperando(recuperando);
+
 		this.tratarDadosCadastro(solicitacaoVisita);
 		this.validarDadosCadastro(solicitacaoVisita);
+
 
 		if (solicitacaoVisita.getId() != null) {
 			solicitacaoVisita.getParente().setNome(solicitacaoVisita.getPessoaSolicitacao().getNome());

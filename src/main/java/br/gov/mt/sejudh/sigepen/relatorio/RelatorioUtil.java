@@ -1,16 +1,16 @@
 package br.gov.mt.sejudh.sigepen.relatorio;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoArquivo;
+import br.gov.mt.sejudh.sigepen.model.Arquivo;
+import br.gov.mt.sejudh.sigepen.model.GerenciarAssinatura;
+import br.gov.mt.sejudh.sigepen.model.TextoDoRelatorio;
+import br.gov.mt.sejudh.sigepen.service.GerenciarAssinaturaService;
+import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
@@ -18,26 +18,20 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
 
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
-
-import br.gov.mt.sejudh.sigepen.enumerator.TipoArquivo;
-import br.gov.mt.sejudh.sigepen.model.Arquivo;
-import br.gov.mt.sejudh.sigepen.model.TextoDoRelatorio;
-import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
-import br.gov.mt.sejudh.sigepen.util.Sigepen;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import static net.sf.jasperreports.engine.JasperCompileManager.compileReportToFile;
 
 @RequestScoped
 public class RelatorioUtil {
 	
 	private static String dataSource;
+
 	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, Map<String, Object> parameters) throws JRException, NamingException, SQLException {
 		
 		Properties properties = new Properties();
@@ -51,7 +45,7 @@ public class RelatorioUtil {
 		InitialContext initialContext = new InitialContext();
 		DataSource ds = (DataSource) initialContext.lookup(dataSource);
 		Connection conn = ds.getConnection();
-		Arquivo arquivo = null;
+        Arquivo arquivo;
 		
 		try {
 			ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
@@ -75,8 +69,6 @@ public class RelatorioUtil {
 			arquivo.setNome(relatorio.name());
 			arquivo.setTipo(TipoArquivo.PDF);
 
-		} catch (Exception e) {
-			throw e;
 		} finally {
 			conn.close();
 			ds = null;
@@ -87,12 +79,51 @@ public class RelatorioUtil {
 	}
 
 	public static <T> Arquivo gerarRelatorio(T valor, Relatorio relatorio) throws JRException {
-		return gerarRelatorio(Arrays.asList(valor), relatorio, new HashMap<String, Object>());
+        return gerarRelatorio(Collections.singletonList(valor), relatorio, new HashMap<>());
 	}
 	
 	public static <T> Arquivo gerarRelatorio(T valor, Relatorio relatorio, Map<String, Object> parameters) throws JRException {
-		return gerarRelatorio(Arrays.asList(valor), relatorio, parameters);
+        return gerarRelatorio(Collections.singletonList(valor), relatorio, parameters);
 	}
+
+	public static void setAssinatura(Map<String, Object> parameters,Relatorio relatorio, GerenciarAssinaturaService gerenciarAssinaturaService){
+
+		GerenciarAssinatura gerenciarAssinatura = gerenciarAssinaturaService.buscar(SecurityUtil.getUnidadeSelecionada(),relatorio);
+
+		if(gerenciarAssinatura != null && !gerenciarAssinatura.getGerenciarAssinaturaServidores().isEmpty()){
+
+			ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+
+			String pathAssinatura = ctx.getRealPath("WEB-INF" + File.separator + "relatorios" + File.separator + "cabecalhos" + File.separator + "Assinatura.jasper");
+
+			if(relatorio.getRodape().equals(ModeloRodape.PADRAO_PAISAGEM)){
+
+				pathAssinatura = ctx.getRealPath("WEB-INF" + File.separator + "relatorios" + File.separator + "cabecalhos" + File.separator + "AssinaturaPassagem.jasper");
+			}
+
+			parameters.put("REPORT_ASSINATURA", pathAssinatura);
+
+			gerenciarAssinatura.getGerenciarAssinaturaServidores().forEach(  gerenciarAssinaturaServidor -> {
+				if(gerenciarAssinaturaServidor.getOrdem().equals("1")){
+					parameters.put("ASSINATURA_".concat("1"),gerenciarAssinaturaServidor.getServidor().getNome());
+					parameters.put("CARGO_".concat("1"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+				}
+				if(gerenciarAssinaturaServidor.getOrdem().equals("2")){
+					parameters.put("ASSINATURA_".concat("2"),gerenciarAssinaturaServidor.getServidor().getNome());
+					parameters.put("CARGO_".concat("2"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+				}
+				if(gerenciarAssinaturaServidor.getOrdem().equals("3")){
+					parameters.put("ASSINATURA_".concat("3"),gerenciarAssinaturaServidor.getServidor().getNome());
+					parameters.put("CARGO_".concat("3"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+				}
+				if(gerenciarAssinaturaServidor.getOrdem().equals("4")){
+					parameters.put("ASSINATURA_".concat("4"),gerenciarAssinaturaServidor.getServidor().getNome());
+					parameters.put("CARGO_".concat("4"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+				}
+			});
+		}
+
+ 	}
 	
 	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio, Map<String, Object> parameters) throws JRException {
 		Arquivo arquivo;
@@ -104,7 +135,7 @@ public class RelatorioUtil {
         parameters.put("UNIDADE_LOGADA", SecurityUtil.getUnidadeSelecionada().getNome());
         parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
 
-        if (!parameters.containsKey("NOME_DO_RELATORIO")) {
+		if (!parameters.containsKey("NOME_DO_RELATORIO")) {
             parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
         }
 
@@ -123,26 +154,60 @@ public class RelatorioUtil {
 	}
 
 	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo) throws JRException, NamingException, SQLException {
-		return gerarRelatorio(relatorio, conteudo, new HashMap<String, Object>());
+        return gerarRelatorio(relatorio, conteudo, new HashMap<>());
+	}
+
+	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo, Map<String, Object> parameters,GerenciarAssinaturaService gerenciarAssinaturaService) throws JRException, NamingException, SQLException {
+        List<TextoDoRelatorio> lista = new ArrayList<>();
+		lista.add(conteudo);
+
+		setAssinatura(parameters, relatorio,gerenciarAssinaturaService);
+
+		return gerarRelatorio(lista, relatorio, parameters);
+	}
+
+	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio, Map<String, Object> parameters,GerenciarAssinaturaService gerenciarAssinaturaService) throws JRException {
+		setAssinatura(parameters, relatorio,gerenciarAssinaturaService);
+		return gerarRelatorio(valores, relatorio, parameters);
 	}
 	
-	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo, Map<String, Object> parameters) throws JRException, NamingException, SQLException {		
-		List<TextoDoRelatorio> lista = new ArrayList<TextoDoRelatorio>();
+	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo, Map<String, Object> parameters) throws JRException, NamingException, SQLException {
+        List<TextoDoRelatorio> lista = new ArrayList<>();
 		lista.add(conteudo);
 	
 		return gerarRelatorio(lista, relatorio, parameters);
 	}
 	
+	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio, GerenciarAssinaturaService gerenciarAssinaturaService) throws JRException {
+        Map<String, Object> parameters = new HashMap<>();
+		setAssinatura(parameters, relatorio,gerenciarAssinaturaService);
+		return gerarRelatorio(valores, relatorio, parameters);
+	}
+
 	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio) throws JRException {
-		return gerarRelatorio(valores, relatorio, new HashMap<String, Object>());
+        return gerarRelatorio(valores, relatorio, new HashMap<>());
 	}
 	
 	public static <T> Arquivo gerarRelatorio(Relatorio relatorio) throws JRException, NamingException, SQLException {
-		return gerarRelatorio(relatorio, new HashMap<String, Object>());
+        return gerarRelatorio(relatorio, new HashMap<>());
 	}
 	
 	private static String getRelatorioPath(ServletContext ctx, Relatorio rel) {
-		return ctx.getRealPath("WEB-INF" + File.separator + "relatorios" + File.separator + rel.name() + ".jasper");
+        String dir = ctx.getRealPath("WEB-INF" + File.separator + "relatorios");
+        String jasperPath = dir + File.separator + rel.name() + ".jasper";
+        File jasperFile = new File(jasperPath);
+        if (!jasperFile.exists()) {
+            String jrxmlPath = dir + rel.name() + ".jrxml";
+            File jrxmlFile = new File(jrxmlPath);
+            if (jrxmlFile.exists()) {
+                try {
+                    compileReportToFile(jrxmlPath, jasperPath);
+                } catch (net.sf.jasperreports.engine.JRException e) {
+                    throw new RuntimeException("Falha ao compilar relatório JRXML: " + jrxmlPath + " -> " + jasperPath, e);
+                }
+            }
+        }
+        return jasperPath;
 	}
 	
 	public static String getSubReportPath(Relatorio relatorio) {
@@ -167,7 +232,7 @@ public class RelatorioUtil {
 				cabecalhoPath = cabecalhoPath + File.separator + "CabecalhoPadraoPaisagemSemUnidadeLogada.jasper";
 				break;
 		}
-		
+
 		return cabecalhoPath;
 	}
 	
@@ -203,4 +268,5 @@ public class RelatorioUtil {
 
 		return new DefaultStreamedContent(new ByteArrayInputStream(JasperExportManager.exportReportToPdf(jasperPrint)), "application/pdf", Relatorio.ListarEntradaSaida.toString()+".pdf", "application/pdf");
 	}
+
 }

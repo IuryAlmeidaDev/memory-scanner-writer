@@ -1,18 +1,5 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRelatorioEntradaSaidaRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.CondicaoRelatorio;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamentoRelatorio;
@@ -21,6 +8,18 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
 import br.gov.mt.sejudh.sigepen.model.Regime;
 import br.gov.mt.sejudh.sigepen.model.dto.RelatorioEntradaSaidaRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestScoped
 public class RelatorioEntradaSaidaRecuperandoDAO {
@@ -33,22 +32,17 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 	}
 	
 	private List<RelatorioEntradaSaidaRecuperandoDTO> buscarDados(FiltroRelatorioEntradaSaidaRecuperando filtro) {
-		List<RelatorioEntradaSaidaRecuperandoDTO> retorno = new ArrayList<RelatorioEntradaSaidaRecuperandoDTO>();
+        List<RelatorioEntradaSaidaRecuperandoDTO> retorno = new ArrayList<>();
 		if(TipoRelatorioEntradaSaidaRec.ENTRADA_SAIDA.equals(filtro.getTipoRelatorioEntradaSaidaRec()) || TipoRelatorioEntradaSaidaRec.ENTRADA.equals(filtro.getTipoRelatorioEntradaSaidaRec())) {
-			List<RelatorioEntradaSaidaRecuperandoDTO> r = this.buscarDadosEntradas(filtro);
-			r.stream().forEach((record) -> {
-				retorno.add(record);
-			});
+            retorno.addAll(this.buscarDadosEntradas(filtro));
 		}
 
 		if(TipoRelatorioEntradaSaidaRec.ENTRADA_SAIDA.equals(filtro.getTipoRelatorioEntradaSaidaRec()) || TipoRelatorioEntradaSaidaRec.SAIDA.equals(filtro.getTipoRelatorioEntradaSaidaRec())) {
 			List<RelatorioEntradaSaidaRecuperandoDTO> r = this.buscarDadosSaidas(filtro);
-			r.stream().forEach((record) -> {
-				retorno.add(record);
-			});
+            retorno.addAll(r);
 		}
 
-		if (retorno.size() > 0) {
+        if (!retorno.isEmpty()) {
 			return retorno.stream().distinct().collect(Collectors.toList());
 		} else {
 			return retorno;
@@ -56,7 +50,7 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 	}
 
 	private List<RelatorioEntradaSaidaRecuperandoDTO> buscarDadosEntradas(FiltroRelatorioEntradaSaidaRecuperando filtro) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		String dataInicial = sdf.format(filtro.getDataInicial());
 		String dataFinal = sdf.format(filtro.getDataFinal());
 		
@@ -72,7 +66,7 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 		hql.append(" pe.nome_social ");
 		hql.append(" from " + Sigepen.SEJUDH_SCHEMA + ".passagem p, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos r, " + Sigepen.SEJUDH_SCHEMA + ".pessoa pe, " + Sigepen.SEJUDH_SCHEMA + ".processo pro, " + Sigepen.SEJUDH_SCHEMA + ".processo_regime_condicao prc ");
 		hql.append(" where ");
-		hql.append("  trunc(p.data_entrada) >= to_date('" + dataInicial + "','DD/MM/YYYY') and trunc(p.data_entrada) <= to_date('" + dataFinal + "','DD/MM/YYYY') ");
+        hql.append("  p.data_entrada >= to_date('" + dataInicial + "','DD/MM/YYYY HH24:MI:SS') and p.data_entrada < to_date('" + dataFinal + "','DD/MM/YYYY HH24:MI:SS') ");
 		hql.append(" and p.recuperando_id = r.matricula ");
 		hql.append(" and r.id_pessoa = pe.id ");
 		hql.append(" and r.matricula = pro.recuperando_id ");
@@ -107,8 +101,8 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 		List<Object[]> results = query.getResultList();
 		
 		List<RelatorioEntradaSaidaRecuperandoDTO> retorno = new ArrayList<RelatorioEntradaSaidaRecuperandoDTO>();
-		
-		results.stream().forEach((record) -> {
+
+        results.forEach((record) -> {
 	        Long matricula = ((BigDecimal) record[0]).longValue();
 	        String nome = (String) record[1];
 	        String nomeMae = (String) record[2];
@@ -130,7 +124,7 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 	}
 
 	private List<RelatorioEntradaSaidaRecuperandoDTO> buscarDadosSaidas(FiltroRelatorioEntradaSaidaRecuperando filtro) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		String dataInicial = sdf.format(filtro.getDataInicial());
 		String dataFinal = sdf.format(filtro.getDataFinal());
 		
@@ -146,7 +140,7 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 		hql.append(" pe.nome_social ");
 		hql.append(" from " + Sigepen.SEJUDH_SCHEMA + ".passagem p, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos r, " + Sigepen.SEJUDH_SCHEMA + ".pessoa pe ");
 		hql.append(" where ");
-		hql.append("  trunc(p.data_saida) >= to_date('" + dataInicial + "','DD/MM/YYYY') and trunc(p.data_saida) <= to_date('" + dataFinal + "','DD/MM/YYYY') ");
+        hql.append("  p.data_saida >= to_date('" + dataInicial + "','DD/MM/YYYY HH24:MI:SS') and p.data_saida < to_date('" + dataFinal + "','DD/MM/YYYY HH24:MI:SS') ");
 		hql.append(" and p.recuperando_id = r.matricula ");
 		hql.append(" and r.id_pessoa = pe.id ");
 		

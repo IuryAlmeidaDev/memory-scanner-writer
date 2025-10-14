@@ -1,22 +1,16 @@
 package br.gov.mt.sejudh.sigepen.util;
 
-import java.io.Serializable;
-import java.util.Optional;
+import br.gov.mt.sejudh.sigepen.enumerator.Acao;
+import br.gov.mt.sejudh.sigepen.enumerator.LogSeverity;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
-
-import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.enumerator.LogSeverity;
+import java.io.Serializable;
 
 @RequestScoped
 public class LoggerUtil implements Serializable {
@@ -202,13 +196,29 @@ public class LoggerUtil implements Serializable {
 				}
 			}
 		}
-		
-		ThreadContext.put("loginUser", String.valueOf(SecurityUtil.getUsuario().getId()));
+
+        // Preenche contexto de thread com informações do usuário e IP de forma null-safe
+        String loginUser = "anonymous";
+        try {
+            Object usuario = SecurityUtil.getUsuario();
+            if (usuario != null) {
+                // getId() pode não existir em tempo de compilação como Object; usar reflexão leve para evitar dependência forte
+                try {
+                    java.lang.reflect.Method m = usuario.getClass().getMethod("getId");
+                    Object id = m.invoke(usuario);
+                    if (id != null) {
+                        loginUser = String.valueOf(id);
+                    }
+                } catch (Exception ignore) {
+                }
+            }
+        } catch (Exception ignore) {
+        }
+        ThreadContext.put("loginUser", loginUser);
 		ThreadContext.put("ipOrigem", getIp());
 
-		if (acao.equals(Acao.IMPRIMIR)) {
+        if (acao != null && acao.equals(Acao.IMPRIMIR)) {
 			ThreadContext.put("hashImpressao", getHashImpressao());
-
 		}
 
 		String mensagem = configuraMensagem(acao, severidade, objeto);
@@ -223,25 +233,36 @@ public class LoggerUtil implements Serializable {
 				break;
 				
 			default:
-				log.error(mensagem + " " + e.getMessage(), e);
-				break;
+                if (e != null) {
+                    log.error("{} {}", mensagem, e.getMessage(), e);
+                }
+                break;
 		}
 	}
-	
-	public static  String getHashImpressao() {
+
+    private static String getHashImpressao() {
 		//set session em: FileDownloadHandlerBean.prepararArquivo
 		String hashImpressao = "HashNaoGerador";
 		FacesUtil facesUtil = new FacesUtil();
-		if(facesUtil != null) {
-			hashImpressao = (String) facesUtil.getObjetoSessao("hashImpressao");
-		}
-		
-		return hashImpressao;
+        hashImpressao = (String) facesUtil.getObjetoSessao("hashImpressao");
+
+        return hashImpressao;
 	}
-	
-	public static String getIp() {	
-		return Optional.ofNullable(FacesUtil.getRequest().getHeader("X-Real-IP-Port"))
-                .filter(ipPort -> !ipPort.trim().isEmpty())
-                .orElseGet(() -> FacesUtil.getRequest().getRemoteAddr());
+
+    public static String getIp() {
+        try {
+            javax.servlet.http.HttpServletRequest req = FacesUtil.getRequest();
+            if (req == null) {
+                return "desconhecido";
+            }
+            String ipPort = req.getHeader("X-Real-IP-Port");
+            if (ipPort != null && !ipPort.trim().isEmpty()) {
+                return ipPort;
+            }
+            String addr = req.getRemoteAddr();
+            return addr != null ? addr : "desconhecido";
+        } catch (Exception e) {
+            return "desconhecido";
+        }
     }
 }

@@ -433,6 +433,7 @@ public class ImprimirFichaVisitanteBean extends MetodosDialogBean {
 	        ficha.setContatos(this.getVisitanteContatos(visitante));
 	        ficha.setCredenciamentos(this.getVisitanteCredenciamentos(visitante));
 	        ficha.setDataValidade(this.credenciamento.getDataValidade());
+	        
 	        lista.add(ficha);
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.FichaVisitante));
 			RequestContext.getCurrentInstance().execute("download()");

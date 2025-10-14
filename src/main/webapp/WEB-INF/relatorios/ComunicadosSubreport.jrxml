@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="ComunicadosSubreport" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0"
+              rightMargin="0" topMargin="10" bottomMargin="10" uuid="1234abcd-5678-90ef-1234-567890abcdef">
+    <property name="ireport.zoom" value="1.2100000000000002"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <parameter name="NOME_EQUIPE" class="java.lang.String"/>
+    <field name="matricula" class="java.lang.String"/>
+    <field name="servidorNome" class="java.lang.String"/>
+    <field name="ocorrencia" class="java.lang.String"/>
+    <field name="descricao" class="java.lang.String"/>
+    <title>
+        <band height="24" splitType="Stretch">
+            <textField>
+                <reportElement mode="Opaque" x="0" y="0" width="555" height="24" backcolor="#CCCCCC"
+                               uuid="aabbccdd-eeff-0011-2233-445566778899"/>
+                <box leftPadding="6"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Comunicado Servidores Equipe " + $P{NOME_EQUIPE}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    <columnHeader>
+        <band height="20" splitType="Stretch">
+            <staticText>
+                <reportElement mode="Transparent" x="0" y="0" width="80" height="20" backcolor="#E6E6E6"
+                               uuid="e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1"/>
+                <box leftPadding="6"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Matrícula]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Transparent" x="80" y="0" width="175" height="20" backcolor="#E6E6E6"
+                               uuid="f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f2f2"/>
+                <box leftPadding="6"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Servidor]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Transparent" x="255" y="0" width="100" height="20" backcolor="#E6E6E6"
+                               uuid="03030303-0303-0303-0303-030303030303"/>
+                <box leftPadding="6"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Ocorrência]]></text>
+            </staticText>
+            <staticText>
+                <reportElement mode="Transparent" x="355" y="0" width="200" height="20" backcolor="#E6E6E6"
+                               uuid="a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a4a4"/>
+                <box leftPadding="6"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Descrição]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="20" splitType="Stretch">
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement x="0" y="0" width="80" height="20" uuid="b5b5b5b5-b5b5-b5b5-b5b5-b5b5b5b5b5b5"/>
+                <box leftPadding="6"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{matricula}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement x="80" y="0" width="175" height="20" uuid="c6c6c6c6-c6c6-c6c6-c6c6-c6c6c6c6c6c6"/>
+                <box leftPadding="6"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{servidorNome}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement x="255" y="0" width="100" height="20" uuid="d7d7d7d7-d7d7-d7d7-d7d7-d7d7d7d7d7d7"/>
+                <box leftPadding="6"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{ocorrencia}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement x="355" y="0" width="200" height="20" uuid="f8f8f8f8-f8f8-f8f8-f8f8-f8f8f8f8f8f8"/>
+                <box leftPadding="6"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font fontName="SansSerif" size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

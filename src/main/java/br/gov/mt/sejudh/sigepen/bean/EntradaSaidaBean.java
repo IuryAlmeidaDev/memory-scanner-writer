@@ -1,14 +1,7 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -19,6 +12,11 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.model.*;
+import br.gov.mt.sejudh.sigepen.model.dto.UsuarioDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.VisitanteEntradaSaidaDTO;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
+import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -51,21 +49,6 @@ import br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoAutorizacaoValidacaoSemBio;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
-import br.gov.mt.sejudh.sigepen.model.AutorizacaoValidacaoSemBiometria;
-import br.gov.mt.sejudh.sigepen.model.Credenciamento;
-import br.gov.mt.sejudh.sigepen.model.EntradaSaida;
-import br.gov.mt.sejudh.sigepen.model.EntradaSaidaRecuperando;
-import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.FaltaDisciplinar;
-import br.gov.mt.sejudh.sigepen.model.FaseDoCredenciamento;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisitaEstrutura;
-import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
-import br.gov.mt.sejudh.sigepen.model.StatusVisita;
-import br.gov.mt.sejudh.sigepen.model.TipoVisita;
-import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.model.Usuario;
-import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.service.CredenciamentoService;
 import br.gov.mt.sejudh.sigepen.service.EntradaSaidaService;
 import br.gov.mt.sejudh.sigepen.service.FaltaDisciplinarService;
@@ -99,7 +82,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 
 	@Inject
 	private EntradaSaidaService service;
-	
+
 	@Inject
 	private CredenciamentoService credenciamentoService;
 
@@ -114,13 +97,13 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 
 	@Inject
 	TipoVisitaService tipoVisitaService;
-	
+
 	@Inject
 	PedidoService pedidoService;
 
 	@Inject
 	private BiometriaSDKDao biometriaSDKDao;
-	
+
 	@Inject
 	private FaltaDisciplinarService faltaDisciplinarService;
 
@@ -170,6 +153,11 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 
 	private boolean processando = false;
 
+	private Ocorrencia ocorrencia;
+
+	@Inject
+	private FileDownloadHandlerBean fileDownload;
+
 	@URLAction(onPostback = false)
 	public String init() throws Exception {
 		this.pesquisaBiometrica = false;
@@ -197,13 +185,13 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		if (acao == null) {
 			try {
 				switch (this.getAcaoDeTela()) {
-				case LISTAR:
-					this.pesquisar();
-					logDeAcesso(log, "Entrada/Saida");
-					break;
+					case LISTAR:
+						this.pesquisar();
+						logDeAcesso(log, "Entrada/Saida");
+						break;
 
-				default:
-					break;
+					default:
+						break;
 
 				}
 			} catch (Exception e) {
@@ -283,7 +271,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 
 			@Override
 			public List<Visitante> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-					Map<String, Object> filters) {
+										Map<String, Object> filters) {
 				try {
 					carregarEstruturaDisponivel();
 				} catch (ValidacaoException e1) {
@@ -334,16 +322,16 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 
 	public void retornoOperacaoBiometrica() {
 		switch (BiometriaRetorno.getOperacao(facesUtil)) {
-		case Pesquisar:
-			redirectAposBiometria(BiometriaRetorno.getValor());
-			break;
-		case Registrar:
-			break;
-		case Capturar:
-			validarBiometria(BiometriaRetorno.getValor());
-			break;
-		default:
-			break;
+			case Pesquisar:
+				redirectAposBiometria(BiometriaRetorno.getValor());
+				break;
+			case Registrar:
+				break;
+			case Capturar:
+				validarBiometria(BiometriaRetorno.getValor());
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -514,11 +502,11 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 						}
 					}
 					boolean lotacaoDisponivel = false;
-					 PassagemLotacao x = this.faltaDisciplinarService.buscaPassagemLotacaoPorRecuperandoId(vr.getRecuperando().getId());
+					PassagemLotacao x = this.faltaDisciplinarService.buscaPassagemLotacaoPorRecuperandoId(vr.getRecuperando().getId());
 
-//					TipoVisita tipoVisita =  tipoVisitaService.buscaPorIdCredenciamento(vr.getId()); 
+//					TipoVisita tipoVisita =  tipoVisitaService.buscaPorIdCredenciamento(vr.getId());
 					TipoVisita tipoVisita = vr.getTipoVisita();
-					
+
 					for(Estrutura e : this.getEstruturaDisponivel(tipoVisita.getTipoEntrada())) {
 						if(e.getId() == x.getEstrutura().getId()) {
 
@@ -548,7 +536,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 
 					TipoVisita tipoVisita = tipoVisitaService.buscaPorIdCredenciamento(vr.getId());
 					List<Estrutura> listEstruturasDisponiveis = this.getEstruturaDisponivelEntradaSaida(tipoVisita.getTipoEntrada());
-					
+
 
 					if (listEstruturasDisponiveis.size() > 0) {
 						for (Estrutura e : listEstruturasDisponiveis) {
@@ -718,7 +706,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 
 	private void validarIniciarVisita() throws ValidacaoException {
 		Optional<Credenciamento> optVr = this.getCredenciamentos().stream().filter(
-				vr -> vr.getSelecionado() && vr.getTipoVisita().getTipoEntrada().equals(TipoEntrada.ENTRADA_SAIDA))
+						vr -> vr.getSelecionado() && vr.getTipoVisita().getTipoEntrada().equals(TipoEntrada.ENTRADA_SAIDA))
 				.findFirst();
 
 		if (optVr.isPresent() && this.entrada.getMotivoEntrada() == null) {
@@ -731,7 +719,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		}
 		boolean ativo = false;
 		ativo = validaSeExisteCredenciamentoAtivoNoStatusDefinidoTempoExecucao(ativo);
-		if (!ativo || (this.getCredenciamentos() == null || 
+		if (!ativo || (this.getCredenciamentos() == null ||
 				(this.getCredenciamentos() != null && this.getCredenciamentos().size() == 0))) {
 			throw new ValidacaoException("Entrada não permitida! Visitante sem credenciamento ativo!");
 		}
@@ -807,10 +795,10 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	}
 
 	private void addVisitanteResponsavel(EntradaSaida entrada) {
-			Visitante entradaResponsavel = service.responsavelDeuEntrada(this.credenciamentos.get(0).getVisitante().getId());
-			if (entradaResponsavel != null) {
-				entrada.setVisitanteResponsavel(entradaResponsavel);
-			}
+		Visitante entradaResponsavel = service.responsavelDeuEntrada(this.credenciamentos.get(0).getVisitante().getId());
+		if (entradaResponsavel != null) {
+			entrada.setVisitanteResponsavel(entradaResponsavel);
+		}
 	}
 
 	public void finalizarVisita() {
@@ -839,7 +827,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	}
 
 	public void selecaoStatusVisita() {
-				
+
 		UnidadePrisional unidadeSelecionada =  SecurityUtil.getUnidadeSelecionada();
 		this.credenciamentos = new ArrayList<Credenciamento>();
 		if (this.entrada != null) {
@@ -875,12 +863,12 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 									this.credenciamentos.add(vr);
 								}
 							}
-						}  
+						}
 					} else {
 						//Visitante é prestador de serviço, não tem recuperando vinculado
 						this.credenciamentos.add(vr);
 					}
-					
+
 				}
 			}
 		}
@@ -950,7 +938,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 
 	private void validaExibicaoMotivo() {
 		if (this.getCredenciamentos().stream().filter(
-				vr -> vr.getTipoVisita().getTipoEntrada().equals(TipoEntrada.ENTRADA_SAIDA) && vr.getSelecionado())
+						vr -> vr.getTipoVisita().getTipoEntrada().equals(TipoEntrada.ENTRADA_SAIDA) && vr.getSelecionado())
 				.count() > 0) {
 			if (this.entrada.getMotivoEntrada() == null) {
 				exibeDialogMotivoEntradaSaida();
@@ -1230,9 +1218,9 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	public void abrirDlgAutorizar(Acao acao) {
 		if (acao.equals(Acao.INICIAR)
 				&& this.entrada.getAutorizacaoValidacaoSemBiometria().stream()
-						.filter(a -> a.getTipoAutorizacaoValidacaoSemBio()
-								.equals(TipoAutorizacaoValidacaoSemBio.ENTRADA_VISITANTE))
-						.count() == 0
+				.filter(a -> a.getTipoAutorizacaoValidacaoSemBio()
+						.equals(TipoAutorizacaoValidacaoSemBio.ENTRADA_VISITANTE))
+				.count() == 0
 				&& !securityUtil.possuiPermissao("AutorizarEntradaVisitanteSemBiometria")) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO",
 					"Entrada não permitida! Usuário não autorizado para efetuar entrada!");
@@ -1240,9 +1228,9 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		}
 		if (acao.equals(Acao.FINALIZAR)
 				&& this.entrada.getAutorizacaoValidacaoSemBiometria().stream()
-						.filter(a -> a.getTipoAutorizacaoValidacaoSemBio()
-								.equals(TipoAutorizacaoValidacaoSemBio.SAIDA_VISITANTE))
-						.count() == 0
+				.filter(a -> a.getTipoAutorizacaoValidacaoSemBio()
+						.equals(TipoAutorizacaoValidacaoSemBio.SAIDA_VISITANTE))
+				.count() == 0
 				&& !securityUtil.possuiPermissao("AutorizarSaidaVisitanteSemBiomatria")) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO",
 					"Saída não permitida! Usuário não autorizado para efetuar saída!");
@@ -1297,7 +1285,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
 		Date df = Sigepen.getDataConsultaMenorIgual(new Date());
 		long unidadeIdSelecionada = SecurityUtil.getUnidadeSelecionada().getId();
-				
+
 		for (EntradaSaida e : v.getEntradas()) {
 			if (e.getUnidadePrisional().getId() == unidadeIdSelecionada
 					&& e.getDataEntrada().after(di) && e.getDataEntrada().before(df)) {
@@ -1329,39 +1317,39 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 
 		if (visantePorPessoa != null) {
 //			try {
-				f.setPessoasIds(ids);
-				f.setData(new Date());
-				f.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
-				List<EntradaSaida> listaEntrada = service.buscarEntradasPorFiltro(f, false);
+			f.setPessoasIds(ids);
+			f.setData(new Date());
+			f.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
+			List<EntradaSaida> listaEntrada = service.buscarEntradasPorFiltro(f, false);
 
-				if (listaEntrada != null && listaEntrada.size() == 0) {
+			if (listaEntrada != null && listaEntrada.size() == 0) {
+				this.novaEntrada(visantePorPessoa);
+			} else if (listaEntrada != null && listaEntrada.size() > 0) {
+				EntradaSaida eAux = listaEntrada.get(0);
+				for (EntradaSaida andamento : listaEntrada) {
+					if (SituacaoVisita.EM_ANDAMENTO.equals(andamento.getSituacao())) {
+						eAux = andamento;
+					}
+				}
+				if (SituacaoVisita.EM_ANDAMENTO.equals(eAux.getSituacao())) {
+					this.entrada = new EntradaSaida();
+					this.entrada = service.buscarAuditoria(eAux);
+					this.autorizacoesVisita = "Autorizar saída sem biometria";
+					this.autorizarSemBiometria = "Autorização para saída SEM BIOMETRIA";
+					if ("ENTRADA".equals(this.acao))
+						this.acao = "SAIDA";
+				} else {
 					this.novaEntrada(visantePorPessoa);
-				} else if (listaEntrada != null && listaEntrada.size() > 0) {
-					EntradaSaida eAux = listaEntrada.get(0);
-					for (EntradaSaida andamento : listaEntrada) {
-						if (SituacaoVisita.EM_ANDAMENTO.equals(andamento.getSituacao())) {
-							eAux = andamento;
-						}
-					}
-					if (SituacaoVisita.EM_ANDAMENTO.equals(eAux.getSituacao())) {
-						this.entrada = new EntradaSaida();
-						this.entrada = service.buscarAuditoria(eAux);
-						this.autorizacoesVisita = "Autorizar saída sem biometria";
-						this.autorizarSemBiometria = "Autorização para saída SEM BIOMETRIA";
-						if ("ENTRADA".equals(this.acao))
-							this.acao = "SAIDA";
-					} else {
-						this.novaEntrada(visantePorPessoa);
-					}
 				}
+			}
 
-				if (!this.entrada.getVisitante().getVisitantesReponsaveis().isEmpty()) {
-					this.mostrarPanelVisitante = false;
-					this.mostrarPanelResponsavel = true;
-				}
+			if (!this.entrada.getVisitante().getVisitantesReponsaveis().isEmpty()) {
+				this.mostrarPanelVisitante = false;
+				this.mostrarPanelResponsavel = true;
+			}
 
-				this.mostrarPanelVisitante = true;
-				this.innerSelecaoStatusVisita();
+			this.mostrarPanelVisitante = true;
+			this.innerSelecaoStatusVisita();
 //			} catch (Exception e) {
 //				facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO",
 //						"Erro ao pesquisar por biometria: " + e.getMessage());
@@ -1397,6 +1385,14 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		this.mostrarPanelResponsavel = mostrarPanelResponsavel;
 	}
 
+	public Ocorrencia getOcorrencia(){
+		return ocorrencia;
+	}
+
+	public void setOcorrencia(Ocorrencia ocorrencia) {
+		this.ocorrencia = ocorrencia;
+	}
+
 	public void abrirDialogDetalhes(Visitante v, String a) {
 		this.setAcao(a);
 		Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
@@ -1423,4 +1419,39 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		return "ALTERAR".equals(this.acao) && SituacaoVisita.EM_ANDAMENTO.equals(this.entrada.getSituacao());
 	}
 
+	public String buscarRecuperandoPorVisitanteCredenciado(Long idVisitante){
+		return service.getNomeRecuperando(idVisitante);
+	}
+
+	public void imprimir() {
+		try {
+
+			List<VisitanteEntradaSaidaDTO> lista = new ArrayList<>();
+
+			for(Visitante visitante : service.buscarEntradasPorFiltro(getFiltro(), false)){
+
+				VisitanteEntradaSaidaDTO visitanteEntradaSaidaDTO = new VisitanteEntradaSaidaDTO(visitante);
+				visitanteEntradaSaidaDTO.setNomeRecuperando(buscarRecuperandoPorVisitanteCredenciado(visitante.getId()));
+				visitanteEntradaSaidaDTO.setDataHoraEntrada(buscarData(visitante));
+
+				lista.add(visitanteEntradaSaidaDTO);
+			}
+
+			if (lista.size() == 0) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
+				return;
+			}
+
+			Map<String, Object> parameters = new HashMap<>();
+
+
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.ListarEntradaVisitatnes));
+
+			RequestContext.getCurrentInstance().execute("download()");
+			LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de entrada de visitantes", log);
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir lista de entrada de visitantes: " + e.getMessage());
+			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de entrada de visitantes", e, log);
+		}
+	}
 }

@@ -24,6 +24,7 @@
 				<p:menuitem value="Tipo Impedimento" outcome="pretty:ListarTipoImpedimento" icon="fa fa-ban" rendered="#{securityUtil.possuiPermissao('ListarTipoImpedimento')}"/>
 				<p:menuitem value="Certidão" outcome="pretty:ListarCertidao" icon="fa fa-archive" rendered="#{securityUtil.possuiPermissao('ListarCertidao')}"/>
 			 	<p:menuitem value="Tipo Falta Disciplinar" outcome="pretty:ListarTipoFaltaDisciplinar" icon="fa fa-cog" rendered="#{securityUtil.possuiPermissao('ListarTipoFaltaDisciplinar')}" />
+			 	<p:menuitem value="Tipo Ocorrênica" outcome="pretty:ListarTipoOcorrencia" icon="fa fa-cog" rendered="#{securityUtil.possuiPermissao('ListarTipoOcorrencia')}" />
 			</p:submenu>
 			
 			<p:submenu label="Recuperando" rendered="#{securityUtil.exibeCategoriaMenu('Recuperando')}">
@@ -72,7 +73,11 @@
 				<p:menuitem value="Apostilamento" outcome="pretty:ListarApostilamento" icon="fa fa-copy" rendered="#{securityUtil.possuiPermissao('ListarApostilamento')}"/>
 				<p:menuitem value="Horário de Refeição" outcome="pretty:ListarHorarioRefeicao" icon="fa fa-clock-o" rendered="#{securityUtil.possuiPermissao('ListarHorarioRefeicao')}"/>
 			</p:submenu>
-			
+
+			<p:submenu label="Plantão" rendered="#{securityUtil.exibeCategoriaMenu('plantao')}">
+				<p:menuitem value="Livro Plantão" outcome="pretty:ListarPlantao" icon="fa fa-file" rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}"/>
+			</p:submenu>
+
 			<p:submenu label="Auditoria" rendered="#{securityUtil.exibeCategoriaMenu('Auditoria')}">
 				<p:menuitem value="Logs" outcome="pretty:ListarLog" icon="fa fa-file-text-o" rendered="#{securityUtil.possuiPermissao('ListarLog')}"/>
 			</p:submenu>
@@ -92,7 +97,7 @@
 				</ui:remove>
 				<p:menuitem value="Sair" action="#{loginBean.logout()}" icon="ui-icon-power" />
 			</p:submenu>
-			
+
             <p:submenu label="Administrador" rendered="#{securityUtil.getLoginUsuario().equals('ADMIN')}">
                 <p:menuitem value="Parametros" outcome="pretty:Parametro" />
                 <p:menuitem value="NServer" outcome="pretty:NServer" />

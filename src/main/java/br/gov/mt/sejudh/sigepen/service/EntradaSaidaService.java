@@ -12,11 +12,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEntradaSaida;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEntradaVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
-import br.gov.mt.sejudh.sigepen.model.EntradaSaida;
-import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.ParametroVisita;
-import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.model.Visitante;
+import br.gov.mt.sejudh.sigepen.model.*;
 import br.gov.mt.sejudh.sigepen.model.dto.EntradaSaidaDTO;
 
 @Stateless
@@ -24,14 +20,14 @@ public class EntradaSaidaService {
 
 	@Inject
 	private EntradaSaidaDAO dao;
-	
+
 	@Inject
 	private AuditoriaDAO auditDao;
 
 	public void buscaTodasAsCelasDaEstruturaId(Long id) {
 		this.dao.buscaTodasAsCelasDaEstruturaId(id);
 	}
-	
+
 	public int buscarQuantidadeFiltrada(FiltroEntradaSaida filtro) {
 		return this.dao.buscarQuantidadeFiltrada(filtro);
 	}
@@ -51,18 +47,18 @@ public class EntradaSaidaService {
 	public Visitante buscarVisitantePorPessoa(FiltroEntradaSaida filtro) {
 		return this.dao.buscarVisitantePorPessoa(filtro);
 	}
-	
+
 	public EntradaSaidaDTO salvar(EntradaSaidaDTO entrada) throws Exception {
 		EntradaSaida e = dao.buscarPorId(entrada.getId());
-		
-		if (!e.getSituacao().equals(SituacaoVisita.EM_ANDAMENTO)) 
+
+		if (!e.getSituacao().equals(SituacaoVisita.EM_ANDAMENTO))
 			throw new ValidacaoException("Esta visita não está mais em andamento.");
-		
+
 		e.setDataSaida(entrada.getDataSaida());
 		e.setSituacao(entrada.getSituacao());
-		
+
 		salvar(e);
-		
+
 		return entrada;
 	}
 
@@ -77,15 +73,15 @@ public class EntradaSaidaService {
 	public Long buscarQuantidadeFinalizada(FiltroEntradaSaida f) {
 		return this.dao.buscarQuantidadeFinalizada(f);
 	}
-	
+
 	public Long buscarEntradaResponsavel(FiltroEntradaSaida f) {
 		return this.dao.buscarEntradaResponsavel(f);
 	}
-	
+
 	public void excluir(EntradaSaida entrada) {
 		this.dao.excluir(entrada);
 	}
-	
+
 	public EntradaSaida buscarPorId(Long id) {
 		return this.dao.buscarPorId(id);
 	}
@@ -97,7 +93,7 @@ public class EntradaSaidaService {
 	public Visitante buscarPessoaVisitante(List<Long> ids) {
 		return this.dao.buscarPessoaVisitante(ids);
 	}
-	
+
 	public EntradaSaida buscarAuditoria(EntradaSaida entrada) {
 		if (entrada != null) {
 			entrada.setAutorRegistro(auditDao.autorRegistro(entrada, entrada.getId()));
@@ -105,7 +101,7 @@ public class EntradaSaidaService {
 		}
 		return entrada;
 	}
-	
+
 	public int buscarQuantidadeFiltrada(FiltroEntradaVisitante filtro) {
 		return this.dao.buscarQuantidadeFiltrada(filtro);
 	}
@@ -121,6 +117,13 @@ public class EntradaSaidaService {
 	public Visitante responsavelDeuEntrada(Long id) {
 		return dao.responsavelDeuEntrada(id);
 	}
+
+	public Recuperando buscarRecuperandoPorVisitanteCredenciado(Long idVisitante){
+		return dao.buscarRecuperandoPorVisitanteCredenciado(idVisitante);
+	}
+
+	public String getNomeRecuperando(Long idVisitante) {
+		Recuperando rec = buscarRecuperandoPorVisitanteCredenciado(idVisitante);
+		return rec != null && rec.getPessoa() != null ? rec.getPessoa().getNome() : "";
+	}
 }
-
-

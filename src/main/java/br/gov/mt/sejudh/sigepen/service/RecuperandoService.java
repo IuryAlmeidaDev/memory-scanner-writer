@@ -534,31 +534,34 @@ public class RecuperandoService {
 		return reg;
 	}
 	
-	public Condicao condicaoAtualRecuperando(List<Processo> processos){
-		Condicao cond = null;
+	public Condicao condicaoAtualRecuperando(List<Processo> processos) {
+		boolean temProvisorio = false;
+		boolean temMedidaSeguranca = false;
+
 		for (Processo processo : processos) {
-			if (processo.getStatusProcesso() != StatusProcesso.FINALIZADO) {
+			if (processo.getStatusProcesso() != StatusProcesso.FINALIZADO && processo.getCondicaoAtual() != null) {
+				Condicao cond = processo.getCondicaoAtual();
 
-				if (processo.getCondicaoAtual() != null) {
-					if (processo.getCondicaoAtual() == Condicao.CONDENADO) {
-						return Condicao.CONDENADO;
-
-					} else if (cond != null) {
-						if (cond == processo.getCondicaoAtual() && processo.getCondicaoAtual() == Condicao.PROVISORIO) {
-							cond = Condicao.PROVISORIO;
-
-						} else if (processo.getCondicaoAtual() == Condicao.MEDIDA_SEGURANCA) {
-							cond = Condicao.MEDIDA_SEGURANCA;
-
-						} 
-					}else {
-						cond = processo.getCondicaoAtual();
-					}
+				if (cond == Condicao.CONDENADO) {
+					return Condicao.CONDENADO;
+				} else if (cond == Condicao.PROVISORIO) {
+					temProvisorio = true;
+				} else if (cond == Condicao.MEDIDA_SEGURANCA) {
+					temMedidaSeguranca = true;
 				}
 			}
 		}
-		return cond;
-	}	
+
+		if (temProvisorio && temMedidaSeguranca) {
+			return Condicao.MEDIDA_SEGURANCA;
+		} else if (temProvisorio) {
+			return Condicao.PROVISORIO;
+		} else if (temMedidaSeguranca) {
+			return Condicao.MEDIDA_SEGURANCA;
+		}
+
+		return null;
+	}
 	
 	public boolean isMaioridade(Date nascimento){
 		Calendar maioridade = Calendar.getInstance();

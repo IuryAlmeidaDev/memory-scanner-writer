@@ -30,7 +30,6 @@ import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamentosVisita;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TempoCondenacao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado;
@@ -48,6 +47,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoVisitaObrigatoriedade;
 import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
+import br.gov.mt.sejudh.sigepen.enumerator.VencimentoCredenciamento;
 import br.gov.mt.sejudh.sigepen.model.Certidao;
 import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
@@ -59,6 +59,7 @@ import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
 import br.gov.mt.sejudh.sigepen.model.OrientacaoSexual;
 import br.gov.mt.sejudh.sigepen.model.Pais;
 import br.gov.mt.sejudh.sigepen.model.Parentesco;
+import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.Raca;
 import br.gov.mt.sejudh.sigepen.model.Regime;
 import br.gov.mt.sejudh.sigepen.model.Religiao;
@@ -70,46 +71,47 @@ import br.gov.mt.sejudh.sigepen.model.TipoServidor;
 import br.gov.mt.sejudh.sigepen.model.TipoUnidade;
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 
 
 @Stateless
 public class ComboService {
-	
+
 	@Inject
 	private ComboDAO dao;
-	
+
 	public ComboService() {
-		
-	}	
-	
+
+	}
+
 	public List<Regime> listarRegime() {
 		return dao.listarRegime();
 	}
-	
+
 	public List<Pais> listarPais() {
 		return dao.listarPais();
 	}
-	
+
 	public List<Religiao> listarReligiao() {
 		return dao.listarReligiao();
 	}
-	
+
 	public List<Raca> listarRaca() {
 		return dao.listarRaca();
 	}
-	
+
 	public List<EstadoCivil> listarEstadoCivil() {
 		return dao.listarEstadoCivil();
 	}
-	
+
 	public List<OrientacaoSexual> listarOrientacaoSexual() {
 		return dao.listarOrientacaoSexual();
 	}
-	
+
 	public List<IdentidadeDeGenero> listarIdentidadeDeGenero() {
 		return dao.listarIdentidadeDeGenero();
 	}
-	
+
 	public List<TipoSanguineo> listarTipoSanguineo() {
 		return dao.listarTipoSanguineo();
 	}
@@ -121,42 +123,43 @@ public class ComboService {
 	public List<Parentesco> listarParentesco() {
 		return dao.listarParentesco();
 	}
-	
+
 	public List<TipoServidor> listarTipoServidor(){
 		return dao.listarTipoServidor();
 	}
-	
-	public List<TipoHistorico> listarTipoHistorico(){
-		return dao.listarTipoHistorico();
+
+	public List<TipoHistorico> listarTipoHistoricoPermitidoParaCadastrar() {
+		return dao.listarTipoHistoricoPorPermissao("CadastrarHistoricoRecuperando");
 	}
-	
+
+	public List<TipoHistorico> listarTipoHistoricoParaVisualizar() {
+		return dao.listarTipoHistoricoPorPermissao("VisualizarHistoricoRecuperando");
+	}
+
+
 	public Status[] getStatus() {
 		return Status.values();
 	}
-	
+
 	public Sexo[] getSexo() {
 		return Sexo.values();
 	}
-	
+
 	public CorOlho[] getCorOlho() {
 		return CorOlho.values();
 	}
-	
+
 	public CorCabelo[] getCorCabelo() {
 		return CorCabelo.values();
 	}
-	
+
 	public Periculosidade[] getPericulosidade() {
 		return Periculosidade.values();
 	}
-	
-	public StatusProcesso[] getStatusProcesso() {
-		return StatusProcesso.values();
-	}
-	
+
 	public SituacaoUnidade[] getSituacaoUnidade() {
 		SituacaoUnidade[] situacoes = SituacaoUnidade.values();
-		
+
 		//Remove o item "Interditado Parcial" para não aparecer no combo de seleção
 		for(int i = 0; i < situacoes.length; i++){
 			if (situacoes[i] == SituacaoUnidade.INTERDITADO_PARCIAL){
@@ -168,39 +171,47 @@ public class ComboService {
 		}
 		return situacoes;
 	}
-	
+
 	public SituacaoUnidade[] getSituacaoUnidadeTodas() {
 		return SituacaoUnidade.values();
 	}
-	
+
 	public TipoContato[] getTipoContato() {
 		return TipoContato.values();
 	}
-	
+
 	public TipoInterdicao[] getTipoInterdicao(){
 		return TipoInterdicao.values();
 	}
-	
+
 	public TipoDeficiencia[] getTipoDeficiencia(){
 		return TipoDeficiencia.values();
 	}
-	
+
 	public List<Estado> listarEstado(){
 		return dao.listarEstado();
 	}
-	
+
+	public List<UnidadePrisional> listarUnidades(){
+		return dao.listarUnidadesPrisionais();
+	}
+
+	public List<Plantao> listarPlantoesCadastrados(){
+		return dao.listarPlantoesCadastrados();
+	}
+
 	public List<Cidade> listarCidade(Estado estado){
 		return dao.listarCidade(estado);
 	}
-	
+
 	public List<TipoUnidade> listarTipoUnidade(){
 		return dao.listarTipoUnidade();
 	}
-	
+
 	public List<TipoDocumento> listarTipoDocumento(){
 		return dao.listarTipoDocumento();
 	}
-	
+
 	public List<Nacionalidade> listarNacionalidades(){
 		return dao.listarNacionalidades();
 	}
@@ -212,7 +223,7 @@ public class ComboService {
 	public StatusRecuperando[] getStatusRecuperando() {
 		return StatusRecuperando.values();
 	}
-	
+
 	public TipoFoto[] getTipoFoto() {
 		return TipoFoto.values();
 	}
@@ -220,10 +231,10 @@ public class ComboService {
 	public TipoProcesso[] getTipoProcesso() {
 		return TipoProcesso.values();
 	}
-	
+
 	public List<TipoTransito> getTipoTransito() {
 		TipoTransito[] tipos = TipoTransito.values();
-		List<TipoTransito> tiposTransito = new ArrayList<TipoTransito>();
+		List<TipoTransito> tiposTransito = new ArrayList<>();
 		for(int i = 2; i < tipos.length; i++){
 			tiposTransito.add(tipos[i]);
 		}
@@ -241,7 +252,7 @@ public class ComboService {
 	public SituacaoFaltaDisciplinar[] getSituacaoFaltaDisciplinar(){
 		return SituacaoFaltaDisciplinar.values();
 	}
-	
+
 	public Modalidade[] getModalidade() {
 		return Modalidade.values();
 	}
@@ -249,33 +260,29 @@ public class ComboService {
 	public TipoParticularidade[] getTipoParticularidade() {
 		return TipoParticularidade.values();
 	}
-	
+
 	public StatusPedido[] getStatusPedido() {
 		return StatusPedido.values();
 	}
-	
+
 	public StatusMovimentacao[] getStatusMovimentacao() {
 		return StatusMovimentacao.values();
 	}
-	
+
 	public TipoDesligamento[] getTipoDesligamento() {
 		return TipoDesligamento.values();
 	}
-	
+
 	public Acao[] getAcao() {
 		return Acao.values();
 	}
-	
+
 	public PronomeTratamento[] getPronomeTratamento() {
 		return PronomeTratamento.values();
 	}
-	
+
 	public TipoDocumentoPedidoTransito[] getTipoDocumentoPedidoTransito() {
 		return TipoDocumentoPedidoTransito.values();
-	}
-	
-	public Estado buscarEstado(String nomeEstado){
-		return dao.buscarEstado(nomeEstado);
 	}
 
 	public List<UnidadePrisional> getUnidadesPrisionais() {
@@ -298,10 +305,6 @@ public class ComboService {
 		return Esfera.values();
 	}
 
-	public TipoPlantao[] getPlantoes() {
-		return TipoPlantao.values();
-	}
-
 	public TipoAtestado[] getAtestados() {
 		return TipoAtestado.values();
 	}
@@ -321,32 +324,28 @@ public class ComboService {
 	public StatusCredenciamento[] getSituacaoCredenciamento(){
 		return StatusCredenciamento.values();
 	}
-	
+
 	public StatusCredenciamentosVisita[] getSituacaoCredenciamentoVisita(){
 		return StatusCredenciamentosVisita.values();
 	}
-	
+
 	public StatusCredenciamentosVisita[] getFiltroSituacaoCredenciamentoVisita(){
-		StatusCredenciamentosVisita[] retorno = {
-				StatusCredenciamentosVisita.DISPONIVEL,
-				StatusCredenciamentosVisita.INDISPONIVEL,
-				StatusCredenciamentosVisita.FALTA_DISCIPLINAR
-				};
-		return retorno;
+        return new StatusCredenciamentosVisita[]{
+                StatusCredenciamentosVisita.DISPONIVEL,
+                StatusCredenciamentosVisita.INDISPONIVEL,
+                StatusCredenciamentosVisita.FALTA_DISCIPLINAR
+                };
 	}
-	
-	
-	
+
 	public StatusCredenciamento[] getFiltroSituacaoCredenciamento(){
-		StatusCredenciamento[] retorno = {
-				StatusCredenciamento.PENDENTE,
-				StatusCredenciamento.APROVADO,
-				StatusCredenciamento.NAO_APROVADO,
-				StatusCredenciamento.INATIVO
-				};
-		return retorno;
+        return new StatusCredenciamento[]{
+                StatusCredenciamento.PENDENTE,
+                StatusCredenciamento.APROVADO,
+                StatusCredenciamento.NAO_APROVADO,
+                StatusCredenciamento.INATIVO
+                };
 	}
-	
+
 	public SituacaoVisita[] getSituacaoVisita() {
 		return SituacaoVisita.values();
 
@@ -355,7 +354,7 @@ public class ComboService {
 	public IdadeRecuperando[] getIdadeRecuperando() {
 		return IdadeRecuperando.values();
 	}
-	
+
 	public TempoCondenacao[] getTempoCondenacao() {
 		return TempoCondenacao.values();
 	}
@@ -363,7 +362,7 @@ public class ComboService {
 	public Lgbt[] getLgbt() {
 		return Lgbt.values();
 	}
-	
+
 	public TipoRelatorioEntradaSaidaRec[] getTipoRelatorioEntradaSaidaRec(){
 		return TipoRelatorioEntradaSaidaRec.values();
 	}
@@ -371,7 +370,7 @@ public class ComboService {
 	public PopulacaoFeminino[] getPopulacaoFeminino() {
 		return PopulacaoFeminino.values();
 	}
-	
+
 	public TipoVisitaObrigatoriedade[] getTipoVisitaObrigatoriedade() {
 		return TipoVisitaObrigatoriedade.values();
 	}
@@ -379,4 +378,18 @@ public class ComboService {
 	public UnidadeMedida[] getUnidadesMedida() {
 		return UnidadeMedida.values();
 	}
+
+	public VencimentoCredenciamento[] getVencimentoCredenciamento() {
+		return VencimentoCredenciamento.values();
+	}
+
+
+	public TipoPlantao[] getTipoPlantao() {
+		return TipoPlantao.values();
+	}
+
+	public Relatorio[] getRelatorio() {
+	    return new Relatorio[] { Relatorio.Atestado };
+	}
+
 }

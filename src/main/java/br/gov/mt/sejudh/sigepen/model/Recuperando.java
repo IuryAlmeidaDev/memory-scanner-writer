@@ -26,6 +26,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -275,7 +277,18 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
     private Etnia etnia;
 
 	@OneToOne(mappedBy = "recuperando", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-	private AutorizacaoCadastroSemBiometria autorizacaoCadastroSemBiometria;
+	private AutorizacaoCadastroSemBiometria autorizacaoCadastroSemBiometria;	
+	
+	@Column(name = "PERICULOSIDADE_ADAPTATIVA")
+    private Integer periculosidadeAdaptativa;	
+	
+	@PrePersist
+    @PreUpdate
+    private void updatePericulosidadeAdaptativa() {
+        if (periculosidade != null) {
+            this.periculosidadeAdaptativa = periculosidade.ordinal(); // Converte o enum para o índice ordinal
+        }
+    }
 
 	public Recuperando() {
         this.passagens = new HashSet<Passagem>();
@@ -746,8 +759,9 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
     public void setUnidadeId(Long unidadeId) {
         this.unidadeId = unidadeId;
     }
+               
 
-    @Override
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -958,4 +972,16 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
 	public void setAutorizacaoCadastroSemBiometria(AutorizacaoCadastroSemBiometria autorizacaoCadastroSemBiometria) {
 		this.autorizacaoCadastroSemBiometria = autorizacaoCadastroSemBiometria;
 	}
+
+	public Integer getPericulosidadeAdaptativa() {
+		return periculosidadeAdaptativa;
+	}
+
+	public void setPericulosidadeAdaptativa(Integer periculosidadeAdaptativa) {
+		this.periculosidadeAdaptativa = periculosidadeAdaptativa;
+	}
+	
+	
+
+	 
 }

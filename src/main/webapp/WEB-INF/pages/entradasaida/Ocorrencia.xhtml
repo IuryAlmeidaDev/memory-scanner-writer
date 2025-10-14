@@ -1,0 +1,58 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:sgp="http://sejudh.mt.gov.br/components"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<p:dialog id="dialogOcorrencia" header="Ocorrencia" showEffect="fade" widgetVar="ocorrencia" modal="true"
+		draggable="false" resizable="false" closeOnEscape="true" width="72%">
+
+
+
+		<h3><strong>Entrada/Saída de Visitante</strong></h3>
+
+		<h:form id="formOcorrenciaVisitante">
+
+			<p:panel id="panelOcorrencia" style="width: 100%;">
+				<div class="ui-g">
+					<div class="ui-g-8">
+						<div>
+							<h:outputLabel value="Nome:" style="width: 150px" />
+							<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.pessoa.nome}" />
+						</div>
+						<div>
+							<h:outputLabel value="CPF:" style="width: 150px;" />
+							<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.pessoa.cpf}" />
+						</div>
+						<div>
+							<h:outputLabel value="Nascimento:" style="width: 150px;" />
+							<h:outputLabel value="#{entradaSaidaBean.entrada.visitante.pessoa.dataNascimento}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputLabel>
+						</div>
+					</div>
+				</div>
+			</p:panel>
+
+			<br />
+			<br />
+
+			<h:panelGroup id="panelOcorrenciaDescricao">
+				<div class="ui-g-12">
+					<sgp:formInputTextarea labelValue="Descrição da Ocorrencia" id="idMotivoOcorrenciaVisita"
+						value="#{entradaSaidaBean.ocorrencia.descricao}" rows="3" columns="150" maxlength="250"
+						autoResize="false" display="text" />
+				</div>
+			</h:panelGroup>
+
+			<center>
+				<p:commandButton value="Finalizar Visita" immediate="true"
+					actionListener="#{entradaSaidaBean.clickOcorrencia}" process="@this" />
+				<p:button outcome="pretty:ListarEntradaSaida" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1" />
+				</p:button>
+
+			</center>
+		</h:form>
+
+	</p:dialog>
+</ui:composition>

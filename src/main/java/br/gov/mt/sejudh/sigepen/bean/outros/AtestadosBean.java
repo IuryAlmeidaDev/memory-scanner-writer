@@ -14,6 +14,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.service.GerenciarAssinaturaService;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
 
@@ -62,8 +63,9 @@ public class AtestadosBean {
 	
 	@Inject
 	private AtestadosService atestadosService;
-	
-	
+
+	@Inject
+	private GerenciarAssinaturaService gerenciarAssinaturaService;
 
     @URLAction(onPostback=false)
     public String init() {
@@ -121,7 +123,7 @@ public class AtestadosBean {
 			
 			parameters.put("UNIDADE_CIDADE_UF", unidadeAtual.getEndereco().getCidade().getNome() + "-" + unidadeAtual.getEndereco().getCidade().getEstado().getUf());
 			
-			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.Atestado, getTextoAtestado(), parameters));
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.Atestado, getTextoAtestado(), parameters,this.gerenciarAssinaturaService));
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Atestado de " + atestadoSelecionado.name(), log);
 		} catch (Exception e) {

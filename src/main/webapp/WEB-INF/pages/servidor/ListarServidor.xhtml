@@ -6,6 +6,10 @@
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
 
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 		
@@ -26,8 +30,10 @@
 					value="#{servidorBean.filtro.unidadeLotacao}"
 					itemsValue="#{servidorBean.unidadesPrisionais}" 
 					itemValue="#{item}"
+					filter="true"  filterMatchMode="custom" filterFunction="removeAcento"
 					itemLabel="#{item.nome}" 
 					temSelecione="true"
+					display="text"
 					converter="SimpleEntityConverter"	
 					rendered="#{securityUtil.possuiPermissao('ListarTodosServidores')}"/>
 				

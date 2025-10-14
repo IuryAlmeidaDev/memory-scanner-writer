@@ -1,0 +1,20 @@
+--------------------------------------------------------------
+--- SCRIPT DE CRIAÇÃO DA TABELA DE AUDITORIA AUD_SIGEPEN_PLANTAO_SERVIDOR
+--------------------------------------------------------------
+
+CREATE TABLE AUD_SIGEPEN_PLANTAO_SERVIDOR
+(
+  ID                   NUMBER(19,0) NOT NULL,
+  REV                  NUMBER(19) NOT NULL,
+  ACAO                 NUMBER(3),
+  ID_SERVIDOR          NUMBER(19),
+  ID_EQUIPE            NUMBER(19),
+  ATIVIDADE            VARCHAR(100),
+  SITUACAO            VARCHAR(100),
+  OCORRENCIA            VARCHAR(100),
+  JUSTIFICATIVA            VARCHAR(100)
+);
+
+ALTER TABLE AUD_SIGEPEN_PLANTAO_SERVIDOR ADD CONSTRAINT PK_AUD_PLANTAO_SERVIDOR PRIMARY KEY (ID, REV);
+
+GRANT SELECT, INSERT ON AUD_SIGEPEN_PLANTAO_SERVIDOR TO SIGEPEN_USER;

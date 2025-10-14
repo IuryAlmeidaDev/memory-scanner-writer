@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import br.gov.mt.sejudh.sigepen.model.AutoriaRegistro;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.Projections;
@@ -110,5 +111,11 @@ public class BaseDAO<T extends BaseModel<I>, I extends Number> implements Serial
 
     public List<T> listarTodos() {
         return em.createQuery("FROM " + this.tClass.getName(), this.tClass).getResultList();
+    }
+
+    public T buscarAutorRegistro(T t){
+        t.setAutorRegistro(this.auditoriaDAO.autorRegistro(t, t.getId()));
+        t.setAutorUltimaAlteracao(this.auditoriaDAO.autorUltimaAlteracao(t, t.getId()));
+        return t;
     }
 }
