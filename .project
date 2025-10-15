@@ -59,11 +59,4 @@
 		<nature>org.jboss.tools.jsf.jsfnature</nature>
 		<nature>org.jboss.tools.ws.jaxrs.nature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>BlobExample_mysql.jrxml</name>
-			<type>1</type>
-			<location>C:/Users/116939~1/AppData/Local/Temp/Rar$DIa7080.12418/BlobExample_mysql.jrxml</location>
-		</link>
-	</linkedResources>
 </projectDescription>

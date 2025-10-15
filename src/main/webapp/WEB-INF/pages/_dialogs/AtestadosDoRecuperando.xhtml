@@ -10,34 +10,70 @@
 	<ui:define name="head">
 		<title>Selecione um tipo de Atestado</title>
 	</ui:define>
-	
+
 	<ui:define name="conteudo">
 		<h:form prependId="false">
-			<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado" var="Atestado" allSuffix="ALL_ENUM_VALUES" />
-			
+			<pe:importEnum
+				type="br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado"
+				var="Atestado" allSuffix="ALL_ENUM_VALUES" />
+
 			<p:panel>
-				<sgp:formSelectOneMenu itemsValue="#{comboHelperBean.atestados}" itemValue="#{item}" itemLabel="#{item.name}" 
-					labelValue="Tipo de Atestado" value="#{atestadosBean.atestadoSelecionado}" temSelecione="true" requiredMessage="*"
-					validationRequired="true" display="text">
+				<sgp:formSelectOneMenu itemsValue="#{comboHelperBean.atestados}"
+					itemValue="#{item}" itemLabel="#{item.name}"
+					labelValue="Tipo de Atestado"
+					value="#{atestadosBean.atestadoSelecionado}" temSelecione="true"
+					requiredMessage="*" validationRequired="true" display="text">
 					<f:ajax event="change" render="compPanel" />
 				</sgp:formSelectOneMenu>
-				
-				<h:panelGroup id="compPanel">	
-					<sgp:formSelectOneMenu rendered="#{atestadosBean.atestadoSelecionado eq Atestado.Comportamento}" labelValue="Comportamento" value="#{atestadosBean.comportamento}" temSelecione="false">
+
+				<h:panelGroup id="compPanel">
+					<sgp:formSelectOneMenu
+						rendered="#{atestadosBean.atestadoSelecionado eq Atestado.Comportamento}"
+						labelValue="Comportamento" value="#{atestadosBean.comportamento}"
+						temSelecione="false">
 						<f:selectItem itemLabel="Ótimo" itemValue="ÓTIMO" />
 						<f:selectItem itemLabel="Bom" itemValue="BOM" />
 						<f:selectItem itemLabel="Regular" itemValue="REGULAR" />
 						<f:selectItem itemLabel="Mau" itemValue="MAU" />
 					</sgp:formSelectOneMenu>
 				</h:panelGroup>
-				
-				<br/>
-				<br/>
-				<br/>
-				<br/>
+
+				<br />
+				<br />
+				<br />
+				<br />
 				<div style="text-align: center">
-					<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" update="@form" actionListener="#{atestadosBean.imprimirAtestado}"/>
+					<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
+						update="@form" actionListener="#{atestadosBean.iniciarImpressao}" />
 				</div>
+
+				<p:dialog header="Opção de Nome Social" widgetVar="modalNomeSocial"
+					modal="true" resizable="false" closable="false">
+
+					<p:panelGrid columns="1" style="width: 100%;">
+
+						<p:outputLabel
+							value="O recuperando possui nome social. Deseja incluí-lo no atestado?"
+							style="font-weight: bold; margin-bottom: 10px;" />
+
+						<p:selectOneRadio value="#{atestadosBean.imprimirComNomeSocial}"
+							layout="lineDirection">
+							<f:selectItem itemLabel="Sim"
+								itemValue="true" />
+							<f:selectItem itemLabel="Não"
+								itemValue="false" />
+						</p:selectOneRadio>
+
+					</p:panelGrid>
+
+					<f:facet name="footer">
+						<p:commandButton value="Confirmar Impressão"
+							icon="fa fa-file-pdf-o"
+							actionListener="#{atestadosBean.gerarAtestado}" update="@form"
+							process="@form" />
+					</f:facet>
+
+				</p:dialog>
 			</p:panel>
 		</h:form>
 	</ui:define>

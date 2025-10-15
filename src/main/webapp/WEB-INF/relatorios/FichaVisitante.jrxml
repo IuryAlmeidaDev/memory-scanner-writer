@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2023-08-08T18:04:56 -->
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 6.2.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FichaVisitante" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.6934217901613435"/>
 	<property name="ireport.x" value="0"/>
@@ -47,44 +46,27 @@
 	<field name="dataValidade" class="java.util.Date"/>
 	<field name="visitante.visitanteResponsavelRelatorio" class="java.util.Collection"/>
 	<pageHeader>
-		<band splitType="Stretch"/>
+		<band height="106" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="106" uuid="fb7c9905-6907-4487-8afd-0d136aba5e05"/>
+				<subreportParameter name="UNIDADE_LOGADA">
+					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
+		</band>
 	</pageHeader>
 	<detail>
-		<band height="360" splitType="Immediate">
-			<line>
-				<reportElement x="0" y="63" width="555" height="1" forecolor="#666666" uuid="d90cd059-bf76-44cb-b072-d2eadcb83641"/>
-			</line>
-			<staticText>
-				<reportElement x="260" y="7" width="290" height="20" uuid="3b47395a-312f-4297-89c8-3f3294819538"/>
-				<textElement textAlignment="Right">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[SIGEPEN - Sistema de Gestão Penitenciária de Mato Grosso]]></text>
-			</staticText>
-			<image scaleImage="FillFrame" isUsingCache="false" evaluationTime="Report">
-				<reportElement x="-16" y="-20" width="245" height="97" uuid="6ca3f86c-9205-4d04-979e-ff74b082e364"/>
-				<imageExpression><![CDATA["imagens/sesp.png"]]></imageExpression>
-			</image>
-			<textField isStretchWithOverflow="true" evaluationTime="Report">
-				<reportElement x="245" y="26" width="305" height="46" uuid="027493f4-862f-40e5-aa62-b165905a1525"/>
-				<textElement textAlignment="Right" markup="html">
-					<font isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["<b>Unidade: </b>" + $P{UNIDADE_LOGADA}]]></textFieldExpression>
-			</textField>
+		<band height="218" splitType="Immediate">
 			<image>
-				<reportElement x="10" y="158" width="168" height="180" uuid="df68f670-36b4-4a95-b557-acdbcd1098b7"/>
+				<reportElement x="10" y="38" width="168" height="180" uuid="df68f670-36b4-4a95-b557-acdbcd1098b7"/>
 				<imageExpression><![CDATA[new ByteArrayInputStream((byte[])$F{visitante.imagemAtual.arquivo})]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="0" y="69" width="553" height="20" uuid="91d36cbe-e313-4a2b-883b-d5846391b092"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[PROCESSO DE EMISSÃO DE]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="10" y="124" width="168" height="20" backcolor="#CCCCCC" uuid="1f2262e4-88e0-43ac-9b2a-08344af1c924"/>
+				<reportElement mode="Opaque" x="10" y="4" width="168" height="20" backcolor="#CCCCCC" uuid="1f2262e4-88e0-43ac-9b2a-08344af1c924"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -97,7 +79,7 @@
 				<text><![CDATA[FOTO VISITANTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="185" y="124" width="365" height="20" backcolor="#CCCCCC" uuid="8912259f-d018-4d12-826a-5b7c74f442c2"/>
+				<reportElement mode="Opaque" x="185" y="4" width="365" height="20" backcolor="#CCCCCC" uuid="8912259f-d018-4d12-826a-5b7c74f442c2"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -110,56 +92,56 @@
 				<text><![CDATA[DADOS PESSOAIS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="155" width="100" height="20" uuid="5b7451b6-cb05-424a-affe-4a42ce5e4d11"/>
+				<reportElement x="185" y="35" width="100" height="20" uuid="5b7451b6-cb05-424a-affe-4a42ce5e4d11"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="175" width="100" height="20" uuid="767bd054-3c1b-42c1-8748-1a84ed77a783"/>
+				<reportElement x="185" y="55" width="100" height="20" uuid="767bd054-3c1b-42c1-8748-1a84ed77a783"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tipo Visita:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="195" width="100" height="20" uuid="fd87ea85-8b54-4302-ac9a-3651f3c479fa"/>
+				<reportElement x="185" y="75" width="100" height="20" uuid="fd87ea85-8b54-4302-ac9a-3651f3c479fa"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Grau de Parentesco:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="215" width="100" height="20" uuid="82c4aba1-65b2-4fde-819b-8dee63a22875"/>
+				<reportElement x="185" y="95" width="100" height="20" uuid="82c4aba1-65b2-4fde-819b-8dee63a22875"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome Social:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="235" width="100" height="20" uuid="84d4278c-6b46-4afb-b9df-a397c4ee5c37"/>
+				<reportElement x="185" y="115" width="100" height="20" uuid="84d4278c-6b46-4afb-b9df-a397c4ee5c37"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome da Mãe:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="255" width="100" height="20" uuid="160ea2f8-7888-4a10-9336-7df4a2b4c505"/>
+				<reportElement x="185" y="135" width="100" height="20" uuid="160ea2f8-7888-4a10-9336-7df4a2b4c505"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome do Pai:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="275" width="100" height="20" uuid="d172e6e7-d882-49e1-8336-53354c1e8200"/>
+				<reportElement x="185" y="155" width="100" height="20" uuid="d172e6e7-d882-49e1-8336-53354c1e8200"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nascimento:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="295" width="100" height="20" uuid="8d4ee875-8e2f-4b87-b901-d624cf7b9155">
+				<reportElement x="185" y="175" width="100" height="20" uuid="8d4ee875-8e2f-4b87-b901-d624cf7b9155">
 					<printWhenExpression><![CDATA[$F{visitante.dataValidade} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -168,61 +150,54 @@
 				<text><![CDATA[Data de Validade:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="290" y="155" width="260" height="20" uuid="429d8373-0a2e-4259-bee4-2e32d1ad9a8f"/>
+				<reportElement x="290" y="35" width="260" height="20" uuid="429d8373-0a2e-4259-bee4-2e32d1ad9a8f"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{visitante.nome}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="290" y="175" width="260" height="20" uuid="6a2d3ff0-0f12-4e9a-9699-76f5e90d1c70"/>
+				<reportElement x="290" y="55" width="260" height="20" uuid="6a2d3ff0-0f12-4e9a-9699-76f5e90d1c70"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tipoVisita.descricao}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="290" y="195" width="260" height="20" uuid="fa1043ac-a7d7-48cc-8dc0-74cf9db64eda"/>
+				<reportElement x="290" y="75" width="260" height="20" uuid="fa1043ac-a7d7-48cc-8dc0-74cf9db64eda"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{visitante.grauParentesco}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="290" y="215" width="260" height="20" uuid="4b05e34e-f4fb-49ef-a50b-5ee25753b978"/>
+				<reportElement x="290" y="95" width="260" height="20" uuid="4b05e34e-f4fb-49ef-a50b-5ee25753b978"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{visitante.nomeSocial}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="290" y="235" width="260" height="20" uuid="986643eb-f913-4a48-87ca-b7aac417c805"/>
+				<reportElement x="290" y="115" width="260" height="20" uuid="986643eb-f913-4a48-87ca-b7aac417c805"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{visitante.nomeMae}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="290" y="255" width="260" height="20" uuid="f5f163ec-907a-4649-9288-2534f542412b"/>
+				<reportElement x="290" y="135" width="260" height="20" uuid="f5f163ec-907a-4649-9288-2534f542412b"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{visitante.nomePai}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="290" y="275" width="260" height="20" uuid="5df7a38f-e5e6-4746-a5a3-feff641a12aa"/>
+				<reportElement x="290" y="155" width="260" height="20" uuid="5df7a38f-e5e6-4746-a5a3-feff641a12aa"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{visitante.dataNascimento}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="0" y="89" width="553" height="20" uuid="d27472c4-34f5-4fa2-b595-775c3a7933ed"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[CARTEIRA INDIVIDUAL DO VISITANTE - CIV]]></text>
-			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="290" y="295" width="260" height="20" uuid="9557d7ea-210e-4c96-8596-c2d79363713f">
+				<reportElement x="290" y="175" width="260" height="20" uuid="9557d7ea-210e-4c96-8596-c2d79363713f">
 					<printWhenExpression><![CDATA[$F{visitante.dataValidade} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle"/>
