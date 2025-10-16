@@ -1,11 +1,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui"
-	template="/WEB-INF/pages/_templates/dialog.xhtml"
-	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite"
-	xmlns:pe="http://primefaces.org/ui/extensions">
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/pages/_templates/dialog.xhtml"
+                xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite"
+                xmlns:pe="http://primefaces.org/ui/extensions">
 
 	<ui:define name="head">
 		<title>Lista de Confere</title>
@@ -21,9 +20,6 @@
 				
 				<sgp:formCalendar labelValue="Data Final" value="#{listaDeChamadaBean.filtroConfere.dataFinal}"
 					requiredMessage="*" display="text" pattern="dd/MM/yyyy"/>
-				
-				<sgp:formSelectOneMenu itemsValue="#{comboHelperBean.plantoes}" itemValue="#{item}" itemLabel="#{item.name}" 
-					labelValue="Plantão" value="#{listaDeChamadaBean.filtroConfere.plantaoInicial}" temSelecione="false" />
 				
 				<br/>
 				<br/>

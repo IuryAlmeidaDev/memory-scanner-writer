@@ -1,28 +1,25 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
-import javax.inject.Inject;
-
+import br.gov.mt.sejudh.sigepen.bean.outros.CadastrarProcessoBean;
+import br.gov.mt.sejudh.sigepen.biometrics.BiometriaRetorno;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
+import br.gov.mt.sejudh.sigepen.enumerator.*;
+import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
+import br.gov.mt.sejudh.sigepen.model.*;
+import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
+import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.*;
+import br.gov.mt.sejudh.sigepen.util.FacesUtil;
+import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
+import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import com.ocpsoft.pretty.faces.annotation.URLAction;
+import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
+import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import com.ocpsoft.pretty.faces.annotation.URLMappings;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -35,63 +32,19 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
-import com.ocpsoft.pretty.faces.annotation.URLAction;
-import com.ocpsoft.pretty.faces.annotation.URLAction.PhaseId;
-import com.ocpsoft.pretty.faces.annotation.URLMapping;
-import com.ocpsoft.pretty.faces.annotation.URLMappings;
-
-import br.gov.mt.sejudh.sigepen.bean.outros.CadastrarProcessoBean;
-import br.gov.mt.sejudh.sigepen.biometrics.BiometriaRetorno;
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroRecuperandoView;
-import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
-import br.gov.mt.sejudh.sigepen.enumerator.BiometriaTipoDedo;
-import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
-import br.gov.mt.sejudh.sigepen.enumerator.OrientacaoParticularidade;
-import br.gov.mt.sejudh.sigepen.enumerator.RegiaoParticularidade;
-import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
-import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusProcesso;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoDeficiencia;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
-import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
-import br.gov.mt.sejudh.sigepen.model.Alcunha;
-import br.gov.mt.sejudh.sigepen.model.AutorizacaoCadastroSemBiometria;
-import br.gov.mt.sejudh.sigepen.model.Biometria;
-import br.gov.mt.sejudh.sigepen.model.Cidade;
-import br.gov.mt.sejudh.sigepen.model.Contato;
-import br.gov.mt.sejudh.sigepen.model.Credenciamento;
-import br.gov.mt.sejudh.sigepen.model.Documento;
-import br.gov.mt.sejudh.sigepen.model.Endereco;
-import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.Etnia;
-import br.gov.mt.sejudh.sigepen.model.Foto;
-import br.gov.mt.sejudh.sigepen.model.HistoricoRecuperando;
-import br.gov.mt.sejudh.sigepen.model.Imagem;
-import br.gov.mt.sejudh.sigepen.model.OutroNome;
-import br.gov.mt.sejudh.sigepen.model.Parente;
-import br.gov.mt.sejudh.sigepen.model.Particularidade;
-import br.gov.mt.sejudh.sigepen.model.Passagem;
-import br.gov.mt.sejudh.sigepen.model.Pessoa;
-import br.gov.mt.sejudh.sigepen.model.Processo;
-import br.gov.mt.sejudh.sigepen.model.ProcessoRegimeCondicao;
-import br.gov.mt.sejudh.sigepen.model.Recuperando;
-import br.gov.mt.sejudh.sigepen.model.SubstituicaoFotoJustificativa;
-import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
-import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.model.Usuario;
-import br.gov.mt.sejudh.sigepen.model.Visitante;
-import br.gov.mt.sejudh.sigepen.model.dto.ExtratoRecuperandoDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
-import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
-import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
-import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
-import br.gov.mt.sejudh.sigepen.util.FacesUtil;
-import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
-import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
-import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @ManagedBean
 @ViewScoped
@@ -562,6 +515,13 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public String salvar() {
 		try {
+			// Validações básicas para evitar NPE em campos essenciais
+			if (this.recuperando == null) {
+				throw new ValidacaoException("Dados do recuperando não informados.");
+			}
+			if (this.recuperando.getPessoa() == null) {
+				throw new ValidacaoException("Dados do recuperando incompletos: pessoa não informada.");
+			}
 			if (!this.recuperando.possuiFotoFrenteAtual()) {
 				throw new ValidacaoException("É necessário associar uma foto de frente atual do recuperando.");
 			}
@@ -604,8 +564,10 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			if (this.recuperando.getParentes() != null) {
 				int conjuges = 0;
 				for (Parente p : this.recuperando.getParentes()) {
-					if (p.getParentesco().getDescricao().equals("Conjugê")
-							&& p.getStatus().equals(SgpStatusAlternativo.A)) {
+					if (p != null 
+							&& p.getParentesco() != null 
+							&& "Conjugê".equals(p.getParentesco().getDescricao())
+							&& SgpStatusAlternativo.A.equals(p.getStatus())) {
 						conjuges++;
 					}
 				}
@@ -626,7 +588,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				buscarRecuperando(this.recuperando.getId());
 
 			LoggerUtil.logInfo(Acao.SALVAR, this.recuperando, log);
-			String mensagemSucesso = "Recuperando(a) " + this.recuperando.getPessoa().getNome() + " salvo com sucesso!";
+			String nomeSeguro = (this.recuperando != null && this.recuperando.getPessoa() != null && this.recuperando.getPessoa().getNome() != null)
+					? this.recuperando.getPessoa().getNome() : "não informado";
+			String mensagemSucesso = "Recuperando(a) " + nomeSeguro + " salvo com sucesso!";
 
 			if (isNovoRecuperando) {
 				facesUtil.exibirMensagemInfo(mensagemSucesso, true);
@@ -643,8 +607,14 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", e.getMessage());
 		} catch (Exception e) {
+			String nomeErro = "não informado";
+			try {
+				if (this.recuperando != null && this.recuperando.getPessoa() != null && this.recuperando.getPessoa().getNome() != null) {
+					nomeErro = this.recuperando.getPessoa().getNome();
+				}
+			} catch (Exception ignored) {}
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO",
-					"Erro ao salvar recuperando (" + this.recuperando.getPessoa().getNome() + "): " + e.getMessage());
+					"Erro ao salvar recuperando (" + nomeErro + "): " + (e.getMessage() != null ? e.getMessage() : e.toString()));
 			LoggerUtil.logErro(Acao.SALVAR, this.recuperando, e, log);
 		}
 
