@@ -1,21 +1,5 @@
 package br.gov.mt.sejudh.sigepen.model.view;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Immutable;
-
 import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.model.EstruturaComplemento;
@@ -24,6 +8,12 @@ import br.gov.mt.sejudh.sigepen.model.OutroNome;
 import br.gov.mt.sejudh.sigepen.model.SituacaoCadastroRecuperando;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Immutable;
+
+import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Immutable
@@ -112,25 +102,17 @@ public class RecuperandoView {
 	
 	@Column(name = "PERICULOSIDADE_ADAPTATIVA")
 	private Integer periculosidadeAdaptativa;
-		
 
 	public RecuperandoView() {
-
 	}
-	
-	
 
 	public SituacaoCadastroRecuperando getSituacaoCadastro() {
 		return situacaoCadastro;
 	}
 
-
-
 	public void setSituacaoCadastro(SituacaoCadastroRecuperando situacaoCadastro) {
 		this.situacaoCadastro = situacaoCadastro;
 	}
-
-
 
 	public Long getId() {
 		return id;
@@ -220,14 +202,6 @@ public class RecuperandoView {
 	public void setPericulosidade(String periculosidade) {
 		this.periculosidade = periculosidade;
 	}
-
-//	public SituacaoCadastroRecuperando getSituacaoCadastro() {
-//		return situacaoCadastro;
-//	}
-//
-//	public void setSituacaoCadastro(SituacaoCadastroRecuperando situacaoCadastro) {
-//		this.situacaoCadastro = situacaoCadastro;
-//	}
 
 	public Boolean getTaVivo() {
 		return taVivo;
@@ -391,13 +365,9 @@ public class RecuperandoView {
 		return periculosidadeAdaptativa;
 	}
 
-
-
 	public void setPericulosidadeAdaptativa(Integer periculosidadeAdaptativa) {
 		this.periculosidadeAdaptativa = periculosidadeAdaptativa;
 	}
-
-
 
 	@Override
     public String toString() {
