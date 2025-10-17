@@ -101,35 +101,16 @@
 	</background>
 	<pageHeader>
 		<band height="106" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<line>
-				<reportElement x="0" y="63" width="555" height="1" forecolor="#666666" uuid="fa63a5f2-71fe-444b-ada6-bbc1d8b9077d"/>
-			</line>
-			<staticText>
-				<reportElement x="260" y="7" width="290" height="20" uuid="4c55a976-1f9f-4319-85fb-212b912d2519"/>
-				<textElement textAlignment="Right">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[SIGEPEN - Sistema de Gestão Penitenciária de Mato Grosso]]></text>
-			</staticText>
-			<image scaleImage="FillFrame" isUsingCache="false" evaluationTime="Report">
-				<reportElement x="-16" y="-20" width="245" height="97" uuid="bab1fd06-612e-4d53-b9b1-be09eae5895a"/>
-				<imageExpression><![CDATA["imagens/sesp.png"]]></imageExpression>
-			</image>
-			<textField evaluationTime="Report">
-				<reportElement x="245" y="26" width="305" height="46" uuid="9c6788e1-252a-4d24-bc9e-237b0332851d"/>
-				<textElement textAlignment="Right" markup="html">
-					<font isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["<b>Unidade: </b>" + $P{UNIDADE_LOGADA}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="0" y="73" width="555" height="20" uuid="f0fff148-3e97-40ac-abbc-9883466a6fb6"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></textFieldExpression>
-			</textField>
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="106" uuid="fb7c9905-6907-4487-8afd-0d136aba5e05"/>
+				<subreportParameter name="UNIDADE_LOGADA">
+					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
 		</band>
 	</pageHeader>
 	<columnHeader>
