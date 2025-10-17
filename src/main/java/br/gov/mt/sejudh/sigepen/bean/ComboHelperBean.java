@@ -1,78 +1,17 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import br.gov.mt.sejudh.sigepen.enumerator.*;
+import br.gov.mt.sejudh.sigepen.model.*;
+import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
+import br.gov.mt.sejudh.sigepen.service.ComboService;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.inject.Inject;
-
-import br.gov.mt.sejudh.sigepen.enumerator.Acao;
-import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
-import br.gov.mt.sejudh.sigepen.enumerator.CorCabelo;
-import br.gov.mt.sejudh.sigepen.enumerator.CorOlho;
-import br.gov.mt.sejudh.sigepen.enumerator.Esfera;
-import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
-import br.gov.mt.sejudh.sigepen.enumerator.IdadeRecuperando;
-import br.gov.mt.sejudh.sigepen.enumerator.Lgbt;
-import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
-import br.gov.mt.sejudh.sigepen.enumerator.NaturezaFaltaDisciplinar;
-import br.gov.mt.sejudh.sigepen.enumerator.Periculosidade;
-import br.gov.mt.sejudh.sigepen.enumerator.PopulacaoFeminino;
-import br.gov.mt.sejudh.sigepen.enumerator.PronomeTratamento;
-import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
-import br.gov.mt.sejudh.sigepen.enumerator.SgpStatus;
-import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
-import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
-import br.gov.mt.sejudh.sigepen.enumerator.SituacaoFaltaDisciplinar;
-import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
-import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
-import br.gov.mt.sejudh.sigepen.enumerator.Status;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamentosVisita;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante;
-import br.gov.mt.sejudh.sigepen.enumerator.TempoCondenacao;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoContato;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoDeficiencia;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamento;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoDocumentoPedidoTransito;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoEntrada;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoInterdicao;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoParticularidade;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoProcesso;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoTransito;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoVisitaObrigatoriedade;
-import br.gov.mt.sejudh.sigepen.enumerator.UnidadeMedida;
-import br.gov.mt.sejudh.sigepen.enumerator.VencimentoCredenciamento;
-import br.gov.mt.sejudh.sigepen.model.Escolaridade;
-import br.gov.mt.sejudh.sigepen.model.Estado;
-import br.gov.mt.sejudh.sigepen.model.EstadoCivil;
-import br.gov.mt.sejudh.sigepen.model.Funcionalidade;
-import br.gov.mt.sejudh.sigepen.model.IdentidadeDeGenero;
-import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
-import br.gov.mt.sejudh.sigepen.model.OrientacaoSexual;
-import br.gov.mt.sejudh.sigepen.model.Pais;
-import br.gov.mt.sejudh.sigepen.model.Parentesco;
-import br.gov.mt.sejudh.sigepen.model.Raca;
-import br.gov.mt.sejudh.sigepen.model.Regime;
-import br.gov.mt.sejudh.sigepen.model.Religiao;
-import br.gov.mt.sejudh.sigepen.model.TipoDocumento;
-import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
-import br.gov.mt.sejudh.sigepen.model.TipoSanguineo;
-import br.gov.mt.sejudh.sigepen.model.TipoServidor;
-import br.gov.mt.sejudh.sigepen.model.TipoUnidade;
-import br.gov.mt.sejudh.sigepen.model.TipoVisita;
-import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
-import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.service.ComboService;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @ManagedBean(eager=true)
 @ApplicationScoped
@@ -202,6 +141,8 @@ public class ComboHelperBean {
 
 	private Relatorio[] relatorio;
 
+    private TipoPlantao[] plantoes;
+
 	@Inject
 	private ComboService comboService;
 
@@ -269,6 +210,7 @@ public class ComboHelperBean {
 		unidadesMedida = comboService.getUnidadesMedida();
 		vencimentoCredenciamentos = comboService.getVencimentoCredenciamento();
 		relatorio = comboService.getRelatorio();
+        plantoes = comboService.getTipoPlantao();
 	}
 
 	public NaturezaFaltaDisciplinar[] getNaturezaFaltaDisciplinar(){
@@ -789,5 +731,13 @@ public class ComboHelperBean {
 
     public void setRelatorio(Relatorio[] relatorio) {
         this.relatorio = relatorio;
+    }
+
+    public TipoPlantao[] getPlantoes() {
+        return plantoes;
+    }
+
+    public void setPlantoes(TipoPlantao[] plantoes) {
+        this.plantoes = plantoes;
     }
 }
