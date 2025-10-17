@@ -31,7 +31,7 @@
 	<parameter name="ASSINATURA_4" class="java.lang.String"/>
 	<parameter name="CARGO_4" class="java.lang.String"/>
 	<parameter name="REPORT_ASSINATURA" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadraoPaisagem.jasper"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["cabecalhos\\Assinatura.jasper"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[]]>
