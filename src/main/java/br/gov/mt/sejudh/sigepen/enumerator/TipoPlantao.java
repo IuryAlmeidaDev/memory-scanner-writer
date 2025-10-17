@@ -6,11 +6,10 @@ public enum TipoPlantao {
 	C("C", 2),
 	D("D", 3);
 
-
 	private String descricao;
 	private Integer id;
 
-	private TipoPlantao(String descricao, Integer id) {
+	TipoPlantao(String descricao, Integer id) {
 		this.descricao = descricao;
 		this.id = id;
 	}

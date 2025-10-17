@@ -20,6 +20,9 @@
 				
 				<sgp:formCalendar labelValue="Data Final" value="#{listaDeChamadaBean.filtroConfere.dataFinal}"
 					requiredMessage="*" display="text" pattern="dd/MM/yyyy"/>
+
+                <sgp:formSelectOneMenu itemsValue="#{comboHelperBean.plantoes}" itemValue="#{item}" itemLabel="#{item.name}"
+                                       labelValue="Plantão" value="#{listaDeChamadaBean.filtroConfere.plantaoInicial}" temSelecione="false" />
 				
 				<br/>
 				<br/>

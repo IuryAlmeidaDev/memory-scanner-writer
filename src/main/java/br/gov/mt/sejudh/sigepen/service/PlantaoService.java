@@ -197,7 +197,7 @@ public class PlantaoService extends BaseService<Plantao, Long> {
         String nomeRelatorio = "Livro de Plantão - "
                 + new SimpleDateFormat("dd 'de' MMMM yyyy", new java.util.Locale("pt", "BR"))
                 .format(plantao.getDataPlantao())
-                + " Plantão " + plantao.getTipoPlantao().getDescricao();
+                + " Plantão " + plantao.getPlantao().getDescricao();
 
         parametros.put("NOME_DO_RELATORIO", nomeRelatorio);
         parametros.put("DATA_HORA_INICIAL", sdf.format(plantao.getDataPlantao()));
