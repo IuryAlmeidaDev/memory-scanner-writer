@@ -1,48 +1,19 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroConsulta;
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroVwVisitanteRelatorio;
-import br.gov.mt.sejudh.sigepen.enumerator.*;
-import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
-import br.gov.mt.sejudh.sigepen.model.*;
-import br.gov.mt.sejudh.sigepen.model.dto.AutorizacaoSemBiometriaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.FaseDoCredenciamentoDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.VisitanteDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.VisitanteListaDTO;
-import br.gov.mt.sejudh.sigepen.model.view.AssociarVisitanteResponsavelView;
-import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
+import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.model.GerenciarAssinatura;
+import br.gov.mt.sejudh.sigepen.model.GerenciarAssinaturaServidor;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
-import br.gov.mt.sejudh.sigepen.service.VisitanteResponsavelService;
-import br.gov.mt.sejudh.sigepen.service.VisitanteService;
-import br.gov.mt.sejudh.sigepen.util.Sigepen;
-import org.hibernate.Criteria;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.annotations.QueryHints;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.DateType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.criteria.Root;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @RequestScoped
 public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
@@ -50,7 +21,10 @@ public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
 
 	private static final long serialVersionUID = 1635530084073694819L;
 
-	@Override
+    @Inject
+    private Logger log;
+
+    @Override
 	public List<GerenciarAssinatura> listarTodos(){
 
 
@@ -140,7 +114,7 @@ public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
 
 			return result;
 		} catch (NoResultException e) {
-			e.printStackTrace();
+			log.error("Erro ao buscar gerenciar assinatura {}", e.getMessage());
 			return null;
 		}
     }

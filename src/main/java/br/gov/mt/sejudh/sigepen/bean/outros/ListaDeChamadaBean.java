@@ -1,23 +1,5 @@
 package br.gov.mt.sejudh.sigepen.bean.outros;
 
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.event.ActionEvent;
-import javax.inject.Inject;
-
-import br.gov.mt.sejudh.sigepen.model.relatorio.EstruturaRelatorio;
-import br.gov.mt.sejudh.sigepen.service.ListaDeChamadaService;
-import org.apache.logging.log4j.Logger;
-import org.primefaces.context.RequestContext;
-
-import com.ocpsoft.pretty.faces.annotation.URLAction;
-import com.ocpsoft.pretty.faces.annotation.URLMapping;
-
 import br.gov.mt.sejudh.sigepen.bean.FileDownloadHandlerBean;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroListaConfere;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
@@ -27,11 +9,27 @@ import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.Plantao;
 import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
+import br.gov.mt.sejudh.sigepen.model.relatorio.EstruturaRelatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
+import br.gov.mt.sejudh.sigepen.service.ListaDeChamadaService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import com.ocpsoft.pretty.faces.annotation.URLAction;
+import com.ocpsoft.pretty.faces.annotation.URLMapping;
+import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.*;
 
 @ManagedBean
 @ViewScoped
@@ -94,8 +92,6 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
                     er.setRecuperandos(listaDeChamadaService.listarRecuperando(er.getIdEstrutura(), comFoto));
                 }
             }
-
-
 
             if (comFoto) {
 				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(estruturaRelatorio, Relatorio.ListaDeChamadaComFoto, parameters));
@@ -226,7 +222,7 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 		Plantao primeiroPlantao = new Plantao(filtroConfere.getPlantaoInicial(), filtroConfere.getDataInicial());
 
 		int dias = getDataIntervalo();
-		int atual = primeiroPlantao.getTipoPlantao().ordinal();
+		int atual = primeiroPlantao.getPlantao().ordinal();
 
 		for (int i = 0; i < dias; i++) {
 			if (atual >= TipoPlantao.values().length) {

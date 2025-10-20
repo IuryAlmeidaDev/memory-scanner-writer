@@ -1,10 +1,14 @@
 package br.gov.mt.sejudh.sigepen.model.relatorio;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.ByteArrayInputStream;
 import java.util.Date;
 
 public class RecuperandoRelatorio {
+    private static final Logger log = LogManager.getLogger(RecuperandoRelatorio.class);
     private String nomeCela;
     private Long matricula;
     private String nomeRecuperando;
@@ -71,6 +75,9 @@ public class RecuperandoRelatorio {
     }
 
     public ByteArrayInputStream getFoto() {
+        if (foto == null) {
+            return null;
+        }
         return new ByteArrayInputStream(foto);
     }
 

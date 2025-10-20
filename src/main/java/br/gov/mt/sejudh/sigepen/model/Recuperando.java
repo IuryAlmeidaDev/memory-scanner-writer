@@ -1,39 +1,8 @@
 package br.gov.mt.sejudh.sigepen.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
+import br.gov.mt.sejudh.sigepen.conversores.EnumCustomConverter;
+import br.gov.mt.sejudh.sigepen.enumerator.*;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.OrderBy;
@@ -43,16 +12,9 @@ import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
-import br.gov.mt.sejudh.sigepen.conversores.EnumCustomConverter;
-import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
-import br.gov.mt.sejudh.sigepen.enumerator.CorCabelo;
-import br.gov.mt.sejudh.sigepen.enumerator.CorOlho;
-import br.gov.mt.sejudh.sigepen.enumerator.Periculosidade;
-import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
-import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoDeficiencia;
-import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
-import br.gov.mt.sejudh.sigepen.util.Sigepen;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.*;
 
 @Audited
 @Entity
@@ -280,13 +242,13 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
 	private AutorizacaoCadastroSemBiometria autorizacaoCadastroSemBiometria;	
 	
 	@Column(name = "PERICULOSIDADE_ADAPTATIVA")
-    private Integer periculosidadeAdaptativa;	
+    private Integer periculosidadeAdaptativa;
 	
 	@PrePersist
     @PreUpdate
     private void updatePericulosidadeAdaptativa() {
         if (periculosidade != null) {
-            this.periculosidadeAdaptativa = periculosidade.ordinal(); // Converte o enum para o índice ordinal
+            this.periculosidadeAdaptativa = periculosidade.ordinal();
         }
     }
 
@@ -974,6 +936,9 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
 	}
 
 	public Integer getPericulosidadeAdaptativa() {
+		if (periculosidadeAdaptativa == null && periculosidade != null) {
+			return periculosidade.ordinal();
+		}
 		return periculosidadeAdaptativa;
 	}
 
