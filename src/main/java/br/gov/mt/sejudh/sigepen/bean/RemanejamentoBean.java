@@ -95,11 +95,11 @@ public class RemanejamentoBean extends MetodosDePaginaBean {
 
 		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
 			FiltroRemanejamento filtroDash = (FiltroRemanejamento) facesUtil
-					.getFlashParameter("filtroRecuperandoDash");
+					.getFlashParameter("filtroRemanejamentoDash");
 
 			if (filtroDash != null) {
 				setFiltro(filtroDash);
-
+				pesquisar();
 			}
 		}
 
