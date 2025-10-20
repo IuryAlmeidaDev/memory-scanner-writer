@@ -464,14 +464,14 @@ public class PlantaoBean extends MetodosDePaginaBean {
             Plantao plantaoAnterior = this.plantaoService.buscarUltimoPlantao();
             Plantao plantaoAtual = new Plantao();
 
-            plantaoAtual.setTipoPlantao(TipoPlantao.valueOf(this.plantaoSelecionado));
+            plantaoAtual.setPlantao(TipoPlantao.valueOf(this.plantaoSelecionado));
             plantaoAtual.setUnidadePrisional(unidadeLogada);
             plantaoAtual.setStatusPlantao(StatusPlantao.ANDAMENTO);
             plantaoAtual.setDataPlantao(new Date());
             plantaoAtual.setUsuarioInicioPlantao(SecurityUtil.getUsuario());
 
             if (plantaoAnterior != null) {
-                plantaoAtual.setPlantaoAnterior(plantaoAnterior.getTipoPlantao().getDescricao());
+                plantaoAtual.setPlantaoAnterior(plantaoAnterior.getPlantao().getDescricao());
             }
 
             this.plantao = this.plantaoService.salvar(plantaoAtual);
@@ -582,7 +582,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
             return false;
         }
 
-        this.plantaoSelecionado = this.plantao.getTipoPlantao().getDescricao();
+        this.plantaoSelecionado = this.plantao.getPlantao().getDescricao();
 
         if (!this.plantao.getEquipes().isEmpty()) {
             this.plantao.getEquipes().forEach(e -> {
