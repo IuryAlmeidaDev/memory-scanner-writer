@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 6.2.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Atestado" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.693421790161336"/>
 	<property name="ireport.x" value="0"/>
@@ -20,19 +21,23 @@
 	<parameter name="RODAPE" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="RESPONSAVEL" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="UNIDADE_CIDADE_UF" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="ASSINATURA_1" class="java.lang.String"/>
 	<parameter name="CARGO_1" class="java.lang.String"/>
+	<parameter name="FUNCAO_1" class="java.lang.String"/>
 	<parameter name="ASSINATURA_2" class="java.lang.String"/>
 	<parameter name="CARGO_2" class="java.lang.String"/>
+	<parameter name="FUNCAO_2" class="java.lang.String"/>
 	<parameter name="ASSINATURA_3" class="java.lang.String"/>
 	<parameter name="CARGO_3" class="java.lang.String"/>
+	<parameter name="FUNCAO_3" class="java.lang.String"/>
 	<parameter name="ASSINATURA_4" class="java.lang.String"/>
 	<parameter name="CARGO_4" class="java.lang.String"/>
+	<parameter name="FUNCAO_4" class="java.lang.String"/>
 	<parameter name="REPORT_ASSINATURA" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["cabecalhos\\Assinatura.jasper"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="RESPONSAVEL" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -69,12 +74,26 @@
 				<textFieldExpression><![CDATA[$P{UNIDADE_CIDADE_UF} + ", " + new java.text.SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("pt", "BR")).format(new java.util.Date())]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="200"/>
+		<band height="165">
+			<staticText>
+				<reportElement x="244" y="135" width="100" height="30" uuid="84a2e39b-3429-46c4-8e6d-36726cdd636b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Diretor(a)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="204" y="109" width="180" height="1" forecolor="#666666" uuid="65c7a268-a9ed-49c7-aa1e-d8a954db0ae2"/>
+			</line>
+			<textField>
+				<reportElement x="30" y="113" width="525" height="30" uuid="ac52b6f0-1a79-40e7-a354-b280a37aaadc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{RESPONSAVEL} != null ? $P{RESPONSAVEL} : ""]]></textFieldExpression>
+			</textField>
+		</band>
 	</detail>
 	<pageFooter>
-		<band height="182" splitType="Stretch">
+		<band height="254" splitType="Stretch">
 			<subreport isUsingCache="false" runToBottom="true">
-				<reportElement positionType="Float" x="0" y="131" width="555" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="203" width="555" height="51" uuid="43a520ec-47e2-4daa-a425-ff40ea48d7f6"/>
 				<subreportParameter name="PAGINA">
 					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -87,8 +106,8 @@
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
 			</subreport>
-			<subreport>
-				<reportElement x="0" y="0" width="555" height="131" uuid="12bdafc3-3f6f-4167-8d85-91578d503af3"/>
+			<subreport isUsingCache="true" overflowType="NoStretch">
+				<reportElement isPrintRepeatedValues="false" x="0" y="1" width="555" height="202" uuid="12bdafc3-3f6f-4167-8d85-91578d503af3"/>
 				<subreportParameter name="EMISSOR">
 					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -98,11 +117,17 @@
 				<subreportParameter name="CARGO_1">
 					<subreportParameterExpression><![CDATA[$P{CARGO_1}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="FUNCAO_1">
+					<subreportParameterExpression><![CDATA[$P{FUNCAO_1}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="ASSINATURA_2">
 					<subreportParameterExpression><![CDATA[$P{ASSINATURA_2}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="CARGO_2">
 					<subreportParameterExpression><![CDATA[$P{CARGO_2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FUNCAO_2">
+					<subreportParameterExpression><![CDATA[$P{FUNCAO_2}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="ASSINATURA_3">
 					<subreportParameterExpression><![CDATA[$P{ASSINATURA_3}]]></subreportParameterExpression>
@@ -110,11 +135,17 @@
 				<subreportParameter name="CARGO_3">
 					<subreportParameterExpression><![CDATA[$P{CARGO_3}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="FUNCAO_3">
+					<subreportParameterExpression><![CDATA[$P{FUNCAO_3}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="ASSINATURA_4">
 					<subreportParameterExpression><![CDATA[$P{ASSINATURA_4}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="CARGO_4">
 					<subreportParameterExpression><![CDATA[$P{CARGO_4}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FUNCAO_4">
+					<subreportParameterExpression><![CDATA[$P{FUNCAO_4}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{REPORT_ASSINATURA}]]></subreportExpression>

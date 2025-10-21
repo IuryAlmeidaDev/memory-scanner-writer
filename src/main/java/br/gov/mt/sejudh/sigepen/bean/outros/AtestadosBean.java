@@ -123,7 +123,12 @@ public class AtestadosBean {
 			
 			parameters.put("UNIDADE_CIDADE_UF", unidadeAtual.getEndereco().getCidade().getNome() + "-" + unidadeAtual.getEndereco().getCidade().getEstado().getUf());
 			
-			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.Atestado, getTextoAtestado(), parameters,this.gerenciarAssinaturaService));
+			if(this.gerenciarAssinaturaService.buscar(unidadeAtual, Relatorio.Atestado) != null) {
+				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.Atestado, getTextoAtestado(), parameters, this.gerenciarAssinaturaService));
+			} else {
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.AtestadoSemAssinatura, getTextoAtestado(), parameters));
+		}
+			
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Atestado de " + atestadoSelecionado.name(), log);
 		} catch (Exception e) {
