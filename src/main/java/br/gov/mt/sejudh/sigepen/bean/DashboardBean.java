@@ -450,13 +450,13 @@ public class DashboardBean {
 
 			case TOTAL_MOVIMENTACAO_INTERNA_AGUARDANDO_FINALIZAR:
 				filtroMovimentacaoInterna.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
-                filtroMovimentacaoInterna.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
-                facesUtil.setFlashParameter("filtroMovimentacaoInternaDash", filtroMovimentacaoInterna);
-                return "pretty:ListarMovimentacaoInterna";
-
-            case TOTAL_MOVIMENTACAO_INTERNA_FINALIZADO_PARCIAL:
-                filtroMovimentacaoInterna.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
-                filtroMovimentacaoInterna.setStatus(StatusMovimentacao.FINALIZADO_PARCIAL);
+				filtroMovimentacaoInterna.setStatus(StatusMovimentacao.AGUARDANDO_FINALIZAR);
+				facesUtil.setFlashParameter("filtroMovimentacaoInternaDash", filtroMovimentacaoInterna);
+				return "pretty:ListarMovimentacaoInterna";
+				
+			case TOTAL_MOVIMENTACAO_INTERNA_FINALIZADO_PARCIAL:
+				filtroMovimentacaoInterna.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroMovimentacaoInterna.setStatus(StatusMovimentacao.FINALIZADO_PARCIAL);
 				facesUtil.setFlashParameter("filtroMovimentacaoInternaDash", filtroMovimentacaoInterna);
 				return "pretty:ListarMovimentacaoInterna";
 
