@@ -64,18 +64,12 @@ public class AtestadosBean {
 	
 	@Inject
 	private AtestadosService atestadosService;
-<<<<<<< HEAD
-
-	@Inject
-	private GerenciarAssinaturaService gerenciarAssinaturaService;
-=======
 	
 	@Inject
 	private GerenciarAssinaturaService gerenciarAssinaturaService;
 	
 	private boolean imprimirComNomeSocial;
 
->>>>>>> 132318b781ed249c989f9cd5deb6fd05b3c96238
 
     @URLAction(onPostback=false)
     public String init() {

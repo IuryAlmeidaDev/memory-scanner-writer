@@ -1,6 +1,8 @@
 package br.gov.mt.sejudh.sigepen.relatorio.textos;
 
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoAtestado;
 import br.gov.mt.sejudh.sigepen.model.Estabelecimento;
@@ -41,7 +43,7 @@ public class Atestados {
 	}
 	
 	public static TextoDoRelatorio getTexto(TipoAtestado tipoAtestado, Recuperando rec, PassagemLotacao lotacao) {
-		return getTexto(tipoAtestado, rec, lotacao, null);
+		return getTexto(tipoAtestado, rec, lotacao);
 	}
 	
 	private static TextoDoRelatorio getTextoComportamento(TipoAtestado tipoAtestado, Recuperando rec, PassagemLotacao lotacao, String comportamento) {

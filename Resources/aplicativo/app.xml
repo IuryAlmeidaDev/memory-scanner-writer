@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<<<<<<< HEAD
-<Application ts="1758913083357" uri="https://sispen.sesp.mt.gov.br/sigepen/arquivos/aplicativo/" launch="br.gov.mt.sejudh.launcher.Launcher">
-    <lib file="concrt140.dll" checksum="3208454740" size="332456" os="win"/>
-    <lib file="controlsfx.jar" checksum="1806948104" size="1416162"/>
-    <lib file="Data/Fingers.ndf" checksum="1558116160" size="5529652"/>
-    <lib file="dll/NSigepenCe.dll" checksum="2637791496" size="3485" os="win"/>
-=======
 <Application ts="1754576013850" uri="https://sispen.sesp.mt.gov.br/sigepen/arquivos/aplicativo/" launch="br.gov.mt.sejudh.launcher.Launcher">
     <lib file="concrt140.dll" checksum="3208454740" size="332456" os="win"/>
     <lib file="controlsfx.jar" checksum="1806948104" size="1416162"/>
     <lib file="Data/Fingers.ndf" checksum="1558116160" size="5529652"/>
     <lib file="dll/NSigepenCe.dll" checksum="3942470735" size="3421" os="win"/>
->>>>>>> 132318b781ed249c989f9cd5deb6fd05b3c96238
     <lib file="dll/NSigepenCliCe.dll" checksum="2322109203" size="1743" os="win"/>
     <lib file="dll/NSigepenSer.dll" checksum="3626330317" size="455" os="win"/>
     <lib file="FScanners/NdmSecuGen/NdmSecuGen.dll" checksum="1694444255" size="43464" os="win"/>
