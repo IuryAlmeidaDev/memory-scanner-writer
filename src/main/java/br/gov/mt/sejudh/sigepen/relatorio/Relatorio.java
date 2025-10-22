@@ -61,6 +61,7 @@ public enum Relatorio {
 	FichaVisitante("", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 59),
 	ListarEntradaSaida("CONSULTAR VISITAS", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 60),
 	HistoricoRecuperando("HISTÓRICO RECUPERANDO", 61),
+	AtestadoSemAssinatura("Atestado", 62),
 
 	/* Relatórios Infopen Estatístico */
 

@@ -14,16 +14,12 @@
 			</line>
 			<textField>
 				<reportElement x="20" y="13" width="303" height="20" uuid="e9ad546c-1939-48da-be48-d7a6169e06d2"/>
-                <textElement markup="html">
-                    <font size="9"/>
-                </textElement>
+				<textElement markup="html"/>
 				<textFieldExpression><![CDATA["<b>Emitido por: </b>" + $P{EMISSOR}]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
 				<reportElement x="20" y="30" width="273" height="20" uuid="009839fa-9142-4c85-8962-a189d8fb1673"/>
-                <textElement markup="html">
-                    <font size="9"/>
-                </textElement>
+				<textElement markup="html"/>
 				<textFieldExpression><![CDATA["<b>Data Emissão: </b> " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())
 + " às " + new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
 			</textField>

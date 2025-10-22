@@ -107,18 +107,25 @@ public class RelatorioUtil {
 				if(gerenciarAssinaturaServidor.getOrdem().equals("1")){
 					parameters.put("ASSINATURA_".concat("1"),gerenciarAssinaturaServidor.getServidor().getNome());
 					parameters.put("CARGO_".concat("1"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+					parameters.put("FUNCAO_".concat("1"),gerenciarAssinaturaServidor.getServidor().getFuncao().getNome());
 				}
 				if(gerenciarAssinaturaServidor.getOrdem().equals("2")){
 					parameters.put("ASSINATURA_".concat("2"),gerenciarAssinaturaServidor.getServidor().getNome());
 					parameters.put("CARGO_".concat("2"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+					parameters.put("FUNCAO_".concat("2"),gerenciarAssinaturaServidor.getServidor().getFuncao().getNome());
+
 				}
 				if(gerenciarAssinaturaServidor.getOrdem().equals("3")){
 					parameters.put("ASSINATURA_".concat("3"),gerenciarAssinaturaServidor.getServidor().getNome());
 					parameters.put("CARGO_".concat("3"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+					parameters.put("FUNCAO_".concat("3"),gerenciarAssinaturaServidor.getServidor().getFuncao().getNome());
+
 				}
 				if(gerenciarAssinaturaServidor.getOrdem().equals("4")){
 					parameters.put("ASSINATURA_".concat("4"),gerenciarAssinaturaServidor.getServidor().getNome());
 					parameters.put("CARGO_".concat("4"),gerenciarAssinaturaServidor.getServidor().getCargo().getNome());
+					parameters.put("FUNCAO_".concat("4"),gerenciarAssinaturaServidor.getServidor().getFuncao().getNome());
+
 				}
 			});
 		}
@@ -160,14 +167,14 @@ public class RelatorioUtil {
 	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo, Map<String, Object> parameters,GerenciarAssinaturaService gerenciarAssinaturaService) throws JRException, NamingException, SQLException {
         List<TextoDoRelatorio> lista = new ArrayList<>();
 		lista.add(conteudo);
-
+		
 		setAssinatura(parameters, relatorio,gerenciarAssinaturaService);
 
 		return gerarRelatorio(lista, relatorio, parameters);
 	}
 
 	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio, Map<String, Object> parameters,GerenciarAssinaturaService gerenciarAssinaturaService) throws JRException {
-		setAssinatura(parameters, relatorio,gerenciarAssinaturaService);
+		setAssinatura(parameters, relatorio, gerenciarAssinaturaService);
 		return gerarRelatorio(valores, relatorio, parameters);
 	}
 	

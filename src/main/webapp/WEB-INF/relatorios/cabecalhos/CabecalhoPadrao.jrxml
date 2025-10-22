@@ -17,15 +17,14 @@
 				<reportElement x="0" y="63" width="555" height="1" forecolor="#666666" uuid="d90cd059-bf76-44cb-b072-d2eadcb83641"/>
 			</line>
 			<staticText>
-                <reportElement x="208" y="6" width="342" height="20" isPrintWhenDetailOverflows="true"
-                               uuid="3b47395a-312f-4297-89c8-3f3294819538"/>
-                <textElement textAlignment="Right" verticalAlignment="Top">
+				<reportElement x="260" y="7" width="290" height="20" uuid="3b47395a-312f-4297-89c8-3f3294819538"/>
+				<textElement textAlignment="Right">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[SIGEPEN - Sistema de Gestão Penitenciária de Mato Grosso]]></text>
 			</staticText>
 			<image scaleImage="FillFrame" isUsingCache="false" evaluationTime="Report">
-				<reportElement x="0" y="0" width="229" height="60" uuid="6ca3f86c-9205-4d04-979e-ff74b082e364"/>
+				<reportElement x="0" y="-3" width="229" height="63" uuid="b856826e-91e1-40b7-946d-a0cb53f3fb7f"/>
 				<imageExpression><![CDATA["imagens/sejus.png"]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" evaluationTime="Report">

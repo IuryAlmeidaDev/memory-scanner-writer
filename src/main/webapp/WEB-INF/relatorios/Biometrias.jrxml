@@ -51,31 +51,27 @@
 	<field name="usuario" class="java.lang.String"/>
 	<field name="imprimirBiometria" class="java.lang.Boolean"/>
 	<pageHeader>
-		<band splitType="Stretch"/>
+		<band height="106" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="106" uuid="fb7c9905-6907-4487-8afd-0d136aba5e05"/>
+				<subreportParameter name="UNIDADE_LOGADA">
+					<subreportParameterExpression><![CDATA[$P{UNIDADE_LOGADA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DO_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_DO_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{CABECALHO}]]></subreportExpression>
+			</subreport>
+		</band>
 	</pageHeader>
 	<detail>
 		<band height="280" splitType="Immediate">
 			<line>
 				<reportElement x="0" y="63" width="555" height="1" forecolor="#666666" uuid="d90cd059-bf76-44cb-b072-d2eadcb83641"/>
 			</line>
-			<staticText>
-				<reportElement x="260" y="7" width="290" height="20" uuid="3b47395a-312f-4297-89c8-3f3294819538"/>
-				<textElement textAlignment="Right">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[SIGEPEN - Sistema de Gestão Penitenciária de Mato Grosso]]></text>
-			</staticText>
-			<image scaleImage="FillFrame" isUsingCache="false" evaluationTime="Report">
-				<reportElement x="-16" y="-20" width="245" height="97" uuid="6ca3f86c-9205-4d04-979e-ff74b082e364"/>
-				<imageExpression><![CDATA["imagens/sesp.png"]]></imageExpression>
-			</image>
-			<textField isStretchWithOverflow="true" evaluationTime="Report">
-				<reportElement x="245" y="26" width="305" height="46" uuid="027493f4-862f-40e5-aa62-b165905a1525"/>
-				<textElement textAlignment="Right" markup="html">
-					<font isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["<b>Unidade: </b>" + $P{UNIDADE_LOGADA}]]></textFieldExpression>
-			</textField>
+			
+			
+			
 			<staticText>
 				<reportElement x="0" y="69" width="553" height="20" uuid="91d36cbe-e313-4a2b-883b-d5846391b092"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
