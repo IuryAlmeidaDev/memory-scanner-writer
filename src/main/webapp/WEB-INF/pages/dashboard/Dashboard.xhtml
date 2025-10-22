@@ -22,7 +22,7 @@
 			</p>
 			<p:dashboard id="dashRecuperando" model="#{dashboardBean.dashModel}">
 				<p:panel id="#{dash.RECUPERANDOS_ATIVOS_SISTEMA.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #228B22;">
+					styleClass="ui-dash-panel" style="background-color: #6EAB2E;">
 					<h:commandLink
 						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_SISTEMA)}">
 						<h:outputText value="#{dashboardBean.totalRecuperandosAtivos}"
@@ -62,7 +62,7 @@
 
 				<p:panel
 					id="#{dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_A_VENCER.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #90EB5D;">
+					styleClass="ui-dash-panel" style="background-color: #3CB371;">
 					<h:commandLink
 						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_A_VENCER)}">
 						<h:outputText value="#{dashboardBean.temporariosNaUnidadeAVencer}"
@@ -75,7 +75,7 @@
 
 				<p:panel
 					id="#{dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCEHOJE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FF0000;">
+					styleClass="ui-dash-panel" style="background-color: #F7D358;">
 					<h:commandLink
 						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCEHOJE)}">
 						<h:outputText
@@ -89,7 +89,7 @@
 
 				<p:panel
 					id="#{dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCIDA.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #8B0000;">
+					styleClass="ui-dash-panel" style="background-color: #A52A2A;">
 					<h:commandLink
 						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCIDA)}">
 						<h:outputText value="#{dashboardBean.temporariosNaUnidadeVencido}"
@@ -102,7 +102,7 @@
 
 				<p:panel
 					id="#{dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #90EB5D;">
+					styleClass="ui-dash-panel" style="background-color: #32CD32;">
 					<h:commandLink
 						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER)}">
 						<h:outputText value="#{dashboardBean.temporariosNoSistemaAVencer}"
@@ -115,7 +115,7 @@
 
 				<p:panel
 					id="#{dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FF0000;">
+					styleClass="ui-dash-panel" style="background-color: #FFD700;">
 					<h:commandLink
 						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE)}">
 						<h:outputText
@@ -147,6 +147,7 @@
 
 			<p style="display: inline-block;">
 				Recuperandos(as) Ativos(as) em Movimentação(ões) <br />
+
 				______________________________________________________________________________________________________________
 			</p>
 
@@ -296,8 +297,7 @@
 							value="#{dashboardBean.totalTransferenciaFinalizadoParcial}"
 							styleClass="ui-dash-text-panel-40" />
 						<br />
-						<h:outputText
-							value="Total transferencia finalizado parcial"
+						<h:outputText value="Total transferencia finalizado parcial"
 							styleClass="ui-dash-text-panel-18" />
 					</h:commandLink>
 				</p:panel>
