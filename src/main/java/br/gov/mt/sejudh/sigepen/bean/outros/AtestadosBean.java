@@ -35,6 +35,7 @@ import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.relatorio.textos.Atestados;
 import br.gov.mt.sejudh.sigepen.service.AtestadosService;
+import br.gov.mt.sejudh.sigepen.service.GerenciarAssinaturaService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -63,9 +64,18 @@ public class AtestadosBean {
 	
 	@Inject
 	private AtestadosService atestadosService;
+<<<<<<< HEAD
 
 	@Inject
 	private GerenciarAssinaturaService gerenciarAssinaturaService;
+=======
+	
+	@Inject
+	private GerenciarAssinaturaService gerenciarAssinaturaService;
+	
+	private boolean imprimirComNomeSocial;
+
+>>>>>>> 132318b781ed249c989f9cd5deb6fd05b3c96238
 
     @URLAction(onPostback=false)
     public String init() {
@@ -111,7 +121,30 @@ public class AtestadosBean {
         return null;
     }
     
-	public void imprimirAtestado() {
+    public void iniciarImpressao() {
+    	if(atestadoSelecionado == null || recuperando == null || lotacao == null) {
+    		facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", "Selecione o tipo de atestado ou comportamento.");
+    		return;
+    	}
+    	
+    	if(isTemNomeSocial()) {
+    		this.imprimirComNomeSocial = true;
+    		RequestContext.getCurrentInstance().execute("PF('modalNomeSocial').show()");
+    	} else {
+    		this.imprimirComNomeSocial = false;
+    		gerarAtestado();
+    	}
+    }
+    
+    
+	public void gerarAtestado() {
+		
+		if(atestadoSelecionado == null || recuperando == null || lotacao == null) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", "Selecione o tipo de atestado ou comportamento.");
+			RequestContext.getCurrentInstance().execute("PF('modalNomeSocial').hide()");
+			return;
+		}
+		
 		try {
 			UnidadePrisional unidadeAtual = lotacao.getEstrutura().getUnidadePrisional();
 			Map<String, Object> parameters = new HashMap<String, Object>();
@@ -128,8 +161,7 @@ public class AtestadosBean {
 			} else {
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(Relatorio.AtestadoSemAssinatura, getTextoAtestado(), parameters));
 		}
-			
-			RequestContext.getCurrentInstance().execute("download()");
+			RequestContext.getCurrentInstance().execute("PF('modalNomeSocial').hide(); download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Atestado de " + atestadoSelecionado.name(), log);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -139,15 +171,25 @@ public class AtestadosBean {
 	}
 	
 	private TextoDoRelatorio getTextoAtestado() {
+		if(atestadoSelecionado == null || recuperando == null || lotacao == null) {
+			return null;
+		}
+		
 		switch(atestadoSelecionado) {
 			case Permanencia:
-				return Atestados.getTexto(atestadoSelecionado, recuperando, lotacao);
+				return Atestados.getTexto(atestadoSelecionado, recuperando, lotacao, imprimirComNomeSocial);
 			case Comportamento:
-				return Atestados.getTexto(atestadoSelecionado, recuperando, lotacao, comportamento);
+				if(comportamento != null) {
+					return Atestados.getTexto(atestadoSelecionado, recuperando, lotacao, comportamento, imprimirComNomeSocial);
+				} else {
+					return null;
+				}
 			default:
 				return null;
 		}
 	}
+	
+	
 
 	public TipoAtestado getAtestadoSelecionado() {
 		return atestadoSelecionado;
@@ -164,4 +206,18 @@ public class AtestadosBean {
 	public void setComportamento(String comportamento) {
 		this.comportamento = comportamento;
 	}
+	
+	public boolean isImprimirComNomeSocial() {
+		return imprimirComNomeSocial;
+	}
+
+	public void setImprimirComNomeSocial(boolean imprimirComNomeSocial) {
+		this.imprimirComNomeSocial = imprimirComNomeSocial;
+	}
+	
+	public boolean isTemNomeSocial() {
+	    return recuperando != null && recuperando.getPessoa() != null && recuperando.getPessoa().getNomeSocial() != null;
+	}
+	
+	
 }
