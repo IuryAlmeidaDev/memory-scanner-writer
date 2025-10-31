@@ -17,10 +17,24 @@ public class CrimeService {
 
 	@Inject
 	private CrimeDAO dao;
-	
+
 	@Interceptors(EJBExcInterceptor.class)
-	public void salvar(Crime crime) {		
-		dao.salvar(crime);
+	public void salvar(Crime crime) throws Exception {
+		try {
+			if (crime == null) throw new Exception("Crime null");
+			
+			crime.setNomeLegislacao(crime.getNomeLegislacao().trim().toUpperCase());
+			crime.setNumArtigo(crime.getNumArtigo().trim().toUpperCase());
+			crime.setNumParagrafo(crime.getNumParagrafo().trim().toUpperCase());
+			crime.setNumInciso(crime.getNumInciso().trim().toUpperCase());
+			crime.setNumAlinea(crime.getNumAlinea().trim().toUpperCase());
+			crime.setDetalhamento(crime.getDetalhamento().trim().toUpperCase());
+			
+			dao.salvar(crime);
+		}
+		catch(Exception e) {
+			throw new Exception("Erro: "+e.getMessage());
+		}
 	}
 
 	public List<Crime> buscaPorFiltro(FiltroCrime filtro, boolean isBuscaRelatorio) {		 
