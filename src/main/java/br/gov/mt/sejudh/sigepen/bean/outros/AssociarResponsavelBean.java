@@ -51,9 +51,12 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
 		if (this.isDialogInvalida()) {
 			return "pretty:dashboard";
 		}
-		pesquisar();
-		
-        return null;
+	    this.filtroAssociarResp = new FiltroAssociarResponsavel(); 
+	    this.exibirMatricula = false; 
+	    
+	    pesquisar();
+	    
+	    return null;
     }
 
     public void selecionarRecuperando(Visitante visitante) {
@@ -98,14 +101,8 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
 	}
 
 	public void pesquisar() {		
-//		FiltroVisitanteImpedimento filtro = new FiltroVisitanteImpedimento();
-		FiltroAssociarResponsavel filtro = new FiltroAssociarResponsavel();
-		
-		Object matriculaObj = facesUtil.getObjetoSessao("matricula", false);
-		if(matriculaObj != null) {
-			filtro.setMatricula(Sigepen.converteStringEmLong(facesUtil.getObjetoSessao("matricula", false).toString()));
-		}
-		this.setFiltroAssociarResp(filtro);
+        
+		final FiltroAssociarResponsavel filtroFinal = this.filtroAssociarResp;
 		
 		this.setLazyDataModel(new LazyDataModel<AssociarVisitanteResponsavelView>() {
 
@@ -113,7 +110,9 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
 			
 			@Override
 			public List<AssociarVisitanteResponsavelView> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {	
-				setRowCount(service.buscaQtdRegistroFiltrado(filtro));
+				
+
+                setRowCount(service.buscaQtdRegistroFiltrado(filtroFinal));
 			
 				if (first >= getRowCount()) {
 					first = 0;                    
@@ -121,8 +120,8 @@ public class AssociarResponsavelBean extends MetodosDialogBean {
 					dt.setFirst(first);
 				}
 			 
-				filtro.organizaFiltro(first, pageSize, sortField, sortOrder);
-				return service.buscarPorFiltroAssociarResponsavel(filtro, false); 
+				filtroFinal.organizaFiltro(first, pageSize, sortField, sortOrder);
+				return service.buscarPorFiltroAssociarResponsavel(filtroFinal, false); 
 			}
 		});
 	}
