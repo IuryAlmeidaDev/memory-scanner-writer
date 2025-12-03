@@ -11,8 +11,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.xml.crypto.Data;
 
@@ -120,6 +122,9 @@ public class RecuperandoService {
 	@Inject
 	private FacesUtil facesUtil;
 
+	@Inject
+	EntityManager em;
+	
 	public void buscarListaFaltaDisciplinarPorRecuperandoId (Long id) {
 		
 	}
@@ -378,7 +383,17 @@ public class RecuperandoService {
 		ativaStatusParenteNaSolicitacaoDeVisita(parente);
 	}
 	
+	@Transactional
 	public void excluirParente(Parente parente) throws ValidacaoException {
+		
+		parente = em.merge(parente);
+		
+		boolean isParente = parente.getCredenciamentos().size() > 0 && parente.getCredenciamentos().get(0)
+				.getVisitante().getTipoVisita().getTipoEntrada() == TipoEntrada.FAMILIA;
+		
+		if (isParente) {
+			throw new ValidacaoException("Operação não permitida! Visitante já cadastrado no módulo de visita.");
+		}
 		dao.excluirParente(parente);
 	}
 

@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 @ViewScoped
 @URLMappings(mappings = {
 		@URLMapping(id = "ListarRecuperando", pattern = "/recuperando", viewId = "/WEB-INF/pages/recuperando/ListarRecuperando.xhtml"),
-		@URLMapping(id = "CadastrarRecuperando", pattern = "/recuperando/cadastrar", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),	
+		@URLMapping(id = "CadastrarRecuperando", pattern = "/recuperando/cadastrar", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "AlterarRecuperando", pattern = "/recuperando/alterar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "VisualizarRecuperando", pattern = "/recuperando/visualizar/#{id}", viewId = "/WEB-INF/pages/recuperando/CadastrarRecuperando.xhtml"),
 		@URLMapping(id = "RelatorioInfopen", pattern = "/recuperando/infopen", viewId = "/WEB-INF/pages/recuperando/RelatorioInfopen.xhtml") })
@@ -139,7 +139,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private CadastrarProcessoBean cadastrarProcessoBean;
-	
+
 	@Inject
 	private BiometriaService bioService;
 
@@ -182,7 +182,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	private List<Etnia> etnias;
 
 	private Foto fotoSubstituida;
-	
+
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void configurarFiltroPaginacao() throws Exception {
 		if (getAcaoDeTela().equals(AcaoDeTela.LISTAR)) {
@@ -192,12 +192,13 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			if (filtroDash != null) {
 				setFiltro(filtroDash);
 				onUnidadePrisionalChange();
-				//this.estruturas = this.estruturaService.buscarEstruturas(SecurityUtil.getUnidadeSelecionada().getId());
+				// this.estruturas =
+				// this.estruturaService.buscarEstruturas(SecurityUtil.getUnidadeSelecionada().getId());
 
 			} else {
 				super.carregarFiltroPaginacao(FiltroRecuperandoView.class, this);
 			}
-			
+
 		}
 	}
 
@@ -207,101 +208,104 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 		try {
 			switch (this.getAcaoDeTela()) {
-				case CADASTRAR:
-					boolean tornar = false;
-					long pessoaId = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
-					Pessoa p = null;
-					Long idPessoa = (facesUtil != null) ? (Long) facesUtil.getObjetoSessao("idPessoa") : null;
-					
-					if (pessoaId == 0 && idPessoa != null) {
-						pessoaId = idPessoa;
-						tornar = true;
-					}
+			case CADASTRAR:
+				boolean tornar = false;
+				long pessoaId = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
+				Pessoa p = null;
+				Long idPessoa = (facesUtil != null) ? (Long) facesUtil.getObjetoSessao("idPessoa") : null;
 
-					if (pessoaId > 0 && pessoaService != null) {
-						p = pessoaService.buscarPessoaPorId(pessoaId);
+				if (pessoaId == 0 && idPessoa != null) {
+					pessoaId = idPessoa;
+					tornar = true;
+				}
 
-						if (p == null) {
-							if (facesUtil != null) {
-								facesUtil.exibirMensagemErro("Pessoa não encontrada.", true);
-							}
-							return "pretty:ListarRecuperando";
-						}
-					} else {
-						p = new Pessoa();
-						p.setNaturalidade(new Cidade());
-					}
+				if (pessoaId > 0 && pessoaService != null) {
+					p = pessoaService.buscarPessoaPorId(pessoaId);
 
-					Visitante v = null;
-					Long idVisitante = null;
-					Long tornarRecuperandoIdVisitante = (facesUtil != null) ? (Long) facesUtil.getObjetoSessao("tornarRecuperandoIdVisitante") : null;
-
-					if (tornarRecuperandoIdVisitante != null && visitanteService != null) {
-						idVisitante = tornarRecuperandoIdVisitante;
-						v = visitanteService.buscarPorId(idVisitante);
-					}
-
-					this.recuperando = new Recuperando(StatusRecuperando.INATIVO_PARCIAL);
-					this.recuperando.setPessoa(p);
-					this.recuperando.setTornarRecuperando(tornar);
-					this.recuperando.setTornarRecuperandoIdVisitante(idVisitante);
-
-					if (v != null && tornarRecuperandoIdVisitante != null && v.getFotoFrenteAtual() != null && v.getFotoFrenteAtual().getImagem() != null) {
-						Foto foto = new Foto();
-						foto.setIsAtual(true);
-						foto.setRecuperando(this.recuperando);
-						foto.setDataInclusao(new Date());
-						foto.setTipo(TipoFoto.FRENTE);
-
-						Imagem imagem = new Imagem();
-						imagem.setDataInclusao(new Date());
-						imagem.setArquivo(v.getFotoFrenteAtual().getImagem().getArquivo());
-						foto.setImagem(imagem);
-
-						this.recuperando.setFotos(new ArrayList<>());
-						this.recuperando.getFotos().add(foto);
-					}
-
-					inicializarVariaveis();
-					break;
-
-				case ALTERAR:
-				case VISUALIZAR:
-					long id = Sigepen.converteStringEmLong(facesUtil != null ? facesUtil.getQueryParameter("id") : null);
-
-					if (!buscarRecuperando(id)) {
+					if (p == null) {
 						if (facesUtil != null) {
-							facesUtil.exibirMensagemErro("Recuperando não encontrado.", true);
+							facesUtil.exibirMensagemErro("Pessoa não encontrada.", true);
 						}
 						return "pretty:ListarRecuperando";
 					}
+				} else {
+					p = new Pessoa();
+					p.setNaturalidade(new Cidade());
+				}
 
-					if (!validarRecuperando()) {
-						if (facesUtil != null) {
-							facesUtil.exibirMensagemErro("Operação não permitida.", true);
-						}
-						return "pretty:ListarRecuperando";
+				Visitante v = null;
+				Long idVisitante = null;
+				Long tornarRecuperandoIdVisitante = (facesUtil != null)
+						? (Long) facesUtil.getObjetoSessao("tornarRecuperandoIdVisitante")
+						: null;
+
+				if (tornarRecuperandoIdVisitante != null && visitanteService != null) {
+					idVisitante = tornarRecuperandoIdVisitante;
+					v = visitanteService.buscarPorId(idVisitante);
+				}
+
+				this.recuperando = new Recuperando(StatusRecuperando.INATIVO_PARCIAL);
+				this.recuperando.setPessoa(p);
+				this.recuperando.setTornarRecuperando(tornar);
+				this.recuperando.setTornarRecuperandoIdVisitante(idVisitante);
+
+				if (v != null && tornarRecuperandoIdVisitante != null && v.getFotoFrenteAtual() != null
+						&& v.getFotoFrenteAtual().getImagem() != null) {
+					Foto foto = new Foto();
+					foto.setIsAtual(true);
+					foto.setRecuperando(this.recuperando);
+					foto.setDataInclusao(new Date());
+					foto.setTipo(TipoFoto.FRENTE);
+
+					Imagem imagem = new Imagem();
+					imagem.setDataInclusao(new Date());
+					imagem.setArquivo(v.getFotoFrenteAtual().getImagem().getArquivo());
+					foto.setImagem(imagem);
+
+					this.recuperando.setFotos(new ArrayList<>());
+					this.recuperando.getFotos().add(foto);
+				}
+
+				inicializarVariaveis();
+				break;
+
+			case ALTERAR:
+			case VISUALIZAR:
+				long id = Sigepen.converteStringEmLong(facesUtil != null ? facesUtil.getQueryParameter("id") : null);
+
+				if (!buscarRecuperando(id)) {
+					if (facesUtil != null) {
+						facesUtil.exibirMensagemErro("Recuperando não encontrado.", true);
 					}
+					return "pretty:ListarRecuperando";
+				}
 
-					inicializarVariaveis();
-					carregarStatusMovimentacao();
-					logDeAcesso(log, this.recuperando);
-
-					if (verificarSeBiometriaEhObrigatoria()) {
-						validarBiometriaAtualizada();
+				if (!validarRecuperando()) {
+					if (facesUtil != null) {
+						facesUtil.exibirMensagemErro("Operação não permitida.", true);
 					}
-					break;
+					return "pretty:ListarRecuperando";
+				}
 
-				case LISTAR:
-					if (unidadeService != null) {
-						unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
-					}
-					pesquisar();
-					logDeAcesso(log, "Recuperandos");
-					break;
+				inicializarVariaveis();
+				carregarStatusMovimentacao();
+				logDeAcesso(log, this.recuperando);
 
-				default:
-					break;
+				if (verificarSeBiometriaEhObrigatoria()) {
+					validarBiometriaAtualizada();
+				}
+				break;
+
+			case LISTAR:
+				if (unidadeService != null) {
+					unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
+				}
+				pesquisar();
+				logDeAcesso(log, "Recuperandos");
+				break;
+
+			default:
+				break;
 			}
 		} catch (Exception e) {
 			if (facesUtil != null) {
@@ -312,7 +316,6 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 		return null;
 	}
-
 
 	public Boolean verificarSeBiometriaEhObrigatoria() {
 		return unidadeService.verificarSeBiometriaEhObrigatoria(SecurityUtil.getUnidadeSelecionada().getId());
@@ -564,9 +567,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			if (this.recuperando.getParentes() != null) {
 				int conjuges = 0;
 				for (Parente p : this.recuperando.getParentes()) {
-					if (p != null 
-							&& p.getParentesco() != null 
-							&& "Conjugê".equals(p.getParentesco().getDescricao())
+					if (p != null && p.getParentesco() != null && "Conjugê".equals(p.getParentesco().getDescricao())
 							&& SgpStatusAlternativo.A.equals(p.getStatus())) {
 						conjuges++;
 					}
@@ -588,8 +589,9 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				buscarRecuperando(this.recuperando.getId());
 
 			LoggerUtil.logInfo(Acao.SALVAR, this.recuperando, log);
-			String nomeSeguro = (this.recuperando != null && this.recuperando.getPessoa() != null && this.recuperando.getPessoa().getNome() != null)
-					? this.recuperando.getPessoa().getNome() : "não informado";
+			String nomeSeguro = (this.recuperando != null && this.recuperando.getPessoa() != null
+					&& this.recuperando.getPessoa().getNome() != null) ? this.recuperando.getPessoa().getNome()
+							: "não informado";
 			String mensagemSucesso = "Recuperando(a) " + nomeSeguro + " salvo com sucesso!";
 
 			if (isNovoRecuperando) {
@@ -609,12 +611,14 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		} catch (Exception e) {
 			String nomeErro = "não informado";
 			try {
-				if (this.recuperando != null && this.recuperando.getPessoa() != null && this.recuperando.getPessoa().getNome() != null) {
+				if (this.recuperando != null && this.recuperando.getPessoa() != null
+						&& this.recuperando.getPessoa().getNome() != null) {
 					nomeErro = this.recuperando.getPessoa().getNome();
 				}
-			} catch (Exception ignored) {}
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO",
-					"Erro ao salvar recuperando (" + nomeErro + "): " + (e.getMessage() != null ? e.getMessage() : e.toString()));
+			} catch (Exception ignored) {
+			}
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "ERRO", "Erro ao salvar recuperando (" + nomeErro
+					+ "): " + (e.getMessage() != null ? e.getMessage() : e.toString()));
 			LoggerUtil.logErro(Acao.SALVAR, this.recuperando, e, log);
 		}
 
@@ -652,19 +656,21 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 		return null;
 	}
-	
+
 	public void excluirProcesso(Processo processo) throws ValidacaoException {
-		try {											
+		try {
 			cadastrarProcessoBean.excluirProcessoRegimeCondicaoECrime(processo);
 			this.recuperando.getProcessos().remove(processo);
-			
+
 			this.atualizarProcessos(processo.getNumeroProcesso());
-			
-			facesUtil.exibirMensagemInfo("Processo " + processo.getNumeroProcesso() + " excluído(a) com sucesso!", true);
+
+			facesUtil.exibirMensagemInfo("Processo " + processo.getNumeroProcesso() + " excluído(a) com sucesso!",
+					true);
 			LoggerUtil.logInfo(Acao.EXCLUIR, processo, log);
-			
+
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir processo (" + processo.getNumeroProcesso() + "): " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+					"Erro ao excluir processo (" + processo.getNumeroProcesso() + "): " + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, recuperando, e, log);
 		}
 	}
@@ -822,7 +828,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.ASSOCIAR, numProc, e, log);
 		}
 	}
-		
+
 	public void atualizarProcessos(String processo) {
 		try {
 			if (processo != null && !processo.isEmpty()) {
@@ -961,7 +967,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				this.fotoDoFormulario.setRecuperando(this.recuperando);
 				this.fotoDoFormulario.setTipo(this.fotoSubstituida.getTipo());
 				this.fotoDoFormulario.setImagem(imagem);
-				
+
 				List<Foto> fotos = this.adicionarNovaFoto();
 				substituicaoFotoJustificativa.setDescricao(descricaoJustificativa);
 				substituicaoFotoJustificativa.setFotoSubstituidaId(this.fotoSubstituida.getId());
@@ -1502,18 +1508,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 
 	public void excluirParente(Parente parente) {
 		try {
-
-			if (this.recuperando.getId() > 0) {
-				boolean isParente = parente.getCredenciamentos().size() > 0 && parente.getCredenciamentos().get(0)
-						.getVisitante().getTipoVisita().getTipoEntrada() == TipoEntrada.FAMILIA;
-				if (isParente) {
-					String mensagem = "Operação não permitida! Visitante já cadastrado no módulo de visita, favor inativar o parente no Rol.";
-					facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", mensagem);
-					return;
-				}
-				service.excluirParente(parente);
-				LoggerUtil.logInfo(Acao.EXCLUIR, parente, log);
-			}
+			service.excluirParente(parente);
+			LoggerUtil.logInfo(Acao.EXCLUIR, parente, log);
 			this.recuperando.getParentes().remove(parente);
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", e.getMessage());
@@ -1690,7 +1686,8 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			r.setQuantFilhos(i);
 			recs.add(r);
 
-			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(recs, Relatorio.RegistroRecuperando,this.gerenciarAssinaturaService));
+			fileDownload.prepararArquivo(
+					RelatorioUtil.gerarRelatorio(recs, Relatorio.RegistroRecuperando, this.gerenciarAssinaturaService));
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, recuperando, log);
 		} catch (Exception e) {

@@ -43,15 +43,25 @@ public abstract class BaseDataModel<T extends BaseModel<I>, I extends Number> ex
     public T getRowData(String rowKey) {
         try {
             int value = Integer.parseInt(rowKey);
-            if (value >= 0) {
-                return ((List<T>) super.getWrappedData()).get(value);
+            List<T> data = (List<T>) super.getWrappedData();
+            
+            if(data == null) {
+            	return null;
             }
+            
+            if(value < 0 || value >= data.size()) {
+            	return null;
+            }
+            
+            return data.get(value);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    
     @Override
     @SuppressWarnings("unchecked")
     public Object getRowKey(T object) {

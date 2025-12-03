@@ -41,7 +41,7 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
 
         StringBuilder sqlFinal = new StringBuilder();
         if (!contar) {
-            sqlFinal.append("SELECT * FROM ( ").append(consultaSQL.toString()).append(" ) ");
+        	 sqlFinal.append("SELECT DISTINCT * FROM ( ").append(consultaSQL.toString()).append(" ) ");
             if (ordemSQL.name().equals("DESCENDING")) {
                 sqlFinal.append("ORDER BY ").append(campoOrdenacao).append(" DESC ");
             } else {
