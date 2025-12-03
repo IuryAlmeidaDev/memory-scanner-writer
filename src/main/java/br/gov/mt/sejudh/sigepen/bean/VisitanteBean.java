@@ -1267,13 +1267,6 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			RequestContext.getCurrentInstance().update("tabView:panelBotoes");
 		}
 	}
-	private Credenciamento getCredenciamentoMaisRecente() {
-	    // ...
-	    Optional<Credenciamento> opt = this.visitante.getCredenciamentos()
-	            .stream()
-	            .max(Comparator.comparing(Credenciamento::getId)); 
-	    return opt.orElse(null);
-	}
 
 	public void novoResponsavel() {
 	    facesUtil.exibirPaginaDialog("pretty:AssociarResponsavel");
@@ -1310,8 +1303,6 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	        return;
 	    }
 
-	    // Recarregar do banco (garante credenciamentos atualizados)
-	    // ESSENCIAL: Garante que 'responsavel' tenha a coleção de credenciamentos carregada para o loop.
 	    responsavel = this.service.buscarPorId(responsavel.getId());
 
 	    if (this.visitante.getId() != null && responsavel.getId().equals(this.visitante.getId())) {
