@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -1267,21 +1268,14 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		}
 	}
 
-	public void novoResponsavelEditar() {
-		Object matriculaObjVisitante = this.visitante.getCredenciamentos().get(0).getRecuperando().getId();
-		if (matriculaObjVisitante != null) {
-			facesUtil.setObjetoSessao("matricula", this.visitante.getCredenciamentos().get(0).getRecuperando().getId());
-		}
-		facesUtil.exibirPaginaDialog("pretty:AssociarResponsavel");
+	public void novoResponsavel() {
+	    facesUtil.exibirPaginaDialog("pretty:AssociarResponsavel");
 	}
 
-	public void novoResponsavel() {
-		Object matriculaObj = this.credenciamentoAtual.getRecuperando().getId();
-		if (matriculaObj != null) {
-			facesUtil.setObjetoSessao("matricula", this.credenciamentoAtual.getRecuperando().getId());
-		}
-		facesUtil.exibirPaginaDialog("pretty:AssociarResponsavel");
+	public void novoResponsavelEditar() {
+	    facesUtil.exibirPaginaDialog("pretty:AssociarResponsavel");
 	}
+
 
 	public void novoEndereco() {
 		facesUtil.exibirPaginaDialog("pretty:AssociarEndereco");
@@ -1304,33 +1298,53 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	}
 
 	public void incluirResponsavel(SelectEvent event) {
-		Visitante visitante = (Visitante) event.getObject();
-		if (visitante == null) {
-			return;
-		}
-		visitante = this.service.buscarPorId(visitante.getId());
-		if (this.visitante.getId() != null && visitante.getId().equals(this.visitante.getId())) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
-					"Não é possível adicionar si próprio como Responsável.");
-			return;
-		}
-		boolean mesmoRecuperando = false;
-		for (Credenciamento vr1 : this.visitante.getCredenciamentos()) {
-			for (Credenciamento vr2 : visitante.getCredenciamentos()) {
-				if (vr1.getRecuperando() != null && vr2.getRecuperando() != null
-						&& vr1.getRecuperando().getId() == vr2.getRecuperando().getId()) {
-					mesmoRecuperando = true;
-				}
-			}
-		}
-		if (!mesmoRecuperando) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
-					"O visitante e o responsável devem possuir credenciamento para o mesmo recuperando.");
-			return;
-		}
-		if (this.visitante.getId() == null || !this.visitante.getId().equals(visitante.getId())) {
-			this.visitantesResponsaveis.add(visitante);
-		}
+	    Visitante responsavel = (Visitante) event.getObject();
+	    if (responsavel == null) {
+	        return;
+	    }
+
+	    responsavel = this.service.buscarPorId(responsavel.getId());
+
+	    if (this.visitante.getId() != null && responsavel.getId().equals(this.visitante.getId())) {
+	        facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
+	                "Não é possível adicionar si próprio como Responsável.");
+	        return;
+	    }
+
+	    boolean mesmoRecuperando = false;
+
+	  
+	    for (Credenciamento credVisitante : this.visitante.getCredenciamentos()) {
+	        if (credVisitante.getRecuperando() == null) continue;
+
+	        Long idRecuperandoVisitante = credVisitante.getRecuperando().getId();
+
+	      
+	        for (Credenciamento credResp : responsavel.getCredenciamentos()) { 
+	            if (credResp.getRecuperando() == null) continue;
+
+	            Long idRecuperandoResp = credResp.getRecuperando().getId();
+
+	          
+	            if (Objects.equals(idRecuperandoVisitante, idRecuperandoResp)) {
+	                mesmoRecuperando = true;
+	                break; 
+	            }
+	        }
+
+	        if (mesmoRecuperando) break; 
+	    }
+
+	    if (!mesmoRecuperando) {
+	        facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
+	                "O visitante e o responsável devem possuir credenciamento para o mesmo recuperando.");
+	        return;
+	    }
+
+
+	    if (!this.visitantesResponsaveis.contains(responsavel)) {
+	        this.visitantesResponsaveis.add(responsavel);
+	    }
 	}
 
 	public void desativarVinculoVisitanteResponsavel(Visitante visitante, Visitante vr) {
