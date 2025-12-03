@@ -116,7 +116,11 @@ public class FaseDoCredenciamentoService extends BaseService<FaseDoCredenciament
         return dataNascimentoConvertida;
     }
 
+   
+    
     public List<FaseDoCredenciamento> lancarCredenciamentoDoDependente(FaseDoCredenciamento fase) throws ValidacaoException {
+    	this.validaFase(fase);
+    	
         if (this.getStatusCredenciamentoInativoOuNaoAprovado(fase)) {
             Visitante responsavel = fase.getCredenciamento().getVisitante();
             List<Visitante> dependentes = this.visitanteService.buscarDependentesDoVisitanteResponsavel(responsavel);
@@ -129,6 +133,8 @@ public class FaseDoCredenciamentoService extends BaseService<FaseDoCredenciament
     }
 
     private List<FaseDoCredenciamento> lancaCredenciamentoDependenteQdoRespInativoOuNaoAprovado(Visitante dependente) throws ValidacaoException {
+    	this.validaResponsavelCredenciamento(dependente);
+    	
         dependente = visitanteService.buscarPorId(dependente.getId());
         Visitante responsavel = dependente.getResponsavel();
 
@@ -298,4 +304,28 @@ public class FaseDoCredenciamentoService extends BaseService<FaseDoCredenciament
 	public FaseDoCredenciamento atribuirProximaFaseCredenciamento(Credenciamento credenciamento) {
 		return this.faseDoCredenciamentoDAO.atribuirProximaFaseCredenciamento(credenciamento);
 	}
+	
+	private void validaResponsavelCredenciamento(Visitante responsavel) {
+    	if(responsavel == null) {
+    		throw new IllegalArgumentException("O objeto responsavel não pode ser vazio.");
+    	}
+    	
+    	if(responsavel.getCredenciamentos() == null) {
+    		throw new IllegalArgumentException("O objeto credenciamento do responsavel não pode ser vazio.");
+    	}
+    }
+	
+	 public void validaFase(FaseDoCredenciamento fase) {
+	    	if(fase == null) {
+	    		throw new IllegalArgumentException("Fase do credenciamento está vazia.");
+	    	}
+	    	
+	    	if(fase.getCredenciamento() == null) {
+	    		throw new IllegalArgumentException("Credenciamento está vazia.");
+	    	}
+	    	
+	    	if(fase.getCredenciamento().getVisitante() == null) {
+	    		throw new IllegalArgumentException("Credenciamento do visitante está vazia.");
+	    	}
+	    }
 }

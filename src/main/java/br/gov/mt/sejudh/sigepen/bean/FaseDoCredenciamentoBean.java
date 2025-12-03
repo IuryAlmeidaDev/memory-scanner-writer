@@ -289,6 +289,7 @@ public class FaseDoCredenciamentoBean extends MetodosDePaginaBean {
         } catch (ValidacaoException e) {
             facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", e.getMessage());
         } catch (Exception e) {
+        	if(this.visitante != null && this.visitante.getPessoa() != null && this.visitante.getPessoa().getNome() != null)
             facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "Erro", "Erro ao salvar Visitante (" + this.visitante.getPessoa().getNome() + "): " + e.getMessage());
             LoggerUtil.logErro(Acao.SALVAR, this.faseDoCredenciamento, e, log);
         }
