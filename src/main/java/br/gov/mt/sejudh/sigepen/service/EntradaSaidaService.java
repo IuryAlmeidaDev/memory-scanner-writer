@@ -126,4 +126,8 @@ public class EntradaSaidaService {
 		Recuperando rec = buscarRecuperandoPorVisitanteCredenciado(idVisitante);
 		return rec != null && rec.getPessoa() != null ? rec.getPessoa().getNome() : "";
 	}
+	
+	public EntradaSaida buscarUltimaEntradaSaidaAtivaPorVisitante(Long idVisitante) {
+		return dao.buscarUltimaEntradaSaidaAtivaPorVisitante(idVisitante);
+	}
 }
