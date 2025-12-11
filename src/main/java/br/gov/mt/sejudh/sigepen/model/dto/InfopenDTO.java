@@ -9,6 +9,8 @@ public class InfopenDTO {
 	List<InfopenRecuperandoDTO> recuperandos;
 	FiltroInfopen filtro;
 	
+	String unidade;
+	
 	public List<InfopenRecuperandoDTO> getRecuperandos() {
 		return recuperandos;
 	}
@@ -20,6 +22,14 @@ public class InfopenDTO {
 	}
 	public void setFiltro(FiltroInfopen filtro) {
 		this.filtro = filtro;
+	}
+	
+	public String getUnidade() {
+		return unidade;
+	}
+	
+	public void setUnidade(String unidade) {
+		this.unidade = unidade;
 	}
 
 }

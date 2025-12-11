@@ -479,6 +479,14 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 	public String salvar(Boolean redirecionarAlterar) {
 		try {
+			
+			if (this.visitante.getPessoa().getDataNascimento() != null
+					&& this.visitante.getPessoa().getDataNascimento().after(new Date())) {
+
+				throw new ValidacaoException("A data de nascimento não pode ser uma data futura.");
+			}
+
+			
 			if (!redirecionarAlterar && this.cadastrarBiometria()) {
 				return null;
 			}
@@ -2294,6 +2302,12 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	private boolean verificaVisitanteResponsavelPossuiCredenciamento(Visitante visitante, Recuperando recuperando) {
 		return service.verificaVisitanteResponsavelPossuiCredenciamento(visitante, recuperando);
 	}
+	
+	
+	public Date getHoje() {
+	    return new Date();
+	}
+
 
 	public boolean getVisitantePreso(long idVisitante) {
 		StatusRecuperando status = this.recuperandoService.buscarStatusRecuperandoPorIdVisitante(idVisitante);

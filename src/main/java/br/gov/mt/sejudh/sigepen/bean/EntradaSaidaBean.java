@@ -1130,15 +1130,17 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	}
 
 	public void excluir(Visitante v) {
-		Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
-		Date df = Sigepen.getDataConsultaMenorIgual(new Date());
-		for (EntradaSaida e : v.getEntradas()) {
-			if (e.getDataEntrada().after(di) && e.getDataEntrada().before(df)) {
-				this.service.excluir(e);
-				LoggerUtil.logInfo(Acao.REMOVER, e, log);
-			}
-		}
-		facesUtil.exibirMensagemInfo("Visita excluída com sucesso!", true);
+	    Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
+	    Date df = Sigepen.getDataConsultaMenorIgual(new Date());
+	    for (EntradaSaida e : v.getEntradas()) {
+	        Date dataEntrada = e.getDataEntrada();
+	        if ((dataEntrada.equals(di) || dataEntrada.after(di)) && 
+	            (dataEntrada.equals(df) || dataEntrada.before(df))) {
+	            this.service.excluir(e);
+	            LoggerUtil.logInfo(Acao.REMOVER, e, log);
+	        }
+	    }
+	    facesUtil.exibirMensagemInfo("Visita excluída com sucesso!", true);
 	}
 
 	public void cancelarVisita() {
@@ -1289,30 +1291,36 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	}
 
 	public Date buscarData(Visitante v) {
-		Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
-		Date df = Sigepen.getDataConsultaMenorIgual(new Date());
-		for (EntradaSaida e : v.getEntradas()) {
-			if (e.getDataEntrada().after(di) && e.getDataEntrada().before(df))
-				return e.getDataEntrada();
-		}
-		return null;
+	    Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
+	    Date df = Sigepen.getDataConsultaMenorIgual(new Date());
+	    for (EntradaSaida e : v.getEntradas()) {
+	        Date dataEntrada = e.getDataEntrada();
+	        
+	        if ((dataEntrada.equals(di) || dataEntrada.after(di)) && 
+	            (dataEntrada.equals(df) || dataEntrada.before(df))) {
+	            return dataEntrada;
+	        }
+	    }
+	    return null;
 	}
 
 	public int buscarStatusVisita(Visitante v) {
-		Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
-		Date df = Sigepen.getDataConsultaMenorIgual(new Date());
-		long unidadeIdSelecionada = SecurityUtil.getUnidadeSelecionada().getId();
+	    Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
+	    Date df = Sigepen.getDataConsultaMenorIgual(new Date());
+	    long unidadeIdSelecionada = SecurityUtil.getUnidadeSelecionada().getId();
 
-		for (EntradaSaida e : v.getEntradas()) {
-			if (e.getUnidadePrisional().getId() == unidadeIdSelecionada
-					&& e.getDataEntrada().after(di) && e.getDataEntrada().before(df)) {
-				if (SituacaoVisita.EM_ANDAMENTO.equals(e.getSituacao()))
-					return 1;
-				else if (SituacaoVisita.FINALIZADA.equals(e.getSituacao()))
-					return 2;
-			}
-		}
-		return 0;
+	    for (EntradaSaida e : v.getEntradas()) {
+	        Date dataEntrada = e.getDataEntrada();
+	        if (e.getUnidadePrisional().getId() == unidadeIdSelecionada
+	                && (dataEntrada.equals(di) || dataEntrada.after(di)) 
+	                && (dataEntrada.equals(df) || dataEntrada.before(df))) {
+	            if (SituacaoVisita.EM_ANDAMENTO.equals(e.getSituacao()))
+	                return 1;
+	            else if (SituacaoVisita.FINALIZADA.equals(e.getSituacao()))
+	                return 2;
+	        }
+	    }
+	    return 0;
 	}
 
 	public String getAcao() {
@@ -1411,19 +1419,22 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	}
 
 	public void abrirDialogDetalhes(Visitante v, String a) {
-		this.setAcao(a);
-		Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
-		Date df = Sigepen.getDataConsultaMenorIgual(new Date());
-		for (EntradaSaida e : v.getEntradas()) {
-			if (e.getDataEntrada().after(di) && e.getDataEntrada().before(df))
-				this.entrada = e;
-		}
-		if (v.getResponsavel() != null) {
-			this.mostrarPanelVisitante = false;
-			this.mostrarPanelResponsavel = true;
-		}
+	    this.setAcao(a);
+	    Date di = Sigepen.getDataConsultaMaiorIgual(new Date());
+	    Date df = Sigepen.getDataConsultaMenorIgual(new Date());
+	    for (EntradaSaida e : v.getEntradas()) {
+	        Date dataEntrada = e.getDataEntrada();
+	        if ((dataEntrada.equals(di) || dataEntrada.after(di)) && 
+	            (dataEntrada.equals(df) || dataEntrada.before(df))) {
+	            this.entrada = e;
+	        }
+	    }
+	    if (v.getResponsavel() != null) {
+	        this.mostrarPanelVisitante = false;
+	        this.mostrarPanelResponsavel = true;
+	    }
 
-		this.mostrarPanelVisitante = true;
+	    this.mostrarPanelVisitante = true;
 	}
 
 	public void buttonIniciarVisita(Long id) {
