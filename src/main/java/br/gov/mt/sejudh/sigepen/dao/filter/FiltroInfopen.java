@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.dao.filter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import br.gov.mt.sejudh.sigepen.enumerator.IdadeRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Lgbt;
@@ -56,6 +57,8 @@ public class FiltroInfopen extends FiltroConsulta {
 	private Date dataInicial;	
 	
 	private Date dataFinal;	
+	
+	private List<Long> unidadesIds;
 
 	public int getTipoRelatorio() {
 		return tipoRelatorio;
@@ -193,7 +196,7 @@ public class FiltroInfopen extends FiltroConsulta {
 	public void setUnidade(long unidade) {
 		this.unidade = unidade;
 	}
-
+	
 	public Lgbt getLgbt() {
 		return lgbt;
 	}
@@ -258,5 +261,12 @@ public class FiltroInfopen extends FiltroConsulta {
 		this.dataFinal = dataFinal;
 	}
 		
+	public List<Long> getUnidadesIds(){
+		return unidadesIds;
+	}
+	
+	public void setUnidadesIds(List<Long> unidadesIds) {
+		this.unidadesIds = unidadesIds;
+	}
 
 }
