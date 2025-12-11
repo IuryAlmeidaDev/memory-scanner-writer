@@ -41,7 +41,7 @@ public class QuadroVagasService {
 	}
 	
 	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroQuadroVagas, boolean relatorio){
-		List<QuadroVagasDTO> quadroVagasDTOs = addCapacidadeTotalUnidade(dao.buscaQuantidadeRecuperados(filtroQuadroVagas, false, relatorio), relatorio);
+		List<QuadroVagasDTO> quadroVagasDTOs = addCapacidadeTotalUnidade(dao.buscarQuadroVagas(filtroQuadroVagas), relatorio);
 		quadroVagasDTOs.forEach
 		(x -> x.setFiltroQuadroVagas(filtroQuadroVagas));
 		return quadroVagasDTOs;
@@ -111,6 +111,10 @@ public class QuadroVagasService {
 
 	public Long quantidadeAtual(Long id){
 		return dao.quantidadeAtual(id);
+	}
+	
+	public List<QuadroVagasDTO> carregarQuadroVgas(FiltroQuadroVagas filtro) {
+		return dao.buscarQuadroVagas(filtro);
 	}
 
 }
