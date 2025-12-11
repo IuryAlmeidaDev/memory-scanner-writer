@@ -1099,8 +1099,25 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 //		if (visitanteResponsavel == null) {
 //			throw new ValidacaoException("É necessário selecionar um Visitante responsável!");
 //		}
+		if(this.credenciamentos == null &&
+				   this.credenciamentos.get(0) == null &&
+				   this.credenciamentos.get(0).getVisitante()== null &&
+				   this.credenciamentos.get(0).getVisitante().getId() == null)  {
+					throw new ValidacaoException("Erro: ID do credenciamento.");
+				}
+		
+		Long id = this.credenciamentos.get(0).getVisitante().getId();
+		
+		if(id == null){
+			throw new ValidacaoException("Erro: ID do credenciamento.");
+		}
+		
+		if(service.responsavelDeuEntrada(id).getId() == null) {
+			throw new ValidacaoException("Erro: ID do credenciamento");
+		}
 
-		Long entradaResponsavel = service.responsavelDeuEntrada(this.credenciamentos.get(0).getVisitante().getId()).getId();
+		Long entradaResponsavel = service.responsavelDeuEntrada(id).getId();
+		
 		if(entradaResponsavel == null){
 			throw new ValidacaoException("É necessário selecionar um Visitante responsável!");
 		}
@@ -1431,7 +1448,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 			for(Visitante visitante : service.buscarEntradasPorFiltro(getFiltro(), false)){
 
 				VisitanteEntradaSaidaDTO visitanteEntradaSaidaDTO = new VisitanteEntradaSaidaDTO(visitante);
-				visitanteEntradaSaidaDTO.setNomeRecuperando(buscarRecuperandoPorVisitanteCredenciado(visitante.getId()));
+				visitanteEntradaSaidaDTO.setNomeRecuperando(formatarRecuperandosSalvos(visitante));
 				visitanteEntradaSaidaDTO.setDataHoraEntrada(buscarData(visitante));
 
 				lista.add(visitanteEntradaSaidaDTO);
@@ -1454,4 +1471,44 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de entrada de visitantes", e, log);
 		}
 	}
+
+
+
+	public String formatarRecuperandosSalvos(Visitante visitante) {
+	    if (visitante == null || visitante.getId() == null) {
+	        return "";
+	    }
+	    
+	    try {
+	        EntradaSaida entradaSaidaCorreta = service.buscarUltimaEntradaSaidaAtivaPorVisitante(visitante.getId());
+	        
+	        if (entradaSaidaCorreta != null) {
+	            return this.formatarRecuperandosSalvos(entradaSaidaCorreta); 
+	        }
+	        
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	        return "Erro ao carregar recuperandos";
+	    }
+	    
+	    return "";
+	}
+	
+	public String formatarRecuperandosSalvos(EntradaSaida entrada) {
+	    List<String> nomes = new ArrayList<>();
+	    List<EntradaSaidaRecuperando> juncoesSalvas = entrada.getRecuperandos(); 
+
+	    if (juncoesSalvas != null) {
+	        for (EntradaSaidaRecuperando esr : juncoesSalvas) { 
+	            Recuperando rec = esr.getCredenciamento().getRecuperando();
+	            
+	            if (rec != null && rec.getPessoa() != null) {
+	                nomes.add(rec.getPessoa().getNome()); 
+	            }
+	        }
+	    }
+	    return String.join(", ", nomes);
+}
+	
+	
 }

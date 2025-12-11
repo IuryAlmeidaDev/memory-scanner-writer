@@ -583,4 +583,28 @@ public class EntradaSaidaDAO {
 		}
 
 	}
+	
+public EntradaSaida buscarUltimaEntradaSaidaAtivaPorVisitante(Long idVisitante) {
+	    
+	    String jpql = "SELECT es FROM EntradaSaida es " +
+	                  "JOIN FETCH es.recuperandos esr " + 
+	                  "JOIN FETCH esr.credenciamento c " +
+	                  "JOIN FETCH c.recuperando r " + 
+                      "JOIN FETCH r.pessoa p " + 
+	                  "WHERE es.visitante.id = :idVisitante " +
+	                  "AND es.situacao = :situacaoVisita " +
+	                  "ORDER BY es.dataEntrada DESC";
+
+	    try {
+	        TypedQuery<EntradaSaida> query = em.createQuery(jpql, EntradaSaida.class);
+	        query.setParameter("idVisitante", idVisitante);
+	        query.setParameter("situacaoVisita", SituacaoVisita.EM_ANDAMENTO); 
+	        query.setMaxResults(1);
+	        
+	        return query.getSingleResult();
+	    } catch (Exception e) {
+            e.printStackTrace(); 
+	        return null;
+	    }
+	}
 }
