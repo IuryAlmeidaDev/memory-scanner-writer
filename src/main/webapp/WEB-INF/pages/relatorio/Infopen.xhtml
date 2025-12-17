@@ -16,430 +16,461 @@
 		<sgp:validarAcesso />
 
 
-		<h3><strong>Relatório Infopen</strong></h3>
+		<h3>
+			<strong>Relatório Infopen</strong>
+		</h3>
 
 		<h:form id="meuFormulario">
 			<p:panel>
 
-		 		<sgp:formSelectOneMenuRelatorios id="tipo_relatorio" value="#{infopenBean.filtro.tipoRelatorio}" labelValue="Tipo do relatório" styleFormLabelColumn="width:145px">		            
-		            		            					
-		            <f:selectItem itemLabel="Sintético" itemValue="0" />	 			
-		            <f:selectItem itemLabel="Detalhado" itemValue="1" />
-		            		            
-		             <c:if test="#{securityUtil.possuiPermissao('VisualizarSinteticoUnificado')}">
-  		     			 <f:selectItem itemLabel="Sintético Unificado" itemValue="2" />
-   					 </c:if>
-   					    					
-   					  <c:if test="#{securityUtil.possuiPermissao('VisualizarSinteticoSequenciado')}">
-  		     			 <f:selectItem itemLabel="Sintético Sequenciado" itemValue="3" />
-   					  </c:if>
-   					    					 
-   					 <c:if test="#{securityUtil.possuiPermissao('VisualizarSinteticoUnificadoDetalhado')}">
-  		     			 <f:selectItem itemLabel="Detalhado Unificado " itemValue="5" />
-   					 </c:if>
-   					    					 
-   					 <c:if test="#{securityUtil.possuiPermissao('VisualizarSinteticoSequenciadoDetalhado')}">
-  		     			 <f:selectItem itemLabel="Detalhado Sequenciado" itemValue="4" />
-   					 </c:if>
-   					  		 	                
-		            <p:ajax update="meuFormulario:panel_filtros, meuFormulario:panelImprimir"/>
-		        </sgp:formSelectOneMenuRelatorios>
-		        							       
-						        
-				<h:panelGroup id="panel_filtros" >								
+				<sgp:formSelectOneMenuRelatorios id="tipo_relatorio"
+					value="#{infopenBean.filtro.tipoRelatorio}"
+					labelValue="Tipo do relatório" styleFormLabelColumn="width:145px">
+
+					<f:selectItem itemLabel="Sintético" itemValue="0" />
+					<f:selectItem itemLabel="Detalhado" itemValue="1" />
+
+					<c:if
+						test="#{securityUtil.possuiPermissao('VisualizarSinteticoUnificado')}">
+						<f:selectItem itemLabel="Sintético Unificado" itemValue="2" />
+					</c:if>
+
+					<c:if
+						test="#{securityUtil.possuiPermissao('VisualizarSinteticoSequenciado')}">
+						<f:selectItem itemLabel="Sintético Sequenciado" itemValue="3" />
+					</c:if>
+
+					<c:if
+						test="#{securityUtil.possuiPermissao('VisualizarSinteticoUnificadoDetalhado')}">
+						<f:selectItem itemLabel="Detalhado Unificado " itemValue="5" />
+					</c:if>
+
+					<c:if
+						test="#{securityUtil.possuiPermissao('VisualizarSinteticoSequenciadoDetalhado')}">
+						<f:selectItem itemLabel="Detalhado Sequenciado" itemValue="4" />
+					</c:if>
+
+					<p:ajax listener="#{infopenBean.onMudarTipoRelatorio}" 
+        					update="meuFormulario:panel_filtros meuFormulario:panelImprimir meuFormulario:panelFiltros" />
+				</sgp:formSelectOneMenuRelatorios>
+
+
+				<h:panelGroup id="panel_filtros">
+
+			
+					<p:outputPanel id="panelFiltros">
+						<sgp:formSelectOneMenuRelatorios id="tipoRelatorioSintetico"
+							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
+							rendered="#{infopenBean.filtro.tipoRelatorio eq '0'}"
+							styleFormLabelColumn="width:145px">
+
+							<f:selectItem itemLabel="NAO" itemValue="" />
+							<f:selectItem itemLabel="SIM" itemValue="data" />
+							<p:ajax listener="#{infopenBean.onMudarFiltroData}" update="meuFormulario:painelData" />
+						</sgp:formSelectOneMenuRelatorios>
+
+
+						
+						<sgp:formSelectOneMenuRelatorios id="tipoRelatorioDetalhado"
+							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
+							rendered="#{infopenBean.filtro.tipoRelatorio eq '1'}"
+							styleFormLabelColumn="width:145px">
+
+							<f:selectItem itemLabel="NAO" itemValue="" />
+							<f:selectItem itemLabel="SIM" itemValue="detalhado" />
+							<p:ajax listener="#{infopenBean.onMudarFiltroData}"
+								update="meuFormulario:painelData meuFormulario:painelData2 meuFormulario:painelData3" />
+						</sgp:formSelectOneMenuRelatorios>
+
+						
+						<sgp:formSelectOneMenuRelatorios id="tipoRelatorioUnificado"
+							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
+							rendered="#{infopenBean.filtro.tipoRelatorio eq '2'}"
+							styleFormLabelColumn="width:145px">
+
+							<f:selectItem itemLabel="NAO" itemValue="" />
+							<f:selectItem itemLabel="SIM" itemValue="unificado" />
+							<p:ajax listener="#{infopenBean.onMudarFiltroData}"
+								update="meuFormulario:painelData4 meuFormulario:painelData5" />
+						</sgp:formSelectOneMenuRelatorios>
+
+
+						
+						<sgp:formSelectOneMenuRelatorios id="tipoRelatorioSequenciado"
+							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
+							rendered="#{infopenBean.filtro.tipoRelatorio eq '3'}"
+							styleFormLabelColumn="width:145px">
+
+							<f:selectItem itemLabel="NAO" itemValue="" />
+							<f:selectItem itemLabel="SIM" itemValue="sequenciado" />
+							<p:ajax listener="#{infopenBean.onMudarFiltroData}"
+								update="meuFormulario:painelData6 meuFormulario:painelData7" />
+						</sgp:formSelectOneMenuRelatorios>
+
+
+					
+						<sgp:formSelectOneMenuRelatorios
+							id="tipoRelatorioSequenciadoDetalhado"
+							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
+							rendered="#{infopenBean.filtro.tipoRelatorio eq '4'}"
+							styleFormLabelColumn="width:145px">
+
+							<f:selectItem itemLabel="NAO" itemValue="" />
+							<f:selectItem itemLabel="SIM" itemValue="sequenciadoDetalhado" />
+							<p:ajax listener="#{infopenBean.onMudarFiltroData}"
+								update="meuFormulario:painelData8 meuFormulario:painelData9" />
+						</sgp:formSelectOneMenuRelatorios>
+
+
+						<sgp:formSelectOneMenuRelatorios
+							id="tipoRelatorioUnificadoDetalhado"
+							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
+							rendered="#{infopenBean.filtro.tipoRelatorio eq '5'}"
+							styleFormLabelColumn="width:145px">
+
+							<f:selectItem itemLabel="NAO" itemValue="" />
+							<f:selectItem itemLabel="SIM" itemValue="unificadoDetalhado" />
+							<p:ajax listener="#{infopenBean.onMudarFiltroData}"
+								update="meuFormulario:painelData10 meuFormulario:painelData11" />
+						</sgp:formSelectOneMenuRelatorios>
+
+					</p:outputPanel>
+
+
+
 				
-				   <!-- Filtro para o relatório Sintético -->				   
-				   <p:outputPanel id="panelFiltros">
-				      <sgp:formSelectOneMenuRelatorios id="tipoRelatorioSintetico" 
-				      		value="#{infopenBean.tipoRelatorio}" 
-				      		labelValue="Por Data:" 
-				      		rendered="#{infopenBean.filtro.tipoRelatorio eq '0'}" 
-				      		styleFormLabelColumn="width:145px">
-				      		
-				        <f:selectItem itemLabel="NAO" itemValue="" />
-				        <f:selectItem itemLabel="SIM" itemValue="data" />
-				        <p:ajax update="meuFormulario:painelData" />				        
-				      </sgp:formSelectOneMenuRelatorios>
-				      
-				      
-				      <!-- Filtro para o relatório Detalhado -->
-				      <sgp:formSelectOneMenuRelatorios id="tipoRelatorioDetalhado" 
-				      		value="#{infopenBean.tipoRelatorio}" 
-				      		labelValue="Por Data:" 
-				      		rendered="#{infopenBean.filtro.tipoRelatorio eq '1'}"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-				      		styleFormLabelColumn="width:145px">
-				      		
-				        <f:selectItem itemLabel="NAO" itemValue="" />
-				        <f:selectItem itemLabel="SIM" itemValue="detalhado" />
-				        <p:ajax update="meuFormulario:painelData meuFormulario:painelData2 meuFormulario:painelData3" />				       
-				      </sgp:formSelectOneMenuRelatorios>
-				      
-				      <!-- Filtro para o relatório Sintético Unificado -->
-			          <sgp:formSelectOneMenuRelatorios id="tipoRelatorioUnificado" 
-				            value="#{infopenBean.tipoRelatorio}" 
-				            labelValue="Por Data:" 
-				            rendered="#{infopenBean.filtro.tipoRelatorio eq '2'}" 
-				            styleFormLabelColumn="width:145px">
-				            
-			            <f:selectItem itemLabel="NAO" itemValue="" />
-			            <f:selectItem itemLabel="SIM" itemValue="unificado" />
-			            <p:ajax update="meuFormulario:painelData4 meuFormulario:painelData5" />		        
-			          </sgp:formSelectOneMenuRelatorios>
-			          			          
-			          
-			          <!-- Filtro para o relatório Sintético Sequenciado -->
-			          <sgp:formSelectOneMenuRelatorios id="tipoRelatorioSequenciado" 
-				            value="#{infopenBean.tipoRelatorio}" 
-				            labelValue="Por Data:" 
-				            rendered="#{infopenBean.filtro.tipoRelatorio eq '3'}" 
-				            styleFormLabelColumn="width:145px">
-				            
-			            <f:selectItem itemLabel="NAO" itemValue="" />
-			            <f:selectItem itemLabel="SIM" itemValue="sequenciado" />
-			            <p:ajax update="meuFormulario:painelData6 meuFormulario:painelData7" />		        
-			          </sgp:formSelectOneMenuRelatorios>
-			          
-			          
-			          <!-- Filtro para o relatório Sequenciado Detalhado -->
-			          <sgp:formSelectOneMenuRelatorios id="tipoRelatorioSequenciadoDetalhado" 
-				            value="#{infopenBean.tipoRelatorio}" 
-				            labelValue="Por Data:" 
-				            rendered="#{infopenBean.filtro.tipoRelatorio eq '4'}" 
-				            styleFormLabelColumn="width:145px">
-				            
-			            <f:selectItem itemLabel="NAO" itemValue="" />
-			            <f:selectItem itemLabel="SIM" itemValue="sequenciadoDetalhado" />
-			            <p:ajax update="meuFormulario:painelData8 meuFormulario:painelData9" />			            		     			              
-			          </sgp:formSelectOneMenuRelatorios>
-			          
-			          
-			           <!-- Filtro para o relatório Unificado Detalhado -->
-			          <sgp:formSelectOneMenuRelatorios id="tipoRelatorioUnificadoDetalhado" 
-				            value="#{infopenBean.tipoRelatorio}" 
-				            labelValue="Por Data:" 
-				            rendered="#{infopenBean.filtro.tipoRelatorio eq '5'}" 
-				            styleFormLabelColumn="width:145px">
-				            
-			            <f:selectItem itemLabel="NAO" itemValue="" />
-			            <f:selectItem itemLabel="SIM" itemValue="unificadoDetalhado" />
-			            <p:ajax update="meuFormulario:painelData10 meuFormulario:painelData11" />			            		     			              
-			          </sgp:formSelectOneMenuRelatorios>
-			          				      
-				    </p:outputPanel>
-				    
-				    
-				    				    
-				    <!-- Painel de datas para o relatório Sintético -->				    
-				    <p:outputPanel id="painelData" deferred="true">
-				      <sgp:formCalendar id="dataInicial" 
-					      value="#{infopenBean.filtro.dataInicial}" 
-					      rendered="#{infopenBean.tipoRelatorio eq 'data'}" 
-					      labelValue="Data Inicial" pattern="dd/MM/yyyy" 
-					      styleFormLabelColumn="width:145px">					     
-				        <p:ajax event="dateSelect" />				        
-				      </sgp:formCalendar>
-				    </p:outputPanel>
-				    
-				    
-				    <!-- Painel de datas para o relatório Detalhado -->
-				    <p:outputPanel id="painelData2" deferred="true">
-				      <sgp:formCalendar id="dataInicial2" 
-					      value="#{infopenBean.filtro.dataInicial}" 
-					      rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}" 
-					      labelValue="Data Inicial" pattern="dd/MM/yyyy" 
-					      styleFormLabelColumn="width:145px">					      
-				        <p:ajax event="dateSelect" />				        
-				      </sgp:formCalendar>
-				    </p:outputPanel>
-				    
-				    
-				    <p:outputPanel id="painelData3" deferred="true">
-				      <sgp:formCalendar id="dataFinal" 
-					      value="#{infopenBean.filtro.dataFinal}" 
-					      rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}" 
-					      labelValue="Data Final" pattern="dd/MM/yyyy" 
-					      styleFormLabelColumn="width:145px">					      
-				        <p:ajax event="dateSelect" />
-				      </sgp:formCalendar>
-				    </p:outputPanel>
-				    
-				    
-				    <!-- Painel de datas para o relatório Sintético Unificado -->
+					<p:outputPanel id="painelData" deferred="true">
+					    <sgp:formCalendar id="dataInicial"
+					        value="#{infopenBean.filtro.dataInicial}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'data'}"
+					        labelValue="Data Inicial" 
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
+					        <p:ajax event="dateSelect" />
+					    </sgp:formCalendar>
+					</p:outputPanel>
+
+
+					
+					<p:outputPanel id="painelData2" deferred="true">
+					    <sgp:formCalendar id="dataInicial2"
+					        value="#{infopenBean.filtro.dataInicial}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}"
+					        labelValue="Data Inicial" 
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
+					        <p:ajax event="dateSelect" />
+					    </sgp:formCalendar>
+					</p:outputPanel>
+
+
+					<p:outputPanel id="painelData3" deferred="true">
+					    <sgp:formCalendar id="dataFinal"
+					        value="#{infopenBean.filtro.dataFinal}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}"
+					        labelValue="Data Final" 
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
+					        <p:ajax event="dateSelect" />
+					    </sgp:formCalendar>
+					</p:outputPanel>
+
+
+				
 					<p:outputPanel id="painelData4" deferred="true">
-					    <sgp:formCalendar id="dataInicialUnificado" 
-					        value="#{infopenBean.filtro.dataInicial}" 
-					        rendered="#{infopenBean.tipoRelatorio eq 'unificado'}" 
+					    <sgp:formCalendar id="dataInicialUnificado"
+					        value="#{infopenBean.filtro.dataInicial}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'unificado'}"
 					        labelValue="Data Inicial" 
-					        pattern="dd/MM/yyyy" 
-					        styleFormLabelColumn="width:145px">					      
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
 					        <p:ajax event="dateSelect" />
 					    </sgp:formCalendar>
 					</p:outputPanel>
-
+					
 					<p:outputPanel id="painelData5" deferred="true">
-					    <sgp:formCalendar id="dataFinalUnificado" 
-					        value="#{infopenBean.filtro.dataFinal}" 
-					        rendered="#{infopenBean.tipoRelatorio eq 'unificado'}" 
+					    <sgp:formCalendar id="dataFinalUnificado"
+					        value="#{infopenBean.filtro.dataFinal}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'unificado'}"
 					        labelValue="Data Final" 
-					        pattern="dd/MM/yyyy" 
-					        styleFormLabelColumn="width:145px">					      
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
 					        <p:ajax event="dateSelect" />
 					    </sgp:formCalendar>
 					</p:outputPanel>
+
+
 					
-					
-					<!-- Painel de datas para o relatório Sintético Sequenciado -->
 					<p:outputPanel id="painelData6" deferred="true">
-					    <sgp:formCalendar id="dataInicialSequenciado" 
-					        value="#{infopenBean.filtro.dataInicial}" 
-					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciado'}" 
+					    <sgp:formCalendar id="dataInicialSequenciado"
+					        value="#{infopenBean.filtro.dataInicial}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciado'}"
 					        labelValue="Data Inicial" 
-					        pattern="dd/MM/yyyy" 
-					        styleFormLabelColumn="width:145px">					      
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
 					        <p:ajax event="dateSelect" />
 					    </sgp:formCalendar>
 					</p:outputPanel>
-
-
+					
 					<p:outputPanel id="painelData7" deferred="true">
-					    <sgp:formCalendar id="dataFinalSequenciado" 
-					        value="#{infopenBean.filtro.dataFinal}" 
-					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciado'}" 
+					    <sgp:formCalendar id="dataFinalSequenciado"
+					        value="#{infopenBean.filtro.dataFinal}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciado'}"
 					        labelValue="Data Final" 
-					        pattern="dd/MM/yyyy" 
-					        styleFormLabelColumn="width:145px">					      
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
 					        <p:ajax event="dateSelect" />
 					    </sgp:formCalendar>
 					</p:outputPanel>
-										
-					
-					<!-- Painel de datas para o relatório Sintético  Detalhado -->
+
+
+				
 					<p:outputPanel id="painelData8" deferred="true">
-					    <sgp:formCalendar id="dataInicialSequenciadoDetalhado" 
-					        value="#{infopenBean.filtro.dataInicial}" 
-					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciadoDetalhado'}" 
+					    <sgp:formCalendar id="dataInicialSequenciadoDetalhado"
+					        value="#{infopenBean.filtro.dataInicial}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciadoDetalhado'}"
 					        labelValue="Data Inicial" 
-					        pattern="dd/MM/yyyy" 
-					        styleFormLabelColumn="width:145px">					      
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
 					        <p:ajax event="dateSelect" />
 					    </sgp:formCalendar>
 					</p:outputPanel>
-
+					
 					<p:outputPanel id="painelData9" deferred="true">
-					    <sgp:formCalendar id="dataFinalSequenciadoDetalhado" 
-					        value="#{infopenBean.filtro.dataFinal}" 
-					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciadoDetalhado'}" 
+					    <sgp:formCalendar id="dataFinalSequenciadoDetalhado"
+					        value="#{infopenBean.filtro.dataFinal}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciadoDetalhado'}"
 					        labelValue="Data Final" 
-					        pattern="dd/MM/yyyy" 
-					        styleFormLabelColumn="width:145px">					      
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
 					        <p:ajax event="dateSelect" />
 					    </sgp:formCalendar>
 					</p:outputPanel>
+
+
 					
-					
-					<!-- Painel de datas para o relatório Unificado Detalhado -->
 					<p:outputPanel id="painelData10" deferred="true">
-					    <sgp:formCalendar id="dataInicialUnificadoDetalhado" 
-					        value="#{infopenBean.filtro.dataInicial}" 
-					        rendered="#{infopenBean.tipoRelatorio eq 'unificadoDetalhado'}" 
+					    <sgp:formCalendar id="dataInicialUnificadoDetalhado"
+					        value="#{infopenBean.filtro.dataInicial}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'unificadoDetalhado'}"
 					        labelValue="Data Inicial" 
-					        pattern="dd/MM/yyyy" 
-					        styleFormLabelColumn="width:145px">					      
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
+					        <p:ajax event="dateSelect" />
+					    </sgp:formCalendar>
+					</p:outputPanel>
+					
+					<p:outputPanel id="painelData11" deferred="true">
+					    <sgp:formCalendar id="dataFinalUnificadoDetalhado"
+					        value="#{infopenBean.filtro.dataFinal}"
+					        rendered="#{infopenBean.tipoRelatorio eq 'unificadoDetalhado'}"
+					        labelValue="Data Final" 
+					        pattern="dd/MM/yyyy"
+					        dataMaxima="#{infopenBean.dataMaxima}"
+					        styleFormLabelColumn="width:145px">
 					        <p:ajax event="dateSelect" />
 					    </sgp:formCalendar>
 					</p:outputPanel>
 
-					<p:outputPanel id="painelData11" deferred="true">
-					    <sgp:formCalendar id="dataFinalUnificadoDetalhado" 
-					        value="#{infopenBean.filtro.dataFinal}" 
-					        rendered="#{infopenBean.tipoRelatorio eq 'unificadoDetalhado'}" 
-					        labelValue="Data Final" 
-					        pattern="dd/MM/yyyy" 
-					        styleFormLabelColumn="width:145px">					      
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
-					</p:outputPanel>										
+
+
 					
-					
-					
-				    <!-- Itens do Painel para os filtros -->
-				
-					<sgp:formSelectOneMenuRelatorios
-						labelValue="Nacionalidade"
+
+					<sgp:formSelectOneMenuRelatorios labelValue="Nacionalidade"
 						value="#{infopenBean.filtro.nacionalidade}"
-						itemsValue="#{infopenBean.nacionalidades}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text"
-						process="@this"
-						converter="SimpleEntityConverter"
-						labelTodos="Todas" 
-						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"												
-						styleFormLabelColumn="width:145px"/>
-					
-					<sgp:formSelectOneMenuRelatorios 
-						labelValue="Raça"
+						itemsValue="#{infopenBean.nacionalidades}" itemValue="#{item}"
+						itemLabel="#{item.descricao}" display="text" process="@this"
+						converter="SimpleEntityConverter" labelTodos="Todas"
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
+						styleFormLabelColumn="width:145px" />
+
+					<sgp:formSelectOneMenuRelatorios labelValue="Raça"
 						value="#{infopenBean.filtro.raca}"
-						itemsValue="#{infopenBean.raca}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text"
-						process="@this"
-						converter="SimpleEntityConverter"
-						labelTodos="Todas" 
+						itemsValue="#{infopenBean.raca}" itemValue="#{item}"
+						itemLabel="#{item.descricao}" display="text" process="@this"
+						converter="SimpleEntityConverter" labelTodos="Todas"
 						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-						styleFormLabelColumn="width:145px"/>
-						
-					<sgp:formSelectOneMenuRelatorios 
-						labelValue="Etnia"
+						styleFormLabelColumn="width:145px" />
+
+					<sgp:formSelectOneMenuRelatorios labelValue="Etnia"
 						value="#{infopenBean.filtro.etnia}"
-						itemsValue="#{infopenBean.etnia}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text"
-						process="@this"
-						converter="SimpleEntityConverter"
-						labelTodos="Todas" 
+						itemsValue="#{infopenBean.etnia}" itemValue="#{item}"
+						itemLabel="#{item.descricao}" display="text" process="@this"
+						converter="SimpleEntityConverter" labelTodos="Todas"
 						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-						styleFormLabelColumn="width:145px"/>
-						
-					<sgp:formSelectOneMenuRelatorios 
-						labelValue="Regime Prisional"
+						styleFormLabelColumn="width:145px" />
+
+					<sgp:formSelectOneMenuRelatorios labelValue="Regime Prisional"
 						value="#{infopenBean.filtro.regime}"
-						itemsValue="#{infopenBean.regimes}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text"
-						process="@this"
-						converter="SimpleEntityConverter"
-						labelTodos="Todos" 
+						itemsValue="#{infopenBean.regimes}" itemValue="#{item}"
+						itemLabel="#{item.descricao}" display="text" process="@this"
+						converter="SimpleEntityConverter" labelTodos="Todos"
 						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-						styleFormLabelColumn="width:145px"/>
-						
-					<sgp:formSelectOneMenu
-						labelValue="Idade"
-					    value="#{infopenBean.filtro.idadeRecuperando}"
-					    itemsValue="#{comboHelperBean.idadeRecuperando}"
-					    itemValue="#{item}"
-					    itemLabel="#{item.descricao}"
-					    display="text"
-					    rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-					    styleFormLabelColumn="width:145px"/>
-						
-                    <sgp:formSelectOneMenu
-                        labelValue="Aposentado"
-                        value="#{infopenBean.filtro.aposentado}"
-                        itemsValue="#{comboHelperBean.simNao}"
-                        itemValue="#{item}"
-                        itemLabel="#{item.descricao}"
-                        temSelecione="true"
-                        rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-                        styleFormLabelColumn="width:145px;"/>
+						styleFormLabelColumn="width:145px" />
 
-					<sgp:formSelectOneMenuRelatorios 
-						labelValue="Estado Civil"
+					<sgp:formSelectOneMenu labelValue="Idade"
+						value="#{infopenBean.filtro.idadeRecuperando}"
+						itemsValue="#{comboHelperBean.idadeRecuperando}"
+						itemValue="#{item}" itemLabel="#{item.descricao}" display="text"
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
+						styleFormLabelColumn="width:145px" />
+
+					<sgp:formSelectOneMenu labelValue="Aposentado"
+						value="#{infopenBean.filtro.aposentado}"
+						itemsValue="#{comboHelperBean.simNao}" itemValue="#{item}"
+						itemLabel="#{item.descricao}" temSelecione="true"
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
+						styleFormLabelColumn="width:145px;" />
+
+					<sgp:formSelectOneMenuRelatorios labelValue="Estado Civil"
 						value="#{infopenBean.filtro.estadoCivil}"
-						itemsValue="#{infopenBean.estadoCivil}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text"
-						process="@this"
-						converter="SimpleEntityConverter"
-						labelTodos="Todos" 
+						itemsValue="#{infopenBean.estadoCivil}" itemValue="#{item}"
+						itemLabel="#{item.descricao}" display="text" process="@this"
+						converter="SimpleEntityConverter" labelTodos="Todos"
 						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-						styleFormLabelColumn="width:145px"/>
-						
-					<sgp:formSelectOneMenuRelatorios 
-						labelValue="Religião"
+						styleFormLabelColumn="width:145px" />
+
+					<sgp:formSelectOneMenuRelatorios labelValue="Religião"
 						value="#{infopenBean.filtro.religiao}"
-						itemsValue="#{infopenBean.religiao}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text"
-						process="@this"
-						converter="SimpleEntityConverter"
-						labelTodos="Todas" 
+						itemsValue="#{infopenBean.religiao}" itemValue="#{item}"
+						itemLabel="#{item.descricao}" display="text" process="@this"
+						converter="SimpleEntityConverter" labelTodos="Todas"
 						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-						styleFormLabelColumn="width:145px"/>
-						
-					<sgp:formSelectOneMenuRelatorios 
-						labelValue="Escolaridade"
+						styleFormLabelColumn="width:145px" />
+
+					<sgp:formSelectOneMenuRelatorios labelValue="Escolaridade"
 						value="#{infopenBean.filtro.escolaridade}"
-						itemsValue="#{infopenBean.escolaridade}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text"
-						process="@this"
-						converter="SimpleEntityConverter"
-						labelTodos="Todas" 
+						itemsValue="#{infopenBean.escolaridade}" itemValue="#{item}"
+						itemLabel="#{item.descricao}" display="text" process="@this"
+						converter="SimpleEntityConverter" labelTodos="Todas"
 						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-						styleFormLabelColumn="width:145px"/>
+						styleFormLabelColumn="width:145px" />
+
+					<sgp:formSelectOneMenu labelValue="PCD"
+						value="#{infopenBean.filtro.tipoDeficiencia}"
+						itemsValue="#{infopenBean.getTiposDeficiencia()}"
+						itemValue="#{item}" itemLabel="#{item.descricao}" display="text"
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
+						styleFormLabelColumn="width:145px" />
+
+					<sgp:formSelectOneMenu labelValue="Recebe Auxílio?"
+						value="#{infopenBean.filtro.recebeAuxilio}"
+						itemsValue="#{comboHelperBean.simNao}" itemValue="#{item}"
+						itemLabel="#{item.descricao}" temSelecione="true"
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
+						styleFormLabelColumn="width:145px;" />
+
+					<sgp:formSelectOneMenu labelValue="Mulheres"
+						value="#{infopenBean.filtro.populacaoFeminino}"
+						itemsValue="#{comboHelperBean.populacaoFeminino}"
+						itemValue="#{item}" itemLabel="#{item.descricao}" display="text"
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
+						styleFormLabelColumn="width:145px" />
+
+					<sgp:formSelectOneMenu labelValue="Identidade de Gênero"
+						value="#{infopenBean.filtro.lgbt}"
+						itemsValue="#{comboHelperBean.lgbt}" itemValue="#{item}"
+						itemLabel="#{item.descricao}" display="text"
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
+						styleFormLabelColumn="width:145px" />
+
+					<sgp:formSelectOneMenu labelValue="Tempo de Condenação"
+						value="#{infopenBean.filtro.tempoCondenacao}"
+						itemsValue="#{comboHelperBean.tempoCondenacao}"
+						itemValue="#{item}" itemLabel="#{item.descricao}" display="text"
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
+						styleFormLabelColumn="width:145px" />
+
+					<div style= "display: flex-direction; justify-content: right; margin-top: 50px;">
+						<p:commandButton value="Selecionar Unidades"
+							rendered="#{infopenBean.filtroUnidade and (infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5)}"
+							onclick="PF('modalUnidades').show()" styleClass="ui-button-info"
+							icon="fa fa-building" styleFormLabelColumn="width:145px" />
+
 						
-					<sgp:formSelectOneMenu
-					    labelValue="PCD"
-					    value="#{infopenBean.filtro.tipoDeficiencia}"
-					    itemsValue="#{infopenBean.getTiposDeficiencia()}"
-					    itemValue="#{item}"
-					    itemLabel="#{item.descricao}"
-					    display="text"
-					    rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-					    styleFormLabelColumn="width:145px"/>
-
-                    <sgp:formSelectOneMenu
-                        labelValue="Recebe Auxílio?"
-                        value="#{infopenBean.filtro.recebeAuxilio}"
-                        itemsValue="#{comboHelperBean.simNao}"
-                        itemValue="#{item}"
-                        itemLabel="#{item.descricao}"
-                        temSelecione="true"
-                        rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-                        styleFormLabelColumn="width:145px;"/>
-
-					<sgp:formSelectOneMenu
-					    labelValue="Mulheres"
-					    value="#{infopenBean.filtro.populacaoFeminino}"
-					    itemsValue="#{comboHelperBean.populacaoFeminino}"
-					    itemValue="#{item}"
-					    itemLabel="#{item.descricao}"
-					    display="text"
-					    rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-					    styleFormLabelColumn="width:145px"/>
-
-					<sgp:formSelectOneMenu
-					    labelValue="Identidade de Gênero"
-					    value="#{infopenBean.filtro.lgbt}"
-					    itemsValue="#{comboHelperBean.lgbt}"
-					    itemValue="#{item}"
-					    itemLabel="#{item.descricao}"
-					    display="text"
-					    rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-					    styleFormLabelColumn="width:145px"/>
-
-					<sgp:formSelectOneMenu
-					    labelValue="Tempo de Condenação"
-					    value="#{infopenBean.filtro.tempoCondenacao}"
-					    itemsValue="#{comboHelperBean.tempoCondenacao}"
-					    itemValue="#{item}"
-					    itemLabel="#{item.descricao}"
-					    display="text"
-					    rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
-					    styleFormLabelColumn="width:145px"/>
-					
-				</h:panelGroup>
-				
-				<br/><br/>
-				
-				<h:panelGroup id="panelImprimir">               
-				    <h:panelGrid columns="3">
-				        <p:commandButton style="display: #{not (infopenBean.filtro.tipoRelatorio eq 3 or infopenBean.filtro.tipoRelatorio eq 4) ? 'block' : 'none'};" value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{infopenBean.imprimir()}" />
-				        <p:commandButton style="display: #{infopenBean.filtro.tipoRelatorio eq 3 or infopenBean.filtro.tipoRelatorio eq 4 ? 'block' : 'none'};" value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{infopenBean.imprimir()}" ajax="false" />
-				        <p:button outcome="pretty:Relatorio" value="Voltar" icon="ui-icon-arrowreturnthick-1-w"/>
-				    </h:panelGrid>                                 
+						<p:outputPanel id="infoUnidades"
+							style="margin-top: 10px; font-weight: bold;"
+							rendered="#{infopenBean.filtroUnidade and not empty infopenBean.unidadesSelecionadas and (infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5)}">
+							<h:outputText
+								value="Unidades selecionadas: #{infopenBean.unidadesSelecionadas.size()}" />
+						</p:outputPanel>
+					</div>
 				</h:panelGroup>
 
-								
+				<br />
+				<br />
+
+				<h:panelGroup id="panelImprimir">
+					<h:panelGrid columns="3">
+						<p:commandButton
+							style="display: #{not (infopenBean.filtro.tipoRelatorio eq 3 or infopenBean.filtro.tipoRelatorio eq 4) ? 'block' : 'none'};"
+							value="Imprimir" icon="fa fa-file-pdf-o"
+							actionListener="#{infopenBean.imprimir()}" />
+						<p:commandButton
+							style="display: #{infopenBean.filtro.tipoRelatorio eq 3 or infopenBean.filtro.tipoRelatorio eq 4 ? 'block' : 'none'};"
+							value="Imprimir" icon="fa fa-file-pdf-o"
+							actionListener="#{infopenBean.imprimir()}" ajax="false" />
+						<p:button outcome="pretty:Relatorio" value="Voltar"
+							icon="ui-icon-arrowreturnthick-1-w" />
+					</h:panelGrid>
+				</h:panelGroup>
+
+
 			</p:panel>
 		</h:form>
+
 		
+		<h:form id="formUnidadesDialog">
+			<p:dialog header="Selecionar Unidades Prisionais"
+				widgetVar="modalUnidades" modal="true" closable="true"
+				closeOnEscape="true" width="500" height="335" resizable="false"
+				draggable="false">
+
+				<p:pickList id="pickListUnidades"
+					value="#{infopenBean.unidadesPickListModel}" var="unidade"
+					itemLabel="#{unidade.nome}" itemValue="#{unidade}"
+					converter="UnidadePrisionalConverter" showSourceFilter="true"
+					showTargetFilter="true" filterMatchMode="contains"
+					responsive="true"
+					style="width: 95%; margin: 0 auto; display: block;">
+
+					<f:facet name="sourceCaption">
+						<div style= "font-weight: bold;">Unidades
+							Disponíveis:</div>
+					</f:facet>
+					<f:facet name="targetCaption">
+						<div style="font-weight: bold;">Unidades
+							Selecionadas:</div>
+					</f:facet>
+				</p:pickList>
+
+				<br />
+
+				<div style="text-align: center; margin-top: 15px;">
+					<p:commandButton value="Confirmar"
+						actionListener="#{infopenBean.associarUnidades}"
+						oncomplete="PF('modalUnidades').hide();"
+						update=":meuFormulario:panel_filtros :meuFormulario:infoUnidades"
+						style="margin-right: 10px;" />
+					<p:commandButton value="Fechar"
+						onclick="PF('modalUnidades').hide();" immediate="true" />
+				</div>
+
+				<style>
+
+</style>
+			</p:dialog>
+		</h:form>
+
 	</ui:define>
 </ui:composition>

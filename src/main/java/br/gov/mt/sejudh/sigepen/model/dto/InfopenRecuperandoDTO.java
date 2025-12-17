@@ -18,6 +18,8 @@ public class InfopenRecuperandoDTO {
 	private String descricaoTitulo;
 	private String dataEntrada;
 	private String dataSaida;
+	private String unidade;
+
 	
 	private FiltroInfopen filtro;
 
@@ -25,7 +27,7 @@ public class InfopenRecuperandoDTO {
 	}
 
 	public InfopenRecuperandoDTO(Long id, String nome, String nomeMae, String regime, String condicao,
-			String status, FiltroInfopen filtro, String descricaoFiltro, String descricaoTitulo, String estrutura, String dataEntrada, String dataSaida) {
+			String status, FiltroInfopen filtro, String descricaoFiltro, String descricaoTitulo, String estrutura, String dataEntrada, String dataSaida, String unidade) {
 		this.id = id;
 		this.nome = nome;
 		this.nomeMae = nomeMae;
@@ -38,7 +40,9 @@ public class InfopenRecuperandoDTO {
 		this.estrutura = estrutura;
 		this.dataEntrada = dataEntrada;
 		this.dataSaida = dataSaida;
+		this.unidade = unidade;
 	}
+
 
 	public Long getId() {
 		return id;
@@ -157,6 +161,12 @@ public class InfopenRecuperandoDTO {
 		this.dataSaida = dataSaida;
 	}
 
-
+	public String getUnidade() {
+		return unidade;
+	}
+	
+	public void setUnidade(String unidade) {
+		this.unidade = unidade;
+	}
 
 }

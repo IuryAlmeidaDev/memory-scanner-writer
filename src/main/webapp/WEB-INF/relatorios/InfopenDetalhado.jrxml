@@ -92,7 +92,12 @@
 		<band height="50">
 			<subreport>
 				<reportElement uuid="1bf56ebe-7213-4968-aeaa-2868b5863b37" x="0" y="0" width="802" height="40"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{recuperandos})]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[
+    				new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
+        				$F{recuperandos} != null ? $F{recuperandos} : java.util.Collections.emptyList()
+    				)
+				]]></dataSourceExpression>
+
 				<subreportExpression><![CDATA["InfopenDetalhadoNacionalidades.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
