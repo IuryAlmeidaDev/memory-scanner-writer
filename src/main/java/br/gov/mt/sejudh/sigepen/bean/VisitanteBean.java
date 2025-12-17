@@ -778,8 +778,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			return;
 		}
 
-		//	boolean verificacaoAntiga = !verificaVisitanteResponsavelPossuiCredenciamento(this.visitante, this.recuperandoSelecionado);
-//		boolean verificacaoNova = !verificaResponsavelPossiCredenciamentoParaRecuperando(this.visitante.getVisitantesReponsaveis(), this.recuperandoSelecionado);
+			//boolean verificacaoAntiga = !verificaVisitanteResponsavelPossuiCredenciamento(this.visitante, this.recuperandoSelecionado);
+            //boolean verificacaoNova = !verificaResponsavelPossiCredenciamentoParaRecuperando(this.visitante.getVisitantesReponsaveis(), this.recuperandoSelecionado);
 		if (this.visitante.getVisitantesReponsaveis()!= null
 				&& !this.visitante.getVisitantesReponsaveis().isEmpty()
 				&& !verificaResponsavelPossiCredenciamentoParaRecuperando(this.visitante.getVisitantesReponsaveis(), this.recuperandoSelecionado)) {
