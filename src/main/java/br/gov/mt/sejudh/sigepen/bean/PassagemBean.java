@@ -130,6 +130,7 @@ public class PassagemBean extends MetodosDePaginaBean {
 	public String init() {
 		this.biometriaValida = false;
 		this.autorizacaoValida = false;
+		this.passagem = new Passagem();
 		try {
 			this.modificaTituloPagina();
 
@@ -250,8 +251,31 @@ public class PassagemBean extends MetodosDePaginaBean {
 	}
 	
 	private boolean validarRecuperandoSaida() {
+		if (!validaRecuperandoSaidaBoolean()) {
+		    return false;
+		}
+
+		if(SecurityUtil.getUnidadeSelecionada() == null) {
+			return false;
+		}
+		
 		return (this.recuperando.getStatus().equals(StatusRecuperando.ATIVO) && 
 				this.recuperando.getPassagemAtual().getLotacaoAtual().getEstrutura().getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada().getId());
+	}
+	
+	private boolean validaRecuperandoSaidaBoolean() {
+		if(this.recuperando == null) return false;
+		
+		if(this.recuperando.getStatus() == null) return false;
+		
+		if(this.recuperando.getPassagemAtual() == null ||
+		   this.recuperando.getPassagemAtual().getLotacaoAtual() == null ||
+		   this.recuperando.getPassagemAtual().getLotacaoAtual().getEstrutura() == null ||
+		   this.recuperando.getPassagemAtual().getLotacaoAtual().getEstrutura().getUnidadePrisional() == null) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	private boolean possuiProcessoNaoFinalizado(Recuperando recuperando) {
