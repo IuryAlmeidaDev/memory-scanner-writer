@@ -49,7 +49,7 @@
                                     display="text" labelValue="Nascimento"
                                     value="#{visitanteBean.visitante.pessoa.dataNascimento}"
                                     validationRequired="true" disabled="#{visitanteBean.disableDadosVisitante}" 
-                                    styleFormLabelColumn="width: 160px" style="width: 400px;">
+                                    styleFormLabelColumn="width: 160px" style="width: 400px;" dataMaxima="#{visitanteBean.hoje}">
                                 <p:ajax event="dateSelect" listener="#{visitanteBean.selecionarEmancipado()}" update="tabView:emancipado, tabView:panelResponsavel"/>
                                 <p:ajax event="change" listener="#{visitanteBean.selecionarEmancipado()}" update="tabView:emancipado, tabView:panelResponsavel"/>
                                 <p:ajax event="dateSelect" listener="#{visitanteBean.setIsMenorQueSete(visitanteBean.visitante.pessoa.dataNascimento)}"/>

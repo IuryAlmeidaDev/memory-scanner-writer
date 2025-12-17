@@ -13,6 +13,11 @@
 	<field name="status" class="java.lang.String"/>
 	<field name="dataEntrada" class="java.lang.String"/>
 	<field name="dataSaida" class="java.lang.String"/>
+	
+	<variable name="QTD_MATRICULA_UNICA" class="java.lang.Long" calculation="DistinctCount">
+   		<variableExpression><![CDATA[$F{id}]]></variableExpression>
+	</variable>
+	
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -30,7 +35,7 @@
 	<columnHeader>
 		<band height="16" splitType="Prevent">
 			<rectangle>
-				<reportElement x="0" y="0" width="807" height="16" backcolor="#CCCCCC" uuid="dec19a3d-7754-4934-a7d7-05be4e5e4c10"/>
+				<reportElement x="0" y="0" width="842" height="16" backcolor="#CCCCCC" uuid="dec19a3d-7754-4934-a7d7-05be4e5e4c10"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
@@ -88,7 +93,7 @@
 				<text><![CDATA[Nome da Mãe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="753" y="0" width="54" height="16" uuid="db36f5a2-7e02-4cac-948a-b4f97f1597ea"/>
+				<reportElement x="753" y="0" width="80" height="16" uuid="db36f5a2-7e02-4cac-948a-b4f97f1597ea"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -98,7 +103,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Situação]]></text>
+				<text><![CDATA[Situação atual]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="701" y="0" width="52" height="16" uuid="cad752bd-62ae-4723-b9f8-c912a84dc556"/>
@@ -141,7 +146,7 @@
 			</staticText>
 			<staticText>
 				<reportElement x="599" y="0" width="35" height="16" uuid="5d98f78b-3776-46b3-9d8f-55c9517ec680"/>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Saida]]></text>
@@ -164,7 +169,7 @@
 	<detail>
 		<band height="15" splitType="Stretch">
 			<rectangle>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="807" height="15" backcolor="#CCCCCC" uuid="d5b72126-f3a8-4d95-ad36-058f8ee79216">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="907" height="15" backcolor="#CCCCCC" uuid="d5b72126-f3a8-4d95-ad36-058f8ee79216">
 					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -237,15 +242,22 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="50">
-			<textField>
-				<reportElement x="753" y="18" width="54" height="20" uuid="90683327-cfae-42d5-9d64-bb38d6df4ca4"/>
-				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="662" y="18" width="91" height="20" uuid="a2a9746c-640d-4df6-a84b-6df3c355390a"/>
-				<text><![CDATA[Registros listados:]]></text>
-			</staticText>
-		</band>
-	</summary>
+    <band height="50">
+        <staticText>
+            <reportElement x="630" y="18" width="123" height="20" uuid="a2a9746c-640d-4df6-a84b-6df3c355390a"/>
+            <textElement textAlignment="Right" verticalAlignment="Middle">
+                <font size="9" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Recuperandos ativos: ]]></text>
+        </staticText>
+        
+        <textField>
+            <reportElement x="753" y="18" width="54" height="20" uuid="b8c3f1e2-9d4a-4f7b-a1c5-3e8d9f2a1b4c"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="9" isBold="true"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$V{QTD_MATRICULA_UNICA}]]></textFieldExpression>
+        </textField>
+    </band>
+</summary>
 </jasperReport>

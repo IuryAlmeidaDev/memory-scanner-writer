@@ -3,6 +3,7 @@
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="1572"/>
+	<parameter name="UNIDADES_IDS" class="java.util.List" isForPrompting="false"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -55,7 +56,7 @@
    and p.nacionalidade_id = n.id
    and p.pais_id = pa.id(+)
    and l.matricula = r.id
-   and l.id_unidade = $P!{UNIDADE_SUB_ID}
+   and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
    and r.status = 1
  group by pa.nome, n.descricao, p.nacionalidade_id
  order by n.descricao, pais]]>
@@ -73,7 +74,7 @@
   from $P!{SCHEMA_SUB}.recuperando r, $P!{SCHEMA_SUB}.regime re, $P!{SCHEMA_SUB}.lista_todos_recuperandos l
  where r.regime_atual_id = re.id
    and r.id = l.matricula
-   and l.id_unidade = $P!{UNIDADE_SUB_ID}
+   and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
    and r.status = 1
  group by re.descricao
  order by re.descricao]]>
@@ -90,7 +91,7 @@
 			<![CDATA[select (case when ec.descricao is null then 'Não informado' else ec.descricao end) estado, count(r.id) quantidade from  $P!{SCHEMA_SUB}.recuperando r, $P!{SCHEMA_SUB}.estado_civil ec, $P!{SCHEMA_SUB}.lista_todos_recuperandos l
 where r.estado_civil_id = ec.id(+)
 and r.id = l.matricula
-and l.id_unidade = $P!{UNIDADE_SUB_ID}
+and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
 and r.status = 1
 group by ec.descricao
 order by ec.descricao]]>
@@ -108,7 +109,7 @@ order by ec.descricao]]>
 where r.religiao_id = re.id(+)
 and r.status = 1
 and l.matricula = r.id
-and l.id_unidade = $P!{UNIDADE_SUB_ID}
+and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
 group by re.descricao
 order by re.descricao]]>
 		</queryString>
@@ -126,7 +127,7 @@ order by re.descricao]]>
  where r.escolaridade_id = e.id(+)
    and r.status = 1
    and l.matricula = r.id
-   and l.id_unidade = $P!{UNIDADE_SUB_ID}
+   and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  group by e.descricao
  order by e.descricao]]>
 		</queryString>
@@ -142,7 +143,7 @@ order by re.descricao]]>
 			<![CDATA[select (case when ra.descricao is null then 'Não informado' else ra.descricao end) raca, count(r.id) quantidade from $P!{SCHEMA_SUB}.recuperando r, $P!{SCHEMA_SUB}.raca ra, $P!{SCHEMA_SUB}.lista_todos_recuperandos l
  where r.raca_id = ra.id(+)
  and l.matricula = r.id
- and l.id_unidade = $P!{UNIDADE_SUB_ID}
+and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
 and r.status = 1
 group by ra.descricao
 order by ra.descricao]]>
@@ -191,7 +192,7 @@ order by ra.descricao]]>
                   from $P!{SCHEMA_SUB}.recuperando r, $P!{SCHEMA_SUB}.pessoa p, $P!{SCHEMA_SUB}.lista_todos_recuperandos l
                  where r.pessoa_id = p.id
                    and l.matricula = r.id
-                   and l.id_unidade = $P!{UNIDADE_SUB_ID}
+                   and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
                    and r.status = 1) y
          group by y.idade) z
  group by z.idade, z.id
@@ -220,7 +221,7 @@ select r.id, (p.ano*365) + (p.mes*30) + p.dia dias from $P!{SCHEMA_SUB}.recupera
 where r.id = p.recuperando_id
 and r.status = 1
 and r.id = l.matricula
-and l.id_unidade = $P!{UNIDADE_SUB_ID}
+and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
 and r.condicao_atual = 'CONDENADO'
 and p.status_processo <> 'FINALIZADO'
 and p.ano is not null
@@ -246,7 +247,7 @@ SELECT 0 ID, DESCRICAO, QUANTIDADE FROM
    AND R.identidade_genero_id = 2
    and r.status = 1
    and l.matricula = r.id
-   and l.id_unidade = $P!{UNIDADE_SUB_ID}
+   and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  )
  UNION
 SELECT 1 ID, DESCRICAO, QUANTIDADE FROM
@@ -256,7 +257,7 @@ SELECT 1 ID, DESCRICAO, QUANTIDADE FROM
    AND R.identidade_genero_id = 2
    and r.status = 1
    and l.matricula = r.id
-   and l.id_unidade = $P!{UNIDADE_SUB_ID}
+   and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  )
  UNION
 SELECT 2 ID, DESCRICAO, QUANTIDADE FROM
@@ -265,7 +266,7 @@ SELECT 2 ID, DESCRICAO, QUANTIDADE FROM
   where R.identidade_genero_id = 1
    and r.status = 1
    and l.matricula = r.id
-   and l.id_unidade = $P!{UNIDADE_SUB_ID}
+   and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  )
  UNION
 SELECT 3 ID, DESCRICAO, QUANTIDADE FROM
@@ -274,7 +275,7 @@ SELECT 3 ID, DESCRICAO, QUANTIDADE FROM
   where R.ORIENTACAO_SEXUAL_id = 3
    and r.status = 1
    and l.matricula = r.id
-   and l.id_unidade = $P!{UNIDADE_SUB_ID}
+   and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  )
  UNION
 SELECT 4 ID, DESCRICAO, QUANTIDADE FROM
@@ -283,7 +284,7 @@ SELECT 4 ID, DESCRICAO, QUANTIDADE FROM
   where R.ORIENTACAO_SEXUAL_id = 2
    and r.status = 1
    and l.matricula = r.id
-   and l.id_unidade = $P!{UNIDADE_SUB_ID}
+   and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  )
  UNION
 SELECT 5 ID, DESCRICAO, QUANTIDADE FROM
@@ -292,7 +293,7 @@ SELECT 5 ID, DESCRICAO, QUANTIDADE FROM
   where  R.ORIENTACAO_SEXUAL_id = 1
    and r.status = 1
    and l.matricula = r.id
-   and l.id_unidade = $P!{UNIDADE_SUB_ID}
+   and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  )
 )ORDER BY ID]]>
 		</queryString>
@@ -309,7 +310,7 @@ SELECT 5 ID, DESCRICAO, QUANTIDADE FROM
 (SELECT 'Gestante' DESCRICAO,  	count(r.id) quantidade
   from $P!{SCHEMA_SUB}.recuperando r,  $P!{SCHEMA_SUB}.lista_todos_recuperandos l
   where r.gestante = 1
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+  and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1
  and l.sexo = 'F'
@@ -319,7 +320,7 @@ UNION
 (SELECT 'Lactante' DESCRICAO,  	count(r.id) quantidade
   from $P!{SCHEMA_SUB}.recuperando r,  $P!{SCHEMA_SUB}.lista_todos_recuperandos l
   where r.lactante = 1
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+  and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1
  and l.sexo = 'F'
@@ -332,7 +333,7 @@ UNION
   AND P.parentesco_id = 3
   AND p.DATA_NASCIMENTO IS NOT NULL
   AND trunc((trunc(sysdate) - p.data_nascimento) / 365) < 12
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+  and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1
  and l.sexo = 'F'
@@ -344,7 +345,7 @@ UNION
   where p.recuperando_id = r.id
   AND P.parentesco_id = 3
   AND p.filho_pcd = 1
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+ and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1
  and l.sexo = 'F'
@@ -363,7 +364,7 @@ UNION
 (SELECT 'Não Possui' DESCRICAO,  	count(r.id) quantidade
   from $P!{SCHEMA_SUB}.recuperando r,  $P!{SCHEMA_SUB}.lista_todos_recuperandos l
   where (r.pne IS NULL OR r.pne = 0)
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+ and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1)
 UNION
@@ -371,7 +372,7 @@ SELECT 1 ID, DESCRICAO, QUANTIDADE FROM
 (SELECT 'Visual' DESCRICAO,  	count(r.id) quantidade
   from $P!{SCHEMA_SUB}.recuperando r,  $P!{SCHEMA_SUB}.lista_todos_recuperandos l
   where (r.pne = 1)
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+  and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1)
 UNION
@@ -379,7 +380,7 @@ SELECT 2 ID, DESCRICAO, QUANTIDADE FROM
 (SELECT 'Auditiva' DESCRICAO,  	count(r.id) quantidade
   from $P!{SCHEMA_SUB}.recuperando r,  $P!{SCHEMA_SUB}.lista_todos_recuperandos l
   where (r.pne = 2)
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+  and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1)
 UNION
@@ -387,7 +388,7 @@ SELECT 3 ID, DESCRICAO, QUANTIDADE FROM
 (SELECT 'Motora' DESCRICAO,  	count(r.id) quantidade
   from $P!{SCHEMA_SUB}.recuperando r,  $P!{SCHEMA_SUB}.lista_todos_recuperandos l
   where (r.pne = 3)
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+  and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1)
 UNION
@@ -395,7 +396,7 @@ SELECT 4 ID, DESCRICAO, QUANTIDADE FROM
 (SELECT 'Mental' DESCRICAO,  	count(r.id) quantidade
   from $P!{SCHEMA_SUB}.recuperando r,  $P!{SCHEMA_SUB}.lista_todos_recuperandos l
   where (r.pne = 4)
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+  and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1)]]>
 		</queryString>
@@ -413,7 +414,7 @@ SELECT 4 ID, DESCRICAO, QUANTIDADE FROM
   from $P!{SCHEMA_SUB}.recuperando r,  $P!{SCHEMA_SUB}.lista_todos_recuperandos l
   where (r.pne IS NOT NULL AND r.pne > 0)
   AND r.recebe_beneficio = 0
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+  and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1)
 UNION
@@ -422,7 +423,7 @@ SELECT 1 ID, DESCRICAO, QUANTIDADE FROM
   from $P!{SCHEMA_SUB}.recuperando r,  $P!{SCHEMA_SUB}.lista_todos_recuperandos l
   where (r.pne IS NOT NULL AND r.pne > 0)
   AND r.recebe_beneficio = 1
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+  and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1)
 UNION
@@ -431,7 +432,7 @@ SELECT 1 ID, DESCRICAO, QUANTIDADE FROM
   from $P!{SCHEMA_SUB}.recuperando r,  $P!{SCHEMA_SUB}.lista_todos_recuperandos l
   where (r.pne IS NOT NULL AND r.pne > 0)
   AND r.recebe_beneficio IS NULL
-  and l.id_unidade = $P!{UNIDADE_SUB_ID}
+  and ($P{UNIDADE_ID} IS NULL OR l.id_unidade = $P{UNIDADE_ID}) AND ($P{UNIDADES_IDS} IS NULL OR $X{IN, l.id_unidade, UNIDADES_IDS})
  and l.matricula = r.id
  and r.status = 1)]]>
 		</queryString>

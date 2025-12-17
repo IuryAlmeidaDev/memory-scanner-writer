@@ -65,35 +65,39 @@ public enum Relatorio {
 
 	/* Relatórios Infopen Estatístico */
 
-	EstatisticoInfopen("Relatório Estatístico Infopen", 62),
-	EstatisticoInfopenPorData("Relatório Estatístico Infopen Por Data", 63),
+	EstatisticoInfopen("Relatório Estatístico Infopen", 63),
+	EstatisticoInfopenPorData("Relatório Estatístico Infopen Por Data", 64),
 
-	EstatisticoInfopenUnificado("Relatório Estatístico Infopen Unificado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 64),
-	EstatisticoInfopenUnificadoPorData("Relatório Estatístico Infopen Unificado Por Data", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 65),
+	EstatisticoInfopenUnificado("Relatório Estatístico Infopen Unificado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 65),
+	EstatisticoInfopenUnificadoPorData("Relatório Estatístico Infopen Unificado Por Data", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 66),
 
-	EstatisticoInfopenSequenciado("Relatório Estatístico Infopen Sequenciado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 66),
-	EstatisticoInfopenSequenciadoPorData("Relatório Estatístico Infopen Sequenciado Por Data", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 67),
+	EstatisticoInfopenSequenciado("Relatório Estatístico Infopen Sequenciado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 67),
+	EstatisticoInfopenSequenciadoPorData("Relatório Estatístico Infopen Sequenciado Por Data", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 68),
 
 	/* Relatórios Infopen Detalhado */
 
-	InfopenDetalhado("Relatório de Recuperandos Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 68),
-	InfopenDetalhadoPorData("Relatório de Recuperandos Infopen Detalhado Por Data", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 69),
+	InfopenDetalhado("Relatório de Recuperandos Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 69),
+	InfopenDetalhadoPorData("Relatório de Recuperandos Infopen Detalhado Por Data", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 70),
 
-	InfopenDetalhadoSequenciado("Relatório de Recuperandos Infopen Detalhado Sequenciado", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM, 70),
-	InfopenDetalhadoSequenciadoPorData("Relatório de Recuperandos Infopen Detalhado Sequenciado Por Data", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM, 71),
+	InfopenDetalhadoSequenciado("Relatório de Recuperandos Infopen Detalhado Sequenciado", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM, 71),
+	InfopenDetalhadoSequenciadoPorData("Relatório de Recuperandos Infopen Detalhado Sequenciado Por Data", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM, 72),
 
-	InfopenDetalhadoUnificado("Relatório de Recuperandos Infopen Detalhado Unificado", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM, 72),
-	InfopenDetalhadoUnificadoPorData("Relatório de Recuperandos Infopen Detalhado Unificado Por Data", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM, 73),
+	InfopenDetalhadoUnificado("Relatório de Recuperandos Infopen Detalhado Unificado", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM, 73),
+	InfopenDetalhadoUnificadoPorData("Relatório de Recuperandos Infopen Detalhado Unificado Por Data", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_PAISAGEM, 74),
 
-	Biometrias("Biometrias", 74),
+	Biometrias("Biometrias", 75),
 
     /* Relatórios de Plantoes */
-    ListarPlantoes("Relatório de Plantões", 75),
+    ListarPlantoes("Relatório de Plantões", 76),
 
-    ListarTipoOcorrencia("Relatório Tipo Ocorrência", 76),
+    ListarTipoOcorrencia("Relatório Tipo Ocorrência", 77),
     RegistroPlantao("Livro de Plantão", 78),
 
-	ListarEntradaVisitatnes("Lista Entrada de Visitas", ModeloCabecalho.PADRAO, ModeloRodape.PADRAO, 79);
+	ListarEntradaVisitatnes("Lista Entrada de Visitas", ModeloCabecalho.PADRAO, ModeloRodape.PADRAO, 79),
+	
+	 /* Relatórios Infopen Detalhado por multiplas unidades*/
+	InfopenDetalhadoMestre("Relatório Consolidado de Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 80);
+
 
 
     Relatorio(String nome, Integer id) {
