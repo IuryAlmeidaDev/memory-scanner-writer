@@ -219,10 +219,10 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 
 	private List<Plantao> gerarListaPlantoes() {
 		List<Plantao> plantoes = new ArrayList<>();
-		Plantao primeiroPlantao = new Plantao(filtroConfere.getPlantaoInicial(), filtroConfere.getDataInicial());
+		Plantao primeiroPlantao = new Plantao(filtroConfere.getTipoPlantaoInicial(), filtroConfere.getDataInicial());
 
 		int dias = getDataIntervalo();
-		int atual = primeiroPlantao.getPlantao().ordinal();
+		int atual = primeiroPlantao.getTipoPlantao().ordinal();
 
 		for (int i = 0; i < dias; i++) {
 			if (atual >= TipoPlantao.values().length) {

@@ -49,6 +49,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -316,27 +320,29 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 				return UnidadePrisionalDTO;
 			}
 		};
-	}
+ }
 
-	public void selecionarEstruturaChamada(GerarPedidoEstruturaDTO estrutura, String data, FiltroGerarPedido tipoRefeicao) {
-		facesUtil.setObjetoSessao("estrutura", estrutura);
-		facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
+ public void selecionarEstruturaChamada(GerarPedidoEstruturaDTO estrutura, String data, FiltroGerarPedido filtroGerarPedido) {
+     facesUtil.setObjetoSessao("estrutura", estrutura);
+     facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
 
-		boolean pedidoExistente = pedidoAlimentoService.verificarExistenciaPedido(
-				data,
-				tipoRefeicao.getTipoRefeicao().getId(),
-				this.unidade.getEstrutura().getId(),
-				contrato.getId()
-		);
+     validaDataPedido(filtroGerarPedido.getDataInicio());
+
+     boolean pedidoExistente = pedidoAlimentoService.verificarExistenciaPedido(
+             data,
+             filtroGerarPedido.getTipoRefeicao().getId(),
+             this.unidade.getEstrutura().getId(),
+             contrato.getId()
+     );
 
 		if (pedidoExistente) {
 			RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').show()");
 		} else {
-			this.imprimir(data, tipoRefeicao, contrato);
+			this.imprimir(data, filtroGerarPedido, contrato);
 		}
 	}
 
-	public void confirmarSubstituicaoPedido() {
+    public void confirmarSubstituicaoPedido() {
 		this.imprimir(this.dataFormatada, this.filtroPedido, this.contrato);
 		RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').hide()");
 
@@ -387,6 +393,31 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			tratarErroGeracaoRelatorio(e);
 		}
 	}
+
+    private void validaDataPedido(Date dataPedido) {
+        try {
+            if (dataPedido == null) {
+                facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Selecione a data para gerar o pedido.");
+                return;
+            }
+
+            LocalDate hoje = LocalDate.now();
+            LocalDate amanha = hoje.plusDays(1);
+            LocalDate dataSelecionada = Instant.ofEpochMilli(dataPedido.getTime())
+                    .atZone(ZoneId.systemDefault()).toLocalDate();
+
+            if (dataSelecionada.isBefore(hoje)) {
+                facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível emitir um pedido retroativo.");
+                return;
+            }
+
+            if (dataSelecionada.isAfter(amanha)) {
+                facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível gerar um pedido com uma antecedência superior a 1 dia.");
+            }
+        } catch (Exception e) {
+            facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Ocorreu um erro ao validar a data informada.");
+        }
+    }
 
 	private List<PedidoEstruturaDTO> getEstruturasDeNivel2(List<PedidoEstruturaDTO> estruturaPedido) {
 		return estruturaPedido.stream()

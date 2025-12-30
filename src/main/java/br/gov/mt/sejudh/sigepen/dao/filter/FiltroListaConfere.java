@@ -8,7 +8,7 @@ public class FiltroListaConfere {
 
 	private Date dataInicial;
 	private Date dataFinal;
-	private TipoPlantao plantaoInicial;
+	private TipoPlantao tipoPlantaoInicial;
 	
 	public Date getDataInicial() {
 		return dataInicial;
@@ -26,11 +26,11 @@ public class FiltroListaConfere {
 		this.dataFinal = dataFinal;
 	}
 	
-	public TipoPlantao getPlantaoInicial() {
-		return plantaoInicial;
+	public TipoPlantao getTipoPlantaoInicial() {
+		return tipoPlantaoInicial;
 	}
 
-	public void setPlantaoInicial(TipoPlantao plantaoInicial) {
-		this.plantaoInicial = plantaoInicial;
+	public void setTipoPlantaoInicial(TipoPlantao tipoPlantaoInicial) {
+		this.tipoPlantaoInicial = tipoPlantaoInicial;
 	}
 }
