@@ -16,14 +16,11 @@ public class FiltroGerarPedido extends FiltroConsulta {
 	
 	@Override
 	public void configurarFiltros() {
-		
-       
 	}
 	
 	public String getDataFormadata() {
-		SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy"); 
-		String novaData = formatador.format(this.dataInicio); 
-		return novaData;
+		SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");
+        return formatador.format(this.dataInicio);
 	}
 
 	public Date getDataInicio() {
