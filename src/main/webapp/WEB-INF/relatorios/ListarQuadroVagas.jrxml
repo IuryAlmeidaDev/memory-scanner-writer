@@ -36,10 +36,10 @@
 	<field name="quantidadeCondenado" class="java.lang.Long"/>
 	<field name="quantidadeProvisorios" class="java.lang.Long"/>
 	<field name="totalRecuperando" class="java.lang.Long"/>
-	<field name="deficit" class="java.lang.String"/>
+	<field name="deficit" class="java.lang.Long"/>
 	<field name="sigla" class="java.lang.String"/>
 	<field name="nomeUnidade" class="java.lang.String"/>
-	<field name="vagas" class="java.lang.String"/>
+	<field name="vagas" class="java.lang.Long"/>
 	<field name="situacaoUnidade" class="java.lang.String"/>
 	<field name="cidade" class="java.lang.String"/>
 	<field name="filtroQuadroVagas" class="java.lang.String"/>
@@ -300,7 +300,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(!$F{nomeUnidade}.equals("")) ? ($F{totalRecuperando}) : ("")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(!$F{nomeUnidade}.equals("")) ? ($F{totalRecuperando}) : ""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="style1" stretchType="RelativeToBandHeight" x="702" y="0" width="50" height="15" uuid="51940744-2141-44ef-961a-979285ea0c11"/>
@@ -313,7 +313,9 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(!$F{nomeUnidade}.equals("")) ? ($F{deficit}) : ("")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[
+($F{nomeUnidade} != null && !$F{nomeUnidade}.equals("")) ? $F{deficit} : ""
+]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="style1" stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15" uuid="81c03dad-19ac-44d0-b580-319806891fca"/>
@@ -325,7 +327,9 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(!$F{nomeUnidade}.equals("")) ? ($F{vagas}) : ("")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[
+($F{nomeUnidade} != null && !$F{nomeUnidade}.equals("")) ? $F{vagas} : ""
+]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="style1" stretchType="RelativeToBandHeight" x="372" y="0" width="130" height="15" uuid="c75bd94e-130f-4fc6-97ad-290c4d7b2989"/>
