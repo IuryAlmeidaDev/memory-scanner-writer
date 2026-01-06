@@ -12,8 +12,6 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
 
 import com.ocpsoft.pretty.faces.annotation.URLAction;
@@ -36,6 +34,7 @@ import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
+
 @ManagedBean
 @ViewScoped
 @URLMappings(mappings = {
@@ -49,7 +48,7 @@ public class QuadroVagasBean extends MetodosDePaginaBean {
 
 	private UnidadePrisional unidade;
 
-	private LazyDataModel<QuadroVagasDTO> unidades;
+	private List<QuadroVagasDTO> unidades;
 	
     private Estrutura estrutura;
 	
@@ -157,37 +156,24 @@ public class QuadroVagasBean extends MetodosDePaginaBean {
 	}
 
 	public void pesquisar() {
-		this.unidades = new LazyDataModel<QuadroVagasDTO>() {
-			private static final long serialVersionUID = 1L;
-			
-			public List<QuadroVagasDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters){
-				setRowCount(quadroVagasService.quantidadeFiltrados(getFiltro()));
-				
-				try {
-					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				return quadroVagasService.buscaQuantidadeRecuperados(getFiltro(), false);
-			}
-		};
+	    if (this.filtro == null) {
+	        this.filtro = new FiltroQuadroVagas();
+	    }
+	    this.unidades = quadroVagasService.buscaQuantidadeRecuperados(filtro, false);
 	}
 	
 	public void imprimir() {
 		try {
-			List<QuadroVagasDTO> lista = quadroVagasService.buscaQuantidadeRecuperados(filtro, true);
-			
-			if (lista.size() == 0) {
+			if (unidades == null || unidades.isEmpty()) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
 				return;
 			}
-			
+		
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			
 			parameters.put("FILTRO", "Campos Utilizados: " + this.getFiltro().montarParametroFiltro());
 			
-			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(lista, Relatorio.ListarQuadroVagas, parameters));
+			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(unidades, Relatorio.ListarQuadroVagas, parameters));
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Quadro Vagas", log);
 		} catch (Exception e) {
@@ -195,6 +181,8 @@ public class QuadroVagasBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Quadro Vagas", e, log);
 		}
 	}
+	
+	
 
 	
 	public FiltroQuadroVagas getFiltro() {
@@ -213,12 +201,12 @@ public class QuadroVagasBean extends MetodosDePaginaBean {
 		this.unidade = unidade;
 	}
 
-	public LazyDataModel<QuadroVagasDTO> getUnidades() {
-		return unidades;
+	public List<QuadroVagasDTO> getUnidades() {
+	    return unidades;
 	}
 
-	public void setUnidades(LazyDataModel<QuadroVagasDTO> unidades) {
-		this.unidades = unidades;
+	public void setUnidades(List<QuadroVagasDTO> unidades) {
+	    this.unidades = unidades;
 	}
 
 	public Estrutura getEstrutura() {

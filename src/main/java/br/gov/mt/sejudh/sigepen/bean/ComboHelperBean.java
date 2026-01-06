@@ -361,6 +361,10 @@ public class ComboHelperBean {
 	public List<TipoHistorico> getTipoHistoricoView() {
 		return comboService.listarTipoHistoricoParaVisualizar();
 	}
+	
+	public List<TipoHistorico> getTipoHistoricoSemPermissao() {
+		return comboService.listarTipoHistoricoSemPermissao();
+	}
 
 	public List<Estado> getEstados() {
 		return estados;

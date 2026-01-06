@@ -162,6 +162,14 @@ public class ComboDAO {
 
 		return tipoHistoricoFiltrado;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<TipoHistorico> listarTipoHistoricoSemPermissao() {
+		String jpql = "select th from TipoHistorico th";
+		Query query = entityManager.createQuery(jpql, TipoHistorico.class);
+		
+	    return query.getResultList();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Estado> listarEstado() {

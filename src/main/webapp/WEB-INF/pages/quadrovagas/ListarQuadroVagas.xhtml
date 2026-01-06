@@ -8,7 +8,7 @@
 
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
-		
+
 		<h3>Gestão de Vagas</h3>
 
 		<!-- 
@@ -17,66 +17,85 @@
 		</h:form>
 		 -->
 
-		<h:form id="meuFormulario" >
-			<p:panel rendered="#{securityUtil.possuiPermissao('ListarQuadroVagas')}">
-				<p:outputLabel value="Consulta"/>
-				
-				<sgp:formInputText 
-					labelValue="Unidade" 
-					size="50"
+		<h:form id="meuFormulario">
+			<p:panel
+				rendered="#{securityUtil.possuiPermissao('ListarQuadroVagas')}">
+				<p:outputLabel value="Consulta" />
+
+				<sgp:formInputText labelValue="Unidade" size="50"
 					value="#{quadroVagasBean.filtro.nome}" />
-					
+
 				<sgp:formInputText labelValue="Sigla"
 					value="#{quadroVagasBean.filtro.sigla}" />
-				
+
 				<sgp:formInputText labelValue="Cidade"
 					value="#{quadroVagasBean.filtro.cidade}" />
-			
+
 				<br />
 				<br />
-				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
-				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{quadroVagasBean.imprimir()}"/>
+				<p:commandButton value="Pesquisar" update=":registrosForm"
+					process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
+					actionListener="#{quadroVagasBean.imprimir()}" />
 			</p:panel>
 		</h:form>
 
 		<h:form id="registrosForm">
-			<p:dataTable id="dataTable" var="unidade" value="#{quadroVagasBean.unidades}" emptyMessage="Nenhum registro encontrado."
-				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{unidade.id}">
+			<p:dataTable id="dataTable" var="unidade"
+				value="#{quadroVagasBean.unidades}"
+				emptyMessage="Nenhum registro encontrado." rows="10"
+				paginator="true" paginatorPosition="bottom" sortMode="single">
+
 				<p:column headerText="Codigo" sortBy="#{unidade.id}" width="80">
 					<h:outputText value="#{unidade.id}" />
 				</p:column>
-				<p:column headerText="Unidade" sortBy="#{unidade.nomeUnidade}" width="400">
+
+				<p:column headerText="Unidade" sortBy="#{unidade.nomeUnidade}"
+					width="400">
 					<h:outputText value="#{unidade.nomeUnidade}" />
 				</p:column>
+
 				<p:column headerText="Sigla" sortBy="#{unidade.sigla}" width="80">
 					<h:outputText value="#{unidade.sigla}" />
 				</p:column>
+
 				<p:column headerText="Cidade" sortBy="#{unidade.cidade}">
 					<h:outputText value="#{unidade.cidade}" />
 				</p:column>
-				<p:column headerText="Capacidade" sortBy="#{unidade.capacidadeTotal}">
+
+				<p:column headerText="Capacidade"
+					sortBy="#{unidade.capacidadeTotal}">
 					<h:outputText value="#{unidade.capacidadeTotal}" />
 				</p:column>
-				<p:column headerText="Condenados" sortBy="#{unidade.quantidadeCondenado}">
+
+				<p:column headerText="Condenados"
+					sortBy="#{unidade.quantidadeCondenado}">
 					<h:outputText value="#{unidade.quantidadeCondenado}" />
 				</p:column>
-				<p:column headerText="Provisórios" sortBy="#{unidade.quantidadeProvisorios}">
+
+				<p:column headerText="Provisórios"
+					sortBy="#{unidade.quantidadeProvisorios}">
 					<h:outputText value="#{unidade.quantidadeProvisorios}" />
 				</p:column>
-				<p:column headerText="Recuperandos" sortBy="#{unidade.totalRecuperando}">
+
+				<p:column headerText="Recuperandos"
+					sortBy="#{unidade.totalRecuperando}">
 					<h:outputText value="#{unidade.totalRecuperando}" />
 				</p:column>
-				<p:column headerText="Deficit" sortBy="#{unidade.deficit}" width="100">
+
+				<p:column headerText="Deficit" sortBy="#{unidade.deficit}">
 					<h:outputText value="#{unidade.deficit}" />
 				</p:column>
+
 				<p:column headerText="Vagas" sortBy="#{unidade.vagas}">
 					<h:outputText value="#{unidade.vagas}" />
-				</p:column>				
-				<f:facet name="footer">
-					Total de registros: #{quadroVagasBean.unidades.rowCount}
-				</f:facet>
+				</p:column>
+
 			</p:dataTable>
 		</h:form>
-		
+
+
+
+
 	</ui:define>
 </ui:composition>

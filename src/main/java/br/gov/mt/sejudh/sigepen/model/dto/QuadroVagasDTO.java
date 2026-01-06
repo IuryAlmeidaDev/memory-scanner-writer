@@ -7,36 +7,42 @@ public class QuadroVagasDTO {
 
 	private long id;
 	private String sigla;
-    private Long capacidadeTotal;
-    private Long quantidadeCondenado;
-    private Long quantidadeProvisorios;
-    private Long totalRecuperando;
-    private String deficit;
-    private String vagas;
-    private String nomeUnidade;
-    private SituacaoUnidade situacaoUnidade;
-    private String cidade;
-    private FiltroQuadroVagas filtroQuadroVagas;
-	 public QuadroVagasDTO() {
-	    	
-    }
-    
-    public QuadroVagasDTO(Long quantidadeCondenado, Long quantidadeProvisorios, Long totalRecuperando, long id, String sigla, String nomeUnidade,
-    		SituacaoUnidade situacaoUnidade, String cidade) {
-    	this.quantidadeCondenado = quantidadeCondenado;
-    	this.quantidadeProvisorios = quantidadeProvisorios;
-    	this.totalRecuperando = totalRecuperando;
-    	this.id = id;
-    	this.sigla = sigla;
-    	this.nomeUnidade = nomeUnidade;
-    	this.situacaoUnidade = situacaoUnidade;
-    	this.cidade = cidade;
-    }
-    
-    public QuadroVagasDTO(Long capacidadeTotal, Long id) {
-    	this.capacidadeTotal = capacidadeTotal;
-    	this.id = id;
-    }    
+	private Long capacidadeTotal;
+	private Long quantidadeCondenado;
+	private Long quantidadeProvisorios;
+	private Long totalRecuperando;
+	private Long deficit;
+	private Long vagas;
+	private String nomeUnidade;
+	private SituacaoUnidade situacaoUnidade;
+	private String cidade;
+	private FiltroQuadroVagas filtroQuadroVagas;
+
+	public QuadroVagasDTO() {
+
+	}
+
+	public QuadroVagasDTO(Long quantidadeCondenado, Long quantidadeProvisorios, Long capacidadeTotal,
+			Long totalRecuperando, Long vagas, Long deficit, long id, String sigla, String nomeUnidade,
+			SituacaoUnidade situacaoUnidade, String cidade) {
+
+		this.quantidadeCondenado = quantidadeCondenado;
+		this.quantidadeProvisorios = quantidadeProvisorios;
+		this.capacidadeTotal = capacidadeTotal;
+		this.totalRecuperando = totalRecuperando;
+		this.vagas = vagas;
+		this.deficit = deficit;
+		this.id = id;
+		this.sigla = sigla;
+		this.nomeUnidade = nomeUnidade;
+		this.situacaoUnidade = situacaoUnidade;
+		this.cidade = cidade;
+	}
+
+	public QuadroVagasDTO(Long capacidadeTotal, Long id) {
+		this.capacidadeTotal = capacidadeTotal;
+		this.id = id;
+	}
 
 	public long getId() {
 		return id;
@@ -45,7 +51,6 @@ public class QuadroVagasDTO {
 	public void setId(long id) {
 		this.id = id;
 	}
-
 
 	public String getSigla() {
 		return sigla;
@@ -58,19 +63,19 @@ public class QuadroVagasDTO {
 	public Long getCapacidadeTotal() {
 		return capacidadeTotal;
 	}
-	
+
 	public void setCapacidadeTotal(Long capacidadeTotal) {
 		this.capacidadeTotal = capacidadeTotal;
 	}
-	
+
 	public FiltroQuadroVagas getFiltroQuadroVagas() {
 		return this.filtroQuadroVagas;
 	}
-	
+
 	public void setFiltroQuadroVagas(FiltroQuadroVagas filtroQuadroVagas) {
 		this.filtroQuadroVagas = filtroQuadroVagas;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Unidade Prisional [id=" + id + ", nome=" + sigla + "]";
@@ -100,37 +105,28 @@ public class QuadroVagasDTO {
 		this.totalRecuperando = totalRecuperando;
 	}
 
-	public String getDeficit() {
+	public Long getDeficit() {
 		return deficit;
 	}
 
-	public void setDeficit(String deficit) {
+	public void setDeficit(Long deficit) {
 		this.deficit = deficit;
 	}
 
-	public String getVagas() {
+	public Long getVagas() {
 		return vagas;
 	}
 
-	public void setVagas(String vagas) {
+	public void setVagas(Long vagas) {
 		this.vagas = vagas;
 	}
-	
+
 	public String getNomeUnidade() {
 		return nomeUnidade;
 	}
-	
+
 	public void setNomeUnidade(String nomeUnidade) {
 		this.nomeUnidade = nomeUnidade;
-	}
-
-	public void calculoQntDeficit(Long capacidade, Long totalRecperando) {
-		Long calc = capacidade - totalRecperando;
-		this.deficit = String.valueOf(calc < 0 ? calc : "");
-	}
-	public void calculoQntVagas(Long capacidade, Long totalRecperando) {
-		Long calc = capacidade - totalRecperando;
-		this.vagas = String.valueOf(calc >= 0 ? calc : "");
 	}
 
 	public String getSituacaoUnidade() {
@@ -144,7 +140,7 @@ public class QuadroVagasDTO {
 	public String getCidade() {
 		return this.cidade;
 	}
-	
+
 	public void setCidade(String cidade) {
 		this.cidade = cidade;
 	}
