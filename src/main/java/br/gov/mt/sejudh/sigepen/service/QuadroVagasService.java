@@ -100,9 +100,4 @@ public class QuadroVagasService {
 	public Long quantidadeAtual(Long id) {
 		return dao.quantidadeAtual(id);
 	}
-	
-	public List<QuadroVagasDTO> carregarQuadroVgas(FiltroQuadroVagas filtro) {
-		return dao.buscarQuadroVagas(filtro);
-	}
-
 }
