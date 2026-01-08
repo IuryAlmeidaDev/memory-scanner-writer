@@ -369,7 +369,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			PedidoAlimento pedidoAlimento = PedidoAlimento.create(
 					data,
 					SecurityUtil.getUsuario().getId(),
-					idEstrutura, contrato.getId(),
+					this.unidade.getId(), contrato.getId(),
 					filtroGerarPedido.getTipoRefeicao().getId()
 			);
 
