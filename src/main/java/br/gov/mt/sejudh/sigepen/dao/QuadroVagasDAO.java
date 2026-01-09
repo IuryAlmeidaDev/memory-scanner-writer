@@ -1,9 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -66,101 +63,86 @@ public class QuadroVagasDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(FiltroQuadroVagas filtroQuadroVagas, boolean isCount, boolean relatorio) {
+	public List<QuadroVagasDTO> buscaQuantidadeRecuperados(
+	        FiltroQuadroVagas filtroQuadroVagas, boolean relatorio) {
 
 	    String filtro = montarFiltro(filtroQuadroVagas);
-	    String orderBy = montarGroupBy(filtroQuadroVagas); 
 
-	    String jpql = "SELECT new br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO("
-	            + " SUM(CASE WHEN r.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END), "
-	            + " SUM(CASE WHEN r.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END), "
-	            + " COUNT(r), "                
-	            + " up.id, "
-	            + " up.sigla, "
-	            + " up.nome, "
-	            + " e.situacaoUnidade, "
-	            + " c.nome"
-	            + " ) "
-	            + " FROM PassagemLotacao pl"
-	            + " INNER JOIN pl.passagem p"
-	            + " INNER JOIN pl.estrutura e"
-	            + " INNER JOIN e.unidadePrisional up"
-	            + " INNER JOIN p.recuperando r"
-	            + " INNER JOIN up.endereco en"
-	            + " INNER JOIN en.cidade c"
-	            + " WHERE pl.dataSaida IS NULL"
-	            + "   AND e.cela = 1"
-	            + "   AND r.condicaoAtual IN('CONDENADO', 'PROVISORIO')"
-	            + filtro
-	            + " GROUP BY up.estrutura.id, up.id, up.nome, e.situacaoUnidade, up.sigla, c.nome "
-	            + orderBy;
+	    String jpql =
+	        "SELECT new br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO(" +
+	        " SUM(CASE WHEN r.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END), " +
+	        " SUM(CASE WHEN r.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END), " +
+	        " 0L, " +
+	        " COUNT(pl.id), " +
+	        " 0L, " +
+	        " 0L, " +
+	        " up.id, up.sigla, up.nome, e.situacaoUnidade, c.nome) " +
+	        "FROM PassagemLotacao pl " +
+	        "JOIN pl.passagem p " +
+	        "JOIN pl.estrutura e " +
+	        "JOIN e.unidadePrisional up " +
+	        "JOIN p.recuperando r " +
+	        "JOIN up.endereco en " +
+	        "JOIN en.cidade c " +
+	        "WHERE pl.dataSaida IS NULL AND e.cela = 1 " +
+	        filtro +
+	        " GROUP BY up.id, up.sigla, up.nome, e.situacaoUnidade, c.nome";
 
-	    Query query = entityManager.createQuery(jpql, QuadroVagasDTO.class);
-
-	    if (!isCount && !relatorio) {
-	        query.setFirstResult(filtroQuadroVagas.getPaginacaoIndex());
-	        query.setMaxResults(filtroQuadroVagas.getQuantidadeRegistros());
-	    }
-
-	    return query.getResultList();
-	}
-	
-	private String montarGroupBy(FiltroQuadroVagas filtro) {
-
-	    if (filtro == null || filtro.getOrdenacao() == null
-	        || filtro.getOrdenacao().getPropertyName() == null
-	        || filtro.getOrdenacao().getPropertyName().isEmpty()) {
-	        return " ORDER BY up.id ASC";
-	    }
-
-	    String campo = filtro.getOrdenacao().getPropertyName();
-	    String direcao = filtro.isAscendente() ? " ASC" : " DESC";
-
-	    switch (campo) {
-	        case "id":
-	            return " ORDER BY up.id" + direcao;
-	        case "sigla":
-	            return " ORDER BY up.sigla" + direcao;
-	        case "nomeUnidade":
-	            return " ORDER BY up.nome" + direcao;
-	        case "cidade":
-	            return " ORDER BY c.nome" + direcao;
-	        case "capacidadeTotal":
-	            return " ORDER BY COUNT(r)" + direcao;
-	        case "totalRecuperando":
-	            return " ORDER BY COUNT(r)" + direcao;
-	        case "vagas":
-	            return " ORDER BY (SUM(e.capacidade) - COUNT(r))" + direcao;
-	        case "deficit":
-	            return " ORDER BY (COUNT(r) - SUM(e.capacidade))" + direcao;
-	        default:
-	            return " ORDER BY up." + campo + direcao;
-	    }
+	    return entityManager
+	            .createQuery(jpql, QuadroVagasDTO.class)
+	            .getResultList();
 	}
 	
 	private String montarFiltro(FiltroQuadroVagas filtroQuadroVagas) {
-		String filtro = " ";
-		if(filtroQuadroVagas.getSigla() != null && !filtroQuadroVagas.getSigla().isEmpty()) {
-			filtro += consultaLikeIgnoraAcentos("up.sigla",filtroQuadroVagas.getSigla());
-		}
-		if(filtroQuadroVagas.getNome() != null && !filtroQuadroVagas.getNome().isEmpty()) {
-			filtro += consultaLikeIgnoraAcentos("up.nome",filtroQuadroVagas.getNome());
-		}
-		
-		if(filtroQuadroVagas.getCidade() != null && !filtroQuadroVagas.getCidade().isEmpty()) {
-			filtro += consultaLikeIgnoraAcentos("c.nome",filtroQuadroVagas.getCidade());
-		}
-		
-		return filtro;
+
+	    if (filtroQuadroVagas == null) {
+	        return "";
+	    }
+
+	    String filtro = "";
+
+	    if (filtroQuadroVagas.getSigla() != null && !filtroQuadroVagas.getSigla().isEmpty()) {
+	        filtro += consultaLikeIgnoraAcentos("up.sigla", filtroQuadroVagas.getSigla());
+	    }
+
+	    if (filtroQuadroVagas.getNome() != null && !filtroQuadroVagas.getNome().isEmpty()) {
+	        filtro += consultaLikeIgnoraAcentos("up.nome", filtroQuadroVagas.getNome());
+	    }
+
+	    if (filtroQuadroVagas.getCidade() != null && !filtroQuadroVagas.getCidade().isEmpty()) {
+	        filtro += consultaLikeIgnoraAcentos("c.nome", filtroQuadroVagas.getCidade());
+	    }
+
+	    return filtro;
 	}
+
 	
 	private String consultaLikeIgnoraAcentos(String coluna, String param) {
 		return " AND translate(lower("+ coluna +"), 'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') LIKE translate('%" + param.toLowerCase() + "%', 'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc')";
 	}
 	
-	public int quantidadeFiltrados(FiltroQuadroVagas filtro) {	
-		return buscaQuantidadeRecuperados(filtro,true, false).size();
+	public Long quantidadeFiltrados(FiltroQuadroVagas filtroQuadroVagas) {
+	    String filtro = montarFiltro(filtroQuadroVagas);
+
+	    String jpql =
+	        "SELECT COUNT(DISTINCT up.id) " +
+	        "FROM PassagemLotacao pl " +
+	        "JOIN pl.passagem p " +
+	        "JOIN pl.estrutura e " +
+	        "JOIN e.unidadePrisional up " +
+	        "JOIN p.recuperando r " +
+	        "JOIN up.endereco en " +
+	        "JOIN en.cidade c " +
+	        "WHERE pl.dataSaida IS NULL " +
+	        "AND e.cela = 1 " +
+	        filtro;
+
+	    return entityManager
+	        .createQuery(jpql, Long.class)
+	        .getSingleResult();
 	}
+
+
 	
 	public boolean jaExisteUnidadePrisionalComMesmoNome(UnidadePrisional unidadePrisional) {
 		Query query = entityManager.createQuery("select count(u) from UnidadePrisional u where lower(u.nome) = :nome  AND u.id <> :unidadeId  AND ( u.estrutura.situacaoUnidade="+ SituacaoUnidade.ATIVO.ordinal() +""
@@ -178,37 +160,7 @@ public class QuadroVagasDAO {
 		return (Long) query.getSingleResult();
 	}
 	
-	public List<QuadroVagasDTO> buscarQuadroVagas(FiltroQuadroVagas filtro) {
-
-	    String order = montarGroupBy(filtro); 
-
-	    String jpql =
-	        "SELECT new br.gov.mt.sejudh.sigepen.model.dto.QuadroVagasDTO(" +
-	        "   SUM(CASE WHEN r.condicaoAtual = 'CONDENADO' THEN 1 ELSE 0 END), " +
-	        "   SUM(CASE WHEN r.condicaoAtual = 'PROVISORIO' THEN 1 ELSE 0 END), " +
-	        "   COUNT(r), " +
-	        "   up.id, " +
-	        "   up.sigla, " +
-	        "   up.nome, " +
-	        "   e.situacaoUnidade, " +
-	        "   c.nome " +
-	        ") " +
-	        "FROM PassagemLotacao pl " +
-	        "JOIN pl.passagem p " +
-	        "JOIN pl.estrutura e " +
-	        "JOIN e.unidadePrisional up " +
-	        "JOIN p.recuperando r " +
-	        "JOIN up.endereco en " +
-	        "JOIN en.cidade c " +
-	        "WHERE pl.dataSaida IS NULL " +
-	        "  AND e.cela = 1 " +
-	        "  AND r.condicaoAtual IN ('CONDENADO', 'PROVISORIO') " +
-	        "GROUP BY up.id, up.sigla, up.nome, e.situacaoUnidade, c.nome " +
-	        order;
-
-	    return entityManager.createQuery(jpql, QuadroVagasDTO.class)
-	             .getResultList();
-	}
+	
 
 
 
