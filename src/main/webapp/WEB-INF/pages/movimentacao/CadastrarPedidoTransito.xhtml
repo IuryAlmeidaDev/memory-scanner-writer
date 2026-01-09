@@ -192,7 +192,7 @@
 							id="tipoMovExt" labelValue="Tipo de Movimentação"
 							itemValue="#{item}" temSelecione="true"
 							value="#{pedidoTransitoBean.pedido.tipoMovimentacao}"
-							itemsValue="#{comboHelperBean.tipoHistoricoView}"
+							itemsValue="#{comboHelperBean.tipoHistoricoSemPermissao}"
 							itemLabel="#{item.descricao}"
 							disabled="#{pedidoTransitoBean.isVisualizacao}"
 							converter="SimpleEntityConverter"

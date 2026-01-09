@@ -68,6 +68,10 @@ public class ComboService {
 	public List<TipoHistorico> listarTipoHistoricoPermitidoParaCadastrar() {
 		return dao.listarTipoHistoricoPorPermissao("CadastrarHistoricoRecuperando");
 	}
+	
+	public List<TipoHistorico> listarTipoHistoricoSemPermissao() {
+		return dao.listarTipoHistoricoSemPermissao();
+	}
 
 	public List<TipoHistorico> listarTipoHistoricoParaVisualizar() {
 		return dao.listarTipoHistoricoPorPermissao("VisualizarHistoricoRecuperando");
