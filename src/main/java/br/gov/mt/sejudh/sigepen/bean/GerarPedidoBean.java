@@ -331,7 +331,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
      boolean pedidoExistente = pedidoAlimentoService.verificarExistenciaPedido(
              data,
              filtroGerarPedido.getTipoRefeicao().getId(),
-             this.unidade.getEstrutura().getId(),
+             this.unidade.getId(),
              contrato.getId()
      );
 
@@ -369,7 +369,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			PedidoAlimento pedidoAlimento = PedidoAlimento.create(
 					data,
 					SecurityUtil.getUsuario().getId(),
-					idEstrutura, contrato.getId(),
+					this.unidade.getId(), contrato.getId(),
 					filtroGerarPedido.getTipoRefeicao().getId()
 			);
 
