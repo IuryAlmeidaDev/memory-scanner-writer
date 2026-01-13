@@ -152,7 +152,7 @@
                     </h:outputText>
                 </p:column>
 
-                <p:column headerText="Situação" sortBy="#{visitante.status}" width="15%">
+                <p:column headerText="Situação" sortBy="#{visitante.statusVisitante}" width="15%">
                     <h:outputText value="#{visitante.status.descricao} "/>
                     <h:outputText value="- Fim: " rendered="#{visitante.fimImpedimento ne null}" />
                     <h:outputText value="#{visitante.fimImpedimento}"
