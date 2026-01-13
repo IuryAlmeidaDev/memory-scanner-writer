@@ -28,7 +28,7 @@ public class Plantao extends BaseModel<Long> {
 
 	@Enumerated
 	@Column(name = "PLANTAO")
-	private TipoPlantao plantao;
+	private TipoPlantao tipoPlantao;
 
 	@Column(name = "PLANTAO_ANTERIOR")
 	private String plantaoAnterior;
@@ -87,9 +87,9 @@ public class Plantao extends BaseModel<Long> {
 		this.status = status;
 	}
 
-	public Plantao(Long id, TipoPlantao plantao, String plantaoAnterior, Date dataPlantao, List<Equipe> equipes, UnidadePrisional unidadePrisional, Status status, StatusPlantao statusPlantao) {
+	public Plantao(Long id, TipoPlantao tipoPlantao, String plantaoAnterior, Date dataPlantao, List<Equipe> equipes, UnidadePrisional unidadePrisional, Status status, StatusPlantao statusPlantao) {
 		this.id = id;
-		this.plantao = plantao;
+		this.tipoPlantao = tipoPlantao;
 		this.plantaoAnterior = plantaoAnterior;
 		this.dataPlantao = dataPlantao;
 		this.equipes = equipes;
@@ -98,8 +98,8 @@ public class Plantao extends BaseModel<Long> {
 		this.statusPlantao = statusPlantao;
 	}
 
-	public Plantao(TipoPlantao plantao, Date dataPlantao) {
-		this.plantao = plantao;
+	public Plantao(TipoPlantao tipoPlantao, Date dataPlantao) {
+		this.tipoPlantao = tipoPlantao;
 		this.dataPlantao = dataPlantao;
 	}
 
@@ -111,12 +111,12 @@ public class Plantao extends BaseModel<Long> {
 		this.id = id;
 	}
 
-	public TipoPlantao getPlantao() {
-		return plantao;
+	public TipoPlantao getTipoPlantao() {
+		return tipoPlantao;
 	}
 
-	public void setPlantao(TipoPlantao tipoPlantao) {
-		this.plantao = tipoPlantao;
+	public void setTipoPlantao(TipoPlantao tipoPlantao) {
+		this.tipoPlantao = tipoPlantao;
 	}
 
 	public Date getDataPlantao() {

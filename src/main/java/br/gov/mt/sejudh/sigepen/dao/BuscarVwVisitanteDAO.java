@@ -236,8 +236,6 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         subselect.append("(SELECT RE.Id as recuperando_id, RE.PESSOA_ID, PASS.TIPO_DESLIGAMENTO, PASS.DATA_SAIDA ")
                 .append("   FROM SIGEPEN_OWNER.RECUPERANDO RE ")
 
-                .append("   LEFT JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE ")
-                .append("     ON CRE.ID_RECUPERANDO = RE.ID ")
                 .append("   INNER JOIN SIGEPEN_OWNER.PESSOA P ")
                 .append("     ON P.ID = RE.PESSOA_ID ")
                 .append("   LEFT JOIN (SELECT RECUPERANDO_ID, MAX(ID) MAX_ID ")
@@ -249,7 +247,6 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
                 .append("  WHERE 1 = 1 ");
 
         adicionarCondicoes(subselect, filtro, true);
-        subselect.append(" AND CRE.ID_TIPO_VISITA IS NULL ");
 
 
         subselect.append(") TBRECUPERANDO");
