@@ -503,19 +503,19 @@ public class DashboardBean {
 				return "pretty:ListarTransferencia";
 
 			case TOTAL_RECEBER_TRANSFERENCIA_EM_ANDAMENTO:
-				filtroPedTransito.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroPedTransito.setUnidadeDestino(securityUtil.getUnidadeSelecionada());
 				filtroPedTransito.setStatus(StatusPedido.EM_ANDAMENTO);
 				facesUtil.setFlashParameter("filtroPedTransitoDash", filtroPedTransito);
 				return "pretty:ListarReceberTransferencia";
 
 			case TOTAL_RECEBER_TRANSFERENCIA_VINCULADO:
-				filtroPedTransito.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroPedTransito.setUnidadeDestino(securityUtil.getUnidadeSelecionada());
 				filtroPedTransito.setStatus(StatusPedido.VINCULADO);
 				facesUtil.setFlashParameter("filtroPedTransitoDash", filtroPedTransito);
 				return "pretty:ListarReceberTransferencia";
 
 			case TOTAL_REMANEJAMENTO_EM_ANDAMENTO:
-				filtroRemanejamento.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+				filtroRemanejamento.setUnidadeRemanejada(securityUtil.getUnidadeSelecionada());
 				filtroRemanejamento.setStatus(StatusPedido.EM_ANDAMENTO);
 				facesUtil.setFlashParameter("filtroRemanejamentoDash", filtroRemanejamento);
 				return "pretty:ListarRemanejamento";
@@ -570,7 +570,7 @@ public class DashboardBean {
 
 	public int getMovimentacaoInternaFinalizadoParcial(){
 
-		if(!securityUtil.possuiPermissao("MovimentacaoInternaFinalizadoParcial")){
+		if(!securityUtil.possuiPermissao("VisualizarMovimentacaoInterna")){
 			return 0;
 		}
 
@@ -698,7 +698,7 @@ public class DashboardBean {
 
 		FiltroPedTransito filtro = new FiltroPedTransito();
 
-		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setUnidadeDestino(securityUtil.getUnidadeSelecionada());
 		filtro.setStatus(StatusPedido.VINCULADO);
 
 		return this.pedidoService.countRecebimentoTransferencia(filtro);
@@ -711,7 +711,7 @@ public class DashboardBean {
 
 		FiltroPedTransito filtro = new FiltroPedTransito();
 
-		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setUnidadeDestino(securityUtil.getUnidadeSelecionada());
 		filtro.setStatus(StatusPedido.EM_ANDAMENTO);
 
 		return this.pedidoService.countRecebimentoTransferencia(filtro);
@@ -725,7 +725,7 @@ public class DashboardBean {
 
 		FiltroRemanejamento filtro = new FiltroRemanejamento();
 
-		filtro.setUnidadeOrigem(securityUtil.getUnidadeSelecionada());
+		filtro.setUnidadeRemanejada(securityUtil.getUnidadeSelecionada());
 		filtro.setStatus(StatusPedido.EM_ANDAMENTO);
 
 		return this.remanejamentoService.countRecebimentoTransferencia(filtro);

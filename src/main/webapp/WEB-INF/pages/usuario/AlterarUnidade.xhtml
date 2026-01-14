@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite"
+    template="/WEB-INF/pages/_templates/principal.xhtml">
+
+    <ui:define name="conteudo">
+        <h3>Alterar Unidade</h3>
+
+        <h:form id="form">
+            <p:panel id="panel" header="Selecione uma unidade" style="margin-top:20px;">
+
+                <sgp:formSelectOneMenu
+                    id="unidade"
+                    labelValue="Unidade"
+                    value="#{alterarUnidadeBean.unidadeSelecionada}"
+                    itemsValue="#{alterarUnidadeBean.unidades}"
+                    itemValue="#{item}"
+                    itemLabel="#{item.nome}"
+                    temSelecione="true"
+                    requiredMessage="Selecione uma unidade"
+                    display="text"
+                    validationRequired="true"
+                    converter="SimpleEntityConverter"/>
+
+                <br/>
+                <br/>
+                
+                <p:commandButton
+                    id="btnAlterar"
+                    action="#{alterarUnidadeBean.alterarUnidade}"
+                    value="Alterar Unidade"
+                    update="@form"
+                    icon="ui-icon-refresh"/>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>
