@@ -41,10 +41,9 @@ public class EntradaSaidaRecuperandoService {
 
 	public EntradaSaida salvar(EntradaSaida entrada) {
 		return this.dao.salvar(entrada);
-		
 	}
 
-	public List<EntradaSaidaDTO> buscarEntradasPorFiltro(FiltroEntradaSaidaRecuperando filtro) {
-		return this.dao.buscarEntradasPorFiltro(filtro);
+	public List<EntradaSaidaDTO> buscarEntradasPorFiltro(FiltroEntradaSaidaRecuperando filtro, String sortField, SortOrder sortOrder) {
+		return this.dao.buscarEntradasPorFiltro(filtro, sortField, sortOrder);
 	}
 }

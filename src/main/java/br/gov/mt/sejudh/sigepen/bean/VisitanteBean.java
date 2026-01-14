@@ -562,7 +562,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", e.getMessage());
 		} catch (Exception e) {
-			if (e.getCause() != null && e.getCause().getCause() != null
+			if (e.getCause() != null && e.getCause().getCause() != null 
 					&& e.getCause().getCause() instanceof ConstraintViolationException) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
 						"Visitante com credenciamento ativo! Não é possível excluir!");
