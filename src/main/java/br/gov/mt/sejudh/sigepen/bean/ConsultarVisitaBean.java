@@ -92,6 +92,10 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 	private UnidadePrisionalService unidadeService;
 	
 	private List<UnidadePrisional> unidadesPrisionais;
+	
+	private String sortField;
+	
+	private SortOrder sortOrder;
 
 	@URLAction(onPostback = false)
 	public String init() throws Exception {
@@ -129,7 +133,9 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 	
 	public void pesquisar() {
 		this.entradas = new LazyDataModel<EntradaSaidaDTO>() {
+			
 			private static final long serialVersionUID = 1L;
+			
 			
 			@Override
 			public Object getRowKey(EntradaSaidaDTO object) {
@@ -158,9 +164,15 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 			public List<EntradaSaidaDTO> load(int first, int pageSize,
 					String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
-
+			
+				
+				ConsultarVisitaBean.this.sortField = sortField;
+				ConsultarVisitaBean.this.sortOrder = sortOrder;
+	
 //				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
 				setRowCount(service.buscarEntradasPorFiltroCount(getFiltro(), sortField,sortOrder, first));
+				
+				
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
@@ -216,9 +228,10 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 			return null;
 		}
 		try {
-			List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro());
+			
+			List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), sortField, sortOrder);
 
-			if (lista.size() == 0) {
+			if (lista.size() == 0 || lista.isEmpty()) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "AVISO", "Relatório não impresso, nenhum registro encontrado!");
 				return null;
 			}
@@ -363,5 +376,23 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 	public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
 		this.unidadesPrisionais = unidadesPrisionais;
 	}
+
+	public String getSortField() {
+		return sortField;
+	}
+
+	public void setSortField(String sortField) {
+		this.sortField = sortField;
+	}
+
+	public SortOrder getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(SortOrder sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+	
+	
 }
 
