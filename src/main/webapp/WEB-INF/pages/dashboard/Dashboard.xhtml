@@ -13,7 +13,7 @@
 
 		<h3>Dashboard</h3>
 
-
+	<h:panelGroup rendered="#{securityUtil.possuiPermissao('VisualizarRecuperando')}">
 		<h:form id="formDashRecuperando">
 
 			<p style="display: inline-block;">
@@ -141,8 +141,9 @@
 				</p:panel>
 			</p:dashboard>
 		</h:form>
+	</h:panelGroup>
 
-
+	<h:panelGroup rendered="#{securityUtil.possuiPermissao('VisualizarMovimentacaoInterna') or securityUtil.possuiPermissao('VisualizarMovimentacaoExterna')}">
 		<h:form id="formDashMovimentacao">
 
 			<p style="display: inline-block;">
@@ -200,7 +201,7 @@
 					<h:commandLink
 						action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_INTERNA_FINALIZADO_PARCIAL)}">
 						<h:outputText
-							value="#{dashboardBean.totalMovimentacaoExternaFinalizadoParcial}"
+							value="#{dashboardBean.totalMovimentacaoInternaFinalizadoParcial}"
 							styleClass="ui-dash-text-panel-40" />
 						<br />
 						<h:outputText
@@ -257,7 +258,7 @@
 					<h:commandLink
 						action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_EXTERNA_FINALIZADO_PARCIAL)}">
 						<h:outputText
-							value="#{dashboardBean.totalMovimentacaoExternaAguardandoFinalizar}"
+							value="#{dashboardBean.totalMovimentacaoExternaFinalizadoParcial}"
 							styleClass="ui-dash-text-panel-40" />
 						<br />
 						<h:outputText
@@ -346,14 +347,18 @@
 			</p:dashboard>
 
 		</h:form>
+	</h:panelGroup>	
 
 		<div style="clear: both;"></div>
 
+	<h:panelGroup rendered="#{securityUtil.possuiPermissao('VisualizarVisitante')}">
 		<h:form id="formDashVisitante">
+		
 			<p style="display: inline-block;">
 				Visitantes <br />
 				______________________________________________________________________________________________________________
 			</p>
+		
 
 			<p:dashboard id="dashVisitante" model="#{dashboardBean.dashModel}">
 
@@ -455,7 +460,8 @@
 				</p:panel>
 			</p:dashboard>
 		</h:form>
-
+	</h:panelGroup>
+	
 		<h:form>
 			<!-- Dialog -->
 			<p:dialog id="solicitacaoResetSenha" header="Solicitação de senha"
