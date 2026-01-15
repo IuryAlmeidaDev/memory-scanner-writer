@@ -235,7 +235,8 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         StringBuilder subselect = new StringBuilder();
         subselect.append("(SELECT RE.Id as recuperando_id, RE.PESSOA_ID, PASS.TIPO_DESLIGAMENTO, PASS.DATA_SAIDA ")
                 .append("   FROM SIGEPEN_OWNER.RECUPERANDO RE ")
-
+                .append("   FULL OUTER JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE ")
+                .append("     ON CRE.ID_RECUPERANDO = RE.ID ")
                 .append("   INNER JOIN SIGEPEN_OWNER.PESSOA P ")
                 .append("     ON P.ID = RE.PESSOA_ID ")
                 .append("   LEFT JOIN (SELECT RECUPERANDO_ID, MAX(ID) MAX_ID ")
