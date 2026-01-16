@@ -83,7 +83,7 @@ public class CardapioDAO extends BaseDAO<Cardapio, Long> {
 			Query diaSemanaQuery = entityManager.createNativeQuery(jpqlDiaSemana);
 			diaSemanaQuery.setParameter("data", data);
 			int diaSemanaInt = Integer.parseInt((String) diaSemanaQuery.getSingleResult()) - 1;
-			DiasSemana diaSemana = DiasSemana.values()[diaSemanaInt];
+			DiasSemana diaSemana = DiasSemana.getValue(diaSemanaInt);
 
 			query.setParameter("diaSemana", diaSemana);
 			query.setParameter("tipoRefeicaoId", tipoRefeicaoId);
