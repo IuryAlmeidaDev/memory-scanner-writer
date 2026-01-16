@@ -24,33 +24,37 @@ public class SimpleEntityConverter implements Converter{
         if (value != null && !"".equals(value)) {  
             long codigo = this.addAttribute(component, value);
             
-            if (codigo > 0) {  
+            if (codigo >= 0) {  
                 return String.valueOf(codigo);  
             }  
         }  
   
-        return (String) value;  
+        return value == null ? null : value.toString();  
     }
     
     protected long addAttribute(UIComponent component, Object o) {
-    	long retorno = 0;
+    	long retorno = -1;
     	
     	try {
-	    	Method metodo = o.getClass().getDeclaredMethod("getId", new Class[] {});
-	        long key = Long.parseLong(metodo.invoke(o, new Object[] {}).toString());  
-	        this.getAttributesFrom(component).put(String.valueOf(key), o);
-	        retorno = key;
-    	} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		}
+            Method metodo = o.getClass().getDeclaredMethod("getId", new Class[] {});
+            Object idObj = metodo.invoke(o, new Object[] {});
+            if (idObj == null) {
+                return -1;
+            }
+            long key = Long.parseLong(idObj.toString());
+            this.getAttributesFrom(component).put(String.valueOf(key), o);
+            retorno = key;
+        } catch (NoSuchMethodException e) {
+            // Se não tem getId, talvez seja um enum ou outra coisa, vamos tentar tratar como ordinal se for Enum
+            if (o instanceof Enum) {
+                long key = ((Enum<?>) o).ordinal();
+                this.getAttributesFrom(component).put(String.valueOf(key), o);
+                return key;
+            }
+            // Se não é enum e não tem getId, não adicionamos aos atributos
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     	
     	return retorno;
     }  

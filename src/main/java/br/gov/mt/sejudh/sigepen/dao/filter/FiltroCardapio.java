@@ -1,5 +1,7 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
-
+import javax.persistence.EntityManager;
+import org.hibernate.Criteria;
+import br.gov.mt.sejudh.sigepen.enumerator.DiasSemana;
 import br.gov.mt.sejudh.sigepen.model.TipoDieta;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
@@ -22,9 +24,30 @@ public class FiltroCardapio extends FiltroConsulta {
 	private UnidadePrisional unidadePrisional;
 	private TipoRefeicao tipoRefeicao;
 	private TipoDieta tipoDieta;
+	private DiasSemana diaSemana;
 	private Boolean festivo;
 	private ObjetoSelectOne semana;
 	private boolean listarTodasUnidades;
+
+	private boolean paraContagem;
+
+	@Override
+	public <T> Criteria criarCriteriaParaQuantidade(Class<T> classe, EntityManager em) {
+		this.paraContagem = true;
+		return super.criarCriteriaParaQuantidade(classe, em);
+	}
+
+	@Override
+	public <T> Criteria criarCriteriaParaBusca(Class<T> classe, EntityManager em) {
+		this.paraContagem = false;
+		return super.criarCriteriaParaBusca(classe, em);
+	}
+
+	@Override
+	public <T> Criteria criarCriteriaParaBusca(Class<T> classe, EntityManager em, boolean isBuscaRelatorio) {
+		this.paraContagem = false;
+		return super.criarCriteriaParaBusca(classe, em, isBuscaRelatorio);
+	}
 
 	@Override
 	public void configurarFiltros() {
@@ -33,29 +56,45 @@ public class FiltroCardapio extends FiltroConsulta {
 		getCriteria().createAlias("contrato.unidades", "unidade", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("tipoDieta", "tipoDieta", JoinType.LEFT_OUTER_JOIN);
 
-		if ("diaSemana.descricao".equals(getPropriedadeOrdenacao())) {
-			setPropriedadeOrdenacao("diaSemana");
-			if (getSortOrder() != null) {
-				if (SortOrder.ASCENDING.equals(getSortOrder())) {
-					setOrdenacao(Order.asc("diaSemana"));
-				} else {
-					setOrdenacao(Order.desc("diaSemana"));
-				}
+		if (this.isListarTodasUnidades()) {
+			if (this.getUnidadePrisional() != null) {
+				getCriteria().add(Restrictions.eq("unidade.id", this.getUnidadePrisional().getId()));
 			}
+		} else {
+			getCriteria().add(Restrictions.eq("unidade", SecurityUtil.getUnidadeSelecionada()));
 		}
 
-		Projection proj = Projections.distinct(Projections.projectionList()
-				.add(Projections.property("id").as("id"))
-				.add(Projections.property("semana").as("semana"))
-				.add(Projections.property("diaSemana").as("diaSemana"))
-				.add(Projections.property("tipoRefeicao.descricao").as("nomeRefeicao"))
-				.add(Projections.property("tipoDieta.descricao").as("nomeDieta"))
-				.add(Projections.property("contrato.numContrato").as("numContrato"))
-				.add(Projections.property("unidade.nome").as("nomeUnidadePrisional"))
-				.add(Projections.property("festivo").as("festivo"))
-		);
+		if (!paraContagem) {
+			if ("diaSemana".equals(getPropriedadeOrdenacao())) {
+				if (getSortOrder() != null) {
+					if (SortOrder.ASCENDING.equals(getSortOrder())) {
+						setOrdenacao(Order.asc("diaSemana"));
+					} else {
+						setOrdenacao(Order.desc("diaSemana"));
+					}
+				}
+			} else if ("diaSemana.descricao".equals(getPropriedadeOrdenacao())) {
+				if (getSortOrder() != null) {
+					if (SortOrder.ASCENDING.equals(getSortOrder())) {
+						setOrdenacao(Order.asc("diaSemana"));
+					} else {
+						setOrdenacao(Order.desc("diaSemana"));
+					}
+				}
+			}
 
-		getCriteria().setProjection(proj);
+			Projection proj = Projections.projectionList()
+					.add(Projections.property("id").as("id"))
+					.add(Projections.property("semana").as("semana"))
+					.add(Projections.property("diaSemana").as("diaSemana"))
+					.add(Projections.property("tipoRefeicao.descricao").as("nomeRefeicao"))
+					.add(Projections.property("tipoDieta.descricao").as("nomeDieta"))
+					.add(Projections.property("contrato.numContrato").as("numContrato"))
+					.add(Projections.property("unidade.nome").as("nomeUnidadePrisional"))
+					.add(Projections.property("festivo").as("festivo"));
+
+			getCriteria().setProjection(proj);
+		}
 
 		if (this.getContrato() != null) {
 			getCriteria().add(Restrictions.eq("contrato.id", this.getContrato().getId()));
@@ -77,12 +116,8 @@ public class FiltroCardapio extends FiltroConsulta {
 			getCriteria().add(Restrictions.eq("semana", this.getSemana().getId()));
 		}
 
-		if (this.isListarTodasUnidades()) {
-			if (this.getUnidadePrisional() != null) {
-				getCriteria().add(Restrictions.eq("unidade.id", this.getUnidadePrisional().getId()));
-			}
-		} else {
-			getCriteria().add(Restrictions.eq("unidade", SecurityUtil.getUnidadeSelecionada()));
+		if (this.getDiaSemana() != null) {
+			getCriteria().add(Restrictions.eq("diaSemana", this.getDiaSemana()));
 		}
 	}
 
@@ -148,5 +183,13 @@ public class FiltroCardapio extends FiltroConsulta {
 
 	public void setTipoDieta(TipoDieta tipoDieta) {
 		this.tipoDieta = tipoDieta;
+	}
+
+	public DiasSemana getDiaSemana() {
+		return diaSemana;
+	}
+
+	public void setDiaSemana(DiasSemana diaSemana) {
+		this.diaSemana = diaSemana;
 	}
 }

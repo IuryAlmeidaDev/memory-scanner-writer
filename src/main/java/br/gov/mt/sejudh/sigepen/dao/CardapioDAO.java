@@ -9,11 +9,12 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.hibernate.Criteria;
-import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroCardapio;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroConsulta;
 import br.gov.mt.sejudh.sigepen.enumerator.DiasSemana;
 import br.gov.mt.sejudh.sigepen.model.Cardapio;
 import br.gov.mt.sejudh.sigepen.model.dto.CardapioDTO;
@@ -39,9 +40,14 @@ public class CardapioDAO extends BaseDAO<Cardapio, Long> {
 	@SuppressWarnings("unchecked")
 	public List<CardapioDTO> buscaPorFiltro(FiltroCardapio filtro) {
 		Criteria criteria = filtro.criarCriteriaParaBusca(Cardapio.class, em);
-		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(CardapioDTO.class));
 		return criteria.list();
+	}
+
+	@Override
+	public int quantidadeFiltrados(FiltroConsulta filtro) {
+		Criteria criteria = filtro.criarCriteriaParaQuantidade(Cardapio.class, em);
+		return ((Number) criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue();
 	}
 
 	public Cardapio buscarPorId(Long id) {
