@@ -1,13 +1,15 @@
 package br.gov.mt.sejudh.sigepen.enumerator;
 
+import java.util.Objects;
+
 public enum DiasSemana {
-	DOM(1, "Domingo"),
-    SEG(2, "Segunda-Feira"),
-    TER(3, "Terça-Feira"),
-    QUA(4, "Quarta-Feira"),
-    QUI(5, "Quinta-Feira"),
-    SEX(6, "Sexta-Feira"),
-    SAB(7, "Sábado");
+	DOM(0, "Domingo"),
+    SEG(1, "Segunda-Feira"),
+    TER(2, "Terça-Feira"),
+    QUA(3, "Quarta-Feira"),
+    QUI(4, "Quinta-Feira"),
+    SEX(5, "Sexta-Feira"),
+    SAB(6, "Sábado");
     
 	private final Integer id;
     private final String descricao;
@@ -29,7 +31,7 @@ public enum DiasSemana {
 		if (id == null) return null;
 		
 		for (DiasSemana dia : DiasSemana.values()) {
-			if (dia.getId() == id) {
+			if (Objects.equals(dia.getId(), id)) {
 				return dia;
 			}
 		}
