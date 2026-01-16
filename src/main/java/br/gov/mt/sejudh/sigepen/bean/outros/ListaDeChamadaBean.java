@@ -192,8 +192,8 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 	}
 
 	private void validarParametrosConfere() throws ValidacaoException {
-		if ((filtroConfere.getDataFinal() == null) || (filtroConfere.getDataInicial() == null)) {
-			throw new ValidacaoException("As datas devem ser preenchidas.");
+		if ((filtroConfere.getDataFinal() == null) || (filtroConfere.getDataInicial() == null) || (filtroConfere.getTipoPlantaoInicial() == null)) {
+			throw new ValidacaoException("As datas e o plantão devem ser preenchidos.");
 		}
 
 		if (filtroConfere.getDataFinal().before(filtroConfere.getDataInicial())
