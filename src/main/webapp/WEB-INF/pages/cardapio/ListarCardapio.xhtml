@@ -88,6 +88,19 @@
 						converter="SimpleEntityConverter" 
 						display="text"
 				/>
+
+				<sgp:formSelectOneMenu 
+                		id="diaSemana" 
+                		labelValue="Dia da Semana" 
+                		itemsValue="#{cardapioBean.diasSemana}" 
+                		itemValue="#{item}" 
+                		itemLabel="#{item.descricao}"						
+						value="#{cardapioBean.filtro.diaSemana}" 
+						temSelecione="true"
+						styleFormLabelColumn="min-width:150px !important"
+						converter="SimpleEntityConverter" 
+						display="text"
+				/>
 					
 				<sgp:formSelectOneMenu
 						id="festivo" 
@@ -108,7 +121,8 @@
 		
 		<h:form id="registrosForm">
 			<p:dataTable id="dataTable" var="cardapio" value="#{cardapioBean.cardapios}" emptyMessage="Nenhum registro encontrado."
-				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{cardapio.id}">
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{cardapio.id}"
+				rowsPerPageTemplate="10,20,30,50">
 				
 				<p:column headerText="Código" style="width:100px;" sortBy="#{cardapio.id}">
 					<h:outputText value="#{cardapio.id}" />
@@ -126,7 +140,7 @@
 					<h:outputText value="#{cardapio.semana}" />
 				</p:column>
 				
-				<p:column headerText="Dia" sortBy="#{cardapio.diaSemana.descricao}">
+				<p:column headerText="Dia" sortBy="#{cardapio.diaSemana}">
 					<h:outputText value="#{cardapio.diaSemana.descricao}" />
 				</p:column>
 
