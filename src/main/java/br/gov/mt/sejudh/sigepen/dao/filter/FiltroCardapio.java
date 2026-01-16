@@ -1,10 +1,12 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
 import br.gov.mt.sejudh.sigepen.model.TipoDieta;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.primefaces.model.SortOrder;
 
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
@@ -30,6 +32,17 @@ public class FiltroCardapio extends FiltroConsulta {
 		getCriteria().createAlias("contrato", "contrato", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("contrato.unidades", "unidade", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("tipoDieta", "tipoDieta", JoinType.LEFT_OUTER_JOIN);
+
+		if ("diaSemana.descricao".equals(getPropriedadeOrdenacao())) {
+			setPropriedadeOrdenacao("diaSemana");
+			if (getSortOrder() != null) {
+				if (SortOrder.ASCENDING.equals(getSortOrder())) {
+					setOrdenacao(Order.asc("diaSemana"));
+				} else {
+					setOrdenacao(Order.desc("diaSemana"));
+				}
+			}
+		}
 
 		Projection proj = Projections.distinct(Projections.projectionList()
 				.add(Projections.property("id").as("id"))
