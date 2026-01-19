@@ -31,10 +31,10 @@ public class Crime implements Serializable{
 	@Column(name = "ID_LEGISLACAO")
 	private long idLegislacao;
 
-	@Column(name = "NOME_LEGISLACAO", columnDefinition="NVARCHAR2")
+	@Column(name = "NOME_LEGISLACAO", columnDefinition="NVARCHAR2", nullable = false)
 	private String nomeLegislacao;
 
-	@Column(name = "ARTIGO", columnDefinition="NVARCHAR2")
+	@Column(name = "ARTIGO", columnDefinition="NVARCHAR2", nullable = false)
 	private String numArtigo;
 	
 	@Column(name = "PARAGRAFO", columnDefinition="NVARCHAR2")
@@ -46,7 +46,7 @@ public class Crime implements Serializable{
 	@Column(name = "ALINEA", columnDefinition="NVARCHAR2")
 	private String numAlinea;
 	
-	@Column(name = "DETALHAMENTO", columnDefinition="NVARCHAR2")
+	@Column(name = "DETALHAMENTO", columnDefinition="NVARCHAR2", nullable = false)
 	private String detalhamento;
 	
 	@Enumerated
