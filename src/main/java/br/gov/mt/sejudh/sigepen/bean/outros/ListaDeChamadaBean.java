@@ -20,6 +20,8 @@ import com.ocpsoft.pretty.faces.annotation.URLAction;
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.context.RequestContext;
+import java.util.stream.Collectors;
+
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -163,8 +165,16 @@ public class ListaDeChamadaBean extends MetodosDialogBean {
 					er.setRecuperandos(listaDeChamadaService.listarRecuperando(er.getIdEstrutura(), false));
 				}
 			}
+			
+			List<Plantao> plantoes = gerarListaPlantoes();
 
-			parameters.put("PLANTOES", gerarListaPlantoes());
+			List<String> nomesPlantoes = plantoes.stream()
+			    .map(p -> p != null && p.getTipoPlantao() != null ? p.getTipoPlantao().getName() : "")
+			    .collect(Collectors.toList());
+
+
+				parameters.put("PLANTOES", nomesPlantoes);
+	
 
 			fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(estruturaRelatorio, Relatorio.ListaDeConfere, parameters));
 			RequestContext.getCurrentInstance().execute("download()");

@@ -71,9 +71,13 @@ public class CrimeBean extends MetodosDePaginaBean {
 	@URLAction(onPostback=false)
 	public String init() {
 		try {
+			this.setLegislacoes(service.listarLegislacoes());
+			this.artigos = new ArrayList<String>();
+			
 			switch(this.getAcaoDeTela()) {
 				case CADASTRAR:
 					this.crime = new Crime();
+					
 					break;
 					
 				case VISUALIZAR:
@@ -85,13 +89,13 @@ public class CrimeBean extends MetodosDePaginaBean {
 						return "pretty:ListarCrime";
 					}
 					
+					List<String> artigosEncontrados = this.service.listarArtigos(this.crime.getNomeLegislacao());
+					this.setArtigos(artigosEncontrados); 
+					
 					logDeAcesso(log, this.crime);
 					break;
 					
 				case LISTAR:
-					this.setLegislacoes(service.listarLegislacoes());				
-					this.artigos = new ArrayList<String>();
-					
 					pesquisar();
 					logDeAcesso(log, "Crimes");
 					break;
@@ -153,6 +157,7 @@ public class CrimeBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.EXCLUIR, crime, e, log);
 		}
 	}
+
 	
 	public void pesquisar() {
 		this.crimes = new LazyDataModel<Crime>() {
@@ -192,9 +197,22 @@ public class CrimeBean extends MetodosDePaginaBean {
 	}
 	
 	public void listarArtigos(){
-		this.setArtigos(service.listarArtigos(this.filtro.getLegislacao()));
+		String legislacao = null;
+		
+		if(this.crime != null && this.crime.getNomeLegislacao() != null) {
+			legislacao = this.crime.getNomeLegislacao();
+		} else if (this.filtro != null && this.filtro.getLegislacao() != null) {
+			legislacao = this.filtro.getLegislacao();
+		}
+		
+		if(legislacao != null) {
+			this.setArtigos(service.listarArtigos(legislacao));
+		} else {
+			this.setArtigos(new ArrayList<String>());
+		}
 	}
-
+	
+	
 	public FiltroCrime getFiltro() {
 		return filtro;
 	}
