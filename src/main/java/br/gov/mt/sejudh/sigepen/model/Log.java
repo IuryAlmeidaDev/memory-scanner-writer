@@ -30,7 +30,7 @@ public class Log implements Serializable {
 	@Column(name = "NIVEL")
 	private String nivel;
 	
-	@Column(name = "MESSAGE", length = 4000)
+	@Column(name = "MESSAGE")
 	private String mensagem;	
 
 	@Column(name ="USUARIO_ID")

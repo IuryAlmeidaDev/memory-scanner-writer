@@ -2,7 +2,6 @@ package br.gov.mt.sejudh.sigepen.util;
 
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.LogSeverity;
-import br.gov.mt.sejudh.sigepen.model.Usuario;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -201,9 +200,17 @@ public class LoggerUtil implements Serializable {
         // Preenche contexto de thread com informações do usuário e IP de forma null-safe
         String loginUser = "anonymous";
         try {
-            Usuario usuario = SecurityUtil.getUsuario();
+            Object usuario = SecurityUtil.getUsuario();
             if (usuario != null) {
-                loginUser = String.valueOf(usuario.getId());
+                // getId() pode não existir em tempo de compilação como Object; usar reflexão leve para evitar dependência forte
+                try {
+                    java.lang.reflect.Method m = usuario.getClass().getMethod("getId");
+                    Object id = m.invoke(usuario);
+                    if (id != null) {
+                        loginUser = String.valueOf(id);
+                    }
+                } catch (Exception ignore) {
+                }
             }
         } catch (Exception ignore) {
         }
@@ -216,31 +223,20 @@ public class LoggerUtil implements Serializable {
 
 		String mensagem = configuraMensagem(acao, severidade, objeto);
 		
-		if (mensagem != null && mensagem.length() > 4000) {
-			mensagem = mensagem.substring(0, 3997) + "...";
-		}
-		
-		try {
-			switch(severidade) {
-				case ERRO:
-					log.error(mensagem, e);
-					break;
+		switch(severidade) {
+			case ERRO:
+				log.error(mensagem, e);
+				break;
+			
+			case INFO:
+				log.info(mensagem);
+				break;
 				
-				case INFO:
-					log.info(mensagem);
-					break;
-					
-				default:
-					if (e != null) {
-						log.error("{} {}", mensagem, e.getMessage(), e);
-					}
-					break;
-			}
-		} catch (Exception ex) {
-			// Fallback para console caso o JDBCAppender falhe (já que ignoreExceptions="false")
-			System.err.println("[FALLBACK-LOG] Erro ao gravar log no banco: " + ex.getMessage());
-			System.err.println("[FALLBACK-LOG] Mensagem original: " + mensagem);
-			if (e != null) e.printStackTrace();
+			default:
+                if (e != null) {
+                    log.error("{} {}", mensagem, e.getMessage(), e);
+                }
+                break;
 		}
 	}
 
