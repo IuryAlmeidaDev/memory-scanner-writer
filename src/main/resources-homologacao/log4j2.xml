@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
-  <StatusListener class="org.apache.logging.log4j.status.StatusConsoleListener" level="ERROR"/>
   <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-    </Console>
-    <JDBC name="databaseAppender" tableName="SIGEPEN_AUDIT_OWNER.LOG" ignoreExceptions="false">
-      <ConnectionFactory class="br.gov.mt.sejudh.sigepen.util.LogConnectionFactory" method="getConnection" />
+    <JDBC name="databaseAppender" tableName="SIGEPEN_AUDIT_OWNER.LOG">
+      <DataSource jndiName="java:/sigepen" />
       <Column name="ID" literal="SIGEPEN_AUDIT_OWNER.SEQ_LOG.NEXTVAL" />
       <Column name="DATALOG" isEventTimestamp="true" />
       <Column name="NIVEL" pattern="%level" />
@@ -21,7 +17,6 @@
   <Loggers>
     <Root level="info">
       <AppenderRef ref="databaseAppender"/>
-      <AppenderRef ref="Console"/>
     </Root>
   </Loggers>
 </Configuration>
