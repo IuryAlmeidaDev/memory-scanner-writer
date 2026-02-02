@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -37,11 +38,12 @@ import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
-import br.gov.mt.sejudh.sigepen.model.dto.PessoaDTO;
+import br.gov.mt.sejudh.sigepen.listener.VisitanteListener;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
 @Entity
+@EntityListeners(VisitanteListener.class)
 @Table(name = "SGP_VISITANTE", schema = Sigepen.SEJUDH_SCHEMA)
 public class Visitante extends BaseModel<Long> {
 
@@ -60,6 +62,10 @@ public class Visitante extends BaseModel<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PESSOA_RESPONSAVEL")
     private Visitante responsavel;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DATA_HORA_FIM_RESPONSAVEL")
+    private Date dataHorarioFimResponsavel;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UNIDADE_PRISIONAL")
@@ -505,4 +511,14 @@ public class Visitante extends BaseModel<Long> {
     public void setOcorrencias(List<Ocorrencia> ocorrencias) {
         this.ocorrencias = ocorrencias;
     }
+
+	public Date getDataHorarioFimResponsavel() {
+		return dataHorarioFimResponsavel;
+	}
+
+	public void setDataHorarioFimResponsavel(Date dataHorarioFimResponsavel) {
+		this.dataHorarioFimResponsavel = dataHorarioFimResponsavel;
+	}
+    
+    
 }
