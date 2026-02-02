@@ -31,6 +31,7 @@ public class VisitanteListener {
 	        if (idade >= 18) {
 	            visitante.setResponsavel(null);
 	            visitante.setEmancipado(null);
+	            visitante.setDataHorarioFimResponsavel(new java.util.Date());
 	            if (visitante.getVisitantesReponsaveis() != null) {
 	                visitante.getVisitantesReponsaveis().clear();
 	            }

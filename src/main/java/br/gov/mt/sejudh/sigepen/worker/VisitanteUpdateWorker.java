@@ -23,6 +23,11 @@ public class VisitanteUpdateWorker {
                 
                 v.setResponsavel(null);
                 v.setEmancipado(null);
+                v.setDataHorarioFimResponsavel(new java.util.Date());
+                
+                if (v.getVisitantesReponsaveis() != null) {
+	                v.getVisitantesReponsaveis().clear();
+	            }
                 
                 em.merge(v);
                 em.flush(); 

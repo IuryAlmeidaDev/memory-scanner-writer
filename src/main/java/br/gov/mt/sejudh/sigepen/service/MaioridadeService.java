@@ -46,12 +46,13 @@ public class MaioridadeService {
             Date dataLimite = cal.getTime();
 
             List<Long> loteIds = em.createQuery(
-                "SELECT v.id FROM Visitante v JOIN v.pessoa p " +
-                "WHERE p.dataNascimento <= :dataLimite " +
-                "AND (v.responsavel IS NOT NULL OR v.emancipado IS NOT NULL)", Long.class)
-                .setParameter("dataLimite", dataLimite)
-                .setMaxResults(100) 
-                .getResultList();
+            	    "SELECT v.id FROM Visitante v JOIN v.pessoa p " +
+            	    "WHERE p.dataNascimento <= :dataLimite " +
+            	    "AND v.dataHorarioFimResponsavel IS NULL " + 
+            	    "AND (v.responsavel IS NOT NULL OR v.emancipado IS NOT NULL)", Long.class)
+            	    .setParameter("dataLimite", dataLimite)
+            	    .setMaxResults(100) 
+            	    .getResultList();
 
             if (loteIds.isEmpty()) {
                 System.out.println(">>> [LOG SIGEPEN] Nada para processar.");

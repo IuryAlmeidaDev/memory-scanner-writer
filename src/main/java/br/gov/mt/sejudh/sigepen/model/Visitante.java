@@ -62,6 +62,10 @@ public class Visitante extends BaseModel<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PESSOA_RESPONSAVEL")
     private Visitante responsavel;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DATA_HORA_FIM_RESPONSAVEL")
+    private Date dataHorarioFimResponsavel;
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UNIDADE_PRISIONAL")
@@ -507,4 +511,14 @@ public class Visitante extends BaseModel<Long> {
     public void setOcorrencias(List<Ocorrencia> ocorrencias) {
         this.ocorrencias = ocorrencias;
     }
+
+	public Date getDataHorarioFimResponsavel() {
+		return dataHorarioFimResponsavel;
+	}
+
+	public void setDataHorarioFimResponsavel(Date dataHorarioFimResponsavel) {
+		this.dataHorarioFimResponsavel = dataHorarioFimResponsavel;
+	}
+    
+    
 }
