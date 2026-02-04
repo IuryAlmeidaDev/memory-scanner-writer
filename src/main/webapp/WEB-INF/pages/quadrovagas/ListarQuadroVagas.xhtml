@@ -34,7 +34,8 @@
 				<br />
 				<br />
 				<p:commandButton value="Pesquisar" update=":registrosForm"
-					process="@form" icon="ui-icon-search" />
+					process="@form" icon="ui-icon-search"
+					action="#{quadroVagasBean.pesquisar()}" />
 				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
 					actionListener="#{quadroVagasBean.imprimir()}" />
 			</p:panel>
