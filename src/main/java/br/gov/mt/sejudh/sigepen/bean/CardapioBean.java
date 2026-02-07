@@ -1,6 +1,9 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +13,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.util.CardapioUtil;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -157,12 +161,14 @@ public class CardapioBean extends MetodosDePaginaBean {
 		if (id <= 0) {
 			return false;
 		}
-		
+
 		this.cardapio = service.buscarPorId(id);
 		
 		ObjetoSelectOne semana = new ObjetoSelectOne();
 		semana.setId(this.cardapio.getSemana());
 		this.setSemanaSelecionada(semana);
+		
+		calcularProximaDataAoAlterarSemanaOuDia();
 
 		return this.cardapio != null;
 	}
@@ -183,7 +189,28 @@ public class CardapioBean extends MetodosDePaginaBean {
 					e.printStackTrace();
 				}
 
-				return service.buscarDTOPorFiltro(getFiltro());
+				List<CardapioDTO> dtos = service.buscarDTOPorFiltro(getFiltro());
+				for (CardapioDTO dto : dtos) {
+					if (dto.getSemana() != null && dto.getDiaSemana() != null) {
+						LocalDate proxima = CardapioUtil.calcularProximaData(dto.getSemana().intValue(),
+								dto.getDiaSemana().getId(), LocalDate.now());
+						if (proxima != null) {
+							dto.setProximaData(Date.from(proxima.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+						}
+					}
+				}
+
+				if ("proximaData".equals(getFiltro().getPropriedadeOrdenacao())) {
+					dtos.sort((c1, c2) -> {
+						if (c1.getProximaData() == null && c2.getProximaData() == null) return 0;
+						if (c1.getProximaData() == null) return 1;
+						if (c2.getProximaData() == null) return -1;
+						int comp = c1.getProximaData().compareTo(c2.getProximaData());
+						return SortOrder.ASCENDING.equals(getFiltro().getSortOrder()) ? comp : -comp;
+					});
+				}
+
+				return dtos;
 			}
 		});
 	}
@@ -366,6 +393,48 @@ public class CardapioBean extends MetodosDePaginaBean {
 
 	public void setSemanaSelecionada(ObjetoSelectOne semanaSelecionada) {
 		this.semanaSelecionada = semanaSelecionada;
-		this.cardapio.setSemana(semanaSelecionada.getId());
+		if (this.semanaSelecionada != null && this.semanaSelecionada.getId() != null) {
+			this.cardapio.setSemana(this.semanaSelecionada.getId());
+			calcularProximaDataAoAlterarSemanaOuDia();
+		}
+	}
+
+	public void onDiaSemanaChange() {
+		calcularProximaDataAoAlterarSemanaOuDia();
+	}
+
+	public void onDataChange() {
+		if (this.cardapio.getData() != null) {
+			LocalDate localDate = this.cardapio.getData().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			int numSemanaAno = CardapioUtil.obterNumeroSemanaAno(new java.text.SimpleDateFormat("dd/MM/yyyy").format(this.cardapio.getData()));
+			int semanaCiclo = CardapioUtil.obterSemana(numSemanaAno);
+			int diaSemanaId = CardapioUtil.obterDiaSemana(localDate);
+
+			this.cardapio.setSemana((long) semanaCiclo);
+			this.cardapio.setDiaSemana(DiasSemana.getValue(diaSemanaId));
+
+			ObjetoSelectOne semana = new ObjetoSelectOne();
+			semana.setId((long) semanaCiclo);
+			semana.setDescricao(semanaCiclo + "ª Semana");
+			this.setSemanaSelecionada(semana);
+			
+			this.cardapio.setProximaData(this.cardapio.getData());
+		} else {
+			this.cardapio.setProximaData(null);
+		}
+	}
+
+	private void calcularProximaDataAoAlterarSemanaOuDia() {
+		if (this.cardapio.getSemana() != null && this.cardapio.getDiaSemana() != null) {
+			LocalDate proxima = CardapioUtil.calcularProximaData(this.cardapio.getSemana().intValue(),
+					this.cardapio.getDiaSemana().getId(), LocalDate.now());
+			if (proxima != null) {
+				this.cardapio.setProximaData(Date.from(proxima.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			} else {
+				this.cardapio.setProximaData(null);
+			}
+		} else {
+			this.cardapio.setProximaData(null);
+		}
 	}
 }
