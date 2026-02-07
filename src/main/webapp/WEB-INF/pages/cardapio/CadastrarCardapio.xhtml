@@ -74,8 +74,9 @@
                    converter="SimpleEntityConverter"
                    disabled="#{cardapioBean.isVisualizacao}"
                    temSelecione="true"
-                   display="text"
-               	/>
+                   display="text">
+                   <p:ajax event="change" listener="#{cardapioBean.onDiaSemanaChange}" update=":formCardapio:proximaDataPanel" />
+                </sgp:formSelectOneMenu>
                	
                	<sgp:formSelectOneMenu
                    id="semana"
@@ -90,7 +91,24 @@
                    disabled="#{cardapioBean.isVisualizacao}"
                    temSelecione="true"
                    display="text">
+                   <p:ajax event="change" update=":formCardapio:proximaDataPanel" />
                	</sgp:formSelectOneMenu>
+
+                <h:panelGroup id="proximaDataPanel">
+                    <div class="form-block" style="display: #{cardapioBean.cardapio.proximaData != null ? 'block' : 'none'}">
+                        <div class="form-label-column" style="width: 140px">
+                            <h:outputLabel value="Próxima Ocorrência:" />
+                        </div>
+                        <div class="form-required-column">
+                            <p:spacer width="15px" />
+                        </div>
+                        <div class="form-input-column">
+                            <h:outputText value="#{cardapioBean.cardapio.proximaData}" style="font-weight: bold; padding-left: 5px;">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </div>
+                    </div>
+                </h:panelGroup>
                    
                	<sgp:formSelectOneMenu 
                    id="festivo"
@@ -103,7 +121,7 @@
                    display="text">
                        <f:selectItem itemLabel="Sim" itemValue="true" />
                        <f:selectItem itemLabel="Não" itemValue="false" />
-                       <f:ajax event="change" render=":formCardapio:dataFestivo"/>
+                       <f:ajax event="change" render=":formCardapio:dataFestivo :formCardapio:proximaDataPanel"/>
                	</sgp:formSelectOneMenu>
                
                	<h:panelGroup id="dataFestivo" >
@@ -113,8 +131,10 @@
 				        styleFormLabelColumn="width: 140px"
 				        value="#{cardapioBean.cardapio.data}" 
 				        disabled="#{cardapioBean.isVisualizacao}"
-				        rendered="#{cardapioBean.cardapio.festivo}"
-   					/>
+				        rendered="#{cardapioBean.cardapio.festivo}">
+                        <p:ajax event="dateSelect" listener="#{cardapioBean.onDataChange}" update=":formCardapio:semana :formCardapio:diaSemana :formCardapio:proximaDataPanel" />
+                        <p:ajax event="change" listener="#{cardapioBean.onDataChange}" update=":formCardapio:semana :formCardapio:diaSemana :formCardapio:proximaDataPanel" />
+                    </sgp:formCalendar>
 				</h:panelGroup>
                
                <br/> <br/>

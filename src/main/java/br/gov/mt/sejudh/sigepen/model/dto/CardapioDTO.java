@@ -4,6 +4,8 @@ import br.gov.mt.sejudh.sigepen.enumerator.DiasSemana;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.Date;
+
 public class CardapioDTO {
 
 	private long id;
@@ -14,6 +16,7 @@ public class CardapioDTO {
 	private Boolean festivo;
 	private String nomeUnidadePrisional;
 	private String numContrato;
+	private Date proximaData;
 	
 	public long getId() {
 		return id;
@@ -62,6 +65,14 @@ public class CardapioDTO {
 	}
 	public void setNumContrato(String numContrato) {
 		this.numContrato = numContrato;
+	}
+
+	public java.util.Date getProximaData() {
+		return proximaData;
+	}
+
+	public void setProximaData(java.util.Date proximaData) {
+		this.proximaData = proximaData;
 	}
 
 	@Override
