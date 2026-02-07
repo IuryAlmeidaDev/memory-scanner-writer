@@ -399,11 +399,32 @@ public class ContratoBean extends MetodosDePaginaBean {
 		if (horarioRefeicao == null)
 			return false;
 		
+		if (horarioRefeicao.getHorarioInicio() == null || horarioRefeicao.getHorarioInicio().length() != 4
+				|| horarioRefeicao.getHorarioFim() == null || horarioRefeicao.getHorarioFim().length() != 4) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO",
+					"Horário da refeição inválido: deve informar o horário no formato HHmm.");
+			return false;
+		}
+
+		Integer horaMinima = 0;
 		Integer horaMaxima = 23;
 		Integer minutoMaximo = 59;
-		if(Integer.parseInt(horarioRefeicao.horario().substring(0, 2)) > horaMaxima && Integer.parseInt(horarioRefeicao.horario().substring(3, 5)) > minutoMaximo) {
+		
+		int hInicio = Integer.parseInt(horarioRefeicao.getHorarioInicio().substring(0, 2));
+		int mInicio = Integer.parseInt(horarioRefeicao.getHorarioInicio().substring(2, 4));
+		int hFim = Integer.parseInt(horarioRefeicao.getHorarioFim().substring(0, 2));
+		int mFim = Integer.parseInt(horarioRefeicao.getHorarioFim().substring(2, 4));
+
+		if (hInicio < horaMinima || hInicio > horaMaxima || mInicio > minutoMaximo ||
+			hFim < horaMinima || hFim > horaMaxima || mFim > minutoMaximo) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO",
-					"Horário da refeição inválida: deve informar um horario entre 00:01 a 23:59");
+					"Horário da refeição inválido: as horas devem ser entre 00 e 23 e os minutos entre 00 e 59.");
+			return false;
+		}
+		
+		if (Integer.parseInt(horarioRefeicao.getHorarioInicio()) > Integer.parseInt(horarioRefeicao.getHorarioFim())) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO",
+					"Horário da refeição inválido: o horário de início não pode ser maior que o horário de fim.");
 			return false;
 		}
 

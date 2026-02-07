@@ -50,8 +50,11 @@ public class HorarioRefeicao extends BaseModel<Long> {
 	@Column(name = "DATA_FIM", nullable = false)
 	private Date dataFim;
 	
-	@Column(name = "HORARIO")
-	private String horario;
+	@Column(name = "HORARIO_INICIO")
+	private String horarioInicio;
+
+	@Column(name = "HORARIO_FIM")
+	private String horarioFim;
 	
 	public HorarioRefeicao() {
 		
@@ -59,13 +62,14 @@ public class HorarioRefeicao extends BaseModel<Long> {
 	
 	public HorarioRefeicao(Object[] row) {
 		TipoRefeicao tipoRefeicao = new TipoRefeicao();
-		this.horario = (String) row[0];
-		tipoRefeicao.setId(((BigDecimal) row[1]).longValue());
+		this.horarioInicio = (String) row[0];
+		this.horarioFim = (String) row[1];
+		tipoRefeicao.setId(((BigDecimal) row[2]).longValue());
 		this.tipoRefeicao = tipoRefeicao;
 	}
 
 	public String horarioFormatado() {
-		return this.horario.substring(0, 2) + ":" + this.horario.substring(2);
+		return formatarHora(this.horarioInicio) + " às " + formatarHora(this.horarioFim);
 	}
 
 	@Override
@@ -117,12 +121,20 @@ public class HorarioRefeicao extends BaseModel<Long> {
 		this.dataFim = dataFim;
 	}
 	
-	public String getHorario() {
-		return horario;
+	public String getHorarioInicio() {
+		return horarioInicio;
 	}
 
-	public void setHorario(String horario) {
-		this.horario = horario;
+	public void setHorarioInicio(String horarioInicio) {
+		this.horarioInicio = horarioInicio;
+	}
+
+	public String getHorarioFim() {
+		return horarioFim;
+	}
+
+	public void setHorarioFim(String horarioFim) {
+		this.horarioFim = horarioFim;
 	}
 	
 	private String formatarHora(String hora) {
@@ -132,9 +144,7 @@ public class HorarioRefeicao extends BaseModel<Long> {
 	}
 	
 	public String horario() {
-		if(this.horario == null)
-			this.horario = "";
-		return formatarHora(this.horario);
+		return formatarHora(this.horarioInicio) + " - " + formatarHora(this.horarioFim);
 	}
 	
 	@Override
@@ -163,7 +173,7 @@ public class HorarioRefeicao extends BaseModel<Long> {
     
     @Override
 	public String toString() {
-		return "Refeicao [id=" + id + ", nome=" + tipoRefeicao.getDescricao() + ", horario=" + horario + "]";
+		return "Refeicao [id=" + id + ", nome=" + (tipoRefeicao != null ? tipoRefeicao.getDescricao() : "") + ", horarioInicio=" + horarioInicio + ", horarioFim=" + horarioFim + "]";
 	}
 	
 }
