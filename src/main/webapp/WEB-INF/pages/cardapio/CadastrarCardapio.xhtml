@@ -95,7 +95,7 @@
                	</sgp:formSelectOneMenu>
 
                 <h:panelGroup id="proximaDataPanel">
-                    <div class="form-block" style="display: #{cardapioBean.cardapio.proximaData != null ? 'block' : 'none'}">
+                    <div class="form-block">
                         <div class="form-label-column" style="width: 140px">
                             <h:outputLabel value="Próxima Ocorrência:" />
                         </div>
@@ -103,9 +103,10 @@
                             <p:spacer width="15px" />
                         </div>
                         <div class="form-input-column">
-                            <h:outputText value="#{cardapioBean.cardapio.proximaData}" style="font-weight: bold; padding-left: 5px;">
+                            <h:outputText value="#{cardapioBean.cardapio.proximaData}" style="font-weight: bold; padding-left: 5px;" rendered="#{cardapioBean.cardapio.proximaData != null}">
                                 <f:convertDateTime pattern="dd/MM/yyyy" />
                             </h:outputText>
+                            <h:outputText value="--/--/----" style="font-weight: bold; padding-left: 5px;" rendered="#{cardapioBean.cardapio.proximaData == null}" />
                         </div>
                     </div>
                 </h:panelGroup>
@@ -115,6 +116,9 @@
                    labelValue="Cardápio Festivo?"
                    styleFormLabelColumn="width: 140px"
                    value="#{cardapioBean.cardapio.festivo}"
+                   itemsValue="#{null}"
+                   itemValue="#{null}"
+                   itemLabel=""
                    validationRequired="true"
                    temSelecione="true"
                    disabled="#{cardapioBean.isVisualizacao}"

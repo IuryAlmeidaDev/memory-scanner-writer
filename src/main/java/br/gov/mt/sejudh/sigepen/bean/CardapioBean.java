@@ -177,7 +177,6 @@ public class CardapioBean extends MetodosDePaginaBean {
 		this.setCardapios(new LazyDataModel<CardapioDTO>() {
 			private static final long serialVersionUID = -6077221856355008621L;
 
-			@Override
 			public List<CardapioDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
 				getFiltro().setListarTodasUnidades(true);
@@ -200,14 +199,18 @@ public class CardapioBean extends MetodosDePaginaBean {
 					}
 				}
 
-				if ("proximaData".equals(getFiltro().getPropriedadeOrdenacao())) {
-					dtos.sort((c1, c2) -> {
-						if (c1.getProximaData() == null && c2.getProximaData() == null) return 0;
-						if (c1.getProximaData() == null) return 1;
-						if (c2.getProximaData() == null) return -1;
-						int comp = c1.getProximaData().compareTo(c2.getProximaData());
-						return SortOrder.ASCENDING.equals(getFiltro().getSortOrder()) ? comp : -comp;
+				if ("proximaData".equals(sortField)) {
+					List<CardapioDTO> sortedDtos = new ArrayList<>(dtos);
+					sortedDtos.sort((c1, c2) -> {
+						Date d1 = c1.getProximaData();
+						Date d2 = c2.getProximaData();
+						if (d1 == null && d2 == null) return 0;
+						if (d1 == null) return 1;
+						if (d2 == null) return -1;
+						int comp = d1.compareTo(d2);
+						return SortOrder.ASCENDING.equals(sortOrder) ? comp : -comp;
 					});
+					return sortedDtos;
 				}
 
 				return dtos;
@@ -395,8 +398,10 @@ public class CardapioBean extends MetodosDePaginaBean {
 		this.semanaSelecionada = semanaSelecionada;
 		if (this.semanaSelecionada != null && this.semanaSelecionada.getId() != null) {
 			this.cardapio.setSemana(this.semanaSelecionada.getId());
-			calcularProximaDataAoAlterarSemanaOuDia();
+		} else {
+			this.cardapio.setSemana(null);
 		}
+		calcularProximaDataAoAlterarSemanaOuDia();
 	}
 
 	public void onDiaSemanaChange() {
