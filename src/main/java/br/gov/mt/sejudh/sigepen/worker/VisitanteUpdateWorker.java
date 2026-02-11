@@ -32,6 +32,7 @@ public class VisitanteUpdateWorker {
                 em.merge(v);
                 em.flush(); 
                 System.out.println(">>> [SUCESSO] ID " + idVisitante + " (" + nome + ") agora é MAIOR.");
+                System.out.println(">>> [DATA] : " + v.getDataHorarioFimResponsavel());
             }
         } catch (Exception e) {
             System.err.println(">>> [ERRO CRÍTICO] Falha ao processar ID " + idVisitante + ": " + e.getMessage());
