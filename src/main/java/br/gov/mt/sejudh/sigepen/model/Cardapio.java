@@ -74,6 +74,9 @@ public class Cardapio extends BaseModel<Long> {
 	@Column(name = "DATA")
 	private Date data;
 
+	@javax.persistence.Transient
+	private Date proximaData;
+
 	public Cardapio() {
 		this.itensCardapio = new ArrayList<>();
 	}
@@ -134,7 +137,15 @@ public class Cardapio extends BaseModel<Long> {
 	public void setData(Date data) {
 		this.data = data;
 	}
-	
+
+	public Date getProximaData() {
+		return proximaData;
+	}
+
+	public void setProximaData(Date proximaData) {
+		this.proximaData = proximaData;
+	}
+
 	public TipoDieta getTipoDieta() {
 		return tipoDieta;
 	}

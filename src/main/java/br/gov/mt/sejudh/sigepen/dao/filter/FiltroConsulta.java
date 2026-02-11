@@ -150,10 +150,14 @@ public abstract class FiltroConsulta implements Serializable {
 		this.setPropriedadeOrdenacao(sortField);
 		this.sortOrder = sortOrder;
 		
-		if (isAscendente() && getPropriedadeOrdenacao() != null) {
-			this.ordenacao = Order.asc(getPropriedadeOrdenacao());
-		} else if(getPropriedadeOrdenacao() != null){
-			this.ordenacao = Order.desc(getPropriedadeOrdenacao());
+		if (getPropriedadeOrdenacao() != null && !"proximaData".equals(getPropriedadeOrdenacao())) {
+			if (isAscendente()) {
+				this.ordenacao = Order.asc(getPropriedadeOrdenacao());
+			} else {
+				this.ordenacao = Order.desc(getPropriedadeOrdenacao());
+			}
+		} else {
+			this.ordenacao = null; // evita ordenar no banco por campos transitórios como proximaData
 		}
 	}
 	
