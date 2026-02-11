@@ -28,8 +28,15 @@
                     validationRequired="true" 
                	/>
 					
-				<sgp:formInputMask labelValue="Horário da Refeição" mask="99:99" maxlength="5"
-					value="#{associarHorarioRefeicaoBean.horarioRefeicao.horario}"
+				<sgp:formInputMask labelValue="Horário Início" mask="99:99" maxlength="5"
+					value="#{associarHorarioRefeicaoBean.horarioRefeicao.horarioInicio}"
+					display="text" styleFormLabelColumn="width: 100px"
+					converter="HoraConverter"
+					validationRequired="true" 
+				 />
+
+				<sgp:formInputMask labelValue="Horário Fim" mask="99:99" maxlength="5"
+					value="#{associarHorarioRefeicaoBean.horarioRefeicao.horarioFim}"
 					display="text" styleFormLabelColumn="width: 100px"
 					converter="HoraConverter"
 					validationRequired="true" 

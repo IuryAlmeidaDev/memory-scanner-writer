@@ -65,7 +65,9 @@ public class FiltroCardapio extends FiltroConsulta {
 		}
 
 		if (!paraContagem) {
-			if ("diaSemana".equals(getPropriedadeOrdenacao())) {
+ 		if ("proximaData".equals(getPropriedadeOrdenacao())) {
+			setOrdenacao(null);
+		} else if ("diaSemana".equals(getPropriedadeOrdenacao())) {
 				if (getSortOrder() != null) {
 					if (SortOrder.ASCENDING.equals(getSortOrder())) {
 						setOrdenacao(Order.asc("diaSemana"));

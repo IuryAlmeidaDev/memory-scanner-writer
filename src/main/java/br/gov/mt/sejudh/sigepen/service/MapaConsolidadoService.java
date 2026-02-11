@@ -33,9 +33,12 @@ public class MapaConsolidadoService {
 	@Inject
 	private ContratoService contratoService;
 
-	private Long cafeManha;
-	private Long almoco;
-	private Long janta;
+	private Long cafeManhaInicio;
+	private Long cafeManhaFim;
+	private Long almocoInicio;
+	private Long almocoFim;
+	private Long jantaInicio;
+	private Long jantaFim;
 	private boolean especial;
 	private final Long horaMaxima = 2359L;
 	private final Long horaMinima = 1L;
@@ -65,11 +68,14 @@ public class MapaConsolidadoService {
 		Long jantaId = 3L;
 		horariosRefeicoes.forEach(horarios -> {
 			if (horarios.getTipoRefeicao().getId() == cafeManhaId) {
-				this.cafeManha = Long.parseLong(horarios.getHorario());
+				this.cafeManhaInicio = Long.parseLong(horarios.getHorarioInicio());
+				this.cafeManhaFim = Long.parseLong(horarios.getHorarioFim());
 			} else if (horarios.getTipoRefeicao().getId() == almocoId) {
-				this.almoco = Long.parseLong(horarios.getHorario());
+				this.almocoInicio = Long.parseLong(horarios.getHorarioInicio());
+				this.almocoFim = Long.parseLong(horarios.getHorarioFim());
 			} else if (horarios.getTipoRefeicao().getId() == jantaId) {
-				this.janta = Long.parseLong(horarios.getHorario());
+				this.jantaInicio = Long.parseLong(horarios.getHorarioInicio());
+				this.jantaFim = Long.parseLong(horarios.getHorarioFim());
 			}
 		});
 	}
@@ -257,7 +263,7 @@ public class MapaConsolidadoService {
 			qtdDiasEspecial = this
 					.validarQtdDiasPeloHorario(diasEspecial,
 							this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEspecialEntrada(),
-									mapaConsolidadoRecuperando.getHorarioEspecialSaida(), this.cafeManha),
+									mapaConsolidadoRecuperando.getHorarioEspecialSaida(), this.cafeManhaInicio, this.cafeManhaFim),
 							this.especial);
 
 			mapaConsolidadoRecuperando.setDiasRecuperandoCafeEspecial(qtdDiasEspecial);
@@ -265,7 +271,7 @@ public class MapaConsolidadoService {
 
 			qtdDiasNormal = this.validarQtdDiasPeloHorario(diasNormal,
 					this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEntrada(),
-							mapaConsolidadoRecuperando.getHorarioSaida(), this.cafeManha));
+							mapaConsolidadoRecuperando.getHorarioSaida(), this.cafeManhaInicio, this.cafeManhaFim));
 
 			mapaConsolidadoRecuperando.setDiasRecuperandoCafeNormal(qtdDiasNormal - qtdDiasEspecial);
 			mapaConsolidadoRecuperando.setCafeManha(mapaConsulta.getValorNormal() * (qtdDiasNormal - qtdDiasEspecial));
@@ -274,7 +280,7 @@ public class MapaConsolidadoService {
 
 			qtdDiasEspecial = this.validarQtdDiasPeloHorario(diasEspecial,
 					this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEspecialEntrada(),
-							mapaConsolidadoRecuperando.getHorarioEspecialSaida(), this.almoco),
+							mapaConsolidadoRecuperando.getHorarioEspecialSaida(), this.almocoInicio, this.almocoFim),
 					this.especial);
 
 			mapaConsolidadoRecuperando.setDiasRecuperandoAlmocoEspecial(qtdDiasEspecial);
@@ -282,7 +288,7 @@ public class MapaConsolidadoService {
 
 			qtdDiasNormal = this.validarQtdDiasPeloHorario(diasNormal,
 					this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEntrada(),
-							mapaConsolidadoRecuperando.getHorarioSaida(), this.almoco));
+							mapaConsolidadoRecuperando.getHorarioSaida(), this.almocoInicio, this.almocoFim));
 
 			mapaConsolidadoRecuperando.setDiasRecuperandoAlmocoNormal(qtdDiasNormal - qtdDiasEspecial);
 			mapaConsolidadoRecuperando.setAlmoco(mapaConsulta.getValorNormal() * (qtdDiasNormal - qtdDiasEspecial));
@@ -291,7 +297,7 @@ public class MapaConsolidadoService {
 
 			qtdDiasEspecial = this.validarQtdDiasPeloHorario(diasEspecial,
 					this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEspecialEntrada(),
-							mapaConsolidadoRecuperando.getHorarioEspecialSaida(), this.janta),
+							mapaConsolidadoRecuperando.getHorarioEspecialSaida(), this.jantaInicio, this.jantaFim),
 					this.especial);
 
 			mapaConsolidadoRecuperando.setDiasRecuperandoJantaEspecial(qtdDiasEspecial);
@@ -299,15 +305,15 @@ public class MapaConsolidadoService {
 
 			qtdDiasNormal = this.validarQtdDiasPeloHorario(diasNormal,
 					this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEntrada(),
-							mapaConsolidadoRecuperando.getHorarioSaida(), this.janta));
+							mapaConsolidadoRecuperando.getHorarioSaida(), this.jantaInicio, this.jantaFim));
 
 			mapaConsolidadoRecuperando.setDiasRecuperandoJantaNormal(qtdDiasNormal - qtdDiasEspecial);
 			mapaConsolidadoRecuperando.setJanta(mapaConsulta.getValorNormal() * (qtdDiasNormal - qtdDiasEspecial));
 		}
 	}
 
-	private boolean validaHorarioPedidoPorRefeicao(Long horarioEntrada, Long horarioSaida, Long horarioRefeicao) {
-		return horarioSaida >= horarioRefeicao && horarioEntrada <= horarioRefeicao;
+	private boolean validaHorarioPedidoPorRefeicao(Long horarioEntrada, Long horarioSaida, Long horarioRefeicaoInicio, Long horarioRefeicaoFim) {
+		return horarioSaida >= horarioRefeicaoInicio && horarioEntrada <= horarioRefeicaoFim;
 	}
 
 	private int validarQtdDiasPeloHorario(int qtdDias, boolean horarioPedido) {

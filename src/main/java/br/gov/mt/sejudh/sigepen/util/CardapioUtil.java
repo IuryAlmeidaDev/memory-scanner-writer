@@ -54,4 +54,45 @@ public class CardapioUtil {
         }
         return resultado;
     }
+
+    /**
+     * Retorna a próxima data em que cairá a semana do ciclo e o dia da semana informados,
+     * a partir de uma data de referência.
+     *
+     * @param semanaCiclo Semana do ciclo (1 a 6)
+     * @param diaSemana   Dia da semana (0 a 6, onde 0 é Domingo)
+     * @param dataReferencia Data de início para a busca
+     * @return Próxima data correspondente
+     */
+    public static LocalDate calcularProximaData(int semanaCiclo, int diaSemana, LocalDate dataReferencia) {
+        LocalDate data = dataReferencia;
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+
+        // Procura nos próximos 12 meses (espaço de tempo suficiente para encontrar no ciclo de 6 semanas)
+        for (int i = 0; i < 366; i++) {
+            int numSemanaAno = data.get(weekFields.weekOfWeekBasedYear());
+            int cicloAtual = obterSemana(numSemanaAno);
+            int diaSemanaAtual = data.getDayOfWeek().getValue() % 7; // Ajusta para 0=Domingo se necessário, mas Java DayOfWeek é 1=Segunda, 7=Domingo
+
+            // DiasSemana enum: DOM(0), SEG(1), ... SAB(6)
+            // Java DayOfWeek: MONDAY(1) ... SUNDAY(7)
+            // Para alinhar:
+            int diaSemanaJavaToEnum = data.getDayOfWeek().getValue() % 7; 
+
+            if (cicloAtual == semanaCiclo && diaSemanaJavaToEnum == diaSemana) {
+                return data;
+            }
+            data = data.plusDays(1);
+        }
+        return null;
+    }
+
+    /**
+     * Obtém o dia da semana no formato do enum DiasSemana (0-6, onde 0 é Domingo)
+     * @param data Data
+     * @return id do dia da semana
+     */
+    public static int obterDiaSemana(LocalDate data) {
+        return data.getDayOfWeek().getValue() % 7;
+    }
 }

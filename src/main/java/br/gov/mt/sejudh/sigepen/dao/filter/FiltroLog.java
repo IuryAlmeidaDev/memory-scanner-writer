@@ -146,16 +146,25 @@ public class FiltroLog extends FiltroConsulta {
 			if (this.getAcao().equals(Acao.ERRO)) {
 				getCriteria().add(Restrictions.eq("nivel", "ERROR"));
 			} else {
-				getCriteria().add(Restrictions.ilike("mensagem", acaoMensagem(this.getAcao()), MatchMode.START));
+				getCriteria().add(Restrictions.ilike("mensagem", acaoMensagem(this.getAcao()), MatchMode.ANYWHERE));
 			}
 		}
 		
-		if(this.getDataInicio() != null){
-			getCriteria().add(Restrictions.ge("dataLog",this.getDataInicio()));
+		if (this.getDataInicio() != null) {
+			getCriteria().add(Restrictions.ge("dataLog", this.getDataInicio()));
 		}
-		
-		if(this.getDataFim()!= null){
+
+		if (this.getDataFim() != null) {
 			getCriteria().add(Restrictions.le("dataLog", this.getDataFim()));
 		}
+	}
+
+	@Override
+	public void organizaFiltro(int first, int pageSize, String sortField, org.primefaces.model.SortOrder sortOrder) {
+		if (sortField == null || sortField.isEmpty()) {
+			sortField = "id";
+			sortOrder = org.primefaces.model.SortOrder.DESCENDING;
+		}
+		super.organizaFiltro(first, pageSize, sortField, sortOrder);
 	}
 }

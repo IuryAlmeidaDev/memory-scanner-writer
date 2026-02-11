@@ -148,7 +148,7 @@ public class ContratoDAO {
 
 	public String horarioRefeiracaoPorUnidade(Long idUnidade, Long tipoRefeiracao) {
 		StringBuilder jpql = new StringBuilder(
-				"SELECT DISTINCT hr.horario  FROM " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c ");
+				"SELECT DISTINCT hr.horario_inicio || ' - ' || hr.horario_fim  FROM " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c ");
 		jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
 				+ ".CONTRATO_UNIDADE_PRISIONAL cup ON cup.CONTRATO_ID = c.ID AND cup.UNIDADE_PRISIONAL_ID = :idUnidade ");
 		jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
@@ -168,7 +168,7 @@ public class ContratoDAO {
 	@SuppressWarnings("unchecked")
 	public List<HorarioRefeicao> horarioRefeiracaoPorUnidade(Long idUnidade) {
 		StringBuilder jpql = new StringBuilder(
-				"SELECT DISTINCT hr.HORARIO,hr.TIPO_REFEICAO_ID  FROM " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c ");
+				"SELECT DISTINCT hr.HORARIO_INICIO, hr.HORARIO_FIM, hr.TIPO_REFEICAO_ID  FROM " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c ");
 		jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
 				+ ".CONTRATO_UNIDADE_PRISIONAL cup ON cup.CONTRATO_ID = c.ID AND cup.UNIDADE_PRISIONAL_ID = :idUnidade ");
 		jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
@@ -187,7 +187,7 @@ public class ContratoDAO {
 	@SuppressWarnings("unchecked")
 	public List<HorarioRefeicao> horarioRefeiracaoPorContratoUnidade(Long idUnidade) {
 		StringBuilder jpql = new StringBuilder(
-				"SELECT DISTINCT hr.horario  FROM " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c ");
+				"SELECT DISTINCT hr.HORARIO_INICIO, hr.HORARIO_FIM, hr.TIPO_REFEICAO_ID  FROM " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c ");
 		jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
 				+ ".CONTRATO_UNIDADE_PRISIONAL cup ON cup.CONTRATO_ID = c.ID AND cup.UNIDADE_PRISIONAL_ID = :idUnidade ");
 		jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
@@ -205,7 +205,7 @@ public class ContratoDAO {
 
 	public String horarioRefeiracaoPorContratoUnidade(Long idUnidade, Long tipoRefeiracao) {
 		StringBuilder jpql = new StringBuilder(
-				"SELECT DISTINCT hr.horario  FROM " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c ");
+				"SELECT DISTINCT hr.horario_inicio || ' - ' || hr.horario_fim  FROM " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c ");
 		jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
 				+ ".CONTRATO_UNIDADE_PRISIONAL cup ON cup.CONTRATO_ID = c.ID AND cup.UNIDADE_PRISIONAL_ID = :idUnidade ");
 		jpql.append("JOIN " + Sigepen.SEJUDH_SCHEMA
