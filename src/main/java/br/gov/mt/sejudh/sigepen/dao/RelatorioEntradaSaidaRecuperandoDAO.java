@@ -109,7 +109,10 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 	        hql.append(" and prc.tipo_processo = '" + filtro.getTipoProcesso().name() + "'");
 	    }
 	    
-	    if(filtro.getTipoDesligamento() != null && !TipoDesligamentoRelatorio.TODOS.equals(filtro.getTipoDesligamento())) {
+	    if(!TipoRelatorioEntradaSaidaRec.ENTRADA.equals(filtro.getTipoRelatorioEntradaSaidaRec()) 
+	        && filtro.getTipoDesligamento() != null 
+	        && !TipoDesligamentoRelatorio.TODOS.equals(filtro.getTipoDesligamento())) {
+	        
 	        hql.append(" and p.tipo_desligamento = '" + filtro.getTipoDesligamento().name() + "'");
 	    }
 	    
