@@ -33,6 +33,8 @@
 	<field name="regime" class="java.lang.String"/>
 	<field name="estrutura.nomeCompleto" class="java.lang.String"/>
 	<field name="nomeSocial" class="java.lang.String"/>
+	<field name="dataEntrada" class="java.util.Date"/>
+	
 	<variable name="id_1" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{id}]]></variableExpression>
 	</variable>
@@ -99,7 +101,7 @@
 				<text><![CDATA[Situação]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="476" y="0" width="97" height="20" uuid="12d2ee4b-a133-41e7-a6f1-f6a3ab94407b"/>
+				<reportElement x="493" y="0" width="80" height="20" uuid="12d2ee4b-a133-41e7-a6f1-f6a3ab94407b"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -138,7 +140,7 @@
 				<text><![CDATA[Condição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="341" y="0" width="135" height="20" uuid="3c9f702f-71e5-46e8-ad52-d7b81ba8093a"/>
+				<reportElement x="302" y="0" width="121" height="20" uuid="3c9f702f-71e5-46e8-ad52-d7b81ba8093a"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -150,6 +152,20 @@
 				</textElement>
 				<text><![CDATA[Nome Mãe]]></text>
 			</staticText>
+			<staticText>
+			    <reportElement x="423" y="0" width="70" height="20"/>
+			    <box>
+			        <topPen lineWidth="0.5"/>
+			        <leftPen lineWidth="0.5"/>
+			        <bottomPen lineWidth="0.5"/>
+			        <rightPen lineWidth="0.5"/>
+			    </box>
+			    <textElement textAlignment="Center" verticalAlignment="Middle">
+			        <font isBold="true"/>
+			    </textElement>
+			    <text><![CDATA[Data Entrada]]></text>
+			</staticText>
+			
 			<staticText>
 				<reportElement mode="Transparent" x="573" y="0" width="70" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="bb7dbe2e-8df0-4feb-a464-3243ed84e308"/>
 				<box>
@@ -165,7 +181,7 @@
 				<text><![CDATA[Lotação]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="188" y="0" width="153" height="20" uuid="2ad008bc-6f2d-4af9-8890-351b92bce15d"/>
+				<reportElement x="188" y="0" width="114" height="20" uuid="2ad008bc-6f2d-4af9-8890-351b92bce15d"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -240,7 +256,7 @@
 				<textFieldExpression><![CDATA[$F{condicaoAtual}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="341" y="0" width="135" height="15" uuid="6b7892a2-b1ba-483c-a790-6690b84adfcd"/>
+				<reportElement stretchType="RelativeToBandHeight" x="300" y="0" width="123" height="15" uuid="6b7892a2-b1ba-483c-a790-6690b84adfcd"/>
 				<box leftPadding="2" rightPadding="2">
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -250,7 +266,7 @@
 				<textFieldExpression><![CDATA[$F{nomeMae}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="476" y="0" width="97" height="15" uuid="bac058a6-9f60-40fc-9542-c8a24cd36080"/>
+				<reportElement stretchType="RelativeToBandHeight" x="493" y="0" width="80" height="15" uuid="bac058a6-9f60-40fc-9542-c8a24cd36080"/>
 				<box>
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -271,7 +287,7 @@
 				<textFieldExpression><![CDATA[$F{estrutura.nomeCompleto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToBandHeight" x="188" y="0" width="153" height="15" uuid="10fdc0ce-64d9-491a-b6ae-0e9a4e2e3c20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="188" y="0" width="114" height="15" uuid="10fdc0ce-64d9-491a-b6ae-0e9a4e2e3c20"/>
 				<box leftPadding="2" rightPadding="2">
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -280,6 +296,24 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nomeSocial}]]></textFieldExpression>
 			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			    <reportElement
+			        stretchType="RelativeToBandHeight"
+			        x="423"
+			        y="0"
+			        width="70"
+			        height="15"
+			        uuid="d1a2b3c4-1234-4abc-9def-123456789abc"/>
+			    <box>
+			        <bottomPen lineWidth="0.5"/>
+			    </box>
+			    <textElement textAlignment="Center" verticalAlignment="Middle">
+			        <font size="8"/>
+			    </textElement>
+			    <textFieldExpression><![CDATA[$F{dataEntrada}]]></textFieldExpression>
+			</textField>
+
+			
 		</band>
 	</detail>
 	<pageFooter>
