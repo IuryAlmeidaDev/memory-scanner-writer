@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -156,6 +157,20 @@ public class RecuperandoService {
 	public List<RecuperandoView> buscarRecuperandosPorFiltro(FiltroRecuperandoView filtro, boolean isBuscaRelatorio) {
 		List<RecuperandoView> recuperandos = dao.buscarRecuperandosPorFiltro(filtro, isBuscaRelatorio);
 		
+		 if (isBuscaRelatorio && recuperandos != null && !recuperandos.isEmpty()) {
+		        List<Long> pessoaIds = recuperandos.stream()
+		            .map(RecuperandoView::getPessoaId)
+		            .filter(id -> id != null)
+		            .collect(Collectors.toList());
+		        
+		        Map<Long, Date> datasEntrada = passagemService.buscarDatasEntradaPorPessoas(pessoaIds);
+		        
+		        for (RecuperandoView r : recuperandos) {
+		            if (r.getPessoaId() != null) {
+		                r.setDataEntrada(datasEntrada.get(r.getPessoaId()));
+		            }
+		        }
+		    }
 		if (filtro.getIsBuscarFotoFrente()) {
 			for (RecuperandoView r : recuperandos) {
 				if (r.getId() != null)

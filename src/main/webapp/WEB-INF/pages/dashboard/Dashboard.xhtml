@@ -139,9 +139,29 @@
 							styleClass="ui-dash-text-panel-18" />
 					</h:commandLink>
 				</p:panel>
+				
+				
+				<p:panel id="#{dash.RECUPERANDOS_PROVISORIOS_90_180_DIAS.descricao}" styleClass="ui-dash-panel" style="background-color: #EC5800;">
+				    <h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_PROVISORIOS_90_180_DIAS)}">
+				        <h:outputText value="#{dashboardBean.totalProvisorios90a180Dias}" styleClass="ui-dash-text-panel-40"/>
+				        <br/>
+				        <h:outputText value="Provisórios (90 a 180 dias)" styleClass="ui-dash-text-panel-18"/>
+				    </h:commandLink>
+				</p:panel>
+				
+				<p:panel id="#{dash.RECUPERANDOS_PROVISORIOS_MAIS_180_DIAS.descricao}" styleClass="ui-dash-panel" style="background-color: #D20A2E;">
+				    <h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_PROVISORIOS_MAIS_180_DIAS)}">
+				        <h:outputText value="#{dashboardBean.totalProvisoriosMais180Dias}" styleClass="ui-dash-text-panel-40"/>
+				        <br/>
+				        <h:outputText value="Provisórios (+180 dias)" styleClass="ui-dash-text-panel-18"/>
+				    </h:commandLink>
+				</p:panel>
+				
 			</p:dashboard>
 		</h:form>
 	</h:panelGroup>
+	
+	<div style="clear: both;"></div>
 
 	<h:panelGroup rendered="#{securityUtil.possuiPermissao('VisualizarMovimentacaoInterna') or securityUtil.possuiPermissao('VisualizarMovimentacaoExterna')}">
 		<h:form id="formDashMovimentacao">

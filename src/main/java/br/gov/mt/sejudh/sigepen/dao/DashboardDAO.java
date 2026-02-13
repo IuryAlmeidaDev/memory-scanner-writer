@@ -12,10 +12,12 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang3.time.DateUtils;
 
+import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
 import br.gov.mt.sejudh.sigepen.enumerator.FaseCredenciamento;
 import br.gov.mt.sejudh.sigepen.enumerator.Modalidade;
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatusAlternativo;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamento;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusRecuperando;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
@@ -180,7 +182,66 @@ public class DashboardDAO {
 
 		return query.getResultList();
 	}
+	
+	public Long countRecuperandosProvisorios90a180Dias(Long unidadeId) {
+	    String jpql =
+	        " select count(distinct r.id) " +
+	        " from Recuperando r, Processo p, Passagem pa, PassagemLotacao pl, Estrutura e " +
+	        " where p.recuperando.id = r.id " +
+	        " and pa.recuperando.id = r.id " +
+	        " and pa.dataSaida is null " +
+	        " and r.status = :status " +
+	        " and r.condicaoAtual = :condicao " +
+	        " and p.modalidade = :modalidade " +
+	        " and pa.id = pl.passagem.id " +
+	        " and pl.dataSaida is null " +
+	        " and pl.estrutura.id = e.id " +
+	        " and e.unidadePrisional.id = :unidadeId " +
+	        " group by r.id " +
+	        " having (trunc(sysdate) - trunc(max(pa.dataEntrada))) between 90 and 180 ";
 
+	    Query query = em.createQuery(jpql);
+	    query.setParameter("status", StatusRecuperando.ATIVO);
+	    query.setParameter("condicao", Condicao.PROVISORIO);
+	    query.setParameter("modalidade", Modalidade.PREVENTIVA);
+	    query.setParameter("unidadeId", unidadeId);
+
+	    try {
+	        return Long.valueOf(query.getResultList().size());
+	    } catch (Exception e) {
+	        return 0L;
+	    }
+	}
+
+	public Long countRecuperandosProvisoriosMais180Dias(Long unidadeId) {
+	    String jpql =
+	        " select count(distinct r.id) " +
+	        " from Recuperando r, Processo p, Passagem pa, PassagemLotacao pl, Estrutura e " +
+	        " where p.recuperando.id = r.id " +
+	        " and pa.recuperando.id = r.id " +
+	        " and pa.dataSaida is null " +
+	        " and r.status = :status " +
+	        " and r.condicaoAtual = :condicao " +
+	        " and p.modalidade = :modalidade " +
+	        " and pa.id = pl.passagem.id " +
+	        " and pl.dataSaida is null " +
+	        " and pl.estrutura.id = e.id " +
+	        " and e.unidadePrisional.id = :unidadeId " +
+	        " group by r.id " +
+	        " having (trunc(sysdate) - trunc(max(pa.dataEntrada))) > 180 ";
+
+	    Query query = em.createQuery(jpql);
+	    query.setParameter("status", StatusRecuperando.ATIVO);
+	    query.setParameter("condicao", Condicao.PROVISORIO);
+	    query.setParameter("modalidade", Modalidade.PREVENTIVA);
+	    query.setParameter("unidadeId", unidadeId);
+
+	    try {
+	        return Long.valueOf(query.getResultList().size());
+	    } catch (Exception e) {
+	        return 0L;
+	    }
+	}
 	public Long solicitacaoVisitaPendente(long unidadeId) {
 		Date dataLimite = calculaDataLimiteMaiorDeIdade();
 		
