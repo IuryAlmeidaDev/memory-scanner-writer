@@ -326,7 +326,10 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
      facesUtil.setObjetoSessao("estrutura", estrutura);
      facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
 
-     validaDataPedido(filtroGerarPedido.getDataInicio());
+     boolean validaOk = validaDataPedido(filtroGerarPedido.getDataInicio());
+     if (!validaOk) {
+         return;
+     }
 
      boolean pedidoExistente = pedidoAlimentoService.verificarExistenciaPedido(
              data,
@@ -343,10 +346,14 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	}
 
     public void confirmarSubstituicaoPedido() {
-		this.imprimir(this.dataFormatada, this.filtroPedido, this.contrato);
-		RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').hide()");
+        if (!validaDataPedido(this.filtroPedido != null ? this.filtroPedido.getDataInicio() : null)) {
+            RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').hide()");
+            return;
+        }
+        this.imprimir(this.dataFormatada, this.filtroPedido, this.contrato);
+        RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').hide()");
 
-	}
+    }
 
 	@Transactional
 	private void imprimir(final String data, final FiltroGerarPedido filtroGerarPedido, Contrato contrato) {
@@ -394,11 +401,11 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
-    private void validaDataPedido(Date dataPedido) {
+    private boolean validaDataPedido(Date dataPedido) {
         try {
             if (dataPedido == null) {
                 facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Selecione a data para gerar o pedido.");
-                return;
+                return false;
             }
 
             LocalDate hoje = LocalDate.now();
@@ -407,15 +414,19 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
                     .atZone(ZoneId.systemDefault()).toLocalDate();
 
             if (dataSelecionada.isBefore(hoje)) {
-                facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível emitir um pedido retroativo.");
-                return;
+                facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível emitir/substituir um pedido retroativamente.");
+                return false;
             }
 
             if (dataSelecionada.isAfter(amanha)) {
                 facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível gerar um pedido com uma antecedência superior a 1 dia.");
+                return false;
             }
+
+            return true;
         } catch (Exception e) {
             facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Ocorreu um erro ao validar a data informada.");
+            return false;
         }
     }
 
