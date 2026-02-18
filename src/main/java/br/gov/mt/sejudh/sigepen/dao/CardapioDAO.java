@@ -83,9 +83,7 @@ public class CardapioDAO extends BaseDAO<Cardapio, Long> {
 			Query query = entityManager.createQuery(jpql, Long.class);
 			query.setParameter("semana", (long) semana);
 
-			// Obtém o dia da semana (0-6, onde 0 é domingo)
-			// A função TO_CHAR(data, 'D') retorna 1-7, onde 1 é domingo, por isso subtraímos 1
-			String jpqlDiaSemana = "SELECT TO_CHAR(TO_DATE(:data, 'DD/MM/YYYY HH24:MI:SS'), 'D') FROM dual";
+			String jpqlDiaSemana = "SELECT TO_CHAR(TO_DATE(SUBSTR(:data, 1, 16), 'DD/MM/YYYY HH24:MI'), 'D') FROM dual";
 			Query diaSemanaQuery = entityManager.createNativeQuery(jpqlDiaSemana);
 			diaSemanaQuery.setParameter("data", data);
 			int diaSemanaInt = Integer.parseInt((String) diaSemanaQuery.getSingleResult()) - 1;

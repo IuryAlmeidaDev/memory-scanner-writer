@@ -233,19 +233,37 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
     }
 
 	private String montarFiltroData() {
-		StringBuilder filtroDataHorario = new StringBuilder();
-		if (this.filtroPedido != null) {
-			String horarioRefeiracao = this.contratoService.buscarHorarioRefeiracao(this.unidade.getId(),
-					this.filtroPedido.getTipoRefeicao().getId());
-			StringBuilder horarioRefeiracaoFormatado = new StringBuilder(horarioRefeiracao);
-			horarioRefeiracaoFormatado.insert(2, ":");
-			String filtroData = filtroPedido.getDataFormadata();
-			filtroDataHorario.append(filtroData);
-			filtroDataHorario.append(" ");
-			filtroDataHorario.append(horarioRefeiracaoFormatado);
-		}
-		this.dataFormatada = filtroDataHorario.toString();
-		return filtroDataHorario.toString();
+	    StringBuilder filtroDataHorario = new StringBuilder();
+	    
+	    if (this.filtroPedido != null) {
+	        // 1. Busca o horário (ex: "1405")
+	        String horarioRefeiracao = this.contratoService.buscarHorarioRefeiracao(
+	                this.unidade.getId(),
+	                this.filtroPedido.getTipoRefeicao().getId());
+	        
+	        // 2. Garante que pegamos apenas os números e apenas os 4 primeiros dígitos (HHmm)
+	        String horaLimpa = horarioRefeiracao.replaceAll("[^0-9]", "");
+	        if (horaLimpa.length() > 4) {
+	            horaLimpa = horaLimpa.substring(0, 4);
+	        }
+
+	        // 3. Formata para HH:mm
+	        StringBuilder horarioFormatado = new StringBuilder(horaLimpa);
+	        if (horarioFormatado.length() >= 2) {
+	            horarioFormatado.insert(2, ":");
+	        }
+	        
+	        // 4. Monta a string final: Data + Hora + Segundos fixos
+	        String filtroData = filtroPedido.getDataFormadata(); // Esperado: "DD/MM/YYYY"
+	        
+	        filtroDataHorario.append(filtroData.trim());
+	        filtroDataHorario.append(" ");
+	        filtroDataHorario.append(horarioFormatado.toString().trim());
+	        filtroDataHorario.append(":00");
+	    }
+	    
+	    this.dataFormatada = filtroDataHorario.toString().trim();
+	    return this.dataFormatada;
 	}
 
 	public void montarEstrutura() {
