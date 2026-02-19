@@ -1,13 +1,16 @@
 package br.gov.mt.sejudh.sigepen.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.persistence.TypedQuery;
 
 import br.gov.mt.sejudh.sigepen.dao.CredenciamentoDAO;
 import br.gov.mt.sejudh.sigepen.dao.ParenteDAO;
@@ -215,4 +218,51 @@ public class PassagemService {
 	public Passagem salvar(Passagem passagem) {
 		return dao.salvar(passagem);
 	}
+	
+	public Date buscarDataEntradaAtualPorPessoa(Long pessoaId) {
+	    Optional<Passagem> passagemOpt =
+	        dao.buscaPassagemPorIdPessoa(pessoaId);
+
+	    if (!passagemOpt.isPresent()) {
+	        return null;
+	    }
+
+	    Passagem p = passagemOpt.get();
+
+	    if (p.getDataSaida() != null) {
+	        return null; // 
+	    }
+
+	    return p.getDataEntrada();
+	}
+	
+	public Map<Long, Date> buscarDatasEntradaPorPessoas(List<Long> pessoaIds) {
+	    if (pessoaIds == null || pessoaIds.isEmpty()) {
+	        return new HashMap<>();
+	    }
+	    
+	    Map<Long, Date> resultado = new HashMap<>();
+	    
+	    for (int i = 0; i < pessoaIds.size(); i += 1000) {
+	        int end = Math.min(i + 1000, pessoaIds.size());
+	        List<Long> chunk = pessoaIds.subList(i, end);
+	        
+	        String jpql = "SELECT p.recuperando.pessoa.id, p.dataEntrada " +
+	                     "FROM Passagem p " +
+	                     "WHERE p.recuperando.pessoa.id IN :pessoaIds " +
+	                     "AND p.dataSaida IS NULL";
+	        
+	        TypedQuery<Object[]> query = dao.getEntityManager().createQuery(jpql, Object[].class);
+	        query.setParameter("pessoaIds", chunk);
+	        
+	        List<Object[]> results = query.getResultList();
+	        for (Object[] row : results) {
+	            resultado.put((Long) row[0], (Date) row[1]);
+	        }
+	    }
+	    
+	    return resultado;
+	}
+
+
 }

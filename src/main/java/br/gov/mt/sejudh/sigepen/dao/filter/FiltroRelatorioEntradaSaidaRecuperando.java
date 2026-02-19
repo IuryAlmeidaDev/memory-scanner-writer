@@ -94,7 +94,7 @@ public class FiltroRelatorioEntradaSaidaRecuperando extends FiltroConsulta {
 		if(this.getTipoProcesso() != null && !TipoEntradaRelatorio.TODAS.equals(this.getTipoProcesso()))
 			filtros += "Tipo Entrada: " + this.getTipoProcesso().getDescricao() + ", ";
 		
-		if(this.getTipoDesligamento() != null)
+		if(this.getTipoDesligamento() != null && !TipoRelatorioEntradaSaidaRec.ENTRADA.equals(this.getTipoRelatorioEntradaSaidaRec()))
 			filtros += "Tipo Desligamento: " + this.getTipoDesligamento().getDescricao() + ", ";
 		
 		if(this.getDataInicial() != null && this.getDataFinal() != null)
@@ -108,6 +108,7 @@ public class FiltroRelatorioEntradaSaidaRecuperando extends FiltroConsulta {
 		
 		if(!"".equals(filtros))
 			return "Filtro utilizado: " + filtros;
+		
 		
 		return null;
 	}

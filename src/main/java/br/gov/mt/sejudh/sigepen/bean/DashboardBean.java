@@ -13,6 +13,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.*;
 import br.gov.mt.sejudh.sigepen.enumerator.*;
 import br.gov.mt.sejudh.sigepen.service.*;
@@ -60,6 +61,10 @@ public class DashboardBean {
 	private List<Long> listaTemporariosNoSistemaVencido = new ArrayList<Long>();
 	private List<Long> listaTemporariosNoSistemaVenceHoje = new ArrayList<Long>();
 	
+	private List<Long> listaProvisorios90a180Dias = new ArrayList<>();
+	private List<Long> listaProvisoriosMais180Dias = new ArrayList<>();
+
+	
 	private Long solicitacaoVisitaPendente;
 	private Long totalCredenciamentoRecebimentoPendente;
 	private Long totalCredenciamentoChecagemPendente;
@@ -85,6 +90,10 @@ public class DashboardBean {
 	private Integer totalReceberTransferenciaViculada;
 
 	private Integer totalRemanejamentoEmAndamento;
+	
+	private Long totalProvisorios90a180Dias;
+	private Long totalProvisoriosMais180Dias;
+
 	
 	@Inject
 	private DashboardService service;
@@ -112,6 +121,9 @@ public class DashboardBean {
 
 	@Inject
 	private UsuarioService usuarioService;
+	
+	@Inject
+	private RecuperandoDAO recuperandoDAO;
 
 
 	@PostConstruct
@@ -180,6 +192,22 @@ public class DashboardBean {
 				this.listaTemporariosNoSistemaVencido = service.recuperandosTemporariosNoSistemaDataSolturaVencida();
 				this.temporariosNoSistemaVencido = Long.parseLong(String.valueOf(this.listaTemporariosNoSistemaVencido.size()));
 				break;
+				
+			case RECUPERANDOS_PROVISORIOS_90_180_DIAS:
+			    Long unidadeId = SecurityUtil.getUnidadeSelecionada().getId();
+			    this.listaProvisorios90a180Dias = recuperandoDAO.buscarIdsProvisoriosPorDias(
+			        unidadeId, 90, 180
+			    );
+			    this.totalProvisorios90a180Dias = Long.valueOf(this.listaProvisorios90a180Dias.size());
+			    break;
+
+			case RECUPERANDOS_PROVISORIOS_MAIS_180_DIAS:
+			    Long unidadeId2 = SecurityUtil.getUnidadeSelecionada().getId();
+			    this.listaProvisoriosMais180Dias = recuperandoDAO.buscarIdsProvisoriosPorDias(
+			        unidadeId2, 181, null
+			    );
+			    this.totalProvisoriosMais180Dias = Long.valueOf(this.listaProvisoriosMais180Dias.size());
+			    break;
 				
 			case SOLICITACAO_VISITA_PENDENTE:
 				this.solicitacaoVisitaPendente = service.solicitacaoVisitaPendente(SecurityUtil.getUnidadeSelecionada().getId());
@@ -311,12 +339,13 @@ public class DashboardBean {
 						i++;
 						aux = i;
 						continue loopColuna;
+						
 					}
 				}
 			}
 		}
 	}
-
+	
 	public String executarAcao(Dashboard dash) {
 		FiltroRecuperandoView filtro = new FiltroRecuperandoView();
 		FiltroSolicitacaoVisita filtroSolicitacaoVisita = new FiltroSolicitacaoVisita();
@@ -393,6 +422,32 @@ public class DashboardBean {
 				filtro.setRecuperandoIds(this.listaTemporariosNoSistemaVencido);
 				facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 				break;
+				
+			case RECUPERANDOS_PROVISORIOS_90_180_DIAS:
+			  
+			    if (this.listaProvisorios90a180Dias.isEmpty()) {
+			        this.listaProvisorios90a180Dias.add(-1L); 
+			    }
+			    filtro.setRecuperandoIds(this.listaProvisorios90a180Dias);
+			    filtro.setUnidade(SecurityUtil.getUnidadeSelecionada());
+			    filtro.setStatus(StatusRecuperando.ATIVO);
+			    filtro.setModalidade(Modalidade.PREVENTIVA);
+			    filtro.setCondicaoAtual(Condicao.PROVISORIO);
+
+			    facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
+			    break;
+
+			case RECUPERANDOS_PROVISORIOS_MAIS_180_DIAS:
+			    if (this.listaProvisoriosMais180Dias.isEmpty()) {
+			        this.listaProvisoriosMais180Dias.add(-1L);
+			    }
+			    filtro.setRecuperandoIds(this.listaProvisoriosMais180Dias);
+			    filtro.setUnidade(SecurityUtil.getUnidadeSelecionada());
+			    filtro.setStatus(StatusRecuperando.ATIVO);
+			    filtro.setModalidade(Modalidade.PREVENTIVA);
+			    filtro.setCondicaoAtual(Condicao.PROVISORIO);
+			    facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
+			    break;
 
 			case SOLICITACAO_VISITA_PENDENTE:
 				filtroSolicitacaoVisita.setStatus(SgpStatusAlternativo.P);
@@ -849,4 +904,13 @@ public class DashboardBean {
     public Integer getTotalRemanejamentoEmAndamento() {
         return totalRemanejamentoEmAndamento;
     }
+    
+    public Long getTotalProvisorios90a180Dias() {
+        return totalProvisorios90a180Dias;
+    }
+
+    public Long getTotalProvisoriosMais180Dias() {
+        return totalProvisoriosMais180Dias;
+    }
+
 }
