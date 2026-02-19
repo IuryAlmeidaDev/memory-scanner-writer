@@ -100,6 +100,9 @@ public class RecuperandoView {
 	@Transient
 	private List<OutroNome> outrosNomes;
 	
+	@Transient
+	private Date dataEntrada;
+	
 	@Column(name = "PERICULOSIDADE_ADAPTATIVA")
 	private Integer periculosidadeAdaptativa;
 
@@ -368,9 +371,18 @@ public class RecuperandoView {
 	public void setPericulosidadeAdaptativa(Integer periculosidadeAdaptativa) {
 		this.periculosidadeAdaptativa = periculosidadeAdaptativa;
 	}
+	
+	public Date getDataEntrada() {
+	    return dataEntrada;
+	}
+
+	public void setDataEntrada(Date dataEntrada) {
+	    this.dataEntrada = dataEntrada;
+	}
 
 	@Override
     public String toString() {
         return "Recuperando [id=" + id + ", nome=" + getNome() + "]";
     }
+	
 }

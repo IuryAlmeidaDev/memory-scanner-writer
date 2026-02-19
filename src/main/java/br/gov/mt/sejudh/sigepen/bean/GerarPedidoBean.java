@@ -233,19 +233,37 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
     }
 
 	private String montarFiltroData() {
-		StringBuilder filtroDataHorario = new StringBuilder();
-		if (this.filtroPedido != null) {
-			String horarioRefeiracao = this.contratoService.buscarHorarioRefeiracao(this.unidade.getId(),
-					this.filtroPedido.getTipoRefeicao().getId());
-			StringBuilder horarioRefeiracaoFormatado = new StringBuilder(horarioRefeiracao);
-			horarioRefeiracaoFormatado.insert(2, ":");
-			String filtroData = filtroPedido.getDataFormadata();
-			filtroDataHorario.append(filtroData);
-			filtroDataHorario.append(" ");
-			filtroDataHorario.append(horarioRefeiracaoFormatado);
-		}
-		this.dataFormatada = filtroDataHorario.toString();
-		return filtroDataHorario.toString();
+	    StringBuilder filtroDataHorario = new StringBuilder();
+	    
+	    if (this.filtroPedido != null) {
+	        // 1. Busca o horário (ex: "1405")
+	        String horarioRefeiracao = this.contratoService.buscarHorarioRefeiracao(
+	                this.unidade.getId(),
+	                this.filtroPedido.getTipoRefeicao().getId());
+	        
+	        // 2. Garante que pegamos apenas os números e apenas os 4 primeiros dígitos (HHmm)
+	        String horaLimpa = horarioRefeiracao.replaceAll("[^0-9]", "");
+	        if (horaLimpa.length() > 4) {
+	            horaLimpa = horaLimpa.substring(0, 4);
+	        }
+
+	        // 3. Formata para HH:mm
+	        StringBuilder horarioFormatado = new StringBuilder(horaLimpa);
+	        if (horarioFormatado.length() >= 2) {
+	            horarioFormatado.insert(2, ":");
+	        }
+	        
+	        // 4. Monta a string final: Data + Hora + Segundos fixos
+	        String filtroData = filtroPedido.getDataFormadata(); // Esperado: "DD/MM/YYYY"
+	        
+	        filtroDataHorario.append(filtroData.trim());
+	        filtroDataHorario.append(" ");
+	        filtroDataHorario.append(horarioFormatado.toString().trim());
+	        filtroDataHorario.append(":00");
+	    }
+	    
+	    this.dataFormatada = filtroDataHorario.toString().trim();
+	    return this.dataFormatada;
 	}
 
 	public void montarEstrutura() {
@@ -326,7 +344,10 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
      facesUtil.setObjetoSessao("estrutura", estrutura);
      facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
 
-     validaDataPedido(filtroGerarPedido.getDataInicio());
+     boolean validaOk = validaDataPedido(filtroGerarPedido.getDataInicio());
+     if (!validaOk) {
+         return;
+     }
 
      boolean pedidoExistente = pedidoAlimentoService.verificarExistenciaPedido(
              data,
@@ -343,10 +364,14 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	}
 
     public void confirmarSubstituicaoPedido() {
-		this.imprimir(this.dataFormatada, this.filtroPedido, this.contrato);
-		RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').hide()");
+        if (!validaDataPedido(this.filtroPedido != null ? this.filtroPedido.getDataInicio() : null)) {
+            RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').hide()");
+            return;
+        }
+        this.imprimir(this.dataFormatada, this.filtroPedido, this.contrato);
+        RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').hide()");
 
-	}
+    }
 
 	@Transactional
 	private void imprimir(final String data, final FiltroGerarPedido filtroGerarPedido, Contrato contrato) {
@@ -394,11 +419,11 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
-    private void validaDataPedido(Date dataPedido) {
+    private boolean validaDataPedido(Date dataPedido) {
         try {
             if (dataPedido == null) {
                 facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Selecione a data para gerar o pedido.");
-                return;
+                return false;
             }
 
             LocalDate hoje = LocalDate.now();
@@ -407,15 +432,19 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
                     .atZone(ZoneId.systemDefault()).toLocalDate();
 
             if (dataSelecionada.isBefore(hoje)) {
-                facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível emitir um pedido retroativo.");
-                return;
+                facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível emitir/substituir um pedido retroativamente.");
+                return false;
             }
 
             if (dataSelecionada.isAfter(amanha)) {
                 facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível gerar um pedido com uma antecedência superior a 1 dia.");
+                return false;
             }
+
+            return true;
         } catch (Exception e) {
             facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Ocorreu um erro ao validar a data informada.");
+            return false;
         }
     }
 

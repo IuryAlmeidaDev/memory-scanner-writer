@@ -5,6 +5,7 @@ import java.util.List;
 import br.gov.mt.sejudh.sigepen.model.*;
 import org.hibernate.NullPrecedence;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -21,6 +22,9 @@ import br.gov.mt.sejudh.sigepen.util.RestrictionsSigepen;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import br.gov.mt.sejudh.sigepen.util.criterion.ExpressaoFonetica.MatchModeFonetica;
 import br.gov.mt.sejudh.sigepen.util.criterion.Restricao;
+import org.hibernate.type.StandardBasicTypes;
+
+import org.hibernate.type.Type;
 import org.hibernate.type.StandardBasicTypes;
 
 public class FiltroRecuperandoView extends FiltroConsulta {
@@ -57,6 +61,7 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 	private List<Long> recuperandoIds;
 
 	private Estrutura estrutura;
+
 
 	@Override
 	public void configurarFiltros() {
@@ -167,10 +172,26 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 			getCriteria().add(Subqueries.propertyIn("unidadeId", critUnidade));
 		}
 		
+		
 		if (this.getRecuperandoIds() != null && this.getRecuperandoIds().size() > 0) {
-			getCriteria().add(Restrictions.in("id", this.getRecuperandoIds()));
+		    List<Long> ids = this.getRecuperandoIds();
+		    
+		    if (ids.size() <= 1000) {
+		        getCriteria().add(Restrictions.in("id", ids));
+		    } else {
+		        Disjunction disjunction = Restrictions.disjunction();
+		        
+		        for (int i = 0; i < ids.size(); i += 1000) {
+		            int end = Math.min(i + 1000, ids.size());
+		            List<Long> chunk = ids.subList(i, end);
+		            disjunction.add(Restrictions.in("id", chunk));
+		        }
+		        
+		        getCriteria().add(disjunction);
+		    }
 		}
-
+		
+		
 		if (this.getModalidade() != null) {
 			DetachedCriteria critModalidade = DetachedCriteria.forClass(ProcessoRegimeCondicao.class, "prc")
 					.add(Restrictions.eq("prc.modalidade", this.getModalidade()))
@@ -392,4 +413,6 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 	public void setEstrutura(Estrutura estrutura) {
 		this.estrutura = estrutura;
 	}
+	
+
 }

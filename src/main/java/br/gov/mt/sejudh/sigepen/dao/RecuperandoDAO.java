@@ -11,6 +11,8 @@ import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.*;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
+
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.QueryHints;
@@ -24,6 +26,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+
+import java.math.BigDecimal;
 import java.util.*;
 
 @RequestScoped
@@ -823,4 +827,58 @@ public class RecuperandoDAO {
             return 0L;
         }
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<Long> buscarIdsProvisoriosPorDias(long unidadeId, int diasMin, Integer diasMax) {
+        StringBuilder sql = new StringBuilder();
+        
+        sql.append("SELECT DISTINCT r.id ");
+        sql.append("FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".recuperando r, ");
+        sql.append("     ").append(Sigepen.SEJUDH_SCHEMA).append(".passagem pa, ");
+        sql.append("     ").append(Sigepen.SEJUDH_SCHEMA).append(".passagem_lotacao pl, ");
+        sql.append("     ").append(Sigepen.SEJUDH_SCHEMA).append(".estrutura e ");
+        sql.append("WHERE r.id = pa.recuperando_id ");
+        sql.append("AND pa.id = pl.passagem_id ");
+        sql.append("AND pl.estrutura_id = e.id ");
+        sql.append("AND r.status = 1 ");
+        sql.append("AND r.condicao_atual = 'PROVISORIO' ");
+        sql.append("AND pa.data_saida IS NULL ");
+        sql.append("AND pl.data_saida IS NULL ");
+        sql.append("AND e.unidadeprisional_id = :unidadeId ");
+        
+        sql.append("AND EXISTS (");
+        sql.append("  SELECT 1 FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".processo p ");
+        sql.append("  WHERE p.recuperando_id = r.id ");
+        sql.append("  AND p.modalidade = 'PREVENTIVA'");
+        sql.append(") ");
+        
+        if (diasMax != null) {
+            sql.append("AND (TRUNC(SYSDATE) - TRUNC(pa.data_entrada)) BETWEEN :diasMin AND :diasMax");
+        } else {
+            sql.append("AND (TRUNC(SYSDATE) - TRUNC(pa.data_entrada)) > :diasMin");
+        }
+        
+        Query query = em.createNativeQuery(sql.toString());
+        query.setParameter("unidadeId", unidadeId);
+        query.setParameter("diasMin", diasMin);
+        if (diasMax != null) {
+            query.setParameter("diasMax", diasMax);
+        }
+        
+        query.setHint("javax.persistence.query.timeout", 30000);
+        
+        try {
+            List<BigDecimal> resultadosBigDecimal = query.getResultList();
+            List<Long> resultados = new ArrayList<>();
+            for (BigDecimal bd : resultadosBigDecimal) {
+                resultados.add(bd.longValue());
+            }
+            return resultados;
+        } catch (Exception e) {
+            System.err.println("Erro ao executar query: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>(); 
+        }
+    }
+    
 }

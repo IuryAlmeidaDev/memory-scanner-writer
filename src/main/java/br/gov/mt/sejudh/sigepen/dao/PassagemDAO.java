@@ -27,6 +27,10 @@ public class PassagemDAO {
 	@Inject
 	private EntityManager em;
 	
+	public EntityManager getEntityManager() {
+	    return em;
+	}
+	
 	public Passagem buscaPassagemPorId(Passagem passagem) {
 		try{
 			String jpql="select p from Passagem p where p.id = :id";
@@ -186,4 +190,24 @@ public class PassagemDAO {
 			this.em.persist(passagem);
 		return passagem;
 	}
+	
+	public Optional<Date> buscarDataEntradaPassagemAtivaPorPessoa(Long idPessoa) {
+	    try {
+	        String jpql =
+	            "select p.dataEntrada " +
+	            "from Passagem p " +
+	            "where p.recuperando.pessoa.id = :idPessoa " +
+	            "and p.dataSaida is null " +
+	            "order by p.id desc";
+
+	        TypedQuery<Date> query = em.createQuery(jpql, Date.class);
+	        query.setParameter("idPessoa", idPessoa);
+	        query.setMaxResults(1);
+
+	        return Optional.of(query.getSingleResult());
+	    } catch (NoResultException e) {
+	        return Optional.empty();
+	    }
+	}
+
 }

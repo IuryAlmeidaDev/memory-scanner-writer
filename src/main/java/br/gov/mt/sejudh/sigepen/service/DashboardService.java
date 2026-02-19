@@ -47,6 +47,14 @@ public class DashboardService {
 	
 	public List<Long> recuperandosTemporariosNoSistemaDataSolturaVenceHoje() {
 		return dao.recuperandosTemporariosNoSistemaDataSolturaVenceHoje();
+	}	
+	
+	public Long countRecuperandosProvisorios90a180Dias(Long unidadeId) {
+	    return dao.countRecuperandosProvisorios90a180Dias(unidadeId);
+	}
+
+	public Long countRecuperandosProvisoriosMais180Dias(Long unidadeId) {
+	    return dao.countRecuperandosProvisoriosMais180Dias(unidadeId);
 	}
 
 	public Long solicitacaoVisitaPendente(long unidadeId) {
