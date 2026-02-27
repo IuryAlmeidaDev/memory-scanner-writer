@@ -212,24 +212,28 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
     }
 
 	public void pesquisar() {
-		this.dietasEspeciais = new LazyDataModel<DietaEspecialDTO>() {
-			private static final long serialVersionUID = 1L;
+	    this.dietasEspeciais = new LazyDataModel<DietaEspecialDTO>() {
+	        private static final long serialVersionUID = 1L;
 
-			public List<DietaEspecialDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-					Map<String, Object> filters) {
-				getFiltro().setListarTodasUnidades(security.possuiPermissao("ListarTodasUnidades"));
-				List<DietaEspecialDTO> dietaEspecialDTO = dietaEspecialService.buscarPorFiltro(getFiltro());
-				setRowCount(dietaEspecialDTO.size());
+	        public List<DietaEspecialDTO> load(int first, int pageSize, String sortField, 
+	                SortOrder sortOrder, Map<String, Object> filters) {
+	            
+	            getFiltro().setListarTodasUnidades(security.possuiPermissao("ListarTodasUnidades"));
+	            setRowCount(dietaEspecialService.quantidadeFiltrados(getFiltro()));
 
-				try {
-					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				return dietaEspecialDTO;
-			}
-		};
+	            try {
+	              
+	                configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	            
+	            return dietaEspecialService.buscarPorFiltro(getFiltro());
+	        }
+	    };
 	}
+	
+	
 	
 	private boolean validarDataDietaEspecial() {
 		if(this.dietaEspecial.getFim() != null && !this.dietaEspecial.getInicio().before(this.dietaEspecial.getFim())) {

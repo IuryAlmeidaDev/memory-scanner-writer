@@ -75,16 +75,27 @@ public class EstruturaService {
 		}
 	}
 
-	public void montarArvoreEstruturaGerarPedido(GerarPedidoEstruturaDTO estrutura, TreeNode no, String dataHora, Long tipoRefeicao) {
-		List<GerarPedidoEstruturaDTO> filhos = dao.buscaEstruturaFilhoGerarPedido(estrutura, dataHora, tipoRefeicao);
-		if (!filhos.isEmpty()) {
-			estrutura.setTemEstruturaFilho(true);
-		}
-		TreeNode pai = new DefaultTreeNode(estrutura, no);
-		pai.setExpanded(true);
-		for (GerarPedidoEstruturaDTO e : filhos) {
-			montarArvoreEstruturaGerarPedido(e, pai, dataHora, tipoRefeicao);
-		}
+	public TreeNode montarArvoreEstruturaGerarPedido(GerarPedidoEstruturaDTO estrutura, TreeNode no, String dataHora, Long tipoRefeicao) {
+	    List<GerarPedidoEstruturaDTO> filhos = dao.buscaEstruturaFilhoGerarPedido(estrutura, dataHora, tipoRefeicao);
+	    
+	    if (!filhos.isEmpty()) {
+	        estrutura.setTemEstruturaFilho(true);
+	    }
+	    
+	    TreeNode pai = new DefaultTreeNode(estrutura, no);
+	    pai.setExpanded(true);
+	    
+	    for (GerarPedidoEstruturaDTO e : filhos) {
+	        if (!e.getCela() || (e.getSituacaoUnidade() == SituacaoUnidade.ATIVO)) {
+	            
+	            TreeNode nodeFilho = montarArvoreEstruturaGerarPedido(e, pai, dataHora, tipoRefeicao);
+	            
+	            if (!e.getCela() && nodeFilho.getChildCount() == 0) {
+	                pai.getChildren().remove(nodeFilho);
+	            }
+	        }
+	    }
+	    return pai;
 	}
 
 	public int capacidadeTotalEstrutura(DefaultTreeNode no) {

@@ -44,4 +44,8 @@ public class DietaEspecialService {
 		return dao.buscarPorTipoDieta(tipoDietaId);
 	}
 	
+	public int quantidadeFiltrados(FiltroDietaEspecial filtro) {
+	    return dao.quantidadeFiltrados(filtro);
+	}
+	
 }

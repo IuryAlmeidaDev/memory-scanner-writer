@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 6.3.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PedidoDetalhado" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="6fa271da-495c-47d7-bfc4-2354b2e3ab76">
 	<property name="ireport.zoom" value="1.6105100000000008"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="50"/>
-	<parameter name="CABECALHO" class="java.lang.String"/>
-	<parameter name="RODAPE" class="java.lang.String"/>
+	<parameter name="CABECALHO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["cabecalhos\\CabecalhoPadrao.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RODAPE" class="java.lang.String">
+		<defaultValueExpression><![CDATA["cabecalhos\\RodapePadrao.jasper"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="NOME_DO_RELATORIO" class="java.lang.String"/>
 	<parameter name="DATA" class="java.lang.String"/>
 	<parameter name="MENSAGEM" class="java.lang.String"/>
 	<parameter name="EMISSOR" class="java.lang.String"/>
 	<parameter name="UNIDADE_LOGADA" class="java.lang.String"/>
 	<parameter name="DIETA_ESPECIAL_POR_ESTRUTURA" class="java.util.List"/>
+	<parameter name="TOTAL_RECUPERANDO" class="java.lang.Integer"/>
 	<field name="item" class="java.lang.String"/>
 	<field name="qtdPorItem" class="java.lang.Double"/>
 	<field name="qtdRecuperando" class="java.lang.Integer"/>
@@ -115,31 +121,36 @@
 	</detail>
 	<pageFooter>
 		<band height="51" splitType="Stretch">
-			<line>
-				<reportElement x="0" y="12" width="555" height="1" forecolor="#666666" uuid="d3287468-1a5e-4bab-940a-d76c70098617"/>
-			</line>
-			<textField>
-				<reportElement x="20" y="13" width="303" height="20" uuid="73d6fea7-2f60-4914-abd5-68171152153a"/>
-				<textElement markup="html"/>
-				<textFieldExpression><![CDATA["<b>Emitido por: </b>" + $P{EMISSOR}]]></textFieldExpression>
-			</textField>
-			<textField pattern="">
-				<reportElement x="20" y="30" width="273" height="20" uuid="d4e56d1f-d52c-4971-a730-0052d5611f8b"/>
-				<textElement markup="html"/>
-				<textFieldExpression><![CDATA["<b>Data Emissão: </b> "
-    + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())
-    + " às "
-    + new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
-			</textField>
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="0" width="555" height="51" uuid="9f0f320f-5f66-48d4-b73b-0c38810300c7"/>
+				<subreportParameter name="PAGINA">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EMISSOR">
+					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_PAGINAS">
+					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
+			</subreport>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="100" splitType="Stretch">
+		<band height="164" splitType="Stretch">
 			<subreport isUsingCache="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="100" isRemoveLineWhenBlank="true" uuid="97ea5d40-9354-46f7-91fd-7f8230821583"/>
+				<reportElement x="0" y="44" width="555" height="100" isRemoveLineWhenBlank="true" uuid="97ea5d40-9354-46f7-91fd-7f8230821583"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{DIETA_ESPECIAL_POR_ESTRUTURA})]]></dataSourceExpression>
 				<subreportExpression><![CDATA["DietaEspecialEstruturaSubReport.jasper"]]></subreportExpression>
 			</subreport>
+			<textField>
+				<reportElement x="0" y="-1" width="555" height="40" isRemoveLineWhenBlank="true" uuid="6b49d93f-6087-4d79-8fc2-b801335dc759"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total de recuperandos: " + $P{TOTAL_RECUPERANDO}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

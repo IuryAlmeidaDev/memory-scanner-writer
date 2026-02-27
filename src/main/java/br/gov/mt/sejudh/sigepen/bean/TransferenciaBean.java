@@ -213,7 +213,8 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 	public String salvar() {
 		String retorno = null;
 		
-		try {			
+		try {	
+			 
 			if (this.transferencia.getListTransferenciaPedidoTransitoDTO().isEmpty()) {
 				throw new ValidacaoException("É necessário adicionar um pedido!");
 			}

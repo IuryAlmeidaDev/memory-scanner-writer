@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -204,10 +205,11 @@ public class MovimentacaoInternaBean extends MetodosDePaginaBean {
 		
 		return true;
 	}
-
+	
 	public String salvar() {
 		String retorno = null;		
 		try {
+			
 			if (this.movimentacao.getPedidos().isEmpty()) {
 				throw new ValidacaoException("É necessário adicionar um pedido!");
 			}			
@@ -249,6 +251,7 @@ public class MovimentacaoInternaBean extends MetodosDePaginaBean {
 		String retorno = null;
 		
 		try {
+			
 			if (this.movimentacao.getPedidos().isEmpty()) {
 				throw new ValidacaoException("É necessário adicionar um pedido!");
 			}			
