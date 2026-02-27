@@ -32,12 +32,22 @@ public class GerarPedidoEstruturaDTO {
 	}
 
 	public GerarPedidoEstruturaDTO(Object[] row) {
-		this.id = ((BigDecimal) row[0]).longValue();
-		this.capacidade = ((BigDecimal) row[1]).intValue();
-		this.cela = ((BigDecimal) row[2]).longValue() == 1;
-		this.nome = (String) row[3];
-		this.dietaPadrao = this.cela ? ((BigDecimal) row[4]).longValue() : 0;
-		this.dietaEspecial = this.cela ? ((BigDecimal) row[5]).longValue() : 0;
+	    this.id = ((BigDecimal) row[0]).longValue();
+	    this.capacidade = ((BigDecimal) row[1]).intValue();
+	    this.cela = ((BigDecimal) row[2]).longValue() == 1;
+	    this.nome = (String) row[3];
+
+	    if (row[4] != null) {
+	        long statusNum = ((BigDecimal) row[4]).longValue();
+	        if (statusNum == 1) {
+	            this.situacaoUnidade = SituacaoUnidade.ATIVO;
+	        } else {
+	            this.situacaoUnidade = SituacaoUnidade.INATIVO;
+	        }
+	    }
+
+	    this.dietaPadrao = this.cela ? ((BigDecimal) row[5]).longValue() : 0;
+	    this.dietaEspecial = this.cela ? ((BigDecimal) row[6]).longValue() : 0;
 	}
 
 	public GerarPedidoEstruturaDTO(long id, int capacidade, boolean cela, String nome, Long dietaPadrao,
