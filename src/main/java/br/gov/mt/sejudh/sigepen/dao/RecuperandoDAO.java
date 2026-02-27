@@ -799,7 +799,7 @@ public class RecuperandoDAO {
 	}
 
     public long countAtivosPorUnidadeNaData(Long unidadeId, Date dataReferencia) {
-        // Cria um range de 24h para a data de referência
+       
         Calendar cal = Calendar.getInstance();
         cal.setTime(dataReferencia);
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -827,57 +827,58 @@ public class RecuperandoDAO {
             return 0L;
         }
     }
+
     
     @SuppressWarnings("unchecked")
     public List<Long> buscarIdsProvisoriosPorDias(long unidadeId, int diasMin, Integer diasMax) {
-        StringBuilder sql = new StringBuilder();
+        Calendar cal = Calendar.getInstance();
         
-        sql.append("SELECT DISTINCT r.id ");
-        sql.append("FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".recuperando r, ");
-        sql.append("     ").append(Sigepen.SEJUDH_SCHEMA).append(".passagem pa, ");
-        sql.append("     ").append(Sigepen.SEJUDH_SCHEMA).append(".passagem_lotacao pl, ");
-        sql.append("     ").append(Sigepen.SEJUDH_SCHEMA).append(".estrutura e ");
-        sql.append("WHERE r.id = pa.recuperando_id ");
-        sql.append("AND pa.id = pl.passagem_id ");
-        sql.append("AND pl.estrutura_id = e.id ");
-        sql.append("AND r.status = 1 ");
-        sql.append("AND r.condicao_atual = 'PROVISORIO' ");
-        sql.append("AND pa.data_saida IS NULL ");
-        sql.append("AND pl.data_saida IS NULL ");
-        sql.append("AND e.unidadeprisional_id = :unidadeId ");
-        
-        sql.append("AND EXISTS (");
-        sql.append("  SELECT 1 FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".processo p ");
-        sql.append("  WHERE p.recuperando_id = r.id ");
-        sql.append("  AND p.modalidade = 'PREVENTIVA'");
-        sql.append(") ");
-        
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, -diasMin);
+        Date dataLimiteMin = cal.getTime(); 
+
+        Date dataLimiteMax = null;
         if (diasMax != null) {
-            sql.append("AND (TRUNC(SYSDATE) - TRUNC(pa.data_entrada)) BETWEEN :diasMin AND :diasMax");
-        } else {
-            sql.append("AND (TRUNC(SYSDATE) - TRUNC(pa.data_entrada)) > :diasMin");
+            cal.setTime(new Date());
+            cal.add(Calendar.DAY_OF_YEAR, -diasMax);
+            dataLimiteMax = cal.getTime(); 
         }
-        
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT r.id FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".recuperando r ")
+           .append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".passagem pa ON r.id = pa.recuperando_id ")
+           .append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".passagem_lotacao pl ON pa.id = pl.passagem_id ")
+           .append("JOIN ").append(Sigepen.SEJUDH_SCHEMA).append(".estrutura e ON pl.estrutura_id = e.id ")
+           .append("WHERE r.status = 1 ") 
+           .append("AND r.condicao_atual = 'PROVISORIO' ")
+           .append("AND pa.data_saida IS NULL AND pl.data_saida IS NULL ")
+           .append("AND e.unidadeprisional_id = :unidadeId ")
+           .append("AND EXISTS (SELECT 1 FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".processo p ")
+           .append("             WHERE p.recuperando_id = r.id AND p.modalidade = 'PREVENTIVA') ");
+
+        if (diasMax != null) {
+            sql.append("AND pa.data_entrada <= :dataMin AND pa.data_entrada >= :dataMax ");
+        } else {
+            sql.append("AND pa.data_entrada < :dataMin ");
+        }
+
         Query query = em.createNativeQuery(sql.toString());
         query.setParameter("unidadeId", unidadeId);
-        query.setParameter("diasMin", diasMin);
+        query.setParameter("dataMin", dataLimiteMin);
         if (diasMax != null) {
-            query.setParameter("diasMax", diasMax);
+            query.setParameter("dataMax", dataLimiteMax);
         }
-        
-        query.setHint("javax.persistence.query.timeout", 30000);
-        
+ 
         try {
-            List<BigDecimal> resultadosBigDecimal = query.getResultList();
+            List<Object> resultadosRaw = query.getResultList();
             List<Long> resultados = new ArrayList<>();
-            for (BigDecimal bd : resultadosBigDecimal) {
-                resultados.add(bd.longValue());
+            for (Object obj : resultadosRaw) {
+                resultados.add(((Number) obj).longValue());
             }
             return resultados;
         } catch (Exception e) {
-            System.err.println("Erro ao executar query: " + e.getMessage());
-            e.printStackTrace();
-            return new ArrayList<>(); 
+            System.err.println("Erro na query de provisórios: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
     

@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
+import java.util.Calendar;
 import java.util.List;
 
 import br.gov.mt.sejudh.sigepen.model.*;
@@ -61,6 +62,7 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 	private List<Long> recuperandoIds;
 
 	private Estrutura estrutura;
+
 
 
 	@Override
@@ -172,6 +174,52 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 			getCriteria().add(Subqueries.propertyIn("unidadeId", critUnidade));
 		}
 		
+		if (this.getDiasProvisorioMin() != null) {
+		    StringBuilder subquery = new StringBuilder();
+		    subquery.append("MATRICULA IN (");
+		    subquery.append("  SELECT /*+ MATERIALIZE */ r.id "); 
+		    subquery.append("  FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".recuperando r ");
+		    subquery.append("  WHERE r.status = 1 ");
+		    subquery.append("    AND r.condicao_atual = 'PROVISORIO' ");
+		    
+		    if (this.getUnidade() != null) {
+		        subquery.append("    AND EXISTS ( ");
+		        subquery.append("      SELECT 1 ");
+		        subquery.append("      FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".passagem pa, ");
+		        subquery.append("           ").append(Sigepen.SEJUDH_SCHEMA).append(".passagem_lotacao pl, ");
+		        subquery.append("           ").append(Sigepen.SEJUDH_SCHEMA).append(".estrutura e ");
+		        subquery.append("      WHERE pa.recuperando_id = r.id ");
+		        subquery.append("        AND pa.data_saida IS NULL ");
+		        subquery.append("        AND pa.id = pl.passagem_id ");
+		        subquery.append("        AND pl.data_saida IS NULL ");
+		        subquery.append("        AND pl.estrutura_id = e.id ");
+		        subquery.append("        AND e.unidadeprisional_id = ").append(this.getUnidade().getId());
+		        subquery.append("        AND ( ");
+		        if (this.getDiasProvisorioMax() != null) {
+		            subquery.append("          (TRUNC(SYSDATE) - TRUNC(pa.data_entrada)) BETWEEN ")
+		                    .append(this.getDiasProvisorioMin())
+		                    .append(" AND ")
+		                    .append(this.getDiasProvisorioMax());
+		        } else {
+		            subquery.append("          (TRUNC(SYSDATE) - TRUNC(pa.data_entrada)) > ")
+		                    .append(this.getDiasProvisorioMin());
+		        }
+		        subquery.append("        ) ");
+		        subquery.append("    ) ");
+		    }
+		    
+		    subquery.append("    AND EXISTS ( ");
+		    subquery.append("      SELECT 1 ");
+		    subquery.append("      FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".processo p ");
+		    subquery.append("      WHERE p.recuperando_id = r.id ");
+		    subquery.append("        AND p.modalidade = 'PREVENTIVA' ");
+		    subquery.append("        AND ROWNUM = 1 "); 
+		    subquery.append("    ) ");
+		    
+		    subquery.append(")");
+		    
+		    getCriteria().add(Restrictions.sqlRestriction(subquery.toString()));
+		}
 		
 		if (this.getRecuperandoIds() != null && this.getRecuperandoIds().size() > 0) {
 		    List<Long> ids = this.getRecuperandoIds();
@@ -193,18 +241,20 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 		
 		
 		if (this.getModalidade() != null) {
-			DetachedCriteria critModalidade = DetachedCriteria.forClass(ProcessoRegimeCondicao.class, "prc")
-					.add(Restrictions.eq("prc.modalidade", this.getModalidade()))
-					.createAlias("prc.processo", "proc", JoinType.INNER_JOIN)
-					.setProjection(Projections.projectionList().add(Projections.groupProperty("proc.recuperando.id")));
+		    if (this.getDiasProvisorioMin() == null) {
+		        DetachedCriteria critModalidade = DetachedCriteria.forClass(ProcessoRegimeCondicao.class, "prc")
+		            .add(Restrictions.eq("prc.modalidade", this.getModalidade()))
+		            .createAlias("prc.processo", "proc", JoinType.INNER_JOIN)
+		            .setProjection(Projections.projectionList().add(Projections.groupProperty("proc.recuperando.id")));
 
-			critModalidade.add(Restrictions.eq("proc.modalidade", this.getModalidade()));
+		        critModalidade.add(Restrictions.eq("proc.modalidade", this.getModalidade()));
 
-			if (this.getModalidade() == Modalidade.TEMPORARIA) {
-				critModalidade.add(Restrictions.ne("prc.regime.id", 4L));
-			}
+		        if (this.getModalidade() == Modalidade.TEMPORARIA) {
+		            critModalidade.add(Restrictions.ne("prc.regime.id", 4L));
+		        }
 
-			getCriteria().add(Subqueries.propertyIn("id", critModalidade));
+		        getCriteria().add(Subqueries.propertyIn("id", critModalidade));
+		    }
 		}
 
 		if (this.getIsTrazerEstruturaNome()) {
@@ -413,6 +463,24 @@ public class FiltroRecuperandoView extends FiltroConsulta {
 	public void setEstrutura(Estrutura estrutura) {
 		this.estrutura = estrutura;
 	}
-	
+
+	private Integer diasProvisorioMin;
+	private Integer diasProvisorioMax;
+
+	public Integer getDiasProvisorioMin() {
+	    return diasProvisorioMin;
+	}
+
+	public void setDiasProvisorioMin(Integer diasProvisorioMin) {
+	    this.diasProvisorioMin = diasProvisorioMin;
+	}
+
+	public Integer getDiasProvisorioMax() {
+	    return diasProvisorioMax;
+	}
+
+	public void setDiasProvisorioMax(Integer diasProvisorioMax) {
+	    this.diasProvisorioMax = diasProvisorioMax;
+	}
 
 }

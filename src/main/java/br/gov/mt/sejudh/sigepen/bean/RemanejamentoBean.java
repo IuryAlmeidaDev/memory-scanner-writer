@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -230,8 +231,9 @@ public class RemanejamentoBean extends MetodosDePaginaBean {
 		String retorno = null;
 		
 		try {
+			
 			if (this.remanejamento.getDataInicio().after(this.getDataMaxima())) {
-				throw new ValidacaoException("Data de entrada inválida!");
+				throw new ValidacaoException("Data de entrada não pode ser maior que a atual");
 			}
 			
 			if (this.remanejamento.getPedido() == null) {
