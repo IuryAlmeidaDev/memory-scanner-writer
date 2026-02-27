@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import br.gov.mt.sejudh.sigepen.util.CardapioUtil;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -142,6 +143,14 @@ public class CardapioBean extends MetodosDePaginaBean {
 		String retorno = null;
 
 		try {
+			if (this.cardapio.getId() == null || this.cardapio.getId() <= 0) {
+				Cardapio existente = service.buscarExistente(this.cardapio);
+				if (existente != null) {
+					RequestContext.getCurrentInstance().execute("PF('confirmarSobrescrita').show()");
+					return null;
+				}
+			}
+
 			service.salvar(this.cardapio);
 			facesUtil.exibirMensagemInfo("Cardápio de " + this.cardapio.getDiaSemana().getDescricao() + " salvo com Sucesso!", true);
 			retorno = "pretty:ListarCardapio";
@@ -154,6 +163,30 @@ public class CardapioBean extends MetodosDePaginaBean {
 			LoggerUtil.logErro(Acao.SALVAR, cardapio, e, log);
 		}
 
+		return retorno;
+	}
+
+	public String sobrescrever() {
+		String retorno = null;
+		try {
+			Cardapio existente = service.buscarExistente(this.cardapio);
+			if (existente != null) {
+				existente.setItensCardapio(new ArrayList<>(this.cardapio.getItensCardapio()));
+				for (ItemCardapio item : existente.getItensCardapio()) {
+					item.setCardapio(existente);
+				}
+				existente.setFestivo(this.cardapio.getFestivo());
+				existente.setData(this.cardapio.getData());
+
+				service.salvar(existente);
+				facesUtil.exibirMensagemInfo("Cardápio de " + existente.getDiaSemana().getDescricao() + " substituído com Sucesso!", true);
+				retorno = "pretty:ListarCardapio";
+				LoggerUtil.logInfo(Acao.SALVAR, existente, log);
+			}
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao substituir cardápio: " + e.getMessage());
+			LoggerUtil.logErro(Acao.SALVAR, cardapio, e, log);
+		}
 		return retorno;
 	}
 	

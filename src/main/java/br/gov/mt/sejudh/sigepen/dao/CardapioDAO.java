@@ -60,6 +60,31 @@ public class CardapioDAO extends BaseDAO<Cardapio, Long> {
 		return (Cardapio) query.getSingleResult();
 	}
 
+	public Cardapio buscarPor(Long semana, DiasSemana diaSemana, Long tipoRefeicaoId, Long contratoId, Long tipoDietaId) {
+		try {
+			String jpql = "SELECT c FROM Cardapio c " +
+					"WHERE c.semana = :semana " +
+					"AND c.diaSemana = :diaSemana " +
+					"AND c.tipoRefeicao.id = :tipoRefeicaoId " +
+					"AND c.contrato.id = :contratoId " +
+					"AND c.tipoDieta.id = :tipoDietaId";
+
+			Query query = entityManager.createQuery(jpql, Cardapio.class);
+			query.setParameter("semana", semana);
+			query.setParameter("diaSemana", diaSemana);
+			query.setParameter("tipoRefeicaoId", tipoRefeicaoId);
+			query.setParameter("contratoId", contratoId);
+			query.setParameter("tipoDietaId", tipoDietaId);
+
+			return (Cardapio) query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	/**
 	 * Verifica se existe um cardápio para a data, tipo de refeição e contrato especificados
 	 * 

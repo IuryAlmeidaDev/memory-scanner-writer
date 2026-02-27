@@ -27,9 +27,19 @@ public class CardapioService extends BaseService<Cardapio, Long> {
 	}
 	
 	public Cardapio salvar(Cardapio t) throws ValidacaoException {
-        this.validaDuplicidade(t);
         return this.cardapioDAO.salvar(t);
     }
+
+	public Cardapio buscarExistente(Cardapio cardapio) {
+		if (cardapio.getSemana() != null && cardapio.getDiaSemana() != null &&
+				cardapio.getTipoRefeicao() != null && cardapio.getContrato() != null &&
+				cardapio.getTipoDieta() != null) {
+			return cardapioDAO.buscarPor(cardapio.getSemana(), cardapio.getDiaSemana(),
+					cardapio.getTipoRefeicao().getId(), cardapio.getContrato().getId(),
+					cardapio.getTipoDieta().getId());
+		}
+		return null;
+	}
 	
 	public List<CardapioDTO> buscarDTOPorFiltro(FiltroCardapio filtro) {
 		return cardapioDAO.buscaPorFiltro(filtro);
