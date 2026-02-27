@@ -182,7 +182,7 @@ public class DashboardDAO {
 
 		return query.getResultList();
 	}
-	
+
 	public Long countRecuperandosProvisorios90a180Dias(Long unidadeId) {
 	    String jpql =
 	        " select count(distinct r.id) " +
@@ -242,6 +242,7 @@ public class DashboardDAO {
 	        return 0L;
 	    }
 	}
+	
 	public Long solicitacaoVisitaPendente(long unidadeId) {
 		Date dataLimite = calculaDataLimiteMaiorDeIdade();
 		

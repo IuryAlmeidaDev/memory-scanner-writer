@@ -9,6 +9,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.hibernate.Hibernate;
+
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.MovimentacaoExternaDAO;
 import br.gov.mt.sejudh.sigepen.dao.MovimentacaoInternaDAO;
@@ -113,6 +115,11 @@ public class PedidoService {
 		PedidoTransito pedidoTransito = dao.buscaPedidoTransitoPorId(id);
 
 		if (pedidoTransito != null) {
+			
+			if(pedidoTransito.getRecuperando() != null) {
+				Hibernate.initialize(pedidoTransito.getRecuperando().getPessoa());
+			}
+			
 			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
 			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
 		}
@@ -124,6 +131,10 @@ public class PedidoService {
 		PedidoTransito pedidoTransito = dao.buscaPedidoTransitoImpressaoPorId(id);
 
 		if (pedidoTransito != null) {
+			
+			if(pedidoTransito.getRecuperando() != null) {
+				Hibernate.initialize(pedidoTransito.getRecuperando().getPessoa());
+			}
 			pedidoTransito.setAutorRegistro(auditDAO.autorRegistro(pedidoTransito, pedidoTransito.getId()));
 			pedidoTransito.setAutorUltimaAlteracao(auditDAO.autorUltimaAlteracao(pedidoTransito, pedidoTransito.getId()));
 		}

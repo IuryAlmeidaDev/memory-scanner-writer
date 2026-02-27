@@ -61,8 +61,8 @@ public class DashboardBean {
 	private List<Long> listaTemporariosNoSistemaVencido = new ArrayList<Long>();
 	private List<Long> listaTemporariosNoSistemaVenceHoje = new ArrayList<Long>();
 	
-	private List<Long> listaProvisorios90a180Dias = new ArrayList<>();
-	private List<Long> listaProvisoriosMais180Dias = new ArrayList<>();
+	//private List<Long> listaProvisorios90a180Dias = new ArrayList<>();
+	//private List<Long> listaProvisoriosMais180Dias = new ArrayList<>();
 
 	
 	private Long solicitacaoVisitaPendente;
@@ -194,19 +194,15 @@ public class DashboardBean {
 				break;
 				
 			case RECUPERANDOS_PROVISORIOS_90_180_DIAS:
-			    Long unidadeId = SecurityUtil.getUnidadeSelecionada().getId();
-			    this.listaProvisorios90a180Dias = recuperandoDAO.buscarIdsProvisoriosPorDias(
-			        unidadeId, 90, 180
+			    this.totalProvisorios90a180Dias = service.countRecuperandosProvisorios90a180Dias(
+			        SecurityUtil.getUnidadeSelecionada().getId()
 			    );
-			    this.totalProvisorios90a180Dias = Long.valueOf(this.listaProvisorios90a180Dias.size());
 			    break;
 
 			case RECUPERANDOS_PROVISORIOS_MAIS_180_DIAS:
-			    Long unidadeId2 = SecurityUtil.getUnidadeSelecionada().getId();
-			    this.listaProvisoriosMais180Dias = recuperandoDAO.buscarIdsProvisoriosPorDias(
-			        unidadeId2, 181, null
+			    this.totalProvisoriosMais180Dias = service.countRecuperandosProvisoriosMais180Dias(
+			        SecurityUtil.getUnidadeSelecionada().getId()
 			    );
-			    this.totalProvisoriosMais180Dias = Long.valueOf(this.listaProvisoriosMais180Dias.size());
 			    break;
 				
 			case SOLICITACAO_VISITA_PENDENTE:
@@ -424,28 +420,22 @@ public class DashboardBean {
 				break;
 				
 			case RECUPERANDOS_PROVISORIOS_90_180_DIAS:
-			  
-			    if (this.listaProvisorios90a180Dias.isEmpty()) {
-			        this.listaProvisorios90a180Dias.add(-1L); 
-			    }
-			    filtro.setRecuperandoIds(this.listaProvisorios90a180Dias);
-			    filtro.setUnidade(SecurityUtil.getUnidadeSelecionada());
 			    filtro.setStatus(StatusRecuperando.ATIVO);
-			    filtro.setModalidade(Modalidade.PREVENTIVA);
 			    filtro.setCondicaoAtual(Condicao.PROVISORIO);
-
+			    filtro.setModalidade(Modalidade.PREVENTIVA);
+			    filtro.setUnidade(SecurityUtil.getUnidadeSelecionada());
+			    filtro.setDiasProvisorioMin(90);
+			    filtro.setDiasProvisorioMax(180);
 			    facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 			    break;
 
 			case RECUPERANDOS_PROVISORIOS_MAIS_180_DIAS:
-			    if (this.listaProvisoriosMais180Dias.isEmpty()) {
-			        this.listaProvisoriosMais180Dias.add(-1L);
-			    }
-			    filtro.setRecuperandoIds(this.listaProvisoriosMais180Dias);
-			    filtro.setUnidade(SecurityUtil.getUnidadeSelecionada());
 			    filtro.setStatus(StatusRecuperando.ATIVO);
-			    filtro.setModalidade(Modalidade.PREVENTIVA);
 			    filtro.setCondicaoAtual(Condicao.PROVISORIO);
+			    filtro.setModalidade(Modalidade.PREVENTIVA);
+			    filtro.setUnidade(SecurityUtil.getUnidadeSelecionada());
+			    filtro.setDiasProvisorioMin(181);
+			    filtro.setDiasProvisorioMax(null);
 			    facesUtil.setFlashParameter("filtroRecuperandoDash", filtro);
 			    break;
 

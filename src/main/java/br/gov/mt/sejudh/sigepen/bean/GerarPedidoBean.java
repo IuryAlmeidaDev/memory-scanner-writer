@@ -405,11 +405,32 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			for (DietaEspecialEstruturaDTO dietaDTO : refeicoesEspeciais) {
 				pedidoAlimento.getDietasEspeciais().add(DietaEspecialPedidoAlimento.newInstance(pedidoAlimento, dietaDTO));
 			}
+			
+			int totalDietaComum = 0;
+			if(itemCardapioPorEstrutura != null) {
+				totalDietaComum = itemCardapioPorEstrutura.stream()
+						.mapToInt(DetalheItemEstruturaCardapioDTO::getQtdRecuperando)
+						.distinct()
+						.sum();
+			}
+			
+			int totalDietaEspecial = 0;
+			if(refeicoesEspeciais != null) {
+				totalDietaEspecial = refeicoesEspeciais.stream()
+						.mapToInt(DietaEspecialEstruturaDTO::getQtdRecuperando)
+						.sum();
+			}
+			
+			int totalRecuperandoDieta = totalDietaComum + totalDietaEspecial;
 
 			pedidoAlimentoService.salvarPedidoAlimento(pedidoAlimento);
 
 			// Parâmetros do relatório
 			final Map<String, Object> parameters = criarParametrosRelatorio(data, filtroGerarPedido, refeicoesEspeciais, contrato);
+			
+			parameters.put("TOTAL_RECUPERANDO", totalRecuperandoDieta);
+			
+			System.out.println(">>>> TOTAL RECUPERANDO : "+totalRecuperandoDieta);
 
 			// Geração do relatório
 			gerarRelatorioUnificado(itemCardapioPorEstrutura, parameters);

@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -268,7 +269,8 @@ public class MovimentacaoExternaBean extends MetodosDePaginaBean {
 	public String confirmarInicioMovimentacao() {
 		String retorno = null;
 		
-		try {			
+		try {		
+			
 			if (this.movimentacao.getPedidos().isEmpty()) {
 				throw new ValidacaoException("É necessário adicionar um pedido!");
 			}			
@@ -692,4 +694,5 @@ public class MovimentacaoExternaBean extends MetodosDePaginaBean {
 	public void setRecuperandosComBiometriaDesatualizada(List<Recuperando> recuperandosComBiometriaDesatualizada) {
 		this.recuperandosComBiometriaDesatualizada = recuperandosComBiometriaDesatualizada;
 	}
+
 }

@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -98,6 +99,8 @@ public class PassagemService {
 
     @Interceptors(EJBExcInterceptor.class)
     public void desligar(Recuperando recuperando, Passagem passagem, PassagemLotacao lotacao) throws Exception {
+    	
+    	
         if (passagem.getDataSaida().after(Sigepen.getDataAtual())) {
             throw new ValidacaoException("Data de saída não pode ser maior que data atual.");
         }
