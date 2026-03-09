@@ -59,7 +59,7 @@ public class VisitanteListaDTO {
 	public void setUnidade(String unidade) {
 		this.unidade = unidade;
 	}
-	public void setSituacaoCadastro(int situacaoCadastro) {
+	public void setSituacaoCadastro(Integer situacaoCadastro) {
 		this.situacaoCadastro = StatusCredenciamento.getValue(situacaoCadastro);
 	}
 	public void setDataValidade(Date dataValidade) {
