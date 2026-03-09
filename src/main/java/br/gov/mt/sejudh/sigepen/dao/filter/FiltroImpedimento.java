@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.dao.filter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -80,4 +81,23 @@ public class FiltroImpedimento extends FiltroConsulta {
     public void setVisitante(Visitante visitante) {
         this.visitante = visitante;
     }
+    
+    @Override
+    public void configurarOrdenacao() {
+        super.configurarOrdenacao();
+        
+        if (this.getOrdenacao() != null) {
+
+            String propOrdenacao = this.getPropriedadeOrdenacao();
+
+            if (propOrdenacao != null && 
+                !propOrdenacao.equals("id") && 
+                !propOrdenacao.endsWith(".id")) {
+                getCriteria().addOrder(Order.desc("id"));
+            }
+        } else {
+            getCriteria().addOrder(Order.desc("id"));
+        }
+    }
+    
 }

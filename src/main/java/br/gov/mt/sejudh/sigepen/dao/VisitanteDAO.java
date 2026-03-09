@@ -209,6 +209,17 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 		Session session = em.unwrap(Session.class);
 
 		StringBuilder sql = new StringBuilder();
+		
+		sql.append("WITH CREDEN AS ( ");
+		sql.append("    SELECT c.*, ");
+		sql.append("           ROW_NUMBER() OVER ( ");
+		sql.append("               PARTITION BY c.ID_VISITANTE, c.ID_RECUPERANDO ");
+		sql.append("               ORDER BY c.ID_CREDENCIAMENTO DESC ");
+		sql.append("           ) rn ");
+		sql.append("    FROM SIGEPEN_OWNER.SGP_CREDENCIAMENTO c ");
+		sql.append(") ");
+		
+		
 		sql.append("SELECT  ");
 		sql.append("    v.ID_VISITANTE             as codigo, ");
 		sql.append("    pv.NOME                    as visitante, ");
@@ -223,19 +234,21 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 		sql.append("    c.DATA_VALIDADE            as dataValidade ");
 		sql.append("FROM SIGEPEN_OWNER.SGP_VISITANTE v ");
 		sql.append("INNER JOIN SIGEPEN_OWNER.PESSOA pv ON pv.ID = v.ID_PESSOA_VISITANTE ");
-		sql.append(
-				" left join (select d.pessoa_id, d.numero from SIGEPEN_OWNER.documento d where d.tipo_documento_id = 12) tbdoc on tbdoc.pessoa_id = pv.id ");
-		sql.append("INNER JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO c ON v.ID_VISITANTE = c.ID_VISITANTE ");
+		
+		sql.append("INNER JOIN CREDEN c ");
+		sql.append("   ON v.ID_VISITANTE = c.ID_VISITANTE ");
+		sql.append("  AND c.rn = 1 ");
+		
+		sql.append(" left join (select d.pessoa_id, d.numero from SIGEPEN_OWNER.documento d where d.tipo_documento_id = 12) tbdoc on tbdoc.pessoa_id = pv.id ");
+		//sql.append("INNER JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO c ON v.ID_VISITANTE = c.ID_VISITANTE ");
 		sql.append("INNER JOIN SIGEPEN_OWNER.SGP_TIPO_VISITA tv on c.ID_TIPO_VISITA = tv.ID_TIPO_VISITA ");
-		sql.append("INNER JOIN SIGEPEN_OWNER.RECUPERANDO r ON r.ID = c.ID_RECUPERANDO ");
-		sql.append("INNER JOIN SIGEPEN_OWNER.PESSOA pr ON pr.ID = r.PESSOA_ID ");
-		sql.append("INNER JOIN SIGEPEN_OWNER.PARENTE P3 ON  c.ID_PARENTE = P3.ID ");
-		sql.append("INNER JOIN SIGEPEN_OWNER.PARENTESCO P4 ON P4.ID = P3.PARENTESCO_ID ");
+		sql.append("LEFT  JOIN SIGEPEN_OWNER.RECUPERANDO r ON r.ID = c.ID_RECUPERANDO ");
+		sql.append("LEFT JOIN SIGEPEN_OWNER.PESSOA pr ON pr.ID = r.PESSOA_ID ");
+		sql.append("LEFT  JOIN SIGEPEN_OWNER.PARENTE P3 ON  c.ID_PARENTE = P3.ID ");
+		sql.append("LEFT  JOIN SIGEPEN_OWNER.PARENTESCO P4 ON P4.ID = P3.PARENTESCO_ID ");
 		sql.append("INNER JOIN SIGEPEN_OWNER.UNIDADE_PRISIONAL up ON c.ID_UNIDADE_PRISIONAL = up.ID ");
-		sql.append(
-				"INNER JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO_FASE fc on c.ID_CREDENCIAMENTO = fc.ID_CREDENCIAMENTO ");
-		sql.append(
-				"LEFT JOIN SIGEPEN_OWNER.SGP_IMPEDIMENTO si ON SI.ID_VISITANTE = v.ID_VISITANTE AND SI.STAT_IMPEDIMENTO = 'A' AND SI.DATA_FIM_IMPEDIMENTO >= sysdate ");
+		sql.append("LEFT  JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO_FASE fc on c.ID_CREDENCIAMENTO = fc.ID_CREDENCIAMENTO ");
+		sql.append("LEFT JOIN SIGEPEN_OWNER.SGP_IMPEDIMENTO si ON SI.ID_VISITANTE = v.ID_VISITANTE AND SI.STAT_IMPEDIMENTO = 'A' AND SI.DATA_FIM_IMPEDIMENTO >= sysdate ");
 		sql.append("WHERE 1 = 1 ");
 
 		if (filtro.getNome() != null && !filtro.getNome().equals("")) {
@@ -1080,7 +1093,6 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 	    Criteria criteria = filtro.criarCriteriaParaQuantidade(AssociarVisitanteResponsavelView.class, em);
 	    
 	    criteria.setProjection(Projections.countDistinct("id")); 
-
 	    criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY); 
 	    
 	    return ((Number) criteria.uniqueResult()).intValue();

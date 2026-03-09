@@ -129,6 +129,7 @@ public class ImpedimentoDAO extends BaseDAO<Impedimento, Long> {
 	public int buscarQuantidadeFiltrada(FiltroImpedimento filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(Impedimento.class, em);
 		criteria.setProjection(Projections.countDistinct("id"));
+		//criteria.addQueryHint(QueryHints.READ_ONLY);
 		return ((Number) criteria.uniqueResult()).intValue();
 	}
 

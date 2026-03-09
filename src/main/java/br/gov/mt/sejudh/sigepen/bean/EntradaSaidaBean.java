@@ -154,6 +154,8 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	private boolean processando = false;
 
 	private Ocorrencia ocorrencia;
+	
+	private List<Credenciamento> todosCredenciamentoVisitante;
 
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
@@ -1339,8 +1341,82 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		FiltroEntradaSaida f = new FiltroEntradaSaida();
 		f.setPessoasIds(ids);
 		Visitante visantePorPessoa = service.buscarPessoaVisitante(ids);
+		
+		List<Credenciamento> credenciamentos = 
+			    credenciamentoService.buscarPorVisitanteId(visantePorPessoa.getId());
+
+		List<String> nomesTransferidos = new ArrayList<>();
+		
+		Set<String> nomesTransferidosSet = new LinkedHashSet<>();
+		long unidadeLogadaId = SecurityUtil.getUnidadeSelecionada().getId();
+
+		for (Credenciamento c : credenciamentos) {
+		    if (c.getRecuperando() != null) {
+		        boolean credenciamentoAtivo = 
+		            FaseCredenciamento.APROVACAO.getId().equals(c.getFaseCredenciamento())
+		            && StatusCredenciamento.APROVADO.getId().equals(c.getStatusCredenciamento())
+		            && (c.getDataValidade() == null || 
+		                !c.getDataValidade().before(
+		                    Sigepen.getDataConsultaMaiorIgual(new Date())));
+
+		        if (!credenciamentoAtivo) continue; 
+
+		        UnidadePrisional unidadeAtual = faltaDisciplinarService
+		                .buscaUnidadePriosionalAtualRecuperandoId(
+		                    c.getRecuperando().getId());
+		        if (unidadeAtual != null && unidadeAtual.getId() != unidadeLogadaId) {
+		            nomesTransferidosSet.add(
+		                c.getRecuperando().getPessoa().getNome()
+		                + " (" + unidadeAtual.getNome() + ")"
+		            );
+		        }
+		    }
+		}
+
+		if (!nomesTransferidosSet.isEmpty()) {
+		    facesUtil.exibirMensagem(
+		        FacesMessage.SEVERITY_WARN,
+		        "Recuperandos transferidos",
+		        "Os seguintes recuperandos estão em outra unidade: "
+		        + String.join(", ", nomesTransferidosSet)
+		    );
+		}
 
 		if (visantePorPessoa != null) {
+			
+			this.todosCredenciamentoVisitante = credenciamentoService
+			        .buscarPorVisitanteId(visantePorPessoa.getId())
+			        .stream()
+			        .filter(c -> 
+			            c.getRecuperando() != null
+			            && FaseCredenciamento.APROVACAO.getId().equals(c.getFaseCredenciamento())
+			            && StatusCredenciamento.APROVADO.getId().equals(c.getStatusCredenciamento())
+			            && (c.getDataValidade() == null || 
+			                !c.getDataValidade().before(
+			                    Sigepen.getDataConsultaMaiorIgual(new Date())))
+			        )
+			        .collect(Collectors.collectingAndThen(
+			            Collectors.toMap(
+			                c -> c.getRecuperando().getId(),
+			                c -> c,
+			                (existing, replacement) -> existing 
+			            ),
+			            map -> new ArrayList<>(map.values())
+			        ));
+
+			if (this.todosCredenciamentoVisitante != null) {
+			    for (Credenciamento cred : this.todosCredenciamentoVisitante) {
+			        UnidadePrisional upAtual = this.faltaDisciplinarService
+			                .buscaUnidadePriosionalAtualRecuperandoId(
+			                    cred.getRecuperando().getId());
+			        if (upAtual != null) {
+			            cred.getRecuperando().setLotacaoAtual(upAtual.getNome());
+			        } else {
+			            cred.getRecuperando().setLotacaoAtual("Não encontrada");
+			        }
+			    }
+			}
+			
 //			try {
 			f.setPessoasIds(ids);
 			f.setData(new Date());
@@ -1520,6 +1596,15 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	    }
 	    return String.join(", ", nomes);
 }
+	
+	public List<Credenciamento> getTodosCredenciamentoVisitante() {
+	    return todosCredenciamentoVisitante;
+	}
+
+	public void setTodosCredenciamentoVisitante(
+	        List<Credenciamento> todosCredenciamentoVisitante) {
+	    this.todosCredenciamentoVisitante = todosCredenciamentoVisitante;
+	}
 	
 	
 }
