@@ -257,10 +257,10 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 			}
 			
 		} catch (ValidacaoException e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "AVISO", e.getMessage());
 		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-					"Erro ao salvar uma dieta especial (" + this.dietaEspecial + "): " + e.getMessage());
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "AVISO",
+					"Erro ao salvar uma dieta especial: " + e.getMessage());
 			LoggerUtil.logErro(Acao.SALVAR, dietaEspecial, e, log);
 		}
 

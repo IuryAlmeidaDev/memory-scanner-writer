@@ -11,6 +11,7 @@ import br.gov.mt.sejudh.sigepen.model.Arquivo;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.DietaEspecialPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.ItemPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
@@ -51,7 +52,9 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -377,6 +380,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	private void imprimir(final String data, final FiltroGerarPedido filtroGerarPedido, Contrato contrato) {
 		try {
 			configurarDadosRelatorio();
+			validarHorarioRefeicao(contrato, filtroGerarPedido.getTipoRefeicao().getId());
 
 			final long idEstrutura = gerarPedidoEstruturaDTO.getId();
 
@@ -388,6 +392,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			final List<DetalheItemEstruturaCardapioDTO> itemCardapioPorEstrutura = DetalheItemEstruturaCardapioDTO.combinarPedidos(
 					estruturaNivel2, refeicoesDetalhadas);
 			final List<DietaEspecialEstruturaDTO> refeicoesEspeciais = estruturaService.buscarDietasEspeciais(idEstrutura, data);
+			
+			
 
 			validarCardapio(itemCardapioPorEstrutura);
 
@@ -397,6 +403,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 					this.unidade.getId(), contrato.getId(),
 					filtroGerarPedido.getTipoRefeicao().getId()
 			);
+			
+			
 
 			for (DetalheItemEstruturaCardapioDTO itemDTO : itemCardapioPorEstrutura) {
    				pedidoAlimento.getItensPedido().add(ItemPedidoAlimento.newInstance(pedidoAlimento, itemDTO));
@@ -451,6 +459,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
             LocalDate amanha = hoje.plusDays(1);
             LocalDate dataSelecionada = Instant.ofEpochMilli(dataPedido.getTime())
                     .atZone(ZoneId.systemDefault()).toLocalDate();
+            
+            
 
             if (dataSelecionada.isBefore(hoje)) {
                 facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível emitir/substituir um pedido retroativamente.");
@@ -492,9 +502,11 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	}
 
 	private void tratarErroGeracaoRelatorio(Exception e) {
-		String message = e.getCause() != null ? e.getCause().getMessage() : e.getMessage().substring(e.getMessage().indexOf(":") + 1);
-		facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", message);
-		LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
+	    String message = (e.getCause() != null) ? e.getCause().getMessage() : e.getMessage();
+	    
+	    facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "AVISO", message);
+	    
+	    LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
 	}
 
 	private <T> void validarCardapio(List<T> cardapios) throws Exception {
@@ -502,6 +514,32 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			throw new Exception("Não existe um cardápio para esse tipo de refeição");
 		}
 	}
+	
+	public void validarHorarioRefeicao(Contrato contrato, Long tipoRefeicaoId) throws Exception {
+	    if (contrato.getHorariosRefeicao() == null) return;
+
+	    LocalTime agora = LocalTime.now();
+	    
+	    HorarioRefeicao horarioDefinido = contrato.getHorariosRefeicao().stream()
+	            .filter(h -> h.getTipoRefeicao().getId().equals(tipoRefeicaoId))
+	            .findFirst()
+	            .orElse(null);
+
+	    if (horarioDefinido != null && horarioDefinido.getHorarioInicio() != null) {
+	        String horaBanco = horarioDefinido.getHorarioInicio(); 
+	        
+	        DateTimeFormatter parser = DateTimeFormatter.ofPattern("HHmm");
+	        
+	        LocalTime horaLimite = LocalTime.parse(horaBanco, parser); 
+
+	        if (agora.isBefore(horaLimite)) {
+	            DateTimeFormatter exibicao = DateTimeFormatter.ofPattern("HH");
+	            throw new Exception("Não é possivel gerar o pedido de alimentação no momento. O proximo horário inicia ás: " + horaLimite.format(exibicao)+"h");
+	        }
+	    }
+	}
+	
+	
 
 	private String getMensagemCabecalhoQuantitativo(FiltroGerarPedido filtroGerarPedido, String data, Contrato contrato) {
 		String refeicao = filtroGerarPedido.getTipoRefeicao().getDescricao();

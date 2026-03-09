@@ -274,6 +274,9 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	private FaseCredenciamento[] fasesCredenciamento;
 
 	private String tabIndex = "0";
+	
+	private boolean paginacaoConfigurada = false;
+	
 
 	public Boolean isMenorQueSete() {
 		return visitanteMenorQueSete;
@@ -1681,6 +1684,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	}
 
 	public void pesquisar() {
+		paginacaoConfigurada = false;
 		this.getFiltro().setProjetarDados(true);
 
 		this.lazyDataModel = new LazyDataModel<VwVisitante>() {
@@ -1719,12 +1723,19 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			@Override
 			public List<VwVisitante> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
+				
+				
 				int buscarQuantidadeFiltrada = loadQtde();
 				setRowCount(buscarQuantidadeFiltrada);
 				campoOrdenacao = sortField;
 				sentidoOrdenacao = sortOrder;
 				try {
-					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+					//configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+					if (!paginacaoConfigurada) {
+					    configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+					    paginacaoConfigurada = true;
+					}
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1738,8 +1749,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					}
 				}
 
-				usuarioEstaCadastrando = false;
-				getFiltro().setPessoasIds(new ArrayList<Long>());
+				usuarioEstaCadastrando = false;	
+				//getFiltro().setPessoasIds(new ArrayList<Long>());
 				return visitantes;
 			}
 		};

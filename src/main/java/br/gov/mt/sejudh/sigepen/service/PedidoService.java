@@ -318,6 +318,13 @@ public class PedidoService {
 		validarStatusRecuperando(pedido.getRecuperando());
 		validarOrigemDoRecuperando(pedido);
 		
+		if (passoAtual == MovimentacaoPassos.SALVAR || passoAtual == MovimentacaoPassos.AUTORIZAR) {
+	        if (pedido.getMotivo() == null || pedido.getMotivo().trim().isEmpty()) {
+	            throw new ValidacaoException("É necessário adicionar um motivo!");
+	        }
+	    }
+
+		
 		switch (passoAtual) {
 			case ASSOCIAR_ESTRUTURA:
 				validarEstruturaOrigemDestinoSaoIguais(pedido);
