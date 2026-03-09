@@ -18,7 +18,7 @@
 		<h:form>
 			<p:button value="Cadastrar" outcome="pretty:CadastrarDietaEspecial"
 				icon="ui-icon-plus"
-				rendered="#{securityUtil.possuiPermissao('CadastrarContrato')}" />
+				rendered="#{securityUtil.possuiPermissao('CadastrarDietaEspecial')}" />
 		</h:form>
 
 		<h:form id="meuFormulario">
@@ -97,12 +97,12 @@
 					<center>
 						<p:button title="Visualizar" icon="ui-icon-document"
 							outcome="pretty:VisualizarDietaEspecial"
-							rendered="#{securityUtil.possuiPermissao('VisualizarContrato')}">
+							rendered="#{securityUtil.possuiPermissao('VisualizarDietaEspecial')}">
 							<f:param name="id" value="#{dietaEspecial.id}" />
 						</p:button>
 						<p:button title="Editar" icon="ui-icon-pencil"
 							outcome="pretty:AlterarDietaEspecial"
-							rendered="#{securityUtil.possuiPermissao('AlterarContrato')}">
+							rendered="#{securityUtil.possuiPermissao('AlterarDietaEspecial')}">
 							<f:param name="id" value="#{dietaEspecial.id}" />
 						</p:button>
 					</center>
