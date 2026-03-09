@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 6.3.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListarConsolidadoMensal" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.5"/>
-    <property name="ireport.x" value="258"/>
-    <property name="ireport.y" value="144"/>
+	<property name="ireport.x" value="258"/>
+	<property name="ireport.y" value="144"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\lavidicoalves.JUSTICA\\Desktop\\relatórios\\"]]></defaultValueExpression>
 	</parameter>
@@ -79,7 +80,7 @@
 	<detail>
 		<band height="72">
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="165" y="24" width="55" height="17" uuid="744cc3bc-47a1-4563-993b-440b77d21983"/>
+				<reportElement x="160" y="24" width="60" height="17" uuid="744cc3bc-47a1-4563-993b-440b77d21983"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
@@ -121,15 +122,15 @@
 				<textFieldExpression><![CDATA["Unidade Prisional: " + $F{nomeUnidade}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="24" width="165" height="17" uuid="7a134ad1-c318-41c4-a97e-27493115ec7d"/>
+				<reportElement x="0" y="24" width="170" height="17" uuid="7a134ad1-c318-41c4-a97e-27493115ec7d"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Vigência da Unidade no Contrato: ]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="231" y="24" width="94" height="17" uuid="b3eb81a2-85a8-41ab-a4d7-8dc4e8251e2a"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="231" y="24" width="60" height="17" uuid="b3eb81a2-85a8-41ab-a4d7-8dc4e8251e2a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{virgenciaContartoFim}]]></textFieldExpression>
@@ -202,30 +203,30 @@
 		</band>
 	</detail>
 	<pageFooter>
-        <band height="83" splitType="Stretch">
-            <subreport isUsingCache="false" runToBottom="true">
-                <reportElement x="0" y="0" width="801" height="83" uuid="c1fd89dd-c0f2-4290-ab2d-786fe4c5875d"/>
+		<band height="83" splitType="Stretch">
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement x="0" y="0" width="801" height="83" uuid="c1fd89dd-c0f2-4290-ab2d-786fe4c5875d"/>
 				<subreportParameter name="EMISSOR">
 					<subreportParameterExpression><![CDATA[$P{EMISSOR}]]></subreportParameterExpression>
 				</subreportParameter>
-                <subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{RODAPE}]]></subreportExpression>
 			</subreport>
-            <textField>
-                <reportElement x="672" y="63" width="80" height="20" uuid="42607cd8-fdaf-4fc2-a3f5-dba39b902617">
-                    <printWhenExpression><![CDATA[$P{TEM_PAGINACAO}]]></printWhenExpression>
-                </reportElement>
-                <textElement textAlignment="Right"/>
-                <textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
-            </textField>
-            <textField evaluationTime="Report">
-                <reportElement x="752" y="63" width="40" height="20" uuid="f0d5bebc-79ab-4ce5-ba25-e7fc6add2d39">
-                    <printWhenExpression><![CDATA[$P{TEM_PAGINACAO}]]></printWhenExpression>
-                </reportElement>
-                <textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-            </textField>
+			<textField>
+				<reportElement x="672" y="63" width="80" height="20" uuid="42607cd8-fdaf-4fc2-a3f5-dba39b902617">
+					<printWhenExpression><![CDATA[$P{TEM_PAGINACAO}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="752" y="63" width="40" height="20" uuid="f0d5bebc-79ab-4ce5-ba25-e7fc6add2d39">
+					<printWhenExpression><![CDATA[$P{TEM_PAGINACAO}]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
 		</band>
-    </pageFooter>
-    <lastPageFooter>
-        <band height="131"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="131"/>
 	</lastPageFooter>
 </jasperReport>
