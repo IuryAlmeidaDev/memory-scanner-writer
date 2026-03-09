@@ -15,6 +15,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.annotations.QueryHints;
 
 import br.gov.mt.sejudh.sigepen.base.dao.BaseDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroSolicitacaoVisita;

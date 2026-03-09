@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -197,5 +198,24 @@ public class FiltroSolicitacaoVisita extends FiltroConsulta {
 	public void setNomeSocial(String nomeSocial) {
 		this.nomeSocial = nomeSocial;
 	}
+	
+	 @Override
+	    public void configurarOrdenacao() {
+	        super.configurarOrdenacao();
+	        
+	        if (this.getOrdenacao() != null) {
+
+	            String propOrdenacao = this.getPropriedadeOrdenacao();
+	
+	            if (propOrdenacao != null && 
+	                !propOrdenacao.equals("id") && 
+	                !propOrdenacao.equals("solicitacoes.id") &&
+	                !propOrdenacao.endsWith(".id")) {
+	                getCriteria().addOrder(Order.desc("solicitacoes.id"));
+	            }
+	        } else {
+	            getCriteria().addOrder(Order.desc("solicitacoes.id"));
+	        }
+	    }
 
 }

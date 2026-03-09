@@ -34,18 +34,28 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         consultaSQL.append(subselectDadosPessoas);
         consultaSQL.append(subselectVisitantes);
 
-        if (subselectRecuperando != null) {
+        if (subselectRecuperando != null && filtro.getNome() != null && !filtro.getNome().isEmpty()) {
             consultaSQL.append(" UNION ALL ");
             consultaSQL.append(subselectRecuperando);
         }
 
         StringBuilder sqlFinal = new StringBuilder();
         if (!contar) {
-        	 sqlFinal.append("SELECT DISTINCT * FROM ( ").append(consultaSQL.toString()).append(" ) ");
+            sqlFinal.append("SELECT * FROM ( ");
+            sqlFinal.append("  SELECT subq.*, ROW_NUMBER() OVER (PARTITION BY subq.id ORDER BY subq.id DESC) as rn_final ");
+            sqlFinal.append("  FROM ( ").append(consultaSQL.toString()).append(" ) subq ");
+            sqlFinal.append(") WHERE rn_final = 1 ");
+            
             if (ordemSQL.name().equals("DESCENDING")) {
                 sqlFinal.append("ORDER BY ").append(campoOrdenacao).append(" DESC ");
+                if (!campoOrdenacao.equals("id")) {
+                    sqlFinal.append(", id DESC ");
+                }
             } else {
                 sqlFinal.append("ORDER BY ").append(campoOrdenacao).append(" ASC ");
+                if (!campoOrdenacao.equals("id")) {
+                    sqlFinal.append(", id DESC ");
+                }
             }
         } else {
             sqlFinal.append("SELECT SUM(credenciamentosAtivos) AS credenciamentosAtivos FROM ( ").append(consultaSQL).append(" ) ");
@@ -66,17 +76,23 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         return visitantes;
     }
 
+    
     private StringBuilder criarSubselectCTE() {
         return new StringBuilder(" WITH CTE AS ")
-                .append("  (SELECT CRE.ID_VISITANTE visitanteId, ")
-                .append("          CRE.ID_CREDENCIAMENTO credenciamentoId, ")
-                .append("          CRE.ID_RECUPERANDO idRecuperando, ")
-                .append("          CRE.ID_TIPO_VISITA tipoVisitaId, ")
-                .append("          CRE.CODG_FASE_CREDENCIAL faseCredenciamento, ")
-                .append("          CRE.CODG_SITUACAO_CREDENCIAL statusCredenciamento, ")
-                .append("          row_number() OVER(PARTITION BY CRE.ID_VISITANTE ORDER BY CRE.ID_CREDENCIAMENTO DESC) AS RN  ")
-                .append("     FROM SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE), ");
+            .append("  (SELECT CRE.ID_VISITANTE visitanteId, ")
+            .append("          CRE.ID_CREDENCIAMENTO credenciamentoId, ")
+            .append("          CRE.ID_RECUPERANDO idRecuperando, ")
+            .append("          CRE.ID_TIPO_VISITA tipoVisitaId, ")
+            .append("          CRE.CODG_FASE_CREDENCIAL faseCredenciamento, ")
+            .append("          CRE.CODG_SITUACAO_CREDENCIAL statusCredenciamento, ")
+            .append("          CRE.DATA_VALIDADE dataValidade, ")
+            .append("          row_number() OVER ( ")
+            .append("             PARTITION BY CRE.ID_VISITANTE, CRE.ID_RECUPERANDO ")
+            .append("             ORDER BY CRE.ID_CREDENCIAMENTO DESC ")
+            .append("          ) AS RN ")
+            .append("     FROM SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE), ");
     }
+
 
     private StringBuilder criarSubselectDadosPessoas(FiltroVwVisitante filtro) {
         StringBuilder filtrosPessoa = getFiltrosPessoa(filtro);
@@ -114,58 +130,68 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
 
         subselect.append(" SELECT ");
         if (contar) {
-            subselect.append(" count(p.id) credenciamentosAtivos ");
+            subselect.append(" count(DISTINCT p.id) credenciamentosAtivos ");
         } else {
             subselect.append(criarCamposVisitantes());
         }
         subselect.append("   FROM DADOS_PESSOAS P ");
         subselect.append("  INNER JOIN SIGEPEN_OWNER.SGP_VISITANTE v ");
         subselect.append("     ON P.ID = V.ID_PESSOA_VISITANTE ");
-        subselect.append("   LEFT JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE ");
-        subselect.append("     ON CRE.ID_VISITANTE = V.ID_VISITANTE ");
         subselect.append("   LEFT JOIN CTE ");
         subselect.append("     ON CTE.visitanteId = V.ID_VISITANTE ");
         subselect.append("    AND CTE.RN = 1 ");
+        subselect.append("   LEFT JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE ");
+        subselect.append("     ON CRE.ID_CREDENCIAMENTO = CTE.credenciamentoId "); 
         subselect.append("   LEFT JOIN ").append(criarSubselectDocumento());
         subselect.append("     ON TBDOCUMENTO.PESSOAID = P.ID ");
         subselect.append("     WHERE 1 = 1 ");
 
-        adicionarCondicoes(subselect, filtro, false );
+        adicionarCondicoes(subselect, filtro, false);
+        
+        if (!contar) {
+            subselect.append(" GROUP BY v.id_visitante, p.nome, p.id, v.data_hora_cadastro, ")
+                     .append(" v.stat_visitante, CTE.credenciamentoId, CTE.tipoVisitaId, ")
+                     .append(" CTE.faseCredenciamento, CTE.statusCredenciamento ");
+        }
 
         return subselect;
     }
 
     private void adicionarCondicoes(StringBuilder subselect, FiltroVwVisitante filtro, boolean recuperando) {
-        if (filtro.getSituacaoCredenciamento() != null) {
-            subselect.append("       AND CRE.CODG_SITUACAO_CREDENCIAL = :CODG_SITUACAO_CREDENCIAL ");
+        if (!recuperando) {
+            if (filtro.getSituacaoCredenciamento() != null) {
+                subselect.append("       AND CRE.CODG_SITUACAO_CREDENCIAL = :CODG_SITUACAO_CREDENCIAL ");
+            }
+            if (filtro.getFaseCredenciamento() != null) {
+                subselect.append("       AND CRE.CODG_FASE_CREDENCIAL = :CODG_FASE_CREDENCIAL ");
+            }
+            
+
+            if (filtro.getStatus() != null) {
+                subselect.append("  AND V.STAT_VISITANTE = :statusVisitante");
+            }
+       
+            if (filtro.getVencimentoCredenciamento() != null) {
+                VencimentoCredenciamento venc = filtro.getVencimentoCredenciamento();
+                if (venc == VencimentoCredenciamento.VENCIDOS) {
+                    subselect.append(" AND CTE.dataValidade < :dataValidadeFim ");
+                } else {
+                    subselect.append(" AND CTE.dataValidade BETWEEN :dataValidadeInicio AND :dataValidadeFim ");
+                }
+            }
+
+
+            if (filtro.getRecuperando() != null && !filtro.getRecuperando().isEmpty()) {
+                subselect.append("  AND EXISTS (SELECT 1 FROM SIGEPEN_OWNER.RECUPERANDO R ")
+                        .append("              INNER JOIN SIGEPEN_OWNER.PESSOA PR ON PR.ID = R.PESSOA_ID ")
+                        .append("              WHERE R.ID = CRE.ID_RECUPERANDO ")
+                        .append("              AND PR.NOME LIKE '%' || :recuperando || '%') ");
+            }
         }
-        if (filtro.getFaseCredenciamento() != null) {
-            subselect.append("       AND CRE.CODG_FASE_CREDENCIAL = :CODG_FASE_CREDENCIAL ");
-        }
+        
         if (filtro.getUnidadePrisional() != null) {
             subselect.append("       AND CRE.ID_UNIDADE_PRISIONAL = :unidade ");
         }
-
-        if (filtro.getStatus() != null && !recuperando) {
-            subselect.append("  AND V.STAT_VISITANTE = :statusVisitante");
-        }
-
-        if (filtro.getVencimentoCredenciamento() != null && !recuperando) {
-            VencimentoCredenciamento venc = filtro.getVencimentoCredenciamento();
-            if (venc == VencimentoCredenciamento.VENCIDOS) {
-                subselect.append(" AND CRE.DATA_VALIDADE < :dataValidadeFim ");
-            } else {
-                subselect.append(" AND CRE.DATA_VALIDADE BETWEEN :dataValidadeInicio AND :dataValidadeFim ");
-            }
-        }
-
-        if(filtro.getRecuperando() != null && !filtro.getRecuperando().isEmpty() && !recuperando) {
-            subselect.append("  AND EXISTS (SELECT 1 FROM SIGEPEN_OWNER.RECUPERANDO R ")
-                    .append("              INNER JOIN SIGEPEN_OWNER.PESSOA PR ON PR.ID = R.PESSOA_ID ")
-                    .append("              WHERE R.ID = CRE.ID_RECUPERANDO ")
-                    .append("              AND PR.NOME LIKE '%' || :recuperando || '%') ");
-        }
-
     }
 
     private StringBuilder criarCamposVisitantes() {
@@ -193,12 +219,11 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
     }
 
     private StringBuilder criarSubselectRecuperando(boolean contar, FiltroVwVisitante filtro) {
-
         StringBuilder subselect = new StringBuilder();
 
         subselect.append(" SELECT ");
         if (contar) {
-            subselect.append(" count(p.id) credenciamentosAtivos ");
+            subselect.append(" count(DISTINCT p.id) credenciamentosAtivos ");
         } else {
             subselect.append(criarCamposRecuperando());
         }
@@ -208,7 +233,6 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         subselect.append("   LEFT JOIN ").append(criarSubselectDocumento());
         subselect.append("     ON TBDOCUMENTO.PESSOAID = P.ID ");
         subselect.append(" WHERE NOT EXISTS (SELECT 1 FROM SIGEPEN_OWNER.SGP_VISITANTE VT WHERE VT.ID_PESSOA_VISITANTE = P.ID) ");
-
 
         return subselect;
     }
@@ -233,9 +257,9 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
 
     private StringBuilder criarSubselectRecuperandoPessoa(FiltroVwVisitante filtro) {
         StringBuilder subselect = new StringBuilder();
-        subselect.append("(SELECT RE.Id as recuperando_id, RE.PESSOA_ID, PASS.TIPO_DESLIGAMENTO, PASS.DATA_SAIDA ")
+        subselect.append("(SELECT DISTINCT RE.Id as recuperando_id, RE.PESSOA_ID, PASS.TIPO_DESLIGAMENTO, PASS.DATA_SAIDA ")
                 .append("   FROM SIGEPEN_OWNER.RECUPERANDO RE ")
-                .append("   FULL OUTER JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE ")
+                .append("   LEFT JOIN SIGEPEN_OWNER.SGP_CREDENCIAMENTO CRE ")
                 .append("     ON CRE.ID_RECUPERANDO = RE.ID ")
                 .append("   INNER JOIN SIGEPEN_OWNER.PESSOA P ")
                 .append("     ON P.ID = RE.PESSOA_ID ")
@@ -248,8 +272,7 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
                 .append("  WHERE 1 = 1 ");
 
         adicionarCondicoes(subselect, filtro, true);
-
-
+        
         subselect.append(") TBRECUPERANDO");
         return subselect;
     }
@@ -282,7 +305,6 @@ public class BuscarVwVisitanteDAO extends BaseDAO<VwVisitante, Long> {
         if (filtro.getFaseCredenciamento() != null) {
             query.setParameter("CODG_FASE_CREDENCIAL", filtro.getFaseCredenciamento().getId());
         }
-
 
         if (filtro.getVencimentoCredenciamento() != null && !isRecuperando) {
             VencimentoCredenciamento venc = filtro.getVencimentoCredenciamento();
