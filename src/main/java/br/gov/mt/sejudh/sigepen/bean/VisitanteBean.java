@@ -846,9 +846,12 @@ public class VisitanteBean extends MetodosDePaginaBean {
 				System.out.print("Visitante getStatus " + this.visitante.getStatus());
 
 				Optional<Credenciamento> optCredenciamento = credenciamentosDoVisitante.stream()
-						.filter(re -> re.getRecuperando() != null
-								&& re.getRecuperando().getId() == this.recuperandoSelecionado.getId())
-						.findFirst();
+			            .filter(re -> re.getRecuperando() != null
+			                    && re.getRecuperando().getId() == this.recuperandoSelecionado.getId()
+			                    //&& re.getStatusCredenciamento() != null
+			                    && !re.getStatusCredenciamento().equals(StatusCredenciamento.INATIVO.getId())
+			                    && !re.getStatusCredenciamento().equals(StatusCredenciamento.NAO_APROVADO.getId()))
+			            .findFirst();
 
 				if (!optCredenciamento.isPresent()) {
 					RequestContext.getCurrentInstance().execute("PF('selecionarParentesco').show()");
@@ -856,6 +859,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					Optional<Credenciamento> optCredenciamentoMesmaUnidade = credenciamentosDoVisitante.stream()
 							.filter(cred -> cred.getRecuperando() != null
 									&& cred.getRecuperando().getId() == this.recuperandoSelecionado.getId()
+								
 									&& cred.getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada()
 											.getId()
 									&& cred.getStatusCredenciamento() == StatusCredenciamento.APROVADO.getId())
