@@ -274,6 +274,9 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	private FaseCredenciamento[] fasesCredenciamento;
 
 	private String tabIndex = "0";
+	
+	private boolean paginacaoConfigurada = false;
+	
 
 	public Boolean isMenorQueSete() {
 		return visitanteMenorQueSete;
@@ -843,9 +846,12 @@ public class VisitanteBean extends MetodosDePaginaBean {
 				System.out.print("Visitante getStatus " + this.visitante.getStatus());
 
 				Optional<Credenciamento> optCredenciamento = credenciamentosDoVisitante.stream()
-						.filter(re -> re.getRecuperando() != null
-								&& re.getRecuperando().getId() == this.recuperandoSelecionado.getId())
-						.findFirst();
+			            .filter(re -> re.getRecuperando() != null
+			                    && re.getRecuperando().getId() == this.recuperandoSelecionado.getId()
+			                    //&& re.getStatusCredenciamento() != null
+			                    && !re.getStatusCredenciamento().equals(StatusCredenciamento.INATIVO.getId())
+			                    && !re.getStatusCredenciamento().equals(StatusCredenciamento.NAO_APROVADO.getId()))
+			            .findFirst();
 
 				if (!optCredenciamento.isPresent()) {
 					RequestContext.getCurrentInstance().execute("PF('selecionarParentesco').show()");
@@ -853,6 +859,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					Optional<Credenciamento> optCredenciamentoMesmaUnidade = credenciamentosDoVisitante.stream()
 							.filter(cred -> cred.getRecuperando() != null
 									&& cred.getRecuperando().getId() == this.recuperandoSelecionado.getId()
+								
 									&& cred.getUnidadePrisional().getId() == SecurityUtil.getUnidadeSelecionada()
 											.getId()
 									&& cred.getStatusCredenciamento() == StatusCredenciamento.APROVADO.getId())
@@ -1681,6 +1688,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	}
 
 	public void pesquisar() {
+		paginacaoConfigurada = false;
 		this.getFiltro().setProjetarDados(true);
 
 		this.lazyDataModel = new LazyDataModel<VwVisitante>() {
@@ -1719,12 +1727,19 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			@Override
 			public List<VwVisitante> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
+				
+				
 				int buscarQuantidadeFiltrada = loadQtde();
 				setRowCount(buscarQuantidadeFiltrada);
 				campoOrdenacao = sortField;
 				sentidoOrdenacao = sortOrder;
 				try {
-					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+					//configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+					if (!paginacaoConfigurada) {
+					    configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+					    paginacaoConfigurada = true;
+					}
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1738,8 +1753,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					}
 				}
 
-				usuarioEstaCadastrando = false;
-				getFiltro().setPessoasIds(new ArrayList<Long>());
+				usuarioEstaCadastrando = false;	
+				//getFiltro().setPessoasIds(new ArrayList<Long>());
 				return visitantes;
 			}
 		};

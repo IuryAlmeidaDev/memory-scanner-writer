@@ -132,58 +132,34 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 	}
 	
 	public void pesquisar() {
-		this.entradas = new LazyDataModel<EntradaSaidaDTO>() {
-			
-			private static final long serialVersionUID = 1L;
-			
-			
-			@Override
-			public Object getRowKey(EntradaSaidaDTO object) {
-				if(object != null && object.getId() != null) {
-					return object.getId();
-				}
-				return null;
-			}
+	    this.entradas = new LazyDataModel<EntradaSaidaDTO>() {
+	        private static final long serialVersionUID = 1L;
 
-			@Override
-			public EntradaSaidaDTO getRowData(String rowKey) {
-				if (rowKey == null || rowKey.isEmpty()) {
-					return null;
-				}
+	        @Override
+	        public Object getRowKey(EntradaSaidaDTO object) {
+	            return (object != null && object.getId() != null) ? object.getId() : null;
+	        }
 
-				for (EntradaSaidaDTO rec : entradas) {
-					if (rec.getId().equals(Long.valueOf(rowKey))) {
-						return rec;
-					}
-				}
+	        @Override
+	        public EntradaSaidaDTO getRowData(String rowKey) {
+	            if (rowKey == null || rowKey.isEmpty()) return null;
+	            for (EntradaSaidaDTO rec : (List<EntradaSaidaDTO>) getWrappedData()) {
+	                if (rec.getId().toString().equals(rowKey)) return rec;
+	            }
+	            return null;
+	        }
 
-                return null;
-			}
-			
-			@Override
-			public List<EntradaSaidaDTO> load(int first, int pageSize,
-					String sortField, SortOrder sortOrder,
-					Map<String, Object> filters) {
-			
-				
-				ConsultarVisitaBean.this.sortField = sortField;
-				ConsultarVisitaBean.this.sortOrder = sortOrder;
-	
-//				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
-				setRowCount(service.buscarEntradasPorFiltroCount(getFiltro(), sortField,sortOrder, first));
-				
-				
-				try {
-					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+	        @Override
+	        public List<EntradaSaidaDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+	            int total = service.buscarEntradasPorFiltroCount(getFiltro(), sortField, sortOrder, first);
+	            setRowCount(total);
 
-				List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), sortField,sortOrder, first);
-				
-				return lista;
-			}
-		};
+	            String currentSortField = (sortField == null) ? "dataEntrada" : sortField;
+
+	            List<EntradaSaidaDTO> lista = service.buscarEntradasPorFiltro(getFiltro(), currentSortField, sortOrder, first);
+	            return lista;
+	        }
+	    };
 	}
 
 	public FiltroEntradaSaidaRecuperando getFiltro() {

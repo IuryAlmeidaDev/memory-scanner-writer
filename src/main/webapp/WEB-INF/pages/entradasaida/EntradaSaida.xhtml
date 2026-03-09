@@ -625,6 +625,32 @@
 					</p:panel>
 					<br />
 					
+					<p:panel id="painelTodosRecuperandos"
+					    header="Todos os Recuperandos Vinculados (Independente da Lotação)"
+					    style="margin-bottom: 10px;"
+					    rendered="#{not empty entradaSaidaBean.entrada 
+					               and not empty entradaSaidaBean.todosCredenciamentoVisitante}">
+					
+					    <p:dataTable var="credVistRecup"
+					        value="#{entradaSaidaBean.todosCredenciamentoVisitante}"
+					        emptyMessage="Nenhum recuperando vinculado a este visitante."
+					        rows="5" paginator="true" paginatorPosition="bottom">
+					
+					        <p:column headerText="Matrícula" width="15%">
+					            <h:outputText value="#{credVistRecup.recuperando.id}" />
+					        </p:column>
+					
+					        <p:column headerText="Nome do Recuperando" width="50%">
+					            <h:outputText value="#{credVistRecup.recuperando.pessoa.nome}" />
+					        </p:column>
+					
+					        <p:column headerText="Lotação Atual" width="35%">
+					            <h:outputText value="#{credVistRecup.recuperando.lotacaoAtual}" />
+					        </p:column>
+					
+					    </p:dataTable>
+					</p:panel>
+					
 					<p:panel>
 						<div class="row">
 							<div class="col-md-8">

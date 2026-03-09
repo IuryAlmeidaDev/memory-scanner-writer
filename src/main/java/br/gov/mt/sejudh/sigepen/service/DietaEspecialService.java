@@ -24,6 +24,15 @@ public class DietaEspecialService {
 
 	@Interceptors(EJBExcInterceptor.class)
 	public DietaRecuperando salvar(DietaRecuperando dietaEspecial) throws Exception {
+		
+		if (dietaEspecial == null) {
+	        throw new Exception("Erro interno: dieta especial não inicializada.");
+	    }
+	    
+	    if (dietaEspecial.getRecuperando() == null || dietaEspecial.getRecuperando().getId() <= 0) {
+	        throw new Exception("É necessário associar um recuperando antes de concluir o cadastro.");
+	    }
+		
 		return dao.salvar(dietaEspecial);
 	}
 
