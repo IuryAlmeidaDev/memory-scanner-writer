@@ -80,11 +80,11 @@
 	<detail>
 		<band height="72">
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="160" y="24" width="60" height="17" uuid="744cc3bc-47a1-4563-993b-440b77d21983"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="212" y="24" width="88" height="17" uuid="744cc3bc-47a1-4563-993b-440b77d21983"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{virgenciaContartoInicio}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{virgenciaContartoFim}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="41" width="394" height="14" uuid="f3f34de1-fd55-4217-a763-e037cd86ae6c"/>
@@ -122,21 +122,21 @@
 				<textFieldExpression><![CDATA["Unidade Prisional: " + $F{nomeUnidade}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="24" width="170" height="17" uuid="7a134ad1-c318-41c4-a97e-27493115ec7d"/>
+				<reportElement x="0" y="24" width="230" height="17" uuid="7a134ad1-c318-41c4-a97e-27493115ec7d"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Vigência da Unidade no Contrato: ]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="231" y="24" width="60" height="17" uuid="b3eb81a2-85a8-41ab-a4d7-8dc4e8251e2a"/>
+				<reportElement x="113" y="24" width="88" height="17" uuid="b3eb81a2-85a8-41ab-a4d7-8dc4e8251e2a"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{virgenciaContartoFim}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{virgenciaContartoInicio}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="220" y="24" width="11" height="17" uuid="3aa3dade-13ed-4104-8768-222be23bb0fd"/>
+				<reportElement x="201" y="24" width="11" height="17" uuid="3aa3dade-13ed-4104-8768-222be23bb0fd"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font isBold="true"/>
 				</textElement>
@@ -145,7 +145,7 @@
 		</band>
 		<band height="116">
 			<subreport>
-				<reportElement x="0" y="0" width="802" height="116" uuid="b56f0c73-9af3-4f4f-81ab-f8e93f6a8a32"/>
+				<reportElement x="-30" y="0" width="802" height="116" uuid="b56f0c73-9af3-4f4f-81ab-f8e93f6a8a32"/>
 				<subreportParameter name="UNIDADE_LOGADA"/>
 				<subreportParameter name="FILTRO"/>
 				<subreportParameter name="NUMERO_CONTRATO"/>

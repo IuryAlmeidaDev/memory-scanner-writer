@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 6.3.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ConsolidadoMensal" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
 	<property name="ireport.zoom" value="1.6105100000000012"/>
 	<property name="ireport.x" value="0"/>
@@ -290,7 +291,7 @@
 	<detail>
 		<band height="15">
 			<rectangle>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="-1" width="802" height="16" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
+				<reportElement stretchType="ContainerHeight" x="0" y="-1" width="802" height="16" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
 					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -704,7 +705,7 @@
 				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($P{TOTAL_VALOR_JANTA})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="282" y="48" width="75" height="13" uuid="011bb609-3d66-4c65-9189-752276e98db5"/>
+				<reportElement x="281" y="48" width="75" height="13" uuid="011bb609-3d66-4c65-9189-752276e98db5"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -728,7 +729,7 @@
 				<textFieldExpression><![CDATA[$P{TOTAL_JANTA_ESPECIAL}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="207" y="32" width="75" height="16" uuid="1105b594-55f1-4f59-9da0-44cb29b4e705"/>
+				<reportElement x="206" y="32" width="75" height="16" uuid="1105b594-55f1-4f59-9da0-44cb29b4e705"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -740,7 +741,7 @@
 				<text><![CDATA[CAFÉ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="207" y="48" width="75" height="13" uuid="0a64edbd-acc0-4a8e-bfbd-e7cfb2574433"/>
+				<reportElement x="206" y="48" width="75" height="13" uuid="0a64edbd-acc0-4a8e-bfbd-e7cfb2574433"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -752,7 +753,7 @@
 				<textFieldExpression><![CDATA[$P{TOTAL_CAFE_ESPECIAL}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="282" y="32" width="75" height="16" uuid="1a0781ca-0926-417c-8b30-6dc391201878"/>
+				<reportElement x="281" y="32" width="75" height="16" uuid="1a0781ca-0926-417c-8b30-6dc391201878"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -872,7 +873,7 @@
 				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($P{TOTAL_VALOR_JANTA_ESPECIAL})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="32" width="206" height="16" uuid="b7de69f3-5d80-417c-ba5e-cff277083624"/>
+				<reportElement x="1" y="32" width="205" height="16" uuid="b7de69f3-5d80-417c-ba5e-cff277083624"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
