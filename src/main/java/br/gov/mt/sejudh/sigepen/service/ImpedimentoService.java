@@ -8,6 +8,8 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.hibernate.Hibernate;
+
 import br.gov.mt.sejudh.sigepen.base.service.BaseService;
 import br.gov.mt.sejudh.sigepen.dao.ImpedimentoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroConsulta;
@@ -154,9 +156,10 @@ public class ImpedimentoService extends BaseService<Impedimento, Long> {
 		String nomeResponsavel = impedimento.getVisitante().getPessoa().getNome();
 
 		for (Visitante dependente : dependentes) {
-			if (dependente.getResponsavel().getId().equals(impedimento.getVisitante().getId())) {
+			
+			//if (dependente.getResponsavel().getId().equals(impedimento.getVisitante().getId())) {
 				for (Impedimento x : dependente.getImpedimentos()) {
-					if (x.getObservacao().contains(nomeResponsavel)) {
+					if (x.getObservacao() != null && x.getObservacao().contains(nomeResponsavel)) {
 						x.setStatus(impedimento.getStatus());
 						x.setDataImpedimento(impedimento.getDataImpedimento());
 						x.setFimImpedimento(impedimento.getFimImpedimento());
@@ -170,7 +173,7 @@ public class ImpedimentoService extends BaseService<Impedimento, Long> {
 					}
 				}
 			}
-		}
+		//}
 		
 		this.impedimentoDAO.salvar(impedimento);
 		
