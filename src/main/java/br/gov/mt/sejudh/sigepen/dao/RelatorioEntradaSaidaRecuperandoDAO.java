@@ -149,9 +149,8 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 	    
 	    return retorno;
 	}
+	
 	private List<RelatorioEntradaSaidaRecuperandoDTO> buscarDadosSaidas(FiltroRelatorioEntradaSaidaRecuperando filtro) {
-		
-		
 	    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	    
 	    Calendar calInicio = Calendar.getInstance();
@@ -173,10 +172,9 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 	    String dataInicial = sdf.format(dataIni);
 	    String dataFinal = sdf.format(dataFim);
 	    
-	    
 	    StringBuilder hql = new StringBuilder();
 
-	    hql.append(" select distinct  ");
+	    hql.append(" select distinct ");
 	    hql.append(" r.matricula, ");
 	    hql.append(" pe.nome, ");
 	    hql.append(" pe.nome_mae, ");
@@ -184,14 +182,23 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 	    hql.append(" p.data_entrada, ");
 	    hql.append(" p.data_saida, ");
 	    hql.append(" pe.nome_social ");
-	    hql.append(" from " + Sigepen.SEJUDH_SCHEMA + ".passagem p, " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos r, " + Sigepen.SEJUDH_SCHEMA + ".pessoa pe ");
+	    hql.append(" from " + Sigepen.SEJUDH_SCHEMA + ".passagem p ");
+	    hql.append(" join " + Sigepen.SEJUDH_SCHEMA + ".passagem_lotacao pl ON pl.passagem_id = p.id ");
+	    hql.append("   and pl.id = ( ");
+	    hql.append("     select max(pl2.id) ");
+	    hql.append("     from " + Sigepen.SEJUDH_SCHEMA + ".passagem_lotacao pl2 ");
+	    hql.append("     where pl2.passagem_id = p.id ");
+	    hql.append("   ) ");
+	    hql.append(" join " + Sigepen.SEJUDH_SCHEMA + ".estrutura e ON e.id = pl.estrutura_id ");
+	    hql.append(" join " + Sigepen.SEJUDH_SCHEMA + ".lista_todos_recuperandos r ON p.recuperando_id = r.matricula ");
+	    hql.append(" join " + Sigepen.SEJUDH_SCHEMA + ".pessoa pe ON r.id_pessoa = pe.id ");
 	    hql.append(" where ");
-	    hql.append("  p.data_saida >= to_date('" + dataInicial + "','DD/MM/YYYY HH24:MI:SS') and p.data_saida <= to_date('" + dataFinal + "','DD/MM/YYYY HH24:MI:SS') ");
-	    hql.append(" and p.recuperando_id = r.matricula ");
-	    hql.append(" and r.id_pessoa = pe.id ");
+	    hql.append(" p.data_saida >= to_date('" + dataInicial + "','DD/MM/YYYY HH24:MI:SS') ");
+	    hql.append(" and p.data_saida <= to_date('" + dataFinal + "','DD/MM/YYYY HH24:MI:SS') ");
 	    
 	    if(filtro.getUnidade() > 0) {
-	        hql.append(" and r.id_unidade = " + filtro.getUnidade());
+	        // Agora filtra pela unidade da PASSAGEM, não do recuperando
+	        hql.append(" and e.unidadeprisional_id = " + filtro.getUnidade());
 	    }
 	    
 	    if(filtro.getRegime() != null) {
@@ -213,23 +220,21 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 	    @SuppressWarnings("unchecked")
 	    List<Object[]> results = query.getResultList();
 	    
-	    List<RelatorioEntradaSaidaRecuperandoDTO> retorno = new ArrayList<RelatorioEntradaSaidaRecuperandoDTO>();
+	    List<RelatorioEntradaSaidaRecuperandoDTO> retorno = new ArrayList<>();
 	    
-	    results.stream().forEach((record) -> {
+	    results.forEach((record) -> {
 	        Long matricula = ((BigDecimal) record[0]).longValue();
 	        String nome = (String) record[1];
 	        String nomeMae = (String) record[2];
 	        Date dtNascimento = (Date) record[3];
 	        Date dtEntrada = (Date) record[4];
 	        Date dtSaida = (Date) record[5];
-	        String tipoEntrada = null;
-	        String tipoDesligamento = null;
-	        String regime = null;
-	        String condicao = null;
-	        String situacao = null;
 	        String nomeSocial = (String) record[6];
 
-	        RelatorioEntradaSaidaRecuperandoDTO r = new RelatorioEntradaSaidaRecuperandoDTO(matricula, nome, nomeSocial, nomeMae, dtNascimento, dtEntrada, dtSaida, tipoEntrada, tipoDesligamento, regime, condicao, situacao, filtro);
+	        RelatorioEntradaSaidaRecuperandoDTO r = new RelatorioEntradaSaidaRecuperandoDTO(
+	            matricula, nome, nomeSocial, nomeMae, dtNascimento, 
+	            dtEntrada, dtSaida, null, null, null, null, null, filtro
+	        );
 	        retorno.add(r);
 	    });
 	    
