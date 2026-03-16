@@ -33,7 +33,9 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Audited
 @Entity
-@Table(name = "CARDAPIO", schema = Sigepen.SEJUDH_SCHEMA)
+@Table(name = "CARDAPIO", schema = Sigepen.SEJUDH_SCHEMA, uniqueConstraints = {
+		@javax.persistence.UniqueConstraint(name = "UK_CARDAPIO_REQUISITOS", columnNames = { "CONTRATO_ID", "SEMANA", "CODG_DIA_SEMANA", "TIPO_REFEICAO_ID", "TIPO_DIETA_ID" })
+})
 public class Cardapio extends BaseModel<Long> {
 
 	private static final long serialVersionUID = -2841675579819366317L;
