@@ -9,6 +9,7 @@ import javax.interceptor.Interceptors;
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.DietaEspecialDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroDietaEspecial;
+import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.DietaRecuperando;
 import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
@@ -24,16 +25,16 @@ public class DietaEspecialService {
 
 	@Interceptors(EJBExcInterceptor.class)
 	public DietaRecuperando salvar(DietaRecuperando dietaEspecial) throws Exception {
-		
-		if (dietaEspecial == null) {
-	        throw new Exception("Erro interno: dieta especial não inicializada.");
+
+	    if (dietaEspecial == null) {
+	        throw new ValidacaoException("Erro interno: dieta especial não inicializada.");
 	    }
-	    
+
 	    if (dietaEspecial.getRecuperando() == null || dietaEspecial.getRecuperando().getId() <= 0) {
-	        throw new Exception("É necessário associar um recuperando antes de concluir o cadastro.");
+	        throw new ValidacaoException("É necessário associar um recuperando antes de concluir o cadastro.");
 	    }
-		
-		return dao.salvar(dietaEspecial);
+
+	    return dao.salvar(dietaEspecial);
 	}
 
 	public DietaRecuperando buscaPorId(long id) {
