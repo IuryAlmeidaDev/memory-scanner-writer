@@ -11,7 +11,6 @@ import br.gov.mt.sejudh.sigepen.model.Arquivo;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.DietaEspecialPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.ItemPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
@@ -52,9 +51,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,8 +75,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	private LazyDataModel<UnidadePrisionalDTO> unidades;
 	private DefaultTreeNode root = new DefaultTreeNode();
 	private Estrutura estrutura;
-    private Long unidadeSelecionada;
-    private GerarPedidoEstruturaDTO gerarPedidoEstruturaDTO;
+	private Long unidadeSelecionada;
+	private GerarPedidoEstruturaDTO gerarPedidoEstruturaDTO;
 	private Contrato contrato;
 
 	@Inject
@@ -232,41 +229,41 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 
 		this.unidade = unidadeService.buscaPorId(id);
 
-        return this.unidade != null;
-    }
+		return this.unidade != null;
+	}
 
 	private String montarFiltroData() {
-	    StringBuilder filtroDataHorario = new StringBuilder();
-	    
-	    if (this.filtroPedido != null) {
-	        // 1. Busca o horário (ex: "1405")
-	        String horarioRefeiracao = this.contratoService.buscarHorarioRefeiracao(
-	                this.unidade.getId(),
-	                this.filtroPedido.getTipoRefeicao().getId());
-	        
-	        // 2. Garante que pegamos apenas os números e apenas os 4 primeiros dígitos (HHmm)
-	        String horaLimpa = horarioRefeiracao.replaceAll("[^0-9]", "");
-	        if (horaLimpa.length() > 4) {
-	            horaLimpa = horaLimpa.substring(0, 4);
-	        }
+		StringBuilder filtroDataHorario = new StringBuilder();
 
-	        // 3. Formata para HH:mm
-	        StringBuilder horarioFormatado = new StringBuilder(horaLimpa);
-	        if (horarioFormatado.length() >= 2) {
-	            horarioFormatado.insert(2, ":");
-	        }
-	        
-	        // 4. Monta a string final: Data + Hora + Segundos fixos
-	        String filtroData = filtroPedido.getDataFormadata(); // Esperado: "DD/MM/YYYY"
-	        
-	        filtroDataHorario.append(filtroData.trim());
-	        filtroDataHorario.append(" ");
-	        filtroDataHorario.append(horarioFormatado.toString().trim());
-	        filtroDataHorario.append(":00");
-	    }
-	    
-	    this.dataFormatada = filtroDataHorario.toString().trim();
-	    return this.dataFormatada;
+		if (this.filtroPedido != null) {
+			// 1. Busca o horário (ex: "1405")
+			String horarioRefeiracao = this.contratoService.buscarHorarioRefeiracao(this.unidade.getId(),
+					this.filtroPedido.getTipoRefeicao().getId());
+
+			// 2. Garante que pegamos apenas os números e apenas os 4 primeiros dígitos
+			// (HHmm)
+			String horaLimpa = horarioRefeiracao.replaceAll("[^0-9]", "");
+			if (horaLimpa.length() > 4) {
+				horaLimpa = horaLimpa.substring(0, 4);
+			}
+
+			// 3. Formata para HH:mm
+			StringBuilder horarioFormatado = new StringBuilder(horaLimpa);
+			if (horarioFormatado.length() >= 2) {
+				horarioFormatado.insert(2, ":");
+			}
+
+			// 4. Monta a string final: Data + Hora + Segundos fixos
+			String filtroData = filtroPedido.getDataFormadata(); // Esperado: "DD/MM/YYYY"
+
+			filtroDataHorario.append(filtroData.trim());
+			filtroDataHorario.append(" ");
+			filtroDataHorario.append(horarioFormatado.toString().trim());
+			filtroDataHorario.append(":00");
+		}
+
+		this.dataFormatada = filtroDataHorario.toString().trim();
+		return this.dataFormatada;
 	}
 
 	public void montarEstrutura() {
@@ -276,40 +273,34 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			if (this.unidade.getId() > 0) {
 				String dataFormatada = montarFiltroData();
 				try {
-					this.contrato = contratoService.buscarContratoVigenteEAtivoPorUnidade(
-							this.unidade.getId(),
-							this.filtroPedido.getDataInicio()
-					);
+					this.contrato = contratoService.buscarContratoVigenteEAtivoPorUnidade(this.unidade.getId(),
+							this.filtroPedido.getDataInicio());
 
-					boolean existeCardapio = cardapioDAO.existeCardapioPara(
-							dataFormatada,
-							tipoRefeicao,
-							contrato.getId()
-					);
+					boolean existeCardapio = cardapioDAO.existeCardapioPara(dataFormatada, tipoRefeicao,
+							contrato.getId());
 
 					if (existeCardapio) {
 						// Se existe contrato e cardápio, montar a estrutura
 						root = new DefaultTreeNode(new GerarPedidoEstruturaDTO(), null);
 						root.setExpanded(true);
 						estruturaService.montarArvoreEstruturaGerarPedido(
-								GerarPedidoEstruturaDTO.from(unidade.getEstrutura()),
-								root,
-								dataFormatada,
-								tipoRefeicao
-						);
+								GerarPedidoEstruturaDTO.from(unidade.getEstrutura()), root, dataFormatada,
+								tipoRefeicao);
 						estruturaService.capacidadeTotalEstruturaGerarPedido(root);
 						estruturaService.capacidadeTotalDietaPadrao(root);
 						estruturaService.capacidadeTotalDietaEspecial(root);
 						GerarPedidoEstruturaDTO e = (GerarPedidoEstruturaDTO) root.getData();
 						this.unidade.setCapacidadeTotal(e.getCapacidadeTotal());
 					} else {
-						facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Não existe cardápio cadastrado para esta data e tipo de refeição");
+						facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro",
+								"Não existe cardápio cadastrado para esta data e tipo de refeição");
 						root = new DefaultTreeNode();
 					}
 				} catch (EJBException e) {
 					Throwable cause = e.getCause();
 					if (cause instanceof NaoEncontradoException || cause instanceof MultiplosResultadosException) {
-						facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", e.getMessage().substring(e.getMessage().indexOf(":") + 1));
+						facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro",
+								e.getMessage().substring(e.getMessage().indexOf(":") + 1));
 					} else {
 						throw e;
 					}
@@ -341,104 +332,86 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 				return UnidadePrisionalDTO;
 			}
 		};
- }
+	}
 
- public void selecionarEstruturaChamada(GerarPedidoEstruturaDTO estrutura, String data, FiltroGerarPedido filtroGerarPedido) {
-     facesUtil.setObjetoSessao("estrutura", estrutura);
-     facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
+	public void selecionarEstruturaChamada(GerarPedidoEstruturaDTO estrutura, String data,
+			FiltroGerarPedido filtroGerarPedido) {
+		facesUtil.setObjetoSessao("estrutura", estrutura);
+		facesUtil.setObjetoSessao("tipo_relatorio", "estrutura");
 
-     boolean validaOk = validaDataPedido(filtroGerarPedido.getDataInicio());
-     if (!validaOk) {
-         return;
-     }
+		boolean validaOk = validaDataPedido(filtroGerarPedido.getDataInicio());
+		if (!validaOk) {
+			return;
+		}
 
-     boolean pedidoExistente = pedidoAlimentoService.verificarExistenciaPedido(
-             data,
-             filtroGerarPedido.getTipoRefeicao().getId(),
-             this.unidade.getId(),
-             contrato.getId()
-     );
+		boolean pedidoExistente = pedidoAlimentoService.verificarExistenciaPedido(data,
+				filtroGerarPedido.getTipoRefeicao().getId(), this.unidade.getId(), contrato.getId());
 
 		if (pedidoExistente) {
 			RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').show()");
 		} else {
-			this.imprimir(data, filtroGerarPedido, contrato);
+			this.imprimir(data, filtroGerarPedido, contrato, false);
 		}
 	}
 
-    public void confirmarSubstituicaoPedido() {
-        if (!validaDataPedido(this.filtroPedido != null ? this.filtroPedido.getDataInicio() : null)) {
-            RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').hide()");
-            return;
-        }
-        this.imprimir(this.dataFormatada, this.filtroPedido, this.contrato);
-        RequestContext.getCurrentInstance().execute("PF('confirmSubstituirPedidoDialog').hide()");
-
-    }
-
 	@Transactional
-	private void imprimir(final String data, final FiltroGerarPedido filtroGerarPedido, Contrato contrato) {
+	private void imprimir(final String data, final FiltroGerarPedido filtroGerarPedido, Contrato contrato,
+			boolean substituir) {
 		try {
+
 			configurarDadosRelatorio();
-			validarHorarioRefeicao(contrato, filtroGerarPedido.getTipoRefeicao().getId());
 
 			final long idEstrutura = gerarPedidoEstruturaDTO.getId();
 
 			final List<PedidoEstruturaDTO> estruturaPedido = estruturaService.montarEstruturaPedido(data, idEstrutura);
 			final List<PedidoEstruturaDTO> estruturaNivel2 = getEstruturasDeNivel2(estruturaPedido);
-			final List<RefeicaoDetalhadaDTO> refeicoesDetalhadas = estruturaService.buscaPedidoConsulta(
-					data, idEstrutura, filtroGerarPedido.getTipoRefeicao());
+			final List<RefeicaoDetalhadaDTO> refeicoesDetalhadas = estruturaService.buscaPedidoConsulta(data,
+					idEstrutura, filtroGerarPedido.getTipoRefeicao());
 
-			final List<DetalheItemEstruturaCardapioDTO> itemCardapioPorEstrutura = DetalheItemEstruturaCardapioDTO.combinarPedidos(
-					estruturaNivel2, refeicoesDetalhadas);
-			final List<DietaEspecialEstruturaDTO> refeicoesEspeciais = estruturaService.buscarDietasEspeciais(idEstrutura, data);
-			
-			
+			final List<DetalheItemEstruturaCardapioDTO> itemCardapioPorEstrutura = DetalheItemEstruturaCardapioDTO
+					.combinarPedidos(estruturaNivel2, refeicoesDetalhadas);
+			final List<DietaEspecialEstruturaDTO> refeicoesEspeciais = estruturaService
+					.buscarDietasEspeciais(idEstrutura, data);
 
 			validarCardapio(itemCardapioPorEstrutura);
 
-			PedidoAlimento pedidoAlimento = PedidoAlimento.create(
-					data,
-					SecurityUtil.getUsuario().getId(),
-					this.unidade.getId(), contrato.getId(),
-					filtroGerarPedido.getTipoRefeicao().getId()
-			);
-			
-			
+			PedidoAlimento pedidoAlimento = PedidoAlimento.create(data, SecurityUtil.getUsuario().getId(),
+					this.unidade.getId(), contrato.getId(), filtroGerarPedido.getTipoRefeicao().getId());
 
 			for (DetalheItemEstruturaCardapioDTO itemDTO : itemCardapioPorEstrutura) {
-   				pedidoAlimento.getItensPedido().add(ItemPedidoAlimento.newInstance(pedidoAlimento, itemDTO));
+				pedidoAlimento.getItensPedido().add(ItemPedidoAlimento.newInstance(pedidoAlimento, itemDTO));
 			}
 
 			for (DietaEspecialEstruturaDTO dietaDTO : refeicoesEspeciais) {
-				pedidoAlimento.getDietasEspeciais().add(DietaEspecialPedidoAlimento.newInstance(pedidoAlimento, dietaDTO));
+				pedidoAlimento.getDietasEspeciais()
+						.add(DietaEspecialPedidoAlimento.newInstance(pedidoAlimento, dietaDTO));
 			}
-			
+
 			int totalDietaComum = 0;
-			if(itemCardapioPorEstrutura != null) {
+			if (itemCardapioPorEstrutura != null) {
 				totalDietaComum = itemCardapioPorEstrutura.stream()
-						.mapToInt(DetalheItemEstruturaCardapioDTO::getQtdRecuperando)
-						.distinct()
-						.sum();
+						.mapToInt(DetalheItemEstruturaCardapioDTO::getQtdRecuperando).distinct().sum();
 			}
-			
+
 			int totalDietaEspecial = 0;
-			if(refeicoesEspeciais != null) {
-				totalDietaEspecial = refeicoesEspeciais.stream()
-						.mapToInt(DietaEspecialEstruturaDTO::getQtdRecuperando)
+			if (refeicoesEspeciais != null) {
+				totalDietaEspecial = refeicoesEspeciais.stream().mapToInt(DietaEspecialEstruturaDTO::getQtdRecuperando)
 						.sum();
 			}
-			
+
 			int totalRecuperandoDieta = totalDietaComum + totalDietaEspecial;
 
-			pedidoAlimentoService.salvarPedidoAlimento(pedidoAlimento);
+			if (substituir) {
+				pedidoAlimentoService.salvarPedidoAlimento(pedidoAlimento);
+			}
 
 			// Parâmetros do relatório
-			final Map<String, Object> parameters = criarParametrosRelatorio(data, filtroGerarPedido, refeicoesEspeciais, contrato);
-			
+			final Map<String, Object> parameters = criarParametrosRelatorio(data, filtroGerarPedido, refeicoesEspeciais,
+					contrato);
+
 			parameters.put("TOTAL_RECUPERANDO", totalRecuperandoDieta);
-			
-			System.out.println(">>>> TOTAL RECUPERANDO : "+totalRecuperandoDieta);
+
+			System.out.println(">>>> TOTAL RECUPERANDO : " + totalRecuperandoDieta);
 
 			// Geração do relatório
 			gerarRelatorioUnificado(itemCardapioPorEstrutura, parameters);
@@ -448,44 +421,51 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
-    private boolean validaDataPedido(Date dataPedido) {
-        try {
-            if (dataPedido == null) {
-                facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Selecione a data para gerar o pedido.");
-                return false;
-            }
-
-            LocalDate hoje = LocalDate.now();
-            LocalDate amanha = hoje.plusDays(1);
-            LocalDate dataSelecionada = Instant.ofEpochMilli(dataPedido.getTime())
-                    .atZone(ZoneId.systemDefault()).toLocalDate();
-            
-            
-
-            if (dataSelecionada.isBefore(hoje)) {
-                facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível emitir/substituir um pedido retroativamente.");
-                return false;
-            }
-
-            if (dataSelecionada.isAfter(amanha)) {
-                facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção", "Não é possível gerar um pedido com uma antecedência superior a 1 dia.");
-                return false;
-            }
-
-            return true;
-        } catch (Exception e) {
-            facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Ocorreu um erro ao validar a data informada.");
-            return false;
-        }
-    }
-
-	private List<PedidoEstruturaDTO> getEstruturasDeNivel2(List<PedidoEstruturaDTO> estruturaPedido) {
-		return estruturaPedido.stream()
-				.filter(estrutura -> estrutura.getNivel() == 2)
-				.collect(Collectors.toList());
+	public void substituicaoPedido() {
+		imprimir(dataFormatada, filtroPedido, contrato, true);
 	}
 
-	private <T> Map<String, Object> criarParametrosRelatorio(String data, FiltroGerarPedido filtroGerarPedido, List<T> refeicoesEspeciais, Contrato contrato) {
+	public void naoSubstituirPedido() {
+		imprimir(dataFormatada, filtroPedido, contrato, false);
+	}
+
+	private boolean validaDataPedido(Date dataPedido) {
+		try {
+			if (dataPedido == null) {
+				facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Selecione a data para gerar o pedido.");
+				return false;
+			}
+
+			LocalDate hoje = LocalDate.now();
+			LocalDate amanha = hoje.plusDays(1);
+			LocalDate dataSelecionada = Instant.ofEpochMilli(dataPedido.getTime()).atZone(ZoneId.systemDefault())
+					.toLocalDate();
+
+			if (dataSelecionada.isBefore(hoje)) {
+				facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção",
+						"Não é possível emitir/substituir um pedido retroativamente.");
+				return false;
+			}
+
+			if (dataSelecionada.isAfter(amanha)) {
+				facesUtil.exibirMensagem(SEVERITY_ERROR, "Atenção",
+						"Não é possível gerar um pedido com uma antecedência superior a 1 dia.");
+				return false;
+			}
+
+			return true;
+		} catch (Exception e) {
+			facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro", "Ocorreu um erro ao validar a data informada.");
+			return false;
+		}
+	}
+
+	private List<PedidoEstruturaDTO> getEstruturasDeNivel2(List<PedidoEstruturaDTO> estruturaPedido) {
+		return estruturaPedido.stream().filter(estrutura -> estrutura.getNivel() == 2).collect(Collectors.toList());
+	}
+
+	private <T> Map<String, Object> criarParametrosRelatorio(String data, FiltroGerarPedido filtroGerarPedido,
+			List<T> refeicoesEspeciais, Contrato contrato) {
 		final Map<String, Object> parameters = new HashMap<>();
 
 		parameters.put("DATA", data);
@@ -495,18 +475,19 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		return parameters;
 	}
 
-	private <T> void gerarRelatorioUnificado(List<T> estruturaAgrupada, Map<String, Object> parameters) throws JRException {
-		Arquivo relatorioGerado = RelatorioUtil.gerarRelatorio(estruturaAgrupada, Relatorio.PedidoDetalhado, parameters);
+	private <T> void gerarRelatorioUnificado(List<T> estruturaAgrupada, Map<String, Object> parameters)
+			throws JRException {
+		Arquivo relatorioGerado = RelatorioUtil.gerarRelatorio(estruturaAgrupada, Relatorio.PedidoDetalhado,
+				parameters);
 		fileDownload.prepararArquivo(relatorioGerado);
 		RequestContext.getCurrentInstance().execute("download()");
 	}
 
 	private void tratarErroGeracaoRelatorio(Exception e) {
-	    String message = (e.getCause() != null) ? e.getCause().getMessage() : e.getMessage();
-	    
-	    facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "AVISO", message);
-	    
-	    LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
+		String message = e.getCause() != null ? e.getCause().getMessage()
+				: e.getMessage().substring(e.getMessage().indexOf(":") + 1);
+		facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", message);
+		LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
 	}
 
 	private <T> void validarCardapio(List<T> cardapios) throws Exception {
@@ -514,49 +495,21 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			throw new Exception("Não existe um cardápio para esse tipo de refeição");
 		}
 	}
-	
-	public void validarHorarioRefeicao(Contrato contrato, Long tipoRefeicaoId) throws Exception {
-	    if (contrato.getHorariosRefeicao() == null) return;
 
-	    LocalTime agora = LocalTime.now();
-	    
-	    HorarioRefeicao horarioDefinido = contrato.getHorariosRefeicao().stream()
-	            .filter(h -> h.getTipoRefeicao().getId().equals(tipoRefeicaoId))
-	            .findFirst()
-	            .orElse(null);
-
-	    if (horarioDefinido != null && horarioDefinido.getHorarioInicio() != null) {
-	        String horaBanco = horarioDefinido.getHorarioInicio(); 
-	        
-	        DateTimeFormatter parser = DateTimeFormatter.ofPattern("HHmm");
-	        
-	        LocalTime horaLimite = LocalTime.parse(horaBanco, parser); 
-
-	        if (agora.isBefore(horaLimite)) {
-	            DateTimeFormatter exibicao = DateTimeFormatter.ofPattern("HH");
-	            throw new Exception("Não é possivel gerar o pedido de alimentação no momento. O proximo horário inicia ás: " + horaLimite.format(exibicao)+"h");
-	        }
-	    }
-	}
-	
-	
-
-	private String getMensagemCabecalhoQuantitativo(FiltroGerarPedido filtroGerarPedido, String data, Contrato contrato) {
+	private String getMensagemCabecalhoQuantitativo(FiltroGerarPedido filtroGerarPedido, String data,
+			Contrato contrato) {
 		String refeicao = filtroGerarPedido.getTipoRefeicao().getDescricao();
 		return gerarMensagemCabecalho(refeicao, data, contrato);
 	}
 
 	private String gerarMensagemCabecalho(String refeicao, String data, Contrato contrato) {
-		return "Solicito a empresa " + contrato.getFornecedor().getNomeFantasia() +
-				", cadastrada no CNPJ nº " + contrato.getFornecedor().getCnpj() +
-				", o fornecimento do " + refeicao +
-				" para o dia " + data +
-				", para a " + this.unidade.getNome() +
-				" conforme cardápios relacionados abaixo:";
+		return "Solicito a empresa " + contrato.getFornecedor().getNomeFantasia() + ", cadastrada no CNPJ nº "
+				+ contrato.getFornecedor().getCnpj() + ", o fornecimento do " + refeicao + " para o dia " + data
+				+ ", para a " + this.unidade.getNome() + " conforme cardápios relacionados abaixo:";
 	}
 
 	private void configurarDadosRelatorio() {
-        this.gerarPedidoEstruturaDTO = (GerarPedidoEstruturaDTO) facesUtil.getObjetoSessao("estrutura");
+		this.gerarPedidoEstruturaDTO = (GerarPedidoEstruturaDTO) facesUtil.getObjetoSessao("estrutura");
 	}
 
 	public boolean isUnidadePrisional(GerarPedidoEstruturaDTO estrutura) {
