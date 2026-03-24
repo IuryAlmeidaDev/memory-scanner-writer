@@ -63,6 +63,7 @@
 			
 			<p:submenu label="Gestão de Alimentação" rendered="#{securityUtil.exibeCategoriaMenu('MapaAlimentacao')}">
 				<p:menuitem value="Gerar Pedido" outcome="pretty:ListarGerarPedido" icon="fa fa-coffee" rendered="#{securityUtil.possuiPermissao('ListarGerarPedido')}"/>
+				<p:menuitem value="Histórico de Pedido" outcome="pretty:ListarHistoricoPedidoAlimento" icon="fa fa-history" rendered="#{securityUtil.possuiPermissao('ListarHistoricoPedidoAlimento')}"/>
 				<p:menuitem value="Gerar Mapa consolidado" outcome="pretty:ListarMapaConsolidado" icon="fa fa-list-alt" rendered="#{securityUtil.possuiPermissao('ListarMapaConsolidado')}"/>
 				<p:menuitem value="Dieta Especial Recuperando" outcome="pretty:ListarDietaEspecial" icon="fa fa-cutlery" rendered="#{securityUtil.possuiPermissao('ListarDietaEspecial')}"/>
 				<p:menuitem value="Alimentos" outcome="pretty:ListarAlimento" icon="fa fa-apple" rendered="#{securityUtil.possuiPermissao('ListarAlimento')}"/>
