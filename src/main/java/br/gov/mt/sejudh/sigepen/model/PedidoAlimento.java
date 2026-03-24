@@ -66,7 +66,7 @@ public class PedidoAlimento extends BaseModel<Long> {
         this.idUnidadePrisional = idUnidadePrisional;
         this.idContrato = idContrato;
         this.idTipoRefeicao = idTipoRefeicao;
-        this.status = Status.ATIVO;
+        this.status = Status.PENDENTE;
     }
 
     public PedidoAlimento() {}
@@ -128,7 +128,11 @@ public class PedidoAlimento extends BaseModel<Long> {
         return status;
     }
 
-    @Override
+    public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
