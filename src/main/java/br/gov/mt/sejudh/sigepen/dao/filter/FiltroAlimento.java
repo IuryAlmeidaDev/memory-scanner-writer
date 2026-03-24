@@ -28,7 +28,7 @@ public class FiltroAlimento extends FiltroConsulta{
 		getCriteria().setProjection(proj);
 		
 		if (this.getDescricao() != null && !this.getDescricao().isEmpty()) {
-			getCriteria().add(Restrictions.eq("descricao", this.getDescricao()));
+			getCriteria().add(Restrictions.ilike("descricao", this.getDescricao() + "%"));
 		}
 
 		if (this.getUnidadeMedida() != null) {
