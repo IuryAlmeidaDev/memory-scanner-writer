@@ -214,8 +214,13 @@ public class ContratoDAO {
 		Query query = entityManager.createNativeQuery(jpql.toString());
 		query.setParameter("idUnidade", idUnidade);
 		query.setParameter("tipoRefeiracao", tipoRefeiracao);
-		String horarioRefeicao = (String) query.getSingleResult();
-		return horarioRefeicao;
+		
+		try {
+			String horarioRefeicao = (String) query.getSingleResult();
+			return horarioRefeicao;
+		}catch(Exception e) {
+			return null;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
