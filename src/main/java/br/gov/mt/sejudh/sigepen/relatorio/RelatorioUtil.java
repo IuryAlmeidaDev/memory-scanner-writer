@@ -250,6 +250,9 @@ public class RelatorioUtil {
 			case PADRAO:
 				rodapePath = rodapePath + File.separator + "RodapePadrao.jasper";
 				break;
+			case PADRAO_ASSINADO:
+				rodapePath = rodapePath + File.separator + "RodapePadraoAssinado.jasper";
+				break;
 			case PADRAO_PAISAGEM:
 				rodapePath = rodapePath + File.separator + "RodapePadraoPaisagem.jasper";
 				break;
