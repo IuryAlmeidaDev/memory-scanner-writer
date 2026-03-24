@@ -57,7 +57,10 @@ public class FiltroContrato extends FiltroConsulta {
 
 		if (!this.isListarTodasUnidades()) {
 			getCriteria().add(Restrictions.eq("unidade.id", SecurityUtil.getUnidadeSelecionada().getId()));
-		}
+		}else 
+			if(this.getUnidadePrisional() != null) {
+				getCriteria().add(Restrictions.eq("unidade.id", this.getUnidadePrisional().getId()));
+			}
 
 		if (this.getStatus() != null) {
 			getCriteria().add(Restrictions.eq("status", this.getStatus()));
