@@ -29,7 +29,7 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
                         "AND p.idTipoRefeicao = :idTipoRefeicao " +
                         "AND p.idUnidadePrisional = :idUnidadePrisional " +
                         "AND p.idContrato = :idContrato " +
-                        "AND p.status = :statusAtivo", // Verifica apenas pedidos ativos
+                        "AND p.status = :statusPendente", // Verifica apenas pedidos pendentes
                 Boolean.class
         );
 
@@ -37,7 +37,7 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
         query.setParameter("idTipoRefeicao", idTipoRefeicao);
         query.setParameter("idUnidadePrisional", idUnidadePrisional);
         query.setParameter("idContrato", idContrato);
-        query.setParameter("statusAtivo", Status.ATIVO);
+        query.setParameter("statusPendente", Status.PENDENTE);
 
         return query.getSingleResult();
     }
@@ -59,14 +59,14 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
                         "AND p.idTipoRefeicao = :idTipoRefeicao " +
                         "AND p.idUnidadePrisional = :idUnidadePrisional " +
                         "AND p.idContrato = :idContrato " +
-                        "AND p.status = :statusAtivo",
+                        "AND p.status = :statusPendente",
                 Long.class
         );
         query.setParameter("dataPedido", dataPedido);
         query.setParameter("idTipoRefeicao", idTipoRefeicao);
         query.setParameter("idUnidadePrisional", idUnidadePrisional);
         query.setParameter("idContrato", idContrato);
-        query.setParameter("statusAtivo", Status.ATIVO);
+        query.setParameter("statusPendente", Status.PENDENTE);
         return query.getResultList();
     }
 
