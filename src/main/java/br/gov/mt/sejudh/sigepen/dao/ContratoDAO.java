@@ -243,4 +243,8 @@ public class ContratoDAO {
 
 		return contratos;
 	}
+	
+	public int contarFiltrados(FiltroContrato filtro) {
+	    return filtro.contarRegistros(entityManager);
+	}
 }

@@ -1,5 +1,9 @@
 package br.gov.mt.sejudh.sigepen.dao.filter;
 
+import javax.persistence.EntityManager;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
@@ -7,6 +11,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.util.RestrictionsSigepen;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -65,6 +70,39 @@ public class FiltroContrato extends FiltroConsulta {
 		if (this.getStatus() != null) {
 			getCriteria().add(Restrictions.eq("status", this.getStatus()));
 		}
+	}
+	
+	public int contarRegistros(EntityManager em) {
+	    Session session = em.unwrap(Session.class);
+	    Criteria criteria = session.createCriteria(Contrato.class);
+	    
+	    criteria.createAlias("fornecedor", "fornecedor", JoinType.INNER_JOIN)
+	            .createAlias("unidades", "unidade", JoinType.INNER_JOIN);
+
+	    criteria.setProjection(Projections.countDistinct("id"));
+
+	    if (this.getNumContrato() != null && !this.getNumContrato().isEmpty()) {
+	        criteria.add(RestrictionsSigepen.ignoraAcentoLike("numContrato", this.getNumContrato(), MatchMode.ANYWHERE));
+	    }
+	    if (this.getFornecedor() != null && !this.getFornecedor().isEmpty()) {
+	        criteria.add(RestrictionsSigepen.ignoraAcentoLike("fornecedor.nomeFantasia", this.getFornecedor(), MatchMode.ANYWHERE));
+	    }
+	    if (this.getCnpj() != null && !this.getCnpj().isEmpty()) {
+	        criteria.add(RestrictionsSigepen.ignoraAcentoLike("fornecedor.cnpj", this.getCnpj(), MatchMode.ANYWHERE));
+	    }
+	    if (this.getNome() != null && !this.getNome().equalsIgnoreCase("")) {
+	        criteria.add(Restrictions.ilike("fornecedor.nomeFantasia", this.getNome(), MatchMode.ANYWHERE));
+	    }
+	    if (!this.isListarTodasUnidades()) {
+	        criteria.add(Restrictions.eq("unidade.id", SecurityUtil.getUnidadeSelecionada().getId()));
+	    } else if (this.getUnidadePrisional() != null) {
+	        criteria.add(Restrictions.eq("unidade.id", this.getUnidadePrisional().getId()));
+	    }
+	    if (this.getStatus() != null) {
+	        criteria.add(Restrictions.eq("status", this.getStatus()));
+	    }
+
+	    return ((Number) criteria.uniqueResult()).intValue();
 	}
 
 	public String getNumContrato() {
