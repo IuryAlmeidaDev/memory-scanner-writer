@@ -188,6 +188,11 @@
 	                </p:confirmDialog>
 	            </p:panel>
 	            
+	            <p:confirmDialog widgetVar="confirmarSobrescrita" header="Cardápio já cadastrado" message="Já existe um cardápio cadastrado para essas características. Deseja substituí-lo?" icon="ui-icon-alert">
+	                <p:commandButton value="Sim" action="#{cardapioBean.sobrescrever()}" oncomplete="PF('confirmarSobrescrita').hide()" update="@form :mensagens" icon="ui-icon-check" />
+	                <p:commandButton value="Não" onclick="PF('confirmarSobrescrita').hide()" type="button" icon="ui-icon-close" />
+	            </p:confirmDialog>
+	            
 	            <br/>
 	
 	            <p:commandButton value="Salvar" action="#{cardapioBean.salvar()}" update="@form" icon="ui-icon-disk" rendered="#{(securityUtil.possuiPermissao('CadastrarCardapio') and !cardapioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCardapio') and !cardapioBean.isVisualizacao)}"/>
