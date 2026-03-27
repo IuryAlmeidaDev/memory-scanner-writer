@@ -58,6 +58,32 @@
 							itemLabel="#{item.descricao}" itemValue="#{item}" />
 					</p:selectOneMenu>
 
+					<p:outputLabel value="Status:" for="status"
+						style="font-weight: bold;" />
+					<p:selectOneMenu id="status"
+						value="#{historicoPedidoAlimentoBean.filtro.status}"
+						style="width: 215px">
+						<f:selectItem itemLabel="Selecione" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems value="#{historicoPedidoAlimentoBean.status}"
+							var="item" itemLabel="#{item.descricao}" itemValue="#{item}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Unidade Prisional:" for="unidade"
+						style="font-weight: bold;"
+						rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
+					<p:selectOneMenu id="unidade"
+						value="#{historicoPedidoAlimentoBean.filtro.idUnidadePrisional}"
+						style="width: 215px"
+						rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}"
+						filter="true" filterMatchMode="contains">
+
+						<f:selectItem itemLabel="Selecione" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems value="#{historicoPedidoAlimentoBean.unidades}"
+							var="u" itemLabel="#{u.nome}" itemValue="#{u.id}" />
+					</p:selectOneMenu>
+
 				</h:panelGrid>
 
 				<br />
@@ -126,20 +152,9 @@
 				<p:column headerText="Ações"
 					style="width:130px; text-align: center;">
 					<center>
-						<p:commandButton title="Finalizar" icon="fa fa-flag"
-							update=":registrosForm" process="@this"
-							action="#{historicoPedidoAlimentoBean.finalizar(pedido.id)}"
-							rendered="#{pedido.status eq 'PENDENTE'}" />
-
 						<p:commandButton title="Relatório de Emissão"
 							icon="fa fa-file-pdf-o" update=":formDownload" process="@this"
-							action="#{historicoPedidoAlimentoBean.baixarRelatorio(pedido.id, false)}" />
-
-						<p:commandButton title="Relatório Assinado"
-							icon="fa fa-check-square-o" style="color: white;"
-							update=":formDownload" process="@this"
-							action="#{historicoPedidoAlimentoBean.baixarRelatorio(pedido.id, true)}"
-							rendered="#{pedido.status eq 'ATIVO'}" />
+							action="#{historicoPedidoAlimentoBean.baixarRelatorio(pedido.id)}" />
 					</center>
 				</p:column>
 

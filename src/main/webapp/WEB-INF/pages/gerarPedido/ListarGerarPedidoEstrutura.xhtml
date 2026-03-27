@@ -17,33 +17,33 @@
 
 		<h:form id="meuFormulario">
 			<p:panel>
-                <p:outputLabel value="Consulta"/>
+				<p:outputLabel value="Consulta" />
 
-               	<sgp:formCalendar labelValue="Data Inicio" 
+				<sgp:formCalendar labelValue="Data Inicio"
 					value="#{gerarPedidoBean.filtroPedido.dataInicio}" display="text"
-					validationRequired="true" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 170px">
+					validationRequired="true" pattern="dd/MM/yyyy"
+					styleFormLabelColumn="width: 170px">
 					<p:ajax event="dateSelect" />
-					<p:ajax event="change"  />
+					<p:ajax event="change" />
 				</sgp:formCalendar>
 
-                 <sgp:formSelectOneMenu 
-                		id="tipoRefeicao" 
-                		validationRequired="true"
-                		labelValue="Tipo de Refeição" 
-                		itemsValue="#{gerarPedidoBean.tiposRefeicao}" 
-                		itemValue="#{item}" 
-                		itemLabel="#{item.descricao}"						
-						value="#{gerarPedidoBean.filtroPedido.tipoRefeicao}" 
-						temSelecione="true"
-						styleFormLabelColumn="min-width:150px !important"
-						converter="SimpleEntityConverter" 
-						display="text"
-				/>
+				<sgp:formSelectOneMenu id="tipoRefeicao" validationRequired="true"
+					labelValue="Tipo de Refeição"
+					itemsValue="#{gerarPedidoBean.tiposRefeicao}" itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					value="#{gerarPedidoBean.filtroPedido.tipoRefeicao}"
+					temSelecione="true"
+					styleFormLabelColumn="min-width:150px !important"
+					converter="SimpleEntityConverter" display="text" />
 
-                <br/> <br/>
-                <p:commandButton value="Pesquisar" update=":unidadeForm :meuFormulario" action="#{gerarPedidoBean.montarEstrutura()}" icon="ui-icon-search" process="@form"/>
-        	</p:panel>
-        </h:form>
+				<br />
+				<br />
+				<p:commandButton value="Pesquisar"
+					update=":unidadeForm :meuFormulario"
+					action="#{gerarPedidoBean.montarEstrutura()}" icon="ui-icon-search"
+					process="@form" />
+			</p:panel>
+		</h:form>
 		<h:form id="unidadeForm">
 			<p:tabView id="tabView" effect="fade" effectDuration="fast"
 				widgetVar="aba" dynamic="true">
@@ -62,46 +62,54 @@
 								<p:column headerText="Dieta Especial">
 									<h:outputText value="#{est.totalDietaEspecial}" />
 								</p:column>
-								<p:column headerText="Ações" style="width:120px;">
-									<center>
-										<p:commandButton title="Gerar e Imprimir Pedido"
-											icon="fa fa-print"
-											update=":formListaChamadas" process="@this"
-											action="#{gerarPedidoBean.selecionarEstruturaChamada(est,gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}"
-														 rendered="#{gerarPedidoBean.isUnidadePrisional(est)}"
-											/>
-									</center>
+								<p:column headerText="Total"
+									style="text-align: center; font-weight: bold;">
+									<h:outputText
+										value="#{est.totalDietaPadrao + est.totalDietaEspecial}" />
+								</p:column>
+
+								<p:column headerText="Ações"
+									style="width:150px; text-align: center;">
+									<p:commandButton title="Imprimir" icon="fa fa-print"
+										update=":formListaChamadas" process="@this"
+										action="#{gerarPedidoBean.selecionarEstruturaChamada(est, gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido, false)}"
+										rendered="#{gerarPedidoBean.isUnidadePrisional(est)}"
+										style="margin-right: 5px;" />
+
+									<p:commandButton title="Imprimir e Assinar"
+										icon="fa fa-pencil-square-o" update=":formListaChamadas"
+										process="@this"
+										action="#{gerarPedidoBean.selecionarEstruturaChamada(est, gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido, true)}"
+										rendered="#{gerarPedidoBean.isUnidadePrisional(est)}"
+										styleClass="ui-button-success" />
 								</p:column>
 							</p:treeTable>
-							<p:confirmDialog global="true">
-								<p:commandButton value="Sim" type="button"
-									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-								<p:commandButton value="Não" type="button"
-									styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-							</p:confirmDialog>
 
 							<!-- Diálogo informativo sobre pedido existente -->
-							<p:dialog header="Pedido já existente" widgetVar="confirmSubstituirPedidoDialog"
-									  modal="true" resizable="false" closeOnEscape="true">
+							<!-- Substitua apenas o conteúdo do p:dialog -->
+							<p:dialog header="Pedido assinado já existente"
+								widgetVar="confirmSubstituirPedidoDialog" modal="true"
+								resizable="false" closeOnEscape="true">
 								<p:outputPanel style="text-align:center;">
 									<p:panelGrid columns="1" styleClass="ui-noborder">
-										<h:outputText value="Já existe um pedido para esta data, tipo de refeição e unidade prisional." />
-										<h:outputText value="Você deseja substituir o pedido existente?" />
+										<h:outputText
+											value="Já existe um pedido ASSINADO para esta data e tipo de refeição." />
+										<h:outputText
+											value="Deseja substituí-lo? O pedido anterior e todos os pendentes serão inativados." />
 									</p:panelGrid>
 
 									<p:commandButton value="Confirmar"
-													 action="#{gerarPedidoBean.confirmarSubstituicaoPedido()}"
-													 oncomplete="PF('confirmSubstituirPedidoDialog').hide()"
-													 update=":unidadeForm :formListaChamadas"
-													 styleClass="ui-button-primary"
-													 icon="ui-icon-check" />
+										action="#{gerarPedidoBean.confirmarSubstituicaoPedido}"
+										oncomplete="PF('confirmSubstituirPedidoDialog').hide()"
+										update=":unidadeForm :formListaChamadas"
+										styleClass="ui-button-primary" icon="ui-icon-check" />
 
 									<p:commandButton value="Cancelar"
-													 oncomplete="PF('confirmSubstituirPedidoDialog').hide()"
-													 styleClass="ui-button-secondary"
-													 icon="ui-icon-close" />
+										onclick="PF('confirmSubstituirPedidoDialog').hide(); return false;"
+										styleClass="ui-button-secondary" icon="ui-icon-close" />
 								</p:outputPanel>
 							</p:dialog>
+
 
 						</p:panel>
 					</h:form>

@@ -4,9 +4,11 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroHistoricoPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.ContratoComboDTO;
 import br.gov.mt.sejudh.sigepen.service.HistoricoPedidoAlimentoService;
 import br.gov.mt.sejudh.sigepen.service.TipoRefeicaoService;
+import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -25,6 +27,7 @@ import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.DietaEspecialPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.dto.DetalheItemEstruturaCardapioDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialEstruturaDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.ContratoService;
@@ -58,6 +61,8 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 	private List<TipoRefeicao> tiposRefeicao;
 	private Map<Long, String> descricoesRefeicao;
 	private Map<Long, String> descricoesContrato;
+	private List<Status> status;
+	private List<UnidadePrisional> unidades;
 
 	@Inject
 	private HistoricoPedidoAlimentoService historicoPedidoAlimentoService;
@@ -73,6 +78,8 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 	private ContratoService contratoService;
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
+	@Inject
+	private UnidadePrisionalService unidadePrisionalService;
 
 	public FiltroHistoricoPedidoAlimento getFiltro() {
 		return filtro;
@@ -109,6 +116,22 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 	    return descricoesContrato;
 	}
 
+	public List<Status> getStatus() {
+		return status;
+	}
+
+	public void setStatus(List<Status> status) {
+		this.status = status;
+	}
+
+	public List<UnidadePrisional> getUnidades() {
+		return unidades;
+	}
+
+	public void setUnidades(List<UnidadePrisional> unidades) {
+		this.unidades = unidades;
+	}
+
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
 		if (!security.possuiPermissao("ListarTodasUnidades")) {
@@ -129,13 +152,18 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 
 	@URLAction(onPostback = false)
 	public String init() {
+		this.status = Arrays.asList(Status.values());
 		this.tiposRefeicao = tipoRefeicaoService.listarTodos();
 		this.contratos = historicoPedidoAlimentoService.listarContratosParaCombo();
 		this.descricoesRefeicao = this.tiposRefeicao.stream()
 				.collect(Collectors.toMap(t -> t.getId(), t -> t.getDescricao()));
 		this.descricoesContrato = this.contratos.stream()
 	            .collect(Collectors.toMap(c -> c.getId(), c -> c.getNumContrato()));
-
+		
+		if (security.possuiPermissao("ListarTodasUnidades")) {
+	        this.unidades = unidadePrisionalService.listarUnidadesNaoInativas(); 
+	    }
+		
 		try {
 			switch (getAcaoDeTela()) {
 			case LISTAR:
@@ -191,7 +219,7 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 		};
 	}
 
-	public void baixarRelatorio(Long idPedido, boolean ehAssinado) {
+	public void baixarRelatorio(Long idPedido) {
 		try {
 			PedidoAlimento pedido = historicoPedidoAlimentoService.buscarPorIdComItens(idPedido);
 
@@ -213,9 +241,8 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 			String nomeUnidadeHistorica = historicoPedidoAlimentoService.buscarNomeUnidadePorId(pedido.getIdUnidadePrisional());
 
 			Map<String, Object> parameters = montarParametros(pedido, itensPedido, dietasEspeciais, contrato, nomeUnidadeHistorica);
-
-			if (ehAssinado) {
-				parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
+			
+			if(Status.ATIVO.equals(pedido.getStatus())) {
 				Arquivo relatorioGerado = RelatorioUtil.gerarRelatorio(itensPedido, Relatorio.PedidoDetalhadoAssinado,
 						parameters);
 				fileDownload.prepararArquivo(relatorioGerado);
@@ -228,7 +255,6 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 				RequestContext.getCurrentInstance().execute("download()");
 				LoggerUtil.logInfo(Acao.IMPRIMIR, "Histórico Pedido Alimento", log);
 			}
-
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro",
 					"Não foi possível gerar o relatório." + e.getMessage());
@@ -237,7 +263,7 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 	}
 
 	private List<DetalheItemEstruturaCardapioDTO> converterItens(PedidoAlimento pedido) {
-		return pedido.getItensPedido().stream().filter(i -> i.getStatus() == Status.ATIVO)
+		return pedido.getItensPedido().stream()
 				.map(i -> new DetalheItemEstruturaCardapioDTO(i.getItem(), i.getQtdPorItem(), i.getQtdRecuperando(),
 						i.getSiglaUnidadeMedida(), i.getNomeEstrutura(), i.getNivelEstrutura(), i.getItemCardapioId(),
 						i.getEstruturaId()))
@@ -245,7 +271,8 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 	}
 
 	private List<DietaEspecialEstruturaDTO> converterDietas(PedidoAlimento pedido) {
-		return pedido.getDietasEspeciais().stream().filter(d -> d.getStatus() == Status.ATIVO).map(this::converterDieta)
+		return pedido.getDietasEspeciais().stream()
+				.map(this::converterDieta)
 				.collect(Collectors.toList());
 	}
 
@@ -262,7 +289,7 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 	private Map<String, Object> montarParametros(PedidoAlimento pedido,
 	        List<DetalheItemEstruturaCardapioDTO> itensPedido, 
 	        List<DietaEspecialEstruturaDTO> dietasEspeciais,
-	        Contrato contrato, String nomeUnidade) { // <--- Novo parâmetro
+	        Contrato contrato, String nomeUnidade) { 
 
 	    Map<String, Object> parameters = new HashMap<>();
 	    parameters.put("DATA", pedido.getDataPedido());
