@@ -103,7 +103,7 @@
 				<p:commandButton value="Salvar"
 					action="#{dietaEspecialBean.salvar()}" update="@form"
 					icon="ui-icon-disk"
-					rendered="#{(securityUtil.possuiPermissao('CadastrarContrato') and !dietaEspecialBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterardietaEspecial') and !dietaEspecialBean.isVisualizacao)}" />
+					rendered="#{(securityUtil.possuiPermissao('CadastrarDietaEspecial') and !dietaEspecialBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterardietaEspecial') and !dietaEspecialBean.isVisualizacao)}" />
 
 				<p:button outcome="pretty:ListarDietaEspecial" value="Voltar"
 					icon="ui-icon-arrowreturnthick-1-w">
