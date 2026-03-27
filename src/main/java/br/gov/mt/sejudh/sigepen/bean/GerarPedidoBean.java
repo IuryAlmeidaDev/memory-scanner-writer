@@ -11,7 +11,6 @@ import br.gov.mt.sejudh.sigepen.model.Arquivo;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.DietaEspecialPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
-import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.ItemPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
@@ -52,9 +51,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -81,6 +79,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	private Long unidadeSelecionada;
 	private GerarPedidoEstruturaDTO gerarPedidoEstruturaDTO;
 	private Contrato contrato;
+	private boolean paginacaoConfigurada = false;
 
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
@@ -241,7 +240,10 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		if (this.filtroPedido != null) {
 			String horarioRefeiracao = this.contratoService.buscarHorarioRefeiracao(this.unidade.getId(),
 					this.filtroPedido.getTipoRefeicao().getId());
-
+			
+		if(horarioRefeiracao == null || horarioRefeiracao.isEmpty()) {
+			return null;
+		}
 			String horaLimpa = horarioRefeiracao.replaceAll("[^0-9]", "");
 			if (horaLimpa.length() > 4) {
 				horaLimpa = horaLimpa.substring(0, 4);
@@ -270,6 +272,14 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		if (this.unidade != null) {
 			if (this.unidade.getId() > 0) {
 				String dataFormatada = montarFiltroData();
+				
+				if (dataFormatada == null || dataFormatada.isEmpty()) {
+	                facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro",
+	                        "Não existe cardápio cadastrado para esta data e tipo de refeição");
+	                estrutura = new Estrutura();
+	                return;
+	            }
+				
 				try {
 					this.contrato = contratoService.buscarContratoVigenteEAtivoPorUnidade(this.unidade.getId(),
 							this.filtroPedido.getDataInicio());
@@ -309,24 +319,34 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	}
 
 	public void pesquisar() {
+		paginacaoConfigurada = false;
 		this.unidades = new LazyDataModel<UnidadePrisionalDTO>() {
 			private static final long serialVersionUID = 1L;
 
 			public List<UnidadePrisionalDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
 
+				try {
+					if(!paginacaoConfigurada) {
+						configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+						paginacaoConfigurada = true;
+					}
+					
+				} catch (Exception e) {
+					log.error(e);
+				}
+				
 				List<UnidadePrisionalDTO> UnidadePrisionalDTO = unidadeService
 						.buscarPorFiltroUnidadesComContratosAtivos(getFiltro(), false);
 
 				setRowCount(UnidadePrisionalDTO.size());
+				
+				int toIndex = Math.min(first + pageSize, UnidadePrisionalDTO.size());
+	            if (first >= UnidadePrisionalDTO.size()) {
+	                return new ArrayList<>();
+	            }
 
-				try {
-					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
-				} catch (Exception e) {
-					log.error(e);
-				}
-
-				return UnidadePrisionalDTO;
+				return UnidadePrisionalDTO.subList(first, toIndex);
 			}
 		};
 	}
@@ -368,8 +388,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	private void imprimir(final String data, final FiltroGerarPedido filtroGerarPedido, Contrato contrato,
 			boolean assinado) {
 		try {
+
 			configurarDadosRelatorio();
-			validarHorarioRefeicao(contrato, filtroGerarPedido.getTipoRefeicao().getId());
 
 			final long idEstrutura = gerarPedidoEstruturaDTO.getId();
 

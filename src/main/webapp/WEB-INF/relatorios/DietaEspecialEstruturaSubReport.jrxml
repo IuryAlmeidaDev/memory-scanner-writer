@@ -6,16 +6,21 @@
 	<field name="tipoDieta" class="java.lang.String"/>
 	<field name="nomeEstrutura" class="java.lang.String"/>
 	<field name="qtdRecuperando" class="java.lang.Integer"/>
+	
+	<variable name="TOTAL_DIETA_ESTRUTURA" class="java.lang.Integer" calculation="Sum" resetType="Group" resetGroup="GroupEstrutura">
+    	<variableExpression><![CDATA[$F{qtdRecuperando}]]></variableExpression>
+	</variable>
+	
 	<group name="GroupEstrutura">
 		<groupExpression><![CDATA[$F{nomeEstrutura}]]></groupExpression>
 		<groupHeader>
 			<band height="20" splitType="Stretch">
-				<textField>
+				<textField evaluationTime="Group" evaluationGroup="GroupEstrutura">
 					<reportElement mode="Transparent" x="0" y="0" width="300" height="20" backcolor="#FFFFFF" uuid="b8697c19-1370-44c0-8a60-3a8ed2a8932c"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{nomeEstrutura}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{nomeEstrutura} + " - Total de dieta especial: " + $V{TOTAL_DIETA_ESTRUTURA}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
