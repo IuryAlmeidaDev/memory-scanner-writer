@@ -131,8 +131,10 @@
 				</p:column>
 
 				<p:column headerText="Data" sortBy="#{pedido.dataPedido}"
-					style="width:120px;">
-					<h:outputText value="#{pedido.dataPedido}" />
+					style="width:160px; white-space: nowrap; text-align: center;">
+					<h:outputText value="#{pedido.dataPedido}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+					</h:outputText>
 				</p:column>
 
 				<p:column headerText="Contrato" sortBy="#{pedido.idContrato}">
