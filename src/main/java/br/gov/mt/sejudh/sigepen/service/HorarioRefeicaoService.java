@@ -44,4 +44,8 @@ public class HorarioRefeicaoService extends BaseService<HorarioRefeicao, Long>{
 		return this.horarioRefeicaoDAO.temHorarioRefeicao(id);
 	}
 	
+	public int contarFiltrados(FiltroHorarioRefeicao filtro) {
+		return horarioRefeicaoDAO.contarFiltrados(filtro);
+	}
+	
 }
