@@ -266,8 +266,8 @@ public class ConsultarVisitaBean extends MetodosDePaginaBean {
 		
 	public void finalizarVisita() {
 		try {
-			if (this.entrada.getMotivoFinalizacao().isEmpty()) {
-				facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro", "Preenchimento do motivo é obrigatório");
+			if (this.entrada.getMotivoFinalizacao() == null || this.entrada.getMotivoFinalizacao().trim().isEmpty()) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "AVISO", "Preenchimento do motivo é obrigatório");
 				return;
 			}		
 			LoggerUtil.logInfo(Acao.FINALIZAR, this.entrada, log);
