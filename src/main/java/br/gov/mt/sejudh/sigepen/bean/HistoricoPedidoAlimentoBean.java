@@ -27,7 +27,6 @@ import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.DietaEspecialPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.dto.DetalheItemEstruturaCardapioDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialEstruturaDTO;
-import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
 import br.gov.mt.sejudh.sigepen.relatorio.RelatorioUtil;
 import br.gov.mt.sejudh.sigepen.service.ContratoService;
@@ -61,6 +60,7 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 	private List<TipoRefeicao> tiposRefeicao;
 	private Map<Long, String> descricoesRefeicao;
 	private Map<Long, String> descricoesContrato;
+	private Map<Long, String> descricoesUnidades;
 	private List<Status> status;
 	private List<UnidadePrisional> unidades;
 
@@ -132,6 +132,14 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 		this.unidades = unidades;
 	}
 
+	public Map<Long, String> getDescricoesUnidades() {
+		return descricoesUnidades;
+	}
+
+	public void setDescricoesUnidades(Map<Long, String> descricoesUnidades) {
+		this.descricoesUnidades = descricoesUnidades;
+	}
+
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
 		if (!security.possuiPermissao("ListarTodasUnidades")) {
@@ -155,14 +163,17 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 		this.status = Arrays.asList(Status.values());
 		this.tiposRefeicao = tipoRefeicaoService.listarTodos();
 		this.contratos = historicoPedidoAlimentoService.listarContratosParaCombo();
+		
 		this.descricoesRefeicao = this.tiposRefeicao.stream()
 				.collect(Collectors.toMap(t -> t.getId(), t -> t.getDescricao()));
 		this.descricoesContrato = this.contratos.stream()
 	            .collect(Collectors.toMap(c -> c.getId(), c -> c.getNumContrato()));
-		
+
 		if (security.possuiPermissao("ListarTodasUnidades")) {
-	        this.unidades = unidadePrisionalService.listarUnidadesNaoInativas(); 
-	    }
+	        this.unidades = unidadePrisionalService.listarUnidadesNaoInativas();
+	        this.descricoesUnidades = this.unidades.stream()
+	        		.collect(Collectors.toMap(u -> u.getId(), u -> u.getNome()));   
+		}
 		
 		try {
 			switch (getAcaoDeTela()) {

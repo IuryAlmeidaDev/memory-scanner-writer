@@ -146,6 +146,11 @@
 					<h:outputText
 						value="#{historicoPedidoAlimentoBean.descricoesRefeicao[pedido.idTipoRefeicao]}" />
 				</p:column>
+				
+				<p:column headerText="Unidade" sortBy="#{pedido.idUnidadePrisional}">
+				    <h:outputText
+				        value="#{historicoPedidoAlimentoBean.descricoesUnidades[pedido.idUnidadePrisional]}" />
+				</p:column>
 
 				<p:column headerText="Status" sortBy="#{pedido.status}">
 					<h:outputText value="#{pedido.status}" />
