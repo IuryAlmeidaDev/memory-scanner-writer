@@ -6,7 +6,7 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnidadePrisional;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
 import br.gov.mt.sejudh.sigepen.exception.MultiplosResultadosException;
-import br.gov.mt.sejudh.sigepen.exception.NaoEncontradoException;
+import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Arquivo;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.DietaEspecialPedidoAlimento;
@@ -39,12 +39,12 @@ import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
 import net.sf.jasperreports.engine.JRException;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.net.Severity;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
-import javax.ejb.EJBException;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -55,6 +55,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,6 +84,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	private GerarPedidoEstruturaDTO gerarPedidoEstruturaDTO;
 	private Contrato contrato;
 	private boolean paginacaoConfigurada = false;
+	private HorarioRefeicao horarioRefeicao;
 
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
@@ -172,6 +174,14 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 
 	public void setContrato(Contrato contrato) {
 		this.contrato = contrato;
+	}
+
+	public HorarioRefeicao getHorarioRefeicao() {
+		return horarioRefeicao;
+	}
+
+	public void setHorarioRefeicao(HorarioRefeicao horarioRefeicao) {
+		this.horarioRefeicao = horarioRefeicao;
 	}
 
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
@@ -274,6 +284,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		Long tipoRefeicao = this.filtroPedido.getTipoRefeicao().getId();
 		if (this.unidade != null) {
 			if (this.unidade.getId() > 0) {
+				
+				this.horarioRefeicao = estruturaService.buscarConfiguracaoHorarioRefeicao(this.unidade.getId(), tipoRefeicao);				
 				String dataFormatada = montarFiltroData();
 				
 				if (dataFormatada == null || dataFormatada.isEmpty()) {
@@ -284,6 +296,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	            }
 				
 				try {
+					validarHorarioRefeicao(tipoRefeicao);
+					
 					this.contrato = contratoService.buscarContratoVigenteEAtivoPorUnidade(this.unidade.getId(),
 							this.filtroPedido.getDataInicio());
 
@@ -306,15 +320,11 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 								"Não existe cardápio cadastrado para esta data e tipo de refeição");
 						root = new DefaultTreeNode();
 					}
-				} catch (EJBException e) {
-					Throwable cause = e.getCause();
-					if (cause instanceof NaoEncontradoException || cause instanceof MultiplosResultadosException) {
-						facesUtil.exibirMensagem(SEVERITY_ERROR, "Erro",
-								e.getMessage().substring(e.getMessage().indexOf(":") + 1));
-					} else {
-						throw e;
-					}
-					root = new DefaultTreeNode();
+				} catch (ValidacaoException e) {
+				    facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Regra de Negócio", e.getMessage());
+				    root = new DefaultTreeNode(); 
+				} catch (Exception e) {
+				    facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro Inesperado", e.getMessage());
 				}
 			}
 		}
@@ -391,7 +401,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	private void imprimir(final String data, final FiltroGerarPedido filtroGerarPedido, Contrato contrato,
 			boolean assinado) {
 		try {
-
+			validarHorarioRefeicao(filtroGerarPedido.getTipoRefeicao().getId());
 			configurarDadosRelatorio();
 
 			final long idEstrutura = gerarPedidoEstruturaDTO.getId();
@@ -453,31 +463,28 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		}
 	}
 
-	public void validarHorarioRefeicao(Contrato contrato, Long tipoRefeicaoId) throws Exception {
-		if (contrato.getHorariosRefeicao() == null)
-			return;
+	public void validarHorarioRefeicao(Long tipoRefeicaoId) throws ValidacaoException {
+	    if (this.horarioRefeicao == null || this.horarioRefeicao.getHorarioInicio() == null) {
+	        return; 
+	    }
 
-		LocalTime agora = LocalTime.now();
-		HorarioRefeicao horarioDefinido = contrato.getHorariosRefeicao().stream()
-				.filter(h -> h.getTipoRefeicao().getId().equals(tipoRefeicaoId))
-				.findFirst()
-				.orElse(null);
+	    LocalTime agora = LocalTime.now();
+	    DateTimeFormatter parser = DateTimeFormatter.ofPattern("HHmm");
+	    
+	    try {
+	        LocalTime horaLimiteIncial = LocalTime.parse(this.horarioRefeicao.getHorarioInicio(), parser);
 
-		if (horarioDefinido != null && horarioDefinido.getHorarioInicio() != null) {
-			String horaBanco = horarioDefinido.getHorarioInicio();
-			DateTimeFormatter parser = DateTimeFormatter.ofPattern("HHmm");
-			LocalTime horaLimite = LocalTime.parse(horaBanco, parser);
-			
-			if (agora.isBefore(horaLimite)) {
-				DateTimeFormatter exibicao = DateTimeFormatter.ofPattern("HH");
-				throw new Exception(
-						"Não é possivel gerar o pedido de alimentação no momento. O proximo horário inicia ás: "
-								+ horaLimite.format(exibicao) + "h");
-			}
-
-		}
-
+	        if (agora.isBefore(horaLimiteIncial)) {
+	            DateTimeFormatter exibicaoSomenteHora = DateTimeFormatter.ofPattern("H'h'");
+	            String horaFormatada = horaLimiteIncial.format(exibicaoSomenteHora);
+	           
+	            throw new ValidacaoException("O horário permitido para esta refeição inicia às: " + horaFormatada);
+	        }
+	    } catch (DateTimeParseException e) {
+	        throw new ValidacaoException("Erro interno: O formato do horário (" + this.horarioRefeicao.getHorarioInicio() + ") está incorreto.");
+	    }
 	}
+
 
 	private int calcularTotalDietaComum(List<DetalheItemEstruturaCardapioDTO> itens) {
 		if (itens == null)
