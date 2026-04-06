@@ -127,4 +127,8 @@ public class ContratoService {
 		return dao.buscarContratoVigente(idUnidade, dataInicio, dataFim);
 	}
 
+	public int contarFiltrados(FiltroContrato filtro) {
+	    return dao.contarFiltrados(filtro);
+	}
+	
 }

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.hibernate.Criteria;
@@ -16,7 +18,10 @@ import br.gov.mt.sejudh.sigepen.model.dto.HorarioRefeicaoDTO;
 
 @RequestScoped
 public class HorarioRefeicaoDAO extends BaseDAO<HorarioRefeicao, Long>{
-
+	
+	@Inject
+	private EntityManager em;
+	
 	private static final long serialVersionUID = 291027809840436611L;
 	
 	@SuppressWarnings("unchecked")
@@ -73,4 +78,8 @@ public class HorarioRefeicaoDAO extends BaseDAO<HorarioRefeicao, Long>{
         criteria.setResultTransformer(new AliasToBeanResultTransformer(HorarioRefeicaoDTO.class));
         return criteria.list();
     }
+	
+	public int contarFiltrados(FiltroHorarioRefeicao filtro) {
+		return filtro.contarRegistros(em);
+	}
 }

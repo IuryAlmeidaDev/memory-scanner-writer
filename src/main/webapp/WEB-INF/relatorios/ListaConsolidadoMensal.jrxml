@@ -145,7 +145,7 @@
 		</band>
 		<band height="116">
 			<subreport>
-				<reportElement x="-30" y="0" width="802" height="116" uuid="b56f0c73-9af3-4f4f-81ab-f8e93f6a8a32"/>
+				<reportElement x="0" y="0" width="801" height="116" uuid="b56f0c73-9af3-4f4f-81ab-f8e93f6a8a32"/>
 				<subreportParameter name="UNIDADE_LOGADA"/>
 				<subreportParameter name="FILTRO"/>
 				<subreportParameter name="NUMERO_CONTRATO"/>

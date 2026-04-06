@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -243,16 +244,25 @@ public class ContratoBean extends MetodosDePaginaBean {
 
 			public List<ContratoDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
-				getFiltro().setListarTodasUnidades(security.possuiPermissao("ListarTodasUnidades"));
-				List<ContratoDTO> contratoDto = contratoService.buscarPorFiltro(getFiltro());
-				setRowCount(contratoDto.size());
-
+				
+				
+				//List<ContratoDTO> contratoDto = contratoService.buscarPorFiltro(getFiltro());
+				//setRowCount(contratoDto.size());
+				
+				
 				try {
+					getFiltro().setListarTodasUnidades(security.possuiPermissao("ListarTodasUnidades"));
+					
+					int total = contratoService.contarFiltrados(getFiltro());
+					setRowCount(total);
+			
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+					return contratoService.buscarPorFiltro(getFiltro());
+					
 				} catch (Exception e) {
 					e.printStackTrace();
-				}
-				return contratoDto;
+					return new ArrayList<>();
+					}
 			}
 		};
 	}

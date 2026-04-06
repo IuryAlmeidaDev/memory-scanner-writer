@@ -62,6 +62,7 @@ public enum Relatorio {
 	ListarEntradaSaida("CONSULTAR VISITAS", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 60),
 	HistoricoRecuperando("HISTÓRICO RECUPERANDO", 61),
 	AtestadoSemAssinatura("Atestado", 62),
+	
 
 	/* Relatórios Infopen Estatístico */
 
@@ -96,7 +97,10 @@ public enum Relatorio {
 	ListarEntradaVisitatnes("Lista Entrada de Visitas", ModeloCabecalho.PADRAO, ModeloRodape.PADRAO, 79),
 	
 	 /* Relatórios Infopen Detalhado por multiplas unidades*/
-	InfopenDetalhadoMestre("Relatório Consolidado de Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 80);
+	InfopenDetalhadoMestre("Relatório Consolidado de Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 80),
+	
+	/* Relatórios novos */
+	PedidoDetalhadoAssinado("Pedido de Alimentação Assinado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_ASSINADO, 81);
 
 
 
