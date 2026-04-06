@@ -4,7 +4,8 @@ import java.util.Arrays;
 
 public enum Status {
 	INATIVO("Inativo", "I",1),
-	ATIVO("Ativo", "A",2);
+	ATIVO("Ativo", "A",2),
+	PENDENTE("Pendente", "P",3);
 
 	private String descricao;
 	private final String inicial;

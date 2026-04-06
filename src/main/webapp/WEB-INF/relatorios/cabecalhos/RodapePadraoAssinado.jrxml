@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 6.3.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RodapePadrao" pageWidth="555" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ca5d2853-6c77-4890-b361-6e38863346bc">
+	<property name="ireport.zoom" value="1.6934217901613318"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="EMISSOR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<pageFooter>
+		<band height="51" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="12" width="555" height="1" forecolor="#666666" uuid="28f796a5-1ef7-4988-bb21-9dfc85f2005b"/>
+			</line>
+			<textField>
+				<reportElement x="20" y="13" width="303" height="20" uuid="e9ad546c-1939-48da-be48-d7a6169e06d2"/>
+				<textElement markup="html"/>
+				<textFieldExpression><![CDATA["<b>Assinado por: </b>" + $P{EMISSOR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="20" y="30" width="273" height="20" uuid="009839fa-9142-4c85-8962-a189d8fb1673"/>
+				<textElement markup="html"/>
+				<textFieldExpression><![CDATA["<b>Data Emissão: </b> " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())
++ " às " + new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -5,6 +5,8 @@ import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
 import br.gov.mt.sejudh.sigepen.enumerator.Status; // Importar a enum Status
 
 import javax.persistence.TypedQuery;
+
+import java.util.Arrays;
 import java.util.List;
 
 public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
@@ -21,25 +23,49 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
      * @param idContrato ID do contrato
      * @return true se já existir um pedido ATIVO com os parâmetros fornecidos, caso contrário, false.
      */
-    public boolean existePedido(String dataPedido, Long idTipoRefeicao, Long idUnidadePrisional, Long idContrato) {
+    /**
+     * Verifica se já existe um pedido ATIVO (assinado) para a mesma data,
+     * tipo de refeição, unidade prisional e contrato.
+     */
+    public boolean existePedidoAtivo(String dataPedido, Long idTipoRefeicao,
+            Long idUnidadePrisional, Long idContrato) {
         TypedQuery<Boolean> query = em.createQuery(
                 "SELECT CASE WHEN (COUNT(p) > 0) THEN true ELSE false END " +
-                        "FROM PedidoAlimento p " +
-                        "WHERE p.dataPedido = :dataPedido " +
-                        "AND p.idTipoRefeicao = :idTipoRefeicao " +
-                        "AND p.idUnidadePrisional = :idUnidadePrisional " +
-                        "AND p.idContrato = :idContrato " +
-                        "AND p.status = :statusAtivo", // Verifica apenas pedidos ativos
-                Boolean.class
-        );
-
+                "FROM PedidoAlimento p " +
+                "WHERE p.dataPedido = :dataPedido " +
+                "AND p.idTipoRefeicao = :idTipoRefeicao " +
+                "AND p.idUnidadePrisional = :idUnidadePrisional " +
+                "AND p.idContrato = :idContrato " +
+                "AND p.status = :statusAtivo",
+                Boolean.class);
         query.setParameter("dataPedido", dataPedido);
         query.setParameter("idTipoRefeicao", idTipoRefeicao);
         query.setParameter("idUnidadePrisional", idUnidadePrisional);
         query.setParameter("idContrato", idContrato);
         query.setParameter("statusAtivo", Status.ATIVO);
-
         return query.getSingleResult();
+    }
+
+    /**
+     * Busca IDs de pedidos PENDENTE ou ATIVO para inativar ao confirmar substituição
+     * de um pedido assinado.
+     */
+    public List<Long> findPedidosParaInativarAoAssinar(String dataPedido,
+            Long idTipoRefeicao, Long idUnidadePrisional, Long idContrato) {
+        TypedQuery<Long> query = em.createQuery(
+                "SELECT p.id FROM PedidoAlimento p " +
+                "WHERE p.dataPedido = :dataPedido " +
+                "AND p.idTipoRefeicao = :idTipoRefeicao " +
+                "AND p.idUnidadePrisional = :idUnidadePrisional " +
+                "AND p.idContrato = :idContrato " +
+                "AND p.status IN (:statuses)",
+                Long.class);
+        query.setParameter("dataPedido", dataPedido);
+        query.setParameter("idTipoRefeicao", idTipoRefeicao);
+        query.setParameter("idUnidadePrisional", idUnidadePrisional);
+        query.setParameter("idContrato", idContrato);
+        query.setParameter("statuses", Arrays.asList(Status.PENDENTE, Status.ATIVO));
+        return query.getResultList();
     }
 
     /**
@@ -59,14 +85,14 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
                         "AND p.idTipoRefeicao = :idTipoRefeicao " +
                         "AND p.idUnidadePrisional = :idUnidadePrisional " +
                         "AND p.idContrato = :idContrato " +
-                        "AND p.status = :statusAtivo",
+                        "AND p.status = :statusPendente",
                 Long.class
         );
         query.setParameter("dataPedido", dataPedido);
         query.setParameter("idTipoRefeicao", idTipoRefeicao);
         query.setParameter("idUnidadePrisional", idUnidadePrisional);
         query.setParameter("idContrato", idContrato);
-        query.setParameter("statusAtivo", Status.ATIVO);
+        query.setParameter("statusPendente", Status.PENDENTE);
         return query.getResultList();
     }
 

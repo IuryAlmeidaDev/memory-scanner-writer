@@ -50,9 +50,11 @@ public class EntradaSaidaService {
 
 	public EntradaSaidaDTO salvar(EntradaSaidaDTO entrada) throws Exception {
 		EntradaSaida e = dao.buscarPorId(entrada.getId());
-
-		if (!e.getSituacao().equals(SituacaoVisita.EM_ANDAMENTO))
-			throw new ValidacaoException("Esta visita não está mais em andamento.");
+		
+		validarEntrada(entrada, e);
+		
+			if (!e.getSituacao().equals(SituacaoVisita.EM_ANDAMENTO))
+				throw new ValidacaoException("Esta visita não está mais em andamento.");
 
 		e.setDataSaida(entrada.getDataSaida());
 		e.setSituacao(entrada.getSituacao());
@@ -60,6 +62,16 @@ public class EntradaSaidaService {
 		salvar(e);
 
 		return entrada;
+	}
+	
+	public void validarEntrada(EntradaSaidaDTO entrada, EntradaSaida e) throws ValidacaoException {
+		if(e == null) {
+			throw new ValidacaoException("Registro de Entrada/Saida não pode ser vazio");
+		}
+		
+		if(e.getSituacao() == null) {
+			throw new ValidacaoException("Está visita está com situação vazia.");
+		}
 	}
 
 	public EntradaSaida salvar(EntradaSaida entrada) {

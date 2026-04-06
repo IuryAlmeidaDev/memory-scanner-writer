@@ -87,8 +87,13 @@ public class UnidadePrisionalService {
 	
 	public List<UnidadePrisionalDTO> buscarPorFiltroUnidadesComContratosAtivos(FiltroUnidadePrisional filtro, boolean isRelatorio){
 		List<UnidadePrisionalDTO> unidades = new ArrayList<>();
+		
+		int primeiroRegistroOriginal = filtro.getPrimeiroRegistro();
+		int quatidadeRegistrosOriginal = filtro.getQuantidadeRegistros();
+		
+		
 		filtro.setPaginacaoIndex(999);
-		List<UnidadePrisionalDTO> unidadesPorFiltro = this.buscarPorFiltro(filtro, isRelatorio);
+		List<UnidadePrisionalDTO> unidadesPorFiltro = this.buscarPorFiltro(filtro, true);
 		List<UnidadePrisional> unidadesContrato = this.listarUnidadesComContratosAtivo();
 		unidadesPorFiltro.forEach(unidadeFiltro -> {
 			unidadesContrato.forEach(unidadeContrato -> {
@@ -97,6 +102,12 @@ public class UnidadePrisionalService {
 				}
 			});
 		});
+		
+		filtro.setPrimeiroRegistro(primeiroRegistroOriginal);
+		filtro.setQuantidadeRegistros(quatidadeRegistrosOriginal);
+		filtro.setPaginacaoIndex(0);
+		
+		
 		return unidades;
 	}
 	

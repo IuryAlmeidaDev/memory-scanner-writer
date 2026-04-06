@@ -152,7 +152,7 @@
 	
 	                <br/> <br/>
 	
-	                <p:dataTable id="itens" var="itemCardapio" emptyMessage="Nenhum item adicionado." value="#{cardapioBean.cardapio.itensCardapio}" rows="5" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{itemCardapio.id}">
+	                <p:dataTable id="itens" var="itemCardapio" emptyMessage="Nenhum item adicionado." value="#{cardapioBean.cardapio.itensCardapio}" rows="10" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{itemCardapio.id}">
 	
 	                    <p:column headerText="Nome">
 	                        <h:outputText value="#{itemCardapio.alimento.descricao}" />
