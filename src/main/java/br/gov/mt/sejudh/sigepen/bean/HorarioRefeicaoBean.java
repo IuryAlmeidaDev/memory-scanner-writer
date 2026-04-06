@@ -163,11 +163,16 @@ public class HorarioRefeicaoBean extends MetodosDePaginaBean {
 			@Override
 			public List<HorarioRefeicaoDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
-				getFiltro().setListarTodasUnidades(securityUtil.possuiPermissao("ListarTodasUnidades"));
-				setRowCount(service.quantidadeFiltrados(getFiltro()));
+				
+				//setRowCount(service.quantidadeFiltrados(getFiltro()));
 
 				try {
+					getFiltro().setListarTodasUnidades(securityUtil.possuiPermissao("ListarTodasUnidades"));
+					
+					int total = service.contarFiltrados(getFiltro());
+					setRowCount(total);
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+					return service.buscaPorFiltro(getFiltro());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

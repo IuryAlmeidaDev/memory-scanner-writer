@@ -212,7 +212,8 @@ public class CardapioBean extends MetodosDePaginaBean {
 
 			public List<CardapioDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
-				getFiltro().setListarTodasUnidades(true);
+				//getFiltro().setListarTodasUnidades(true);
+				getFiltro().setListarTodasUnidades(securityUtil.possuiPermissao("ListarTodasUnidades"));
 				setRowCount(service.quantidadeFiltrados(getFiltro()));
 
 				try {

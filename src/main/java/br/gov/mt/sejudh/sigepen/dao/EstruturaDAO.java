@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
 import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
 import br.gov.mt.sejudh.sigepen.model.dto.GerarPedidoEstruturaDTO;
@@ -319,5 +320,26 @@ public class EstruturaDAO {
 	    return (List<PedidoEstruturaDTO>) query.getResultList().stream()
 	            .map(row -> new PedidoEstruturaDTO((Object[]) row))
 	            .collect(Collectors.toList());
+	}
+	
+	/**
+	 * Busca a configuração de horário de uma refeição específica para uma unidade prisional.
+	 * @param unidadeId ID da Unidade Prisional
+	 * @param tipoRefeicaoId ID do Tipo de Refeição (Café, Almoço, etc)
+	 * @return Objeto HorarioRefeicao com os limites de horário
+	 */
+	public HorarioRefeicao buscarConfiguracaoHorarioRefeicao(Long unidadeId, Long tipoRefeicaoId) {
+	        StringBuilder jpql = new StringBuilder();
+	        jpql.append("SELECT h FROM HorarioRefeicao h ")
+	            .append("WHERE h.unidadePrisional.id = :unidadeId ")
+	            .append("AND h.tipoRefeicao.id = :tipoRefeicaoId");
+
+	        Query query = entityManager.createQuery(jpql.toString(), HorarioRefeicao.class);
+	        query.setParameter("unidadeId", unidadeId);
+	        query.setParameter("tipoRefeicaoId", tipoRefeicaoId);
+
+	        List<HorarioRefeicao> resultados = query.getResultList();
+	        return resultados.isEmpty() ? null : resultados.get(0);
+
 	}
 }

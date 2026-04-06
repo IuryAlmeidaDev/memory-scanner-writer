@@ -19,6 +19,7 @@ import br.gov.mt.sejudh.sigepen.dao.ServidorDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoUnidade;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Estrutura;
+import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.SituacaoEstruturaUnidade;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.dto.EstruturaDto;
@@ -488,5 +489,9 @@ public class EstruturaService {
 
 	public String buscarNomeEstrutura(Long idEstrutura){
 		return dao.buscarNomeEstrutura(idEstrutura);
+	}
+	
+	public HorarioRefeicao buscarConfiguracaoHorarioRefeicao(Long unidadeId, Long tipoRefeicaoId) {
+		return dao.buscarConfiguracaoHorarioRefeicao(unidadeId, tipoRefeicaoId);
 	}
 }

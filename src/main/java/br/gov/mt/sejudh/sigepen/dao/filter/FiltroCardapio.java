@@ -55,13 +55,15 @@ public class FiltroCardapio extends FiltroConsulta {
 		getCriteria().createAlias("contrato", "contrato", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("contrato.unidades", "unidade", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("tipoDieta", "tipoDieta", JoinType.LEFT_OUTER_JOIN);
+		getCriteria().setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		if (this.isListarTodasUnidades()) {
 			if (this.getUnidadePrisional() != null) {
 				getCriteria().add(Restrictions.eq("unidade.id", this.getUnidadePrisional().getId()));
 			}
 		} else {
-			getCriteria().add(Restrictions.eq("unidade", SecurityUtil.getUnidadeSelecionada()));
+			//getCriteria().add(Restrictions.eq("unidade", SecurityUtil.getUnidadeSelecionada()));
+			getCriteria().add(Restrictions.eq("unidade.id", SecurityUtil.getUnidadeSelecionada().getId()));
 		}
 
 		if (!paraContagem) {

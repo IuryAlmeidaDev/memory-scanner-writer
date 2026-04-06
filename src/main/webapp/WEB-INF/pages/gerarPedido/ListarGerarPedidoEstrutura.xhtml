@@ -62,48 +62,54 @@
 								<p:column headerText="Dieta Especial">
 									<h:outputText value="#{est.totalDietaEspecial}" />
 								</p:column>
-								<p:column headerText="Ações" style="width:120px;">
-									<center>
-										<p:commandButton title="Gerar e Imprimir Pedido"
-											icon="fa fa-print" update=":formListaChamadas"
-											process="@this"
-											action="#{gerarPedidoBean.selecionarEstruturaChamada(est,gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido)}"
-											rendered="#{gerarPedidoBean.isUnidadePrisional(est)}" />
-									</center>
+								<p:column headerText="Total"
+									style="text-align: center; font-weight: bold;">
+									<h:outputText
+										value="#{est.totalDietaPadrao + est.totalDietaEspecial}" />
+								</p:column>
+
+								<p:column headerText="Ações"
+									style="width:150px; text-align: center;">
+									<p:commandButton title="Imprimir" icon="fa fa-print"
+										update=":formListaChamadas" process="@this"
+										action="#{gerarPedidoBean.selecionarEstruturaChamada(est, gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido, false)}"
+										rendered="#{gerarPedidoBean.isUnidadePrisional(est)}"
+										style="margin-right: 5px;" />
+
+									<p:commandButton title="Imprimir e Assinar"
+										icon="fa fa-pencil-square-o" update=":formListaChamadas"
+										process="@this"
+										action="#{gerarPedidoBean.selecionarEstruturaChamada(est, gerarPedidoBean.dataFormatada, gerarPedidoBean.filtroPedido, true)}"
+										rendered="#{gerarPedidoBean.isUnidadePrisional(est)}"
+										styleClass="ui-button-success" />
 								</p:column>
 							</p:treeTable>
-							<p:confirmDialog global="true">
-								<p:commandButton value="Sim" type="button"
-									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-								<p:commandButton value="Não" type="button"
-									styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-							</p:confirmDialog>
 
 							<!-- Diálogo informativo sobre pedido existente -->
-							<p:dialog header="Pedido já existente"
+							<!-- Substitua apenas o conteúdo do p:dialog -->
+							<p:dialog header="Pedido assinado já existente"
 								widgetVar="confirmSubstituirPedidoDialog" modal="true"
 								resizable="false" closeOnEscape="true">
 								<p:outputPanel style="text-align:center;">
 									<p:panelGrid columns="1" styleClass="ui-noborder">
 										<h:outputText
-											value="Já existe um pedido para esta data, tipo de refeição e unidade prisional." />
+											value="Já existe um pedido ASSINADO para esta data e tipo de refeição." />
 										<h:outputText
-											value="Você deseja substituir o pedido existente?" />
+											value="Deseja substituí-lo? O pedido anterior e todos os pendentes serão inativados." />
 									</p:panelGrid>
 
 									<p:commandButton value="Confirmar"
-										action="#{gerarPedidoBean.substituicaoPedido}"
+										action="#{gerarPedidoBean.confirmarSubstituicaoPedido}"
 										oncomplete="PF('confirmSubstituirPedidoDialog').hide()"
 										update=":unidadeForm :formListaChamadas"
 										styleClass="ui-button-primary" icon="ui-icon-check" />
 
-									<p:commandButton value="Não"
-										action="#{gerarPedidoBean.naoSubstituirPedido}"
-										oncomplete="PF('confirmSubstituirPedidoDialog').hide()"
-										update=":unidadeForm :formListaChamadas"
+									<p:commandButton value="Cancelar"
+										onclick="PF('confirmSubstituirPedidoDialog').hide(); return false;"
 										styleClass="ui-button-secondary" icon="ui-icon-close" />
 								</p:outputPanel>
 							</p:dialog>
+
 
 						</p:panel>
 					</h:form>

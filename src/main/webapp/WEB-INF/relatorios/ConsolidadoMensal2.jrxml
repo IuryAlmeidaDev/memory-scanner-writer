@@ -158,7 +158,7 @@
 				<text><![CDATA[Saída]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="466" y="0" width="51" height="29" uuid="19544ef8-9320-4323-b6fc-bb01ab1c613b"/>
+				<reportElement x="466" y="0" width="44" height="29" uuid="19544ef8-9320-4323-b6fc-bb01ab1c613b"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -168,7 +168,7 @@
 				<text><![CDATA[Nº Dias]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="637" y="16" width="40" height="13" uuid="4b61d221-256e-473a-87b6-0e04a191f77a"/>
+				<reportElement x="600" y="16" width="32" height="13" uuid="4b61d221-256e-473a-87b6-0e04a191f77a"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -179,7 +179,7 @@
 				<text><![CDATA[CA	]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="557" y="16" width="40" height="13" uuid="21133948-b328-4fdd-8fe0-ad95aa7c4b3e"/>
+				<reportElement x="540" y="16" width="30" height="13" uuid="21133948-b328-4fdd-8fe0-ad95aa7c4b3e"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -190,7 +190,7 @@
 				<text><![CDATA[AL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="677" y="16" width="40" height="13" uuid="79cd44f3-16cc-49ce-8671-647c1f6f898e"/>
+				<reportElement x="632" y="16" width="30" height="13" uuid="79cd44f3-16cc-49ce-8671-647c1f6f898e"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -201,7 +201,7 @@
 				<text><![CDATA[AL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="717" y="16" width="40" height="13" uuid="8ead21be-81cb-4814-a2dd-3950745fa800"/>
+				<reportElement x="662" y="16" width="28" height="13" uuid="8ead21be-81cb-4814-a2dd-3950745fa800"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -212,7 +212,7 @@
 				<text><![CDATA[JA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="597" y="16" width="40" height="13" uuid="b3463209-4e33-4565-8eaf-8bcb0bbda729"/>
+				<reportElement x="570" y="16" width="30" height="13" uuid="b3463209-4e33-4565-8eaf-8bcb0bbda729"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -223,7 +223,7 @@
 				<text><![CDATA[JA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="757" y="0" width="34" height="29" uuid="d7ba3060-ad8c-46fd-803e-6e18d35e73b3"/>
+				<reportElement x="690" y="0" width="110" height="29" uuid="d7ba3060-ad8c-46fd-803e-6e18d35e73b3"/>
 				<box leftPadding="0">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -234,7 +234,7 @@
 				<text><![CDATA[soma]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="637" y="0" width="120" height="16" uuid="096e5c85-c768-4cc3-adcb-42396b797d6f"/>
+				<reportElement x="600" y="0" width="90" height="16" uuid="096e5c85-c768-4cc3-adcb-42396b797d6f"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -245,7 +245,7 @@
 				<text><![CDATA[Refeições Especiais]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="517" y="0" width="120" height="16" uuid="389170d5-ac9d-42c3-8fe0-02473dc39f9e"/>
+				<reportElement x="510" y="0" width="90" height="16" uuid="389170d5-ac9d-42c3-8fe0-02473dc39f9e"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -256,7 +256,7 @@
 				<text><![CDATA[Refeições Normais]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="517" y="16" width="40" height="13" uuid="54eabb61-c4e2-436e-b61e-9d7f69e93356"/>
+				<reportElement x="510" y="16" width="30" height="13" uuid="54eabb61-c4e2-436e-b61e-9d7f69e93356"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -281,7 +281,7 @@
 	<detail>
 		<band height="15">
 			<rectangle>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="-1" width="791" height="16" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="-1" width="800" height="16" backcolor="#CCCCCC" uuid="7a539541-78a7-422f-a7f2-acb3fb485f5b">
 					<printWhenExpression><![CDATA[new Boolean($V{PAGE_COUNT}.intValue()%2 == 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -328,7 +328,7 @@
 				<textFieldExpression><![CDATA[$F{saidaRecuperando}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="677" y="0" width="40" height="15" uuid="4516f850-c4fd-4331-a46d-996e60f97736"/>
+				<reportElement x="632" y="0" width="30" height="15" uuid="4516f850-c4fd-4331-a46d-996e60f97736"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -341,20 +341,7 @@
 				<textFieldExpression><![CDATA[$F{diasRecuperandoAlmocoEspecial}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="757" y="0" width="34" height="15" uuid="fcbcb60e-a8d8-4b9d-866c-02d57f4ff7d0"/>
-				<box leftPadding="0">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($F{soma})]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="717" y="0" width="40" height="15" uuid="4b0afc53-45de-4773-85bd-37eeedf9836c"/>
+				<reportElement x="662" y="0" width="28" height="15" uuid="4b0afc53-45de-4773-85bd-37eeedf9836c"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -367,7 +354,7 @@
 				<textFieldExpression><![CDATA[$F{diasRecuperandoJantaEspecial}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="597" y="0" width="40" height="15" uuid="7b6f21b8-1229-44d8-93f3-4c301c8705df"/>
+				<reportElement x="570" y="0" width="30" height="15" uuid="7b6f21b8-1229-44d8-93f3-4c301c8705df"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -380,7 +367,7 @@
 				<textFieldExpression><![CDATA[$F{diasRecuperandoJantaNormal}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="557" y="0" width="40" height="15" uuid="fa0e6b99-ac30-4857-a759-b4ca66f2d198"/>
+				<reportElement x="540" y="0" width="30" height="15" uuid="fa0e6b99-ac30-4857-a759-b4ca66f2d198"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -393,7 +380,7 @@
 				<textFieldExpression><![CDATA[$F{diasRecuperandoAlmocoNormal}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="517" y="0" width="40" height="15" uuid="695862e3-405e-4140-88bf-41aa3aa1c3d9"/>
+				<reportElement x="510" y="0" width="30" height="15" uuid="695862e3-405e-4140-88bf-41aa3aa1c3d9"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -406,7 +393,7 @@
 				<textFieldExpression><![CDATA[$F{diasRecuperandoCafeNormal}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="637" y="0" width="40" height="15" uuid="768ba605-d97b-4300-a979-02ca50c0b781"/>
+				<reportElement x="600" y="0" width="32" height="15" uuid="768ba605-d97b-4300-a979-02ca50c0b781"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -419,7 +406,7 @@
 				<textFieldExpression><![CDATA[$F{diasRecuperandoCafeEspecial}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="466" y="0" width="51" height="15" uuid="ad7736a0-1775-4c42-bdda-8560f40b22fd"/>
+				<reportElement x="466" y="0" width="44" height="15" uuid="ad7736a0-1775-4c42-bdda-8560f40b22fd"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -469,6 +456,19 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nomeSocialRecuperando}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="690" y="0" width="110" height="15" uuid="fcbcb60e-a8d8-4b9d-866c-02d57f4ff7d0"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($F{soma})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -1,0 +1,176 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3>Histórico de Pedidos</h3>
+
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel value="Consulta"
+					style="font-weight: bold; font-size: 1.2em;" />
+				<br />
+				<br />
+
+				<h:panelGrid columns="2" cellpadding="0"
+					columnClasses="colunaLabel, colunaCampo" rowClasses="linhaEspacada">
+
+					<p:outputLabel value="Data Inicial:" for="dataInicial"
+						style="font-weight: bold;" />
+					<p:calendar id="dataInicial"
+						value="#{historicoPedidoAlimentoBean.filtro.dataPedidoInicial}"
+						pattern="dd/MM/yyyy" mask="true" locale="pt_BR" showOn="button"
+						size="25" />
+
+					<p:outputLabel value="Data Final:" for="dataFinal"
+						style="font-weight: bold;" />
+					<p:calendar id="dataFinal"
+						value="#{historicoPedidoAlimentoBean.filtro.dataPedidoFinal}"
+						pattern="dd/MM/yyyy" mask="true" locale="pt_BR" showOn="button"
+						size="25" />
+
+					<p:outputLabel value="Contrato:" for="contrato"
+						style="font-weight: bold;" />
+					<p:selectOneMenu id="contrato"
+						value="#{historicoPedidoAlimentoBean.filtro.idContrato}"
+						style="width: 215px">
+						<f:selectItem itemLabel="Selecione" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems value="#{historicoPedidoAlimentoBean.contratos}"
+							var="item" itemLabel="#{item.numContrato}" itemValue="#{item.id}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Tipo de Refeição:" for="tipoRefeicao"
+						style="font-weight: bold;" />
+					<p:selectOneMenu id="tipoRefeicao"
+						value="#{historicoPedidoAlimentoBean.filtro.tipoRefeicao}"
+						converter="SimpleEntityConverter" style="width: 215px">
+						<f:selectItem itemLabel="Selecione" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems
+							value="#{historicoPedidoAlimentoBean.tiposRefeicao}" var="item"
+							itemLabel="#{item.descricao}" itemValue="#{item}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Status:" for="status"
+						style="font-weight: bold;" />
+					<p:selectOneMenu id="status"
+						value="#{historicoPedidoAlimentoBean.filtro.status}"
+						style="width: 215px">
+						<f:selectItem itemLabel="Selecione" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems value="#{historicoPedidoAlimentoBean.status}"
+							var="item" itemLabel="#{item.descricao}" itemValue="#{item}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Unidade Prisional:" for="unidade"
+						style="font-weight: bold;"
+						rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
+					<p:selectOneMenu id="unidade"
+						value="#{historicoPedidoAlimentoBean.filtro.idUnidadePrisional}"
+						style="width: 215px"
+						rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}"
+						filter="true" filterMatchMode="contains">
+
+						<f:selectItem itemLabel="Selecione" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems value="#{historicoPedidoAlimentoBean.unidades}"
+							var="u" itemLabel="#{u.nome}" itemValue="#{u.id}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<br />
+				<p:commandButton value="Pesquisar" update=":registrosForm"
+					process="@form" icon="ui-icon-search" style="margin-top: 5px;" />
+			</p:panel>
+		</h:form>
+
+		<style type="text/css">
+.colunaLabel {
+	width: 130px;
+	text-align: left;
+}
+
+.colunaLabel.ui-outputlabel, .colunaLabel label {
+	font-size: 14px !important;
+	font-weight: bold !important;
+}
+
+.colunaCampo {
+	text-align: left;
+}
+
+.linhaEspacada td {
+	padding-bottom: 5px;
+}
+
+.ui-selectonemenu {
+	vertical-align: middle;
+}
+</style>
+
+		<h:form id="formDownload" />
+
+		<h:form id="registrosForm">
+			<p:dataTable id="dataTable" var="pedido"
+				value="#{historicoPedidoAlimentoBean.pedidos}"
+				emptyMessage="Nenhum registro encontrado." rows="10"
+				paginator="true" paginatorPosition="bottom" lazy="true"
+				sortBy="#{pedido.id}" sortOrder="descending">
+
+				<p:column headerText="Código" style="width:100px;"
+					sortBy="#{pedido.id}">
+					<h:outputText value="#{pedido.id}" />
+				</p:column>
+
+				<p:column headerText="Data" sortBy="#{pedido.dataPedido}"
+					style="width:160px; white-space: nowrap; text-align: center;">
+					<h:outputText value="#{pedido.dataPedido}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Contrato" sortBy="#{pedido.idContrato}">
+					<h:outputText
+						value="#{historicoPedidoAlimentoBean.descricoesContrato[pedido.idContrato]}" />
+				</p:column>
+
+				<p:column headerText="Refeição" sortBy="#{pedido.idTipoRefeicao}">
+					<h:outputText
+						value="#{historicoPedidoAlimentoBean.descricoesRefeicao[pedido.idTipoRefeicao]}" />
+				</p:column>
+				
+				<p:column headerText="Unidade" sortBy="#{pedido.idUnidadePrisional}">
+				    <h:outputText
+				        value="#{historicoPedidoAlimentoBean.descricoesUnidades[pedido.idUnidadePrisional]}" />
+				</p:column>
+
+				<p:column headerText="Status" sortBy="#{pedido.status}">
+					<h:outputText value="#{pedido.status}" />
+				</p:column>
+
+				<p:column headerText="Ações"
+					style="width:130px; text-align: center;">
+					<center>
+						<p:commandButton title="Relatório de Emissão"
+							icon="fa fa-file-pdf-o" update=":formDownload" process="@this"
+							action="#{historicoPedidoAlimentoBean.baixarRelatorio(pedido.id)}" />
+					</center>
+				</p:column>
+
+				<f:facet name="footer">
+                    Total de registros: #{historicoPedidoAlimentoBean.pedidos.rowCount}
+                </f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+	</ui:define>
+</ui:composition>
