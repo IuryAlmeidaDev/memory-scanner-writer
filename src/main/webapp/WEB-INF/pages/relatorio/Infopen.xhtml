@@ -50,14 +50,14 @@
 						<f:selectItem itemLabel="Detalhado Sequenciado" itemValue="4" />
 					</c:if>
 
-					<p:ajax listener="#{infopenBean.onMudarTipoRelatorio}" 
-        					update="meuFormulario:panel_filtros meuFormulario:panelImprimir meuFormulario:panelFiltros" />
+					<p:ajax listener="#{infopenBean.onMudarTipoRelatorio}"
+						update="meuFormulario:panel_filtros meuFormulario:panelImprimir meuFormulario:panelFiltros" />
 				</sgp:formSelectOneMenuRelatorios>
 
 
 				<h:panelGroup id="panel_filtros">
 
-			
+
 					<p:outputPanel id="panelFiltros">
 						<sgp:formSelectOneMenuRelatorios id="tipoRelatorioSintetico"
 							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
@@ -66,11 +66,12 @@
 
 							<f:selectItem itemLabel="NAO" itemValue="" />
 							<f:selectItem itemLabel="SIM" itemValue="data" />
-							<p:ajax listener="#{infopenBean.onMudarFiltroData}" update="meuFormulario:painelData" />
+							<p:ajax listener="#{infopenBean.onMudarFiltroData}"
+								update="meuFormulario:painelData" />
 						</sgp:formSelectOneMenuRelatorios>
 
 
-						
+
 						<sgp:formSelectOneMenuRelatorios id="tipoRelatorioDetalhado"
 							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
 							rendered="#{infopenBean.filtro.tipoRelatorio eq '1'}"
@@ -82,7 +83,7 @@
 								update="meuFormulario:painelData meuFormulario:painelData2 meuFormulario:painelData3" />
 						</sgp:formSelectOneMenuRelatorios>
 
-						
+
 						<sgp:formSelectOneMenuRelatorios id="tipoRelatorioUnificado"
 							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
 							rendered="#{infopenBean.filtro.tipoRelatorio eq '2'}"
@@ -95,7 +96,7 @@
 						</sgp:formSelectOneMenuRelatorios>
 
 
-						
+
 						<sgp:formSelectOneMenuRelatorios id="tipoRelatorioSequenciado"
 							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
 							rendered="#{infopenBean.filtro.tipoRelatorio eq '3'}"
@@ -108,7 +109,7 @@
 						</sgp:formSelectOneMenuRelatorios>
 
 
-					
+
 						<sgp:formSelectOneMenuRelatorios
 							id="tipoRelatorioSequenciadoDetalhado"
 							value="#{infopenBean.tipoRelatorio}" labelValue="Por Data"
@@ -138,153 +139,138 @@
 
 
 
-				
+
 					<p:outputPanel id="painelData" deferred="true">
-					    <sgp:formCalendar id="dataInicial"
-					        value="#{infopenBean.filtro.dataInicial}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'data'}"
-					        labelValue="Data Inicial" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataInicial"
+							value="#{infopenBean.filtro.dataInicial}"
+							rendered="#{infopenBean.tipoRelatorio eq 'data'}"
+							labelValue="Data Inicial" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
 
 
-					
+
 					<p:outputPanel id="painelData2" deferred="true">
-					    <sgp:formCalendar id="dataInicial2"
-					        value="#{infopenBean.filtro.dataInicial}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}"
-					        labelValue="Data Inicial" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataInicial2"
+							value="#{infopenBean.filtro.dataInicial}"
+							rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}"
+							labelValue="Data Inicial" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
 
 
 					<p:outputPanel id="painelData3" deferred="true">
-					    <sgp:formCalendar id="dataFinal"
-					        value="#{infopenBean.filtro.dataFinal}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}"
-					        labelValue="Data Final" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataFinal"
+							value="#{infopenBean.filtro.dataFinal}"
+							rendered="#{infopenBean.tipoRelatorio eq 'detalhado'}"
+							labelValue="Data Final" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
 
 
-				
+
 					<p:outputPanel id="painelData4" deferred="true">
-					    <sgp:formCalendar id="dataInicialUnificado"
-					        value="#{infopenBean.filtro.dataInicial}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'unificado'}"
-					        labelValue="Data Inicial" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataInicialUnificado"
+							value="#{infopenBean.filtro.dataInicial}"
+							rendered="#{infopenBean.tipoRelatorio eq 'unificado'}"
+							labelValue="Data Inicial" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
-					
+
 					<p:outputPanel id="painelData5" deferred="true">
-					    <sgp:formCalendar id="dataFinalUnificado"
-					        value="#{infopenBean.filtro.dataFinal}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'unificado'}"
-					        labelValue="Data Final" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataFinalUnificado"
+							value="#{infopenBean.filtro.dataFinal}"
+							rendered="#{infopenBean.tipoRelatorio eq 'unificado'}"
+							labelValue="Data Final" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
 
 
-					
+
 					<p:outputPanel id="painelData6" deferred="true">
-					    <sgp:formCalendar id="dataInicialSequenciado"
-					        value="#{infopenBean.filtro.dataInicial}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciado'}"
-					        labelValue="Data Inicial" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataInicialSequenciado"
+							value="#{infopenBean.filtro.dataInicial}"
+							rendered="#{infopenBean.tipoRelatorio eq 'sequenciado'}"
+							labelValue="Data Inicial" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
-					
+
 					<p:outputPanel id="painelData7" deferred="true">
-					    <sgp:formCalendar id="dataFinalSequenciado"
-					        value="#{infopenBean.filtro.dataFinal}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciado'}"
-					        labelValue="Data Final" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataFinalSequenciado"
+							value="#{infopenBean.filtro.dataFinal}"
+							rendered="#{infopenBean.tipoRelatorio eq 'sequenciado'}"
+							labelValue="Data Final" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
 
 
-				
+
 					<p:outputPanel id="painelData8" deferred="true">
-					    <sgp:formCalendar id="dataInicialSequenciadoDetalhado"
-					        value="#{infopenBean.filtro.dataInicial}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciadoDetalhado'}"
-					        labelValue="Data Inicial" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataInicialSequenciadoDetalhado"
+							value="#{infopenBean.filtro.dataInicial}"
+							rendered="#{infopenBean.tipoRelatorio eq 'sequenciadoDetalhado'}"
+							labelValue="Data Inicial" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
-					
+
 					<p:outputPanel id="painelData9" deferred="true">
-					    <sgp:formCalendar id="dataFinalSequenciadoDetalhado"
-					        value="#{infopenBean.filtro.dataFinal}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'sequenciadoDetalhado'}"
-					        labelValue="Data Final" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataFinalSequenciadoDetalhado"
+							value="#{infopenBean.filtro.dataFinal}"
+							rendered="#{infopenBean.tipoRelatorio eq 'sequenciadoDetalhado'}"
+							labelValue="Data Final" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
 
 
-					
+
 					<p:outputPanel id="painelData10" deferred="true">
-					    <sgp:formCalendar id="dataInicialUnificadoDetalhado"
-					        value="#{infopenBean.filtro.dataInicial}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'unificadoDetalhado'}"
-					        labelValue="Data Inicial" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataInicialUnificadoDetalhado"
+							value="#{infopenBean.filtro.dataInicial}"
+							rendered="#{infopenBean.tipoRelatorio eq 'unificadoDetalhado'}"
+							labelValue="Data Inicial" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
-					
+
 					<p:outputPanel id="painelData11" deferred="true">
-					    <sgp:formCalendar id="dataFinalUnificadoDetalhado"
-					        value="#{infopenBean.filtro.dataFinal}"
-					        rendered="#{infopenBean.tipoRelatorio eq 'unificadoDetalhado'}"
-					        labelValue="Data Final" 
-					        pattern="dd/MM/yyyy"
-					        dataMaxima="#{infopenBean.dataMaxima}"
-					        styleFormLabelColumn="width:145px">
-					        <p:ajax event="dateSelect" />
-					    </sgp:formCalendar>
+						<sgp:formCalendar id="dataFinalUnificadoDetalhado"
+							value="#{infopenBean.filtro.dataFinal}"
+							rendered="#{infopenBean.tipoRelatorio eq 'unificadoDetalhado'}"
+							labelValue="Data Final" pattern="dd/MM/yyyy"
+							dataMaxima="#{infopenBean.dataMaxima}"
+							styleFormLabelColumn="width:145px">
+							<p:ajax event="dateSelect" />
+						</sgp:formCalendar>
 					</p:outputPanel>
-
-
-
-					
 
 					<sgp:formSelectOneMenuRelatorios labelValue="Nacionalidade"
 						value="#{infopenBean.filtro.nacionalidade}"
@@ -391,13 +377,40 @@
 						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5}"
 						styleFormLabelColumn="width:145px" />
 
-					<div style= "display: flex-direction; justify-content: right; margin-top: 50px;">
+					<sgp:formSelectOneMenuRelatorios labelValue="Estado Nasc."
+						value="#{infopenBean.filtro.estado}"
+						itemsValue="#{infopenBean.estados}" itemValue="#{item}"
+						itemLabel="#{item.nome}" display="text" process="@this"
+						converter="EstadoConverter" labelTodos="Todos"
+						rendered="#{infopenBean.filtro.tipoRelatorio eq 1 
+               or infopenBean.filtro.tipoRelatorio eq 4 
+               or infopenBean.filtro.tipoRelatorio eq 5}"
+						styleFormLabelColumn="width:145px">
+						<p:ajax listener="#{infopenBean.onMudarEstado}"
+							update="meuFormulario:panelMunicipio" />
+					</sgp:formSelectOneMenuRelatorios>
+
+					<p:outputPanel id="panelMunicipio">
+						<sgp:formSelectOneMenuRelatorios labelValue="Município Nasc."
+							value="#{infopenBean.filtro.cidade}"
+							itemsValue="#{infopenBean.cidades}" itemValue="#{item}"
+							itemLabel="#{item.nome}" display="text" process="@this"
+							converter="CidadeConverter" labelTodos="Todos"
+							rendered="#{(infopenBean.filtro.tipoRelatorio eq 1 
+                or infopenBean.filtro.tipoRelatorio eq 4 
+                or infopenBean.filtro.tipoRelatorio eq 5)
+                and not empty infopenBean.cidades}"
+							styleFormLabelColumn="width:145px" />
+					</p:outputPanel>
+
+					<div
+						style="display: flex-direction; justify-content: right; margin-top: 50px;">
 						<p:commandButton value="Selecionar Unidades"
 							rendered="#{infopenBean.filtroUnidade and (infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5)}"
 							onclick="PF('modalUnidades').show()" styleClass="ui-button-info"
 							icon="fa fa-building" styleFormLabelColumn="width:145px" />
 
-						
+
 						<p:outputPanel id="infoUnidades"
 							style="margin-top: 10px; font-weight: bold;"
 							rendered="#{infopenBean.filtroUnidade and not empty infopenBean.unidadesSelecionadas and (infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5)}">
@@ -429,7 +442,7 @@
 			</p:panel>
 		</h:form>
 
-		
+
 		<h:form id="formUnidadesDialog">
 			<p:dialog header="Selecionar Unidades Prisionais"
 				widgetVar="modalUnidades" modal="true" closable="true"
@@ -445,12 +458,10 @@
 					style="width: 95%; margin: 0 auto; display: block;">
 
 					<f:facet name="sourceCaption">
-						<div style= "font-weight: bold;">Unidades
-							Disponíveis:</div>
+						<div style="font-weight: bold;">Unidades Disponíveis:</div>
 					</f:facet>
 					<f:facet name="targetCaption">
-						<div style="font-weight: bold;">Unidades
-							Selecionadas:</div>
+						<div style="font-weight: bold;">Unidades Selecionadas:</div>
 					</f:facet>
 				</p:pickList>
 
@@ -467,7 +478,6 @@
 				</div>
 
 				<style>
-
 </style>
 			</p:dialog>
 		</h:form>

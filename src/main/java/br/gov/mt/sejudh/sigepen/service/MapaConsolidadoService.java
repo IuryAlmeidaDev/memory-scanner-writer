@@ -10,7 +10,9 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -421,5 +423,19 @@ public class MapaConsolidadoService {
 	private int obterQtdDias(Duration diff) {
 		return (int) diff.toDays();
 	}
+	
+	public Map<String, Integer> obterDadosAuditoria(Long idUnidade, String dataInicio, String dataFim) {
+	    Map<String, Object> dadosBrutos = dao.buscarTotaisPedidosAuditados(idUnidade, dataInicio, dataFim);
+	    Map<String, Integer> params = new HashMap<>();
 
+	    params.put("AUDIT_CAFE", (Integer) dadosBrutos.getOrDefault("AUDIT_CAFE", 0));
+	    params.put("AUDIT_ALMOCO", (Integer) dadosBrutos.getOrDefault("AUDIT_ALMOCO", 0));
+	    params.put("AUDIT_JANTA", (Integer) dadosBrutos.getOrDefault("AUDIT_JANTA", 0));
+	    
+	    params.put("AUDIT_CAFE_ESP", (Integer) dadosBrutos.getOrDefault("AUDIT_CAFE_ESPECIAL", 0));
+	    params.put("AUDIT_ALMOCO_ESP", (Integer) dadosBrutos.getOrDefault("AUDIT_ALMOCO_ESPECIAL", 0));
+	    params.put("AUDIT_JANTA_ESP", (Integer) dadosBrutos.getOrDefault("AUDIT_JANTA_ESPECIAL", 0));
+	    
+	    return params;
+	}
 }

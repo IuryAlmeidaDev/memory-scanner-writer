@@ -130,10 +130,10 @@
 					<h:outputText value="#{pedido.id}" />
 				</p:column>
 
-				<p:column headerText="Data" sortBy="#{pedido.dataPedido}"
+				<p:column headerText="Data" sortBy="#{pedido.dataEmissao}"
 					style="width:160px; white-space: nowrap; text-align: center;">
-					<h:outputText value="#{pedido.dataPedido}">
-						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+					<h:outputText value="#{pedido.dataEmissao}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 					</h:outputText>
 				</p:column>
 

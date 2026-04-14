@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.RequestScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroInfopen;
@@ -20,7 +22,9 @@ import br.gov.mt.sejudh.sigepen.enumerator.PopulacaoFeminino;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.TempoCondenacao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDeficienciaRelatorio;
+import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
+import br.gov.mt.sejudh.sigepen.model.Estado;
 import br.gov.mt.sejudh.sigepen.model.EstadoCivil;
 import br.gov.mt.sejudh.sigepen.model.Etnia;
 import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
@@ -31,7 +35,8 @@ import br.gov.mt.sejudh.sigepen.model.dto.InfopenDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.InfopenRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
-@RequestScoped
+@Named("infopenDAO")
+@Stateless
 public class InfopenDAO {
 
 	@Inject
@@ -371,6 +376,14 @@ public class InfopenDAO {
 		if (filtro.getNacionalidade() != null) {
 			sql += " AND NA.ID = :NACIONALIDADE ";
 		}
+		if (filtro.getEstado() != null && filtro.getEstado().getUf() != null 
+		        && !filtro.getEstado().getUf().isEmpty()) {
+		    sql += " AND EXISTS (SELECT 1 FROM " + Sigepen.SEJUDH_SCHEMA 
+		        + ".MUNICIPIO MUN WHERE MUN.ID = P.CIDADE_ID AND MUN.ESTADO = :ESTADO_UF)";
+		}
+		if (filtro.getCidade() != null && filtro.getCidade().getId() > 0) {
+		    sql += " AND P.CIDADE_ID = :CIDADE_ID";
+		}
 		if (filtro.getRegime() != null) {
 			sql += " AND RE.ID = :REGIME ";
 		}
@@ -428,12 +441,15 @@ public class InfopenDAO {
 		        return new ArrayList<>();
 		    }
 		}
-
-
-		
-
 		if (filtro.getNacionalidade() != null) {
 			query.setParameter("NACIONALIDADE", filtro.getNacionalidade().getId());
+		}
+		if (filtro.getEstado() != null && filtro.getEstado().getUf() != null 
+		        && !filtro.getEstado().getUf().isEmpty()) {
+		    query.setParameter("ESTADO_UF", filtro.getEstado().getUf());
+		}
+		if (filtro.getCidade() != null && filtro.getCidade().getId() > 0) {
+		    query.setParameter("CIDADE_ID", filtro.getCidade().getId());
 		}
 		if (filtro.getRegime() != null) {
 			query.setParameter("REGIME", filtro.getRegime().getId());
@@ -645,4 +661,76 @@ public class InfopenDAO {
 		}
 		return result;
 	}
+	
+	public List<Estado> buscarEstados() {
+	    try {
+	        String sql = "SELECT UF, NOME FROM " + Sigepen.SEJUDH_SCHEMA + ".ESTADO WHERE STATUS = 'A' ORDER BY NOME";
+	        Query query = this.em.createNativeQuery(sql);
+
+	        @SuppressWarnings("unchecked")
+	        List<Object[]> lista = (List<Object[]>) query.getResultList();
+	        List<Estado> estados = new ArrayList<>();
+	        for (Object[] item : lista) {
+	            Estado e = new Estado();
+	            e.setUf((String) item[0]);
+	            e.setNome((String) item[1]);
+	            estados.add(e);
+	        }
+	        return estados;
+	    } catch (Exception e) {
+	        return new ArrayList<>();
+	    }
+	}
+
+	public List<Cidade> buscarMunicipiosPorEstado(String uf) {
+	    try {
+	        String sql = "SELECT ID, NOME FROM " + Sigepen.SEJUDH_SCHEMA
+	                + ".MUNICIPIO WHERE ESTADO = :UF AND STATUS = 'A' ORDER BY NOME";
+	        Query query = this.em.createNativeQuery(sql);
+	        query.setParameter("UF", uf);
+
+	        @SuppressWarnings("unchecked")
+	        List<Object[]> lista = (List<Object[]>) query.getResultList();
+	        List<Cidade> cidades = new ArrayList<>();
+	        for (Object[] item : lista) {
+	            Cidade c = new Cidade();
+	            c.setId(((java.math.BigDecimal) item[0]).longValue());
+	            c.setNome((String) item[1]);
+	            cidades.add(c);
+	        }
+	        return cidades;
+	    } catch (Exception e) {
+	        return new ArrayList<>();
+	    }
+	}
+	
+	public Cidade buscarCidadePorId(Long id) {
+	    if (id == null || id <= 0) return null;
+
+	    try {
+	        String sql = "SELECT ID, NOME FROM " + Sigepen.SEJUDH_SCHEMA
+	                + ".MUNICIPIO WHERE ID = :ID";
+	        Query query = this.em.createNativeQuery(sql);
+	        query.setParameter("ID", id);
+
+	        Object[] result = (Object[]) query.getSingleResult();
+	        
+	        Cidade c = new Cidade();
+	        if (result[0] instanceof java.math.BigDecimal) {
+	            c.setId(((java.math.BigDecimal) result[0]).longValue());
+	        } else {
+	            c.setId(Long.valueOf(result[0].toString()));
+	        }
+	        
+	        c.setNome((String) result[1]);
+	        return c;
+	    } catch (NoResultException e) {
+	        return null; 
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+	
+	
 }

@@ -847,10 +847,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 
 				Optional<Credenciamento> optCredenciamento = credenciamentosDoVisitante.stream()
 			            .filter(re -> re.getRecuperando() != null
-			                    && re.getRecuperando().getId() == this.recuperandoSelecionado.getId()
-			                    //&& re.getStatusCredenciamento() != null
-			                    && !re.getStatusCredenciamento().equals(StatusCredenciamento.INATIVO.getId())
-			                    && !re.getStatusCredenciamento().equals(StatusCredenciamento.NAO_APROVADO.getId()))
+			                    && re.getRecuperando().getId() == this.recuperandoSelecionado.getId())
 			            .findFirst();
 
 				if (!optCredenciamento.isPresent()) {

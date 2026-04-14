@@ -66,6 +66,19 @@
 		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
 	</parameter>
 	<parameter name="GAMB_NULL_DS" class="net.sf.jasperreports.engine.JREmptyDataSource" isForPrompting="false"/>
+	<parameter name="AUDIT_CAFE" class="java.lang.Integer"/>
+	<parameter name="AUDIT_ALMOCO" class="java.lang.Integer"/>
+	<parameter name="AUDIT_JANTA" class="java.lang.Integer"/>
+	<parameter name="AUDIT_CAFE_ESP" class="java.lang.Integer"/>
+	<parameter name="AUDIT_ALMOCO_ESP" class="java.lang.Integer"/>
+	<parameter name="AUDIT_JANTA_ESP" class="java.lang.Integer"/>
+	<parameter name="TOTAL_VALOR_CAFE_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_VALOR_ALMOCO_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_VALOR_JANTA_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_VALOR_CAFE_ESP_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_VALOR_ALMOCO_ESP_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_VALOR_JANTA_ESP_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_GERAL_AUDIT" class="java.lang.Double"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -476,7 +489,7 @@
 		<band height="33" splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="81">
+		<band height="165">
 			<staticText>
 				<reportElement x="8" y="4" width="205" height="16" uuid="441afccf-018e-4191-9edf-06e10c333246"/>
 				<box leftPadding="3">
@@ -485,7 +498,7 @@
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<text><![CDATA[Refeições Fornecidas]]></text>
+				<text><![CDATA[Refeições Previstas]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="213" y="20" width="75" height="13" uuid="0d59974a-7094-4ff3-9b73-95275bd81e70"/>
@@ -540,7 +553,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement markup="none"/>
-				<text><![CDATA[JANTA]]></text>
+				<text><![CDATA[JANTAR]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="438" y="4" width="75" height="16" uuid="06992c5a-aa1c-42e6-bda1-9d51e7eba46e"/>
@@ -727,7 +740,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement markup="none"/>
-				<text><![CDATA[JANTA]]></text>
+				<text><![CDATA[JANTAR]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="438" y="33" width="75" height="16" uuid="3a19f9c3-04e0-4f39-8531-4f01ccc3c9eb"/>
@@ -825,8 +838,358 @@
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
+				<text><![CDATA[Refeições Especiais Previstas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="88" width="205" height="16" uuid="846f5347-d4ef-4822-8e24-6c93bef9395f"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<text><![CDATA[Refeições Fornecidas]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="214" y="104" width="75" height="13" uuid="791c56a7-b907-425e-912a-299720d383af"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$P{AUDIT_CAFE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="214" y="88" width="75" height="16" uuid="4d93ac14-e483-465b-9a1e-bde9695bfae4"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[CAFÉ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="289" y="88" width="75" height="16" uuid="88ae46ba-1ece-4f30-8b8c-027fce5aa0bc"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[ALMOÇO]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="289" y="104" width="75" height="13" uuid="e9fb12d7-9c00-43bb-b5d6-8bf6b86e82d4"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$P{AUDIT_ALMOCO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="364" y="88" width="75" height="16" uuid="27d21b2d-86bd-4d1a-98ed-4f1cc29454fa"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[JANTAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="439" y="88" width="75" height="16" uuid="9b985582-31be-43e1-bc72-a9c088586616"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="364" y="104" width="75" height="13" uuid="1b35342a-2464-4b46-87db-8856781beaed"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$P{AUDIT_JANTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="439" y="104" width="75" height="13" uuid="dea56e74-915e-4e58-bba8-ffd38649c378"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$P{AUDIT_CAFE} + $P{AUDIT_ALMOCO} + $P{AUDIT_JANTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="289" y="133" width="75" height="13" uuid="71949bec-e7f8-4ed4-b2fb-1a0a1f58e326"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$P{AUDIT_ALMOCO_ESP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="364" y="133" width="75" height="13" uuid="01ef9256-9f1f-4c26-91cc-5d2bb0cbeb0a"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$P{AUDIT_JANTA_ESP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="214" y="117" width="75" height="16" uuid="0e745153-1d3a-4302-9df7-67e308cc7aa4"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[CAFÉ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="214" y="133" width="75" height="13" uuid="cb1bb2c0-2711-4b0e-b689-9844ae9429af"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$P{AUDIT_CAFE_ESP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="289" y="117" width="75" height="16" uuid="871732df-5a63-4f28-8c20-e3327ca2479a"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[ALMOÇO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="364" y="117" width="75" height="16" uuid="4e71ff2c-0e44-4dc0-bdec-c75276da1d71"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[JANTAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="439" y="117" width="75" height="16" uuid="1a8c3bd3-2309-411d-b0c2-dea1ff3e8105"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="439" y="133" width="75" height="13" uuid="6e3bf261-7d34-4fe6-bb42-abdf0541b4df"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$P{AUDIT_CAFE_ESP} + $P{AUDIT_ALMOCO_ESP} + $P{AUDIT_JANTA_ESP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="9" y="117" width="205" height="16" uuid="0d603b58-edda-46a9-bdf3-fd3e02f9716c"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<text><![CDATA[Refeições Fornecidas Especias]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="514" y="88" width="75" height="16" uuid="12ffba5b-49e2-4c02-a2c7-7cb992db8f01"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[R$ CAFÉ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="589" y="88" width="75" height="16" uuid="0fb75447-f4fd-4aa9-b8f8-f4c96ffde350"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[R$ ALMOÇO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="664" y="88" width="75" height="16" uuid="0e4389c7-8429-4e2d-b611-c26caf354c40"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[R$ JANTA]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="514" y="104" width="75" height="13" uuid="1e72eeac-c2e2-4b5e-81a2-8a2a78e31366"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($P{TOTAL_VALOR_CAFE_AUDIT})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="589" y="104" width="75" height="13" uuid="dbac0090-ddbd-4dff-8e09-d76d7935df1d"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($P{TOTAL_VALOR_ALMOCO_AUDIT})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="664" y="104" width="75" height="13" uuid="1fc71412-f929-4908-8292-0c2f3e7730c7"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($P{TOTAL_VALOR_JANTA_AUDIT})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="514" y="117" width="75" height="16" uuid="fac34fba-db5b-409d-9027-aad232a15a1a"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[R$ CAFÉ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="514" y="133" width="75" height="13" uuid="ca64bd37-5472-474a-b973-d70c602ba70a"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($P{TOTAL_VALOR_CAFE_ESP_AUDIT})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="589" y="117" width="75" height="16" uuid="abe320ff-146c-4c73-8066-b9b6c2b54a47"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[R$ ALMOÇO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="664" y="117" width="75" height="16" uuid="263b3ddc-e081-4cbc-a692-41f0de27b3f4"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[R$ JANTA]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="589" y="133" width="75" height="13" uuid="18b87f66-f117-4a4c-a548-8fbec741f176"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($P{TOTAL_VALOR_ALMOCO_ESP_AUDIT})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="664" y="133" width="75" height="13" uuid="b23019c5-fbae-4c46-b1ea-963b4483a7c0"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($P{TOTAL_VALOR_JANTA_ESP_AUDIT})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="9" y="142" width="75" height="16" uuid="67e43015-da27-42ea-bdd6-1fa58e000d14"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[R$ TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="84" y="142" width="75" height="16" uuid="ebbe77f3-b3e3-4b64-8464-ede948a7d1cf"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($P{TOTAL_GERAL_AUDIT})]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

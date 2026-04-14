@@ -3,8 +3,9 @@ package br.gov.mt.sejudh.sigepen.dao.filter;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import org.hibernate.criterion.Restrictions;
+
+import java.util.Calendar;
 import java.util.Date;
-import java.text.SimpleDateFormat;
 
 public class FiltroHistoricoPedidoAlimento extends FiltroConsulta {
 
@@ -29,18 +30,19 @@ public class FiltroHistoricoPedidoAlimento extends FiltroConsulta {
 			getCriteria().add(Restrictions.eq("idTipoRefeicao", tipoRefeicao.getId()));
 		}
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
 		if (dataPedidoInicial != null) {
-			getCriteria().add(Restrictions.ge("dataPedido", sdf.format(dataPedidoInicial) + " 00:00"));
-		}
-		if (dataPedidoFinal != null) {
-			getCriteria().add(Restrictions.le("dataPedido", sdf.format(dataPedidoFinal) + " 23:59"));
-		}
-
-		if (status != null) {
-			getCriteria().add(Restrictions.eq("status", status));
-		}
+	        getCriteria().add(Restrictions.ge("dataEmissao", dataPedidoInicial));
+	    }
+	    
+	    if (dataPedidoFinal != null) {
+	        Calendar c = Calendar.getInstance();
+	        c.setTime(dataPedidoFinal);
+	        c.set(Calendar.HOUR_OF_DAY, 23);
+	        c.set(Calendar.MINUTE, 59);
+	        c.set(Calendar.SECOND, 59);
+	        
+	        getCriteria().add(Restrictions.le("dataEmissao", c.getTime()));
+	    }
 	}
 
 	public Long getIdUnidadePrisional() {
@@ -90,7 +92,4 @@ public class FiltroHistoricoPedidoAlimento extends FiltroConsulta {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
-
-	
-
 }
