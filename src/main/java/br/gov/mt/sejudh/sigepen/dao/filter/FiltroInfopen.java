@@ -10,7 +10,9 @@ import br.gov.mt.sejudh.sigepen.enumerator.PopulacaoFeminino;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.TempoCondenacao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDeficienciaRelatorio;
+import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
+import br.gov.mt.sejudh.sigepen.model.Estado;
 import br.gov.mt.sejudh.sigepen.model.EstadoCivil;
 import br.gov.mt.sejudh.sigepen.model.Etnia;
 import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
@@ -59,6 +61,10 @@ public class FiltroInfopen extends FiltroConsulta {
 	private Date dataFinal;	
 	
 	private List<Long> unidadesIds;
+	
+	private Estado estado;
+	
+	private Cidade cidade;
 
 	public int getTipoRelatorio() {
 		return tipoRelatorio;
@@ -137,6 +143,22 @@ public class FiltroInfopen extends FiltroConsulta {
 		this.tempoCondenacao = tempoCondenacao;
 	}
 	
+	public Estado getEstado() {
+		return estado;
+	}
+
+	public void setEstado(Estado estado) {
+		this.estado = estado;
+	}
+
+	public Cidade getCidade() {
+		return cidade;
+	}
+
+	public void setCidade(Cidade cidade) {
+		this.cidade = cidade;
+	}
+
 	public String getDescricao() {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -181,6 +203,12 @@ public class FiltroInfopen extends FiltroConsulta {
 		
 		if(this.getDataFinal() != null) {
 			filtros += "Período: " + sdf.format(this.getDataFinal()) +  ", ";			
+		}
+		if(this.getEstado() != null) {
+		    filtros += "Estado: " + this.getEstado().getNome() + ", ";
+		}
+		if(this.getCidade() != null) {
+		    filtros += "Município: " + this.getCidade().getNome() + ", ";
 		}
 	
 		if(!"".equals(filtros))

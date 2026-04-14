@@ -47,6 +47,14 @@
 					filterMatchMode="custom" filterFunction="removeAcento"
 					converter="SimpleEntityConverter"
 					styleFormLabelColumn="min-width:140px !important" />
+					
+				<sgp:formSelectOneMenu id="statusDieta" labelValue="Status"
+				    value="#{dietaEspecialBean.filtro.statusDieta}"
+				    temSelecione="true"
+				    styleFormLabelColumn="min-width:140px !important">
+				    <f:selectItem itemValue="ATIVO" itemLabel="Ativo" />
+				    <f:selectItem itemValue="INATIVO" itemLabel="Inativo" />
+				</sgp:formSelectOneMenu>
 
 				<div class="form-block "></div>
 				<p:commandButton value="Pesquisar" update=":registrosForm"

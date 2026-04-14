@@ -64,6 +64,9 @@ public class PassagemService {
     @Inject
     private SolicitacaoVisitaDAO solicitacaoVisitaDAO;
     
+    @Inject
+    private DietaEspecialService dietaEspecialService;
+    
     public Passagem buscaPassagemPorId(Passagem passagem) {
         return dao.buscaPassagemPorId(passagem);
     }
@@ -138,6 +141,12 @@ public class PassagemService {
         recuperando.getPassagens().add(passagem);
 
         recuperandoDao.salvar(recuperando);
+        
+        dietaEspecialService.encerrarDietasAtivasDoRecuperando(
+                recuperando.getId(), passagem.getDataSaida()
+            );
+
+        
         this.eventoRecuperando.fire(recuperando);
         
         this.inativarSolicitacaoVisita(recuperando);

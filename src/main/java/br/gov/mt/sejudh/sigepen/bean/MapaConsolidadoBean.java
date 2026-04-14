@@ -207,29 +207,52 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 	}
 	
 	public void gerarMapa() {
-		
-		if(validacoes(this.unidade.getId())) {	
-			List<MapaConsolidadoDTO> mapaConsolidados = new ArrayList<>();
-			Map<String, Object> parameters = new HashMap<>();
-			parameters.put("ANO", this.ano);
-			this.contratos.forEach(contrato -> {				
-				MapaConsolidadoDTO mapaConsolidado =  mapaConsolidadoService.obterMapaConsolidado(this.unidade, this.mes, this.ano, contrato);
-				mapaConsolidados.add(mapaConsolidado);				
-			});
-			
-			try {
+	    if(validacoes(this.unidade.getId())) {	
+	        List<MapaConsolidadoDTO> mapaConsolidados = new ArrayList<>();
+	        Map<String, Object> parameters = new HashMap<>();
+	        
+	        parameters.put("ANO", this.ano);
 
-				fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(mapaConsolidados,Relatorio.ListaConsolidadoMensal, parameters, this.gerenciarAssinaturaService));
-				RequestContext.getCurrentInstance().execute("download()");
-				LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Consolidado do Mês", log);
-			} catch (Exception e) {
-				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
-				LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
-			}
-			
-			
-			
-		}		
+	        String dataInicioStr = obterDataInicio(this.mes.getId(), Integer.parseInt(this.ano));
+	        String dataFimStr = obterDataFim(this.mes.getId(), Integer.parseInt(this.ano));
+
+	        Map<String, Integer> audit = mapaConsolidadoService.obterDadosAuditoria(this.unidade.getId(), dataInicioStr, dataFimStr);
+	        parameters.putAll(audit);
+
+	        this.contratos.forEach(contrato -> {				
+	            MapaConsolidadoDTO dto = mapaConsolidadoService.obterMapaConsolidado(this.unidade, this.mes, this.ano, contrato);
+	            mapaConsolidados.add(dto);
+
+	            double vlrAuditCafe = audit.get("AUDIT_CAFE") * (dto.getTotalValorCafe() / dto.getTotalCafe());
+	            double vlrAuditAlmoco = audit.get("AUDIT_ALMOCO") * (dto.getTotalValorAlmoco() / dto.getTotalAlmoco());
+	            double vlrAuditJanta = audit.get("AUDIT_JANTA") * (dto.getTotalValorJanta() / dto.getTotalJanta());
+
+	            double vlrAuditCafeEsp = audit.get("AUDIT_CAFE_ESP") * (dto.getTotalValorCafeEspecial() / dto.getTotalCafeEspecial());
+	            double vlrAuditAlmocoEsp = audit.get("AUDIT_ALMOCO_ESP") * (dto.getTotalValorAlmocoEspecial() / dto.getTotalAlmocoEspecial());
+	            double vlrAuditJantaEsp = audit.get("AUDIT_JANTA_ESP") * (dto.getTotalValorJantaEspecial() / dto.getTotalJantaEspecial());
+
+	            parameters.put("TOTAL_VALOR_CAFE_AUDIT", vlrAuditCafe);
+	            parameters.put("TOTAL_VALOR_ALMOCO_AUDIT", vlrAuditAlmoco);
+	            parameters.put("TOTAL_VALOR_JANTA_AUDIT", vlrAuditJanta);
+	            
+	            parameters.put("TOTAL_VALOR_CAFE_ESP_AUDIT", vlrAuditCafeEsp);
+	            parameters.put("TOTAL_VALOR_ALMOCO_ESP_AUDIT", vlrAuditAlmocoEsp);
+	            parameters.put("TOTAL_VALOR_JANTA_ESP_AUDIT", vlrAuditJantaEsp);
+	            
+	            parameters.put("TOTAL_GERAL_AUDIT", vlrAuditCafe + vlrAuditAlmoco + vlrAuditJanta + 
+	                                               vlrAuditCafeEsp + vlrAuditAlmocoEsp + vlrAuditJantaEsp);
+	        });
+	       
+	        try {
+
+	            fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(mapaConsolidados, Relatorio.ListaConsolidadoMensal, parameters));
+	            RequestContext.getCurrentInstance().execute("download()");
+	            LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Consolidado do Mês", log);
+	        } catch (Exception e) {
+	            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
+	            LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
+	        }
+	    }		
 	}	
 	
 }

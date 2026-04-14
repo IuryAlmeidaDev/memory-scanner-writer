@@ -42,7 +42,9 @@ import br.gov.mt.sejudh.sigepen.enumerator.Lgbt;
 import br.gov.mt.sejudh.sigepen.enumerator.TempoCondenacao;
 import br.gov.mt.sejudh.sigepen.enumerator.TipoDeficienciaRelatorio;
 import br.gov.mt.sejudh.sigepen.model.Arquivo;
+import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
+import br.gov.mt.sejudh.sigepen.model.Estado;
 import br.gov.mt.sejudh.sigepen.model.EstadoCivil;
 import br.gov.mt.sejudh.sigepen.model.Etnia;
 import br.gov.mt.sejudh.sigepen.model.Nacionalidade;
@@ -85,6 +87,8 @@ public class InfopenBean extends MetodosDialogBean {
 	private TempoCondenacao tempoCondenacao;
 	private Lgbt lbgt;
 	private Etnia[] etnia = {};
+	private List<Estado> estados = new ArrayList<>();
+	private List<Cidade> cidades = new ArrayList<>();
 
 	private List<UnidadePrisional> unidades = new ArrayList<UnidadePrisional>();
 
@@ -117,6 +121,7 @@ public class InfopenBean extends MetodosDialogBean {
 		this.escolaridade = this.service.buscarEscolaridade(SecurityUtil.getUnidadeSelecionada().getId());
 		this.raca = this.service.buscarRaca(SecurityUtil.getUnidadeSelecionada().getId());
 		this.etnia = this.service.buscarEtnia(SecurityUtil.getUnidadeSelecionada().getId());
+		this.estados = this.service.buscarEstados();
 
 		this.filtroUnidade = SecurityUtil.possuiPermissaoNaUnidadeLogada("ListarTodasUnidades");
 		if (this.filtroUnidade) {
@@ -219,7 +224,34 @@ public class InfopenBean extends MetodosDialogBean {
 	public void setUnidadesSelecionadas(List<Long> unidadesSelecionadas) {
 		this.unidadesSelecionadas = unidadesSelecionadas;
 	}
+	public List<Estado> getEstados() {
+	    return estados;
+	}
 
+	public void setEstados(List<Estado> estados) {
+	    this.estados = estados;
+	}
+
+	public List<Cidade> getCidades() {
+	    return cidades;
+	}
+
+	public void setCidades(List<Cidade> cidades) {
+	    this.cidades = cidades;
+	}
+	
+	public void onMudarEstado() {
+	    this.filtro.setCidade(null);
+	    this.cidades = new ArrayList<>();
+
+	    if (this.filtro.getEstado() != null 
+	            && this.filtro.getEstado().getUf() != null 
+	            && !this.filtro.getEstado().getUf().isEmpty()) {
+	        this.cidades = this.service.buscarMunicipiosPorEstado(
+	                this.filtro.getEstado().getUf());
+	    }
+	    RequestContext.getCurrentInstance().update("meuFormulario:panelMunicipio");
+	}
 
 	public void inicializarPickListUnidades() {
 		List<UnidadePrisional> unidadesNaoSelecionada = new ArrayList<>();
