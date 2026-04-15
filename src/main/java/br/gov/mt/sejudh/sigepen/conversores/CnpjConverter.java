@@ -7,39 +7,32 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
 @FacesConverter(value="convertCnpj")
-public class CnpjConverter implements Converter{
+public class CnpjConverter implements Converter {
 	
-	@Override
-	public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
-        /*
-         * Irá converter CNPJ formatado para um sem pontos, traço e barra.
-         * Ex.: 07.374.998/0001-33 torna-se 07374998000133.
-         */
-         String cnpj = value;
-         if (value!= null && !value.equals(""))
-              cnpj = value.replaceAll("\\.", "").replaceAll("\\-", "").replaceAll("/", "");
-
-         return cnpj;
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
+        if (value == null || value.trim().isEmpty()) {
+            return "";
+        }
+        return value.replaceAll("[^a-zA-Z0-9]", "").toUpperCase();
     }
 
-	@Override
-	public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
-        /*
-         * Irá converter CNPJ não formatado para um com pontos, traço e barra.
-         * Ex.: 07374998000133 torna-se 07.374.998/0001-33.
-         */
-         String cnpj = value.toString();
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
+        if (value == null || value.toString().trim().isEmpty()) {
+            return "";
+        }
+
+        String cnpj = value.toString().toUpperCase(); 
          
-         if (cnpj != null && !cnpj.equals("")){
-        	 while(cnpj.length()<14){
-            	 cnpj = "0"+cnpj;
-             }
-        	 cnpj = cnpj.substring(0, 2) + "." + cnpj.substring(2, 5) + "." + cnpj.substring(5, 8 ) + "/" + cnpj.substring(8, 12) + "-" + cnpj.substring(12, 14);
-         }else{
-        	 cnpj="";
-         }
+        while (cnpj.length() < 14) {
+            cnpj = "0" + cnpj;
+        }
 
-         return cnpj;
+        return cnpj.substring(0, 2) + "." + 
+               cnpj.substring(2, 5) + "." + 
+               cnpj.substring(5, 8) + "/" + 
+               cnpj.substring(8, 12) + "-" + 
+               cnpj.substring(12, 14);
     }
-
 }

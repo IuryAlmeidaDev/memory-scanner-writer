@@ -25,16 +25,16 @@ public class BiometriaSDKCliente implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	final static String components = "Biometrics.FingerExtraction,Biometrics.FingerMatching,Images.WSQ";
-	
+
 	private NBiometricClient biometricClient;
-	
+
 	@PostConstruct
 	private void init() {
 		try {
 			validarLicencas();
 			inicializar();
 		} catch (Exception e) {
-			
+
 		}
 	}
 

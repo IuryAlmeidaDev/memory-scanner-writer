@@ -17,7 +17,7 @@ import br.gov.mt.sejudh.sigepen.model.Biometria;
 
 @RequestScoped
 public class BiometriaSDKDao {
-	
+
 	@Inject
 	private BiometriaSDKCliente cliente;
 
@@ -67,7 +67,7 @@ public class BiometriaSDKDao {
 			try {
 				statusOperacao = cliente.identify(subject);
 			} catch (RuntimeException e) {
-				throw new RuntimeException("Servidor biométrico inoperante, entre em contato com o Suporte Sigepen");
+				throw new RuntimeException("Servidor biométrico inoperante, entre em contato com o Suporte Sigepen", e);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -104,7 +104,7 @@ public class BiometriaSDKDao {
 				statusOperacao = cliente.enroll(subject);
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new IOException("Servidor biométrico inoperante, entre em contato com o Suporte Sigepen");
+				throw new IOException("Servidor biométrico inoperante, entre em contato com o Suporte Sigepen", e);
 			}
 			
 			return statusOperacao;
@@ -142,7 +142,7 @@ public class BiometriaSDKDao {
 			throw e;
 		}
 	}
-	
+
 	private NSubject criarSubjectDeImagem(byte[] imagem) {
 		NBuffer buff = null;
 		NFinger finger = null;

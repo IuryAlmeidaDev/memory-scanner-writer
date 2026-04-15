@@ -133,13 +133,20 @@ public class BiometriaWebService {
 			LoggerUtil.logWS(e, log);
 			JsonObject js = new JsonObject();
 			js.addProperty("erro", e.getMessage());
-			
+			Throwable root = e;
+			while (root.getCause() != null && root.getCause() != root) {
+				root = root.getCause();
+			}
+			if (root != e) {
+				js.addProperty("detalhe", root.getClass().getName() + ": " + root.getMessage());
+			}
+
 			return js.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 		}
-		
+
 		return biometrias.toString();
 	}
 	
@@ -169,11 +176,18 @@ public class BiometriaWebService {
 			LoggerUtil.logWS(e, log);
 			JsonObject js = new JsonObject();
 			js.addProperty("erro", e.getMessage());
-			
+			Throwable root = e;
+			while (root.getCause() != null && root.getCause() != root) {
+				root = root.getCause();
+			}
+			if (root != e) {
+				js.addProperty("detalhe", root.getClass().getName() + ": " + root.getMessage());
+			}
+
 			return js.toString();
 		}
 	}
-	
+
 	@POST
 	@Path("/salvar")
 	@Produces(MediaType.TEXT_PLAIN)
