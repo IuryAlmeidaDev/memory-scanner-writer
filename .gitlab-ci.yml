@@ -52,7 +52,7 @@ build_maven:
   extends: .setup_maven
   script:
     - "mvn clean"
-    - "mvn $MAVEN_CLI_OPTS package -DskipTests=true -B -s settings.xml -P $MAVEN_PROFILE"
+    - "mvn $MAVEN_CLI_OPTS package -B -s settings.xml -P $MAVEN_PROFILE"
   only:
     refs:
       - develop
@@ -80,7 +80,7 @@ code_check:
   script:
     - "mvn -s settings.xml -B -ntp cyclonedx:makeBom -P $MAVEN_PROFILE"
     - "curl -k -s -X POST $DTRACK_HOST/api/v1/bom -H Content-Type:multipart/form-data -H X-API-Key:$DTRACK_TOKEN -F bom=@target/bom.json -F project=$DTRACK_PROJECT"
-    - "mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -s $mavenSettings -B -ntp verify sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.token=$SONAR_KEY"
+    - "mvn $MAVEN_CLI_OPTS -s $mavenSettings -B -ntp verify sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.token=$SONAR_KEY -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
   allow_failure: true
   only:
     refs:
