@@ -69,8 +69,12 @@ build_maven:
     - key: "$CI_COMMIT_REF_SLUG"
 
   artifacts:
+    when: always
     paths:
       - target/
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
     expire_in: 1 hour
 
 code_check:
