@@ -48,9 +48,9 @@ public class ContratoService {
 		return contrato;
 	}
 
-	public int quantidadeFiltrados(FiltroContrato filtro) {
+	/*public int quantidadeFiltrados(FiltroContrato filtro) {
 		return dao.quantidadeFiltrados(filtro);
-	}
+	}*/
 
 	public List<ContratoDTO> buscarPorFiltro(FiltroContrato filtro) {
 		return dao.buscaPorFiltro(filtro);

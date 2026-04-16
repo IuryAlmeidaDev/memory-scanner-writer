@@ -55,11 +55,11 @@ public class ContratoDAO {
 		return contrato;
 	}
 
-	public int quantidadeFiltrados(FiltroContrato filtro) {
+	/*public int quantidadeFiltrados(FiltroContrato filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(Contrato.class, entityManager);
 		criteria.setProjection(Projections.rowCount());
 		return ((Number) criteria.uniqueResult()).intValue();
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	public List<ContratoDTO> buscaPorFiltro(FiltroContrato filtro) {
