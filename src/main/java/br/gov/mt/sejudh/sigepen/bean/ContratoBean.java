@@ -167,6 +167,9 @@ public class ContratoBean extends MetodosDePaginaBean {
 				this.contratoSelecionada = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
 			}
 		}
+		
+		 this.setFiltro(new FiltroContrato());
+		
 		if (!security.possuiPermissao("ListarCardapio")) {
 			this.setFiltro(new FiltroContrato());
 			// this.filtro.setId(SecurityUtil.getUnidadeSelecionada().getId());
@@ -175,9 +178,6 @@ public class ContratoBean extends MetodosDePaginaBean {
 		} else {
 			super.carregarFiltroPaginacao(FiltroContrato.class, this);
 		}
-
-		this.setFiltro(new FiltroContrato());
-		super.carregarFiltroPaginacao(FiltroContrato.class, this);
 	}
 
 	@URLAction(onPostback = false)
@@ -244,14 +244,17 @@ public class ContratoBean extends MetodosDePaginaBean {
 
 			public List<ContratoDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
-				
-				
-				//List<ContratoDTO> contratoDto = contratoService.buscarPorFiltro(getFiltro());
-				//setRowCount(contratoDto.size());
-				
+		
 				
 				try {
+					
+					if(getFiltro () == null) {
+						setFiltro(new FiltroContrato());
+					}
+					
 					getFiltro().setListarTodasUnidades(security.possuiPermissao("ListarTodasUnidades"));
+					
+					configuraPaginacao(0, first, pageSize, sortField, sortOrder, getFiltro());
 					
 					int total = contratoService.contarFiltrados(getFiltro());
 					setRowCount(total);
