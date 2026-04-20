@@ -1,207 +1,224 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:sgp="http://sejudh.mt.gov.br/components"
-                template="/WEB-INF/pages/_templates/principal.xhtml">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
 
 	<ui:define name="footer">
 		<h:outputScript library="js" name="selectOneMenuFilter.js" />
 	</ui:define>
 
-    <ui:define name="conteudo">
-        <sgp:validarAcesso/>
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
 
-        <h3>#{cardapioBean.tituloPagina} Cardápio </h3>
-        <h:form id="formCardapio">
-            <p:panel>
-               	<sgp:formSelectOneMenu
-                   id="contrato"
-                   labelValue="Contrato"
-                   styleFormLabelColumn="width: 140px"
-                   itemValue="#{item}"
-                   itemsValue="#{cardapioBean.contratos}"
-                   itemLabel="#{item.numContrato}"
-                   value="#{cardapioBean.cardapio.contrato}"
-                   validationRequired="true"
-                   converter="SimpleEntityConverter"
-                   disabled="#{cardapioBean.isVisualizacao}"
-                   filter="true" filterMatchMode="custom" filterFunction="removeAcento"
-                   temSelecione="true"
-                   display="text"
-               	/>
+		<h3>#{cardapioBean.tituloPagina} Cardápio</h3>
+		<h:form id="formCardapio">
+			<p:panel>
+				<sgp:formSelectOneMenu id="contrato" labelValue="Contrato"
+					styleFormLabelColumn="width: 140px" itemValue="#{item}"
+					itemsValue="#{cardapioBean.contratos}"
+					itemLabel="#{item.numContrato}"
+					value="#{cardapioBean.cardapio.contrato}" validationRequired="true"
+					converter="SimpleEntityConverter"
+					disabled="#{cardapioBean.isVisualizacao or !securityUtil.possuiPermissao('ListarTodasUnidades')}"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					temSelecione="true" display="text">
 
-               	<sgp:formSelectOneMenu
-                   id="dieta"
-                   labelValue="Dieta"
-                   styleFormLabelColumn="width: 140px"
-                   itemValue="#{item}"
-                   itemsValue="#{cardapioBean.tiposDieta}"
-                   itemLabel="#{item.descricao}"
-                   value="#{cardapioBean.cardapio.tipoDieta}"
-                   validationRequired="true"
-                   converter="SimpleEntityConverter"
-                   disabled="#{cardapioBean.isVisualizacao}"
-                   temSelecione="true"
-                   display="text"
-               	/>
+					<p:ajax event="change" listener="#{cardapioBean.onContratoChange}"
+						update=":formCardapio:painelUnidadePrisional" />
+				</sgp:formSelectOneMenu>
 
-               	<sgp:formSelectOneMenu
-                   id="tipoRefeicao"
-                   labelValue="Refeição"
-                   styleFormLabelColumn="width: 140px"
-                   itemValue="#{item}"
-                   itemsValue="#{cardapioBean.tiposRefeicao}"
-                   itemLabel="#{item.descricao}"
-                   value="#{cardapioBean.cardapio.tipoRefeicao}"
-                   validationRequired="true"
-                   converter="SimpleEntityConverter"
-                   disabled="#{cardapioBean.isVisualizacao}"
-                   temSelecione="true"
-                   display="text"
-               	/>
 
-               	<sgp:formSelectOneMenu
-                   id="diaSemana"
-                   labelValue="Dia da Semana"
-                   styleFormLabelColumn="width: 140px"
-                   itemValue="#{item}"
-                   itemsValue="#{cardapioBean.diasSemana}"
-                   itemLabel="#{item.descricao}"
-                   value="#{cardapioBean.cardapio.diaSemana}"
-                   validationRequired="true"
-                   converter="SimpleEntityConverter"
-                   disabled="#{cardapioBean.isVisualizacao}"
-                   temSelecione="true"
-                   display="text">
-                   <p:ajax event="change" listener="#{cardapioBean.onDiaSemanaChange}" update=":formCardapio:proximaDataPanel" />
-                </sgp:formSelectOneMenu>
-               	
-               	<sgp:formSelectOneMenu
-                   id="semana"
-                   labelValue="Semana"
-                   styleFormLabelColumn="width: 140px"
-                   itemValue="#{item}"
-                   itemsValue="#{cardapioBean.semanas}"
-                   itemLabel="#{item.descricao}"
-                   value="#{cardapioBean.semanaSelecionada}"
-                   validationRequired="true"
-                   converter="SimpleEntityConverter"
-                   disabled="#{cardapioBean.isVisualizacao}"
-                   temSelecione="true"
-                   display="text">
-                   <p:ajax event="change" update=":formCardapio:proximaDataPanel" />
-               	</sgp:formSelectOneMenu>
-
-                <h:panelGroup id="proximaDataPanel">
-                    <div class="form-block">
-                        <div class="form-label-column" style="width: 140px">
-                            <h:outputLabel value="Próxima Ocorrência:" />
-                        </div>
-                        <div class="form-required-column">
-                            <p:spacer width="15px" />
-                        </div>
-                        <div class="form-input-column">
-                            <h:outputText value="#{cardapioBean.cardapio.proximaData}" style="font-weight: bold; padding-left: 5px;" rendered="#{cardapioBean.cardapio.proximaData != null}">
-                                <f:convertDateTime pattern="dd/MM/yyyy" />
-                            </h:outputText>
-                            <h:outputText value="--/--/----" style="font-weight: bold; padding-left: 5px;" rendered="#{cardapioBean.cardapio.proximaData == null}" />
-                        </div>
-                    </div>
-                </h:panelGroup>
-                   
-               	<sgp:formSelectOneMenu 
-                   id="festivo"
-                   labelValue="Cardápio Festivo?"
-                   styleFormLabelColumn="width: 140px"
-                   value="#{cardapioBean.cardapio.festivo}"
-                   itemsValue="#{null}"
-                   itemValue="#{null}"
-                   itemLabel=""
-                   validationRequired="true"
-                   temSelecione="true"
-                   disabled="#{cardapioBean.isVisualizacao}"
-                   display="text">
-                       <f:selectItem itemLabel="Sim" itemValue="true" />
-                       <f:selectItem itemLabel="Não" itemValue="false" />
-                       <f:ajax event="change" render=":formCardapio:dataFestivo :formCardapio:proximaDataPanel"/>
-               	</sgp:formSelectOneMenu>
-               
-               	<h:panelGroup id="dataFestivo" >
-    				<sgp:formCalendar
-				        labelValue="Data da Festividade" 
-				        display="text" 
-				        styleFormLabelColumn="width: 140px"
-				        value="#{cardapioBean.cardapio.data}" 
-				        disabled="#{cardapioBean.isVisualizacao}"
-				        rendered="#{cardapioBean.cardapio.festivo}">
-                        <p:ajax event="dateSelect" listener="#{cardapioBean.onDataChange}" update=":formCardapio:semana :formCardapio:diaSemana :formCardapio:proximaDataPanel" />
-                        <p:ajax event="change" listener="#{cardapioBean.onDataChange}" update=":formCardapio:semana :formCardapio:diaSemana :formCardapio:proximaDataPanel" />
-                    </sgp:formCalendar>
+				<h:panelGroup id="painelUnidadePrisional">
+					<sgp:formSelectOneMenu id="unidadePrisional"
+						labelValue="Unidade Prisional" styleFormLabelColumn="width: 140px"
+						itemValue="#{item}"
+						itemsValue="#{cardapioBean.unidadesPrisionais}"
+						itemLabel="#{item.nome}"
+						value="#{cardapioBean.cardapio.unidadePrisional}"
+						validationRequired="true" converter="SimpleEntityConverter"
+						rendered="#{cardapioBean.exibirCampoUnidade}"
+						disabled="#{cardapioBean.isVisualizacao or !securityUtil.possuiPermissao('ListarTodasUnidades')}"
+						temSelecione="true" display="text" />
 				</h:panelGroup>
-               
-               <br/> <br/>
 
-	            <p:panel header="Itens">
-	
-	                <p:commandButton icon="ui-icon-plus" value="Adicionar" immediate="true" actionListener="#{cardapioBean.abrirDialogItem}" 
-	                    rendered="#{(securityUtil.possuiPermissao('CadastrarItemCardapio') and !cardapioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarItemCardapio') and !cardapioBean.isVisualizacao)}">
-	                    <p:ajax event="dialogReturn" listener="#{cardapioBean.incluirItemCardapio}" update="itens"/>
-	                </p:commandButton>
-	
-	                <br/> <br/>
-	
-	                <p:dataTable id="itens" var="itemCardapio" emptyMessage="Nenhum item adicionado." value="#{cardapioBean.cardapio.itensCardapio}" rows="10" paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" sortBy="#{itemCardapio.id}">
-	
-	                    <p:column headerText="Nome">
-	                        <h:outputText value="#{itemCardapio.alimento.descricao}" />
-	                    </p:column>
-	
-	                    <p:column headerText="Masculino" width="200">
-	                        <h:outputText value="#{itemCardapio.masc}"/>
-	                    </p:column>
-	
-	                    <p:column headerText="Feminino" width="200">
-	                        <h:outputText value="#{itemCardapio.fem}" />
-	                    </p:column>
-	
-	                    <p:column width="90">
-	                        <center>
-	                            <p:commandButton title="Alterar" icon="ui-icon-pencil" immediate="true" action="#{cardapioBean.abrirDialogAlterarItem(itemCardapio)}" 
-	                            rendered="#{(securityUtil.possuiPermissao('CadastrarItemCardapio') and !cardapioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarItemCardapio') and !cardapioBean.isVisualizacao)}">
-	                                <p:ajax event="dialogReturn" listener="#{cardapioBean.incluirItemCardapio}" update="itens"/>
-	                            </p:commandButton>
-	
-	                            <p:commandButton action="#{cardapioBean.excluirItemCardapio(itemCardapio)}" immediate="true" icon="ui-icon-trash" title="Excluir" update=":formCardapio:itens :mensagens"
-	                            rendered="#{(securityUtil.possuiPermissao('CadastrarItemCardapio') and !cardapioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarItemCardapio') and !cardapioBean.isVisualizacao)}">
-	                                <p:confirm header="Confirmação" message="Deseja excluir o Item??" icon="ui-icon-alert" />
-	                            </p:commandButton>
-	                        </center>
-	                    </p:column>
-	
-	                </p:dataTable>
-	
-	                <p:confirmDialog global="true">
-	                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-	                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-	                </p:confirmDialog>
-	            </p:panel>
-	            
-	            <p:confirmDialog widgetVar="confirmarSobrescrita" header="Cardápio já cadastrado" message="Já existe um cardápio cadastrado para essas características. Deseja substituí-lo?" icon="ui-icon-alert">
-	                <p:commandButton value="Sim" action="#{cardapioBean.sobrescrever()}" oncomplete="PF('confirmarSobrescrita').hide()" update="@form :mensagens" icon="ui-icon-check" />
-	                <p:commandButton value="Não" onclick="PF('confirmarSobrescrita').hide()" type="button" icon="ui-icon-close" />
-	            </p:confirmDialog>
-	            
-	            <br/>
-	
-	            <p:commandButton value="Salvar" action="#{cardapioBean.salvar()}" update="@form" icon="ui-icon-disk" rendered="#{(securityUtil.possuiPermissao('CadastrarCardapio') and !cardapioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCardapio') and !cardapioBean.isVisualizacao)}"/>
-	
-	            <p:button outcome="pretty:ListarCardapio" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
-	                <f:param name="list" value="1"/>
-	            </p:button>
-	            
+				<sgp:formSelectOneMenu id="dieta" labelValue="Dieta"
+					styleFormLabelColumn="width: 140px" itemValue="#{item}"
+					itemsValue="#{cardapioBean.tiposDieta}"
+					itemLabel="#{item.descricao}"
+					value="#{cardapioBean.cardapio.tipoDieta}"
+					validationRequired="true" converter="SimpleEntityConverter"
+					disabled="#{cardapioBean.isVisualizacao}" temSelecione="true"
+					display="text" />
+
+				<sgp:formSelectOneMenu id="tipoRefeicao" labelValue="Refeição"
+					styleFormLabelColumn="width: 140px" itemValue="#{item}"
+					itemsValue="#{cardapioBean.tiposRefeicao}"
+					itemLabel="#{item.descricao}"
+					value="#{cardapioBean.cardapio.tipoRefeicao}"
+					validationRequired="true" converter="SimpleEntityConverter"
+					disabled="#{cardapioBean.isVisualizacao}" temSelecione="true"
+					display="text" />
+
+				<sgp:formSelectOneMenu id="diaSemana" labelValue="Dia da Semana"
+					styleFormLabelColumn="width: 140px" itemValue="#{item}"
+					itemsValue="#{cardapioBean.diasSemana}"
+					itemLabel="#{item.descricao}"
+					value="#{cardapioBean.cardapio.diaSemana}"
+					validationRequired="true" converter="SimpleEntityConverter"
+					disabled="#{cardapioBean.isVisualizacao}" temSelecione="true"
+					display="text">
+					<p:ajax event="change" listener="#{cardapioBean.onDiaSemanaChange}"
+						update=":formCardapio:proximaDataPanel" />
+				</sgp:formSelectOneMenu>
+
+				<sgp:formSelectOneMenu id="semana" labelValue="Semana"
+					styleFormLabelColumn="width: 140px" itemValue="#{item}"
+					itemsValue="#{cardapioBean.semanas}" itemLabel="#{item.descricao}"
+					value="#{cardapioBean.semanaSelecionada}" validationRequired="true"
+					converter="SimpleEntityConverter"
+					disabled="#{cardapioBean.isVisualizacao}" temSelecione="true"
+					display="text">
+					<p:ajax event="change" update=":formCardapio:proximaDataPanel" />
+				</sgp:formSelectOneMenu>
+
+				<h:panelGroup id="proximaDataPanel">
+					<div class="form-block">
+						<div class="form-label-column" style="width: 140px">
+							<h:outputLabel value="Próxima Ocorrência:" />
+						</div>
+						<div class="form-required-column">
+							<p:spacer width="15px" />
+						</div>
+						<div class="form-input-column">
+							<h:outputText value="#{cardapioBean.cardapio.proximaData}"
+								style="font-weight: bold; padding-left: 5px;"
+								rendered="#{cardapioBean.cardapio.proximaData != null}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+							<h:outputText value="--/--/----"
+								style="font-weight: bold; padding-left: 5px;"
+								rendered="#{cardapioBean.cardapio.proximaData == null}" />
+						</div>
+					</div>
+				</h:panelGroup>
+
+				<sgp:formSelectOneMenu id="festivo" labelValue="Cardápio Festivo?"
+					styleFormLabelColumn="width: 140px"
+					value="#{cardapioBean.cardapio.festivo}" itemsValue="#{null}"
+					itemValue="#{null}" itemLabel="" validationRequired="true"
+					temSelecione="true" disabled="#{cardapioBean.isVisualizacao}"
+					display="text">
+					<f:selectItem itemLabel="Sim" itemValue="true" />
+					<f:selectItem itemLabel="Não" itemValue="false" />
+					<f:ajax event="change"
+						render=":formCardapio:dataFestivo :formCardapio:proximaDataPanel" />
+				</sgp:formSelectOneMenu>
+
+				<h:panelGroup id="dataFestivo">
+					<sgp:formCalendar labelValue="Data da Festividade" display="text"
+						styleFormLabelColumn="width: 140px"
+						value="#{cardapioBean.cardapio.data}"
+						disabled="#{cardapioBean.isVisualizacao}"
+						rendered="#{cardapioBean.cardapio.festivo}">
+						<p:ajax event="dateSelect" listener="#{cardapioBean.onDataChange}"
+							update=":formCardapio:semana :formCardapio:diaSemana :formCardapio:proximaDataPanel" />
+						<p:ajax event="change" listener="#{cardapioBean.onDataChange}"
+							update=":formCardapio:semana :formCardapio:diaSemana :formCardapio:proximaDataPanel" />
+					</sgp:formCalendar>
+				</h:panelGroup>
+
+				<br />
+				<br />
+
+				<p:panel header="Itens">
+
+					<p:commandButton icon="ui-icon-plus" value="Adicionar"
+						immediate="true" actionListener="#{cardapioBean.abrirDialogItem}"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarItemCardapio') and !cardapioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarItemCardapio') and !cardapioBean.isVisualizacao)}">
+						<p:ajax event="dialogReturn"
+							listener="#{cardapioBean.incluirItemCardapio}" update="itens" />
+					</p:commandButton>
+
+					<br />
+					<br />
+
+					<p:dataTable id="itens" var="itemCardapio"
+						emptyMessage="Nenhum item adicionado."
+						value="#{cardapioBean.cardapio.itensCardapio}" rows="10"
+						paginator="true" paginatorAlwaysVisible="false"
+						paginatorPosition="bottom" sortBy="#{itemCardapio.id}">
+
+						<p:column headerText="Nome">
+							<h:outputText value="#{itemCardapio.alimento.descricao}" />
+						</p:column>
+
+						<p:column headerText="Masculino" width="200">
+							<h:outputText value="#{itemCardapio.masc}" />
+						</p:column>
+
+						<p:column headerText="Feminino" width="200">
+							<h:outputText value="#{itemCardapio.fem}" />
+						</p:column>
+
+						<p:column width="90">
+							<center>
+								<p:commandButton title="Alterar" icon="ui-icon-pencil"
+									immediate="true"
+									action="#{cardapioBean.abrirDialogAlterarItem(itemCardapio)}"
+									rendered="#{(securityUtil.possuiPermissao('CadastrarItemCardapio') and !cardapioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarItemCardapio') and !cardapioBean.isVisualizacao)}">
+									<p:ajax event="dialogReturn"
+										listener="#{cardapioBean.incluirItemCardapio}" update="itens" />
+								</p:commandButton>
+
+								<p:commandButton
+									action="#{cardapioBean.excluirItemCardapio(itemCardapio)}"
+									immediate="true" icon="ui-icon-trash" title="Excluir"
+									update=":formCardapio:itens :mensagens"
+									rendered="#{(securityUtil.possuiPermissao('CadastrarItemCardapio') and !cardapioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarItemCardapio') and !cardapioBean.isVisualizacao)}">
+									<p:confirm header="Confirmação"
+										message="Deseja excluir o Item??" icon="ui-icon-alert" />
+								</p:commandButton>
+							</center>
+						</p:column>
+
+					</p:dataTable>
+
+					<p:confirmDialog global="true">
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:panel>
+
+				<p:confirmDialog widgetVar="confirmarSobrescrita"
+					header="Cardápio já cadastrado"
+					message="Já existe um cardápio cadastrado para essas características. Deseja substituí-lo?"
+					icon="ui-icon-alert">
+					<p:commandButton value="Sim"
+						action="#{cardapioBean.sobrescrever()}"
+						oncomplete="PF('confirmarSobrescrita').hide()"
+						update="@form :mensagens" icon="ui-icon-check" />
+					<p:commandButton value="Não"
+						onclick="PF('confirmarSobrescrita').hide()" type="button"
+						icon="ui-icon-close" />
+				</p:confirmDialog>
+
+				<br />
+
+				<p:commandButton value="Salvar" action="#{cardapioBean.salvar()}"
+					update="@form" icon="ui-icon-disk"
+					rendered="#{(securityUtil.possuiPermissao('CadastrarCardapio') and !cardapioBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCardapio') and !cardapioBean.isVisualizacao)}" />
+
+				<p:button outcome="pretty:ListarCardapio" value="Voltar"
+					icon="ui-icon-arrowreturnthick-1-w">
+					<f:param name="list" value="1" />
+				</p:button>
+
 			</p:panel>
-        </h:form>
-    </ui:define>
+		</h:form>
+	</ui:define>
 </ui:composition>

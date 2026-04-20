@@ -209,4 +209,13 @@ public abstract class MetodosDePaginaBean {
 			}
 		}
 	}
+	
+	public boolean isVisualizacao() {
+	    AcaoDeTela acao = getAcaoDeTela();
+	    return acao.equals(AcaoDeTela.VISUALIZAR) || acao.equals(AcaoDeTela.TAB);
+	}
+
+	public boolean isAlterar() {
+	    return getAcaoDeTela().equals(AcaoDeTela.ALTERAR);
+	}
 }
