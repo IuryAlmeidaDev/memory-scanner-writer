@@ -23,6 +23,7 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 	private TipoDieta tipoDieta;
 	private String recuperando;
 	private Boolean listarTodasUnidades;
+	private String statusDieta;
 	
 
 	@Override
@@ -89,6 +90,15 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 		} else {
 			getCriteria().add(Restrictions.eq("unidade.id", SecurityUtil.getUnidadeSelecionada().getId()));
 		}
+		
+		if ("ATIVO".equals(this.statusDieta)) {
+		    getCriteria().add(Restrictions.isNull("fim"));
+
+		
+		} else if ("INATIVO".equals(this.statusDieta)) {
+		    getCriteria().add(Restrictions.isNotNull("fim"));
+		}
+		
 	}
 
 	public UnidadePrisional getUnidadePrisional() {
@@ -122,5 +132,14 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 	public void setListarTodasUnidades(boolean listarTodasUnidades) {
 		this.listarTodasUnidades = listarTodasUnidades;
 	}
+	
+	public String getStatusDieta() {
+	    return statusDieta;
+	}
+
+	public void setStatusDieta(String statusDieta) {
+	    this.statusDieta = statusDieta;
+	}
+
 
 }

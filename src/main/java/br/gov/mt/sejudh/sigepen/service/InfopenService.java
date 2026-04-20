@@ -8,7 +8,9 @@ import javax.inject.Inject;
 import br.gov.mt.sejudh.sigepen.base.service.BaseService;
 import br.gov.mt.sejudh.sigepen.dao.InfopenDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroInfopen;
+import br.gov.mt.sejudh.sigepen.model.Cidade;
 import br.gov.mt.sejudh.sigepen.model.Escolaridade;
+import br.gov.mt.sejudh.sigepen.model.Estado;
 import br.gov.mt.sejudh.sigepen.model.EstadoCivil;
 import br.gov.mt.sejudh.sigepen.model.Etnia;
 import br.gov.mt.sejudh.sigepen.model.Impedimento;
@@ -60,5 +62,17 @@ public class InfopenService extends BaseService<Impedimento, Long> {
 
 	public long buscarFeminino(long idUnidade) {
 		return this.dao.buscarFeminino(idUnidade);
+	}
+	
+	public List<Estado> buscarEstados() {
+	    return this.dao.buscarEstados();
+	}
+
+	public List<Cidade> buscarMunicipiosPorEstado(String uf) {
+	    return this.dao.buscarMunicipiosPorEstado(uf);
+	}
+	
+	public Cidade buscarCidadePorId(Long id) {
+		return this.dao.buscarCidadePorId(id);
 	}
 }

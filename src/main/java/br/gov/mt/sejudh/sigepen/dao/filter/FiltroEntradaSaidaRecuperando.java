@@ -12,6 +12,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 
+import br.gov.mt.sejudh.sigepen.enumerator.Sexo;
 import br.gov.mt.sejudh.sigepen.enumerator.SimNao;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusCredenciamentosVisita;
@@ -52,6 +53,7 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 	private SituacaoVisita situacao;
 	private List<String> filtros;
 	private String filtro;
+	private Sexo sexo;
 	
 	@Override
 	public void configurarFiltros() {
@@ -193,6 +195,11 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 		
 		if (this.filtros.size() > 0) {
 			this.filtro = String.join(", ", filtros);
+		}
+		
+		if (this.getSexo() != null) {
+		    getCriteria().add(Restrictions.eq("pessoa_visitante.sexo", this.getSexo()));
+		    this.filtros.add("Sexo: " + this.getSexo().getDescricao());
 		}
 	}
 
@@ -353,6 +360,14 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 	public void setExibeUnidadeNoFiltro(boolean exibeUnidadeNoFiltro) {
 		this.exibeUnidadeNoFiltro = exibeUnidadeNoFiltro;
 	}
+	
+	public Sexo getSexo() {
+	    return sexo;
+	}
+
+	public void setSexo(Sexo sexo) {
+	    this.sexo = sexo;
+	}
 
 	public String configureFiltros() {
 		StringBuilder builder = new StringBuilder("WHERE (1=1)  ");
@@ -364,7 +379,6 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 		if(this.getUnidade() != null && this.getUnidade().getId() > 0) {
 			builder.append("and up.id = :unidade  ");
 		}
-
 
 		if (this.getDataInicio() != null) {
 			builder.append("and esv.data_entrada between :di and :df  ");
@@ -408,6 +422,10 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 
 		if (StringUtils.isNotBlank(this.getNome())) {
 			builder.append("and translate(lower(pessoa_v.nome),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') like translate(lower(:visitante),'àáâãäèéêëìíîïòóôõöùúûüç', 'aaaaaeeeeiiiiooooouuuuc') ");
+		}
+
+		if (this.getSexo() != null) {
+		    builder.append("and pessoa_v.sexo = :sexo ");
 		}
 
 		if (this.getSituacao() != null) {
@@ -492,6 +510,10 @@ public class FiltroEntradaSaidaRecuperando extends FiltroConsulta {
 
 		if (StringUtils.isNotBlank(this.getNome())) {
 			query.setParameter("visitante", "%" + getNome() + "%");
+		}
+		
+		if (this.getSexo() != null) {
+		    query.setParameter("sexo", this.getSexo().name()); 
 		}
 
 //		if(this.getSituacao() != null) {

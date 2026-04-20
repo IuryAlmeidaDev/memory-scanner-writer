@@ -34,6 +34,19 @@
 	<parameter name="CARGO_3" class="java.lang.String"/>
 	<parameter name="ASSINATURA_4" class="java.lang.String"/>
 	<parameter name="CARGO_4" class="java.lang.String"/>
+	<parameter name="AUDIT_CAFE" class="java.lang.Integer"/>
+	<parameter name="AUDIT_ALMOCO" class="java.lang.Integer"/>
+	<parameter name="AUDIT_JANTA" class="java.lang.Integer"/>
+	<parameter name="AUDIT_CAFE_ESP" class="java.lang.Integer"/>
+	<parameter name="AUDIT_ALMOCO_ESP" class="java.lang.Integer"/>
+	<parameter name="AUDIT_JANTA_ESP" class="java.lang.Integer"/>
+	<parameter name="TOTAL_VALOR_CAFE_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_VALOR_ALMOCO_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_VALOR_JANTA_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_VALOR_CAFE_ESP_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_VALOR_ALMOCO_ESP_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_VALOR_JANTA_ESP_AUDIT" class="java.lang.Double"/>
+	<parameter name="TOTAL_GERAL_AUDIT" class="java.lang.Double"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -196,6 +209,45 @@
 				</subreportParameter>
 				<subreportParameter name="TOTAL_JANTA_ESPECIAL">
 					<subreportParameterExpression><![CDATA[$F{totalJantaEspecial}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AUDIT_CAFE">
+					<subreportParameterExpression><![CDATA[$P{AUDIT_CAFE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AUDIT_ALMOCO">
+					<subreportParameterExpression><![CDATA[$P{AUDIT_ALMOCO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AUDIT_JANTA">
+					<subreportParameterExpression><![CDATA[$P{AUDIT_JANTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AUDIT_CAFE_ESP">
+					<subreportParameterExpression><![CDATA[$P{AUDIT_CAFE_ESP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AUDIT_ALMOCO_ESP">
+					<subreportParameterExpression><![CDATA[$P{AUDIT_ALMOCO_ESP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AUDIT_JANTA_ESP">
+					<subreportParameterExpression><![CDATA[$P{AUDIT_JANTA_ESP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_VALOR_CAFE_AUDIT">
+					<subreportParameterExpression><![CDATA[$P{TOTAL_VALOR_CAFE_AUDIT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_VALOR_ALMOCO_AUDIT">
+					<subreportParameterExpression><![CDATA[$P{TOTAL_VALOR_ALMOCO_AUDIT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_VALOR_JANTA_AUDIT">
+					<subreportParameterExpression><![CDATA[$P{TOTAL_VALOR_JANTA_AUDIT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_VALOR_CAFE_ESP_AUDIT">
+					<subreportParameterExpression><![CDATA[$P{TOTAL_VALOR_CAFE_ESP_AUDIT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_VALOR_ALMOCO_ESP_AUDIT">
+					<subreportParameterExpression><![CDATA[$P{TOTAL_VALOR_ALMOCO_ESP_AUDIT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_VALOR_JANTA_ESP_AUDIT">
+					<subreportParameterExpression><![CDATA[$P{TOTAL_VALOR_JANTA_ESP_AUDIT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL_GERAL_AUDIT">
+					<subreportParameterExpression><![CDATA[$P{TOTAL_GERAL_AUDIT}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{consolidadoRecuperandoDTOs})]]></dataSourceExpression>
 				<subreportExpression><![CDATA["ConsolidadoMensal2.jasper"]]></subreportExpression>

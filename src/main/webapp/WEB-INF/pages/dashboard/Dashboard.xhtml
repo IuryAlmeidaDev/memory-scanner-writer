@@ -11,479 +11,410 @@
 		<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.Dashboard"
 			var="dash" allSuffix="ALL_ENUM_VALUES" />
 
-		<h3>Dashboard</h3>
+		<style>
+			.dash-header {
+				font-size: 20px;
+				font-weight: 600;
+				color: #555;
+				margin: 25px 0 15px 0;
+				padding-bottom: 8px;
+				border-bottom: 2px solid #ddd;
+			}
+			.dash-header:first-child {
+				margin-top: 5px;
+			}
+			.dash-header i {
+				margin-right: 8px;
+				color: #777;
+			}
+			.dash-grid {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 12px;
+				margin-bottom: 10px;
+			}
+			.dash-card {
+				position: relative;
+				border-radius: 5px;
+				padding: 16px 18px;
+				min-height: 80px;
+				box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+				transition: box-shadow 0.2s, transform 0.15s;
+				cursor: pointer;
+			}
+			.dash-card:hover {
+				box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+				transform: translateY(-2px);
+			}
+			.dash-card a {
+				text-decoration: none !important;
+				color: #fff !important;
+				display: block;
+				outline: none !important;
+				-webkit-tap-highlight-color: transparent;
+			}
+			.dash-card a:focus,
+			.dash-card a:active,
+			.dash-card a:hover {
+				outline: none !important;
+				text-decoration: none !important;
+				color: #fff !important;
+			}
+			.dash-card .dash-icon {
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				font-size: 20px;
+				color: rgba(255,255,255,0.45);
+			}
+			.dash-card .dash-number {
+				display: block;
+				font-size: 36px;
+				font-weight: 700;
+				line-height: 1.1;
+				color: #fff;
+			}
+			.dash-card .dash-label {
+				display: block;
+				font-size: 14px;
+				color: rgba(255,255,255,0.9);
+				margin-top: 6px;
+				line-height: 1.3;
+			}
+			.bg-green       { background-color: #43a047; }
+			.bg-green-light { background-color: #66bb6a; }
+			.bg-green-dark  { background-color: #2e7d32; }
+			.bg-blue        { background-color: #1e88e5; }
+			.bg-blue-dark   { background-color: #1565c0; }
+			.bg-orange      { background-color: #fb8c00; }
+			.bg-yellow      { background-color: #f9a825; }
+			.bg-red         { background-color: #e53935; }
+			.bg-red-dark    { background-color: #b71c1c; }
+		</style>
 
-	<h:panelGroup rendered="#{securityUtil.possuiPermissao('VisualizarRecuperando')}">
-		<h:form id="formDashRecuperando">
+		<!-- ============ RECUPERANDOS ============ -->
+		<h:panelGroup rendered="#{securityUtil.possuiPermissao('VisualizarRecuperando')}">
+			<h:form id="formDashRecuperando">
 
-			<p style="display: inline-block;">
-				Recuperandos(as) <br />
-				______________________________________________________________________________________________________________
-			</p>
-			<p:dashboard id="dashRecuperando" model="#{dashboardBean.dashModel}">
-				<p:panel id="#{dash.RECUPERANDOS_ATIVOS_SISTEMA.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #6EAB2E;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_SISTEMA)}">
-						<h:outputText value="#{dashboardBean.totalRecuperandosAtivos}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Recuperandos ativos no Sistema"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+				<div class="dash-header">
+					<i class="fa fa-users"></i> Recuperandos(as)
+				</div>
 
-				<p:panel id="#{dash.RECUPERANDOS_ATIVOS_UNIDADE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #03a9f4;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_UNIDADE)}">
-						<h:outputText
-							value="#{dashboardBean.totalRecuperandosAtivosNaUnidade}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Recuperandos ativos na Unidade"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+				<div class="dash-grid">
 
-				<p:panel
-					id="#{dash.RECUPERANDOS_ATIVOS_CADASTRO_INCOMPLETO_UNIDADE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FFCC00;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_CADASTRO_INCOMPLETO_UNIDADE)}">
-						<h:outputText
-							value="#{dashboardBean.totalRecuperandosComCadastroIncompleto}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Cadastros ativos incompletos"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-green">
+						<span class="fa fa-users dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_SISTEMA)}">
+							<h:outputText value="#{dashboardBean.totalRecuperandosAtivos}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Recuperandos ativos no Sistema" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_A_VENCER.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #3CB371;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_A_VENCER)}">
-						<h:outputText value="#{dashboardBean.temporariosNaUnidadeAVencer}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Temporários na unidade a vencer"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-blue">
+						<span class="fa fa-user dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_UNIDADE)}">
+							<h:outputText value="#{dashboardBean.totalRecuperandosAtivosNaUnidade}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Recuperandos ativos na Unidade" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCEHOJE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #F7D358;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCEHOJE)}">
-						<h:outputText
-							value="#{dashboardBean.temporariosNaUnidadeVenceHoje}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Temporários na unidade vence hoje"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-orange">
+						<span class="fa fa-exclamation-triangle dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_ATIVOS_CADASTRO_INCOMPLETO_UNIDADE)}">
+							<h:outputText value="#{dashboardBean.totalRecuperandosComCadastroIncompleto}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Cadastros ativos incompletos" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCIDA.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #A52A2A;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCIDA)}">
-						<h:outputText value="#{dashboardBean.temporariosNaUnidadeVencido}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Temporários na unidade vencida"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-green-light">
+						<span class="fa fa-clock-o dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_A_VENCER)}">
+							<h:outputText value="#{dashboardBean.temporariosNaUnidadeAVencer}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Temporários na unidade a vencer" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #32CD32;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER)}">
-						<h:outputText value="#{dashboardBean.temporariosNoSistemaAVencer}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Temporários no sistema a vencer"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-yellow">
+						<span class="fa fa-calendar dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCEHOJE)}">
+							<h:outputText value="#{dashboardBean.temporariosNaUnidadeVenceHoje}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Temporários na unidade vence hoje" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FFD700;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE)}">
-						<h:outputText
-							value="#{dashboardBean.temporariosNoSistemaVenceHoje}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Temporários no sistema vence hoje"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-red">
+						<span class="fa fa-exclamation-triangle dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NA_UNIDADE_SOLTURA_VENCIDA)}">
+							<h:outputText value="#{dashboardBean.temporariosNaUnidadeVencido}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Temporários na unidade vencida" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCIDA.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #8B0000;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCIDA)}">
-						<h:outputText value="#{dashboardBean.temporariosNoSistemaVencido}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Temporários no sistema vencido"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
-				
-				
-				<p:panel id="#{dash.RECUPERANDOS_PROVISORIOS_90_180_DIAS.descricao}" styleClass="ui-dash-panel" style="background-color: #EC5800;">
-				    <h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_PROVISORIOS_90_180_DIAS)}">
-				        <h:outputText value="#{dashboardBean.totalProvisorios90a180Dias}" styleClass="ui-dash-text-panel-40"/>
-				        <br/>
-				        <h:outputText value="Provisórios (90 a 180 dias)" styleClass="ui-dash-text-panel-18"/>
-				    </h:commandLink>
-				</p:panel>
-				
-				<p:panel id="#{dash.RECUPERANDOS_PROVISORIOS_MAIS_180_DIAS.descricao}" styleClass="ui-dash-panel" style="background-color: #D20A2E;">
-				    <h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_PROVISORIOS_MAIS_180_DIAS)}">
-				        <h:outputText value="#{dashboardBean.totalProvisoriosMais180Dias}" styleClass="ui-dash-text-panel-40"/>
-				        <br/>
-				        <h:outputText value="Provisórios (+180 dias)" styleClass="ui-dash-text-panel-18"/>
-				    </h:commandLink>
-				</p:panel>
-				
-			</p:dashboard>
-		</h:form>
-	</h:panelGroup>
-	
-	<div style="clear: both;"></div>
+					<div class="dash-card bg-green">
+						<span class="fa fa-clock-o dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_A_VENCER)}">
+							<h:outputText value="#{dashboardBean.temporariosNoSistemaAVencer}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Temporários no sistema a vencer" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-	<h:panelGroup rendered="#{securityUtil.possuiPermissao('VisualizarMovimentacaoInterna') or securityUtil.possuiPermissao('VisualizarMovimentacaoExterna')}">
-		<h:form id="formDashMovimentacao">
+					<div class="dash-card bg-yellow">
+						<span class="fa fa-calendar dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCEHOJE)}">
+							<h:outputText value="#{dashboardBean.temporariosNoSistemaVenceHoje}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Temporários no sistema vence hoje" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-			<p style="display: inline-block;">
-				Recuperandos(as) Ativos(as) em Movimentação(ões) <br />
+					<div class="dash-card bg-red">
+						<span class="fa fa-exclamation-triangle dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_TEMPORARIOS_NO_SISTEMA_SOLTURA_VENCIDA)}">
+							<h:outputText value="#{dashboardBean.temporariosNoSistemaVencido}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Temporários no sistema vencido" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				______________________________________________________________________________________________________________
-			</p>
+					<div class="dash-card bg-orange">
+						<span class="fa fa-calendar-check-o dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_PROVISORIOS_90_180_DIAS)}">
+							<h:outputText value="#{dashboardBean.totalProvisorios90a180Dias}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Provisórios (90 a 180 dias)" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-			<p:dashboard id="dashMovimentacao" model="#{dashboardBean.dashModel}">
-				<p:panel id="#{dash.TOTAL_MOVIMENTACAO_INTERNA_PENDENTE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FF8C00;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_INTERNA_PENDENTE)}">
-						<h:outputText
-							value="#{dashboardBean.totalMovimentacaoInternaPendente}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Total movimentação interna pendente"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-red-dark">
+						<span class="fa fa-calendar-times-o dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.RECUPERANDOS_PROVISORIOS_MAIS_180_DIAS)}">
+							<h:outputText value="#{dashboardBean.totalProvisoriosMais180Dias}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Provisórios (+180 dias)" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.TOTAL_MOVIMENTACAO_INTERNA_EM_ANDAMENTO.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FFC107;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_INTERNA_EM_ANDAMENTO)}">
-						<h:outputText
-							value="#{dashboardBean.totalMovimentacaoInternaEmAndamento}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Total movimentação interna em andamento"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+				</div>
+			</h:form>
+		</h:panelGroup>
 
-				<p:panel
-					id="#{dash.TOTAL_MOVIMENTACAO_INTERNA_AGUARDANDO_FINALIZAR.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #B22222;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_INTERNA_AGUARDANDO_FINALIZAR)}">
-						<h:outputText
-							value="#{dashboardBean.totalMovimentacaoInternaAguardandoFinalizar}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText
-							value="Total movimentação interna aguardando finalizar"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+		<!-- ============ MOVIMENTAÇÕES ============ -->
+		<h:panelGroup rendered="#{securityUtil.possuiPermissao('VisualizarMovimentacaoInterna') or securityUtil.possuiPermissao('VisualizarMovimentacaoExterna')}">
+			<h:form id="formDashMovimentacao">
 
-				<p:panel
-					id="#{dash.TOTAL_MOVIMENTACAO_INTERNA_FINALIZADO_PARCIAL.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #228B22;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_INTERNA_FINALIZADO_PARCIAL)}">
-						<h:outputText
-							value="#{dashboardBean.totalMovimentacaoInternaFinalizadoParcial}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText
-							value="Total movimentação interna finalizado parcial"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+				<div class="dash-header">
+					<i class="fa fa-exchange"></i> Recuperandos(as) Ativos(as) em Movimentação(ões)
+				</div>
 
-				<p:panel id="#{dash.TOTAL_MOVIMENTACAO_EXTERNA_PENDENTE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FF8C00;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_EXTERNA_PENDENTE)}">
-						<h:outputText
-							value="#{dashboardBean.totalMovimentacaoExternaPendente}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Total movimentação externa pendente"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+				<div class="dash-grid">
 
-				<p:panel
-					id="#{dash.TOTAL_MOVIMENTACAO_EXTERNA_EM_ANDAMENTO.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FFC107;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_EXTERNA_EM_ANDAMENTO)}">
-						<h:outputText
-							value="#{dashboardBean.totalMovimentacaoExternaEmAndamento}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Total movimentação externa em andamento"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-orange">
+						<span class="fa fa-plus-circle dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_INTERNA_PENDENTE)}">
+							<h:outputText value="#{dashboardBean.totalMovimentacaoInternaPendente}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Mov. interna pendente" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.TOTAL_MOVIMENTACAO_EXTERNA_AGUARDANDO_FINALIZAR.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #B22222;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_EXTERNA_AGUARDANDO_FINALIZAR)}">
-						<h:outputText
-							value="#{dashboardBean.totalMovimentacaoExternaAguardandoFinalizar}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText
-							value="Total movimentação externa aguardando finalizar"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-blue">
+						<span class="fa fa-cogs dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_INTERNA_EM_ANDAMENTO)}">
+							<h:outputText value="#{dashboardBean.totalMovimentacaoInternaEmAndamento}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Mov. interna em andamento" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.TOTAL_MOVIMENTACAO_EXTERNA_FINALIZADO_PARCIAL.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #228B22;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_EXTERNA_FINALIZADO_PARCIAL)}">
-						<h:outputText
-							value="#{dashboardBean.totalMovimentacaoExternaFinalizadoParcial}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText
-							value="Total movimentação externa finalizado parcial"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
-				<p:panel id="#{dash.TOTAL_TRANSFERENCIA_PENDENTE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FF8C00;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_TRANSFERENCIA_PENDENTE)}">
-						<h:outputText value="#{dashboardBean.totalTransferenciaPendente}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Total transferencia pendente"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
-				<p:panel id="#{dash.TOTAL_TRANSFERENCIA_EM_ANDAMENTO.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FFC107;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_TRANSFERENCIA_EM_ANDAMENTO)}">
-						<h:outputText
-							value="#{dashboardBean.totalTransferenciaEmAndamento}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Total transferencia em andamento"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
-				<p:panel
-					id="#{dash.TOTAL_TRANSFERENCIA_FINALIZADO_PARCIAL.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #228B22;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_TRANSFERENCIA_FINALIZADO_PARCIAL)}">
-						<h:outputText
-							value="#{dashboardBean.totalTransferenciaFinalizadoParcial}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Total transferencia finalizado parcial"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
-				<p:panel
-					id="#{dash.TOTAL_RECEBER_TRANSFERENCIA_VINCULADO.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #2196F3;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_RECEBER_TRANSFERENCIA_VINCULADO)}">
-						<h:outputText
-							value="#{dashboardBean.totalReceberTransferenciaViculada}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Total receber transferencia vinculado"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
-				<p:panel
-					id="#{dash.TOTAL_RECEBER_TRANSFERENCIA_EM_ANDAMENTO.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FFC107;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_RECEBER_TRANSFERENCIA_EM_ANDAMENTO)}">
-						<h:outputText
-							value="#{dashboardBean.totalReceberTransferenciaEmAndamento}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Total receber transferencia em andamento"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
-				<p:panel id="#{dash.TOTAL_REMANEJAMENTO_EM_ANDAMENTO.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FFC107;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_REMANEJAMENTO_EM_ANDAMENTO)}">
-						<h:outputText
-							value="#{dashboardBean.totalRemanejamentoEmAndamento}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Total remanejamento"
-							styleClass="ui-dash-text-panel-18" />
-						<br />
-						<h:outputText value="em andamento"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-red">
+						<span class="fa fa-hourglass-half dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_INTERNA_AGUARDANDO_FINALIZAR)}">
+							<h:outputText value="#{dashboardBean.totalMovimentacaoInternaAguardandoFinalizar}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Mov. interna aguardando finalizar" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-			</p:dashboard>
+					<div class="dash-card bg-green">
+						<span class="fa fa-check-circle dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_INTERNA_FINALIZADO_PARCIAL)}">
+							<h:outputText value="#{dashboardBean.totalMovimentacaoInternaFinalizadoParcial}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Mov. interna finalizado parcial" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-		</h:form>
-	</h:panelGroup>	
+					<div class="dash-card bg-orange">
+						<span class="fa fa-plus-circle dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_EXTERNA_PENDENTE)}">
+							<h:outputText value="#{dashboardBean.totalMovimentacaoExternaPendente}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Mov. externa pendente" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-		<div style="clear: both;"></div>
+					<div class="dash-card bg-blue">
+						<span class="fa fa-cogs dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_EXTERNA_EM_ANDAMENTO)}">
+							<h:outputText value="#{dashboardBean.totalMovimentacaoExternaEmAndamento}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Mov. externa em andamento" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-	<h:panelGroup rendered="#{securityUtil.possuiPermissao('VisualizarVisitante')}">
-		<h:form id="formDashVisitante">
-		
-			<p style="display: inline-block;">
-				Visitantes <br />
-				______________________________________________________________________________________________________________
-			</p>
-		
+					<div class="dash-card bg-red">
+						<span class="fa fa-hourglass-half dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_EXTERNA_AGUARDANDO_FINALIZAR)}">
+							<h:outputText value="#{dashboardBean.totalMovimentacaoExternaAguardandoFinalizar}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Mov. externa aguardando finalizar" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-			<p:dashboard id="dashVisitante" model="#{dashboardBean.dashModel}">
+					<div class="dash-card bg-green">
+						<span class="fa fa-check-circle dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_MOVIMENTACAO_EXTERNA_FINALIZADO_PARCIAL)}">
+							<h:outputText value="#{dashboardBean.totalMovimentacaoExternaFinalizadoParcial}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Mov. externa finalizado parcial" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel id="#{dash.SOLICITACAO_VISITA_PENDENTE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #104E8B;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.SOLICITACAO_VISITA_PENDENTE)}">
-						<h:outputText value="#{dashboardBean.solicitacaoVisitaPendente}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Solicitações de visita pendentes"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-orange">
+						<span class="fa fa-truck dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_TRANSFERENCIA_PENDENTE)}">
+							<h:outputText value="#{dashboardBean.totalTransferenciaPendente}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Transferência pendente" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.TOTAL_CREDENCIAMENTO_RECEBIMENTO_PENDENTE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FF8C00;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_RECEBIMENTO_PENDENTE)}">
-						<h:outputText
-							value="#{dashboardBean.totalCredenciamentoRecebimentoPendente}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Visitantes Pendentes"
-							styleClass="ui-dash-text-panel-18" />
-						<br />
-						<h:outputText value="Fase de Recebimentos de Documentação"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-yellow">
+						<span class="fa fa-truck dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_TRANSFERENCIA_EM_ANDAMENTO)}">
+							<h:outputText value="#{dashboardBean.totalTransferenciaEmAndamento}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Transferência em andamento" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.TOTAL_CREDENCIAMENTO_CHECAGEM_PENDENTE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #FFC107;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_CHECAGEM_PENDENTE)}">
-						<h:outputText
-							value="#{dashboardBean.totalCredenciamentoChecagemPendente}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Visitantes Pendentes"
-							styleClass="ui-dash-text-panel-18" />
-						<br />
-						<h:outputText value="Fase de Checagem de Documentação"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-green">
+						<span class="fa fa-check-circle dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_TRANSFERENCIA_FINALIZADO_PARCIAL)}">
+							<h:outputText value="#{dashboardBean.totalTransferenciaFinalizadoParcial}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Transferência finalizado parcial" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.TOTAL_CREDENCIAMENTO_CONFERENCIA_PENDENTE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #1E90FF;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_CONFERENCIA_PENDENTE)}">
-						<h:outputText
-							value="#{dashboardBean.totalCredenciamentoConferenciaPendente}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Visitantes Pendentes"
-							styleClass="ui-dash-text-panel-18" />
-						<br />
-						<h:outputText value="Fase de Conferência e Autenticações"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-blue">
+						<span class="fa fa-link dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_RECEBER_TRANSFERENCIA_VINCULADO)}">
+							<h:outputText value="#{dashboardBean.totalReceberTransferenciaViculada}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Receber transferência vinculado" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.TOTAL_CREDENCIAMENTO_ANALISE_PENDENTE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #90EB5D;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_ANALISE_PENDENTE)}">
-						<h:outputText
-							value="#{dashboardBean.totalCredenciamentoAnalisePendente}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Visitantes Pendentes"
-							styleClass="ui-dash-text-panel-18" />
-						<br />
-						<h:outputText value="Fase de Análise e Autenticação de Certidões"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
+					<div class="dash-card bg-yellow">
+						<span class="fa fa-sign-in dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_RECEBER_TRANSFERENCIA_EM_ANDAMENTO)}">
+							<h:outputText value="#{dashboardBean.totalReceberTransferenciaEmAndamento}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Receber transferência em andamento" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
 
-				<p:panel
-					id="#{dash.TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE.descricao}"
-					styleClass="ui-dash-panel" style="background-color: #006400;">
-					<h:commandLink
-						action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE)}">
-						<h:outputText
-							value="#{dashboardBean.totalCredenciamentoAprovacaoPendente}"
-							styleClass="ui-dash-text-panel-40" />
-						<br />
-						<h:outputText value="Visitantes Pendentes"
-							styleClass="ui-dash-text-panel-18" />
-						<br />
-						<h:outputText value="Fase de Aprovação"
-							styleClass="ui-dash-text-panel-18" />
-					</h:commandLink>
-				</p:panel>
-			</p:dashboard>
-		</h:form>
-	</h:panelGroup>
-	
+					<div class="dash-card bg-yellow">
+						<span class="fa fa-random dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_REMANEJAMENTO_EM_ANDAMENTO)}">
+							<h:outputText value="#{dashboardBean.totalRemanejamentoEmAndamento}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Remanejamento em andamento" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
+
+				</div>
+			</h:form>
+		</h:panelGroup>
+
+		<!-- ============ VISITANTES ============ -->
+		<h:panelGroup rendered="#{securityUtil.possuiPermissao('VisualizarVisitante')}">
+			<h:form id="formDashVisitante">
+
+				<div class="dash-header">
+					<i class="fa fa-user"></i> Visitantes
+				</div>
+
+				<div class="dash-grid">
+
+					<div class="dash-card bg-blue-dark">
+						<span class="fa fa-envelope dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.SOLICITACAO_VISITA_PENDENTE)}">
+							<h:outputText value="#{dashboardBean.solicitacaoVisitaPendente}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Solicitações de visita pendentes" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
+
+					<div class="dash-card bg-orange">
+						<span class="fa fa-file-text dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_RECEBIMENTO_PENDENTE)}">
+							<h:outputText value="#{dashboardBean.totalCredenciamentoRecebimentoPendente}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Pendentes - Fase de Recebimento de Documentação" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
+
+					<div class="dash-card bg-yellow">
+						<span class="fa fa-check-square-o dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_CHECAGEM_PENDENTE)}">
+							<h:outputText value="#{dashboardBean.totalCredenciamentoChecagemPendente}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Pendentes - Fase de Checagem de Documentação" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
+
+					<div class="dash-card bg-blue">
+						<span class="fa fa-search dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_CONFERENCIA_PENDENTE)}">
+							<h:outputText value="#{dashboardBean.totalCredenciamentoConferenciaPendente}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Pendentes - Fase de Conferência e Autenticações" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
+
+					<div class="dash-card bg-green-light">
+						<span class="fa fa-certificate dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_ANALISE_PENDENTE)}">
+							<h:outputText value="#{dashboardBean.totalCredenciamentoAnalisePendente}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Pendentes - Fase de Análise e Autenticação de Certidões" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
+
+					<div class="dash-card bg-green-dark">
+						<span class="fa fa-thumbs-up dash-icon"></span>
+						<h:commandLink action="#{dashboardBean.executarAcao(dash.TOTAL_CREDENCIAMENTO_APROVACAO_PENDENTE)}">
+							<h:outputText value="#{dashboardBean.totalCredenciamentoAprovacaoPendente}" styleClass="dash-number" />
+							<br/>
+							<h:outputText value="Pendentes - Fase de Aprovação" styleClass="dash-label" />
+						</h:commandLink>
+					</div>
+
+				</div>
+			</h:form>
+		</h:panelGroup>
+
+		<!-- ============ DIALOGS ============ -->
 		<h:form>
-			<!-- Dialog -->
 			<p:dialog id="solicitacaoResetSenha" header="Solicitação de senha"
 				widgetVar="solicitacaoResetSenha"
 				visible="#{dashboardBean.solicitacaoResetSenha > 0}" modal="true"
@@ -497,7 +428,6 @@
 		</h:form>
 
 		<h:form rendered="false">
-			<!-- Dialog -->
 			<p:dialog id="movimentacaoInterna" header="Movimentação interna"
 				widgetVar="movimentacaoInterna"
 				visible="#{dashboardBean.movimentacaoInternaPendente > 0 || dashboardBean.movimentacaoInternaEmAndamento > 0 || dashboardBean.movimentacaoInternaAguardandoFinalizar > 0}"
@@ -520,7 +450,6 @@
 		</h:form>
 
 		<h:form rendered="false">
-			<!-- Dialog -->
 			<p:dialog id="movimentacaoExterna" header="Movimentação Externa"
 				widgetVar="movimentacaoExterna"
 				visible="#{dashboardBean.movimentacaoExternaPendente > 0 || dashboardBean.movimentacaoExternaEmAndamento > 0 || dashboardBean.movimentacaoExternaAguardandoFinalizar > 0}"

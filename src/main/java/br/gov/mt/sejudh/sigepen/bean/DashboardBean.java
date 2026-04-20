@@ -9,19 +9,12 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.*;
 import br.gov.mt.sejudh.sigepen.enumerator.*;
 import br.gov.mt.sejudh.sigepen.service.*;
-import org.primefaces.component.panel.Panel;
-import org.primefaces.model.DashboardColumn;
-import org.primefaces.model.DashboardModel;
-import org.primefaces.model.DefaultDashboardColumn;
-import org.primefaces.model.DefaultDashboardModel;
 
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 
@@ -41,9 +34,6 @@ import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 @URLMapping(id = "dashboard", pattern = "/dashboard", viewId = "/WEB-INF/pages/dashboard/Dashboard.xhtml")
 public class DashboardBean {
 	
-	private static final int NUM_COLUNAS_DASHBOARD = 3;
-	
-	private DashboardModel dashModel;
 	private Long totalRecuperandosAtivos;
 	private Long totalRecuperandosAtivosNaUnidade;
 	private Long totalRecuperandosComCadastroIncompleto;
@@ -131,21 +121,20 @@ public class DashboardBean {
 		if(facesUtil.getObjetoSessao("permissao", false) != null) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "Atenção", String.valueOf(facesUtil.getObjetoSessao("permissao")));
 		}
-		
-		dashModel = new DefaultDashboardModel();
-		
+
 		if(SecurityUtil.getLoginUsuario().equals("ADMIN")){
 			return;
 		}
-		
-		for (int i=1; i<=NUM_COLUNAS_DASHBOARD;i++) {
-			dashModel.addColumn(new DefaultDashboardColumn());
-		}
-		
-		try {
-			configurarDashboard();
-		} catch (Exception e) {
-			e.printStackTrace();
+
+		for (Dashboard d : Dashboard.values()) {
+			if (!securityUtil.possuiPermissao(d.getDescricao())) {
+				continue;
+			}
+			try {
+				atribuirValores(d);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -292,56 +281,6 @@ public class DashboardBean {
 		return calendar.getTime();
 	}
 
-	private void configurarDashboard() {
-		org.primefaces.component.dashboard.Dashboard dashRecuperando = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("formDashRecuperando:dashRecuperando");
-		configurarDashboard(dashRecuperando);
-
-		org.primefaces.component.dashboard.Dashboard dashMovimentacao = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("formDashMovimentacao:dashMovimentacao");
-		configurarDashboard(dashMovimentacao);
-
-		org.primefaces.component.dashboard.Dashboard dashVisitante = (org.primefaces.component.dashboard.Dashboard) FacesContext.getCurrentInstance().getViewRoot().findComponent("formDashVisitante:dashVisitante");
-		configurarDashboard(dashVisitante);
-	}
-
-	private void configurarDashboard(UIComponent das) {
-
-		List<Dashboard> lista = new ArrayList<Dashboard>();
-
-		if (das != null) {
-			for (UIComponent componente : das.getChildren()) {
-				if (componente instanceof Panel) {
-					Dashboard painel = Dashboard.getValue(componente.getId());
-					lista.add(painel);
-				}
-			}
-
-			int aux = 0;
-			double result = (double)lista.size() / NUM_COLUNAS_DASHBOARD;
-			double rowsceil = Math.ceil(result);
-
-			for(int j=0; j<rowsceil; j++) {
-				loopColuna:
-				for (DashboardColumn coluna : dashModel.getColumns()) {
-					for (int i=aux;i<lista.size();) {
-						if(!securityUtil.possuiPermissao(lista.get(i).getDescricao())) {
-							i++;
-							aux = i;
-							continue;
-						}
-
-						atribuirValores(lista.get(i));
-						coluna.addWidget(lista.get(i).getDescricao());
-
-						i++;
-						aux = i;
-						continue loopColuna;
-						
-					}
-				}
-			}
-		}
-	}
-	
 	public String executarAcao(Dashboard dash) {
 		FiltroRecuperandoView filtro = new FiltroRecuperandoView();
 		FiltroSolicitacaoVisita filtroSolicitacaoVisita = new FiltroSolicitacaoVisita();
@@ -774,10 +713,6 @@ public class DashboardBean {
 		filtro.setStatus(StatusPedido.EM_ANDAMENTO);
 
 		return this.remanejamentoService.countRecebimentoTransferencia(filtro);
-	}
-
-	public DashboardModel getDashModel() {
-		return dashModel;
 	}
 
 	public Long getTotalRecuperandosAtivos() {
