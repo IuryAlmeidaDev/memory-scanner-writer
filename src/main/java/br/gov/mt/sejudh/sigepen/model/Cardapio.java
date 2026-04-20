@@ -34,182 +34,205 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Audited
 @Entity
 @Table(name = "CARDAPIO", schema = Sigepen.SEJUDH_SCHEMA, uniqueConstraints = {
-		@javax.persistence.UniqueConstraint(name = "UK_CARDAPIO_REQUISITOS", columnNames = { "CONTRATO_ID", "SEMANA", "CODG_DIA_SEMANA", "TIPO_REFEICAO_ID", "TIPO_DIETA_ID" })
+    @javax.persistence.UniqueConstraint(
+        name = "UK_CARDAPIO_UNIDADE_REQUISITOS",
+        columnNames = {
+            "UNIDADE_PRISIONAL_ID",
+            "CONTRATO_ID",
+            "SEMANA",
+            "CODG_DIA_SEMANA",
+            "TIPO_REFEICAO_ID",
+            "TIPO_DIETA_ID"
+        }
+    )
 })
 public class Cardapio extends BaseModel<Long> {
 
-	private static final long serialVersionUID = -2841675579819366317L;
+    private static final long serialVersionUID = -2841675579819366317L;
 
-	@SequenceGenerator(name = "SEQ_CARDAPIO_GENERATOR", sequenceName = "SEQ_CARDAPIO", allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CARDAPIO_GENERATOR")
-	@Column(name = "ID")
-	private Long id;
+    @SequenceGenerator(name = "SEQ_CARDAPIO_GENERATOR", sequenceName = "SEQ_CARDAPIO", allocationSize = 1, schema = Sigepen.SEJUDH_SCHEMA)
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CARDAPIO_GENERATOR")
+    @Column(name = "ID")
+    private Long id;
 
-	@Column(name = "SEMANA", nullable = false)
-	private Long semana;
+    @Column(name = "SEMANA", nullable = false)
+    private Long semana;
 
-	@Enumerated
-	@Column(name = "CODG_DIA_SEMANA", nullable = false)
-	private DiasSemana diaSemana;
+    @Enumerated
+    @Column(name = "CODG_DIA_SEMANA", nullable = false)
+    private DiasSemana diaSemana;
 
-	@ManyToOne
-	@JoinColumn(name = "TIPO_REFEICAO_ID")
-	private TipoRefeicao tipoRefeicao;
+    @ManyToOne
+    @JoinColumn(name = "TIPO_REFEICAO_ID")
+    private TipoRefeicao tipoRefeicao;
 
-	@ManyToOne
-	@JoinColumn(name = "CONTRATO_ID")
-	private Contrato contrato;
+    @ManyToOne
+    @JoinColumn(name = "CONTRATO_ID")
+    private Contrato contrato;
 
-	@ManyToOne
-	@JoinColumn(name = "TIPO_DIETA_ID", nullable = false)
-	private TipoDieta tipoDieta;
+    @ManyToOne
+    @JoinColumn(name = "TIPO_DIETA_ID", nullable = false)
+    private TipoDieta tipoDieta;
 
-	@OneToMany(orphanRemoval = true, mappedBy = "cardapio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@NotFound(action = NotFoundAction.IGNORE)
-	private List<ItemCardapio> itensCardapio;
+    @OneToMany(orphanRemoval = true, mappedBy = "cardapio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @NotFound(action = NotFoundAction.IGNORE)
+    private List<ItemCardapio> itensCardapio;
 
-	@Column(name = "FESTIVO", nullable = false)
-	private Boolean festivo;
+    @Column(name = "FESTIVO", nullable = false)
+    private Boolean festivo;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "DATA")
-	private Date data;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DATA")
+    private Date data;
 
-	@javax.persistence.Transient
-	private Date proximaData;
+    @javax.persistence.Transient
+    private Date proximaData;
 
-	public Cardapio() {
-		this.itensCardapio = new ArrayList<>();
-	}
+    @ManyToOne
+    @JoinColumn(name = "UNIDADE_PRISIONAL_ID", nullable = false)
+    private UnidadePrisional unidadePrisional;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getSemana() {
-		return semana;
-	}
-
-	public void setSemana(Long semana) {
-		this.semana = semana;
-	}
-
-	public DiasSemana getDiaSemana() {
-		return diaSemana;
-	}
-
-	public void setDiaSemana(DiasSemana diaSemana) {
-		this.diaSemana = diaSemana;
-	}
-
-	public TipoRefeicao getTipoRefeicao() {
-		return tipoRefeicao;
-	}
-
-	public void setTipoRefeicao(TipoRefeicao tipoRefeicao) {
-		this.tipoRefeicao = tipoRefeicao;
-	}
-
-	public Contrato getContrato() {
-		return contrato;
-	}
-
-	public void setContrato(Contrato contrato) {
-		this.contrato = contrato;
-	}
-
-	public Boolean getFestivo() {
-		return festivo;
-	}
-
-	public void setFestivo(Boolean festivo) {
-		this.festivo = festivo;
-	}
-
-	public Date getData() {
-		return data;
-	}
-
-	public void setData(Date data) {
-		this.data = data;
-	}
-
-	public Date getProximaData() {
-		return proximaData;
-	}
-
-	public void setProximaData(Date proximaData) {
-		this.proximaData = proximaData;
-	}
-
-	public TipoDieta getTipoDieta() {
-		return tipoDieta;
-	}
-
-	public void setTipoDieta(TipoDieta tipoDieta) {
-		this.tipoDieta = tipoDieta;
-	}
-
-	public List<ItemCardapio> getItensCardapio() {
-		return itensCardapio;
-	}
-
-	public void setItensCardapio(List<ItemCardapio> itensCardapio) {
-		this.itensCardapio = itensCardapio;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id.hashCode();
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Cardapio other = (Cardapio) obj;
-		if (!Objects.equals(id, other.id))
-			return false;
-		if (semana == null) {
-			if (other.semana != null)
-				return false;
-		} else if (!semana.equals(other.semana))
-			return false;
-		if (diaSemana == null) {
-			if (other.diaSemana != null)
-				return false;
-		} else if (!diaSemana.equals(other.diaSemana))
-			return false;
-		if (festivo == null) {
-            return other.festivo == null;
-		} else return festivo.equals(other.festivo);
+    public Cardapio() {
+        this.itensCardapio = new ArrayList<>();
     }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("id", id)
-				.append("semana", semana)
-				.append("diaSemana", diaSemana)
-				.append("tipoRefeicao", tipoRefeicao)
-				.append("contrato", contrato)
-				.append("tipoDieta", tipoDieta)
-				.append("itensCardapio", itensCardapio)
-				.append("festivo", festivo)
-				.append("data", data)
-				.toString();
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getSemana() {
+        return semana;
+    }
+
+    public void setSemana(Long semana) {
+        this.semana = semana;
+    }
+
+    public DiasSemana getDiaSemana() {
+        return diaSemana;
+    }
+
+    public void setDiaSemana(DiasSemana diaSemana) {
+        this.diaSemana = diaSemana;
+    }
+
+    public TipoRefeicao getTipoRefeicao() {
+        return tipoRefeicao;
+    }
+
+    public void setTipoRefeicao(TipoRefeicao tipoRefeicao) {
+        this.tipoRefeicao = tipoRefeicao;
+    }
+
+    public Contrato getContrato() {
+        return contrato;
+    }
+
+    public void setContrato(Contrato contrato) {
+        this.contrato = contrato;
+    }
+
+    public Boolean getFestivo() {
+        return festivo;
+    }
+
+    public void setFestivo(Boolean festivo) {
+        this.festivo = festivo;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
+
+    public Date getProximaData() {
+        return proximaData;
+    }
+
+    public void setProximaData(Date proximaData) {
+        this.proximaData = proximaData;
+    }
+
+    public TipoDieta getTipoDieta() {
+        return tipoDieta;
+    }
+
+    public void setTipoDieta(TipoDieta tipoDieta) {
+        this.tipoDieta = tipoDieta;
+    }
+
+    public List<ItemCardapio> getItensCardapio() {
+        return itensCardapio;
+    }
+
+    public void setItensCardapio(List<ItemCardapio> itensCardapio) {
+        this.itensCardapio = itensCardapio;
+    }
+
+    public UnidadePrisional getUnidadePrisional() {
+        return unidadePrisional;
+    }
+
+    public void setUnidadePrisional(UnidadePrisional unidadePrisional) {
+        this.unidadePrisional = unidadePrisional;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (id != null ? id.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Cardapio other = (Cardapio) obj;
+        if (!Objects.equals(id, other.id))
+            return false;
+        if (semana == null) {
+            if (other.semana != null)
+                return false;
+        } else if (!semana.equals(other.semana))
+            return false;
+        if (diaSemana == null) {
+            if (other.diaSemana != null)
+                return false;
+        } else if (!diaSemana.equals(other.diaSemana))
+            return false;
+        if (festivo == null) {
+            return other.festivo == null;
+        } else return festivo.equals(other.festivo);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("id", id)
+                .append("semana", semana)
+                .append("diaSemana", diaSemana)
+                .append("tipoRefeicao", tipoRefeicao)
+                .append("contrato", contrato)
+                .append("tipoDieta", tipoDieta)
+                .append("itensCardapio", itensCardapio)
+                .append("festivo", festivo)
+                .append("data", data)
+                .append("unidadePrisional", unidadePrisional)
+                .toString();
+    }
 }
