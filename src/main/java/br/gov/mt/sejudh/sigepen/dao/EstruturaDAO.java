@@ -128,7 +128,7 @@ public class EstruturaDAO {
 	       .append("WHERE c.TIPO_REFEICAO_ID = :tipoRefeicao AND c.SEMANA = :semana AND td.ESPECIAL = 0 ")
 	       .append("AND c.CODG_DIA_SEMANA = (SELECT TO_CHAR(TO_DATE(SUBSTR(:data, 1, 19), 'DD/MM/YYYY HH24:MI:SS'), 'D') FROM dual) - 1 ")
 	       .append("AND l.ESTRUTURA_ID IN (SELECT id FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA START WITH id = :id CONNECT BY PRIOR id = ESTRUTURAPAI_ID) ")
-	       .append("AND TO_DATE(SUBSTR(:data, 1, 19), 'DD/MM/YYYY HH24:MI:SS') BETWEEN l.DATA_ENTRADA AND NVL(l.DATA_SAIDA, SYSDATE) ")	       
+	       .append("AND TO_DATE(SUBSTR(:data, 1, 19), 'DD/MM/YYYY HH24:MI:SS') BETWEEN l.DATA_ENTRADA AND NVL(l.DATA_SAIDA, TO_DATE('31/12/9999','DD/MM/YYYY')) ")
 	       .append("AND NOT EXISTS (SELECT 1 FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".DIETA_RECUPERANDO dr1 WHERE dr1.recuperando_id = pas.RECUPERANDO_ID AND dr1.STATUS = 1 AND (dr1.FIM IS NULL OR dr1.FIM > SYSDATE)) ")
 	       .append("GROUP BY a.DESCRICAO, ic.MASC_MG, ic.FEM_MG, td.DESCRICAO, p.SEXO, a.UNIDADE_MEDIDA, ic.ID ");
 
