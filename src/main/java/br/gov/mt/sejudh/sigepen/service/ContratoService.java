@@ -1,8 +1,10 @@
 package br.gov.mt.sejudh.sigepen.service;
 
 import java.text.ParseException;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -121,6 +123,21 @@ public class ContratoService {
 			Hibernate.initialize(contrato.getUnidades());
 			return contrato;
 		}
+	}
+
+	public HorarioRefeicao buscarHorarioEntregaVigentePorUnidade(long idUnidade, Long tipoRefeicaoId, Date data) {
+		Contrato contrato = buscarContratoVigenteEAtivoPorUnidade(idUnidade, data);
+		if (contrato == null || contrato.getHorariosRefeicao() == null) {
+			return null;
+		}
+
+		return contrato.getHorariosRefeicao().stream()
+				.filter(horario -> horario.getTipoRefeicao() != null
+						&& Objects.equals(horario.getTipoRefeicao().getId(), tipoRefeicaoId))
+				.max(Comparator.comparing(HorarioRefeicao::getDataInicio,
+						Comparator.nullsLast(Comparator.naturalOrder()))
+						.thenComparing(HorarioRefeicao::getId))
+				.orElse(null);
 	}
 
 	public List<Contrato> buscarContratoVigente(long idUnidade, String dataInicio, String dataFim) throws ParseException {
