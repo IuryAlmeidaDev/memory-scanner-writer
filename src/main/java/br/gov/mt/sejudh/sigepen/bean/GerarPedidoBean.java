@@ -251,28 +251,27 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		StringBuilder filtroDataHorario = new StringBuilder();
 
 		if (this.filtroPedido != null) {
-			String horarioRefeiracao = this.contratoService.buscarHorarioRefeiracao(this.unidade.getId(),
-					this.filtroPedido.getTipoRefeicao().getId());
-			
-		if(horarioRefeiracao == null || horarioRefeiracao.isEmpty()) {
-			return null;
-		}
-			String horaLimpa = horarioRefeiracao.replaceAll("[^0-9]", "");
-			if (horaLimpa.length() > 4) {
-				horaLimpa = horaLimpa.substring(0, 4);
+			HorarioRefeicao horarioEntrega = contratoService.buscarHorarioEntregaVigentePorUnidade(
+					this.unidade.getId(),
+					this.filtroPedido.getTipoRefeicao().getId(),
+					this.filtroPedido.getDataInicio());
+
+			if (horarioEntrega == null || horarioEntrega.getHorarioInicio() == null) {
+				return null;
 			}
 
-			StringBuilder horarioFormatado = new StringBuilder(horaLimpa);
-			if (horarioFormatado.length() >= 2) {
-				horarioFormatado.insert(2, ":");
-			}
+			LocalDate dataPedido = Instant.ofEpochMilli(this.filtroPedido.getDataInicio().getTime())
+					.atZone(ZoneId.systemDefault())
+					.toLocalDate();
+			LocalTime horarioPedido = LocalTime.parse(horarioEntrega.getHorarioInicio(), DateTimeFormatter.ofPattern("HHmm"))
+					.withSecond(0)
+					.withNano(0);
 
-			String filtroData = filtroPedido.getDataFormadata();
+			String filtroData = dataPedido.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
 			filtroDataHorario.append(filtroData.trim());
 			filtroDataHorario.append(" ");
-			filtroDataHorario.append(horarioFormatado.toString().trim());
-			filtroDataHorario.append(":00");
+			filtroDataHorario.append(horarioPedido.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
 		}
 
 		this.dataFormatada = filtroDataHorario.toString().trim();
@@ -403,46 +402,26 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		try {
 			validarHorarioRefeicao(filtroGerarPedido.getTipoRefeicao().getId());
 			configurarDadosRelatorio();
+			log.info("Geracao manual disparada pelo bean. unidade=" + this.unidade.getId()
+					+ ", refeicao=" + filtroGerarPedido.getTipoRefeicao().getId()
+					+ ", dataPedido=" + data
+					+ ", contrato=" + (contrato != null ? contrato.getId() : null)
+					+ ", assinado=" + assinado);
 
-			final long idEstrutura = gerarPedidoEstruturaDTO.getId();
+			PedidoAlimentoService.PedidoGerado pedidoGerado = pedidoAlimentoService.gerarPedidoManual(
+					this.unidade,
+					contrato,
+					filtroGerarPedido.getTipoRefeicao(),
+					data,
+					SecurityUtil.getUsuario().getId(),
+					assinado);
 
-			final List<PedidoEstruturaDTO> estruturaPedido = estruturaService.montarEstruturaPedido(data, idEstrutura);
-			final List<PedidoEstruturaDTO> estruturaNivel2 = getEstruturasDeNivel2(estruturaPedido);
-			final List<RefeicaoDetalhadaDTO> refeicoesDetalhadas = estruturaService.buscaPedidoConsulta(data,
-					idEstrutura, filtroGerarPedido.getTipoRefeicao());
+			PedidoAlimentoService.PedidoMontado pedidoMontado = pedidoGerado.getPedidoMontado();
 
-			final List<DetalheItemEstruturaCardapioDTO> itemCardapioPorEstrutura = DetalheItemEstruturaCardapioDTO
-					.combinarPedidos(estruturaNivel2, refeicoesDetalhadas);
-			final List<DietaEspecialEstruturaDTO> refeicoesEspeciais = estruturaService
-					.buscarDietasEspeciais(idEstrutura, data);
-
-			validarCardapio(itemCardapioPorEstrutura);
-
-			PedidoAlimento pedidoAlimento = PedidoAlimento.create(data, SecurityUtil.getUsuario().getId(),
-					this.unidade.getId(), contrato.getId(), filtroGerarPedido.getTipoRefeicao().getId());
-
-			for (DetalheItemEstruturaCardapioDTO itemDTO : itemCardapioPorEstrutura) {
-				pedidoAlimento.getItensPedido().add(ItemPedidoAlimento.newInstance(pedidoAlimento, itemDTO));
-			}
-			for (DietaEspecialEstruturaDTO dietaDTO : refeicoesEspeciais) {
-				pedidoAlimento.getDietasEspeciais()
-						.add(DietaEspecialPedidoAlimento.newInstance(pedidoAlimento, dietaDTO));
-			}
+			final List<DetalheItemEstruturaCardapioDTO> itemCardapioPorEstrutura = pedidoMontado.getItens();
+			final List<DietaEspecialEstruturaDTO> refeicoesEspeciais = pedidoMontado.getDietasEspeciais();
 
 			int totalRecuperandoDieta = calcularTotalGeralRecuperando(itemCardapioPorEstrutura, refeicoesEspeciais);
-
-			if (assinado) {
-				boolean aindaTemAtivo = pedidoAlimentoService.verificarExistenciaPedidoAtivo(data,
-						filtroGerarPedido.getTipoRefeicao().getId(), this.unidade.getId(), contrato.getId());
-
-				if (aindaTemAtivo) {
-					pedidoAlimentoService.salvarPedidoAssinadoSubstituindo(pedidoAlimento);
-				} else {
-					pedidoAlimentoService.salvarPrimeiroPedidoAssinado(pedidoAlimento);
-				}
-			} else {
-				pedidoAlimentoService.salvarPedidoPendente(pedidoAlimento);
-			}
 
 			final Map<String, Object> parameters = criarParametrosRelatorio(data, filtroGerarPedido, refeicoesEspeciais,
 					contrato);
@@ -464,27 +443,35 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	}
 
 	public void validarHorarioRefeicao(Long tipoRefeicaoId) throws ValidacaoException {
-	    if (this.horarioRefeicao == null || this.horarioRefeicao.getHorarioInicio() == null) {
-	        return; 
-	    }
+		if (this.unidade == null || this.unidade.getId() <= 0) {
+			return;
+		}
 
-	    LocalTime agora = LocalTime.now();
-	    DateTimeFormatter parser = DateTimeFormatter.ofPattern("HHmm");
-	    
-	    try {
-	        LocalTime horaLimiteIncial = LocalTime.parse(this.horarioRefeicao.getHorarioInicio(), parser);
+		if (this.filtroPedido == null || this.filtroPedido.getDataInicio() == null) {
+			return;
+		}
 
-	        if (agora.isBefore(horaLimiteIncial)) {
-	            DateTimeFormatter exibicaoSomenteHora = DateTimeFormatter.ofPattern("H'h'");
-	            String horaFormatada = horaLimiteIncial.format(exibicaoSomenteHora);
-	           
-	            throw new ValidacaoException("O horário permitido para esta refeição inicia às: " + horaFormatada);
-	        }
-	    } catch (DateTimeParseException e) {
-	        throw new ValidacaoException("Erro interno: O formato do horário (" + this.horarioRefeicao.getHorarioInicio() + ") está incorreto.");
-	    }
+		HorarioRefeicao horarioEntrega = contratoService.buscarHorarioEntregaVigentePorUnidade(
+				this.unidade.getId(),
+				tipoRefeicaoId,
+				this.filtroPedido.getDataInicio());
+
+		if (horarioEntrega == null || horarioEntrega.getHorarioInicio() == null) {
+			return;
+		}
+
+		this.horarioRefeicao = horarioEntrega;
+
+		LocalDate dataPedido = Instant.ofEpochMilli(this.filtroPedido.getDataInicio().getTime())
+				.atZone(ZoneId.systemDefault())
+				.toLocalDate();
+
+		pedidoAlimentoService.validarGeracaoAntesDoCorte(
+				horarioEntrega,
+				dataPedido,
+				2,
+				java.time.LocalDateTime.now());
 	}
-
 
 	private int calcularTotalDietaComum(List<DetalheItemEstruturaCardapioDTO> itens) {
 		if (itens == null)
@@ -600,3 +587,4 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	}
 
 }
+
