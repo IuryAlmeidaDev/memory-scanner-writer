@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,6 +132,26 @@ public class PedidoAlimento extends BaseModel<Long> {
     public void setStatus(Status status) {
 		this.status = status;
 	}
+
+    public boolean isPendente() {
+        return Status.PENDENTE.equals(this.status);
+    }
+
+    public boolean isAtivo() {
+        return Status.ATIVO.equals(this.status);
+    }
+
+    public boolean isEditavelAte(LocalDateTime dataHoraCorte, LocalDateTime referencia) {
+        if (dataHoraCorte == null || referencia == null) {
+            return false;
+        }
+
+        if (!(isPendente() || isAtivo())) {
+            return false;
+        }
+
+        return referencia.isBefore(dataHoraCorte);
+    }
 
 	@Override
     public int hashCode() {

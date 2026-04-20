@@ -3,14 +3,13 @@ package br.gov.mt.sejudh.sigepen.enumerator;
 import java.util.Arrays;
 
 public enum Status {
-	INATIVO("Inativo", "I",1),
-	ATIVO("Ativo", "A",2),
-	PENDENTE("Pendente", "P",3);
+    INATIVO("Inativo", "I", 1),
+    ATIVO("Ativo", "A", 2),
+    PENDENTE("Pendente", "P", 3);
 
-	private String descricao;
-	private final String inicial;
+    private String descricao;
+    private final String inicial;
     private Integer id;
-
 
     Status(String descricao, String inicial) {
         this.descricao = descricao;
@@ -23,13 +22,13 @@ public enum Status {
         this.id = id;
     }
 
-	public String getDescricao() {
-		return descricao;
-	}
+    public String getDescricao() {
+        return descricao;
+    }
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 
     public String getInicial() {
         return inicial;
@@ -45,5 +44,10 @@ public enum Status {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return this.descricao;
     }
 }
