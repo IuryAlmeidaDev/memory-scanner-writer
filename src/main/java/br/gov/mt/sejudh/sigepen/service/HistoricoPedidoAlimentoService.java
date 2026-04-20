@@ -10,7 +10,6 @@ import br.gov.mt.sejudh.sigepen.model.dto.ContratoComboDTO;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -21,7 +20,7 @@ public class HistoricoPedidoAlimentoService {
 
     @Inject
     private HistoricoPedidoAlimentoDAO dao;
-    
+
     @Inject
     private UnidadePrisionalDAO upDao;
 
@@ -42,7 +41,7 @@ public class HistoricoPedidoAlimentoService {
     public List<ContratoComboDTO> listarContratosParaCombo() {
         return dao.listarContratosParaCombo();
     }
-    
+
     @Transactional
     public PedidoAlimento buscarPorIdComItens(Long id) {
         LOGGER.info("Buscando PedidoAlimento com itens para relatório. ID: " + id);
@@ -54,35 +53,33 @@ public class HistoricoPedidoAlimentoService {
 
         return pedido;
     }
-    
+
     @Transactional
     public void finalizarPedido(Long idPedido) {
         try {
             PedidoAlimento pedido = dao.buscarPorId(idPedido);
-            
+
             if (pedido == null) {
                 throw new RuntimeException("Pedido não encontrado.");
             }
-            
-            if (!Status.PENDENTE.equals(pedido.getStatus())) {
-                throw new RuntimeException("Apenas pedidos PENDENTES podem ser finalizados.");
+
+            if (!Status.PENDENTE.equals(pedido.getStatus()) && !Status.ATIVO.equals(pedido.getStatus())) {
+                throw new RuntimeException("Apenas pedidos pendentes ou ativos podem ser finalizados.");
             }
 
-            dao.alterarStatus(idPedido, Status.ATIVO);
-            
+            if (Status.PENDENTE.equals(pedido.getStatus())) {
+                dao.alterarStatus(idPedido, Status.ATIVO);
+            }
+
             LOGGER.info("Pedido " + idPedido + " finalizado com sucesso.");
         } catch (Exception e) {
             LOGGER.severe("Erro ao finalizar pedido: " + e.getMessage());
-            throw e; 
+            throw e;
         }
     }
-    
+
     public String buscarNomeUnidadePorId(Long idUnidade) {
-    	UnidadePrisional up = upDao.buscaSimplesPorId(idUnidade);
-    	return up != null ? up.getNome() : "";
+        UnidadePrisional up = upDao.buscaSimplesPorId(idUnidade);
+        return up != null ? up.getNome() : "";
     }
-    
-    
-    
-   
 }
