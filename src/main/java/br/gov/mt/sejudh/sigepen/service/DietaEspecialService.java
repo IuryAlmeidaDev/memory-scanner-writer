@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -56,6 +57,10 @@ public class DietaEspecialService {
 	
 	public int quantidadeFiltrados(FiltroDietaEspecial filtro) {
 	    return dao.quantidadeFiltrados(filtro);
+	}
+	
+	public void encerrarDietasAtivasDoRecuperando(long idRecuperando, Date dataFim) {
+	    dao.encerrarDietasAtivasDoRecuperando(idRecuperando, dataFim);
 	}
 	
 }

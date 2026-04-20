@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -87,6 +88,16 @@ public class DietaEspecialDAO {
 		
 		List<DietaRecuperando> dietaRecuperandos = (List<DietaRecuperando>) query.getResultList();		
 		return dietaRecuperandos;
+	}
+	
+	public void encerrarDietasAtivasDoRecuperando(long idRecuperando, Date dataFim) {
+	    String jpql = "UPDATE DietaRecuperando d SET d.fim = :dataFim " +
+	                  "WHERE d.recuperando.id = :idRecuperando " +
+	                  "AND d.fim IS NULL";
+	    entityManager.createQuery(jpql)
+	        .setParameter("dataFim", dataFim)
+	        .setParameter("idRecuperando", idRecuperando)
+	        .executeUpdate();
 	}
 	
 }

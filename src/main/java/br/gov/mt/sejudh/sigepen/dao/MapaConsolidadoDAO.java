@@ -3,7 +3,9 @@ package br.gov.mt.sejudh.sigepen.dao;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -128,6 +130,78 @@ public class MapaConsolidadoDAO {
 		query.setParameter("idContrato", idContrato);
 		return (List<RelatorioMapaAlimentacaoConsultaDTO>) query.getResultList().stream()
 				.map(row -> new RelatorioMapaAlimentacaoConsultaDTO((Object[]) row)).collect(Collectors.toList());
+	}
+	
+	
+	public Map<String, Object> buscarTotaisPedidosAuditados(Long idUnidade, String dataInicio, String dataFim) {
+	    Map<String, Object> totaisRelatorio = new HashMap<>();
+	    totaisRelatorio.put("AUDIT_CAFE", 0);
+	    totaisRelatorio.put("AUDIT_ALMOCO", 0);
+	    totaisRelatorio.put("AUDIT_JANTA", 0);
+	    totaisRelatorio.put("AUDIT_CAFE_ESPECIAL", 0);
+	    totaisRelatorio.put("AUDIT_ALMOCO_ESPECIAL", 0);
+	    totaisRelatorio.put("AUDIT_JANTA_ESPECIAL", 0);
+
+	    String schema = Sigepen.SEJUDH_SCHEMA + ".";
+	    StringBuilder sql = new StringBuilder();
+	    
+	    sql.append("SELECT tr.DESCRICAO, ");
+	    sql.append("  SUM(sub.QTD_TOTAL_COMUM) AS TOTAL_COMUM, "); 
+	    sql.append("  SUM(NVL(esp.QTD_ESPECIAL, 0)) AS TOTAL_ESPECIAL ");
+	    sql.append("FROM " + schema + "SIGEPEN_PEDIDO_ALIMENTO p ");
+	    sql.append("JOIN " + schema + "TIPO_REFEICAO tr ON tr.ID = p.ID_TIPO_REFEICAO ");
+	    
+	    sql.append("JOIN ( ");
+	    sql.append("  SELECT ID_PEDIDO_ALIMENTO, SUM(QTD_ESTRUTURA) AS QTD_TOTAL_COMUM ");
+	    sql.append("  FROM ( ");
+	    sql.append("    SELECT ID_PEDIDO_ALIMENTO, ID_ESTRUTURA, MAX(QTD_RECUPERANDO) AS QTD_ESTRUTURA ");
+	    sql.append("    FROM " + schema + "SGP_ITEM_PEDIDO_ALIMENTO ");
+	    sql.append("    GROUP BY ID_PEDIDO_ALIMENTO, ID_ESTRUTURA ");
+	    sql.append("  ) ");
+	    sql.append("  GROUP BY ID_PEDIDO_ALIMENTO ");
+	    sql.append(") sub ON sub.ID_PEDIDO_ALIMENTO = p.ID_PEDIDO_ALIMENTO ");
+	    
+	    sql.append("LEFT JOIN ( ");
+	    sql.append("  SELECT d.ID_PEDIDO_ALIMENTO, SUM(d.QTD_RECUPERANDO) AS QTD_ESPECIAL ");
+	    sql.append("  FROM " + schema + "SGP_DIETA_ESP_PEDIDO d ");
+	    sql.append("  GROUP BY d.ID_PEDIDO_ALIMENTO ");
+	    sql.append(") esp ON esp.ID_PEDIDO_ALIMENTO = p.ID_PEDIDO_ALIMENTO ");	    
+	    
+	    sql.append("WHERE p.ID_UNIDADE_PRISIONAL = :idUnidade ");
+	    sql.append("AND p.STAT_PEDIDO = 1 "); 	    
+	    sql.append("AND TO_DATE(SUBSTR(p.DATA_PEDIDO, 1, 10), 'DD/MM/YYYY') ");
+	    sql.append("    BETWEEN TO_DATE(:inicio, 'DD/MM/YYYY') AND TO_DATE(:fim, 'DD/MM/YYYY') ");
+	    sql.append("GROUP BY tr.DESCRICAO ");
+
+	    try {
+	        Query query = entityManager.createNativeQuery(sql.toString());
+	        query.setParameter("idUnidade", idUnidade);
+	        query.setParameter("inicio", dataInicio);
+	        query.setParameter("fim", dataFim);
+
+	        List<Object[]> resultados = query.getResultList();
+
+	        for (Object[] linha : resultados) {
+	            String desc = (linha[0] != null) ? linha[0].toString().toUpperCase() : "";
+	            
+	            int comum    = ((Number) linha[1]).intValue(); 
+	            int especial = linha[2] != null ? ((Number) linha[2]).intValue() : 0;
+
+	            if (desc.contains("CAF")) {
+	                totaisRelatorio.put("AUDIT_CAFE", comum);
+	                totaisRelatorio.put("AUDIT_CAFE_ESPECIAL", especial);
+	            } else if (desc.contains("ALMOC") || desc.contains("ALMOÇ")) {
+	                totaisRelatorio.put("AUDIT_ALMOCO", comum);
+	                totaisRelatorio.put("AUDIT_ALMOCO_ESPECIAL", especial);
+	            } else if (desc.contains("JANT")) {
+	                totaisRelatorio.put("AUDIT_JANTA", comum);
+	                totaisRelatorio.put("AUDIT_JANTA_ESPECIAL", especial);
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return totaisRelatorio;
 	}
 
 }
