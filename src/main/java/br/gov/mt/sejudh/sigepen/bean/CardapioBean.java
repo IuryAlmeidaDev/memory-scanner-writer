@@ -11,6 +11,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 
 import br.gov.mt.sejudh.sigepen.util.CardapioUtil;
@@ -72,6 +73,7 @@ public class CardapioBean extends MetodosDePaginaBean {
 	private LazyDataModel<CardapioDTO> cardapios;
 	
 	private Apostilamento apostilamentoSelecionado;
+	private boolean podeListarTodasUnidadesNoFiltro;
 	
 	@Inject
 	private CardapioService service;
@@ -125,6 +127,7 @@ public class CardapioBean extends MetodosDePaginaBean {
 					}
 					break;
 				case LISTAR:
+					configurarFiltrosListagem();
 					pesquisar();
 					logDeAcesso(log, "Cardapios");
 					break;
@@ -212,8 +215,7 @@ public class CardapioBean extends MetodosDePaginaBean {
 
 			public List<CardapioDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
-				//getFiltro().setListarTodasUnidades(true);
-				getFiltro().setListarTodasUnidades(securityUtil.possuiPermissao("ListarTodasUnidades"));
+				getFiltro().setListarTodasUnidades(podeListarTodasUnidadesNoFiltro);
 				setRowCount(service.quantidadeFiltrados(getFiltro()));
 
 				try {
@@ -314,12 +316,135 @@ public class CardapioBean extends MetodosDePaginaBean {
 	}
 	
 	private void carregarListas() {
-		this.setUnidadesPrisionais(unidadeService.listarUnidadesNaoInativas());
+		this.podeListarTodasUnidadesNoFiltro = securityUtil.possuiPermissao("ListarTodasUnidades")
+				|| securityUtil.possuiPermissao("ListarUnidade");
+		this.setUnidadesPrisionais(this.podeListarTodasUnidadesNoFiltro
+				? unidadeService.listarUnidadesNaoInativas()
+				: criarListaUnidadeLogada());
 		this.tiposRefeicao = tipoRefeicaoService.listarTodos();
-		this.contratos = contratoService.listarAtivos();
+		this.contratos = this.podeListarTodasUnidadesNoFiltro
+				? contratoService.listarAtivos()
+				: criarListaContratoDaUnidadeLogada();
 		this.setTiposDieta(tipoDietaService.listarAtivas());
 		this.setDiasSemana(this.listarDiasSemana());
 		this.populaSemanas();
+
+		log.info("CardapioBean.carregarListas - permissaoAmplaFiltro=" + this.podeListarTodasUnidadesNoFiltro
+				+ ", unidadeLogada=" + (SecurityUtil.getUnidadeSelecionada() != null ? SecurityUtil.getUnidadeSelecionada().getId() : null)
+				+ ", totalUnidadesFiltro=" + (this.unidadesPrisionais != null ? this.unidadesPrisionais.size() : null)
+				+ ", totalContratosFiltro=" + (this.contratos != null ? this.contratos.size() : null));
+	}
+
+	private void configurarFiltrosListagem() {
+		if (this.getFiltro() == null) {
+			return;
+		}
+
+		if (this.podeListarTodasUnidadesNoFiltro) {
+			if (this.getFiltro().getContrato() != null && this.getFiltro().getContrato().getId() != null
+					&& this.getFiltro().getContrato().getId() > 0) {
+				atualizarFiltroUnidadePorContrato(null);
+			} else if (this.unidadesPrisionais == null || this.unidadesPrisionais.isEmpty()) {
+				this.setUnidadesPrisionais(unidadeService.listarUnidadesNaoInativas());
+			}
+			log.info("CardapioBean.configurarFiltrosListagem - perfil amplo, contratoFiltro="
+					+ (this.getFiltro().getContrato() != null ? this.getFiltro().getContrato().getId() : null)
+					+ ", unidadeFiltro=" + (this.getFiltro().getUnidadePrisional() != null ? this.getFiltro().getUnidadePrisional().getId() : null)
+					+ ", totalUnidadesFiltro=" + (this.unidadesPrisionais != null ? this.unidadesPrisionais.size() : null));
+			return;
+		}
+
+		UnidadePrisional unidadeLogada = SecurityUtil.getUnidadeSelecionada();
+		if (unidadeLogada == null) {
+			return;
+		}
+
+		this.getFiltro().setUnidadePrisional(unidadeLogada);
+		this.getFiltro().setContrato(buscarContratoAtualDaUnidade(unidadeLogada));
+		log.info("CardapioBean.configurarFiltrosListagem - perfil restrito, unidadeFiltro="
+				+ (this.getFiltro().getUnidadePrisional() != null ? this.getFiltro().getUnidadePrisional().getId() : null)
+				+ ", contratoFiltro=" + (this.getFiltro().getContrato() != null ? this.getFiltro().getContrato().getId() : null));
+	}
+
+	private List<UnidadePrisional> criarListaUnidadeLogada() {
+		List<UnidadePrisional> unidades = new ArrayList<>();
+		if (SecurityUtil.getUnidadeSelecionada() != null) {
+			unidades.add(SecurityUtil.getUnidadeSelecionada());
+		}
+		return unidades;
+	}
+
+	private List<Contrato> criarListaContratoDaUnidadeLogada() {
+		List<Contrato> contratosDaUnidade = new ArrayList<>();
+		UnidadePrisional unidadeLogada = SecurityUtil.getUnidadeSelecionada();
+		if (unidadeLogada == null) {
+			return contratosDaUnidade;
+		}
+
+		Contrato contratoAtual = buscarContratoAtualDaUnidade(unidadeLogada);
+		if (contratoAtual != null) {
+			contratosDaUnidade.add(contratoAtual);
+		}
+		return contratosDaUnidade;
+	}
+
+	private Contrato buscarContratoAtualDaUnidade(UnidadePrisional unidade) {
+		try {
+			return contratoService.buscarContratoVigenteEAtivoPorUnidade(unidade.getId(), new Date());
+		} catch (Exception e) {
+			LoggerUtil.logErro(e, log);
+			return null;
+		}
+	}
+
+	public void atualizarFiltroUnidadePorContrato(AjaxBehaviorEvent event) {
+		if (!this.podeListarTodasUnidadesNoFiltro) {
+			return;
+		}
+
+		if (this.getFiltro() == null || this.getFiltro().getContrato() == null
+				|| this.getFiltro().getContrato().getId() == null || this.getFiltro().getContrato().getId() <= 0) {
+			this.setUnidadesPrisionais(unidadeService.listarUnidadesNaoInativas());
+			this.getFiltro().setUnidadePrisional(null);
+			log.info("CardapioBean.atualizarFiltroUnidadePorContrato - contrato nao informado, totalUnidadesFiltro="
+					+ (this.unidadesPrisionais != null ? this.unidadesPrisionais.size() : null));
+			return;
+		}
+
+		Contrato contratoSelecionado = contratoService.buscaPorId(this.getFiltro().getContrato().getId());
+		if (contratoSelecionado == null || contratoSelecionado.getUnidades() == null || contratoSelecionado.getUnidades().isEmpty()) {
+			this.setUnidadesPrisionais(unidadeService.listarUnidadesNaoInativas());
+			this.getFiltro().setUnidadePrisional(null);
+			log.info("CardapioBean.atualizarFiltroUnidadePorContrato - contrato sem unidades vinculadas. contrato="
+					+ (this.getFiltro().getContrato() != null ? this.getFiltro().getContrato().getId() : null)
+					+ ", totalUnidadesFiltro=" + (this.unidadesPrisionais != null ? this.unidadesPrisionais.size() : null));
+			return;
+		}
+
+		this.getFiltro().setContrato(contratoSelecionado);
+		this.setUnidadesPrisionais(new ArrayList<>(contratoSelecionado.getUnidades()));
+
+		if (contratoSelecionado.getUnidades().size() == 1) {
+			this.getFiltro().setUnidadePrisional(contratoSelecionado.getUnidades().get(0));
+			return;
+		}
+
+		UnidadePrisional unidadeSelecionada = this.getFiltro().getUnidadePrisional();
+		boolean unidadeAindaPertenceAoContrato = unidadeSelecionada != null
+				&& contratoSelecionado.getUnidades().stream()
+						.anyMatch(unidade -> unidade.getId() == unidadeSelecionada.getId());
+
+		if (!unidadeAindaPertenceAoContrato) {
+			this.getFiltro().setUnidadePrisional(null);
+		}
+		log.info("CardapioBean.atualizarFiltroUnidadePorContrato - contrato selecionado="
+				+ contratoSelecionado.getId()
+				+ ", unidadesNoContrato=" + contratoSelecionado.getUnidades().size()
+				+ ", totalUnidadesFiltro=" + (this.unidadesPrisionais != null ? this.unidadesPrisionais.size() : null));
+	}
+
+	public boolean isFiltroUnidadeHabilitado() {
+		return this.podeListarTodasUnidadesNoFiltro;
 	}
 	
 	private void populaSemanas(){
@@ -398,6 +523,10 @@ public class CardapioBean extends MetodosDePaginaBean {
 
 	public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
 		this.unidadesPrisionais = unidadesPrisionais;
+	}
+
+	public boolean isPodeListarTodasUnidadesNoFiltro() {
+		return podeListarTodasUnidadesNoFiltro;
 	}
 
 	public List<TipoDieta> getTiposDieta() {
