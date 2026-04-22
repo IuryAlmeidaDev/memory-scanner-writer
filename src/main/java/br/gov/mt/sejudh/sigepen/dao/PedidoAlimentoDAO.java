@@ -46,6 +46,61 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
         return query.getSingleResult();
     }
 
+    public boolean existePedidoAtivoPorTipoRefeicaoEUnidade(String dataPedido, Long idTipoRefeicao,
+            Long idUnidadePrisional, Long idContrato) {
+        TypedQuery<Boolean> query = em.createQuery(
+                "SELECT CASE WHEN (COUNT(p) > 0) THEN true ELSE false END " +
+                "FROM PedidoAlimento p " +
+                "WHERE p.dataPedido = :dataPedido " +
+                "AND p.idTipoRefeicao = :idTipoRefeicao " +
+                "AND p.idUnidadePrisional = :idUnidadePrisional " +
+                "AND p.idContrato = :idContrato " +
+                "AND p.status = :statusAtivo",
+                Boolean.class);
+        query.setParameter("dataPedido", dataPedido);
+        query.setParameter("idTipoRefeicao", idTipoRefeicao);
+        query.setParameter("idUnidadePrisional", idUnidadePrisional);
+        query.setParameter("idContrato", idContrato);
+        query.setParameter("statusAtivo", Status.ATIVO);
+        return query.getSingleResult();
+    }
+
+    public List<Long> findPedidosEmAbertoPorTipoRefeicaoEUnidade(String dataPedido, Long idTipoRefeicao,
+            Long idUnidadePrisional, Long idContrato) {
+        TypedQuery<Long> query = em.createQuery(
+                "SELECT p.id FROM PedidoAlimento p " +
+                "WHERE p.dataPedido = :dataPedido " +
+                "AND p.idTipoRefeicao = :idTipoRefeicao " +
+                "AND p.idUnidadePrisional = :idUnidadePrisional " +
+                "AND p.idContrato = :idContrato " +
+                "AND p.status IN (:statusesEmAberto)",
+                Long.class);
+        query.setParameter("dataPedido", dataPedido);
+        query.setParameter("idTipoRefeicao", idTipoRefeicao);
+        query.setParameter("idUnidadePrisional", idUnidadePrisional);
+        query.setParameter("idContrato", idContrato);
+        query.setParameter("statusesEmAberto", Arrays.asList(Status.PENDENTE, Status.ATIVO));
+        return query.getResultList();
+    }
+
+    public List<Long> findPedidosPendentesPorTipoRefeicaoEUnidade(String dataPedido, Long idTipoRefeicao,
+            Long idUnidadePrisional, Long idContrato) {
+        TypedQuery<Long> query = em.createQuery(
+                "SELECT p.id FROM PedidoAlimento p " +
+                "WHERE p.dataPedido = :dataPedido " +
+                "AND p.idTipoRefeicao = :idTipoRefeicao " +
+                "AND p.idUnidadePrisional = :idUnidadePrisional " +
+                "AND p.idContrato = :idContrato " +
+                "AND p.status = :statusPendente",
+                Long.class);
+        query.setParameter("dataPedido", dataPedido);
+        query.setParameter("idTipoRefeicao", idTipoRefeicao);
+        query.setParameter("idUnidadePrisional", idUnidadePrisional);
+        query.setParameter("idContrato", idContrato);
+        query.setParameter("statusPendente", Status.PENDENTE);
+        return query.getResultList();
+    }
+
     /**
      * Busca IDs de pedidos PENDENTE ou ATIVO para inativar ao confirmar substituição
      * de um pedido assinado.
