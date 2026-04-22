@@ -31,17 +31,23 @@
 					itemLabel="#{item.numContrato}" temSelecione="true" filter="true"
 					filterMatchMode="custom" filterFunction="removeAcento"
 					converter="SimpleEntityConverter"
-					styleFormLabelColumn="min-width:150px !important" />
+					styleFormLabelColumn="min-width:150px !important">
+					<p:ajax process="@this"
+						listener="#{cardapioBean.onContratoFiltroChange}"
+						update=":meuFormulario:unidadePrisionalWrapper" />
+				</sgp:formSelectOneMenu>
 
-				<sgp:formSelectOneMenu id="unidadePrisional"
-					labelValue="Unidade Prisional" itemValue="#{item}"
-					itemLabel="#{item.nome}"
-					itemsValue="#{cardapioBean.unidadesPrisionais}"
-					value="#{cardapioBean.filtro.unidadePrisional}"
-					converter="SimpleEntityConverter" temSelecione="true" filter="true"
-					filterMatchMode="custom" filterFunction="removeAcento"
-					styleFormLabelColumn="min-width:150px !important"
-					rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
+				<p:outputPanel id="unidadePrisionalWrapper">
+					<sgp:formSelectOneMenu id="unidadePrisional"
+						labelValue="Unidade Prisional" itemValue="#{item}"
+						itemLabel="#{item.nome}"
+						itemsValue="#{cardapioBean.unidadesPrisionais}"
+						value="#{cardapioBean.filtro.unidadePrisional}"
+						converter="SimpleEntityConverter" temSelecione="true" filter="true"
+						filterMatchMode="custom" filterFunction="removeAcento"
+						styleFormLabelColumn="min-width:150px !important"
+						rendered="#{cardapioBean.exibirFiltroUnidadePrisional}" />
+				</p:outputPanel>
 
 				<p:column headerText="Unidade Prisional"
 					sortBy="#{cardapio.nomeUnidadePrisional}">
