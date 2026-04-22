@@ -5,177 +5,157 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
-	
+
 	<ui:define name="footer">
 		<h:outputScript library="js" name="selectOneMenuFilter.js" />
 	</ui:define>
 
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
-		
-		<h3> Cardápios </h3>
+
+		<h3>Cardápios</h3>
 
 		<h:form>
-			<p:button value="Cadastrar" outcome="pretty:CadastrarCardapio" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarCardapio')}"/>
+			<p:button value="Cadastrar" outcome="pretty:CadastrarCardapio"
+				icon="ui-icon-plus"
+				rendered="#{securityUtil.possuiPermissao('CadastrarCardapio')}" />
 		</h:form>
-		
+
 		<h:form id="meuFormulario">
 			<p:panel>
-                <p:outputLabel value="Consulta"/>
+				<p:outputLabel value="Consulta" />
 
-                <sgp:formSelectOneMenu 
-						id="contrato"
-                        labelValue="Contrato"
-						value="#{cardapioBean.filtro.contrato}"
-						itemsValue="#{cardapioBean.contratos}" 
-						itemValue="#{item}"
-						itemLabel="#{item.numContrato}" 
-						temSelecione="true"
-						filter="true" filterMatchMode="custom" filterFunction="removeAcento"
-						converter="SimpleEntityConverter"
-						styleFormLabelColumn="min-width:150px !important"
-						disabled="#{not cardapioBean.podeListarTodasUnidadesNoFiltro}"
-				>
-					<p:ajax process="@this" update=":meuFormulario:unidadePrisional" listener="#{cardapioBean.atualizarFiltroUnidadePorContrato}" />
+				<sgp:formSelectOneMenu id="contrato" labelValue="Contrato"
+					value="#{cardapioBean.filtro.contrato}"
+					itemsValue="#{cardapioBean.contratos}" itemValue="#{item}"
+					itemLabel="#{item.numContrato}" temSelecione="true" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					converter="SimpleEntityConverter"
+					styleFormLabelColumn="min-width:150px !important" />
+
+				<sgp:formSelectOneMenu id="unidadePrisional"
+					labelValue="Unidade Prisional" itemValue="#{item}"
+					itemLabel="#{item.nome}"
+					itemsValue="#{cardapioBean.unidadesPrisionais}"
+					value="#{cardapioBean.filtro.unidadePrisional}"
+					converter="SimpleEntityConverter" temSelecione="true" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					styleFormLabelColumn="min-width:150px !important"
+					rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
+
+				<p:column headerText="Unidade Prisional"
+					sortBy="#{cardapio.nomeUnidadePrisional}">
+					<h:outputText value="#{cardapio.nomeUnidadePrisional}" />
+				</p:column>
+
+				<sgp:formSelectOneMenu id="tipoRefeicao"
+					labelValue="Tipo de Refeição"
+					itemsValue="#{cardapioBean.tiposRefeicao}" itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					value="#{cardapioBean.filtro.tipoRefeicao}" temSelecione="true"
+					styleFormLabelColumn="min-width:150px !important"
+					converter="SimpleEntityConverter" display="text" />
+
+				<sgp:formSelectOneMenu id="tipoDieta" labelValue="Tipo de Dieta"
+					itemsValue="#{cardapioBean.tiposDieta}" itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					value="#{cardapioBean.filtro.tipoDieta}" temSelecione="true"
+					styleFormLabelColumn="min-width:150px !important"
+					converter="SimpleEntityConverter" display="text" />
+
+				<sgp:formSelectOneMenu id="semana" labelValue="Semana"
+					itemsValue="#{cardapioBean.semanas}" itemValue="#{item}"
+					itemLabel="#{item.descricao}" value="#{cardapioBean.filtro.semana}"
+					temSelecione="true"
+					styleFormLabelColumn="min-width:150px !important"
+					converter="SimpleEntityConverter" display="text" />
+
+				<sgp:formSelectOneMenu id="diaSemana" labelValue="Dia da Semana"
+					itemsValue="#{cardapioBean.diasSemana}" itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					value="#{cardapioBean.filtro.diaSemana}" temSelecione="true"
+					styleFormLabelColumn="min-width:150px !important"
+					converter="SimpleEntityConverter" display="text" />
+
+				<sgp:formSelectOneMenu id="festivo" labelValue="Cardápio Festivo?"
+					value="#{cardapioBean.filtro.festivo}" itemsValue="#{null}"
+					itemValue="#{null}" itemLabel=""
+					styleFormLabelColumn="min-width:150px !important"
+					temSelecione="true" display="text">
+					<f:selectItem itemLabel="Sim" itemValue="true" />
+					<f:selectItem itemLabel="Não" itemValue="false" />
 				</sgp:formSelectOneMenu>
-                
-                <sgp:formSelectOneMenu 
-                		id="unidadePrisional"
-                		labelValue="Unidade Prisional"
-                		itemValue="#{item}" 
-                		itemLabel="#{item.nome}"
-                		itemsValue="#{cardapioBean.unidadesPrisionais}"
-                		value="#{cardapioBean.filtro.unidadePrisional}" 
-                		converter="SimpleEntityConverter"
-                		temSelecione="true"
-                		filter="true" filterMatchMode="custom" filterFunction="removeAcento"
-                		styleFormLabelColumn="min-width:150px !important"
-                		disabled="#{not cardapioBean.filtroUnidadeHabilitado}"
-				/>
-                
-                <sgp:formSelectOneMenu 
-                		id="tipoRefeicao" 
-                		labelValue="Tipo de Refeição" 
-                		itemsValue="#{cardapioBean.tiposRefeicao}" 
-                		itemValue="#{item}" 
-                		itemLabel="#{item.descricao}"						
-						value="#{cardapioBean.filtro.tipoRefeicao}" 
-						temSelecione="true"
-						styleFormLabelColumn="min-width:150px !important"
-						converter="SimpleEntityConverter" 
-						display="text"
-				/>
 
-                <sgp:formSelectOneMenu
-                		id="tipoDieta"
-                		labelValue="Tipo de Dieta"
-                		itemsValue="#{cardapioBean.tiposDieta}"
-                		itemValue="#{item}"
-                		itemLabel="#{item.descricao}"
-						value="#{cardapioBean.filtro.tipoDieta}"
-						temSelecione="true"
-						styleFormLabelColumn="min-width:150px !important"
-						converter="SimpleEntityConverter"
-						display="text"
-				/>
-
-				<sgp:formSelectOneMenu 
-                		id="semana" 
-                		labelValue="Semana" 
-                		itemsValue="#{cardapioBean.semanas}" 
-                		itemValue="#{item}" 
-                		itemLabel="#{item.descricao}"						
-						value="#{cardapioBean.filtro.semana}" 
-						temSelecione="true"
-						styleFormLabelColumn="min-width:150px !important"
-						converter="SimpleEntityConverter" 
-						display="text"
-				/>
-
-				<sgp:formSelectOneMenu 
-                		id="diaSemana" 
-                		labelValue="Dia da Semana" 
-                		itemsValue="#{cardapioBean.diasSemana}" 
-                		itemValue="#{item}" 
-                		itemLabel="#{item.descricao}"						
-						value="#{cardapioBean.filtro.diaSemana}" 
-						temSelecione="true"
-						styleFormLabelColumn="min-width:150px !important"
-						converter="SimpleEntityConverter" 
-						display="text"
-				/>
-					
-				<sgp:formSelectOneMenu
-						id="festivo" 
-						labelValue="Cardápio Festivo?"
-						value="#{cardapioBean.filtro.festivo}"
-						itemsValue="#{null}"
-						itemValue="#{null}"
-						itemLabel=""
-						styleFormLabelColumn="min-width:150px !important"
-						temSelecione="true"
-						display="text">
-							<f:selectItem itemLabel="Sim" itemValue="true" />
-							<f:selectItem itemLabel="Não" itemValue="false" />
-				</sgp:formSelectOneMenu>
-				
 				<br />
 				<br />
-				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
-        	</p:panel>
-        </h:form>
-		
+				<p:commandButton value="Pesquisar" update=":registrosForm"
+					process="@form" icon="ui-icon-search" />
+			</p:panel>
+		</h:form>
+
 		<h:form id="registrosForm">
-			<p:dataTable id="dataTable" var="cardapio" value="#{cardapioBean.cardapios}" emptyMessage="Nenhum registro encontrado."
-				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{cardapio.id}"
-				rowsPerPageTemplate="10,20,30,50">
-				
-				<p:column headerText="Código" style="width:100px;" sortBy="#{cardapio.id}">
+			<p:dataTable id="dataTable" var="cardapio"
+				value="#{cardapioBean.cardapios}"
+				emptyMessage="Nenhum registro encontrado." rows="10"
+				paginator="true" paginatorPosition="bottom" lazy="true"
+				sortBy="#{cardapio.id}" rowsPerPageTemplate="10,20,30,50">
+
+				<p:column headerText="Código" style="width:100px;"
+					sortBy="#{cardapio.id}">
 					<h:outputText value="#{cardapio.id}" />
 				</p:column>
-				
-				<p:column headerText="Refeição"  style="width:200px;" sortBy="#{cardapio.nomeRefeicao}">
+
+				<p:column headerText="Refeição" style="width:200px;"
+					sortBy="#{cardapio.nomeRefeicao}">
 					<h:outputText value="#{cardapio.nomeRefeicao}" />
 				</p:column>
 
-				<p:column headerText="Dieta"  style="width:200px;" sortBy="#{cardapio.nomeDieta}">
+				<p:column headerText="Dieta" style="width:200px;"
+					sortBy="#{cardapio.nomeDieta}">
 					<h:outputText value="#{cardapio.nomeDieta}" />
 				</p:column>
 
-				<p:column headerText="Semana" style="width:200px;" sortBy="#{cardapio.semana}">
+				<p:column headerText="Semana" style="width:200px;"
+					sortBy="#{cardapio.semana}">
 					<h:outputText value="#{cardapio.semana}" />
 				</p:column>
-				
+
 				<p:column headerText="Dia" sortBy="#{cardapio.diaSemana}">
 					<h:outputText value="#{cardapio.diaSemana.descricao}" />
 				</p:column>
 
-				<p:column headerText="Próxima Ocorrência" style="width:150px;" sortBy="#{cardapio.proximaData}">
+				<p:column headerText="Próxima Ocorrência" style="width:150px;"
+					sortBy="#{cardapio.proximaData}">
 					<h:outputText value="#{cardapio.proximaData}">
 						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>
 				</p:column>
 
-				<p:column headerText="Unidade Prisional" sortBy="#{cardapio.nomeUnidadePrisional}">
+				<p:column headerText="Unidade Prisional"
+					sortBy="#{cardapio.nomeUnidadePrisional}">
 					<h:outputText value="#{cardapio.nomeUnidadePrisional}" />
 				</p:column>
 
 				<p:column headerText="Contrato" sortBy="#{cardapio.numContrato}">
 					<h:outputText value="#{cardapio.numContrato}" />
 				</p:column>
-				
+
 				<p:column headerText="Ações" style="width:150px;">
 					<center>
-						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarCardapio" rendered="#{securityUtil.possuiPermissao('VisualizarCardapio')}">
+						<p:button title="Visualizar" icon="ui-icon-document"
+							outcome="pretty:VisualizarCardapio"
+							rendered="#{securityUtil.possuiPermissao('VisualizarCardapio')}">
 							<f:param name="id" value="#{cardapio.id}" />
 						</p:button>
-						
-						<p:button title="Editar" icon="ui-icon-pencil" outcome="pretty:AlterarCardapio" rendered="#{securityUtil.possuiPermissao('AlterarCardapio')}">
+
+						<p:button title="Editar" icon="ui-icon-pencil"
+							outcome="pretty:AlterarCardapio"
+							rendered="#{securityUtil.possuiPermissao('AlterarCardapio')}">
 							<f:param name="id" value="#{cardapio.id}" />
 						</p:button>
 					</center>
 				</p:column>
-				
+
 				<f:facet name="footer">
 					Total de registros: #{cardapioBean.cardapios.rowCount}
 				</f:facet>

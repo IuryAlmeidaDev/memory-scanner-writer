@@ -53,556 +53,500 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @ManagedBean
 @ViewScoped
 @URLMappings(mappings = {
-		@URLMapping(id = "ListarCardapio", pattern = "/cardapio", viewId = "/WEB-INF/pages/cardapio/ListarCardapio.xhtml"),
-		@URLMapping(id = "CadastrarCardapio", pattern = "/cardapio/cadastrar", viewId = "/WEB-INF/pages/cardapio/CadastrarCardapio.xhtml"),
-		@URLMapping(id = "AlterarCardapio", pattern = "/cardapio/alterar/#{id}", viewId = "/WEB-INF/pages/cardapio/CadastrarCardapio.xhtml"),
-		@URLMapping(id = "VisualizarCardapio", pattern = "/cardapio/visualizar/#{id}", viewId = "/WEB-INF/pages/cardapio/CadastrarCardapio.xhtml") })
+        @URLMapping(id = "ListarCardapio",    pattern = "/cardapio",                  viewId = "/WEB-INF/pages/cardapio/ListarCardapio.xhtml"),
+        @URLMapping(id = "CadastrarCardapio", pattern = "/cardapio/cadastrar",        viewId = "/WEB-INF/pages/cardapio/CadastrarCardapio.xhtml"),
+        @URLMapping(id = "AlterarCardapio",   pattern = "/cardapio/alterar/#{id}",   viewId = "/WEB-INF/pages/cardapio/CadastrarCardapio.xhtml"),
+        @URLMapping(id = "VisualizarCardapio",pattern = "/cardapio/visualizar/#{id}",viewId = "/WEB-INF/pages/cardapio/CadastrarCardapio.xhtml") })
 public class CardapioBean extends MetodosDePaginaBean {
-	
-	private DiasSemana[] diasSemana;
-	private List<ObjetoSelectOne> semanas;
-	private List<TipoRefeicao> tiposRefeicao;
-	private List<Contrato> contratos;
-	private List<UnidadePrisional> unidadesPrisionais;
-	private List<TipoDieta> tiposDieta;
-	
-	private Cardapio cardapio;
-	private ItemCardapio itemCardapio;
-	private ObjetoSelectOne semanaSelecionada;
-	private FiltroCardapio filtro;
-	private LazyDataModel<CardapioDTO> cardapios;
-	
-	private Apostilamento apostilamentoSelecionado;
-	private boolean podeListarTodasUnidadesNoFiltro;
-	
-	@Inject
-	private CardapioService service;
-	
-	@Inject
-	private TipoRefeicaoService tipoRefeicaoService;
-	
-	@Inject
-	private TipoDietaService tipoDietaService;
-	
-	@Inject
-	private ContratoService contratoService;
-	
-	@Inject 
-	private ItemCardapioService itemCardapioService;
-	
-	@Inject
-	private UnidadePrisionalService unidadeService;
-	
-	@Inject
-	private FacesUtil facesUtil;
-	
-	@Inject
-	private SecurityUtil securityUtil;
-
-	@Inject
-	private Logger log;
-	
-	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
-	public void carregaFiltros() throws Exception {
-		this.setFiltro(new FiltroCardapio());
-		super.carregarFiltroPaginacao(FiltroCardapio.class, this, getFiltro());
-	}
-	
-	@URLAction(onPostback = false)
-	public String init() {
-		try {	
-			carregarListas();
-			
-			switch (this.getAcaoDeTela()) {
-				case CADASTRAR:
-					this.cardapio = new Cardapio();
-					break;
-				case VISUALIZAR:
-				case ALTERAR:
-					long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
-	
-					if (!buscarCardapio(id)) {
-						facesUtil.exibirMensagemErro("Cardapio não encontrado.", true);
-						return "pretty:ListarCardapio";
-					}
-					break;
-				case LISTAR:
-					configurarFiltrosListagem();
-					pesquisar();
-					logDeAcesso(log, "Cardapios");
-					break;
-				default:
-					break;
-			}
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
-			LoggerUtil.logErro(e, log);
-		}
-
-		return null;
-	}
-	
-	public String salvar() {
-		String retorno = null;
-
-		try {
-			if (this.cardapio.getId() == null || this.cardapio.getId() <= 0) {
-				Cardapio existente = service.buscarExistente(this.cardapio);
-				if (existente != null) {
-					RequestContext.getCurrentInstance().execute("PF('confirmarSobrescrita').show()");
-					return null;
-				}
-			}
-
-			service.salvar(this.cardapio);
-			facesUtil.exibirMensagemInfo("Cardápio de " + this.cardapio.getDiaSemana().getDescricao() + " salvo com Sucesso!", true);
-			retorno = "pretty:ListarCardapio";
-			LoggerUtil.logInfo(Acao.SALVAR, cardapio, log);
-		} catch (ValidacaoException e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-					"Erro ao salvar cardápio (" + this.cardapio.getId() + "): " + e.getMessage());
-			LoggerUtil.logErro(Acao.SALVAR, cardapio, e, log);
-		}
-
-		return retorno;
-	}
-
-	public String sobrescrever() {
-		String retorno = null;
-		try {
-			Cardapio existente = service.buscarExistente(this.cardapio);
-			if (existente != null) {
-				existente.setItensCardapio(new ArrayList<>(this.cardapio.getItensCardapio()));
-				for (ItemCardapio item : existente.getItensCardapio()) {
-					item.setCardapio(existente);
-				}
-				existente.setFestivo(this.cardapio.getFestivo());
-				existente.setData(this.cardapio.getData());
-
-				service.salvar(existente);
-				facesUtil.exibirMensagemInfo("Cardápio de " + existente.getDiaSemana().getDescricao() + " substituído com Sucesso!", true);
-				retorno = "pretty:ListarCardapio";
-				LoggerUtil.logInfo(Acao.SALVAR, existente, log);
-			}
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao substituir cardápio: " + e.getMessage());
-			LoggerUtil.logErro(Acao.SALVAR, cardapio, e, log);
-		}
-		return retorno;
-	}
-	
-	private boolean buscarCardapio(long id) {
-		if (id <= 0) {
-			return false;
-		}
-
-		this.cardapio = service.buscarPorId(id);
-		
-		ObjetoSelectOne semana = new ObjetoSelectOne();
-		semana.setId(this.cardapio.getSemana());
-		this.setSemanaSelecionada(semana);
-		
-		calcularProximaDataAoAlterarSemanaOuDia();
-
-		return this.cardapio != null;
-	}
-	
-	public void pesquisar() {
-		this.setCardapios(new LazyDataModel<CardapioDTO>() {
-			private static final long serialVersionUID = -6077221856355008621L;
-
-			public List<CardapioDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-					Map<String, Object> filters) {
-				getFiltro().setListarTodasUnidades(podeListarTodasUnidadesNoFiltro);
-				setRowCount(service.quantidadeFiltrados(getFiltro()));
-
-				try {
-					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				List<CardapioDTO> dtos = service.buscarDTOPorFiltro(getFiltro());
-				for (CardapioDTO dto : dtos) {
-					if (dto.getSemana() != null && dto.getDiaSemana() != null) {
-						LocalDate proxima = CardapioUtil.calcularProximaData(dto.getSemana().intValue(),
-								dto.getDiaSemana().getId(), LocalDate.now());
-						if (proxima != null) {
-							dto.setProximaData(Date.from(proxima.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-						}
-					}
-				}
-
-				if ("proximaData".equals(sortField)) {
-					List<CardapioDTO> sortedDtos = new ArrayList<>(dtos);
-					sortedDtos.sort((c1, c2) -> {
-						Date d1 = c1.getProximaData();
-						Date d2 = c2.getProximaData();
-						if (d1 == null && d2 == null) return 0;
-						if (d1 == null) return 1;
-						if (d2 == null) return -1;
-						int comp = d1.compareTo(d2);
-						return SortOrder.ASCENDING.equals(sortOrder) ? comp : -comp;
-					});
-					return sortedDtos;
-				}
-
-				return dtos;
-			}
-		});
-	}
-	
-	public void abrirDialogItem(ActionEvent event) {
-		this.itemCardapio = null;
-		facesUtil.exibirPaginaDialog("pretty:AssociarItemCardapio");
-	}
-	
-	public void abrirDialogAlterarItem(ItemCardapio itemCardapio) {
-		this.itemCardapio = itemCardapio;
-		facesUtil.setObjetoSessao("itemCardapio", itemCardapio);
-		facesUtil.exibirPaginaDialog("pretty:AssociarItemCardapio");
-		LoggerUtil.logInfo(Acao.ALTERAR, itemCardapio, log);
-	}
-	
-	public void incluirItemCardapio(SelectEvent event) {
-		ItemCardapio itemCardapio = (ItemCardapio) event.getObject();
-
-		try {
-			if (itemCardapio != null) {
-				if (itemCardapio.getFem() < 0 || itemCardapio.getMasc() < 0) {
-					facesUtil.exibirMensagemErro("Valor de gramatura de alimento não pode ser negativo", true);
-					return;
-				}
-
-				if (this.itemCardapio != null) {
-					cardapio.getItensCardapio().remove(this.itemCardapio);
-				} else {
-					itemCardapio.setCardapio(this.cardapio);
-				}
-
-				cardapio.getItensCardapio().add(itemCardapio);
-
-				if (this.cardapio.getId() != null && this.cardapio.getId() > 0) {
-					itemCardapioService.salvar(itemCardapio);
-					LoggerUtil.logInfo(Acao.SALVAR, itemCardapio, log);
-				} else {
-					LoggerUtil.logInfo(Acao.ADICIONAR, itemCardapio, log);
-				}
-			}
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-					"Erro ao incluir item ao cardápio: " + e.getMessage());
-			LoggerUtil.logErro(Acao.ADICIONAR, itemCardapio, e, log);
-		}
-	}
-
-	public void excluirItemCardapio(ItemCardapio itemCardapio) {
-		try {
-			this.cardapio.getItensCardapio().remove(itemCardapio);
-
-			if (this.cardapio.getId() > 0) {
-				itemCardapioService.excluir(itemCardapio);
-				LoggerUtil.logInfo(Acao.EXCLUIR, itemCardapio, log);
-			} else {
-				LoggerUtil.logInfo(Acao.REMOVER, itemCardapio, log);
-			}
-		} catch (Exception e) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
-					"Erro ao excluir item do Cardapio: " + e.getMessage());
-			LoggerUtil.logErro(Acao.REMOVER, itemCardapio, e, log);
-		}
-	}
-	
-	private void carregarListas() {
-		this.podeListarTodasUnidadesNoFiltro = securityUtil.possuiPermissao("ListarTodasUnidades")
-				|| securityUtil.possuiPermissao("ListarUnidade");
-		this.setUnidadesPrisionais(this.podeListarTodasUnidadesNoFiltro
-				? unidadeService.listarUnidadesNaoInativas()
-				: criarListaUnidadeLogada());
-		this.tiposRefeicao = tipoRefeicaoService.listarTodos();
-		this.contratos = this.podeListarTodasUnidadesNoFiltro
-				? contratoService.listarAtivos()
-				: criarListaContratoDaUnidadeLogada();
-		this.setTiposDieta(tipoDietaService.listarAtivas());
-		this.setDiasSemana(this.listarDiasSemana());
-		this.populaSemanas();
-
-		log.info("CardapioBean.carregarListas - permissaoAmplaFiltro=" + this.podeListarTodasUnidadesNoFiltro
-				+ ", unidadeLogada=" + (SecurityUtil.getUnidadeSelecionada() != null ? SecurityUtil.getUnidadeSelecionada().getId() : null)
-				+ ", totalUnidadesFiltro=" + (this.unidadesPrisionais != null ? this.unidadesPrisionais.size() : null)
-				+ ", totalContratosFiltro=" + (this.contratos != null ? this.contratos.size() : null));
-	}
-
-	private void configurarFiltrosListagem() {
-		if (this.getFiltro() == null) {
-			return;
-		}
-
-		if (this.podeListarTodasUnidadesNoFiltro) {
-			if (this.getFiltro().getContrato() != null && this.getFiltro().getContrato().getId() != null
-					&& this.getFiltro().getContrato().getId() > 0) {
-				atualizarFiltroUnidadePorContrato(null);
-			} else if (this.unidadesPrisionais == null || this.unidadesPrisionais.isEmpty()) {
-				this.setUnidadesPrisionais(unidadeService.listarUnidadesNaoInativas());
-			}
-			log.info("CardapioBean.configurarFiltrosListagem - perfil amplo, contratoFiltro="
-					+ (this.getFiltro().getContrato() != null ? this.getFiltro().getContrato().getId() : null)
-					+ ", unidadeFiltro=" + (this.getFiltro().getUnidadePrisional() != null ? this.getFiltro().getUnidadePrisional().getId() : null)
-					+ ", totalUnidadesFiltro=" + (this.unidadesPrisionais != null ? this.unidadesPrisionais.size() : null));
-			return;
-		}
-
-		UnidadePrisional unidadeLogada = SecurityUtil.getUnidadeSelecionada();
-		if (unidadeLogada == null) {
-			return;
-		}
-
-		this.getFiltro().setUnidadePrisional(unidadeLogada);
-		this.getFiltro().setContrato(buscarContratoAtualDaUnidade(unidadeLogada));
-		log.info("CardapioBean.configurarFiltrosListagem - perfil restrito, unidadeFiltro="
-				+ (this.getFiltro().getUnidadePrisional() != null ? this.getFiltro().getUnidadePrisional().getId() : null)
-				+ ", contratoFiltro=" + (this.getFiltro().getContrato() != null ? this.getFiltro().getContrato().getId() : null));
-	}
-
-	private List<UnidadePrisional> criarListaUnidadeLogada() {
-		List<UnidadePrisional> unidades = new ArrayList<>();
-		if (SecurityUtil.getUnidadeSelecionada() != null) {
-			unidades.add(SecurityUtil.getUnidadeSelecionada());
-		}
-		return unidades;
-	}
-
-	private List<Contrato> criarListaContratoDaUnidadeLogada() {
-		List<Contrato> contratosDaUnidade = new ArrayList<>();
-		UnidadePrisional unidadeLogada = SecurityUtil.getUnidadeSelecionada();
-		if (unidadeLogada == null) {
-			return contratosDaUnidade;
-		}
-
-		Contrato contratoAtual = buscarContratoAtualDaUnidade(unidadeLogada);
-		if (contratoAtual != null) {
-			contratosDaUnidade.add(contratoAtual);
-		}
-		return contratosDaUnidade;
-	}
-
-	private Contrato buscarContratoAtualDaUnidade(UnidadePrisional unidade) {
-		try {
-			return contratoService.buscarContratoVigenteEAtivoPorUnidade(unidade.getId(), new Date());
-		} catch (Exception e) {
-			LoggerUtil.logErro(e, log);
-			return null;
-		}
-	}
-
-	public void atualizarFiltroUnidadePorContrato(AjaxBehaviorEvent event) {
-		if (!this.podeListarTodasUnidadesNoFiltro) {
-			return;
-		}
-
-		if (this.getFiltro() == null || this.getFiltro().getContrato() == null
-				|| this.getFiltro().getContrato().getId() == null || this.getFiltro().getContrato().getId() <= 0) {
-			this.setUnidadesPrisionais(unidadeService.listarUnidadesNaoInativas());
-			this.getFiltro().setUnidadePrisional(null);
-			log.info("CardapioBean.atualizarFiltroUnidadePorContrato - contrato nao informado, totalUnidadesFiltro="
-					+ (this.unidadesPrisionais != null ? this.unidadesPrisionais.size() : null));
-			return;
-		}
-
-		Contrato contratoSelecionado = contratoService.buscaPorId(this.getFiltro().getContrato().getId());
-		if (contratoSelecionado == null || contratoSelecionado.getUnidades() == null || contratoSelecionado.getUnidades().isEmpty()) {
-			this.setUnidadesPrisionais(unidadeService.listarUnidadesNaoInativas());
-			this.getFiltro().setUnidadePrisional(null);
-			log.info("CardapioBean.atualizarFiltroUnidadePorContrato - contrato sem unidades vinculadas. contrato="
-					+ (this.getFiltro().getContrato() != null ? this.getFiltro().getContrato().getId() : null)
-					+ ", totalUnidadesFiltro=" + (this.unidadesPrisionais != null ? this.unidadesPrisionais.size() : null));
-			return;
-		}
-
-		this.getFiltro().setContrato(contratoSelecionado);
-		this.setUnidadesPrisionais(new ArrayList<>(contratoSelecionado.getUnidades()));
-
-		if (contratoSelecionado.getUnidades().size() == 1) {
-			this.getFiltro().setUnidadePrisional(contratoSelecionado.getUnidades().get(0));
-			return;
-		}
-
-		UnidadePrisional unidadeSelecionada = this.getFiltro().getUnidadePrisional();
-		boolean unidadeAindaPertenceAoContrato = unidadeSelecionada != null
-				&& contratoSelecionado.getUnidades().stream()
-						.anyMatch(unidade -> unidade.getId() == unidadeSelecionada.getId());
-
-		if (!unidadeAindaPertenceAoContrato) {
-			this.getFiltro().setUnidadePrisional(null);
-		}
-		log.info("CardapioBean.atualizarFiltroUnidadePorContrato - contrato selecionado="
-				+ contratoSelecionado.getId()
-				+ ", unidadesNoContrato=" + contratoSelecionado.getUnidades().size()
-				+ ", totalUnidadesFiltro=" + (this.unidadesPrisionais != null ? this.unidadesPrisionais.size() : null));
-	}
-
-	public boolean isFiltroUnidadeHabilitado() {
-		return this.podeListarTodasUnidadesNoFiltro;
-	}
-	
-	private void populaSemanas(){
-		int total = 6;
-		
-		this.semanas = new ArrayList<ObjetoSelectOne>();
-		
-		for(int i = 1; i <= total; i++) {
-			this.semanas.add(new ObjetoSelectOne(i, i + "º Semana"));
-		}
-	}
-	
-	public DiasSemana[] listarDiasSemana() {
-		return DiasSemana.values(); 
-	}
-
-	public Cardapio getCardapio() {
-		return cardapio;
-	}
-
-	public void setCardapio(Cardapio cardapio) {
-		this.cardapio = cardapio;
-	}
-
-	public Apostilamento getApostilamentoSelecionado() {
-		return apostilamentoSelecionado;
-	}
-
-	public void setApostilamentoSelecionado(Apostilamento apostilamentoSelecionado) {
-		this.apostilamentoSelecionado = apostilamentoSelecionado;
-	}
-	
-	public DiasSemana[] getDiasSemana() {
-		return diasSemana;
-	}
-
-	public void setDiasSemana(DiasSemana[] diasSemana) {
-		this.diasSemana = diasSemana;
-	}
-
-	public LazyDataModel<CardapioDTO> getCardapios() {
-		return cardapios;
-	}
-
-	public void setCardapios(LazyDataModel<CardapioDTO> cardapios) {
-		this.cardapios = cardapios;
-	}
-
-	public FiltroCardapio getFiltro() {
-		return filtro;
-	}
-
-	public void setFiltro(FiltroCardapio filtro) {
-		this.filtro = filtro;
-	}
-
-	public List<TipoRefeicao> getTiposRefeicao() {
-		return tiposRefeicao;
-	}
-
-	public void setTiposRefeicao(List<TipoRefeicao> tiposRefeicao) {
-		this.tiposRefeicao = tiposRefeicao;
-	}
-
-	public List<Contrato> getContratos() {
-		return contratos;
-	}
-
-	public void setContratos(List<Contrato> contratos) {
-		this.contratos = contratos;
-	}
-
-	public List<UnidadePrisional> getUnidadesPrisionais() {
-		return unidadesPrisionais;
-	}
-
-	public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
-		this.unidadesPrisionais = unidadesPrisionais;
-	}
-
-	public boolean isPodeListarTodasUnidadesNoFiltro() {
-		return podeListarTodasUnidadesNoFiltro;
-	}
-
-	public List<TipoDieta> getTiposDieta() {
-		return tiposDieta;
-	}
-
-	public void setTiposDieta(List<TipoDieta> tiposDieta) {
-		this.tiposDieta = tiposDieta;
-	}
-
-	public ItemCardapio getItemCardapio() {
-		return itemCardapio;
-	}
-
-	public void setItemCardapio(ItemCardapio itemCardapio) {
-		this.itemCardapio = itemCardapio;
-	}
-
-	public List<ObjetoSelectOne> getSemanas() {
-		return semanas;
-	}
-
-	public void setSemanas(List<ObjetoSelectOne> semanas) {
-		this.semanas = semanas;
-	}
-	
-	public ObjetoSelectOne getSemanaSelecionada() {
-		return semanaSelecionada;
-	}
-
-	public void setSemanaSelecionada(ObjetoSelectOne semanaSelecionada) {
-		this.semanaSelecionada = semanaSelecionada;
-		if (this.semanaSelecionada != null && this.semanaSelecionada.getId() != null) {
-			this.cardapio.setSemana(this.semanaSelecionada.getId());
-		} else {
-			this.cardapio.setSemana(null);
-		}
-		calcularProximaDataAoAlterarSemanaOuDia();
-	}
-
-	public void onDiaSemanaChange() {
-		calcularProximaDataAoAlterarSemanaOuDia();
-	}
-
-	public void onDataChange() {
-		if (this.cardapio.getData() != null) {
-			LocalDate localDate = this.cardapio.getData().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			int numSemanaAno = CardapioUtil.obterNumeroSemanaAno(new java.text.SimpleDateFormat("dd/MM/yyyy").format(this.cardapio.getData()));
-			int semanaCiclo = CardapioUtil.obterSemana(numSemanaAno);
-			int diaSemanaId = CardapioUtil.obterDiaSemana(localDate);
-
-			this.cardapio.setSemana((long) semanaCiclo);
-			this.cardapio.setDiaSemana(DiasSemana.getValue(diaSemanaId));
-
-			ObjetoSelectOne semana = new ObjetoSelectOne();
-			semana.setId((long) semanaCiclo);
-			semana.setDescricao(semanaCiclo + "ª Semana");
-			this.setSemanaSelecionada(semana);
-			
-			this.cardapio.setProximaData(this.cardapio.getData());
-		} else {
-			this.cardapio.setProximaData(null);
-		}
-	}
-
-	private void calcularProximaDataAoAlterarSemanaOuDia() {
-		if (this.cardapio.getSemana() != null && this.cardapio.getDiaSemana() != null) {
-			LocalDate proxima = CardapioUtil.calcularProximaData(this.cardapio.getSemana().intValue(),
-					this.cardapio.getDiaSemana().getId(), LocalDate.now());
-			if (proxima != null) {
-				this.cardapio.setProximaData(Date.from(proxima.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-			} else {
-				this.cardapio.setProximaData(null);
-			}
-		} else {
-			this.cardapio.setProximaData(null);
-		}
-	}
+
+    private DiasSemana[] diasSemana;
+    private List<ObjetoSelectOne> semanas;
+    private List<TipoRefeicao> tiposRefeicao;
+    private List<Contrato> contratos;
+    private List<UnidadePrisional> unidadesPrisionais = new ArrayList<>();
+    private List<TipoDieta> tiposDieta;
+
+    private Cardapio cardapio;
+    private ItemCardapio itemCardapio;
+    private ObjetoSelectOne semanaSelecionada;
+    private FiltroCardapio filtro;
+    private LazyDataModel<CardapioDTO> cardapios;
+    private Apostilamento apostilamentoSelecionado;
+
+    @Inject
+    private CardapioService service;
+
+    @Inject
+    private TipoRefeicaoService tipoRefeicaoService;
+
+    @Inject
+    private TipoDietaService tipoDietaService;
+
+    @Inject
+    private ContratoService contratoService;
+
+    @Inject
+    private ItemCardapioService itemCardapioService;
+
+    @Inject
+    private UnidadePrisionalService unidadeService;
+
+    @Inject
+    private FacesUtil facesUtil;
+
+    @Inject
+    private SecurityUtil securityUtil;
+
+    @Inject
+    private Logger log;
+
+    @URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
+    public void carregaFiltros() throws Exception {
+        this.setFiltro(new FiltroCardapio());
+        super.carregarFiltroPaginacao(FiltroCardapio.class, this, getFiltro());
+    }
+
+    @URLAction(onPostback = false)
+    public String init() {
+        try {
+            carregarListas();
+
+            switch (this.getAcaoDeTela()) {
+                case CADASTRAR:
+                    this.cardapio = new Cardapio();
+                    // Para usuários sem permissão total, pré-seleciona a unidade logada
+                    if (!securityUtil.possuiPermissao("ListarTodasUnidades")) {
+                        this.cardapio.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+                    }
+                    break;
+
+                case VISUALIZAR:
+                case ALTERAR:
+                    long id = Sigepen.converteStringEmLong(facesUtil.getQueryParameter("id"));
+                    if (!buscarCardapio(id)) {
+                        facesUtil.exibirMensagemErro("Cardápio não encontrado.", true);
+                        return "pretty:ListarCardapio";
+                    }
+                    break;
+
+                case LISTAR:
+                    pesquisar();
+                    logDeAcesso(log, "Cardapios");
+                    break;
+
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
+            LoggerUtil.logErro(e, log);
+        }
+
+        return null;
+    }
+
+    public String salvar() {
+        String retorno = null;
+        try {
+            if (this.cardapio.getId() == null || this.cardapio.getId() <= 0) {
+                Cardapio existente = service.buscarExistente(this.cardapio);
+                if (existente != null) {
+                    RequestContext.getCurrentInstance().execute("PF('confirmarSobrescrita').show()");
+                    return null;
+                }
+            }
+
+            service.salvar(this.cardapio);
+            facesUtil.exibirMensagemInfo(
+                "Cardápio de " + this.cardapio.getDiaSemana().getDescricao() + " salvo com sucesso!", true);
+            retorno = "pretty:ListarCardapio";
+            LoggerUtil.logInfo(Acao.SALVAR, cardapio, log);
+        } catch (ValidacaoException e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
+        } catch (Exception e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+                "Erro ao salvar cardápio (" + this.cardapio.getId() + "): " + e.getMessage());
+            LoggerUtil.logErro(Acao.SALVAR, cardapio, e, log);
+        }
+        return retorno;
+    }
+
+    public String sobrescrever() {
+        String retorno = null;
+        try {
+            Cardapio existente = service.buscarExistente(this.cardapio);
+            if (existente != null) {
+                existente.setItensCardapio(new ArrayList<>(this.cardapio.getItensCardapio()));
+                for (ItemCardapio item : existente.getItensCardapio()) {
+                    item.setCardapio(existente);
+                }
+                existente.setFestivo(this.cardapio.getFestivo());
+                existente.setData(this.cardapio.getData());
+
+                service.salvar(existente);
+                facesUtil.exibirMensagemInfo(
+                    "Cardápio de " + existente.getDiaSemana().getDescricao() + " substituído com sucesso!", true);
+                retorno = "pretty:ListarCardapio";
+                LoggerUtil.logInfo(Acao.SALVAR, existente, log);
+            }
+        } catch (Exception e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+                "Erro ao substituir cardápio: " + e.getMessage());
+            LoggerUtil.logErro(Acao.SALVAR, cardapio, e, log);
+        }
+        return retorno;
+    }
+
+    private boolean buscarCardapio(long id) {
+        if (id <= 0) {
+            return false;
+        }
+
+        this.cardapio = service.buscarPorId(id);
+
+        if (this.cardapio == null) {
+            return false;
+        }
+
+        ObjetoSelectOne semana = new ObjetoSelectOne();
+        semana.setId(this.cardapio.getSemana());
+        this.setSemanaSelecionada(semana);
+
+        if (this.cardapio.getContrato() != null) {
+            this.unidadesPrisionais = service.buscarUnidadesPorContrato(
+                this.cardapio.getContrato().getId()
+            );
+        }
+
+        calcularProximaDataAoAlterarSemanaOuDia();
+        return true;
+    }
+
+    public void pesquisar() {
+        this.setCardapios(new LazyDataModel<CardapioDTO>() {
+            private static final long serialVersionUID = -6077221856355008621L;
+
+            @Override
+            public List<CardapioDTO> load(int first, int pageSize, String sortField,
+                                          SortOrder sortOrder, Map<String, Object> filters) {
+
+                boolean podeVerTudo = securityUtil.possuiPermissao("ListarTodasUnidades");
+                getFiltro().setListarTodasUnidades(podeVerTudo);
+
+                if (!podeVerTudo) {
+                    getFiltro().setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+                }
+
+                setRowCount(service.quantidadeFiltrados(getFiltro()));
+
+                try {
+                    configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                List<CardapioDTO> dtos = service.buscarDTOPorFiltro(getFiltro());
+
+                for (CardapioDTO dto : dtos) {
+                    if (dto.getSemana() != null && dto.getDiaSemana() != null) {
+                        LocalDate proxima = CardapioUtil.calcularProximaData(
+                            dto.getSemana().intValue(),
+                            dto.getDiaSemana().getId(),
+                            LocalDate.now()
+                        );
+                        if (proxima != null) {
+                            dto.setProximaData(
+                                Date.from(proxima.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                            );
+                        }
+                    }
+                }
+
+                if ("proximaData".equals(sortField)) {
+                    List<CardapioDTO> sortedDtos = new ArrayList<>(dtos);
+                    sortedDtos.sort((c1, c2) -> {
+                        Date d1 = c1.getProximaData();
+                        Date d2 = c2.getProximaData();
+                        if (d1 == null && d2 == null) return 0;
+                        if (d1 == null) return 1;
+                        if (d2 == null) return -1;
+                        int comp = d1.compareTo(d2);
+                        return SortOrder.ASCENDING.equals(sortOrder) ? comp : -comp;
+                    });
+                    return sortedDtos;
+                }
+
+                return dtos;
+            }
+        });
+    }
+
+    public void abrirDialogItem(ActionEvent event) {
+        this.itemCardapio = null;
+        facesUtil.exibirPaginaDialog("pretty:AssociarItemCardapio");
+    }
+
+    public void abrirDialogAlterarItem(ItemCardapio itemCardapio) {
+        this.itemCardapio = itemCardapio;
+        facesUtil.setObjetoSessao("itemCardapio", itemCardapio);
+        facesUtil.exibirPaginaDialog("pretty:AssociarItemCardapio");
+        LoggerUtil.logInfo(Acao.ALTERAR, itemCardapio, log);
+    }
+
+    public void incluirItemCardapio(SelectEvent event) {
+        ItemCardapio itemCardapio = (ItemCardapio) event.getObject();
+        try {
+            if (itemCardapio != null) {
+                if (itemCardapio.getFem() < 0 || itemCardapio.getMasc() < 0) {
+                    facesUtil.exibirMensagemErro("Valor de gramatura não pode ser negativo.", true);
+                    return;
+                }
+
+                if (this.itemCardapio != null) {
+                    cardapio.getItensCardapio().remove(this.itemCardapio);
+                } else {
+                    itemCardapio.setCardapio(this.cardapio);
+                }
+
+                cardapio.getItensCardapio().add(itemCardapio);
+
+                if (this.cardapio.getId() != null && this.cardapio.getId() > 0) {
+                    itemCardapioService.salvar(itemCardapio);
+                    LoggerUtil.logInfo(Acao.SALVAR, itemCardapio, log);
+                } else {
+                    LoggerUtil.logInfo(Acao.ADICIONAR, itemCardapio, log);
+                }
+            }
+        } catch (Exception e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+                "Erro ao incluir item ao cardápio: " + e.getMessage());
+            LoggerUtil.logErro(Acao.ADICIONAR, itemCardapio, e, log);
+        }
+    }
+
+    public void excluirItemCardapio(ItemCardapio itemCardapio) {
+        try {
+            this.cardapio.getItensCardapio().remove(itemCardapio);
+
+            if (this.cardapio.getId() > 0) {
+                itemCardapioService.excluir(itemCardapio);
+                LoggerUtil.logInfo(Acao.EXCLUIR, itemCardapio, log);
+            } else {
+                LoggerUtil.logInfo(Acao.REMOVER, itemCardapio, log);
+            }
+        } catch (Exception e) {
+            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
+                "Erro ao excluir item do cardápio: " + e.getMessage());
+            LoggerUtil.logErro(Acao.REMOVER, itemCardapio, e, log);
+        }
+    }
+
+    private void carregarListas() {
+        this.tiposRefeicao = tipoRefeicaoService.listarTodos();
+        this.contratos = contratoService.listarAtivos();
+        this.setTiposDieta(tipoDietaService.listarAtivas());
+        this.setDiasSemana(this.listarDiasSemana());
+        this.populaSemanas();
+
+        if (!securityUtil.possuiPermissao("ListarTodasUnidades")) {
+            UnidadePrisional unidadeDoUsuario = SecurityUtil.getUnidadeSelecionada();
+            this.unidadesPrisionais = new ArrayList<>();
+            if (unidadeDoUsuario != null) {
+                this.unidadesPrisionais.add(unidadeDoUsuario);
+            }
+        }
+    }
+
+    public void onContratoChange() {
+        this.cardapio.setUnidadePrisional(null);
+        this.unidadesPrisionais = new ArrayList<>();
+
+        if (this.cardapio.getContrato() != null && this.cardapio.getContrato().getId() != null) {
+            this.unidadesPrisionais = service.buscarUnidadesPorContrato(this.cardapio.getContrato().getId());
+
+            if (!securityUtil.possuiPermissao("ListarTodasUnidades")) {
+                UnidadePrisional unidadeLogada = SecurityUtil.getUnidadeSelecionada();
+                
+                if (unidadeLogada != null) {
+                    long idProcurado = unidadeLogada.getId();
+
+                    boolean unidadeVinculada = this.unidadesPrisionais.stream()
+                        .anyMatch(u -> u.getId() == idProcurado);
+
+                    if (unidadeVinculada) {
+                        this.cardapio.setUnidadePrisional(unidadeLogada);
+                    }
+                }
+            }
+        }
+    }
+
+    private void populaSemanas() {
+        int total = 6;
+        this.semanas = new ArrayList<ObjetoSelectOne>();
+        for (int i = 1; i <= total; i++) {
+            this.semanas.add(new ObjetoSelectOne(i, i + "º Semana"));
+        }
+    }
+
+    public DiasSemana[] listarDiasSemana() {
+        return DiasSemana.values();
+    }
+
+    public void onDiaSemanaChange() {
+        calcularProximaDataAoAlterarSemanaOuDia();
+    }
+
+    public void onDataChange() {
+        if (this.cardapio.getData() != null) {
+            LocalDate localDate = this.cardapio.getData()
+                .toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            int numSemanaAno = CardapioUtil.obterNumeroSemanaAno(
+                new java.text.SimpleDateFormat("dd/MM/yyyy").format(this.cardapio.getData()));
+            int semanaCiclo = CardapioUtil.obterSemana(numSemanaAno);
+            int diaSemanaId = CardapioUtil.obterDiaSemana(localDate);
+
+            this.cardapio.setSemana((long) semanaCiclo);
+            this.cardapio.setDiaSemana(DiasSemana.getValue(diaSemanaId));
+
+            ObjetoSelectOne semana = new ObjetoSelectOne();
+            semana.setId((long) semanaCiclo);
+            semana.setDescricao(semanaCiclo + "ª Semana");
+            this.setSemanaSelecionada(semana);
+
+            this.cardapio.setProximaData(this.cardapio.getData());
+        } else {
+            this.cardapio.setProximaData(null);
+        }
+    }
+
+    private void calcularProximaDataAoAlterarSemanaOuDia() {
+        if (this.cardapio.getSemana() != null && this.cardapio.getDiaSemana() != null) {
+            LocalDate proxima = CardapioUtil.calcularProximaData(
+                this.cardapio.getSemana().intValue(),
+                this.cardapio.getDiaSemana().getId(),
+                LocalDate.now()
+            );
+            if (proxima != null) {
+                this.cardapio.setProximaData(
+                    Date.from(proxima.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                );
+            } else {
+                this.cardapio.setProximaData(null);
+            }
+        } else {
+            this.cardapio.setProximaData(null);
+        }
+    }
+
+    public boolean isExibirCampoUnidade() {
+        if (isVisualizacao() || isAlterar()) {
+            return true;
+        }
+        return this.cardapio != null
+            && this.cardapio.getContrato() != null
+            && this.cardapio.getContrato().getId() != null;
+    }
+
+    public Cardapio getCardapio() {
+        return cardapio;
+    }
+
+    public void setCardapio(Cardapio cardapio) {
+        this.cardapio = cardapio;
+    }
+
+    public Apostilamento getApostilamentoSelecionado() {
+        return apostilamentoSelecionado;
+    }
+
+    public void setApostilamentoSelecionado(Apostilamento apostilamentoSelecionado) {
+        this.apostilamentoSelecionado = apostilamentoSelecionado;
+    }
+
+    public DiasSemana[] getDiasSemana() {
+        return diasSemana;
+    }
+
+    public void setDiasSemana(DiasSemana[] diasSemana) {
+        this.diasSemana = diasSemana;
+    }
+
+    public LazyDataModel<CardapioDTO> getCardapios() {
+        return cardapios;
+    }
+
+    public void setCardapios(LazyDataModel<CardapioDTO> cardapios) {
+        this.cardapios = cardapios;
+    }
+
+    public FiltroCardapio getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(FiltroCardapio filtro) {
+        this.filtro = filtro;
+    }
+
+    public List<TipoRefeicao> getTiposRefeicao() {
+        return tiposRefeicao;
+    }
+
+    public void setTiposRefeicao(List<TipoRefeicao> tiposRefeicao) {
+        this.tiposRefeicao = tiposRefeicao;
+    }
+
+    public List<Contrato> getContratos() {
+        return contratos;
+    }
+
+    public void setContratos(List<Contrato> contratos) {
+        this.contratos = contratos;
+    }
+
+    public List<UnidadePrisional> getUnidadesPrisionais() {
+        return unidadesPrisionais;
+    }
+
+    public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
+        this.unidadesPrisionais = unidadesPrisionais;
+    }
+
+    public List<TipoDieta> getTiposDieta() {
+        return tiposDieta;
+    }
+
+    public void setTiposDieta(List<TipoDieta> tiposDieta) {
+        this.tiposDieta = tiposDieta;
+    }
+
+    public ItemCardapio getItemCardapio() {
+        return itemCardapio;
+    }
+
+    public void setItemCardapio(ItemCardapio itemCardapio) {
+        this.itemCardapio = itemCardapio;
+    }
+
+    public List<ObjetoSelectOne> getSemanas() {
+        return semanas;
+    }
+
+    public void setSemanas(List<ObjetoSelectOne> semanas) {
+        this.semanas = semanas;
+    }
+
+    public ObjetoSelectOne getSemanaSelecionada() {
+        return semanaSelecionada;
+    }
+
+    public void setSemanaSelecionada(ObjetoSelectOne semanaSelecionada) {
+        this.semanaSelecionada = semanaSelecionada;
+        if (this.semanaSelecionada != null && this.semanaSelecionada.getId() != null) {
+            this.cardapio.setSemana(this.semanaSelecionada.getId());
+        } else {
+            this.cardapio.setSemana(null);
+        }
+        calcularProximaDataAoAlterarSemanaOuDia();
+    }
 }
