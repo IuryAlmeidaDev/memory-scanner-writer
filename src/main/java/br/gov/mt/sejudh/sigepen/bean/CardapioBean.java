@@ -11,6 +11,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 
 import br.gov.mt.sejudh.sigepen.util.CardapioUtil;
@@ -347,7 +348,9 @@ public class CardapioBean extends MetodosDePaginaBean {
         this.setDiasSemana(this.listarDiasSemana());
         this.populaSemanas();
 
-        if (!securityUtil.possuiPermissao("ListarTodasUnidades")) {
+        if (securityUtil.possuiPermissao("ListarTodasUnidades")) {
+            this.unidadesPrisionais = new ArrayList<>();
+        } else {
             UnidadePrisional unidadeDoUsuario = SecurityUtil.getUnidadeSelecionada();
             this.unidadesPrisionais = new ArrayList<>();
             if (unidadeDoUsuario != null) {
@@ -378,6 +381,38 @@ public class CardapioBean extends MetodosDePaginaBean {
                 }
             }
         }
+    }
+
+    public void onContratoFiltroChange() {
+        if (this.filtro == null) {
+            return;
+        }
+
+        this.filtro.setUnidadePrisional(null);
+        this.unidadesPrisionais = new ArrayList<>();
+
+        if (!securityUtil.possuiPermissao("ListarTodasUnidades")) {
+            UnidadePrisional unidadeLogada = SecurityUtil.getUnidadeSelecionada();
+            if (unidadeLogada != null) {
+                this.unidadesPrisionais.add(unidadeLogada);
+                this.filtro.setUnidadePrisional(unidadeLogada);
+            }
+            return;
+        }
+
+        if (this.filtro.getContrato() != null && this.filtro.getContrato().getId() != null) {
+            this.unidadesPrisionais = service.buscarUnidadesPorContrato(this.filtro.getContrato().getId());
+        }
+    }
+
+    public boolean isExibirFiltroUnidadePrisional() {
+        if (!securityUtil.possuiPermissao("ListarTodasUnidades")) {
+            return false;
+        }
+
+        return this.filtro != null
+            && this.filtro.getContrato() != null
+            && this.filtro.getContrato().getId() != null;
     }
 
     private void populaSemanas() {

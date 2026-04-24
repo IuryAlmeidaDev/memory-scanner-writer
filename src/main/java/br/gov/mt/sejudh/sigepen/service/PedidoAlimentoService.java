@@ -141,7 +141,7 @@ public class PedidoAlimentoService {
 
     @Transactional
     public void salvarPedidoAssinadoSubstituindo(PedidoAlimento novoPedido) {
-        List<Long> idsParaInativar = dao.findPedidosParaInativarAoAssinar(
+        List<Long> idsParaInativar = dao.findPedidosEmAbertoPorTipoRefeicaoEUnidade(
                 novoPedido.getDataPedido(),
                 novoPedido.getIdTipoRefeicao(),
                 novoPedido.getIdUnidadePrisional(),
@@ -161,7 +161,7 @@ public class PedidoAlimentoService {
 
     @Transactional
     public void salvarPrimeiroPedidoAssinado(PedidoAlimento novoPedido) {
-        List<Long> idsEmAberto = dao.findActivePedidoAlimentoIdsByCriteria(
+        List<Long> idsEmAberto = dao.findPedidosEmAbertoPorTipoRefeicaoEUnidade(
                 novoPedido.getDataPedido(),
                 novoPedido.getIdTipoRefeicao(),
                 novoPedido.getIdUnidadePrisional(),
@@ -372,12 +372,23 @@ public class PedidoAlimentoService {
         String dataPedido = DATA_PEDIDO_FORMATTER.format(dataHoraEntrega);
         Long idTipoRefeicao = horarioAlvo.getTipoRefeicao().getId();
 
-        if (dao.existePedidoAtivo(dataPedido, idTipoRefeicao, unidade.getId(), contrato.getId())
-                || !dao.findActivePedidoAlimentoIdsByCriteria(dataPedido, idTipoRefeicao, unidade.getId(), contrato.getId()).isEmpty()) {
-            LOGGER.info("Pedido automatico nao gerado porque ja existe pedido ativo ou em aberto. Unidade "
+        if (dao.existePedidoAtivoPorTipoRefeicaoEUnidade(dataPedido, idTipoRefeicao, unidade.getId(), contrato.getId())) {
+            LOGGER.info("Pedido automatico nao gerado porque ja existe pedido ATIVO para a refeicao na unidade. Unidade "
                     + identificarUnidade(unidade) + ", refeicao " + identificarRefeicao(horarioAlvo)
                     + ", entrega " + dataPedido);
             return Optional.empty();
+        }
+
+        List<Long> pedidosPendentes = dao.findPedidosPendentesPorTipoRefeicaoEUnidade(
+                dataPedido,
+                idTipoRefeicao,
+                unidade.getId(),
+                contrato.getId());
+        if (!pedidosPendentes.isEmpty()) {
+            LOGGER.info("Pedido automatico encontrou " + pedidosPendentes.size()
+                    + " pedido(s) PENDENTE(s) para a mesma refeicao na unidade e eles serao inativados. Unidade "
+                    + identificarUnidade(unidade) + ", refeicao " + identificarRefeicao(horarioAlvo)
+                    + ", entrega " + dataPedido + ", IDs " + pedidosPendentes);
         }
 
         if (!cardapioDAO.existeCardapioPara(dataPedido, idTipoRefeicao, contrato.getId())) {
@@ -484,7 +495,7 @@ public class PedidoAlimentoService {
             salvarPedidoPendente(pedidoAlimento);
             break;
         case MANUAL_ASSINADO:
-            boolean aindaTemAtivo = verificarExistenciaPedidoAtivo(
+            boolean aindaTemAtivo = dao.existePedidoAtivoPorTipoRefeicaoEUnidade(
                     dataPedido,
                     tipoRefeicao.getId(),
                     unidade.getId(),
@@ -498,12 +509,12 @@ public class PedidoAlimentoService {
             }
             break;
         case AUTOMATICO_ATIVO:
-            if (!dao.findActivePedidoAlimentoIdsByCriteria(
+            if (dao.existePedidoAtivoPorTipoRefeicaoEUnidade(
                     dataPedido,
                     tipoRefeicao.getId(),
                     unidade.getId(),
-                    contrato.getId()).isEmpty()) {
-                throw new ValidacaoException("Ja existe pedido em aberto para a mesma unidade, refeicao e horario.");
+                    contrato.getId())) {
+                throw new ValidacaoException("Ja existe pedido ATIVO para a mesma unidade e refeicao.");
             }
 
             salvarPrimeiroPedidoAssinado(pedidoAlimento);

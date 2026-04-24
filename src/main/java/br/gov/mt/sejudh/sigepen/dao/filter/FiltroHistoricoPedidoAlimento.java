@@ -29,6 +29,9 @@ public class FiltroHistoricoPedidoAlimento extends FiltroConsulta {
 		if (tipoRefeicao != null && tipoRefeicao.getId() != null) {
 			getCriteria().add(Restrictions.eq("idTipoRefeicao", tipoRefeicao.getId()));
 		}
+		if (status != null) {
+			getCriteria().add(Restrictions.eq("status", status));
+		}
 
 		if (dataPedidoInicial != null) {
 	        getCriteria().add(Restrictions.ge("dataEmissao", dataPedidoInicial));
