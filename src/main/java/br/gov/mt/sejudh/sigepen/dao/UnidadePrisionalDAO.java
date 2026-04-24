@@ -70,6 +70,16 @@ public class UnidadePrisionalDAO {
 				UnidadePrisional unidade = (UnidadePrisional) query.getSingleResult();
 		return unidade;
 	}
+
+	public List<UnidadePrisional> listarPorIds(List<Long> ids) {
+		if (ids == null || ids.isEmpty()) {
+			return new ArrayList<>();
+		}
+		String jpql = "select new br.gov.mt.sejudh.sigepen.model.UnidadePrisional(u.id, u.nome) from UnidadePrisional u where u.id in :ids order by u.nome";
+		TypedQuery<UnidadePrisional> query = entityManager.createQuery(jpql, UnidadePrisional.class);
+		query.setParameter("ids", ids);
+		return query.getResultList();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<UnidadePrisionalDTO> buscaPorFiltro(FiltroUnidadePrisional filtro, boolean isRelatorio) {

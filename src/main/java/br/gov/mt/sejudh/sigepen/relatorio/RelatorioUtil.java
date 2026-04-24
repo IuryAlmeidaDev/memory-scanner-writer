@@ -133,31 +133,48 @@ public class RelatorioUtil {
  	}
 	
 	public static <T> Arquivo gerarRelatorio(List<T> valores, Relatorio relatorio, Map<String, Object> parameters) throws JRException {
-		Arquivo arquivo;
+		ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+		return renderizar(valores, relatorio, parameters, ctx,
+				SecurityUtil.getNomeUnidadeUsuario(),
+				SecurityUtil.getMatriculaUsuario());
+	}
 
-        ServletContext ctx = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+	/**
+	 * Variante para execução fora do ciclo JSF (endpoints REST).
+	 * Recebe ServletContext por parâmetro em vez de obter via FacesContext,
+	 * e aceita unidadeLogada/emissor explícitos porque o caller pode
+	 * optar por não resolvê-los via SecurityUtil.
+	 */
+	public static <T> Arquivo gerarRelatorioRest(List<T> valores, Relatorio relatorio, Map<String, Object> parameters,
+												 ServletContext ctx, String unidadeLogada, String emissor) throws JRException {
+		return renderizar(valores, relatorio, parameters, ctx,
+				unidadeLogada != null ? unidadeLogada : "",
+				emissor != null ? emissor : "");
+	}
 
-        parameters.put("CABECALHO", getCabecalhoPath(ctx, relatorio.getCabecalho()));
-        parameters.put("RODAPE", getRodapePath(ctx, relatorio.getRodape()));
-        parameters.put("UNIDADE_LOGADA", SecurityUtil.getUnidadeSelecionada().getNome());
-        parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
+	private static <T> Arquivo renderizar(List<T> valores, Relatorio relatorio, Map<String, Object> parameters,
+										  ServletContext ctx, String unidadeLogada, String emissor) throws JRException {
+		parameters.put("CABECALHO", getCabecalhoPath(ctx, relatorio.getCabecalho()));
+		parameters.put("RODAPE", getRodapePath(ctx, relatorio.getRodape()));
+		parameters.put("UNIDADE_LOGADA", unidadeLogada);
+		parameters.put("EMISSOR", emissor);
 
 		if (!parameters.containsKey("NOME_DO_RELATORIO")) {
-            parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
-        }
+			parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
+		}
 
-        JRDataSource datasource = new JRBeanCollectionDataSource(valores);
-        JasperPrint jasperPrint = JasperFillManager.fillReport(getRelatorioPath(ctx, relatorio), parameters, datasource);
+		JRDataSource datasource = new JRBeanCollectionDataSource(valores);
+		JasperPrint jasperPrint = JasperFillManager.fillReport(getRelatorioPath(ctx, relatorio), parameters, datasource);
 
-        byte[] pdf = JasperExportManager.exportReportToPdf(jasperPrint);
+		byte[] pdf = JasperExportManager.exportReportToPdf(jasperPrint);
 
-        arquivo = new Arquivo();
-        arquivo.setBytes(pdf);
-        arquivo.setContentType("application/pdf");
-        arquivo.setNome(relatorio.name());
-        arquivo.setTipo(TipoArquivo.PDF);
+		Arquivo arquivo = new Arquivo();
+		arquivo.setBytes(pdf);
+		arquivo.setContentType("application/pdf");
+		arquivo.setNome(relatorio.name());
+		arquivo.setTipo(TipoArquivo.PDF);
 
-        return arquivo;
+		return arquivo;
 	}
 
 	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, TextoDoRelatorio conteudo) throws JRException, NamingException, SQLException {
@@ -202,19 +219,25 @@ public class RelatorioUtil {
 	private static String getRelatorioPath(ServletContext ctx, Relatorio rel) {
         String dir = ctx.getRealPath("WEB-INF" + File.separator + "relatorios");
         String jasperPath = dir + File.separator + rel.name() + ".jasper";
-        File jasperFile = new File(jasperPath);
-        if (!jasperFile.exists()) {
-            String jrxmlPath = dir + rel.name() + ".jrxml";
-            File jrxmlFile = new File(jrxmlPath);
-            if (jrxmlFile.exists()) {
-                try {
-                    compileReportToFile(jrxmlPath, jasperPath);
-                } catch (net.sf.jasperreports.engine.JRException e) {
-                    throw new RuntimeException("Falha ao compilar relatório JRXML: " + jrxmlPath + " -> " + jasperPath, e);
-                }
-            }
-        }
+        ensureCompilado(jasperPath);
         return jasperPath;
+	}
+
+	private static void ensureCompilado(String jasperPath) {
+		File jasperFile = new File(jasperPath);
+		if (jasperFile.exists()) {
+			return;
+		}
+		String jrxmlPath = jasperPath.replaceAll("\\.jasper$", ".jrxml");
+		File jrxmlFile = new File(jrxmlPath);
+		if (!jrxmlFile.exists()) {
+			return;
+		}
+		try {
+			compileReportToFile(jrxmlPath, jasperPath);
+		} catch (net.sf.jasperreports.engine.JRException e) {
+			throw new RuntimeException("Falha ao compilar relatório JRXML: " + jrxmlPath + " -> " + jasperPath, e);
+		}
 	}
 	
 	public static String getSubReportPath(Relatorio relatorio) {
@@ -240,6 +263,7 @@ public class RelatorioUtil {
 				break;
 		}
 
+		ensureCompilado(cabecalhoPath);
 		return cabecalhoPath;
 	}
 	
@@ -257,7 +281,8 @@ public class RelatorioUtil {
 				rodapePath = rodapePath + File.separator + "RodapePadraoPaisagem.jasper";
 				break;
 		}
-		
+
+		ensureCompilado(rodapePath);
 		return rodapePath;
 	}
 	

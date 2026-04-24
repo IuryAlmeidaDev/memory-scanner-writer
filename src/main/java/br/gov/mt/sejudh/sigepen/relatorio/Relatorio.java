@@ -100,7 +100,10 @@ public enum Relatorio {
 	InfopenDetalhadoMestre("Relatório Consolidado de Infopen Detalhado", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 80),
 	
 	/* Relatórios novos */
-	PedidoDetalhadoAssinado("Pedido de Alimentação Assinado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_ASSINADO, 81);
+	PedidoDetalhadoAssinado("Pedido de Alimentação Assinado", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO_ASSINADO, 81),
+
+	/* Relatório de recuperandos ativos nas unidades com Jumbo */
+	ListarRelatorioJumbo("LISTA DE RECUPERANDOS ATIVOS — JUMBO", 82);
 
 
 
