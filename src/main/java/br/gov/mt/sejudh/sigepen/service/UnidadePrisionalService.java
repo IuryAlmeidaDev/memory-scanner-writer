@@ -77,8 +77,12 @@ public class UnidadePrisionalService {
 		return u;
 	}
 	
-	public UnidadePrisional buscaSimplesPorId(Long id) {		
+	public UnidadePrisional buscaSimplesPorId(Long id) {
 		return dao.buscaSimplesPorId(id);
+	}
+
+	public List<UnidadePrisional> listarPorIds(List<Long> ids) {
+		return dao.listarPorIds(ids);
 	}
 	
 	public List<UnidadePrisionalDTO> buscarPorFiltro(FiltroUnidadePrisional filtro, boolean isRelatorio){

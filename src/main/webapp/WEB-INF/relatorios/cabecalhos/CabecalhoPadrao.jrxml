@@ -23,7 +23,7 @@
 				</textElement>
 				<text><![CDATA[SIGEPEN - Sistema de Gestão Penitenciária de Mato Grosso]]></text>
 			</staticText>
-			<image scaleImage="FillFrame" isUsingCache="false" evaluationTime="Report">
+			<image scaleImage="FillFrame" evaluationTime="Report">
 				<reportElement x="0" y="-3" width="229" height="63" uuid="b856826e-91e1-40b7-946d-a0cb53f3fb7f"/>
 				<imageExpression><![CDATA["imagens/sejus.png"]]></imageExpression>
 			</image>
