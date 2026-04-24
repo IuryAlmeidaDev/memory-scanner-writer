@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
+
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
+
+		<h3><strong>Relatório de Recuperandos nas Unidades com Jumbo</strong></h3>
+
+		<h:form id="meuFormulario">
+			<p:panel>
+				<p:outputLabel for="unidadesJumbo" value="Unidades com Jumbo" />
+				<br/>
+				<p:selectCheckboxMenu id="unidadesJumbo"
+					value="#{relatorioJumboBean.filtro.unidadesSelecionadas}"
+					converter="javax.faces.Long"
+					label="Selecione as unidades"
+					filter="true"
+					filterMatchMode="contains"
+					multiple="true"
+					style="width: 350px;">
+					<f:selectItems value="#{relatorioJumboBean.unidadesDisponiveis}"
+						var="unidade"
+						itemLabel="#{unidade.nome}"
+						itemValue="#{unidade.id}" />
+				</p:selectCheckboxMenu>
+				<br/><br/>
+				<!--
+				<p:commandButton value="Imprimir"
+					icon="fa fa-file-pdf-o"
+					actionListener="#{relatorioJumboBean.imprimir()}" />
+				-->
+				<p:commandButton value="Exportar Excel"
+					icon="fa fa-file-excel-o"
+					actionListener="#{relatorioJumboBean.exportarXlsx()}" />
+				<p:button outcome="pretty:Relatorio" value="Voltar"
+					icon="ui-icon-arrowreturnthick-1-w" />
+			</p:panel>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

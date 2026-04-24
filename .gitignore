@@ -15,7 +15,9 @@ build/*
 *~.nib
 local.properties
 .settings/
-.loadpath 
+.loadpath
+.classpath
+.project
 
 out/
 /target/
