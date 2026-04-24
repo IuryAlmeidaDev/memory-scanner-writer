@@ -71,6 +71,19 @@ public class FileDownloadHandlerBean {
     	facesUtil.setObjetoSessao("arquivo", arquivo);
     }
 
+    /**
+     * Coloca o arquivo na sessao para download sem aplicar o processamento PDF
+     * (que marcaria os bytes com hash de impressao e quebraria o zip do XLSX).
+     * O hash de impressao continua sendo gerado e persistido na sessao para que
+     * LoggerUtil.getHashImpressao() consiga rastrear a exportacao no audit log.
+     */
+    public void prepararArquivoXlsx(Arquivo arquivo) {
+        String loginUser = String.valueOf(SecurityUtil.getUsuario().getId());
+        String hashImpressao = new ProcessarPDFService().geraHashImpressaoRelatorio(loginUser);
+        facesUtil.setObjetoSessao("hashImpressao", hashImpressao);
+        facesUtil.setObjetoSessao("arquivo", arquivo);
+    }
+
 
     public byte[] enviarPDFParaAdicionarMarcaDagua(byte[] inputPdfBytes, String watermarkText) throws IOException {
         HttpURLConnection connection = null;

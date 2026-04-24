@@ -218,6 +218,15 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Geração de XLSX - fastexcel (Dhatim).
+             Biblioteca leve (so traz opczip como transitiva) escolhida no lugar do Apache POI
+             para nao forcar upgrade de commons-codec 1.11 declarado neste pom. -->
+        <dependency>
+            <groupId>org.dhatim</groupId>
+            <artifactId>fastexcel</artifactId>
+            <version>0.18.4</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
