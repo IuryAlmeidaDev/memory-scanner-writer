@@ -12,6 +12,7 @@ import javax.interceptor.Interceptors;
 
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.ContratoDAO;
+import br.gov.mt.sejudh.sigepen.dao.HorarioRefeicaoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroContrato;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.exception.MultiplosResultadosException;
@@ -30,6 +31,9 @@ public class ContratoService {
 	
 	@Inject
 	private AuditoriaDAO auditDao;
+
+	@Inject
+	private HorarioRefeicaoDAO horarioRefeicaoDAO;
 
 	@Interceptors(EJBExcInterceptor.class)
 	public Contrato salvar(Contrato contrato) throws Exception {
@@ -126,13 +130,29 @@ public class ContratoService {
 	}
 
 	public HorarioRefeicao buscarHorarioEntregaVigentePorUnidade(long idUnidade, Long tipoRefeicaoId, Date data) {
+		HorarioRefeicao horarioUnidade = horarioRefeicaoDAO.buscarVigentePorUnidadeETipo(idUnidade, tipoRefeicaoId, data);
+		if (horarioUnidade != null) {
+			return horarioUnidade;
+		}
+
 		Contrato contrato = buscarContratoVigenteEAtivoPorUnidade(idUnidade, data);
-		if (contrato == null || contrato.getHorariosRefeicao() == null) {
+		if (contrato == null) {
+			return null;
+		}
+
+		HorarioRefeicao horarioContrato = horarioRefeicaoDAO
+				.buscarVigentePorContratoETipo(contrato.getId(), tipoRefeicaoId, data);
+		if (horarioContrato != null) {
+			return horarioContrato;
+		}
+
+		if (contrato.getHorariosRefeicao() == null) {
 			return null;
 		}
 
 		return contrato.getHorariosRefeicao().stream()
-				.filter(horario -> horario.getTipoRefeicao() != null
+				.filter(horario -> horario.getUnidadePrisional() == null
+						&& horario.getTipoRefeicao() != null
 						&& Objects.equals(horario.getTipoRefeicao().getId(), tipoRefeicaoId))
 				.max(Comparator.comparing(HorarioRefeicao::getDataInicio,
 						Comparator.nullsLast(Comparator.naturalOrder()))

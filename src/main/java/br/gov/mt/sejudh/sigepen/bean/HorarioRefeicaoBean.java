@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -29,7 +30,8 @@ import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.model.dto.HorarioRefeicaoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.AgendaPedidoRefeicaoDTO;
+import br.gov.mt.sejudh.sigepen.service.AgendaPedidoRefeicaoService;
 import br.gov.mt.sejudh.sigepen.service.HorarioRefeicaoService;
 import br.gov.mt.sejudh.sigepen.service.TipoRefeicaoService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
@@ -47,7 +49,7 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 		@URLMapping(id = "VisualizarHorarioRefeicao", pattern = "/horarioRefeicao/visualizar/#{id}", viewId = "/WEB-INF/pages/horarioRefeicao/CadastrarHorarioRefeicao.xhtml") })
 public class HorarioRefeicaoBean extends MetodosDePaginaBean {
 
-	private LazyDataModel<HorarioRefeicaoDTO> horariosRefeicao;
+	private LazyDataModel<AgendaPedidoRefeicaoDTO> horariosRefeicao;
 	private List<UnidadePrisional> unidadesPrisionais;
 	private List<HorarioRefeicao> listHorarios;
 
@@ -58,6 +60,9 @@ public class HorarioRefeicaoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private HorarioRefeicaoService service;
+
+	@Inject
+	private AgendaPedidoRefeicaoService agendaPedidoRefeicaoService;
 
 	@Inject
 	private UnidadePrisionalService unidadeService;
@@ -157,27 +162,45 @@ public class HorarioRefeicaoBean extends MetodosDePaginaBean {
 	}
 
 	public void pesquisar() {
-		this.horariosRefeicao = new LazyDataModel<HorarioRefeicaoDTO>() {
+		this.horariosRefeicao = new LazyDataModel<AgendaPedidoRefeicaoDTO>() {
 			private static final long serialVersionUID = 9125627329863531857L;
 
 			@Override
-			public List<HorarioRefeicaoDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
+			public List<AgendaPedidoRefeicaoDTO> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
-				
-				//setRowCount(service.quantidadeFiltrados(getFiltro()));
-
 				try {
 					getFiltro().setListarTodasUnidades(securityUtil.possuiPermissao("ListarTodasUnidades"));
-					
-					int total = service.contarFiltrados(getFiltro());
-					setRowCount(total);
-					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
-					return service.buscaPorFiltro(getFiltro());
+
+					List<UnidadePrisional> unidades;
+					if (getFiltro().isListarTodasUnidades()) {
+						unidades = unidadeService.listarUnidadesComContratosAtivo();
+						if (getFiltro().getUnidadePrisional() != null) {
+							long unidadeFiltroId = getFiltro().getUnidadePrisional().getId();
+							unidades.removeIf(u -> u.getId() != unidadeFiltroId);
+						}
+					} else {
+						unidades = new ArrayList<>();
+						UnidadePrisional unidadeSelecionada = SecurityUtil.getUnidadeSelecionada();
+						if (unidadeSelecionada != null) {
+							unidades.add(unidadeSelecionada);
+						}
+					}
+
+					List<AgendaPedidoRefeicaoDTO> agenda = agendaPedidoRefeicaoService
+							.montarAgendaOperacional(unidades, LocalDateTime.now());
+					setRowCount(agenda.size());
+
+					int fim = Math.min(first + pageSize, agenda.size());
+					if (first >= fim) {
+						return new ArrayList<>();
+					}
+
+					return agenda.subList(first, fim);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
-				return service.buscaPorFiltro(getFiltro());
+				return new ArrayList<>();
 			}
 		};
 	}
@@ -291,11 +314,11 @@ public class HorarioRefeicaoBean extends MetodosDePaginaBean {
 		this.filtro = filtro;
 	}
 
-	public LazyDataModel<HorarioRefeicaoDTO> getHorariosRefeicao() {
+	public LazyDataModel<AgendaPedidoRefeicaoDTO> getHorariosRefeicao() {
 		return horariosRefeicao;
 	}
 
-	public void setHorariosRefeicao(LazyDataModel<HorarioRefeicaoDTO> horariosRefeicao) {
+	public void setHorariosRefeicao(LazyDataModel<AgendaPedidoRefeicaoDTO> horariosRefeicao) {
 		this.horariosRefeicao = horariosRefeicao;
 	}
 
