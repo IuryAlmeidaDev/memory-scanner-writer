@@ -25,9 +25,6 @@ public class AgendadorTarefas {
 	@Inject
 	private RecuperandoService recuperandoService;
 
-	@Inject
-	private PedidoAlimentoService pedidoAlimentoService;
-
 	@Schedule(hour = "5", minute = "30", persistent = false)
 	public void expirarPedidosTransito(){
 		try {
@@ -47,17 +44,6 @@ public class AgendadorTarefas {
 			logger.info("***** FINALIZADA RENOVAR LICENÇA BIOMETRIA *****");
 		} catch (Exception e) {
 			logger.error("***** ERRO AO VALIDAR LICENÇA: "+ e.getMessage() + " *****");
-		}
-	}
-
-	@Schedule(minute = "*", hour = "*", persistent = false)
-	public void gerarPedidosAlimentacaoAutomaticamente(){
-		try {
-			logger.info("***** INICIADA AUTOMACAO PEDIDO ALIMENTACAO *****");
-			int totalGerados = pedidoAlimentoService.gerarPedidosAutomaticosPendentes();
-			logger.info("***** FINALIZADA AUTOMACAO PEDIDO ALIMENTACAO. TOTAL GERADO: " + totalGerados + " *****");
-		} catch (Exception e) {
-			logger.error("***** ERRO NA AUTOMACAO PEDIDO ALIMENTACAO: " + e.getMessage() + " *****");
 		}
 	}
 

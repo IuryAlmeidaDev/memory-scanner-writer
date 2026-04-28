@@ -3,6 +3,7 @@ package br.gov.mt.sejudh.sigepen.bean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -44,6 +45,7 @@ import br.gov.mt.sejudh.sigepen.service.FornecedorService;
 import br.gov.mt.sejudh.sigepen.service.HorarioRefeicaoService;
 import br.gov.mt.sejudh.sigepen.service.TipoRefeicaoService;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
+import br.gov.mt.sejudh.sigepen.service.AgendadorPedidoAlimentacaoDinamicoService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -102,6 +104,9 @@ public class ContratoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private UnidadePrisionalService unidadeService;
+
+	@Inject
+	private AgendadorPedidoAlimentacaoDinamicoService agendadorPedidoAlimentacaoDinamicoService;
 
 	public Contrato getcontrato() {
 		return contrato;
@@ -301,7 +306,9 @@ public class ContratoBean extends MetodosDePaginaBean {
 	}
 
 	private boolean validarTemTodosHorarios() {
-		List<TipoRefeicao> listaRefeicao = this.contrato.getHorariosRefeicao().stream().map(x -> x.getTipoRefeicao())
+		List<TipoRefeicao> listaRefeicao = this.contrato.getHorariosRefeicao().stream()
+				.filter(x -> x.getUnidadePrisional() == null)
+				.map(x -> x.getTipoRefeicao())
 				.collect(Collectors.toList());
 
 		if (!tipoRefeicaoService.temTodasRefeicoes(listaRefeicao)) {
@@ -324,6 +331,7 @@ public class ContratoBean extends MetodosDePaginaBean {
 		try {
 			if (this.validarContrato()) {
 				contratoService.salvar(this.contrato);
+				rearmarDisparosUnidadesDoContrato();
 				facesUtil.exibirMensagemInfo("contrato " + this.contrato.getNumContrato() + " salva com Sucesso!",
 						true);
 				retorno = "pretty:ListarContrato";
@@ -398,12 +406,14 @@ public class ContratoBean extends MetodosDePaginaBean {
 
 	public void abrirDialogHorario(ActionEvent event) {
 		this.horarioRefeicao = null;
+		facesUtil.setObjetoSessao("unidadesContrato", this.contrato.getUnidades());
 		facesUtil.exibirPaginaDialog("pretty:AssociarHorarioRefeicao");
 	}
 
 	public void abrirDialogAlterarHorario(HorarioRefeicao horarioRefeicao) {
 		this.horarioRefeicao = horarioRefeicao;
 		facesUtil.setObjetoSessao("horarioRefeicao", horarioRefeicao);
+		facesUtil.setObjetoSessao("unidadesContrato", this.contrato.getUnidades());
 		facesUtil.exibirPaginaDialog("pretty:AssociarHorarioRefeicao");
 		LoggerUtil.logInfo(Acao.ALTERAR, horarioRefeicao, log);
 	}
@@ -442,10 +452,15 @@ public class ContratoBean extends MetodosDePaginaBean {
 		}
 
 		for (HorarioRefeicao horario : this.contrato.getHorariosRefeicao()) {
-			if (horarioRefeicao.getTipoRefeicao().equals(horario.getTipoRefeicao())
+			boolean mesmoEscopo = Objects.equals(
+					horarioRefeicao.getUnidadePrisional() != null ? horarioRefeicao.getUnidadePrisional().getId() : null,
+					horario.getUnidadePrisional() != null ? horario.getUnidadePrisional().getId() : null);
+
+			if (mesmoEscopo
+					&& horarioRefeicao.getTipoRefeicao().equals(horario.getTipoRefeicao())
 					&& ((horario.getId() <= 0) || horarioRefeicao.getId() != horario.getId())) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO",
-						"Não é possível registrar dois horários para a mesma refeição.");
+						"Não é possível registrar dois horários para a mesma refeição no mesmo escopo.");
 				return false;
 			}
 		}
@@ -487,6 +502,7 @@ public class ContratoBean extends MetodosDePaginaBean {
 
 			if (this.contrato.getId() > 0) {
 				horarioRefeicaoService.excluir(horarioRefeicao);
+				rearmarDisparosUnidadesDoContrato();
 				LoggerUtil.logInfo(Acao.EXCLUIR, horarioRefeicao, log);
 			} else {
 				LoggerUtil.logInfo(Acao.REMOVER, horarioRefeicao, log);
@@ -526,6 +542,22 @@ public class ContratoBean extends MetodosDePaginaBean {
 		arquivo.setTipo(TipoArquivo.PDF);
 		fileDownload.prepararArquivo(arquivo);
 		RequestContext.getCurrentInstance().execute("download()");
+	}
+
+	private void rearmarDisparosUnidadesDoContrato() {
+		if (this.contrato == null || this.contrato.getUnidades() == null) {
+			return;
+		}
+
+		for (UnidadePrisional unidadeContrato : this.contrato.getUnidades()) {
+			if (unidadeContrato != null && unidadeContrato.getId() > 0) {
+				try {
+					agendadorPedidoAlimentacaoDinamicoService.rearmarUnidade(unidadeContrato.getId());
+				} catch (Exception e) {
+					log.warn("Falha ao reprogramar disparo automatico da unidade " + unidadeContrato.getId(), e);
+				}
+			}
+		}
 	}
 
 }

@@ -133,7 +133,7 @@
 				<p:column headerText="Data" sortBy="#{pedido.dataEmissao}"
 					style="width:160px; white-space: nowrap; text-align: center;">
 					<h:outputText value="#{pedido.dataEmissao}">
-						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/Cuiaba" />
 					</h:outputText>
 				</p:column>
 

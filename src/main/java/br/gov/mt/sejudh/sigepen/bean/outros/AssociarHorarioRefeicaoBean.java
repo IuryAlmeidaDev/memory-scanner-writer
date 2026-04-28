@@ -13,6 +13,7 @@ import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.Refeicao;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.service.TipoRefeicaoService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 
@@ -23,6 +24,7 @@ public class AssociarHorarioRefeicaoBean extends MetodosDialogBean {
 	
 	private HorarioRefeicao horarioRefeicao;
 	private List<TipoRefeicao> tiposRefeicao;
+	private List<UnidadePrisional> unidadesContrato;
 	
 	@Inject
 	private TipoRefeicaoService service;
@@ -37,6 +39,7 @@ public class AssociarHorarioRefeicaoBean extends MetodosDialogBean {
 		}
 		
 		this.tiposRefeicao = service.listarTodos();
+		this.unidadesContrato = (List<UnidadePrisional>) facesUtil.getObjetoSessao("unidadesContrato");
 
 		this.horarioRefeicao = (HorarioRefeicao) facesUtil.getObjetoSessao("horarioRefeicao");
 
@@ -69,5 +72,13 @@ public class AssociarHorarioRefeicaoBean extends MetodosDialogBean {
 
 	public void setHorarioRefeicao(HorarioRefeicao horarioRefeicao) {
 		this.horarioRefeicao = horarioRefeicao;
+	}
+
+	public List<UnidadePrisional> getUnidadesContrato() {
+		return unidadesContrato;
+	}
+
+	public void setUnidadesContrato(List<UnidadePrisional> unidadesContrato) {
+		this.unidadesContrato = unidadesContrato;
 	}
 }
