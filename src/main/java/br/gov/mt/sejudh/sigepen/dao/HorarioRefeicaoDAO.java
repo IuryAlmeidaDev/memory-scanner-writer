@@ -45,6 +45,41 @@ public class HorarioRefeicaoDAO extends BaseDAO<HorarioRefeicao, Long>{
 
 		return horariosRefeicao;
 	}
+
+	@SuppressWarnings("unchecked")
+	public HorarioRefeicao buscarVigentePorUnidadeETipo(Long unidadeId, Long tipoRefeicaoId, Date dataReferencia) {
+		String jpql = "select h from HorarioRefeicao h "
+				+ "where h.unidadePrisional.id = :unidadeId "
+				+ "and h.tipoRefeicao.id = :tipoRefeicaoId "
+				+ "and h.dataInicio <= :dataReferencia "
+				+ "and (h.dataFim is null or h.dataFim >= :dataReferencia) "
+				+ "order by h.dataInicio desc, h.id desc";
+		Query query = em.createQuery(jpql, HorarioRefeicao.class);
+		query.setParameter("unidadeId", unidadeId);
+		query.setParameter("tipoRefeicaoId", tipoRefeicaoId);
+		query.setParameter("dataReferencia", dataReferencia);
+		query.setMaxResults(1);
+		List<HorarioRefeicao> result = query.getResultList();
+		return result.isEmpty() ? null : result.get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	public HorarioRefeicao buscarVigentePorContratoETipo(Long contratoId, Long tipoRefeicaoId, Date dataReferencia) {
+		String jpql = "select h from HorarioRefeicao h "
+				+ "where h.contrato.id = :contratoId "
+				+ "and h.unidadePrisional is null "
+				+ "and h.tipoRefeicao.id = :tipoRefeicaoId "
+				+ "and h.dataInicio <= :dataReferencia "
+				+ "and (h.dataFim is null or h.dataFim >= :dataReferencia) "
+				+ "order by h.dataInicio desc, h.id desc";
+		Query query = em.createQuery(jpql, HorarioRefeicao.class);
+		query.setParameter("contratoId", contratoId);
+		query.setParameter("tipoRefeicaoId", tipoRefeicaoId);
+		query.setParameter("dataReferencia", dataReferencia);
+		query.setMaxResults(1);
+		List<HorarioRefeicao> result = query.getResultList();
+		return result.isEmpty() ? null : result.get(0);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<HorarioRefeicao> buscarPorUnidadeDataInicio(long unidadeId, Date dataInicio) {

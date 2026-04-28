@@ -9,6 +9,7 @@ import java.time.Month;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,23 +53,40 @@ public class MapaConsolidadoService {
 
 	public List<RelatorioMapaAlimentacaoRecuperandoDTO> obterMapaAlimentacaoRecuperando(Long idEstrutura,
 			LocalDate dataInicio, LocalDate dataFim) {
-		return dao.buscaRelatorioMapaAlimentacaoRecuperando(idEstrutura, dataInicio, dataFim);
+		List<RelatorioMapaAlimentacaoRecuperandoDTO> recuperandos = dao.buscaRelatorioMapaAlimentacaoRecuperando(idEstrutura, dataInicio, dataFim);
+		return recuperandos != null ? recuperandos : new ArrayList<RelatorioMapaAlimentacaoRecuperandoDTO>();
 	}
 
 	public List<RelatorioMapaAlimentacaoConsultaDTO> obterMapaAlimentacaoConsulta(Long idUnidade, Long idContrato) {
-		return dao.buscarRelatorioMapaAlimentacaoConsulta(idUnidade, idContrato);
+		List<RelatorioMapaAlimentacaoConsultaDTO> consultas = dao.buscarRelatorioMapaAlimentacaoConsulta(idUnidade, idContrato);
+		return consultas != null ? consultas : new ArrayList<RelatorioMapaAlimentacaoConsultaDTO>();
 	}
 
 	private void buscarHorariosRefeicoes(Long unidade) {
+		this.cafeManhaInicio = null;
+		this.cafeManhaFim = null;
+		this.almocoInicio = null;
+		this.almocoFim = null;
+		this.jantaInicio = null;
+		this.jantaFim = null;
 		List<HorarioRefeicao> horariosRefeicoes = this.contratoService.buscarHorarioRefeiracao(unidade);
 		this.setHorariosRefeicao(horariosRefeicoes);
 	}
 
 	private void setHorariosRefeicao(List<HorarioRefeicao> horariosRefeicoes) {
+		if (horariosRefeicoes == null || horariosRefeicoes.isEmpty()) {
+			return;
+		}
+
 		Long cafeManhaId = 1L;
 		Long almocoId = 2L;
 		Long jantaId = 3L;
 		horariosRefeicoes.forEach(horarios -> {
+			if (horarios == null || horarios.getTipoRefeicao() == null || horarios.getTipoRefeicao().getId() == null
+					|| horarios.getHorarioInicio() == null || horarios.getHorarioFim() == null) {
+				return;
+			}
+
 			if (horarios.getTipoRefeicao().getId() == cafeManhaId) {
 				this.cafeManhaInicio = Long.parseLong(horarios.getHorarioInicio());
 				this.cafeManhaFim = Long.parseLong(horarios.getHorarioFim());
@@ -212,6 +230,9 @@ public class MapaConsolidadoService {
 			List<RelatorioMapaAlimentacaoConsultaDTO> mapaAlimentacaoConsulta) {
 		MapaConsolidadoRecuperandoDTO mapaConsolidadoRecuperando = new MapaConsolidadoRecuperandoDTO();
 		mapaAlimentacaoConsulta.forEach(mapaConsulta -> {
+			if (mapaConsulta == null || mapaConsulta.getRefeicao() == null) {
+				return;
+			}
 			if (mapaConsulta.getRefeicao().equals("CAFÉ DA MANHÃ")) {
 				mapaConsolidadoRecuperando.setCafeManha(mapaConsulta.getValorNormal());
 				mapaConsolidadoRecuperando.setCafeManhaEspecial(mapaConsulta.getValorEspecial());
@@ -243,6 +264,9 @@ public class MapaConsolidadoService {
 	private void montarMapaConsolidado(List<RelatorioMapaAlimentacaoConsultaDTO> mapaAlimentacaoConsulta,
 			MapaConsolidadoDTO mapaConsolidado, Mes mes) {
 		mapaAlimentacaoConsulta.forEach(mapaConsulta -> {
+			if (mapaConsulta == null) {
+				return;
+			}
 
 			mapaConsolidado.setNomeFornecedor(mapaConsulta.getNomeFornecedor());
 			mapaConsolidado.setVirgenciaContartoInicio(mapaConsulta.getVirgenciaContartoInicio());
@@ -255,6 +279,10 @@ public class MapaConsolidadoService {
 
 	private void montarValorRefeicao(RelatorioMapaAlimentacaoConsultaDTO mapaConsulta,
 			MapaConsolidadoRecuperandoDTO mapaConsolidadoRecuperando) {
+		if (mapaConsulta == null || mapaConsulta.getRefeicao() == null) {
+			return;
+		}
+
 		int diasNormal = mapaConsolidadoRecuperando.getDiasRecuperandoNormal();
 		int diasEspecial = mapaConsolidadoRecuperando.getDiasRecuperandoEspecial();
 		int qtdDiasNormal = 0;
@@ -315,6 +343,10 @@ public class MapaConsolidadoService {
 	}
 
 	private boolean validaHorarioPedidoPorRefeicao(Long horarioEntrada, Long horarioSaida, Long horarioRefeicaoInicio, Long horarioRefeicaoFim) {
+		if (horarioEntrada == null || horarioSaida == null || horarioRefeicaoInicio == null || horarioRefeicaoFim == null) {
+			return false;
+		}
+
 		return horarioSaida >= horarioRefeicaoInicio && horarioEntrada <= horarioRefeicaoFim;
 	}
 
@@ -426,6 +458,9 @@ public class MapaConsolidadoService {
 	
 	public Map<String, Integer> obterDadosAuditoria(Long idUnidade, String dataInicio, String dataFim) {
 	    Map<String, Object> dadosBrutos = dao.buscarTotaisPedidosAuditados(idUnidade, dataInicio, dataFim);
+	    if (dadosBrutos == null) {
+	    	dadosBrutos = new HashMap<String, Object>();
+	    }
 	    Map<String, Integer> params = new HashMap<>();
 
 	    params.put("AUDIT_CAFE", (Integer) dadosBrutos.getOrDefault("AUDIT_CAFE", 0));

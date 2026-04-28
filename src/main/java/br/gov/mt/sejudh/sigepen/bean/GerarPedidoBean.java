@@ -57,6 +57,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -462,15 +463,68 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 
 		this.horarioRefeicao = horarioEntrega;
 
-		LocalDate dataPedido = Instant.ofEpochMilli(this.filtroPedido.getDataInicio().getTime())
+		LocalDate dataPedidoAlvo = Instant.ofEpochMilli(this.filtroPedido.getDataInicio().getTime())
 				.atZone(ZoneId.systemDefault())
 				.toLocalDate();
 
-		pedidoAlimentoService.validarGeracaoAntesDoCorte(
+		List<HorarioRefeicao> horariosVigentes = buscarHorariosVigentesParaData(this.unidade.getId(), this.filtroPedido.getDataInicio());
+		HorarioRefeicao horarioAnterior = resolverHorarioAnterior(horariosVigentes, tipoRefeicaoId);
+
+		LocalTime horaAnterior = LocalTime.parse(horarioAnterior.getHorarioInicio(), DateTimeFormatter.ofPattern("HHmm"));
+		LocalTime horaAlvo = LocalTime.parse(horarioEntrega.getHorarioInicio(), DateTimeFormatter.ofPattern("HHmm"));
+		LocalDate dataRefeicaoAnterior = horaAnterior.isBefore(horaAlvo) ? dataPedidoAlvo : dataPedidoAlvo.minusDays(1);
+		java.time.LocalDateTime referencia = java.time.LocalDateTime.now(ZoneId.of("America/Cuiaba"));
+
+		log.info("Validacao janela manual. unidade=" + this.unidade.getId()
+				+ ", tipoAlvo=" + tipoRefeicaoId
+				+ ", horarioAnterior=" + horarioAnterior.getHorarioInicio()
+				+ ", horarioAlvo=" + horarioEntrega.getHorarioInicio()
+				+ ", referencia=" + referencia);
+
+		pedidoAlimentoService.validarGeracaoDentroDaJanelaOperacional(
+				horarioAnterior,
+				dataRefeicaoAnterior,
 				horarioEntrega,
-				dataPedido,
+				dataPedidoAlvo,
 				2,
-				java.time.LocalDateTime.now());
+				referencia);
+	}
+
+	private List<HorarioRefeicao> buscarHorariosVigentesParaData(Long unidadeId, Date dataReferencia) {
+		List<HorarioRefeicao> horarios = new ArrayList<>();
+		List<TipoRefeicao> tipos = this.tiposRefeicao != null ? this.tiposRefeicao : tipoRefeicaoService.listarTodos();
+		for (TipoRefeicao tipo : tipos) {
+			HorarioRefeicao horario = contratoService.buscarHorarioEntregaVigentePorUnidade(unidadeId, tipo.getId(), dataReferencia);
+			if (horario != null && horario.getHorarioInicio() != null) {
+				horarios.add(horario);
+			}
+		}
+
+		horarios.sort(Comparator.comparing(h -> LocalTime.parse(h.getHorarioInicio(), DateTimeFormatter.ofPattern("HHmm"))));
+		return horarios;
+	}
+
+	private HorarioRefeicao resolverHorarioAnterior(List<HorarioRefeicao> horarios, Long tipoRefeicaoId) throws ValidacaoException {
+		if (horarios == null || horarios.isEmpty()) {
+			throw new ValidacaoException("Nao existem horarios vigentes para calcular a janela operacional.");
+		}
+
+		int indiceAlvo = -1;
+		for (int i = 0; i < horarios.size(); i++) {
+			HorarioRefeicao horario = horarios.get(i);
+			if (horario.getTipoRefeicao() != null && horario.getTipoRefeicao().getId() != null
+					&& horario.getTipoRefeicao().getId().equals(tipoRefeicaoId)) {
+				indiceAlvo = i;
+				break;
+			}
+		}
+
+		if (indiceAlvo < 0) {
+			throw new ValidacaoException("Nao foi possivel localizar o horario vigente da refeicao selecionada.");
+		}
+
+		int indiceAnterior = indiceAlvo == 0 ? horarios.size() - 1 : indiceAlvo - 1;
+		return horarios.get(indiceAnterior);
 	}
 
 	private int calcularTotalDietaComum(List<DetalheItemEstruturaCardapioDTO> itens) {

@@ -14,11 +14,7 @@
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 		
-		<h3>Horário de Pedido das Refeições </h3>
-
-		<h:form>
-			<p:button value="Cadastrar" outcome="pretty:CadastrarHorarioRefeicao" icon="ui-icon-plus" rendered="#{securityUtil.possuiPermissao('CadastrarHorarioRefeicao')}"/>
-		</h:form>
+		<h3>Cronograma de Pedidos de Refeição</h3>
 		
 		<h:form id="meuFormulario" rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}">
 			<p:panel>
@@ -45,31 +41,52 @@
 		
 		<h:form id="registrosForm">
 			<p:dataTable id="dataTable" var="horario" value="#{horarioRefeicaoBean.horariosRefeicao}" emptyMessage="Nenhum registro encontrado."
-				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{horario.id}">
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{horario.unidadeId}">
 
-				<p:column headerText="Código" style="width:100px;" sortBy="#{horario.id}">
-					<h:outputText value="#{horario.id}" />
+				<p:column headerText="Código" style="width:100px;" sortBy="#{horario.unidadeId}">
+					<h:outputText value="#{horario.unidadeId}" />
 				</p:column>
 				
 				<p:column headerText="Nome Unidade" sortBy="#{horario.nomeUnidade}">
 					<h:outputText value="#{horario.nomeUnidade}" />
 				</p:column>
 				
-				<p:column headerText="Data Inicio" sortBy="#{horario.dataInicio}" width="150">
-                    <h:outputText value="#{horario.dataInicio}">
-                        <f:convertDateTime pattern="dd/MM/yyyy"/>
-                    </h:outputText>
-                </p:column>				
-				<p:column headerText="Ações" style="width:150px;">
-					<center>
-						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarHorarioRefeicao" rendered="#{securityUtil.possuiPermissao('VisualizarHorarioRefeicao')}">
-							<f:param name="id" value="#{horario.id}" />
-						</p:button>
-						
-						<p:button title="Editar" icon="ui-icon-pencil" outcome="pretty:AlterarHorarioRefeicao" rendered="#{securityUtil.possuiPermissao('AlterarHorarioRefeicao')}">
-							<f:param name="id" value="#{horario.id}" />
-						</p:button>
-					</center>
+				<p:column headerText="Contrato" sortBy="#{horario.contrato}">
+					<h:outputText value="#{horario.contrato}" />
+				</p:column>
+
+				<p:column headerText="Refeição Atual" sortBy="#{horario.refeicaoAtual}">
+					<h:outputText value="#{horario.refeicaoAtual}" />
+				</p:column>
+
+				<p:column headerText="Próxima Refeição" sortBy="#{horario.proximaRefeicao}">
+					<h:outputText value="#{horario.proximaRefeicao}" />
+				</p:column>
+
+				<p:column sortBy="#{horario.disparo}">
+					<f:facet name="header">
+						<h:panelGroup layout="block">
+							<h:outputText value="Disparo " />
+							<h:outputText id="ajudaDisparo" styleClass="fa fa-exclamation-circle" style="cursor: help;" />
+							<p:tooltip for="ajudaDisparo" value="Momento em que o pedido da próxima refeição é gerado automaticamente" />
+						</h:panelGroup>
+					</f:facet>
+					<h:outputText value="#{horario.disparo}" />
+				</p:column>
+
+				<p:column sortBy="#{horario.corte}">
+					<f:facet name="header">
+						<h:panelGroup layout="block">
+							<h:outputText value="Corte " />
+							<h:outputText id="ajudaCorte" styleClass="fa fa-exclamation-circle" style="cursor: help;" />
+							<p:tooltip for="ajudaCorte" value="Prazo final para gerar o pedido da próxima refeição" />
+						</h:panelGroup>
+					</f:facet>
+					<h:outputText value="#{horario.corte}" />
+				</p:column>
+
+				<p:column headerText="Tempo restante até o corte" sortBy="#{horario.tempoRestanteCorte}">
+					<h:outputText value="#{horario.tempoRestanteCorte}" />
 				</p:column>
 				
 				<f:facet name="footer">

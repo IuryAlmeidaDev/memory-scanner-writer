@@ -24,7 +24,9 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -119,6 +121,15 @@ public class PedidoAlimentoService {
 
     @Inject
     private CardapioDAO cardapioDAO;
+
+    @Inject
+    private TipoRefeicaoService tipoRefeicaoService;
+
+    @Inject
+    private AgendaPedidoRefeicaoService agendaPedidoRefeicaoService;
+
+    @Inject
+    private RolloutAlimentacaoService rolloutAlimentacaoService;
 
     public boolean verificarExistenciaPedidoAtivo(String dataPedido, Long idTipoRefeicao,
             Long idUnidadePrisional, Long idContrato) {
@@ -231,8 +242,42 @@ public class PedidoAlimentoService {
             int horasDeAntecedencia, LocalDateTime referencia) throws ValidacaoException {
         LocalDateTime horarioCorte = calcularHorarioCorte(horarioRefeicao, dataPedido, horasDeAntecedencia);
         if (!referencia.isBefore(horarioCorte)) {
-            throw new ValidacaoException("O horario de corte para geracao do pedido foi atingido em "
+            throw new ValidacaoException("A geracao desta refeicao so e permitida ate 2 horas antes do inicio do horario de entrega. Horario de corte: "
                     + horarioCorte.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) + ".");
+        }
+    }
+
+    public void validarGeracaoDentroDaJanelaOperacional(HorarioRefeicao horarioRefeicaoAnterior,
+            LocalDate dataRefeicaoAnterior,
+            HorarioRefeicao horarioRefeicaoAlvo,
+            LocalDate dataRefeicaoAlvo,
+            int horasDeAntecedencia,
+            LocalDateTime referencia) throws ValidacaoException {
+        if (horarioRefeicaoAnterior == null || horarioRefeicaoAlvo == null
+                || dataRefeicaoAnterior == null || dataRefeicaoAlvo == null || referencia == null) {
+            throw new IllegalArgumentException("Dados obrigatorios para validar a janela operacional nao informados.");
+        }
+
+        LocalTime horarioInicioAnterior = parseHorarioInicio(horarioRefeicaoAnterior);
+        LocalTime horarioCorte = calcularHorarioCorte(horarioRefeicaoAlvo, dataRefeicaoAlvo, horasDeAntecedencia).toLocalTime();
+        LocalTime horarioReferencia = referencia.toLocalTime();
+
+        boolean janelaSimples = horarioInicioAnterior.isBefore(horarioCorte);
+        boolean permitido;
+
+        if (janelaSimples) {
+            permitido = !horarioReferencia.isBefore(horarioInicioAnterior) && horarioReferencia.isBefore(horarioCorte);
+        } else {
+            permitido = !horarioReferencia.isBefore(horarioInicioAnterior) || horarioReferencia.isBefore(horarioCorte);
+        }
+
+        if (!permitido) {
+            throw new ValidacaoException("A geracao desta refeicao e permitida a partir de "
+                    + horarioInicioAnterior.format(DateTimeFormatter.ofPattern("HH:mm"))
+                    + " e antes de "
+                    + horarioCorte.format(DateTimeFormatter.ofPattern("HH:mm"))
+                    + ". Horario atual considerado: "
+                    + horarioReferencia.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + ".");
         }
     }
 
@@ -243,6 +288,14 @@ public class PedidoAlimentoService {
 
         for (UnidadePrisional unidadeResumo : unidadePrisionalService.listarUnidadesComContratosAtivo()) {
             try {
+                if (!rolloutAlimentacaoService.unidadeHabilitada(unidadeResumo.getId())) {
+                    continue;
+                }
+                if (!agendaPedidoRefeicaoService.unidadeAptaParaAutomacao(unidadeResumo.getId(), referencia)) {
+                    LOGGER.info("NAO_GERADO_BLOQUEIO unidade=" + unidadeResumo.getId()
+                            + " motivo=Sem horario vigente para todas as refeicoes");
+                    continue;
+                }
                 UnidadePrisional unidade = unidadePrisionalService.buscaPorId(unidadeResumo.getId());
                 totalGerados += gerarPedidosAutomaticosDaUnidade(unidade, referencia);
             } catch (Exception e) {
@@ -255,7 +308,38 @@ public class PedidoAlimentoService {
 
     @Transactional
     public int gerarPedidosAutomaticosPendentes() {
-        return gerarPedidosAutomaticosPendentes(LocalDateTime.now());
+        return gerarPedidosAutomaticosPendentes(LocalDateTime.now(ZoneId.of("America/Cuiaba")));
+    }
+
+    @Transactional
+    public int gerarPedidosAutomaticosDaUnidade(Long unidadeId, LocalDateTime referencia) {
+        if (unidadeId == null) {
+            return 0;
+        }
+
+        UnidadePrisional unidadeResumo;
+        try {
+            unidadeResumo = unidadePrisionalService.buscaPorId(unidadeId);
+        } catch (Exception e) {
+            LOGGER.warning("Falha ao buscar unidade para automacao. unidade=" + unidadeId + ", erro=" + e.getMessage());
+            return 0;
+        }
+
+        if (unidadeResumo == null) {
+            return 0;
+        }
+
+        if (!rolloutAlimentacaoService.unidadeHabilitada(unidadeResumo.getId())) {
+            return 0;
+        }
+
+        if (!agendaPedidoRefeicaoService.unidadeAptaParaAutomacao(unidadeResumo.getId(), referencia)) {
+            LOGGER.info("NAO_GERADO_BLOQUEIO unidade=" + unidadeResumo.getId()
+                    + " motivo=Sem horario vigente para todas as refeicoes");
+            return 0;
+        }
+
+        return gerarPedidosAutomaticosDaUnidade(unidadeResumo, referencia);
     }
 
     private int gerarPedidosAutomaticosDaUnidade(UnidadePrisional unidade, LocalDateTime referencia) {
@@ -541,7 +625,24 @@ public class PedidoAlimentoService {
     private List<HorarioRefeicao> buscarHorariosEntregaVigentes(Long idUnidade, LocalDateTime referencia) {
         try {
             Contrato contrato = contratoService.buscarContratoVigenteEAtivoPorUnidade(idUnidade, Timestamp.valueOf(referencia));
-            List<HorarioRefeicao> horarios = normalizarHorariosPorTipo(contrato.getHorariosRefeicao());
+            List<HorarioRefeicao> horarios = new ArrayList<>();
+            for (TipoRefeicao tipoRefeicao : tipoRefeicaoService.listarTodos()) {
+                HorarioRefeicao horario = contratoService.buscarHorarioEntregaVigentePorUnidade(
+                        idUnidade,
+                        tipoRefeicao.getId(),
+                        Timestamp.valueOf(referencia));
+                if (horario == null || horario.getHorarioInicio() == null) {
+                    LOGGER.info("Unidade " + idUnidade
+                            + " sem horario vigente para a refeicao " + identificarRefeicao(tipoRefeicao)
+                            + ". Contrato " + contrato.getId() + ".");
+                    return Arrays.asList();
+                }
+                horarios.add(horario);
+            }
+
+            horarios.sort(Comparator.comparing(this::parseHorarioInicio)
+                    .thenComparing(h -> h.getTipoRefeicao().getId()));
+
             if (horarios.isEmpty()) {
                 LOGGER.info("Contrato vigente sem horarios de entrega configurados para unidade " + idUnidade + ".");
             }
@@ -552,7 +653,7 @@ public class PedidoAlimentoService {
         }
     }
 
-    private List<HorarioRefeicao> normalizarHorariosPorTipo(List<HorarioRefeicao> horarios) {
+    private List<HorarioRefeicao> normalizarHorariosPorTipo(List<HorarioRefeicao> horarios, LocalDateTime referencia) {
         if (horarios == null || horarios.isEmpty()) {
             return Arrays.asList();
         }
@@ -560,6 +661,9 @@ public class PedidoAlimentoService {
         Map<Long, HorarioRefeicao> horariosPorTipo = new LinkedHashMap<>();
         for (HorarioRefeicao horario : horarios) {
             if (horario == null || horario.getTipoRefeicao() == null || horario.getTipoRefeicao().getId() == null) {
+                continue;
+            }
+            if (!isHorarioVigenteNaReferencia(horario, referencia)) {
                 continue;
             }
 
@@ -570,8 +674,30 @@ public class PedidoAlimentoService {
         }
 
         return horariosPorTipo.values().stream()
-                .sorted(Comparator.comparing(this::parseHorarioInicio))
+                .sorted(Comparator.comparing(this::parseHorarioInicio)
+                        .thenComparing(horario -> horario.getTipoRefeicao().getId()))
                 .collect(Collectors.toList());
+    }
+
+    private boolean isHorarioVigenteNaReferencia(HorarioRefeicao horario, LocalDateTime referencia) {
+        if (horario == null || referencia == null) {
+            return false;
+        }
+
+        LocalDate dataReferencia = referencia.toLocalDate();
+        LocalDate dataInicio = toLocalDate(horario.getDataInicio());
+        LocalDate dataFim = toLocalDate(horario.getDataFim());
+
+        boolean inicioValido = dataInicio == null || !dataReferencia.isBefore(dataInicio);
+        boolean fimValido = dataFim == null || !dataReferencia.isAfter(dataFim);
+        return inicioValido && fimValido;
+    }
+
+    private LocalDate toLocalDate(java.util.Date data) {
+        if (data == null) {
+            return null;
+        }
+        return data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private boolean isHorarioMaisRecente(HorarioRefeicao candidato, HorarioRefeicao atual) {

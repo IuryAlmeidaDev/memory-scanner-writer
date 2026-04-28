@@ -19,7 +19,13 @@
                    value="#{associarHorarioRefeicaoBean.horarioRefeicao.tipoRefeicao}"
                    validationRequired="true" 
                    converter="SimpleEntityConverter"/>
-                   
+
+				<sgp:formSelectOneMenu display="text" temSelecione="true" id="unidade"
+					labelValue="Unidade (opcional)" itemValue="#{item}" itemLabel="#{item.nome}"
+					itemsValue="#{associarHorarioRefeicaoBean.unidadesContrato}"
+					value="#{associarHorarioRefeicaoBean.horarioRefeicao.unidadePrisional}"
+					converter="SimpleEntityConverter"/>
+                    
 				<sgp:formCalendar
                     labelValue="Data de Início" 
                     display="text" 
