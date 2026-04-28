@@ -27,7 +27,6 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.realm.Realm;
-import org.omg.CORBA.portable.ApplicationException;
 
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import com.ocpsoft.pretty.faces.annotation.URLMappings;
@@ -206,7 +205,7 @@ public class LoginBean {
 		}
 	}
 
-	public void login() throws ApplicationException {
+	public void login() {
 		try {
 			SecurityUtils.getSubject().login(new UsernamePasswordToken(usuario, senha));
 			clearCache();
@@ -239,7 +238,7 @@ public class LoginBean {
 	}
 
 	private void gravarLogAcesso(TipoAcessoLog tipoAcessoLog, TipoBloqueioLog tipoBloqueio,
-			String loginUsuarioAutorizador) throws ApplicationException {
+			String loginUsuarioAutorizador) {
 
 		LogAcesso logAcesso = new LogAcesso();
 
@@ -269,7 +268,7 @@ public class LoginBean {
 		}
 	}
 
-	private void invalidarLogin() throws ApplicationException {
+	private void invalidarLogin() {
 		String usuarioAtual = (String) SecurityUtils.getSubject().getPrincipal();
 		SecurityUtils.getSubject().logout();
 		gravarLogAcesso(TipoAcessoLog.LOGOUT, TipoBloqueioLog.NENHUM, usuarioAtual);
