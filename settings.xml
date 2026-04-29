@@ -183,6 +183,14 @@ under the License.
      -->
 
     <mirror>
+      <id>maven-public-http-allow</id>
+      <name>maven-public-http-allow</name>
+      <url>http://nexus.seguranca.local:8081/repository/maven-public/</url>
+      <mirrorOf>external:http:*</mirrorOf>
+      <blocked>false</blocked>
+    </mirror>
+
+    <mirror>
       <id>maven-public</id>
       <name>maven-public</name>
       <url>http://nexus.seguranca.local:8081/repository/maven-public/</url>
