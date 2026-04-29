@@ -79,7 +79,7 @@ build_maven:
 
 code_check:
   stage: code_check
-  image: maven:3.6.3-jdk-11-slim
+  image: maven:3.9.6-eclipse-temurin-17
   extends: .setup_maven
   script:
     - "mvn -s settings.xml -B -ntp cyclonedx:makeBom -P $MAVEN_PROFILE"
