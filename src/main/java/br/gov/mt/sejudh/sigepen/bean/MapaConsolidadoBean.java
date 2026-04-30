@@ -25,6 +25,7 @@ import com.ocpsoft.pretty.faces.annotation.URLMappings;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroHorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.Mes;
+import br.gov.mt.sejudh.sigepen.model.Arquivo;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.MapaConsolidadoDTO;
@@ -41,28 +42,28 @@ import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 public class MapaConsolidadoBean extends MetodosDePaginaBean {
 
 	private List<UnidadePrisional> unidadesPrisionais;
-	
+
 	private UnidadePrisional unidade;
-	
+
 	private Mes mes;
 
 	private FiltroHorarioRefeicao filtro;
 
 	private Mes[] meses;
-	
+
 	private String ano;
-	
+
 	private List<Contrato> contratos = new ArrayList<Contrato>();
-	
+
 	@Inject
-	private ContratoService contratoService;  
+	private ContratoService contratoService;
 
 	@Inject
 	private ApostilamentoService apostilamentoService;
-	
+
 	@Inject
 	private UnidadePrisionalService unidadeService;
-	
+
 	@Inject
 	private MapaConsolidadoService mapaConsolidadoService;
 
@@ -71,7 +72,7 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 
 	@Inject
 	private Logger log;
-	
+
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
 
@@ -80,7 +81,7 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 
 	public List<UnidadePrisional> getUnidadesPrisionais() {
 		return unidadesPrisionais;
-	}	
+	}
 
 	public UnidadePrisional getUnidade() {
 		return unidade;
@@ -97,11 +98,11 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 	public void setMes(Mes mes) {
 		this.mes = mes;
 	}
-	
+
 	public String getAno() {
 		return this.ano;
 	}
-	
+
 	public void setAno(String ano) {
 		this.ano = ano;
 	}
@@ -117,9 +118,25 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 	public Mes[] setMeses(Mes[] meses) {
 		return this.meses = meses;
 	}
-	
+
 	public MapaConsolidadoService getMapaConsolidadoService() {
 		return this.mapaConsolidadoService;
+	}
+
+	protected void registrarAcessoFornecedor() {
+		logDeAcesso(log, "Fornecedor");
+	}
+
+	protected void registrarErro(Exception e) {
+		LoggerUtil.logErro(e, log);
+	}
+
+	protected void registrarSucessoGeracao() {
+		LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Consolidado do MÃªs", log);
+	}
+
+	protected void registrarErroGeracao(Exception e) {
+		LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
 	}
 
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
@@ -128,8 +145,8 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 
 	@URLAction(onPostback = false)
 	public String init() {
-		this.unidadesPrisionais = unidadeService.listarUnidadesComContratosAtivo();
 		try {
+			this.unidadesPrisionais = unidadeService.listarUnidadesComContratosAtivo();
 			switch (this.getAcaoDeTela()) {
 			case CADASTRAR:
 				break;
@@ -140,7 +157,7 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 
 			case LISTAR:
 
-				logDeAcesso(log, "Fornecedor");
+				registrarAcessoFornecedor();
 				break;
 
 			default:
@@ -148,40 +165,70 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 			}
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
-			LoggerUtil.logErro(e, log);
+			registrarErro(e);
 		}
 
 		return null;
 	}
-	
+
 	private boolean existeApostilamentoParaUniadade(Long idUnidade) {
-		if(apostilamentoService.existeApostilamentoUnidade(idUnidade)){
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "É nescessário criar um apostilamento!");
+		if (apostilamentoService.existeApostilamentoUnidade(idUnidade)) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Ã‰ nescessÃ¡rio criar um apostilamento!");
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	private boolean validarAno() {
-		if(!(Integer.parseInt(this.ano) >= 1923)) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Informe um ano válido!");
+		if (this.ano == null || this.ano.trim().isEmpty()) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Informe um ano vÃ¡lido!");
+			return false;
+		}
+
+		int anoInformado;
+		try {
+			anoInformado = Integer.parseInt(this.ano);
+		} catch (NumberFormatException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Informe um ano vÃ¡lido!");
+			return false;
+		}
+
+		if (!(anoInformado >= 1923)) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Informe um ano vÃ¡lido!");
 			return false;
 		}
 		return true;
 	}
-	
-	private boolean validacoes(Long idUnidade){
+
+	private boolean validacoes(Long idUnidade) {
+		if (this.unidade == null || idUnidade == null || this.mes == null) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Informe a unidade e o mÃªs de referÃªncia!");
+			return false;
+		}
+
 		return this.existeApostilamentoParaUniadade(idUnidade) && this.validarAno() && this.validarContratoVigente(idUnidade);
 	}
-	
-	private boolean validarContratoVigente(long idUnidade){
+
+	private boolean validarContratoVigente(long idUnidade) {
 		String dataInicio = obterDataInicio(this.mes.getId(), Integer.parseInt(this.ano));
 		String dataFim = obterDataFim(this.mes.getId(), Integer.parseInt(this.ano));
 		try {
-			this.contratos = contratoService.buscarContratoVigente(idUnidade, dataInicio,dataFim);
-			if(this.contratos.isEmpty()) {
-				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Atenção para o Mês/Ano selecionado, não há contrato vigente na Unidade Prisional");
+			this.contratos = contratoService.buscarContratoVigente(idUnidade, dataInicio, dataFim);
+			if (this.contratos == null) {
+				this.contratos = new ArrayList<Contrato>();
+			}
+
+			List<Contrato> contratosDaUnidade = new ArrayList<Contrato>();
+			for (Contrato contrato : this.contratos) {
+				if (contratoPertenceAUnidade(contrato, idUnidade)) {
+					contratosDaUnidade.add(contrato);
+				}
+			}
+
+			this.contratos = contratosDaUnidade;
+			if (this.contratos.isEmpty()) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "AtenÃ§Ã£o para o MÃªs/Ano selecionado, nÃ£o hÃ¡ contrato vigente na Unidade Prisional");
 				return false;
 			}
 		} catch (ParseException e) {
@@ -190,7 +237,7 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 		}
 		return true;
 	}
-	
+
 	private String obterDataInicio(int mes, int ano) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		return YearMonth.of(ano, mes).atDay(1).format(formatter);
@@ -200,59 +247,132 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 	private String obterDataFim(int mes, int ano) {
 		YearMonth yearMonth = YearMonth.of(ano, mes);
 		int ultimoDiaDoMes = yearMonth.lengthOfMonth();
-		
+
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		return yearMonth.atDay(ultimoDiaDoMes).format(formatter);
 
 	}
-	
+
+	private double calcularValorAuditoria(Integer quantidadeAuditada, Double valorTotal, Integer quantidadeTotal) {
+		if (quantidadeAuditada == null || valorTotal == null || quantidadeTotal == null || quantidadeTotal <= 0) {
+			return 0D;
+		}
+
+		return quantidadeAuditada.doubleValue() * (valorTotal / quantidadeTotal.doubleValue());
+	}
+
+	private int obterQuantidadeAuditoria(Map<String, Integer> audit, String chave) {
+		if (audit == null || chave == null) {
+			return 0;
+		}
+
+		Integer quantidade = audit.get(chave);
+		return quantidade != null ? quantidade : 0;
+	}
+
+	private void inicializarParametrosAuditoria(Map<String, Object> parameters) {
+		parameters.put("TOTAL_VALOR_CAFE_AUDIT", 0D);
+		parameters.put("TOTAL_VALOR_ALMOCO_AUDIT", 0D);
+		parameters.put("TOTAL_VALOR_JANTA_AUDIT", 0D);
+		parameters.put("TOTAL_VALOR_CAFE_ESP_AUDIT", 0D);
+		parameters.put("TOTAL_VALOR_ALMOCO_ESP_AUDIT", 0D);
+		parameters.put("TOTAL_VALOR_JANTA_ESP_AUDIT", 0D);
+		parameters.put("TOTAL_GERAL_AUDIT", 0D);
+	}
+
+	private double obterParametroDouble(Map<String, Object> parameters, String chave) {
+		Object valor = parameters.get(chave);
+		return valor instanceof Double ? (Double) valor : 0D;
+	}
+
+	private boolean contratoPertenceAUnidade(Contrato contrato, Long idUnidade) {
+		if (contrato == null || idUnidade == null || contrato.getUnidades() == null) {
+			return false;
+		}
+
+		for (UnidadePrisional unidadeContrato : contrato.getUnidades()) {
+			if (unidadeContrato != null && idUnidade.equals(unidadeContrato.getId())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	protected Arquivo gerarArquivoRelatorio(List<MapaConsolidadoDTO> mapaConsolidados, Map<String, Object> parameters) throws Exception {
+		return RelatorioUtil.gerarRelatorio(mapaConsolidados, Relatorio.ListaConsolidadoMensal, parameters);
+	}
+
+	protected void executarDownload() {
+		RequestContext.getCurrentInstance().execute("download()");
+	}
+
 	public void gerarMapa() {
-	    if(validacoes(this.unidade.getId())) {	
-	        List<MapaConsolidadoDTO> mapaConsolidados = new ArrayList<>();
-	        Map<String, Object> parameters = new HashMap<>();
-	        
-	        parameters.put("ANO", this.ano);
+		Long idUnidade = this.unidade != null ? this.unidade.getId() : null;
+		if (validacoes(idUnidade)) {
+			List<MapaConsolidadoDTO> mapaConsolidados = new ArrayList<>();
+			Map<String, Object> parameters = new HashMap<>();
 
-	        String dataInicioStr = obterDataInicio(this.mes.getId(), Integer.parseInt(this.ano));
-	        String dataFimStr = obterDataFim(this.mes.getId(), Integer.parseInt(this.ano));
+			parameters.put("ANO", this.ano);
 
-	        Map<String, Integer> audit = mapaConsolidadoService.obterDadosAuditoria(this.unidade.getId(), dataInicioStr, dataFimStr);
-	        parameters.putAll(audit);
+			String dataInicioStr = obterDataInicio(this.mes.getId(), Integer.parseInt(this.ano));
+			String dataFimStr = obterDataFim(this.mes.getId(), Integer.parseInt(this.ano));
 
-	        this.contratos.forEach(contrato -> {				
-	            MapaConsolidadoDTO dto = mapaConsolidadoService.obterMapaConsolidado(this.unidade, this.mes, this.ano, contrato);
-	            mapaConsolidados.add(dto);
+			Map<String, Integer> audit = mapaConsolidadoService.obterDadosAuditoria(this.unidade.getId(), dataInicioStr, dataFimStr);
+			if (audit == null) {
+				audit = new HashMap<String, Integer>();
+			}
+			final Map<String, Integer> auditFinal = audit;
+			parameters.putAll(audit);
+			inicializarParametrosAuditoria(parameters);
 
-	            double vlrAuditCafe = audit.get("AUDIT_CAFE") * (dto.getTotalValorCafe() / dto.getTotalCafe());
-	            double vlrAuditAlmoco = audit.get("AUDIT_ALMOCO") * (dto.getTotalValorAlmoco() / dto.getTotalAlmoco());
-	            double vlrAuditJanta = audit.get("AUDIT_JANTA") * (dto.getTotalValorJanta() / dto.getTotalJanta());
+			this.contratos.forEach(contrato -> {
+				if (!contratoPertenceAUnidade(contrato, this.unidade.getId())) {
+					return;
+				}
 
-	            double vlrAuditCafeEsp = audit.get("AUDIT_CAFE_ESP") * (dto.getTotalValorCafeEspecial() / dto.getTotalCafeEspecial());
-	            double vlrAuditAlmocoEsp = audit.get("AUDIT_ALMOCO_ESP") * (dto.getTotalValorAlmocoEspecial() / dto.getTotalAlmocoEspecial());
-	            double vlrAuditJantaEsp = audit.get("AUDIT_JANTA_ESP") * (dto.getTotalValorJantaEspecial() / dto.getTotalJantaEspecial());
+				MapaConsolidadoDTO dto = mapaConsolidadoService.obterMapaConsolidado(this.unidade, this.mes, this.ano, contrato);
+				if (dto == null) {
+					return;
+				}
+				mapaConsolidados.add(dto);
 
-	            parameters.put("TOTAL_VALOR_CAFE_AUDIT", vlrAuditCafe);
-	            parameters.put("TOTAL_VALOR_ALMOCO_AUDIT", vlrAuditAlmoco);
-	            parameters.put("TOTAL_VALOR_JANTA_AUDIT", vlrAuditJanta);
-	            
-	            parameters.put("TOTAL_VALOR_CAFE_ESP_AUDIT", vlrAuditCafeEsp);
-	            parameters.put("TOTAL_VALOR_ALMOCO_ESP_AUDIT", vlrAuditAlmocoEsp);
-	            parameters.put("TOTAL_VALOR_JANTA_ESP_AUDIT", vlrAuditJantaEsp);
-	            
-	            parameters.put("TOTAL_GERAL_AUDIT", vlrAuditCafe + vlrAuditAlmoco + vlrAuditJanta + 
-	                                               vlrAuditCafeEsp + vlrAuditAlmocoEsp + vlrAuditJantaEsp);
-	        });
-	       
-	        try {
+				double vlrAuditCafe = calcularValorAuditoria(obterQuantidadeAuditoria(auditFinal, "AUDIT_CAFE"),
+						dto.getTotalValorCafe(), dto.getTotalCafe());
+				double vlrAuditAlmoco = calcularValorAuditoria(obterQuantidadeAuditoria(auditFinal, "AUDIT_ALMOCO"),
+						dto.getTotalValorAlmoco(), dto.getTotalAlmoco());
+				double vlrAuditJanta = calcularValorAuditoria(obterQuantidadeAuditoria(auditFinal, "AUDIT_JANTA"),
+						dto.getTotalValorJanta(), dto.getTotalJanta());
 
-	            fileDownload.prepararArquivo(RelatorioUtil.gerarRelatorio(mapaConsolidados, Relatorio.ListaConsolidadoMensal, parameters));
-	            RequestContext.getCurrentInstance().execute("download()");
-	            LoggerUtil.logInfo(Acao.IMPRIMIR, "Gerar Consolidado do Mês", log);
-	        } catch (Exception e) {
-	            facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
-	            LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
-	        }
-	    }		
-	}	
-	
+				double vlrAuditCafeEsp = calcularValorAuditoria(obterQuantidadeAuditoria(auditFinal, "AUDIT_CAFE_ESP"),
+						dto.getTotalValorCafeEspecial(), dto.getTotalCafeEspecial());
+				double vlrAuditAlmocoEsp = calcularValorAuditoria(obterQuantidadeAuditoria(auditFinal, "AUDIT_ALMOCO_ESP"),
+						dto.getTotalValorAlmocoEspecial(), dto.getTotalAlmocoEspecial());
+				double vlrAuditJantaEsp = calcularValorAuditoria(obterQuantidadeAuditoria(auditFinal, "AUDIT_JANTA_ESP"),
+						dto.getTotalValorJantaEspecial(), dto.getTotalJantaEspecial());
+
+				parameters.put("TOTAL_VALOR_CAFE_AUDIT", obterParametroDouble(parameters, "TOTAL_VALOR_CAFE_AUDIT") + vlrAuditCafe);
+				parameters.put("TOTAL_VALOR_ALMOCO_AUDIT", obterParametroDouble(parameters, "TOTAL_VALOR_ALMOCO_AUDIT") + vlrAuditAlmoco);
+				parameters.put("TOTAL_VALOR_JANTA_AUDIT", obterParametroDouble(parameters, "TOTAL_VALOR_JANTA_AUDIT") + vlrAuditJanta);
+
+				parameters.put("TOTAL_VALOR_CAFE_ESP_AUDIT", obterParametroDouble(parameters, "TOTAL_VALOR_CAFE_ESP_AUDIT") + vlrAuditCafeEsp);
+				parameters.put("TOTAL_VALOR_ALMOCO_ESP_AUDIT", obterParametroDouble(parameters, "TOTAL_VALOR_ALMOCO_ESP_AUDIT") + vlrAuditAlmocoEsp);
+				parameters.put("TOTAL_VALOR_JANTA_ESP_AUDIT", obterParametroDouble(parameters, "TOTAL_VALOR_JANTA_ESP_AUDIT") + vlrAuditJantaEsp);
+
+				parameters.put("TOTAL_GERAL_AUDIT", obterParametroDouble(parameters, "TOTAL_GERAL_AUDIT") + vlrAuditCafe + vlrAuditAlmoco + vlrAuditJanta
+						+ vlrAuditCafeEsp + vlrAuditAlmocoEsp + vlrAuditJantaEsp);
+			});
+
+			try {
+
+				fileDownload.prepararArquivo(gerarArquivoRelatorio(mapaConsolidados, parameters));
+				executarDownload();
+				registrarSucessoGeracao();
+			} catch (Exception e) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
+				registrarErroGeracao(e);
+			}
+		}
+	}
+
 }
