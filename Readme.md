@@ -10,9 +10,16 @@
 ![Apache Maven](https://img.shields.io/badge/maven-3.6.3+-C71A36?style=for-the-badge&logo=Apache%20Maven&logoColor=white)
 ![Java](https://img.shields.io/badge/java-8-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 
+[![Versão](https://img.shields.io/badge/versão-1.37.0-blue?style=for-the-badge)](./CHANGELOG.md)
+
 <!-- Breve descrição do projeto. -->
 
 O sistema de gestão penitenciária tem como objetivo controlar e gerenciar todas as penitenciárias do estado de Mato Grosso.
+
+## Histórico de versões
+
+As mudanças por versão estão registradas em [CHANGELOG.md](./CHANGELOG.md).
+Releases publicadas: <https://gitlab.sesp.mt.gov.br/sesp/sti/sistemas/source/sigepen/-/releases>.
 
 ## Pré-requisitos
 
