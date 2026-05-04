@@ -38,6 +38,14 @@ public class EstruturaDAO {
 		this.entityManager = entityManager;
 	}
 
+	private String filtroTransferenciaEmAndamento(String recuperandoExpression) {
+		return " AND NOT EXISTS (SELECT 1 FROM " + Sigepen.SEJUDH_SCHEMA + ".PEDIDO_TRANSITO pt "
+				+ "WHERE pt.RECUPERANDO_ID = " + recuperandoExpression + " "
+				+ "AND pt.STATUS = 'EM_ANDAMENTO' "
+				+ "AND pt.TIPO_TRANSITO = 'TRANSFERENCIA' "
+				+ "AND pt.DATA_CONCLUSAO IS NULL) ";
+	}
+
 	public Estrutura salvar(Estrutura estrutura) {
 		if (estrutura.getId() > 0) {
 			estrutura = entityManager.merge(estrutura);
@@ -93,9 +101,10 @@ public class EstruturaDAO {
 		// PT.RECUPERANDO_ID = P.RECUPERANDO_ID AND PT.DATA_CONCLUSAO IS NULL AND
 		// PT.STATUS IN ('SUSPENSO', 'EM_ANDAMENTO') ");
 
-		where.append("(e.ESTRUTURAPAI_ID = :id AND e.CELA = 0) ");
+		where.append("((e.ESTRUTURAPAI_ID = :id AND e.CELA = 0) ");
 		where.append(
-				"OR (e.ESTRUTURAPAI_ID = :id AND e.CELA = 1 AND TO_DATE(SUBSTR(:data, 1, 19), 'DD/MM/YYYY HH24:MI:SS') >= plo.DATA_ENTRADA AND (TO_DATE(SUBSTR(:data, 1, 19), 'DD/MM/YYYY HH24:MI:SS') <= plo.DATA_SAIDA OR plo.DATA_SAIDA IS NULL)) ");
+				"OR (e.ESTRUTURAPAI_ID = :id AND e.CELA = 1 AND TO_DATE(SUBSTR(:data, 1, 19), 'DD/MM/YYYY HH24:MI:SS') >= plo.DATA_ENTRADA AND (TO_DATE(SUBSTR(:data, 1, 19), 'DD/MM/YYYY HH24:MI:SS') <= plo.DATA_SAIDA OR plo.DATA_SAIDA IS NULL))) ");
+		where.append(filtroTransferenciaEmAndamento("r.ID"));
 		sql.append(where);
 		sql.append("GROUP BY e.id,e.CAPACIDADE,e.cela,e.nome,e.SITUACAO,e.ESTRUTURAPAI_ID,e.UNIDADEPRISIONAL_ID ");
 		sql.append("ORDER BY e.id");
@@ -130,6 +139,7 @@ public class EstruturaDAO {
 	       .append("AND l.ESTRUTURA_ID IN (SELECT id FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".ESTRUTURA START WITH id = :id CONNECT BY PRIOR id = ESTRUTURAPAI_ID) ")
 	       .append("AND TO_DATE(SUBSTR(:data, 1, 19), 'DD/MM/YYYY HH24:MI:SS') BETWEEN l.DATA_ENTRADA AND NVL(l.DATA_SAIDA, TO_DATE('31/12/9999','DD/MM/YYYY')) ")
 	       .append("AND NOT EXISTS (SELECT 1 FROM ").append(Sigepen.SEJUDH_SCHEMA).append(".DIETA_RECUPERANDO dr1 WHERE dr1.recuperando_id = pas.RECUPERANDO_ID AND dr1.STATUS = 1 AND (dr1.FIM IS NULL OR dr1.FIM > SYSDATE)) ")
+	       .append(filtroTransferenciaEmAndamento("pas.RECUPERANDO_ID"))
 	       .append("GROUP BY a.DESCRICAO, ic.MASC_MG, ic.FEM_MG, td.DESCRICAO, p.SEXO, a.UNIDADE_MEDIDA, ic.ID ");
 
 	    final Query query = entityManager.createNativeQuery(sql.toString());
@@ -169,6 +179,7 @@ public class EstruturaDAO {
 	       .append("      AND td.ESPECIAL = 1 ")
 	       .append("      AND TO_DATE(SUBSTR(:DATA, 1, 19), 'DD/MM/YYYY HH24:MI:SS') BETWEEN l.DATA_ENTRADA AND NVL(l.DATA_SAIDA, TO_DATE('31/12/9999','DD/MM/YYYY')) ")
 	       .append("      AND TO_DATE(SUBSTR(:DATA, 1, 19), 'DD/MM/YYYY HH24:MI:SS') BETWEEN dr.INICIO AND NVL(dr.FIM, TO_DATE('31/12/9999','DD/MM/YYYY')) ")
+	       .append(filtroTransferenciaEmAndamento("pas.RECUPERANDO_ID"))
 	       .append(") ")
 
 	       .append("SELECT ")
@@ -294,6 +305,7 @@ public class EstruturaDAO {
 	       .append("         AND dr.STATUS = 1 ")
 	       .append("         AND TO_DATE(SUBSTR(:data, 1, 19), 'DD/MM/YYYY HH24:MI:SS') BETWEEN dr.INICIO AND NVL(dr.FIM, TO_DATE('31/12/9999','DD/MM/YYYY')) ")
 	       .append("    WHERE TO_DATE(SUBSTR(:data, 1, 16), 'DD/MM/YYYY HH24:MI') BETWEEN l.DATA_ENTRADA AND NVL(l.DATA_SAIDA, TO_DATE('31/12/9999','DD/MM/YYYY')) ")
+	       .append(filtroTransferenciaEmAndamento("pas.RECUPERANDO_ID"))
 	       .append("    GROUP BY l.ESTRUTURA_ID ")
 	       .append("), ")
 	       .append("hierarquia_completa AS ( ")
