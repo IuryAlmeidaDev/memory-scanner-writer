@@ -39,7 +39,6 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 		getCriteria().createAlias("recuperando_.pessoa", "pessoa", JoinType.INNER_JOIN);
 		getCriteria().createAlias("tipoDieta", "tipoDieta", JoinType.INNER_JOIN);
 		
-		// Buscar unidade prisional do recuperando
 		getCriteria().createAlias("recuperando_.passagens", "passagem_", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("passagem_.lotacao", "lotacao", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("lotacao.estrutura", "estrutura", JoinType.LEFT_OUTER_JOIN);
@@ -60,7 +59,6 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 
 		getCriteria().setProjection(proj);
 		
-		//Subselect para trazer apenas a ultima passagem e ultima lotação
 		DetachedCriteria critPassagem = DetachedCriteria.forClass(Passagem.class, "pass")
 				.add(Restrictions.eqProperty("pass.recuperando.id", "recuperando_.id"))
 				.setProjection(Projections.projectionList().add(Projections.max("pass.id")));
