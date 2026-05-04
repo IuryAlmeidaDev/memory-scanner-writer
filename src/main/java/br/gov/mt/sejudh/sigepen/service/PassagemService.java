@@ -142,7 +142,7 @@ public class PassagemService {
 
         recuperandoDao.salvar(recuperando);
         
-        dietaEspecialService.encerrarDietasAtivasDoRecuperando(
+        dietaEspecialService.inativarDietasAtivasOuSuspensasDoRecuperando(
                 recuperando.getId(), passagem.getDataSaida()
             );
 

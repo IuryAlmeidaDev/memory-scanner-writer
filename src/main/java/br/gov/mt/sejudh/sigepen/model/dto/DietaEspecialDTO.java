@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Date;
 
+import br.gov.mt.sejudh.sigepen.enumerator.Status;
+
 public class DietaEspecialDTO {
 
 	private long id;
@@ -14,6 +16,7 @@ public class DietaEspecialDTO {
 	private String nomeSocialRecuperando;
 	private String nomeUnidadePrisional;
 	private String tipoDieta;
+	private Status status;
 	
 	private Date dataEntrada;
 
@@ -31,6 +34,10 @@ public class DietaEspecialDTO {
 
 	public Date getFim() {
 		return fim;
+	}
+
+	public void setFim(Date fim) {
+		this.fim = fim;
 	}
 
 	public String getTipoDieta() {
@@ -53,6 +60,28 @@ public class DietaEspecialDTO {
 		return dataEntrada;
 	}
 
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public String getStatusAtual() {
+		Date agora = new Date();
+
+		if (Status.INATIVO.equals(status) || (fim != null && !fim.after(agora))) {
+			return "Encerrada";
+		}
+
+		if (Status.SUSPENSO.equals(status)) {
+			return "Suspensa";
+		}
+
+		return "Ativa";
+	}
+
 	public void setDataEntrada(Date dataEntrada) {
 		this.dataEntrada = dataEntrada;
 	}
@@ -63,6 +92,7 @@ public class DietaEspecialDTO {
 				.append("id", id)
 				.append("inicio", inicio)
 				.append("fim", fim)
+				.append("status", status)
 				.append("nomeRecuperando", nomeRecuperando)
 				.append("nomeUnidadePrisional", nomeUnidadePrisional)
 				.append("tipoDieta", tipoDieta)
