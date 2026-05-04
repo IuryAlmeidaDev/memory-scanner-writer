@@ -5,7 +5,7 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [1.37.0] - A definir
+## [1.37.0] - 04/05/2026
 
 ### Adicionado
 
@@ -39,6 +39,10 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   (incompatível com Java 11+).
 - **CI:** `code_check` ajustado para JDK 17 + mirror HTTP, com `sonar-maven-plugin`
   pinado em `3.11.0.3922` para compatibilidade.
+- **Biometria v2 — parsing defensivo em PESQUISAR e REGISTRAR:** quando o webservice
+  retornava texto não-JSON (ex.: HTML de erro de proxy/nginx, resposta vazia, plain
+  text), o cliente lançava exceção. Agora o parsing é tolerante e o erro é tratado.
+  Distribuído via FXLauncher na atualização do `sigepen-biometria.exe`.
 
 ### Alterado
 
@@ -50,7 +54,11 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Pedido de transferência:** conclusão do pedido deixa de encerrar dieta especial; o ciclo
   de suspensão/reativação passa a ser tratado no fluxo de transferência.
 - **Docker:** normalização de quebra de linha no `docker-compose`.
-- **FXLauncher:** sincronização dos artefatos com o `sigepen-biometria-v2`.
+- **FXLauncher:** sincronização de `app.xml`, `sigepen-biometria.exe`, `LiveMedia.dll`
+  e `msvcp140.dll` em `Resources/aplicativo/` com o hotfix `v2.2.1` do
+  `sigepen-biometria-v2` (parsing defensivo). Os 2 últimos arquivos corrigem
+  inconsistência preexistente entre o `app.xml` declarado e o que era servido aos
+  clientes pelo Wildfly.
 
 ### Notas da versão
 
