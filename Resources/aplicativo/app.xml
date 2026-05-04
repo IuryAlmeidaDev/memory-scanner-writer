@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Application ts="1777574064970" uri="https://sispen.sesp.mt.gov.br/sigepen/arquivos/aplicativo/" launch="br.gov.mt.sejudh.launcher.Launcher">
+<Application ts="1777908505489" uri="https://sispen.sesp.mt.gov.br/sigepen/arquivos/aplicativo/" launch="br.gov.mt.sejudh.launcher.Launcher">
     <lib file="concrt140.dll" checksum="3208454740" size="332456" os="win"/>
     <lib file="controlsfx.jar" checksum="1806948104" size="1416162"/>
     <lib file="Data/Fingers.ndf" checksum="1558116160" size="5529652"/>
@@ -46,7 +46,7 @@
     <lib file="NLicensing.dll" checksum="1966985409" size="861640" os="win"/>
     <lib file="NMedia.dll" checksum="372171883" size="1961416" os="win"/>
     <lib file="NMediaProc.dll" checksum="3851610951" size="775624" os="win"/>
-    <lib file="sigepen-biometria.exe" checksum="2629139999" size="17583790"/>
+    <lib file="sigepen-biometria.exe" checksum="378499980" size="17583790"/>
     <lib file="svml_dispmd.dll" checksum="345573301" size="18838744" os="win"/>
     <lib file="vccorlib140.dll" checksum="560076967" size="391344" os="win"/>
     <lib file="vcruntime140.dll" checksum="1540112800" size="87224" os="win"/>
