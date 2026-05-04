@@ -8,6 +8,7 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 ## [1.37.0] - A definir
 
 ### Adicionado
+
 - **Dieta especial:** novo status suspenso para representar dietas pausadas durante
   trânsito de recuperandos.
 - **Dieta especial — listagem:** filtro por status com opções de ativos, suspensos,
@@ -28,6 +29,7 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   (substitui stacktrace cru).
 
 ### Corrigido
+
 - **Alimentação:** consulta de itens para refeições futuras.
 - **Alimentação:** bloqueio por corte e duplicidade de pedidos automáticos.
 - **Alimentação:** validação automática de data, refeição, unidade e contrato.
@@ -39,6 +41,7 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   pinado em `3.11.0.3922` para compatibilidade.
 
 ### Alterado
+
 - **Dieta especial — trânsito:** início de transferência suspende dietas vigentes dos
   recuperandos vinculados, e cancelamento de transferência em andamento reativa as dietas
   suspensas.
@@ -50,6 +53,7 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **FXLauncher:** sincronização dos artefatos com o `sigepen-biometria-v2`.
 
 ### Notas da versão
+
 - **Scripts de banco:** executar os scripts da pasta
   [`Scripts de Banco/v17.0.0/`](./Scripts%20de%20Banco/v17.0.0) na ordem:
   1. `SIGEPEN_OWNER/01-INSERT_PERMISSAO_JUMBO.sql` — cria a permissão do Relatório Jumbo.
