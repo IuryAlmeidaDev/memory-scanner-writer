@@ -60,7 +60,19 @@ public class DietaEspecialService {
 	}
 	
 	public void encerrarDietasAtivasDoRecuperando(long idRecuperando, Date dataFim) {
-	    dao.encerrarDietasAtivasDoRecuperando(idRecuperando, dataFim);
+	    inativarDietasAtivasOuSuspensasDoRecuperando(idRecuperando, dataFim);
+	}
+
+	public void suspenderDietasAtivasDoRecuperando(long idRecuperando) {
+	    dao.suspenderDietasAtivasDoRecuperando(idRecuperando);
+	}
+
+	public void reativarDietasSuspensasDoRecuperando(long idRecuperando) {
+	    dao.reativarDietasSuspensasDoRecuperando(idRecuperando);
+	}
+
+	public void inativarDietasAtivasOuSuspensasDoRecuperando(long idRecuperando, Date dataFim) {
+	    dao.inativarDietasAtivasOuSuspensasDoRecuperando(idRecuperando, dataFim);
 	}
 	
 }

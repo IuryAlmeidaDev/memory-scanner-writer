@@ -8,6 +8,11 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 ## [1.37.0] - A definir
 
 ### Adicionado
+
+- **Dieta especial:** novo status suspenso para representar dietas pausadas durante
+  trânsito de recuperandos.
+- **Dieta especial — listagem:** filtro por status com opções de ativos, suspensos,
+  encerrados e todos.
 - **Gestão de alimentação — automação de pedidos:** disparo automático da próxima refeição
   com base no horário de entrega do contrato, cronograma de pedidos e horários configuráveis.
 - **Gestão de alimentação — pedido manual:** ajuste do fluxo de pedido manual e centralização
@@ -24,6 +29,7 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   (substitui stacktrace cru).
 
 ### Corrigido
+
 - **Alimentação:** consulta de itens para refeições futuras.
 - **Alimentação:** bloqueio por corte e duplicidade de pedidos automáticos.
 - **Alimentação:** validação automática de data, refeição, unidade e contrato.
@@ -35,14 +41,29 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   pinado em `3.11.0.3922` para compatibilidade.
 
 ### Alterado
+
+- **Dieta especial — trânsito:** início de transferência suspende dietas vigentes dos
+  recuperandos vinculados, e cancelamento de transferência em andamento reativa as dietas
+  suspensas.
+- **Dieta especial — desligamento:** saída de passagem inativa dietas ativas ou suspensas
+  usando a data de saída como data de encerramento.
+- **Pedido de transferência:** conclusão do pedido deixa de encerrar dieta especial; o ciclo
+  de suspensão/reativação passa a ser tratado no fluxo de transferência.
 - **Docker:** normalização de quebra de linha no `docker-compose`.
 - **FXLauncher:** sincronização dos artefatos com o `sigepen-biometria-v2`.
 
 ### Notas da versão
+
 - **Scripts de banco:** executar os scripts da pasta
   [`Scripts de Banco/v17.0.0/`](./Scripts%20de%20Banco/v17.0.0) na ordem:
   1. `SIGEPEN_OWNER/01-INSERT_PERMISSAO_JUMBO.sql` — cria a permissão do Relatório Jumbo.
   2. `SIGEPEN_AUDIT_OWNER/01-AUD_INSERT_PERMISSAO_JUMBO.sql` — registro de auditoria correspondente.
+  3. `SIGEPEN_OWNER/02-ALTERAR_UNIDADE_PRISIONAL_QTD_VISITA.sql` — adiciona quantidade
+     de visitas por recuperando na unidade prisional.
+  4. `SIGEPEN_AUDIT_OWNER/02-ALTERAR_AUD_CARDAPIO_UNIDADE_PRISIONAL.sql` — adiciona
+     unidade prisional na auditoria de cardápio.
+  5. `SIGEPEN_AUDIT_OWNER/03-ALTERAR_AUD_UNIDADE_PRISIONAL_QTD_VISITA.sql` — adiciona
+     quantidade de visitas por recuperando na auditoria de unidade prisional.
 - **Migrações em homologação/produção:** abrir chamado no Conecta conforme padrão PDS.
 
 [1.37.0]: https://gitlab.sesp.mt.gov.br/sesp/sti/sistemas/source/sigepen/-/compare/v1.36.0...v1.37.0

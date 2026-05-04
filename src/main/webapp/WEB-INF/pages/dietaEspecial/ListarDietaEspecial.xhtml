@@ -50,10 +50,10 @@
 					
 				<sgp:formSelectOneMenu id="statusDieta" labelValue="Status"
 				    value="#{dietaEspecialBean.filtro.statusDieta}"
-				    temSelecione="true"
+				    temSelecione="false"
 				    styleFormLabelColumn="min-width:140px !important">
-				    <f:selectItem itemValue="ATIVO" itemLabel="Ativo" />
-				    <f:selectItem itemValue="INATIVO" itemLabel="Inativo" />
+				    <f:selectItems value="#{dietaEspecialBean.statusFiltroDietaEspecial}"
+				    	var="status" itemValue="#{status}" itemLabel="#{status.descricao}" />
 				</sgp:formSelectOneMenu>
 
 				<div class="form-block "></div>
@@ -96,10 +96,13 @@
 						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 					</h:outputText>
 				</p:column>
-				<p:column headerText="fim" sortBy="#{dietaEspecial.fim}" width="170">
+				<p:column headerText="Fim" sortBy="#{dietaEspecial.fim}" width="170">
 					<h:outputText value="#{dietaEspecial.fim}">
 						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 					</h:outputText>
+				</p:column>
+				<p:column headerText="Status" sortBy="#{dietaEspecial.statusAtual}" style="width:120px; text-align:center;">
+					<h:outputText value="#{dietaEspecial.statusAtual}" />
 				</p:column>
 				<p:column headerText="Ações" style="width:150px;">
 					<center>

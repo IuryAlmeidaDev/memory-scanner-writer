@@ -9,6 +9,9 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 
 import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
+import br.gov.mt.sejudh.sigepen.enumerator.Status;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusFiltroDietaEspecial;
+import java.util.Date;
 import br.gov.mt.sejudh.sigepen.model.Passagem;
 import br.gov.mt.sejudh.sigepen.model.PassagemLotacao;
 import br.gov.mt.sejudh.sigepen.model.TipoDieta;
@@ -23,7 +26,11 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 	private TipoDieta tipoDieta;
 	private String recuperando;
 	private Boolean listarTodasUnidades;
-	private String statusDieta;
+	private StatusFiltroDietaEspecial statusDieta;
+
+	public FiltroDietaEspecial() {
+		this.statusDieta = StatusFiltroDietaEspecial.ATIVO;
+	}
 	
 
 	@Override
@@ -32,7 +39,6 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 		getCriteria().createAlias("recuperando_.pessoa", "pessoa", JoinType.INNER_JOIN);
 		getCriteria().createAlias("tipoDieta", "tipoDieta", JoinType.INNER_JOIN);
 		
-		// Buscar unidade prisional do recuperando
 		getCriteria().createAlias("recuperando_.passagens", "passagem_", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("passagem_.lotacao", "lotacao", JoinType.LEFT_OUTER_JOIN);
 		getCriteria().createAlias("lotacao.estrutura", "estrutura", JoinType.LEFT_OUTER_JOIN);
@@ -43,7 +49,7 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 				.add(Projections.property("id").as("id"))
 				.add(Projections.property("inicio").as("inicio"))
 				.add(Projections.property("fim").as("fim"))
-				.add(Projections.property("fim").as("fim"))
+				.add(Projections.property("status").as("status"))
 				.add(Projections.property("tipoDieta.descricao").as("tipoDieta"))
 				.add(Projections.property("pessoa.nome").as("nomeRecuperando"))
 						.add(Projections.property("pessoa.nomeSocial").as("nomeSocialRecuperando"))
@@ -53,7 +59,6 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 
 		getCriteria().setProjection(proj);
 		
-		//Subselect para trazer apenas a ultima passagem e ultima lotação
 		DetachedCriteria critPassagem = DetachedCriteria.forClass(Passagem.class, "pass")
 				.add(Restrictions.eqProperty("pass.recuperando.id", "recuperando_.id"))
 				.setProjection(Projections.projectionList().add(Projections.max("pass.id")));
@@ -91,12 +96,24 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 			getCriteria().add(Restrictions.eq("unidade.id", SecurityUtil.getUnidadeSelecionada().getId()));
 		}
 		
-		if ("ATIVO".equals(this.statusDieta)) {
-		    getCriteria().add(Restrictions.isNull("fim"));
-
-		
-		} else if ("INATIVO".equals(this.statusDieta)) {
-		    getCriteria().add(Restrictions.isNotNull("fim"));
+		if (StatusFiltroDietaEspecial.ATIVO.equals(this.statusDieta)) {
+			getCriteria().add(Restrictions.eq("status", Status.ATIVO));
+			getCriteria().add(Restrictions.or(
+					Restrictions.isNull("fim"),
+					Restrictions.gt("fim", new Date())
+			));
+		} else if (StatusFiltroDietaEspecial.SUSPENSO.equals(this.statusDieta)) {
+			getCriteria().add(Restrictions.eq("status", Status.SUSPENSO));
+			getCriteria().add(Restrictions.or(
+					Restrictions.isNull("fim"),
+					Restrictions.gt("fim", new Date())
+			));
+		} else if (StatusFiltroDietaEspecial.ENCERRADO.equals(this.statusDieta)) {
+			getCriteria().add(Restrictions.or(
+					Restrictions.eq("status", Status.INATIVO),
+					Restrictions.and(
+							Restrictions.isNotNull("fim"),
+							Restrictions.le("fim", new Date()))));
 		}
 		
 	}
@@ -133,11 +150,11 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 		this.listarTodasUnidades = listarTodasUnidades;
 	}
 	
-	public String getStatusDieta() {
+	public StatusFiltroDietaEspecial getStatusDieta() {
 	    return statusDieta;
 	}
 
-	public void setStatusDieta(String statusDieta) {
+	public void setStatusDieta(StatusFiltroDietaEspecial statusDieta) {
 	    this.statusDieta = statusDieta;
 	}
 

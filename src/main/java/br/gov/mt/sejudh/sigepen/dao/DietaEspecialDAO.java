@@ -1,5 +1,6 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -91,10 +92,43 @@ public class DietaEspecialDAO {
 	}
 	
 	public void encerrarDietasAtivasDoRecuperando(long idRecuperando, Date dataFim) {
-	    String jpql = "UPDATE DietaRecuperando d SET d.fim = :dataFim " +
+	    inativarDietasAtivasOuSuspensasDoRecuperando(idRecuperando, dataFim);
+	}
+
+	public void suspenderDietasAtivasDoRecuperando(long idRecuperando) {
+	    String jpql = "UPDATE DietaRecuperando d SET d.status = :statusSuspenso " +
 	                  "WHERE d.recuperando.id = :idRecuperando " +
-	                  "AND d.fim IS NULL";
+	                  "AND d.status = :statusAtivo " +
+	                  "AND d.inicio <= :dataReferencia " +
+	                  "AND (d.fim IS NULL OR d.fim > :dataReferencia)";
 	    entityManager.createQuery(jpql)
+	        .setParameter("statusSuspenso", Status.SUSPENSO)
+	        .setParameter("statusAtivo", Status.ATIVO)
+	        .setParameter("dataReferencia", new Date())
+	        .setParameter("idRecuperando", idRecuperando)
+	        .executeUpdate();
+	}
+
+	public void reativarDietasSuspensasDoRecuperando(long idRecuperando) {
+	    String jpql = "UPDATE DietaRecuperando d SET d.status = :statusAtivo " +
+	                  "WHERE d.recuperando.id = :idRecuperando " +
+	                  "AND d.status = :statusSuspenso " +
+	                  "AND (d.fim IS NULL OR d.fim > :dataReferencia)";
+	    entityManager.createQuery(jpql)
+	        .setParameter("statusAtivo", Status.ATIVO)
+	        .setParameter("statusSuspenso", Status.SUSPENSO)
+	        .setParameter("dataReferencia", new Date())
+	        .setParameter("idRecuperando", idRecuperando)
+	        .executeUpdate();
+	}
+
+	public void inativarDietasAtivasOuSuspensasDoRecuperando(long idRecuperando, Date dataFim) {
+	    String jpql = "UPDATE DietaRecuperando d SET d.status = :statusInativo, d.fim = :dataFim " +
+	                  "WHERE d.recuperando.id = :idRecuperando " +
+	                  "AND d.status IN (:statusVigentes)";
+	    entityManager.createQuery(jpql)
+	        .setParameter("statusInativo", Status.INATIVO)
+	        .setParameter("statusVigentes", Arrays.asList(Status.ATIVO, Status.SUSPENSO))
 	        .setParameter("dataFim", dataFim)
 	        .setParameter("idRecuperando", idRecuperando)
 	        .executeUpdate();

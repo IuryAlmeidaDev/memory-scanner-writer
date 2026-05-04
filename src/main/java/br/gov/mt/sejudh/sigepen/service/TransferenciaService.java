@@ -2,7 +2,9 @@ package br.gov.mt.sejudh.sigepen.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -11,7 +13,6 @@ import javax.interceptor.Interceptors;
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoDAO;
 import br.gov.mt.sejudh.sigepen.dao.TransferenciaDAO;
-import br.gov.mt.sejudh.sigepen.dao.filter.FiltroMovimentacaoExterna;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroTransferencia;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusMovimentacao;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusPedido;
@@ -35,6 +36,9 @@ public class TransferenciaService {
 	
 	@Inject
 	private AuditoriaDAO auditDAO;
+
+	@Inject
+	private DietaEspecialService dietaEspecialService;
 
 	@Interceptors(EJBExcInterceptor.class)
 	public void salvar(Transferencia transferencia) {
@@ -68,6 +72,7 @@ public class TransferenciaService {
 		transferencia.setDataInicio(new Date());
 		
 		daoPedido.atualizaPedidosParaEmAndamentoTransitoPorTransferenciaId(transferencia.getId(), StatusPedido.EM_ANDAMENTO, transferencia.getDataInicio());
+		suspenderDietasDosRecuperandos(transferencia);
 		dao.salvar(transferencia);
 	
 	}
@@ -139,14 +144,17 @@ public class TransferenciaService {
 	@Interceptors(EJBExcInterceptor.class)
 	public void cancelarTransferencia(Transferencia transferencia) throws ValidacaoException {
 		if(transferencia.getStatus() == StatusMovimentacao.PENDENTE || transferencia.getStatus() == StatusMovimentacao.EM_ANDAMENTO){			
-			
-		transferencia.setStatus(StatusMovimentacao.CANCELADO);
-		transferencia.setDataCancelamento(new Date());		
+			boolean transferenciaEmAndamento = transferencia.getStatus() == StatusMovimentacao.EM_ANDAMENTO;
+			Date dataCancelamento = new Date();
+
+			transferencia.setStatus(StatusMovimentacao.CANCELADO);
+			transferencia.setDataCancelamento(dataCancelamento);
 	
-		daoPedido.atualizaPedidosParaCanceladoTransitoPorTransferenciaId(transferencia.getId(), StatusPedido.CANCELADO, transferencia.getDataCancelamento());
-		transferencia.setStatus(StatusMovimentacao.CANCELADO);
-		transferencia.setDataCancelamento(new Date());		
-		dao.salvar(transferencia);
+			daoPedido.atualizaPedidosParaCanceladoTransitoPorTransferenciaId(transferencia.getId(), StatusPedido.CANCELADO, dataCancelamento);
+			if (transferenciaEmAndamento) {
+				reativarDietasDosRecuperandos(transferencia);
+			}
+			dao.salvar(transferencia);
 		}else{
 			throw new ValidacaoException("Transferência não pode ser finalizada!");	 
 		}
@@ -166,4 +174,43 @@ public class TransferenciaService {
     public int countMovimentacaoExterna(FiltroTransferencia filtro) {
 		return quantidadeFiltrados(filtro);
     }
+
+	private void suspenderDietasDosRecuperandos(Transferencia transferencia) {
+		for (Long recuperandoId : buscarIdsRecuperandosDaTransferencia(transferencia)) {
+			dietaEspecialService.suspenderDietasAtivasDoRecuperando(recuperandoId);
+		}
+	}
+
+	private void reativarDietasDosRecuperandos(Transferencia transferencia) {
+		for (Long recuperandoId : buscarIdsRecuperandosDaTransferencia(transferencia)) {
+			dietaEspecialService.reativarDietasSuspensasDoRecuperando(recuperandoId);
+		}
+	}
+
+	private Set<Long> buscarIdsRecuperandosDaTransferencia(Transferencia transferencia) {
+		Set<Long> ids = new HashSet<>();
+
+		if (transferencia.getListTransferenciaPedidoTransitoDTO() != null
+				&& !transferencia.getListTransferenciaPedidoTransitoDTO().isEmpty()) {
+			for (TransferenciaPedidoTransitoDTO pedido : transferencia.getListTransferenciaPedidoTransitoDTO()) {
+				if (pedido.getMatricula() != null) {
+					ids.add(pedido.getMatricula());
+				}
+			}
+			return ids;
+		}
+
+		List<PedidoTransito> pedidos = daoPedido.buscarPedidosPorTransferencia(transferencia.getId());
+		if (pedidos == null) {
+			return ids;
+		}
+
+		for (PedidoTransito pedido : pedidos) {
+			if (pedido.getRecuperando() != null) {
+				ids.add(pedido.getRecuperando().getId());
+			}
+		}
+
+		return ids;
+	}
 }

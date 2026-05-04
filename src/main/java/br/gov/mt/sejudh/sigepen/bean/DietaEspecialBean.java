@@ -27,6 +27,7 @@ import com.ocpsoft.pretty.faces.annotation.URLMappings;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroDietaEspecial;
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.enumerator.AcaoDeTela;
+import br.gov.mt.sejudh.sigepen.enumerator.StatusFiltroDietaEspecial;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.DietaRecuperando;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
@@ -144,6 +145,10 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 		return this.tipoDietas;
 	}
 
+	public StatusFiltroDietaEspecial[] getStatusFiltroDietaEspecial() {
+		return StatusFiltroDietaEspecial.values();
+	}
+
 	@URLAction(onPostback = false, phaseId = PhaseId.RESTORE_VIEW)
 	public void carregaFiltros() throws Exception {
 		if (getAcaoDeTela().equals(AcaoDeTela.ALTERAR) || getAcaoDeTela().equals(AcaoDeTela.VISUALIZAR)) {
@@ -157,6 +162,13 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 			super.carregarFiltroPaginacao(FiltroDietaEspecial.class, this, getFiltro());
 		} else {
 			super.carregarFiltroPaginacao(FiltroDietaEspecial.class, this);
+		}
+
+		if (this.filtro == null) {
+			this.filtro = new FiltroDietaEspecial();
+		}
+		if (this.filtro.getStatusDieta() == null) {
+			this.filtro.setStatusDieta(StatusFiltroDietaEspecial.ATIVO);
 		}
 	}
 
