@@ -6,7 +6,6 @@ public enum Status {
     INATIVO("Inativo", "I", 1),
     ATIVO("Ativo", "A", 2),
     PENDENTE("Pendente", "P", 3),
-    SUSPENSO("Suspenso", "S", 4);
 
     private String descricao;
     private final String inicial;
