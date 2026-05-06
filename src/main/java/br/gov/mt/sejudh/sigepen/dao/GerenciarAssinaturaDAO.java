@@ -6,11 +6,9 @@ import br.gov.mt.sejudh.sigepen.model.GerenciarAssinatura;
 import br.gov.mt.sejudh.sigepen.model.GerenciarAssinaturaServidor;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -20,9 +18,6 @@ public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
 
 
 	private static final long serialVersionUID = 1635530084073694819L;
-
-    @Inject
-    private Logger log;
 
     @Override
 	public List<GerenciarAssinatura> listarTodos(){
@@ -84,7 +79,7 @@ public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
 		try{
 			return query.getSingleResult();
 		} catch (NoResultException e) {
-			e.printStackTrace();
+			// intentional: assinatura inexistente é fluxo normal — caller trata null
 			return null;
 		}
 
@@ -114,7 +109,7 @@ public class GerenciarAssinaturaDAO extends BaseDAO<GerenciarAssinatura, Long> {
 
 			return result;
 		} catch (NoResultException e) {
-			log.error("Erro ao buscar gerenciar assinatura {}", e.getMessage());
+			// intentional: assinatura inexistente é fluxo normal — caller trata null
 			return null;
 		}
     }

@@ -842,9 +842,6 @@ public class VisitanteBean extends MetodosDePaginaBean {
 				service.buscarRecuperandosDoVisitante(this.visitante);
 				List<Credenciamento> credenciamentosDoVisitante = this.visitante.getCredenciamentos();
 
-
-				System.out.print("Visitante getStatus " + this.visitante.getStatus());
-
 				Optional<Credenciamento> optCredenciamento = credenciamentosDoVisitante.stream()
 			            .filter(re -> re.getRecuperando() != null
 			                    && re.getRecuperando().getId() == this.recuperandoSelecionado.getId())
