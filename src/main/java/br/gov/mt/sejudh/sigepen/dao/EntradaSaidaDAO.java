@@ -10,6 +10,7 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
@@ -314,6 +315,51 @@ public class EntradaSaidaDAO {
 		else
 			entrada = this.em.merge(entrada);
 		return entrada;
+	}
+
+	public void bloquearRecuperandoParaControleVisita(Long recuperandoId) {
+		this.em.find(Recuperando.class, recuperandoId, LockModeType.PESSIMISTIC_WRITE);
+	}
+
+	public UnidadePrisional buscarUnidadePrisionalParaControleVisita(Long unidadeId) {
+		return this.em.find(UnidadePrisional.class, unidadeId);
+	}
+
+	public Long contarVisitantesAdultosPorRecuperandoNoDia(Long unidadeId, Long recuperandoId, Date inicioDia, Date fimDia, Date dataMaioridade) {
+		return contarVisitantesAdultosPorRecuperandoNoDia(unidadeId, recuperandoId, inicioDia, fimDia, dataMaioridade, null);
+	}
+
+	public Long contarVisitantesAdultosPorRecuperandoNoDia(Long unidadeId, Long recuperandoId, Date inicioDia, Date fimDia, Date dataMaioridade, Long entradaIgnoradaId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT COUNT(DISTINCT E.ID) ");
+		sql.append(" FROM " + Sigepen.SEJUDH_SCHEMA + ".SGP_ENTRADA_SAIDA E ");
+		sql.append(" JOIN " + Sigepen.SEJUDH_SCHEMA + ".SGP_ENTRADA_SAIDA_RECUP ESR ON ESR.ID_ENTRADA_SAIDA = E.ID ");
+		sql.append(" JOIN " + Sigepen.SEJUDH_SCHEMA + ".SGP_CREDENCIAMENTO C ON C.ID_CREDENCIAMENTO = ESR.ID_CREDENCIAMENTO ");
+		sql.append(" JOIN " + Sigepen.SEJUDH_SCHEMA + ".SGP_VISITANTE V ON V.ID_VISITANTE = E.ID_VISITANTE ");
+		sql.append(" JOIN " + Sigepen.SEJUDH_SCHEMA + ".PESSOA P ON P.ID = V.ID_PESSOA_VISITANTE ");
+		sql.append(" WHERE E.ID_UNIDADE_PRISIONAL = :unidadeId ");
+		sql.append(" AND C.ID_RECUPERANDO = :recuperandoId ");
+		sql.append(" AND E.DATA_ENTRADA >= :inicioDia ");
+		sql.append(" AND E.DATA_ENTRADA <= :fimDia ");
+		sql.append(" AND E.SITUACAO IN (:situacaoEmAndamento, :situacaoFinalizada) ");
+		sql.append(" AND P.DATA_NASCIMENTO <= :dataMaioridade ");
+		if (entradaIgnoradaId != null) {
+			sql.append(" AND E.ID <> :entradaIgnoradaId ");
+		}
+
+		Query query = this.em.createNativeQuery(sql.toString());
+		query.setParameter("unidadeId", unidadeId);
+		query.setParameter("recuperandoId", recuperandoId);
+		query.setParameter("inicioDia", inicioDia);
+		query.setParameter("fimDia", fimDia);
+		query.setParameter("situacaoEmAndamento", SituacaoVisita.EM_ANDAMENTO.getId());
+		query.setParameter("situacaoFinalizada", SituacaoVisita.FINALIZADA.getId());
+		query.setParameter("dataMaioridade", dataMaioridade);
+		if (entradaIgnoradaId != null) {
+			query.setParameter("entradaIgnoradaId", entradaIgnoradaId);
+		}
+
+		return ((Number) query.getSingleResult()).longValue();
 	}
 
 	public Long buscarQuantidadeEmAndamento(FiltroEntradaSaida f) {
