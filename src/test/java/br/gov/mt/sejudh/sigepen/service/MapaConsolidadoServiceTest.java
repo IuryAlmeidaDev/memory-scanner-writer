@@ -126,6 +126,29 @@ public class MapaConsolidadoServiceTest extends BaseUnitTest {
     }
 
     @Test
+    public void deveContabilizarDietaEspecialNoDiaSeguinteQuandoInicioForAposHorarioDaRefeicao() throws Exception {
+        UnidadePrisional unidade = unidade(10L, 20L, "Unidade A");
+        Contrato contrato = contrato(99L, "2026-04-01 00:00", "2026-04-30 23:59");
+        List<RelatorioMapaAlimentacaoConsultaDTO> consultas = refeicoes(2D, 5D, 9D, 3D, 6D, 10D);
+        List<RelatorioMapaAlimentacaoRecuperandoDTO> recuperandos = Collections.singletonList(
+                recuperando("2026-04-05 14:00", null, "2026-04-05 14:00", null));
+
+        when(contratoService.buscarHorarioRefeiracao(10L)).thenReturn(horariosCompletos());
+        when(dao.buscaRelatorioMapaAlimentacaoRecuperando(eq(20L), any(LocalDate.class), any(LocalDate.class))).thenReturn(recuperandos);
+        when(dao.buscarRelatorioMapaAlimentacaoConsulta(10L, 99L)).thenReturn(consultas);
+
+        MapaConsolidadoDTO resultado = service.obterMapaConsolidado(unidade, Mes.ABRIL, "2026", contrato);
+
+        assertThat(resultado.getConsolidadoRecuperandoDTOs().get(0).getSaidaRecuperando()).isEmpty();
+        assertThat(resultado.getTotalCafe()).isEqualTo(0);
+        assertThat(resultado.getTotalAlmoco()).isEqualTo(0);
+        assertThat(resultado.getTotalJanta()).isEqualTo(0);
+        assertThat(resultado.getTotalCafeEspecial()).isEqualTo(25);
+        assertThat(resultado.getTotalAlmocoEspecial()).isEqualTo(25);
+        assertThat(resultado.getTotalJantaEspecial()).isEqualTo(26);
+    }
+
+    @Test
     public void deveLimparHorariosEntreExecucoesQuandoNovaConsultaNaoTrouxerHorarios() throws Exception {
         UnidadePrisional unidade = unidade(10L, 20L, "Unidade A");
         Contrato contrato = contrato(99L, "2026-04-01 00:00", "2026-04-30 23:59");

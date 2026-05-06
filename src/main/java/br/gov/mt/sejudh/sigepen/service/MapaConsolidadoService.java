@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -138,9 +139,12 @@ public class MapaConsolidadoService {
 			numero++;
 			mapaConsolidadoRecuperando.setNomeRecuperando(mapaRecuperando.getNomeRecuperando());
 			mapaConsolidadoRecuperando.setNomeSocialRecuperando(mapaRecuperando.getNomeSocialRecuperando());
+			mapaConsolidadoRecuperando.setSituacaoRecuperando(mapaRecuperando.getSituacaoRecuperando());
 			mapaConsolidadoRecuperando.setMatriculaRecuperando(mapaRecuperando.getMatriculaRecuperando());
 			mapaConsolidadoRecuperando.setEntradaRecuperando(mapaRecuperando.getEntradaRecuperando());
 			mapaConsolidadoRecuperando.setSaidaRecuperando(mapaRecuperando.getSaidaRecuperando());
+			mapaConsolidadoRecuperando.setInicioEspecial(mapaRecuperando.getInicioEspecial());
+			mapaConsolidadoRecuperando.setFimEspecial(mapaRecuperando.getFimEspecial());
 
 			int qtdDiasEspecial = obterDias(mapaRecuperando.getInicioEspecial(), mapaRecuperando.getFimEspecial());
 			this.especial = qtdDiasEspecial == 0 ? false : true;
@@ -283,63 +287,121 @@ public class MapaConsolidadoService {
 			return;
 		}
 
-		int diasNormal = mapaConsolidadoRecuperando.getDiasRecuperandoNormal();
-		int diasEspecial = mapaConsolidadoRecuperando.getDiasRecuperandoEspecial();
 		int qtdDiasNormal = 0;
 		int qtdDiasEspecial = 0;
 
 		if (mapaConsulta.getRefeicao().equals("CAFÉ DA MANHÃ")) {
 
-			qtdDiasEspecial = this
-					.validarQtdDiasPeloHorario(diasEspecial,
-							this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEspecialEntrada(),
-									mapaConsolidadoRecuperando.getHorarioEspecialSaida(), this.cafeManhaInicio, this.cafeManhaFim),
-							this.especial);
-
-			mapaConsolidadoRecuperando.setDiasRecuperandoCafeEspecial(qtdDiasEspecial);
-			mapaConsolidadoRecuperando.setCafeManhaEspecial(mapaConsulta.getValorEspecial() * qtdDiasEspecial);
-
-			qtdDiasNormal = this.validarQtdDiasPeloHorario(diasNormal,
-					this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEntrada(),
-							mapaConsolidadoRecuperando.getHorarioSaida(), this.cafeManhaInicio, this.cafeManhaFim));
+			qtdDiasNormal = contarRefeicoesNoPeriodo(mapaConsolidadoRecuperando.getDataEntradaRecuperando(),
+					mapaConsolidadoRecuperando.getDataSaidaRecuperando(), this.cafeManhaInicio, this.cafeManhaFim);
+			qtdDiasEspecial = contarRefeicoesEspeciais(mapaConsolidadoRecuperando, this.cafeManhaInicio, this.cafeManhaFim);
 
 			mapaConsolidadoRecuperando.setDiasRecuperandoCafeNormal(qtdDiasNormal - qtdDiasEspecial);
 			mapaConsolidadoRecuperando.setCafeManha(mapaConsulta.getValorNormal() * (qtdDiasNormal - qtdDiasEspecial));
+			mapaConsolidadoRecuperando.setDiasRecuperandoCafeEspecial(qtdDiasEspecial);
+			mapaConsolidadoRecuperando.setCafeManhaEspecial(mapaConsulta.getValorEspecial() * qtdDiasEspecial);
 		}
 		if (mapaConsulta.getRefeicao().equals("ALMOÇO")) {
 
-			qtdDiasEspecial = this.validarQtdDiasPeloHorario(diasEspecial,
-					this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEspecialEntrada(),
-							mapaConsolidadoRecuperando.getHorarioEspecialSaida(), this.almocoInicio, this.almocoFim),
-					this.especial);
-
-			mapaConsolidadoRecuperando.setDiasRecuperandoAlmocoEspecial(qtdDiasEspecial);
-			mapaConsolidadoRecuperando.setAlmocoEspecial(mapaConsulta.getValorEspecial() * qtdDiasEspecial);
-
-			qtdDiasNormal = this.validarQtdDiasPeloHorario(diasNormal,
-					this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEntrada(),
-							mapaConsolidadoRecuperando.getHorarioSaida(), this.almocoInicio, this.almocoFim));
+			qtdDiasNormal = contarRefeicoesNoPeriodo(mapaConsolidadoRecuperando.getDataEntradaRecuperando(),
+					mapaConsolidadoRecuperando.getDataSaidaRecuperando(), this.almocoInicio, this.almocoFim);
+			qtdDiasEspecial = contarRefeicoesEspeciais(mapaConsolidadoRecuperando, this.almocoInicio, this.almocoFim);
 
 			mapaConsolidadoRecuperando.setDiasRecuperandoAlmocoNormal(qtdDiasNormal - qtdDiasEspecial);
 			mapaConsolidadoRecuperando.setAlmoco(mapaConsulta.getValorNormal() * (qtdDiasNormal - qtdDiasEspecial));
+			mapaConsolidadoRecuperando.setDiasRecuperandoAlmocoEspecial(qtdDiasEspecial);
+			mapaConsolidadoRecuperando.setAlmocoEspecial(mapaConsulta.getValorEspecial() * qtdDiasEspecial);
 		}
 		if (mapaConsulta.getRefeicao().equals("JANTA")) {
 
-			qtdDiasEspecial = this.validarQtdDiasPeloHorario(diasEspecial,
-					this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEspecialEntrada(),
-							mapaConsolidadoRecuperando.getHorarioEspecialSaida(), this.jantaInicio, this.jantaFim),
-					this.especial);
-
-			mapaConsolidadoRecuperando.setDiasRecuperandoJantaEspecial(qtdDiasEspecial);
-			mapaConsolidadoRecuperando.setJantaEspecial(mapaConsulta.getValorEspecial() * qtdDiasEspecial);
-
-			qtdDiasNormal = this.validarQtdDiasPeloHorario(diasNormal,
-					this.validaHorarioPedidoPorRefeicao(mapaConsolidadoRecuperando.getHorarioEntrada(),
-							mapaConsolidadoRecuperando.getHorarioSaida(), this.jantaInicio, this.jantaFim));
+			qtdDiasNormal = contarRefeicoesNoPeriodo(mapaConsolidadoRecuperando.getDataEntradaRecuperando(),
+					mapaConsolidadoRecuperando.getDataSaidaRecuperando(), this.jantaInicio, this.jantaFim);
+			qtdDiasEspecial = contarRefeicoesEspeciais(mapaConsolidadoRecuperando, this.jantaInicio, this.jantaFim);
 
 			mapaConsolidadoRecuperando.setDiasRecuperandoJantaNormal(qtdDiasNormal - qtdDiasEspecial);
 			mapaConsolidadoRecuperando.setJanta(mapaConsulta.getValorNormal() * (qtdDiasNormal - qtdDiasEspecial));
+			mapaConsolidadoRecuperando.setDiasRecuperandoJantaEspecial(qtdDiasEspecial);
+			mapaConsolidadoRecuperando.setJantaEspecial(mapaConsulta.getValorEspecial() * qtdDiasEspecial);
 		}
+	}
+
+	private int contarRefeicoesEspeciais(MapaConsolidadoRecuperandoDTO recuperando, Long horarioRefeicaoInicio,
+			Long horarioRefeicaoFim) {
+		if (recuperando.getInicioEspecial() == null) {
+			return 0;
+		}
+
+		Date inicio = maiorData(recuperando.getDataEntradaRecuperando(), recuperando.getInicioEspecial());
+		Date fim = menorData(recuperando.getDataSaidaRecuperando(), recuperando.getFimEspecial());
+
+		if (fim != null && inicio != null && fim.before(inicio)) {
+			return 0;
+		}
+
+		return contarRefeicoesNoPeriodo(inicio, fim, horarioRefeicaoInicio, horarioRefeicaoFim);
+	}
+
+	private Date maiorData(Date primeira, Date segunda) {
+		if (primeira == null) {
+			return segunda;
+		}
+		if (segunda == null) {
+			return primeira;
+		}
+		return primeira.after(segunda) ? primeira : segunda;
+	}
+
+	private Date menorData(Date primeira, Date segunda) {
+		if (primeira == null) {
+			return segunda;
+		}
+		if (segunda == null) {
+			return primeira;
+		}
+		return primeira.before(segunda) ? primeira : segunda;
+	}
+
+	private int contarRefeicoesNoPeriodo(Date inicio, Date fim, Long horarioRefeicaoInicio, Long horarioRefeicaoFim) {
+		if (inicio == null || horarioRefeicaoInicio == null || horarioRefeicaoFim == null) {
+			return 0;
+		}
+
+		LocalDateTime inicioPeriodo = inicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		LocalDateTime fimPeriodo = fim != null
+				? fim.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+				: this.vigenciaFim.atStartOfDay();
+		LocalDateTime inicioVigencia = this.vigenciaInicio.atStartOfDay();
+		LocalDateTime fimVigencia = this.vigenciaFim.atStartOfDay();
+
+		if (inicioPeriodo.isBefore(inicioVigencia)) {
+			inicioPeriodo = inicioVigencia;
+		}
+		if (fimPeriodo.isAfter(fimVigencia)) {
+			fimPeriodo = fimVigencia;
+		}
+		if (fimPeriodo.isBefore(inicioPeriodo)) {
+			return 0;
+		}
+
+		LocalTime horaInicioRefeicao = toLocalTime(horarioRefeicaoInicio);
+		LocalTime horaFimRefeicao = toLocalTime(horarioRefeicaoFim);
+		int total = 0;
+
+		for (LocalDate dia = inicioPeriodo.toLocalDate(); dia.isBefore(this.vigenciaFim); dia = dia.plusDays(1)) {
+			LocalDateTime inicioRefeicao = dia.atTime(horaInicioRefeicao);
+			LocalDateTime fimRefeicao = dia.atTime(horaFimRefeicao);
+
+			if (!fimPeriodo.isBefore(inicioRefeicao) && !inicioPeriodo.isAfter(fimRefeicao)) {
+				total++;
+			}
+		}
+
+		return total;
+	}
+
+	private LocalTime toLocalTime(Long horario) {
+		String valor = String.format("%04d", horario);
+		return LocalTime.of(Integer.parseInt(valor.substring(0, 2)), Integer.parseInt(valor.substring(2, 4)));
 	}
 
 	private boolean validaHorarioPedidoPorRefeicao(Long horarioEntrada, Long horarioSaida, Long horarioRefeicaoInicio, Long horarioRefeicaoFim) {

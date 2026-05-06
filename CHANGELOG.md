@@ -30,11 +30,17 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   (substitui stacktrace cru).
 
 ### Corrigido
+
 - **Alimentação:** consulta de itens para refeições futuras.
 - **Alimentação:** bloqueio por corte e duplicidade de pedidos automáticos.
 - **Alimentação:** validação automática de data, refeição, unidade e contrato.
 - **Contrato:** paginação da listagem.
 - **Contrato:** filtros de unidade prisional, status e contrato na listagem.
+- **Mapa consolidado:** cálculo de refeições especiais passa a considerar a
+  sobreposição diária entre permanência do recuperando, vigência da dieta especial,
+  horários de refeição e período do relatório.
+- **Mapa consolidado:** busca de dietas especiais passa a considerar dietas vigentes
+  que sobrepõem o período do relatório, inclusive iniciadas antes do mês consultado.
 - **Login:** remoção de import `org.omg.CORBA.portable.ApplicationException`
   (incompatível com Java 11+).
 - **CI:** `code_check` ajustado para JDK 17 + mirror HTTP, com `sonar-maven-plugin`
@@ -53,6 +59,20 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   usando a data de saída como data de encerramento.
 - **Pedido de transferência:** conclusão do pedido deixa de encerrar dieta especial; o ciclo
   de suspensão/reativação passa a ser tratado no fluxo de transferência.
+- **Mapa consolidado — relatório:** ajustes de nomenclatura e apresentação das colunas
+  de horário, refeições normais/especiais, total e saída sem data.
+- **Mapa consolidado — relatório:** coluna `Nome Social` centralizada no consolidado
+  mensal.
+- **Mapa consolidado — relatório:** valores monetários padronizados no formato
+  brasileiro, com vírgula decimal e ponto de milhar.
+- **Mapa consolidado — relatório:** coluna `Situação` adicionada ao lado da matrícula,
+  exibindo o desligamento quando houver ou a condição atual do recuperando.
+- **Mapa consolidado — relatório:** ajuste de layout para exibir horários completos,
+  acomodar nomes longos com linha fixa e deixar a saída em branco quando não houver data.
+- **Mapa consolidado — relatório:** colunas `Nome Social` e `Matrícula` ampliadas
+  para reduzir quebras de linha no consolidado mensal.
+- **Mapa consolidado — tela:** ação principal renomeada para `Imprimir`, com ícone de
+  impressão.
 - **Docker:** normalização de quebra de linha no `docker-compose`.
 - **FXLauncher:** sincronização de `app.xml`, `sigepen-biometria.exe`, `LiveMedia.dll`
   e `msvcp140.dll` em `Resources/aplicativo/` com o hotfix `v2.2.1` do
