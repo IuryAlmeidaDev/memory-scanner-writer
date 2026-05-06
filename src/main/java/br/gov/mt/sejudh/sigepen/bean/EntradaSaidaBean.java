@@ -756,7 +756,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		FiltroEntradaSaida f = new FiltroEntradaSaida();
 		f.setData(new Date());
 		f.getPessoasIds().add(this.getEntrada().getVisitante().getPessoa().getId());
-		f.setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
+		f.setUnidade(getUnidadeSelecionadaAtual().getId());
 		List<EntradaSaida> lista = service.buscarEntradasPorFiltro(f, true);
 		if (lista != null && lista.size() > 0) {
 			EntradaSaida eAux = lista.get(0);
@@ -767,7 +767,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		}
 
 		entrada.setDataEntrada(new Date());
-		entrada.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+		entrada.setUnidadePrisional(getUnidadeSelecionadaAtual());
 		entrada.setVisitante(this.getEntrada().getVisitante());
 		entrada.setRecuperandos(new ArrayList<EntradaSaidaRecuperando>());
 
@@ -781,7 +781,12 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		}
 		entrada.setSituacao(SituacaoVisita.EM_ANDAMENTO);
 		addVisitanteResponsavel(entrada);
-		this.entrada = service.salvar(entrada);
+		try {
+			this.entrada = service.iniciarVisita(entrada);
+		} catch (ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage());
+			return;
+		}
 		LoggerUtil.logInfo(Acao.INICIAR, this.entrada, log);
 		facesUtil.exibirMensagemInfo(
 				"Entrada do visitante " + this.entrada.getVisitante().getPessoa().getNome() + " realizada com sucesso!",
@@ -794,6 +799,10 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		}
 
 		return;
+	}
+
+	protected UnidadePrisional getUnidadeSelecionadaAtual() {
+		return SecurityUtil.getUnidadeSelecionada();
 	}
 
 	private void addVisitanteResponsavel(EntradaSaida entrada) {
@@ -1203,7 +1212,13 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 					this.entrada.getRecuperandos().add(e);
 				}
 			}
-			service.salvar(entrada);
+			try {
+				service.alterarVisita(entrada);
+			} catch (ValidacaoException e) {
+				this.processando = false;
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage());
+				return;
+			}
 			LoggerUtil.logInfo(Acao.ALTERAR, this.entrada, log);
 			facesUtil.exibirMensagemInfo("Visitação do visitante " + this.entrada.getVisitante().getPessoa().getNome()
 					+ " alterada com sucesso!", true);

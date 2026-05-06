@@ -209,7 +209,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 	}
 	
 	private boolean validarUnidade() {
-		if (!security.possuiPermissao("ListarTodasUnidades") && this.unidade.getId() != SecurityUtil.getUnidadeSelecionada().getId()) {
+		if (!security.possuiPermissao("ListarTodasUnidades") && this.unidade.getId() != getUnidadeSelecionadaAtual().getId()) {
 			return false;
 		}
 		
@@ -225,7 +225,7 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 			alterarUnidadeSessao();
 			facesUtil.exibirMensagemInfo("Unidade Prisional " + this.unidade.getNome() + " salva com Sucesso!", true);
 			retorno = "pretty:ListarUnidade";			
-			LoggerUtil.logInfo(Acao.SALVAR, unidade, log);
+			registrarSucessoSalvar();
 		} catch(ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
 		} catch(Exception e){
@@ -467,9 +467,21 @@ public class UnidadePrisionalBean extends MetodosDePaginaBean {
 	}
 
 	private void alterarUnidadeSessao() {
-		if (getUnidade().getId() == SecurityUtil.getUnidadeSelecionada().getId()) {
-			SecurityUtil.setUnidadeSelecionada(getUnidade());
+		if (getUnidade().getId() == getUnidadeSelecionadaAtual().getId()) {
+			setUnidadeSelecionadaAtual(getUnidade());
 		}
+	}
+
+	protected UnidadePrisional getUnidadeSelecionadaAtual() {
+		return SecurityUtil.getUnidadeSelecionada();
+	}
+
+	protected void setUnidadeSelecionadaAtual(UnidadePrisional unidade) {
+		SecurityUtil.setUnidadeSelecionada(unidade);
+	}
+
+	protected void registrarSucessoSalvar() {
+		LoggerUtil.logInfo(Acao.SALVAR, unidade, log);
 	}
 	
 	public FiltroUnidadePrisional getFiltro() {
