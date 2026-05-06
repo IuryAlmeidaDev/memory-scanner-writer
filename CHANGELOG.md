@@ -23,13 +23,13 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   automático de pedidos.
 - **Relatório Jumbo self-service:** novo relatório de recuperandos nas unidades com Jumbo,
   com permissão dedicada.
+- **Visitas:** limite de visitas por recuperando configurável por unidade prisional.
 - **Biometria v2 — logs defensivos (Onda 1):** logs de contexto da estação no startup,
   status HTTP e payload em `ConexaoWebService`, parsing defensivo no
   `BiometriaWebServiceClient` e mensagem amigável no popup de erro de biometria
   (substitui stacktrace cru).
 
 ### Corrigido
-
 - **Alimentação:** consulta de itens para refeições futuras.
 - **Alimentação:** bloqueio por corte e duplicidade de pedidos automáticos.
 - **Alimentação:** validação automática de data, refeição, unidade e contrato.
