@@ -37,6 +37,10 @@ public class UnidadePrisionalService {
 		if(jaExisteUnidadePrisionalComMesmoNome(unidade)){
 			throw new ValidacaoException("Já existe uma Unidade Prisional com o mesmo Nome (" + unidade.getNome() + "), e não está INATIVA.");
 		}
+		if(unidade.getQuantidadeVisitaPorRecuperando() != null && unidade.getQuantidadeVisitaPorRecuperando() < 0) {
+			throw new ValidacaoException("Quantidade de visita por recuperando nÃ£o pode ser negativa");
+		}
+
 		Estrutura estrutura;
 		if(unidade.getEstrutura() == null){
 			estrutura = new Estrutura();

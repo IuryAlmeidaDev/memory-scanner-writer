@@ -304,6 +304,18 @@
 							update=":formParametroVisita" process="@this"
 							action="#{unidadePrisionalBean.abrirDialogAdicionarParametroVisita}"
 							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}" />
+						<p:commandButton value="Salvar"
+							action="#{unidadePrisionalBean.salvar()}" update="@form"
+							icon="ui-icon-disk"
+							rendered="#{(securityUtil.possuiPermissao('CadastrarUnidade') and !unidadePrisionalBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarUnidade') and !unidadePrisionalBean.isVisualizacao)}" />
+						<br />
+						<br />
+						<sgp:formInputText id="quantidadeVisitaPorRecuperando"
+							labelValue="Quantidade de visita por recuperando"
+							value="#{unidadePrisionalBean.unidade.quantidadeVisitaPorRecuperando}"
+							maxlength="3"
+							disabled="#{unidadePrisionalBean.isVisualizacao}"
+							display="text" />
 						<br />
 						<br />
 						<p:dataTable id="parametrosVisita" var="p"

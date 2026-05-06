@@ -90,6 +90,9 @@ public class UnidadePrisional implements Serializable {
 	@Column(name = "BIOMETRIA_OBRIGATORIA", nullable = false, columnDefinition = "NUMBER(1) DEFAULT 1")
 	private Boolean biometriaObrigatoria;
 
+	@Column(name = "QTD_VISITA_POR_RECUPERANDO")
+	private Integer quantidadeVisitaPorRecuperando;
+
 	@OneToMany(mappedBy = "unidade", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<ParametroVisita> parametrosVisita;
 	
@@ -268,6 +271,14 @@ public class UnidadePrisional implements Serializable {
 
 	public void setBiometriaObrigatoria(Boolean biometriaObrigatoria) {
 		this.biometriaObrigatoria = biometriaObrigatoria;
+	}
+
+	public Integer getQuantidadeVisitaPorRecuperando() {
+		return quantidadeVisitaPorRecuperando;
+	}
+
+	public void setQuantidadeVisitaPorRecuperando(Integer quantidadeVisitaPorRecuperando) {
+		this.quantidadeVisitaPorRecuperando = quantidadeVisitaPorRecuperando;
 	}
 
 	
