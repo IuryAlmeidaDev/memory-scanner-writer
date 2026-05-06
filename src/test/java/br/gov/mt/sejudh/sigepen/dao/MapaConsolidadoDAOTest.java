@@ -5,6 +5,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.Mes;
 import br.gov.mt.sejudh.sigepen.model.dto.RelatorioMapaAlimentacaoConsultaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RelatorioMapaAlimentacaoRecuperandoDTO;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -21,6 +22,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class MapaConsolidadoDAOTest extends BaseUnitTest {
@@ -142,7 +144,8 @@ public class MapaConsolidadoDAOTest extends BaseUnitTest {
                 BigDecimal.ZERO,
                 null,
                 null,
-                "Nome Social"
+                "Nome Social",
+                "PROVISORIO"
         };
         when(query.getResultList()).thenReturn(Collections.singletonList(linha));
 
@@ -153,6 +156,23 @@ public class MapaConsolidadoDAOTest extends BaseUnitTest {
         assertThat(resultado.get(0).getNomeRecuperando()).isEqualTo("Recuperando");
         assertThat(resultado.get(0).getMatriculaRecuperando()).isEqualTo("123");
         assertThat(resultado.get(0).getNomeSocialRecuperando()).isEqualTo("Nome Social");
+        assertThat(resultado.get(0).getSituacaoRecuperando()).isEqualTo("Provisório");
+    }
+
+    @Test
+    public void buscaRelatorioMapaAlimentacaoRecuperando_deveBuscarDietaQueSobrepoePeriodo() {
+        when(entityManager.createNativeQuery(anyString())).thenReturn(query);
+        when(query.setParameter(anyString(), any())).thenReturn(query);
+        when(query.getResultList()).thenReturn(Collections.emptyList());
+
+        dao.buscaRelatorioMapaAlimentacaoRecuperando(20L, LocalDate.of(2026, 4, 1), LocalDate.of(2026, 5, 1));
+
+        ArgumentCaptor<String> sqlCaptor = ArgumentCaptor.forClass(String.class);
+        verify(entityManager).createNativeQuery(sqlCaptor.capture());
+
+        assertThat(sqlCaptor.getValue())
+                .contains("dr.INICIO <= TO_DATE(:dataFim, 'DD/MM/YYYY')")
+                .contains("dr.FIM >= TO_DATE(:dataInicio, 'DD/MM/YYYY') OR dr.fim IS null");
     }
 
     @Test
@@ -169,7 +189,8 @@ public class MapaConsolidadoDAOTest extends BaseUnitTest {
                 BigDecimal.ONE,
                 null,
                 null,
-                "Social 2"
+                "Social 2",
+                "ALVARA_DE_SOLTURA"
         };
         when(query.getResultList()).thenReturn(Collections.singletonList(linha));
 
@@ -180,5 +201,6 @@ public class MapaConsolidadoDAOTest extends BaseUnitTest {
         assertThat(resultado.get(0).getNomeRecuperando()).isEqualTo("Recuperando 2");
         assertThat(resultado.get(0).getMatriculaRecuperando()).isEqualTo("456");
         assertThat(resultado.get(0).getNomeSocialRecuperando()).isEqualTo("Social 2");
+        assertThat(resultado.get(0).getSituacaoRecuperando()).isEqualTo("Alvará de Soltura");
     }
 }

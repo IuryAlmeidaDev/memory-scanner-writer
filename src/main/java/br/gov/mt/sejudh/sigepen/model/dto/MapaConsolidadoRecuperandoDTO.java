@@ -8,9 +8,12 @@ public class MapaConsolidadoRecuperandoDTO {
 	private Integer numero;
 	private String nomeRecuperando;
 	private String nomeSocialRecuperando;
+	private String situacaoRecuperando;
 	private String matriculaRecuperando;
 	private Date entradaRecuperando;
 	private Date saidaRecuperando;
+	private Date inicioEspecial;
+	private Date fimEspecial;
 	private Integer diasRecuperando;
 	private Long horarioEntrada;
 	private Long horarioEspecialEntrada;
@@ -85,16 +88,24 @@ public class MapaConsolidadoRecuperandoDTO {
 		return sdf.format(entradaRecuperando);
 	}
 
+	public Date getDataEntradaRecuperando() {
+		return entradaRecuperando;
+	}
+
 	public void setEntradaRecuperando(Date entradaRecuperando) {
 		this.entradaRecuperando = entradaRecuperando;
 	}
 	
 	public String getSaidaRecuperando() {
 		if(saidaRecuperando == null) {
-			return "  / / 00:00";	
+			return "";
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		return sdf.format(saidaRecuperando);
+	}
+
+	public Date getDataSaidaRecuperando() {
+		return saidaRecuperando;
 	}
 
 	public void setSaidaRecuperando(Date saidaRecuperando) {
@@ -159,6 +170,22 @@ public class MapaConsolidadoRecuperandoDTO {
 	
 	public void setHorarioEspecialSaida(Long horarioEspecialSaida) {
 		this.horarioEspecialSaida = horarioEspecialSaida;
+	}
+
+	public Date getInicioEspecial() {
+		return inicioEspecial;
+	}
+
+	public void setInicioEspecial(Date inicioEspecial) {
+		this.inicioEspecial = inicioEspecial;
+	}
+
+	public Date getFimEspecial() {
+		return fimEspecial;
+	}
+
+	public void setFimEspecial(Date fimEspecial) {
+		this.fimEspecial = fimEspecial;
 	}
 
 	public Double getCafeManha() {
@@ -286,4 +313,12 @@ public class MapaConsolidadoRecuperandoDTO {
     public void setNomeSocialRecuperando(String nomeSocialRecuperando) {
         this.nomeSocialRecuperando = nomeSocialRecuperando;
     }
+
+	public String getSituacaoRecuperando() {
+		return situacaoRecuperando;
+	}
+
+	public void setSituacaoRecuperando(String situacaoRecuperando) {
+		this.situacaoRecuperando = situacaoRecuperando;
+	}
 }
