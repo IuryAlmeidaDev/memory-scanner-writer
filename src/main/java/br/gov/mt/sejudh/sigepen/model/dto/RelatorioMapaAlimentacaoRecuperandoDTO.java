@@ -3,10 +3,14 @@ package br.gov.mt.sejudh.sigepen.model.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.gov.mt.sejudh.sigepen.enumerator.Condicao;
+import br.gov.mt.sejudh.sigepen.enumerator.TipoDesligamento;
+
 public class RelatorioMapaAlimentacaoRecuperandoDTO {
 	
 	private String nomeRecuperando;
 	private String nomeSocialRecuperando;
+	private String situacaoRecuperando;
 	private String matriculaRecuperando;
 	private Date entradaRecuperando;
 	private Date saidaRecuperando;
@@ -25,6 +29,27 @@ public class RelatorioMapaAlimentacaoRecuperandoDTO {
 		this.inicioEspecial = (Date) row[6];
 		this.fimEspecial = (Date) row[7];
 		this.nomeSocialRecuperando = (String) row[8];
+		this.situacaoRecuperando = formatarSituacao((String) row[9]);
+	}
+
+	private String formatarSituacao(String situacao) {
+		if (situacao == null || situacao.trim().isEmpty()) {
+			return "";
+		}
+
+		for (TipoDesligamento tipoDesligamento : TipoDesligamento.values()) {
+			if (tipoDesligamento.name().equals(situacao)) {
+				return tipoDesligamento.getDescricao();
+			}
+		}
+
+		for (Condicao condicao : Condicao.values()) {
+			if (condicao.name().equals(situacao)) {
+				return condicao.getDescricao();
+			}
+		}
+
+		return situacao;
 	}
 	
 	
@@ -101,4 +126,12 @@ public class RelatorioMapaAlimentacaoRecuperandoDTO {
     public void setNomeSocialRecuperando(String nomeSocialRecuperando) {
         this.nomeSocialRecuperando = nomeSocialRecuperando;
     }
+
+	public String getSituacaoRecuperando() {
+		return situacaoRecuperando;
+	}
+
+	public void setSituacaoRecuperando(String situacaoRecuperando) {
+		this.situacaoRecuperando = situacaoRecuperando;
+	}
 }

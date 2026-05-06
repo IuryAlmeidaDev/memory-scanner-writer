@@ -62,18 +62,18 @@ public class MapaConsolidadoDAO {
 		String dataFim = obterDataFim(mes.getId().intValue(), Integer.parseInt(ano));
 
 		StringBuilder sql = new StringBuilder(
-				"SELECT p2.NOME, r.ID AS matricula, l.DATA_ENTRADA , l.DATA_SAIDA,SUM(CASE WHEN dr.ID IS null THEN 1 ELSE 0 END) AS QTD_padrao,SUM(CASE WHEN dr.ID IS not null THEN 1 ELSE 0 END) AS QTD_especial,dr.INICIO, dr.FIM, p2.NOME_SOCIAL ");
+				"SELECT p2.NOME, r.ID AS matricula, l.DATA_ENTRADA , l.DATA_SAIDA,SUM(CASE WHEN dr.ID IS null THEN 1 ELSE 0 END) AS QTD_padrao,SUM(CASE WHEN dr.ID IS not null THEN 1 ELSE 0 END) AS QTD_especial,dr.INICIO, dr.FIM, p2.NOME_SOCIAL, COALESCE(PAS.TIPO_DESLIGAMENTO, r.CONDICAO_ATUAL) AS SITUACAO ");
 		sql.append("FROM " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM PAS ");
 		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".RECUPERANDO r ON r.id = pas.RECUPERANDO_ID ");
 		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".PESSOA p2 ON p2.ID = r.PESSOA_ID ");
 		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM_LOTACAO L on l.PASSAGEM_ID = pas.ID ");
 		sql.append("LEFT JOIN " + Sigepen.SEJUDH_SCHEMA
-				+ ".DIETA_RECUPERANDO dr ON dr.RECUPERANDO_ID = PAS.RECUPERANDO_ID AND (dr.INICIO >= TO_DATE(:dataInicio, 'DD/MM/YYYY') AND (dr.FIM <= TO_DATE(:dataFim, 'DD/MM/YYYY') OR dr.fim IS null)) ");
+				+ ".DIETA_RECUPERANDO dr ON dr.RECUPERANDO_ID = PAS.RECUPERANDO_ID AND (dr.INICIO <= TO_DATE(:dataFim, 'DD/MM/YYYY') AND (dr.FIM >= TO_DATE(:dataInicio, 'DD/MM/YYYY') OR dr.fim IS null)) ");
 		sql.append("WHERE l.ESTRUTURA_ID in(SELECT id FROM " + Sigepen.SEJUDH_SCHEMA
 				+ ".estrutura e START WITH id = :id CONNECT BY PRIOR id = ESTRUTURAPAI_ID) ");
 		sql.append("AND l.DATA_ENTRADA <= TO_DATE(:dataFim, 'DD/MM/YYYY') ");
 		sql.append("AND (l.DATA_SAIDA >= TO_DATE(:dataInicio, 'DD/MM/YYYY')	OR l.DATA_SAIDA IS null) ");
-		sql.append("GROUP BY p2.NOME, p2.NOME_SOCIAL, r.ID, l.DATA_ENTRADA , l.DATA_SAIDA,dr.INICIO, dr.FIM ");
+		sql.append("GROUP BY p2.NOME, p2.NOME_SOCIAL, PAS.TIPO_DESLIGAMENTO, r.CONDICAO_ATUAL, r.ID, l.DATA_ENTRADA , l.DATA_SAIDA,dr.INICIO, dr.FIM ");
 		sql.append("ORDER BY matricula, l.DATA_ENTRADA, QTD_especial desc ");
 
 		Query query = entityManager.createNativeQuery(sql.toString());
@@ -89,18 +89,18 @@ public class MapaConsolidadoDAO {
 			LocalDate dataInicio, LocalDate dataFim) {
 
 		StringBuilder sql = new StringBuilder(
-				"SELECT p2.NOME, r.ID AS matricula, l.DATA_ENTRADA , l.DATA_SAIDA,SUM(CASE WHEN dr.ID IS null THEN 1 ELSE 0 END) AS QTD_padrao,SUM(CASE WHEN dr.ID IS not null THEN 1 ELSE 0 END) AS QTD_especial,dr.INICIO, dr.FIM, p2.NOME_SOCIAL ");
+				"SELECT p2.NOME, r.ID AS matricula, l.DATA_ENTRADA , l.DATA_SAIDA,SUM(CASE WHEN dr.ID IS null THEN 1 ELSE 0 END) AS QTD_padrao,SUM(CASE WHEN dr.ID IS not null THEN 1 ELSE 0 END) AS QTD_especial,dr.INICIO, dr.FIM, p2.NOME_SOCIAL, COALESCE(PAS.TIPO_DESLIGAMENTO, r.CONDICAO_ATUAL) AS SITUACAO ");
 		sql.append("FROM " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM PAS ");
 		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".RECUPERANDO r ON r.id = pas.RECUPERANDO_ID ");
 		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".PESSOA p2 ON p2.ID = r.PESSOA_ID ");
 		sql.append("JOIN " + Sigepen.SEJUDH_SCHEMA + ".PASSAGEM_LOTACAO L on l.PASSAGEM_ID = pas.ID ");
 		sql.append("LEFT JOIN " + Sigepen.SEJUDH_SCHEMA
-				+ ".DIETA_RECUPERANDO dr ON dr.RECUPERANDO_ID = PAS.RECUPERANDO_ID AND (dr.INICIO >= TO_DATE(:dataInicio, 'DD/MM/YYYY') AND (dr.FIM <= TO_DATE(:dataFim, 'DD/MM/YYYY') OR dr.fim IS null)) ");
+				+ ".DIETA_RECUPERANDO dr ON dr.RECUPERANDO_ID = PAS.RECUPERANDO_ID AND (dr.INICIO <= TO_DATE(:dataFim, 'DD/MM/YYYY') AND (dr.FIM >= TO_DATE(:dataInicio, 'DD/MM/YYYY') OR dr.fim IS null)) ");
 		sql.append("WHERE l.ESTRUTURA_ID in(SELECT id FROM " + Sigepen.SEJUDH_SCHEMA
 				+ ".estrutura e START WITH id = :id CONNECT BY PRIOR id = ESTRUTURAPAI_ID) ");
 		sql.append("AND l.DATA_ENTRADA <= TO_DATE(:dataFim, 'DD/MM/YYYY') ");
 		sql.append("AND (l.DATA_SAIDA >= TO_DATE(:dataInicio, 'DD/MM/YYYY')	OR l.DATA_SAIDA IS null) ");
-		sql.append("GROUP BY p2.NOME, p2.NOME_SOCIAL, r.ID, l.DATA_ENTRADA , l.DATA_SAIDA,dr.INICIO, dr.FIM ");
+		sql.append("GROUP BY p2.NOME, p2.NOME_SOCIAL, PAS.TIPO_DESLIGAMENTO, r.CONDICAO_ATUAL, r.ID, l.DATA_ENTRADA , l.DATA_SAIDA,dr.INICIO, dr.FIM ");
 		sql.append("ORDER BY matricula, l.DATA_ENTRADA, QTD_especial desc ");
 
 		Query query = entityManager.createNativeQuery(sql.toString());
