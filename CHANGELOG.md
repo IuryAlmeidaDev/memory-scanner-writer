@@ -5,6 +5,20 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+
+### Alterado
+
+- **Biometria — falha de licença Neurotec:** mensagem amigável no lugar de
+  `IllegalStateException` com stacktrace cru ao operador.
+- **Biometria — `BiometriaSDKCliente`:** `System.out.println` substituído por log
+  estruturado, permitindo correlação no APM e captura no log centralizado.
+- **`LoggerUtil`:** detecção de pool JCA esgotado passa a emitir log estruturado
+  em stderr, em vez de `printStackTrace` solto.
+- **`VisitanteBean#associarRecuperando`:** removido `print` de debug residual.
+- **`GerenciarAssinaturaDAO`:** `NoResultException` (resultado vazio do JPA, fluxo
+  esperado) deixa de poluir o log com stacktrace.
+
 ## [1.37.0] - 04/05/2026
 
 ### Adicionado
