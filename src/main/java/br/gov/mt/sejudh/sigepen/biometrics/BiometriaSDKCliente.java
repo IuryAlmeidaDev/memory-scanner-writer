@@ -11,6 +11,9 @@ import java.util.concurrent.TimeoutException;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.neurotec.biometrics.NBiometricStatus;
 import com.neurotec.biometrics.NMatchingSpeed;
 import com.neurotec.biometrics.NSubject;
@@ -24,6 +27,8 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 public class BiometriaSDKCliente implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private static final Logger log = LogManager.getLogger(BiometriaSDKCliente.class);
+
 	final static String components = "Biometrics.FingerExtraction,Biometrics.FingerMatching,Images.WSQ";
 
 	private NBiometricClient biometricClient;
@@ -34,14 +39,21 @@ public class BiometriaSDKCliente implements Serializable {
 			validarLicencas();
 			inicializar();
 		} catch (Exception e) {
-
+			// intentional: nao re-lanca pra app subir mesmo sem licenca; chamadas biometricas vao falhar com NPE explicito ate licenca voltar
+			log.error("Falha ao inicializar BiometriaSDKCliente | host={} | port={}",
+					Sigepen.IP_NSERVER, Sigepen.PORT_NSERVER, e);
+			// TODO Fase 2 error_coverage: ElasticApm.captureException(e)
 		}
 	}
 
 	public static void validarLicencas() throws IOException, Exception {
 		if (!NLicense.obtainComponents("/local", 5000, components)) {
-			System.out.println("Não foi possível obter licença.");
+			log.error("Licenca Neurotec NAO obtida | server=/local | timeout_ms=5000 | components={}", components);
+			// TODO Fase 2 error_coverage: ElasticApm.captureException(...)
+			throw new IllegalStateException(
+					"Licenca Neurotec indisponivel - servidor de licencas nao respondeu");
 		}
+		log.info("Licenca Neurotec OK | components={}", components);
 	}
 
 	private void inicializar() {
