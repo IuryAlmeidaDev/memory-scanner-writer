@@ -1,7 +1,11 @@
 package br.gov.mt.sejudh.sigepen.service;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -14,6 +18,7 @@ import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.*;
 import br.gov.mt.sejudh.sigepen.model.dto.EntradaSaidaDTO;
+import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @Stateless
 public class EntradaSaidaService {
@@ -76,6 +81,97 @@ public class EntradaSaidaService {
 
 	public EntradaSaida salvar(EntradaSaida entrada) {
 		return this.dao.salvar(entrada);
+	}
+
+	public EntradaSaida iniciarVisita(EntradaSaida entrada) throws ValidacaoException {
+		validarLimiteVisitantesAdultosPorRecuperando(entrada, null);
+		return salvar(entrada);
+	}
+
+	public EntradaSaida alterarVisita(EntradaSaida entrada) throws ValidacaoException {
+		validarLimiteVisitantesAdultosPorRecuperando(entrada, entrada != null ? entrada.getId() : null);
+		return salvar(entrada);
+	}
+
+	private void validarLimiteVisitantesAdultosPorRecuperando(EntradaSaida entrada, Long entradaIgnoradaId) throws ValidacaoException {
+		if (entrada == null || entrada.getVisitante() == null || entrada.getUnidadePrisional() == null) {
+			return;
+		}
+
+		if (!isVisitanteAdulto(entrada.getVisitante(), new Date())) {
+			return;
+		}
+
+		Long unidadeId = entrada.getUnidadePrisional().getId();
+		if (unidadeId == null) {
+			return;
+		}
+
+		UnidadePrisional unidade = dao.buscarUnidadePrisionalParaControleVisita(unidadeId);
+		if (unidade == null) {
+			return;
+		}
+
+		Integer limite = unidade.getQuantidadeVisitaPorRecuperando();
+		if (limite == null || limite <= 0) {
+			return;
+		}
+
+		List<Long> recuperandoIds = extrairRecuperandoIds(entrada);
+		if (recuperandoIds.isEmpty()) {
+			return;
+		}
+
+		for (Long recuperandoId : recuperandoIds) {
+			dao.bloquearRecuperandoParaControleVisita(recuperandoId);
+		}
+
+		Date hoje = new Date();
+		Date inicioDia = Sigepen.getDataConsultaMaiorIgual(hoje);
+		Date fimDia = Sigepen.getDataConsultaMenorIgual(hoje);
+		Date dataMaioridade = calcularDataMaioridade(hoje);
+
+		for (Long recuperandoId : recuperandoIds) {
+			Long total = dao.contarVisitantesAdultosPorRecuperandoNoDia(
+					unidadeId, recuperandoId, inicioDia, fimDia, dataMaioridade, entradaIgnoradaId);
+
+			if (total >= limite) {
+				throw new ValidacaoException("Limite de visitas para este PPL ja foi excedido para o dia de hoje.");
+			}
+		}
+	}
+
+	private boolean isVisitanteAdulto(Visitante visitante, Date dataReferencia) {
+		if (visitante.getPessoa() == null || visitante.getPessoa().getDataNascimento() == null) {
+			return false;
+		}
+		return !visitante.getPessoa().getDataNascimento().after(calcularDataMaioridade(dataReferencia));
+	}
+
+	private Date calcularDataMaioridade(Date dataReferencia) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dataReferencia);
+		calendar.add(Calendar.YEAR, -18);
+		return calendar.getTime();
+	}
+
+	private List<Long> extrairRecuperandoIds(EntradaSaida entrada) {
+		if (entrada.getRecuperandos() == null) {
+			return Collections.emptyList();
+		}
+
+		TreeSet<Long> recuperandoIds = new TreeSet<Long>();
+		for (EntradaSaidaRecuperando entradaRecuperando : entrada.getRecuperandos()) {
+			if (entradaRecuperando != null
+					&& entradaRecuperando.getCredenciamento() != null
+					&& entradaRecuperando.getCredenciamento().getRecuperando() != null) {
+				Long recuperandoId = entradaRecuperando.getCredenciamento().getRecuperando().getId();
+				if (recuperandoId != null && recuperandoId > 0) {
+					recuperandoIds.add(recuperandoId);
+				}
+			}
+		}
+		return new ArrayList<Long>(recuperandoIds);
 	}
 
 	public Long buscarQuantidadeEmAndamento(FiltroEntradaSaida f) {
