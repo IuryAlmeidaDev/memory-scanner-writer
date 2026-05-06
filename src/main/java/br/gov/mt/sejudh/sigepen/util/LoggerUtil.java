@@ -189,13 +189,15 @@ public class LoggerUtil implements Serializable {
 	}
 	
 	private static void log(LogSeverity severidade, Acao acao, Object objeto, Throwable e, Logger log) {
-		if (e != null) {
-			if (e.getMessage() != null) {
-				if (e.getMessage().toLowerCase().contains("unable to get managed connection")) {
-					System.out.println("Entrou");
-					return;
-				}
-			}
+		if (e != null && e.getMessage() != null
+				&& e.getMessage().toLowerCase().contains("unable to get managed connection")) {
+			// intentional: nao chama log.error/log.warn pra evitar loop recursivo —
+			// JDBC appender precisaria de conexao JCA que ja esta esgotada.
+			// Sai direto via stderr formatado pra sysadmin ver via stdout do container.
+			// TODO Fase 1 error_coverage: quando JDBC appender for removido, trocar por log.error normal.
+			System.err.println("[POOL-JCA-ESGOTADO] unable to get managed connection — "
+					+ "investigar conexoes ociosas/leaks. msg=" + e.getMessage());
+			return;
 		}
 
         // Preenche contexto de thread com informações do usuário e IP de forma null-safe
