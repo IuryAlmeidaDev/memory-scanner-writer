@@ -5,6 +5,20 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+
+### Alterado
+
+- **Biometria — falha de licença Neurotec:** mensagem amigável no lugar de
+  `IllegalStateException` com stacktrace cru ao operador.
+- **Biometria — `BiometriaSDKCliente`:** `System.out.println` substituído por log
+  estruturado, permitindo correlação no APM e captura no log centralizado.
+- **`LoggerUtil`:** detecção de pool JCA esgotado passa a emitir log estruturado
+  em stderr, em vez de `printStackTrace` solto.
+- **`VisitanteBean#associarRecuperando`:** removido `print` de debug residual.
+- **`GerenciarAssinaturaDAO`:** `NoResultException` (resultado vazio do JPA, fluxo
+  esperado) deixa de poluir o log com stacktrace.
+
 ## [1.37.0] - 04/05/2026
 
 ### Adicionado
@@ -36,11 +50,11 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Alimentação:** validação automática de data, refeição, unidade e contrato.
 - **Contrato:** paginação da listagem.
 - **Contrato:** filtros de unidade prisional, status e contrato na listagem.
+- **Mapa consolidado:** busca de dietas especiais passa a considerar dietas vigentes
+  que sobrepõem o período do relatório, inclusive iniciadas antes do mês consultado.
 - **Mapa consolidado:** cálculo de refeições especiais passa a considerar a
   sobreposição diária entre permanência do recuperando, vigência da dieta especial,
   horários de refeição e período do relatório.
-- **Mapa consolidado:** busca de dietas especiais passa a considerar dietas vigentes
-  que sobrepõem o período do relatório, inclusive iniciadas antes do mês consultado.
 - **Login:** remoção de import `org.omg.CORBA.portable.ApplicationException`
   (incompatível com Java 11+).
 - **CI:** `code_check` ajustado para JDK 17 + mirror HTTP, com `sonar-maven-plugin`

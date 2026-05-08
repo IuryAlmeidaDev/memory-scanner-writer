@@ -12,7 +12,7 @@
 <!--			<property name="hibernate.show_sql" value="false" />-->
 			<!-- FIM CONF -->
 			
-			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.format_sql" value="false" />
 			<property name="hibernate.connection.charSet" value="UTF-8" />
 			<property name="hibernate.USE_NEW_ID_GENERATOR_MAPPINGS" value="true" />
 			<property name="org.hibernate.envers.audit_table_prefix" value="AUD_" />
