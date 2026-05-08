@@ -232,7 +232,7 @@ public class MapaConsolidadoBean extends MetodosDePaginaBean {
 				return false;
 			}
 		} catch (ParseException e) {
-			e.printStackTrace();
+			LoggerUtil.logErro(e, log);
 			return false;
 		}
 		return true;

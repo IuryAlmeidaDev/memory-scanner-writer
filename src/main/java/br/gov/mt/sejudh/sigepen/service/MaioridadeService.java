@@ -15,12 +15,17 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import br.gov.mt.sejudh.sigepen.worker.VisitanteUpdateWorker;
 
 @Singleton
 @Startup
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class MaioridadeService {
+
+    private static final Logger log = LogManager.getLogger(MaioridadeService.class);
 
     @PersistenceContext
     private EntityManager em;
@@ -33,14 +38,14 @@ public class MaioridadeService {
     @Schedule(hour = "0", minute = "0", second = "0", persistent = false)
     public void atualizarVisitantesMaioridade() {
         if (processando) {
-            System.out.println(">>> [LOG SIGEPEN] Rotina já em execução. Pulando...");
+            log.info("Rotina ja em execucao - pulando lote");
             return;
         }
 
         try {
             processando = true;
-            System.out.println(">>> [LOG SIGEPEN] Iniciando processamento por lotes (Maioridade)...");
-            
+            log.info("Iniciando processamento de lote - Maioridade");
+
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.YEAR, -18);
             Date dataLimite = cal.getTime();
@@ -48,25 +53,25 @@ public class MaioridadeService {
             List<Long> loteIds = em.createQuery(
             	    "SELECT v.id FROM Visitante v JOIN v.pessoa p " +
             	    "WHERE p.dataNascimento <= :dataLimite " +
-            	    "AND v.dataHorarioFimResponsavel IS NULL " + 
+            	    "AND v.dataHorarioFimResponsavel IS NULL " +
             	    "AND (v.responsavel IS NOT NULL OR v.emancipado IS NOT NULL)", Long.class)
             	    .setParameter("dataLimite", dataLimite)
-            	    .setMaxResults(100) 
+            	    .setMaxResults(100)
             	    .getResultList();
 
             if (loteIds.isEmpty()) {
-                System.out.println(">>> [LOG SIGEPEN] Nada para processar.");
+                log.info("Nenhum visitante para processar");
                 return;
             }
 
             for (Long id : loteIds) {
                 worker.processarIndividual(id);
             }
-            
-            System.out.println(">>> [LOG SIGEPEN] Lote de " + loteIds.size() + " finalizado.");
+
+            log.info("Lote finalizado | tamanho={}", loteIds.size());
 
         } catch (Exception e) {
-            System.err.println(">>> [ERRO] Falha na busca do lote: " + e.getMessage());
+            log.error("Falha na busca do lote de maioridade", e);
         } finally {
             processando = false;
         }

@@ -9,8 +9,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @FacesConverter("SimpleEntityConverter")
 public class SimpleEntityConverter implements Converter{
+
+	private static final Logger log = LogManager.getLogger(SimpleEntityConverter.class);
 
 	public Object getAsObject(FacesContext ctx, UIComponent component, String value) {  
         if (value != null) {  
@@ -53,7 +58,7 @@ public class SimpleEntityConverter implements Converter{
             }
             // Se não é enum e não tem getId, não adicionamos aos atributos
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro em SimpleEntityConverter.addAttribute", e);
         }
     	
     	return retorno;

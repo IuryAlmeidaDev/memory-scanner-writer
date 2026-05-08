@@ -7,6 +7,9 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.neurotec.biometrics.NBiometricStatus;
 import com.neurotec.biometrics.NFinger;
 import com.neurotec.biometrics.NMatchingResult;
@@ -17,6 +20,8 @@ import br.gov.mt.sejudh.sigepen.model.Biometria;
 
 @RequestScoped
 public class BiometriaSDKDao {
+
+	private static final Logger log = LogManager.getLogger(BiometriaSDKDao.class);
 
 	@Inject
 	private BiometriaSDKCliente cliente;
@@ -34,7 +39,7 @@ public class BiometriaSDKDao {
 			try {
 				statusOperacao = cliente.identify(subject);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Erro em identify do cliente biometrico (pesquisaPorTemplateParaPessoaWS)", e);
 				//throw new IOException("Servidor biométrico inoperante, entre em contato com o Suporte Sigepen");
 			}
 
@@ -69,7 +74,7 @@ public class BiometriaSDKDao {
 			} catch (RuntimeException e) {
 				throw new RuntimeException("Servidor biométrico inoperante, entre em contato com o Suporte Sigepen", e);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Erro em identify do cliente biometrico (pesquisaListaPorTemplate)", e);
 			}
 
 			for (NMatchingResult matchingResult : subject.getMatchingResults()) {
@@ -103,7 +108,7 @@ public class BiometriaSDKDao {
 			try {
 				statusOperacao = cliente.enroll(subject);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Erro em enroll do cliente biometrico | idPessoa={}", biometria.getIdPessoa(), e);
 				throw new IOException("Servidor biométrico inoperante, entre em contato com o Suporte Sigepen", e);
 			}
 			
@@ -133,12 +138,12 @@ public class BiometriaSDKDao {
 			switch (statusOperacao) {
 				case COMMUNICATION_ERROR:
 					throw new Exception("Servidor biométrico inoperante, entre em contato com o Suporte Sigepen");
-	
+
 				default:
 					return (statusOperacao == NBiometricStatus.OK);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Erro em alterar biometria | idPessoa={}", biometria.getIdPessoa(), e);
 			throw e;
 		}
 	}

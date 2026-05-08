@@ -15,6 +15,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroInfopen;
 import br.gov.mt.sejudh.sigepen.enumerator.IdadeRecuperando;
 import br.gov.mt.sejudh.sigepen.enumerator.Lgbt;
@@ -38,6 +41,8 @@ import br.gov.mt.sejudh.sigepen.util.Sigepen;
 @Named("infopenDAO")
 @Stateless
 public class InfopenDAO {
+
+	private static final Logger log = LogManager.getLogger(InfopenDAO.class);
 
 	@Inject
 	private EntityManager em;
@@ -725,9 +730,9 @@ public class InfopenDAO {
 	        c.setNome((String) result[1]);
 	        return c;
 	    } catch (NoResultException e) {
-	        return null; 
+	        return null;
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        log.error("Erro em InfopenDAO ao buscar registro", e);
 	        return null;
 	    }
 	}

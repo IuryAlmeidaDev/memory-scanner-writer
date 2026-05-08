@@ -181,7 +181,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		try {
 			carregarEstruturaDisponivel();
 		} catch (ValidacaoException e1) {
-			e1.printStackTrace();
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e1.getMessage());
 		}
 
 		if (acao == null) {
@@ -277,7 +277,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 				try {
 					carregarEstruturaDisponivel();
 				} catch (ValidacaoException e1) {
-					e1.printStackTrace();
+					facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e1.getMessage());
 				}
 
 				getFiltro().setUnidade(SecurityUtil.getUnidadeSelecionada().getId());
@@ -288,7 +288,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.logErro(e, log);
 				}
 
 				List<Visitante> lista = service.buscarEntradasPorFiltro(getFiltro(), false);
@@ -369,7 +369,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect(url);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			LoggerUtil.logErro(e1, log);
 		}
 	}
 
@@ -390,7 +390,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect(url);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			LoggerUtil.logErro(e1, log);
 		}
 	}
 
@@ -795,7 +795,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect(url);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			LoggerUtil.logErro(e1, log);
 		}
 
 		return;
@@ -825,7 +825,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect(url);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			LoggerUtil.logErro(e1, log);
 		}
 	}
 
@@ -1168,7 +1168,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect(url);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			LoggerUtil.logErro(e1, log);
 		}
 	}
 
@@ -1186,7 +1186,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect(url);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			LoggerUtil.logErro(e1, log);
 		}
 	}
 
@@ -1226,7 +1226,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 			try {
 				FacesContext.getCurrentInstance().getExternalContext().redirect(url);
 			} catch (IOException e) {
-				e.printStackTrace();
+				LoggerUtil.logErro(e, log);
 			}
 
 		} else {
@@ -1589,7 +1589,7 @@ public class EntradaSaidaBean extends MetodosDePaginaBean {
 	        }
 	        
 	    } catch (Exception e) {
-	    	e.printStackTrace();
+	    	LoggerUtil.logErro(e, log);
 	        return "Erro ao carregar recuperandos";
 	    }
 	    

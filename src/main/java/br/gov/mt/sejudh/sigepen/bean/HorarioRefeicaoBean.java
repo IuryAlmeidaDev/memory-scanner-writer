@@ -197,7 +197,7 @@ public class HorarioRefeicaoBean extends MetodosDePaginaBean {
 
 					return agenda.subList(first, fim);
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.logErro(e, log);
 				}
 
 				return new ArrayList<>();

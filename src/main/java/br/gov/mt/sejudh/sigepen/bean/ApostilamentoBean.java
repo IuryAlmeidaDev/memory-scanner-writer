@@ -175,7 +175,7 @@ public class ApostilamentoBean extends MetodosDePaginaBean {
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.logErro(e, log);
 				}
 
 				return apostilamentoService.buscaPorFiltro(getFiltro());

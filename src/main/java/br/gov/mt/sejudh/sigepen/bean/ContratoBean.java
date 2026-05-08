@@ -268,7 +268,7 @@ public class ContratoBean extends MetodosDePaginaBean {
 					return contratoService.buscarPorFiltro(getFiltro());
 					
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.logErro(e, log);
 					return new ArrayList<>();
 					}
 			}

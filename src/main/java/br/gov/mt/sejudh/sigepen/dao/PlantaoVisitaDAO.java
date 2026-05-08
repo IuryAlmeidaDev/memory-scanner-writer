@@ -47,7 +47,7 @@ public class PlantaoVisitaDAO extends BaseDAO<PlantaoVisita, Long>{
 
 				return result;
 			} catch (NoResultException e) {
-				e.printStackTrace();
+				// intentional: sem resultado e fluxo normal — caller trata return null
 				return null;
 			}
 		}

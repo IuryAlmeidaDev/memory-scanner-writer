@@ -15,6 +15,8 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import br.gov.mt.sejudh.sigepen.model.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -28,11 +30,14 @@ import br.gov.mt.sejudh.sigepen.dao.filter.FiltroEntradaVisitante;
 import br.gov.mt.sejudh.sigepen.enumerator.SgpStatus;
 import br.gov.mt.sejudh.sigepen.enumerator.SituacaoVisita;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
+import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
 public class EntradaSaidaDAO {
+
+	private static final Logger log = LogManager.getLogger(EntradaSaidaDAO.class);
 
 	@Inject
 	private EntityManager em;
@@ -649,7 +654,7 @@ public EntradaSaida buscarUltimaEntradaSaidaAtivaPorVisitante(Long idVisitante) 
 	        
 	        return query.getSingleResult();
 	    } catch (Exception e) {
-            e.printStackTrace(); 
+            LoggerUtil.logErro(e, log);
 	        return null;
 	    }
 	}

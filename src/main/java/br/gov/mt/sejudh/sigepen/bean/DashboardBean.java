@@ -11,10 +11,14 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import br.gov.mt.sejudh.sigepen.dao.RecuperandoDAO;
 import br.gov.mt.sejudh.sigepen.dao.filter.*;
 import br.gov.mt.sejudh.sigepen.enumerator.*;
 import br.gov.mt.sejudh.sigepen.service.*;
+import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 
 import com.ocpsoft.pretty.faces.annotation.URLMapping;
 
@@ -33,7 +37,9 @@ import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 @ViewScoped
 @URLMapping(id = "dashboard", pattern = "/dashboard", viewId = "/WEB-INF/pages/dashboard/Dashboard.xhtml")
 public class DashboardBean {
-	
+
+	private static final Logger log = LogManager.getLogger(DashboardBean.class);
+
 	private Long totalRecuperandosAtivos;
 	private Long totalRecuperandosAtivosNaUnidade;
 	private Long totalRecuperandosComCadastroIncompleto;
@@ -133,7 +139,7 @@ public class DashboardBean {
 			try {
 				atribuirValores(d);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LoggerUtil.logErro(e, log);
 			}
 		}
 	}
