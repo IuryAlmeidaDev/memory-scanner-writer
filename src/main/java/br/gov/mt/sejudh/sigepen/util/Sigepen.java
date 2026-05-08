@@ -14,10 +14,15 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Named
 @ApplicationScoped
 public class Sigepen {
+
+	private static final Logger log = LogManager.getLogger(Sigepen.class);
+
 	public static final long SEJUDH_ID = 1;
 	public static final String SEJUDH_SCHEMA = "SIGEPEN_OWNER";
 	public static final String SEJUDH_AUDIT_SCHEMA = "SIGEPEN_AUDIT_OWNER";
@@ -193,7 +198,7 @@ public class Sigepen {
 	            properties.load(inputStream);
 	            IP_NSERVER = properties.getProperty("ip.nserver");
 	        } catch (Exception e) {
-	            e.printStackTrace();
+	            log.error("Erro ao carregar application.properties (bootstrap Sigepen)", e);
 	        }
 	    }
 }

@@ -8,10 +8,15 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @ManagedBean(eager=true)
 @ApplicationScoped
 public class VersionBean {
-	
+
+	private static final Logger log = LogManager.getLogger(VersionBean.class);
+
 	String versao;
 
 	@PostConstruct
@@ -25,7 +30,7 @@ public class VersionBean {
 			p.load(inputStream);
 			versao = p.getProperty("version");
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Erro ao carregar pom.properties no VersionBean", e);
 		}
 	}
 

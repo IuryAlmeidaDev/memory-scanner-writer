@@ -662,7 +662,6 @@ public class InfopenBean extends MetodosDialogBean {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
 					"Erro ao imprimir Relatório: " + e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Erro ao gerar relatório", e, log);

@@ -412,7 +412,6 @@ public class LoginBean {
 		List<ServidorDTO> servidorDTOs = servidorService.buscaPorFiltro(filtroServidor, false);
 
 		if (servidorDTOs.size() < 3) {
-			System.out.println("A lista deve conter pelo menos 3 elementos!");
 			throw new IllegalArgumentException("A lista deve conter pelo menos 3 elementos!");
 		}
 
@@ -445,7 +444,6 @@ public class LoginBean {
 		List<ServidorDTO> servidorDTOs = servidorService.buscaPorFiltro(filtroServidor, false);
 
 		if (servidorDTOs.size() < 3) {
-			System.out.println("A lista deve conter pelo menos 3 elementos!");
 			throw new IllegalArgumentException("A lista deve conter pelo menos 3 elementos!");
 		}
 

@@ -114,7 +114,6 @@ public class RelatorioRecuperandoJurisdicionalBean extends MetodosDialogBean {
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório por Seção Jurisdicional do Processo", log);
 		} catch (Exception e) {
-			e.printStackTrace();
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
 					"Erro imprimir Relatório por Seção Jurisdicional do Processo " + e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Relatório por Seção Jurisdicional do Processo", e, log);

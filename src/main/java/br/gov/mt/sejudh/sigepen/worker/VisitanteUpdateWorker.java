@@ -5,10 +5,18 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
+import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 
 @Stateless
 public class VisitanteUpdateWorker {
+
+    private static final Logger log = LogManager.getLogger(VisitanteUpdateWorker.class);
 
     @PersistenceContext
     private EntityManager em;
@@ -17,25 +25,25 @@ public class VisitanteUpdateWorker {
     public void processarIndividual(Long idVisitante) {
         try {
             Visitante v = em.find(Visitante.class, idVisitante);
-            
+
             if (v != null && v.getPessoa() != null) {
                 String nome = v.getPessoa().getNome();
-                
+
                 v.setResponsavel(null);
                 v.setEmancipado(null);
                 v.setDataHorarioFimResponsavel(new java.util.Date());
-                
+
                 if (v.getVisitantesReponsaveis() != null) {
 	                v.getVisitantesReponsaveis().clear();
 	            }
-                
+
                 em.merge(v);
-                em.flush(); 
-                System.out.println(">>> [SUCESSO] ID " + idVisitante + " (" + nome + ") agora é MAIOR.");
-                System.out.println(">>> [DATA] : " + v.getDataHorarioFimResponsavel());
+                em.flush();
+                log.info("Visitante atingiu maioridade | id={} | nome={} | dataFim={}",
+                        idVisitante, nome, v.getDataHorarioFimResponsavel());
             }
         } catch (Exception e) {
-            System.err.println(">>> [ERRO CRÍTICO] Falha ao processar ID " + idVisitante + ": " + e.getMessage());
+            LoggerUtil.logErro(Acao.ALTERAR, idVisitante, e, log);
         }
     }
 }

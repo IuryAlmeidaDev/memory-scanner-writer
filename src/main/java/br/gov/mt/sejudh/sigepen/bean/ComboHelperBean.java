@@ -391,9 +391,6 @@ public class ComboHelperBean {
 	}
 
 	public List<Funcionalidade> getFuncionalidades() {
-		for (Funcionalidade funcionalidade : funcionalidades) {
-			System.out.println("Funcionalidade id " + funcionalidade.getId() + ": " + funcionalidade.getNome());
-		}
 		return funcionalidades;
 	}
 

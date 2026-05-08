@@ -444,7 +444,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.logErro(e, log);
 				}
 
 				List<RecuperandoView> recuperandos = service.buscarRecuperandosPorFiltroEAtestados(getFiltro(), false);
@@ -750,7 +750,6 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
 					"Erro ao capturar biometria: " + e.getMessage());
 			LoggerUtil.logErro(e, log);
@@ -1603,7 +1602,6 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 			RequestContext.getCurrentInstance().execute("download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Relatório Estatístico Infopen", log);
 		} catch (Exception e) {
-			e.printStackTrace();
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
 					"Erro imprimir Relatório Estatístico Infopen: " + e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Relatório Estatístico Infopen", e, log);
@@ -2147,7 +2145,7 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 					try {
 						this.service.salvar(recuperando);
 					} catch (Exception e) {
-						e.printStackTrace();
+						LoggerUtil.logErro(e, log);
 					}
 				}
 			}

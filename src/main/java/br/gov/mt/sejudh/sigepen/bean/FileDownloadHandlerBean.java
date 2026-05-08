@@ -24,14 +24,17 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @ManagedBean
 @ApplicationScoped
 @URLMapping(id="download", pattern="/download", viewId = "/WEB-INF/pages/_download/download.xhtml")
 public class FileDownloadHandlerBean {
-	
+
+	private static final Logger log = LogManager.getLogger(FileDownloadHandlerBean.class);
+
 	@Inject
 	private FacesUtil facesUtil;
 	
@@ -95,7 +98,7 @@ public class FileDownloadHandlerBean {
             properties.load(inputStream);
             requestUrl = properties.getProperty("url.ws.sesp.audit.report");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro ao carregar application.properties (FileDownloadHandlerBean)", e);
         }
 
         String boundary = "boundary"; // sem os traços `--`
@@ -139,7 +142,7 @@ public class FileDownloadHandlerBean {
                 }
             }
 
-            System.out.println("PDF enviado e resposta com marca d'água recebida com sucesso!");
+            log.info("PDF processado com marca d'agua | tamanhoBytes={}", responseOutputStream.size());
             return responseOutputStream.toByteArray();
 
         } finally {
@@ -212,7 +215,7 @@ public class FileDownloadHandlerBean {
                 outputStream.write(buffer, 0, bytesRead);
             }
         } catch (IOException e) {
-            Logger.getLogger(FileDownloadHandlerBean.class.getName()).log(Level.SEVERE, "Erro ao preparar o arquivo para download", e);
+            log.error("Erro ao preparar o arquivo para download", e);
             throw e;
         } finally {
             facesContext.responseComplete();
