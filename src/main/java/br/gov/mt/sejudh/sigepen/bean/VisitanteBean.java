@@ -711,7 +711,6 @@ public class VisitanteBean extends MetodosDePaginaBean {
             RequestContext.getCurrentInstance().execute("download()");
             LoggerUtil.logInfo(Acao.IMPRIMIR, "Lista de Credenciamentos", log);
         } catch (Exception e) {
-        	System.out.println(e.getCause());
         	facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro imprimir lista de Credenciamentos: " + e);
             LoggerUtil.logErro(Acao.IMPRIMIR, "Lista de Credenciamentos", e, log);
         }
@@ -950,7 +949,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				LoggerUtil.logErro(e, log);
 			}
 		} else
 			this.cadastroDadosVisitante = true;
@@ -1069,7 +1068,6 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		} catch (ValidacaoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO",
 					"Erro ao capturar biometria: " + e.getMessage());
 			LoggerUtil.logErro(e, log);
@@ -1176,7 +1174,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					this.salvar(false);
 				this.service.salvarDocumentos(this.visitante);
 			} catch (ValidacaoException e) {
-				e.printStackTrace();
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 			}
 
 			try {
@@ -1195,7 +1193,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LoggerUtil.logErro(e, log);
 				return event.getOldStep();
 			}
 
@@ -1205,7 +1203,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			try {
 				this.service.salvarEnderecos(this.visitante);
 			} catch (ValidacaoException e) {
-				e.printStackTrace();
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 			}
 			if (this.visitante.getPessoa().getEnderecos().isEmpty()) {
 				confirmAoMenosUmEnderecoObrigatorio();
@@ -1217,7 +1215,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			try {
 				this.service.salvarContatos(this.visitante);
 			} catch (ValidacaoException e) {
-				e.printStackTrace();
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 			}
 		}
 
@@ -1225,7 +1223,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			try {
 				this.service.salvarCertidoes(this.visitante);
 			} catch (ValidacaoException e) {
-				e.printStackTrace();
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 			}
 
 			try {
@@ -1244,7 +1242,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LoggerUtil.logErro(e, log);
 				return event.getOldStep();
 			}
 			this.salvarFasesAuto = !this.alterarDados;
@@ -1403,7 +1401,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			buscarVisitante(this.visitante.getId());
 			
 		} catch (ValidacaoException e) {
-			e.printStackTrace();
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 		}
 	}
 
@@ -1441,7 +1439,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			buscarVisitante(this.visitante.getId());
 
 		} catch (ValidacaoException e) {
-			e.printStackTrace();
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 		}
 	}
 
@@ -1458,7 +1456,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			this.service.salvar(this.visitante);
 			contatoService.excluirEndereco(endereco);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.logErro(Acao.EXCLUIR, endereco, e, log);
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir endereço");
 		}
 	}
 
@@ -1478,7 +1477,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			buscarVisitante(this.visitante.getId());
 
 		} catch (ValidacaoException e) {
-			e.printStackTrace();
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 		}
 	}
 
@@ -1495,7 +1494,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			this.service.salvar(this.visitante);
 			contatoService.excluirContato(contato);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.logErro(Acao.EXCLUIR, contato, e, log);
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao excluir contato");
 		}
 	}
 
@@ -1514,7 +1514,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			this.service.salvar(visitante);
 			buscarVisitante(this.visitante.getId());
 		} catch (ValidacaoException e) {
-			e.printStackTrace();
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 		}
 	}
 
@@ -1735,7 +1735,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					}
 
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.logErro(e, log);
 				}
 				exRecuperandos = null;
 				List<VwVisitante> visitantes = loadData(first, pageSize,  sortField,  sortOrder);
@@ -2143,7 +2143,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			if (parente != null && parente.getParentesco() != null && parente.getParentesco().getId() == 5)
 				return this.service.validarConjugeCadastro(_recuperando, _visitante);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.logErro(e, log);
 		}
 		return 0;
 	}
@@ -2189,7 +2189,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect(url);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			LoggerUtil.logErro(e1, log);
 		}
 		return "";
 	}

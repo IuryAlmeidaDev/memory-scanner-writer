@@ -226,7 +226,7 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.logErro(e, log);
 			return "Não foi possível verificar as biometrias.";
 		}
 		
@@ -316,8 +316,8 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 			return "pretty:ListarUnificarRecuperando";
 		} catch (Exception e) {
 			limparRecuperandosUnificacao();
-			
-			e.printStackTrace();
+
+			LoggerUtil.logErro(e, log);
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,"Erro", "Erro ao salvar unificação do Recuperando!");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
@@ -827,17 +827,17 @@ public class UnificarRecuperandoBean extends MetodosDePaginaBean {
 					try {
 						configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 					} catch (Exception e) {
-						e.printStackTrace();
+						LoggerUtil.logErro(e, log);
 					}
 					
 				}else {
 					
 				setRowCount(service.buscarQuantidadeFiltrada(getFiltro()));
-				
+
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.logErro(e, log);
 				}
 
 					recuperandos = service.buscarRecuperandosPorFiltro(getFiltro(), false);

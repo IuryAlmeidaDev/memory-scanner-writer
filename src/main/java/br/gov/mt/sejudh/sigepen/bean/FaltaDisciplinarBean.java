@@ -442,7 +442,7 @@ public class FaltaDisciplinarBean extends MetodosDePaginaBean {
                 try {
                     configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LoggerUtil.logErro(e, log);
                 }
 
                 return service.buscaPorFiltro(getFiltro(), false);
@@ -515,7 +515,6 @@ public class FaltaDisciplinarBean extends MetodosDePaginaBean {
     }
 
     public void configurarTipoFaltaDisciplinar(AjaxBehaviorEvent event) throws AbortProcessingException {
-        System.out.println(event.getSource());
     }
 
     public void associarRecuperando(SelectEvent event) {

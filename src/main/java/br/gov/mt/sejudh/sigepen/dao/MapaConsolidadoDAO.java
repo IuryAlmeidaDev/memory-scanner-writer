@@ -13,13 +13,19 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import br.gov.mt.sejudh.sigepen.enumerator.Mes;
 import br.gov.mt.sejudh.sigepen.model.dto.RelatorioMapaAlimentacaoConsultaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RelatorioMapaAlimentacaoRecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
 public class MapaConsolidadoDAO {
+
+	private static final Logger log = LogManager.getLogger(MapaConsolidadoDAO.class);
 
 	@Inject
 	private EntityManager entityManager;
@@ -199,7 +205,7 @@ public class MapaConsolidadoDAO {
 	            }
 	        }
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        LoggerUtil.logErro(e, log);
 	    }
 	    return totaisRelatorio;
 	}

@@ -41,7 +41,6 @@ public class BiometriaWebService {
 		try {
 			resultado = biometriaService.verificarSeAmostrasSaoIdenticasPorImagem(template);
 		} catch (Exception e) {
-			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 			
 			JsonObject js = new JsonObject();
@@ -63,7 +62,6 @@ public class BiometriaWebService {
 		try {
 			resultado = biometriaService.verificarSeAmostrasSaoIdenticasPorTemplate(template);
 		} catch (Exception e) {
-			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 			
 			JsonObject js = new JsonObject();
@@ -85,7 +83,6 @@ public class BiometriaWebService {
 		try {
 			dedosRepetidos = biometriaService.verificarSeExistemDedosRepetidosPorImagem(template);
 		} catch (Exception e) {
-			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 			
 			JsonObject js = new JsonObject();
@@ -107,7 +104,6 @@ public class BiometriaWebService {
 		try {
 			dedosRepetidos = biometriaService.verificarSeExistemDedosRepetidosPorTemplate(template);
 		} catch (Exception e) {
-			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 			
 			JsonObject js = new JsonObject();
@@ -129,7 +125,6 @@ public class BiometriaWebService {
 		try {
 			biometrias = biometriaService.pesquisarBiometriaPorTemplateString(template);
 		} catch (RuntimeException e) {
-			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 			JsonObject js = new JsonObject();
 			js.addProperty("erro", e.getMessage());
@@ -143,7 +138,6 @@ public class BiometriaWebService {
 
 			return js.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 		}
 
@@ -172,7 +166,6 @@ public class BiometriaWebService {
 			
 			return null;
 		} catch (Exception e) {
-			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 			JsonObject js = new JsonObject();
 			js.addProperty("erro", e.getMessage());
@@ -198,7 +191,6 @@ public class BiometriaWebService {
 		try {
 			bt = biometriaService.salvarBiometriaTemporaria(json);
 		} catch (Exception e) {
-			e.printStackTrace();
 			LoggerUtil.logWS(e, log);
 			
 			JsonObject js = new JsonObject();

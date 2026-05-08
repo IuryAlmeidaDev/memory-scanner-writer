@@ -156,7 +156,7 @@ public class PassagemDAO {
 			}
 			return true;
 		} catch(NoResultException e){
-			e.printStackTrace();
+			// intentional: getResultList nao dispara NoResultException — catch defensivo
 			return false;
 		}
 	}

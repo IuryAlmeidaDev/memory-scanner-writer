@@ -17,9 +17,14 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import br.gov.mt.sejudh.sigepen.model.Usuario;
 
 public class EmailService {
+
+	private static final Logger log = LogManager.getLogger(EmailService.class);
 
 	private static final String SMTP_HOST = System.getenv("SMTP_HOST");//"srv-smtp.seguranca.local";
 	private static final String SMTP_PORT = System.getenv("SMTP_PORT");//"587";
@@ -52,7 +57,7 @@ public class EmailService {
 
 		Transport.send(message);
 
-		System.out.println("E-mail enviado com sucesso para: " + destinatario);
+		log.info("E-mail enviado | destinatario={} | assunto={}", destinatario, assunto);
 	}
 
 	public static void sendEmailResetSenha(Usuario usuario) {
@@ -65,17 +70,17 @@ public class EmailService {
 			placeholders.put("{{senha}}", usuario.getLogin());
 
 			String content = "";
-			try {				
+			try {
 				content = loadTemplate(TEMPLATE_PATH_USUARIO_RESET_SENHA, placeholders);
 			}catch (Exception e) {
-				e.printStackTrace();
+				log.error("Erro ao carregar template de reset de senha | template={}", TEMPLATE_PATH_USUARIO_RESET_SENHA, e);
 			}
 
 			sendEmail(usuario.getEmail(), subject, content);
 
-			System.out.println("E-mail enviado com sucesso!");
+			log.info("E-mail de reset de senha enviado | usuario={}", usuario.getLogin());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Erro ao enviar e-mail de reset de senha | usuario={}", usuario.getLogin(), e);
 		}
 	}
 
@@ -97,14 +102,14 @@ public class EmailService {
 			try {
 				content = loadTemplate(TEMPLATE_PATH_SOLICITACAO_RESET_SENHA, placeholders);
 			}catch (Exception e) {
-				e.printStackTrace();
+				log.error("Erro ao carregar template de solicitacao de reset | template={}", TEMPLATE_PATH_SOLICITACAO_RESET_SENHA, e);
 			}
 
 			sendEmail(EMAIL_TI_SIGEPEN, subject, content);
 
-			System.out.println("E-mail enviado com sucesso!");
+			log.info("E-mail de solicitacao de reset enviado para TI Sigepen | solicitante={}", usuario.getLogin());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Erro ao enviar e-mail para TI Sigepen | solicitante={}", usuario.getLogin(), e);
 		}
 	}
 	

@@ -117,16 +117,12 @@ public class RelatorioEntradaSaidaRecuperandoDAO {
 	    }
 	    
 	    hql.append(" order by p.data_entrada, pe.nome, p.data_saida ");
-	    
-	    System.out.println("QUERY: " + hql.toString());
-	    
+
 	    Query query = this.em.createNativeQuery(hql.toString());
-	    
+
 	    @SuppressWarnings("unchecked")
 	    List<Object[]> results = query.getResultList();
-	    
-	    System.out.println("Registros encontrados: " + results.size());
-	    
+
 	    List<RelatorioEntradaSaidaRecuperandoDTO> retorno = new ArrayList<RelatorioEntradaSaidaRecuperandoDTO>();
 
 	    results.forEach((record) -> {

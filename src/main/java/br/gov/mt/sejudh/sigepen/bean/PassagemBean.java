@@ -186,7 +186,6 @@ public class PassagemBean extends MetodosDePaginaBean {
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(e, log);
-			e.printStackTrace();
 		}
 		
 		return null;

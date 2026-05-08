@@ -359,7 +359,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(
                     null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Falha ao salvar ocorrência."));
-            e.printStackTrace();
+            LoggerUtil.logErro(e, log);
         }
 
     }
@@ -556,7 +556,7 @@ public class PlantaoBean extends MetodosDePaginaBean {
                 try {
                     configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LoggerUtil.logErro(e, log);
                 }
 
                 return plantaoService.buscaPorFiltro(getFiltro(), false);

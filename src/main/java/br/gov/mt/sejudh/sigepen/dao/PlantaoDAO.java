@@ -113,7 +113,7 @@ public class PlantaoDAO extends BaseDAO<Plantao, Long>{
 		try {
             return query.getSingleResult();
 		} catch (NoResultException e) {
-			e.printStackTrace();
+			// intentional: sem resultado e fluxo normal — caller trata return null
 			return null;
 		}
 	}

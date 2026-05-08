@@ -15,6 +15,8 @@ import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.CroppedImage;
@@ -25,13 +27,16 @@ import com.ocpsoft.pretty.faces.annotation.URLMapping;
 import br.gov.mt.sejudh.sigepen.model.Imagem;
 import br.gov.mt.sejudh.sigepen.model.Justificativa;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
+import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
 @ManagedBean
 @ViewScoped
 @URLMapping(id = "AssociarFoto", pattern = "/associar/foto", viewId = "/WEB-INF/pages/_dialogs/AssociarFoto.xhtml")
 public class AssociarFotoBean extends MetodosDialogBean {
-	
+
+	private static final Logger log = LogManager.getLogger(AssociarFotoBean.class);
+
 	private CroppedImage croppedImage;
 	
 	private String caminhoDaImagem;
@@ -74,7 +79,7 @@ public class AssociarFotoBean extends MetodosDialogBean {
 	        bi = reduzirEscalaDaImagem(bi);
 	        escreverImagemEmDisco(bi);
         } catch (Exception e) {
-        	e.printStackTrace();
+        	LoggerUtil.logErro(e, log);
         }
 	}
 	
@@ -84,7 +89,7 @@ public class AssociarFotoBean extends MetodosDialogBean {
 	        bi = reduzirEscalaDaImagem(bi);
 	        escreverImagemEmDisco(bi);
         } catch (Exception e) {
-        	e.printStackTrace();
+        	LoggerUtil.logErro(e, log);
         }
 	}
 	
@@ -106,7 +111,7 @@ public class AssociarFotoBean extends MetodosDialogBean {
 			
 			facesUtil.fecharPaginaDialog(imagem);
 		} catch(Exception e) {
-			 e.printStackTrace();
+			LoggerUtil.logErro(e, log);
 		}
     }
 	
@@ -128,7 +133,7 @@ public class AssociarFotoBean extends MetodosDialogBean {
 			facesUtil.setObjetoSessao("descricaoJustificativa",this.descricaoJustificativa);
 			facesUtil.fecharPaginaDialog(imagem);
 		} catch(Exception e) {
-			 e.printStackTrace();
+			LoggerUtil.logErro(e, log);
 		}
     }
 	
@@ -194,10 +199,10 @@ public class AssociarFotoBean extends MetodosDialogBean {
 	
 	private void excluirImagemDoDisco() {
 		try {
-			File f = new File(ROOT_PATH + this.getCaminhoDaImagem()); 		
+			File f = new File(ROOT_PATH + this.getCaminhoDaImagem());
 			f.delete();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.logErro(e, log);
 		}
 	}
 

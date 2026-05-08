@@ -11,8 +11,11 @@ import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.*;
 import br.gov.mt.sejudh.sigepen.model.dto.RecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
+import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.QueryHints;
@@ -32,7 +35,9 @@ import java.util.*;
 
 @RequestScoped
 public class RecuperandoDAO {
-	
+
+	private static final Logger log = LogManager.getLogger(RecuperandoDAO.class);
+
 	@Inject
 	private EntityManager em;
 	
@@ -877,7 +882,7 @@ public class RecuperandoDAO {
             }
             return resultados;
         } catch (Exception e) {
-            System.err.println("Erro na query de provisórios: " + e.getMessage());
+            LoggerUtil.logErro(e, log);
             return new ArrayList<>();
         }
     }

@@ -192,7 +192,7 @@ public class OrgaoBean extends MetodosDePaginaBean {
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.logErro(e, log);
 				}
 				
 				return orgaoService.buscaPorFiltro(getFiltro(), false);

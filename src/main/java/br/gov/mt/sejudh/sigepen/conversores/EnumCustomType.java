@@ -8,13 +8,17 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.DynamicParameterizedType;
 import org.hibernate.usertype.UserType;
 
 public class EnumCustomType implements DynamicParameterizedType, UserType {
-	
+
+	private static final Logger log = LogManager.getLogger(EnumCustomType.class);
+
 	@SuppressWarnings("rawtypes")
 	private Class<? extends Enum> enumClass;
 
@@ -80,7 +84,7 @@ public class EnumCustomType implements DynamicParameterizedType, UserType {
 			Method metodo = enumClass.getDeclaredMethod("getValue", Integer.class);
 			result = metodo.invoke(enumClass, new Object[] {id});
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Erro em EnumCustomType (reflection)", e);
 		}
 		
 		return result;
@@ -94,7 +98,7 @@ public class EnumCustomType implements DynamicParameterizedType, UserType {
 			Object result = metodo.invoke(en, new Object[] {});
 			id = Integer.parseInt(result.toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Erro em EnumCustomType (reflection)", e);
 		}
 		
 		return id;
