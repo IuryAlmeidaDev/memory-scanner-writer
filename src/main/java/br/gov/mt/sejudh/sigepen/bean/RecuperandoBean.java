@@ -2153,9 +2153,11 @@ public class RecuperandoBean extends MetodosDePaginaBean {
 	}
 
 	public void onUnidadePrisionalChange() {
-		if (this.filtro.getUnidade() != null) {
+		if (this.filtro != null && this.filtro.getUnidade() != null) {
 			this.estruturas = this.estruturaService.buscarEstruturas(this.filtro.getUnidade().getId());
-			estruturas.remove(0);
+			if (this.estruturas != null && !this.estruturas.isEmpty()) {
+				this.estruturas.remove(0);
+			}
 
 		}
 

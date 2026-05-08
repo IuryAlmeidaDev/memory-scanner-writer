@@ -120,6 +120,22 @@ public class PassagemDAO {
 		return dataSaida;		
 	}
 
+	public Optional<Date> buscarDataEntradaPassagemAtual(Long recuperandoId) {
+		try {
+			String jpql = "select p.dataEntrada from Passagem p "
+					+ "where p.recuperando.id = :recuperandoId "
+					+ "and p.dataSaida is null "
+					+ "order by p.dataEntrada desc";
+			TypedQuery<Date> query = em.createQuery(jpql, Date.class);
+			query.setParameter("recuperandoId", recuperandoId);
+			query.setMaxResults(1);
+
+			return Optional.of(query.getSingleResult());
+		} catch (NoResultException e) {
+			return Optional.empty();
+		}
+	}
+
 	public List<Passagem> buscarPassagensDoRecuperando(Long id) {
 		try{
 			String jpql="select p from Passagem p, PassagemLotacao l where p.recuperando.id = :id"
