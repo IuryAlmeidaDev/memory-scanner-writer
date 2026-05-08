@@ -38,7 +38,6 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Relatório Jumbo self-service:** novo relatório de recuperandos nas unidades com Jumbo,
   com permissão dedicada.
 - **Visitas:** limite de visitas por recuperando configurável por unidade prisional.
-- **Visitas:** limite de visitas por recuperando configurável por unidade prisional.
 - **Biometria v2 — logs defensivos (Onda 1):** logs de contexto da estação no startup,
   status HTTP e payload em `ConexaoWebService`, parsing defensivo no
   `BiometriaWebServiceClient` e mensagem amigável no popup de erro de biometria
@@ -51,16 +50,11 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Alimentação:** validação automática de data, refeição, unidade e contrato.
 - **Contrato:** paginação da listagem.
 - **Contrato:** filtros de unidade prisional, status e contrato na listagem.
-- **Mapa consolidado:** cálculo de refeições especiais passa a considerar a
-  sobreposição diária entre permanência do recuperando, vigência da dieta especial,
-  horários de refeição e período do relatório.
 - **Mapa consolidado:** busca de dietas especiais passa a considerar dietas vigentes
   que sobrepõem o período do relatório, inclusive iniciadas antes do mês consultado.
 - **Mapa consolidado:** cálculo de refeições especiais passa a considerar a
   sobreposição diária entre permanência do recuperando, vigência da dieta especial,
   horários de refeição e período do relatório.
-- **Mapa consolidado:** busca de dietas especiais passa a considerar dietas vigentes
-  que sobrepõem o período do relatório, inclusive iniciadas antes do mês consultado.
 - **Login:** remoção de import `org.omg.CORBA.portable.ApplicationException`
   (incompatível com Java 11+).
 - **CI:** `code_check` ajustado para JDK 17 + mirror HTTP, com `sonar-maven-plugin`
