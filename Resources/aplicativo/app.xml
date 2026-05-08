@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Application ts="1777908505489" uri="https://sispen.sesp.mt.gov.br/sigepen/arquivos/aplicativo/" launch="br.gov.mt.sejudh.launcher.Launcher">
+<Application ts="1778187397522" uri="https://sispen.sesp.mt.gov.br/sigepen/arquivos/aplicativo/" launch="br.gov.mt.sejudh.launcher.Launcher">
     <lib file="concrt140.dll" checksum="3208454740" size="332456" os="win"/>
     <lib file="controlsfx.jar" checksum="1806948104" size="1416162"/>
     <lib file="Data/Fingers.ndf" checksum="1558116160" size="5529652"/>
@@ -10,7 +10,7 @@
     <lib file="FScanners/NdmSecuGen/sgfpamx.dll" checksum="1732396975" size="187904" os="win"/>
     <lib file="FScanners/NdmSecuGen/sgfplib.dll" checksum="862412045" size="187904" os="win"/>
     <lib file="inference_engine.dll" checksum="3807831672" size="5899000" os="win"/>
-    <lib file="launcher.jar" checksum="3111275121" size="7873"/>
+    <lib file="launcher.jar" checksum="3100001664" size="7875"/>
     <lib file="libiomp5md.dll" checksum="2265487208" size="1677560" os="win"/>
     <lib file="libmmd.dll" checksum="277237317" size="4271832" os="win"/>
     <lib file="LiveMedia.dll" checksum="3333887645" size="272896" os="win"/>
@@ -46,7 +46,7 @@
     <lib file="NLicensing.dll" checksum="1966985409" size="861640" os="win"/>
     <lib file="NMedia.dll" checksum="372171883" size="1961416" os="win"/>
     <lib file="NMediaProc.dll" checksum="3851610951" size="775624" os="win"/>
-    <lib file="sigepen-biometria.exe" checksum="378499980" size="17583790"/>
+    <lib file="sigepen-biometria.exe" checksum="626427653" size="17759462"/>
     <lib file="svml_dispmd.dll" checksum="345573301" size="18838744" os="win"/>
     <lib file="vccorlib140.dll" checksum="560076967" size="391344" os="win"/>
     <lib file="vcruntime140.dll" checksum="1540112800" size="87224" os="win"/>

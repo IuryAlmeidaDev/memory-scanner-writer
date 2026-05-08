@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -17,6 +19,8 @@ import br.gov.mt.sejudh.sigepen.bean.MetodosDePaginaBean;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroConsulta;
 
 public abstract class BaseDataModel<T extends BaseModel<I>, I extends Number> extends LazyDataModel<T> {
+
+    private static final Logger log = LogManager.getLogger(BaseDataModel.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -54,9 +58,9 @@ public abstract class BaseDataModel<T extends BaseModel<I>, I extends Number> ex
             }
             
             return data.get(value);
-            
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro em BaseDataModel.getRowData | rowKey={}", rowKey, e);
         }
         return null;
     }
@@ -80,7 +84,7 @@ public abstract class BaseDataModel<T extends BaseModel<I>, I extends Number> ex
 
             return baseService.buscaPorFiltro(this.filtro);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro em BaseDataModel.load (paginacao)", e);
         }
         return new ArrayList<>();
     }

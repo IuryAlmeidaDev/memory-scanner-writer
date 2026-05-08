@@ -9,10 +9,15 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.persistence.Id;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @FacesConverter(value="EstadoConverter")
 public class EstadoConverter implements Converter{
 
-	
+	private static final Logger log = LogManager.getLogger(EstadoConverter.class);
+
+
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
 		
@@ -35,14 +40,8 @@ public class EstadoConverter implements Converter{
 				component.getAttributes().put(id,
 						getClazz(context, component).cast(value));
 				return id;
-			} catch (SecurityException e) {
-				e.printStackTrace(); // seu log aqui
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace(); // seu log aqui
-			} catch (NoSuchFieldException e) {
-				e.printStackTrace(); // seu log aqui
-			} catch (IllegalAccessException e) {
-				e.printStackTrace(); // seu log aqui
+			} catch (Exception e) {
+				log.error("Erro em EstadoConverter.getAsString", e);
 			}
 		}
 		return null;

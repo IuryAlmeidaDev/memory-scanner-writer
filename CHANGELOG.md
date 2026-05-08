@@ -63,6 +63,17 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   retornava texto não-JSON (ex.: HTML de erro de proxy/nginx, resposta vazia, plain
   text), o cliente lançava exceção. Agora o parsing é tolerante e o erro é tratado.
   Distribuído via FXLauncher na atualização do `sigepen-biometria.exe`.
+- **Biometria v2 — packaging do `launcher.jar` (uber-jar):** descritor do
+  assembly corrigido. O `launcher.jar` distribuído pelo FXLauncher passa a
+  conter todas as classes e dependências do projeto, eliminando a necessidade
+  do jar antigo hospedado em produção pra completar o classpath em runtime.
+  Distribuído via atualização do `sigepen-biometria.exe` em `Resources/aplicativo/`.
+- **Biometria v2 — `Cliente.VERSAO` alinhada com `pom.xml`:** constante
+  promovida de `"2.2"` para `"2.3"`. Acompanhada de script SQL que atualiza
+  `SIGEPEN_OWNER.PARAMETRO.VALOR` na linha `nome='VERSAO_DESKTOP'` (ver
+  *Notas da versão*). Execução simultânea ao deploy é obrigatória — caso
+  contrário, as estações que atualizarem o exe ficam bloqueadas pelo popup
+  de versão.
 
 ### Alterado
 
@@ -93,6 +104,15 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   `sigepen-biometria-v2` (parsing defensivo). Os 2 últimos arquivos corrigem
   inconsistência preexistente entre o `app.xml` declarado e o que era servido aos
   clientes pelo Wildfly.
+- **Biometria — falha de licença Neurotec:** mensagem amigável no lugar de
+  `IllegalStateException` com stacktrace cru ao operador.
+- **Biometria — `BiometriaSDKCliente`:** `System.out.println` substituído por log
+  estruturado, permitindo correlação no APM e captura no log centralizado.
+- **`LoggerUtil`:** detecção de pool JCA esgotado passa a emitir log estruturado
+  em stderr, em vez de `printStackTrace` solto.
+- **`VisitanteBean#associarRecuperando`:** removido `print` de debug residual.
+- **`GerenciarAssinaturaDAO`:** `NoResultException` (resultado vazio do JPA, fluxo
+  esperado) deixa de poluir o log com stacktrace.
 
 ### Notas da versão
 
@@ -106,6 +126,14 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
      unidade prisional na auditoria de cardápio.
   5. `SIGEPEN_AUDIT_OWNER/03-ALTERAR_AUD_UNIDADE_PRISIONAL_QTD_VISITA.sql` — adiciona
      quantidade de visitas por recuperando na auditoria de unidade prisional.
+- **Scripts de banco — alinhamento de versão do cliente desktop:** executar
+  [`Scripts de Banco/v18.0.0/SIGEPEN_OWNER/01-ATUALIZAR_VERSAO_DESKTOP.sql`](./Scripts%20de%20Banco/v18.0.0/SIGEPEN_OWNER/01-ATUALIZAR_VERSAO_DESKTOP.sql)
+  **simultaneamente ao deploy da WAR**: promove `SIGEPEN_OWNER.PARAMETRO.VALOR`
+  de `'2.2'` para `'2.3'` na linha `nome='VERSAO_DESKTOP'`, acompanhando o
+  novo `Cliente.VERSAO` do `sigepen-biometria-v2`. Sem este UPDATE, as
+  estações que atualizarem o exe pelo FXLauncher ficam bloqueadas pelo
+  popup de versão. Idempotente, com rollback documentado no cabeçalho do
+  script.
 - **Migrações em homologação/produção:** abrir chamado no Conecta conforme padrão PDS.
 
 [1.37.0]: https://gitlab.sesp.mt.gov.br/sesp/sti/sistemas/source/sigepen/-/compare/v1.36.0...v1.37.0

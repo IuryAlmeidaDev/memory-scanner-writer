@@ -148,11 +148,11 @@ public class TipoFaltaDisciplinarBean extends MetodosDePaginaBean {
 			@Override
 			public List<TipoFaltaDisciplinar> load(int first, int pageSize, String sortField, SortOrder sortOrder,	Map<String, Object> filters) {
 				setRowCount(service.quantidadeFiltrados(getFiltro()));
-				
+
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.logErro(e, log);
 				}
 				
 				return service.buscaPorFiltro(getFiltro(), false);

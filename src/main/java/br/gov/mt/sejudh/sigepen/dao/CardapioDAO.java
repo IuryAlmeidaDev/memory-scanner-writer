@@ -9,6 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -24,6 +26,8 @@ import br.gov.mt.sejudh.sigepen.util.CardapioUtil;
 
 @RequestScoped
 public class CardapioDAO extends BaseDAO<Cardapio, Long> {
+
+    private static final Logger log = LogManager.getLogger(CardapioDAO.class);
 
     @Inject
     private EntityManager entityManager;
@@ -81,7 +85,7 @@ public class CardapioDAO extends BaseDAO<Cardapio, Long> {
         } catch (NoResultException e) {
             return null;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro em CardapioDAO.buscaCardapio", e);
             return null;
         }
     }
@@ -114,7 +118,7 @@ public class CardapioDAO extends BaseDAO<Cardapio, Long> {
         } catch (NoResultException e) {
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro em CardapioDAO (count)", e);
             return false;
         }
     }

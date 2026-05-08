@@ -158,7 +158,6 @@ public class AtestadosBean {
 			RequestContext.getCurrentInstance().execute("PF('modalNomeSocial').hide(); download()");
 			LoggerUtil.logInfo(Acao.IMPRIMIR, "Atestado de " + atestadoSelecionado.name(), log);
 		} catch (Exception e) {
-			e.printStackTrace();
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Atestado de " + atestadoSelecionado.name(), e, log);
 		}

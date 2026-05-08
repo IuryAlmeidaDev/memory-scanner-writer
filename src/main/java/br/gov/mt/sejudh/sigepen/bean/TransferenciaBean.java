@@ -428,13 +428,13 @@ public class TransferenciaBean extends MetodosDePaginaBean {
 			@Override
 			public List<Transferencia> load(int first, int pageSize, String sortField, SortOrder sortOrder,	Map<String, Object> filters) {
 				setRowCount(service.quantidadeFiltrados(getFiltro()));
-				
+
 				try {
 					configuraPaginacao(getRowCount(), first, pageSize, sortField, sortOrder, getFiltro());
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerUtil.logErro(e, log);
 				}
-				
+
 				return service.buscaPorFiltro(getFiltro(), false);
 			}
 		};

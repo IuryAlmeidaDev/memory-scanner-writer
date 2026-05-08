@@ -9,6 +9,8 @@ import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -29,7 +31,9 @@ import static net.sf.jasperreports.engine.JasperCompileManager.compileReportToFi
 
 @RequestScoped
 public class RelatorioUtil {
-	
+
+	private static final Logger log = LogManager.getLogger(RelatorioUtil.class);
+
 	private static String dataSource;
 
 	public static <T> Arquivo gerarRelatorio(Relatorio relatorio, Map<String, Object> parameters) throws JRException, NamingException, SQLException {
@@ -39,7 +43,7 @@ public class RelatorioUtil {
             properties.load(inputStream);
             dataSource = properties.getProperty("sigepenJndiName");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Erro ao carregar application.properties (RelatorioUtil)", e);
         }
 		
 		InitialContext initialContext = new InitialContext();

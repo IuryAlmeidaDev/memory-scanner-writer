@@ -21,6 +21,8 @@ import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 
 import br.gov.mt.sejudh.sigepen.enumerator.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
@@ -70,12 +72,15 @@ import br.gov.mt.sejudh.sigepen.model.view.AssociarVisitanteResponsavelView;
 import br.gov.mt.sejudh.sigepen.model.view.VwVisitante;
 import br.gov.mt.sejudh.sigepen.service.VisitanteResponsavelService;
 import br.gov.mt.sejudh.sigepen.service.VisitanteService;
+import br.gov.mt.sejudh.sigepen.util.LoggerUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
 public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 
 	private static final long serialVersionUID = 1635530084073694819L;
+
+	private static final Logger log = LogManager.getLogger(VisitanteDAO.class);
 
 	@Inject
 	private ParametroUnidadeDAO parametroUnidadeDAO;
@@ -898,7 +903,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 			Query query = this.em.createNativeQuery(jpql.toString());
 			return ((BigDecimal) query.getSingleResult()).longValue() > 0;
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.logErro(e, log);
 			return true;
 		}
 
@@ -913,7 +918,7 @@ public class VisitanteDAO extends BaseDAO<Visitante, Long> {
 			Query query = this.em.createNativeQuery(jpql.toString());
 			return ((BigDecimal) query.getSingleResult()).longValue() > 0;
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.logErro(e, log);
 			return true;
 		}
 

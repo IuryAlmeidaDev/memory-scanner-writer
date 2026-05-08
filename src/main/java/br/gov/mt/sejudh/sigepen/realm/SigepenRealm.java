@@ -12,6 +12,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -28,6 +30,8 @@ import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 public class SigepenRealm extends JdbcRealm {
+
+	private static final Logger log = LogManager.getLogger(SigepenRealm.class);
 
 	protected String jndiDataSourceName;
 
@@ -161,7 +165,7 @@ public class SigepenRealm extends JdbcRealm {
 			
 			return new UsuarioSenhaSalt(password, salt);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Erro SQL em SigepenRealm ao buscar credenciais", e);
 
 			throw new AuthenticationException(e.getMessage(), e);
 						

@@ -9,6 +9,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.web.filter.authc.UserFilter;
 
@@ -17,6 +19,8 @@ import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 public class SigepenFilter extends UserFilter {
+
+	private static final Logger log = LogManager.getLogger(SigepenFilter.class);
 
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object obj) {
@@ -48,7 +52,7 @@ public class SigepenFilter extends UserFilter {
 					try {
 						resp.sendRedirect(urlAlterarSenha);
 					} catch (IOException e) {
-						e.printStackTrace();
+						log.error("Erro em sendRedirect (SigepenFilter)", e);
 					}
 				}
 			}
@@ -56,13 +60,13 @@ public class SigepenFilter extends UserFilter {
 				try {
 					resp.sendRedirect(urlSelecionarUnidade);
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.error("Erro em sendRedirect (SigepenFilter)", e);
 				}
 			} else if (unidade != null && url.equals(Sigepen.APPLICATION_LOGIN_URL)) {
 				try {
 					resp.sendRedirect(Sigepen.APPLICATION_DASHBOARD_URL);
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.error("Erro em sendRedirect (SigepenFilter)", e);
 				}
 			}
 		}
