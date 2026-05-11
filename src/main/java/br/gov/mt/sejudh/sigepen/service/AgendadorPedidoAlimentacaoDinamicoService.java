@@ -5,6 +5,8 @@ import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -35,6 +37,7 @@ public class AgendadorPedidoAlimentacaoDinamicoService {
     private static final Logger LOGGER = Logger.getLogger(AgendadorPedidoAlimentacaoDinamicoService.class.getName());
     private static final DateTimeFormatter HORARIO_REFEICAO_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
     private static final ZoneId APP_ZONE = ZoneId.of("America/Cuiaba");
+    private static final int DIAS_CATCH_UP_STARTUP = 2;
 
     private static class TimerInfo implements Serializable {
         private static final long serialVersionUID = 1L;
@@ -62,7 +65,7 @@ public class AgendadorPedidoAlimentacaoDinamicoService {
     private UnidadePrisionalService unidadePrisionalService;
 
     @Inject
-    private PedidoAlimentoService pedidoAlimentoService;
+    private ProcessadorPedidoAlimentacaoAsync processadorPedidoAlimentacaoAsync;
 
     @Inject
     private ContratoService contratoService;
@@ -75,35 +78,62 @@ public class AgendadorPedidoAlimentacaoDinamicoService {
 
     @PostConstruct
     public void inicializar() {
-        rearmarAgendaCompleta();
+        try {
+            rearmarAgendaCompleta();
+        } catch (Exception e) {
+            LOGGER.warning("Falha ao inicializar agendador dinamico de alimentacao. O deploy sera mantido ativo: "
+                    + e.getMessage());
+        }
     }
 
+    @Lock(LockType.WRITE)
     public void rearmarAgendaCompleta() {
         List<UnidadePrisional> unidades = unidadePrisionalService.listarUnidadesComContratosAtivo();
         LocalDateTime referencia = LocalDateTime.now(APP_ZONE);
 
         for (UnidadePrisional unidade : unidades) {
-            if (!rolloutAlimentacaoService.unidadeHabilitada(unidade.getId())) {
-                continue;
-            }
+            try {
+                if (!rolloutAlimentacaoService.unidadeHabilitada(unidade.getId())) {
+                    continue;
+                }
 
-            cancelarTimersDaUnidade(unidade.getId());
-            pedidoAlimentoService.gerarPedidosAutomaticosDaUnidade(unidade.getId(), referencia);
-            agendarProximoDisparo(unidade.getId(), referencia);
+                cancelarTimersDaUnidade(unidade.getId());
+                processadorPedidoAlimentacaoAsync.processarCatchUpUnidade(
+                        unidade.getId(),
+                        referencia,
+                        DIAS_CATCH_UP_STARTUP);
+                agendarProximoDisparo(unidade.getId(), referencia);
+            } catch (Exception e) {
+                LOGGER.warning("Unidade " + unidade.getId()
+                        + " ignorada ao rearmar agenda dinamica de alimentacao: " + e.getMessage());
+            }
         }
     }
 
+    @Lock(LockType.WRITE)
     public void rearmarUnidade(Long unidadeId) {
-        if (unidadeId == null || !rolloutAlimentacaoService.unidadeHabilitada(unidadeId)) {
+        if (unidadeId == null) {
             return;
         }
 
         cancelarTimersDaUnidade(unidadeId);
+        if (!rolloutAlimentacaoService.unidadeHabilitada(unidadeId)) {
+            return;
+        }
+
         LocalDateTime referencia = LocalDateTime.now(APP_ZONE);
-        pedidoAlimentoService.gerarPedidosAutomaticosDaUnidade(unidadeId, referencia);
-        agendarProximoDisparo(unidadeId, referencia);
+        try {
+            processadorPedidoAlimentacaoAsync.processarCatchUpUnidade(
+                    unidadeId,
+                    referencia,
+                    DIAS_CATCH_UP_STARTUP);
+            agendarProximoDisparo(unidadeId, referencia);
+        } catch (Exception e) {
+            LOGGER.warning("Erro ao rearmar agenda dinamica da unidade " + unidadeId + ": " + e.getMessage());
+        }
     }
 
+    @Lock(LockType.READ)
     @Timeout
     public void aoDisparar(Timer timer) {
         Object info = timer.getInfo();
@@ -115,7 +145,10 @@ public class AgendadorPedidoAlimentacaoDinamicoService {
         LocalDateTime referencia = LocalDateTime.now(APP_ZONE);
 
         try {
-            pedidoAlimentoService.gerarPedidosAutomaticosDaUnidade(timerInfo.unidadeId, referencia);
+            if (!rolloutAlimentacaoService.unidadeHabilitada(timerInfo.unidadeId)) {
+                return;
+            }
+            processadorPedidoAlimentacaoAsync.processarUnidade(timerInfo.unidadeId, referencia);
         } catch (Exception e) {
             LOGGER.warning("Erro ao processar disparo dinamico da unidade " + timerInfo.unidadeId + ": " + e.getMessage());
         }
@@ -223,12 +256,19 @@ public class AgendadorPedidoAlimentacaoDinamicoService {
         Timestamp dataReferencia = Timestamp.valueOf(referencia);
 
         for (TipoRefeicao tipoRefeicao : tipoRefeicaoService.listarTodos()) {
-            HorarioRefeicao horario = contratoService.buscarHorarioEntregaVigentePorUnidade(
-                    unidadeId,
-                    tipoRefeicao.getId(),
-                    dataReferencia);
-            if (horario != null && horario.getHorarioInicio() != null) {
-                horarios.add(horario);
+            try {
+                HorarioRefeicao horario = contratoService.buscarHorarioEntregaVigentePorUnidade(
+                        unidadeId,
+                        tipoRefeicao.getId(),
+                        dataReferencia);
+                if (horario != null && horario.getHorarioInicio() != null) {
+                    horarios.add(horario);
+                }
+            } catch (Exception e) {
+                LOGGER.info("Unidade " + unidadeId
+                        + " sem horario vigente para a refeicao " + tipoRefeicao.getId()
+                        + " na referencia " + referencia + ": " + e.getMessage());
+                return new ArrayList<>();
             }
         }
 

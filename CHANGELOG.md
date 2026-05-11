@@ -19,7 +19,7 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **`GerenciarAssinaturaDAO`:** `NoResultException` (resultado vazio do JPA, fluxo
   esperado) deixa de poluir o log com stacktrace.
 
-## [1.37.0] - 04/05/2026
+## [1.37.0] - 08/05/2026
 
 ### Adicionado
 
@@ -50,6 +50,12 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Alimentação:** consulta de itens para refeições futuras.
 - **Alimentação:** bloqueio por corte e duplicidade de pedidos automáticos.
 - **Alimentação:** validação automática de data, refeição, unidade e contrato.
+- **Alimentação - pedidos automáticos:** proteção contra duplicidade de pedido ativo
+  em concorrência, com `flush` explícito na persistência e tratamento de violação de
+  unicidade.
+- **Alimentação - agendador dinâmico:** isolamento de falhas por unidade no rearme,
+  validação de rollout no disparo e recuperação de janelas recentes por catch-up no
+  startup/rearme.
 - **Contrato:** paginação da listagem.
 - **Contrato:** filtros de unidade prisional, status e contrato na listagem.
 - **Mapa consolidado:** busca de dietas especiais passa a considerar dietas vigentes
@@ -90,6 +96,13 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Alterado
 
+- **Alimentação - agendador dinâmico:** processamento da geração automática delegado
+  para componente assíncrono, reduzindo trabalho executado diretamente no `@Timeout`.
+- **Alimentação - pedidos automáticos:** geração automática passa a inativar pedidos
+  `PENDENTE` da mesma chave antes de salvar o novo pedido `ATIVO`, sem substituir
+  pedido ativo existente.
+- **Testes unitários:** adicionada cobertura para agendador dinâmico, processador
+  assíncrono, violação de unicidade, fluxo automático ativo e cenários de catch-up.
 - **Dieta especial — trânsito:** início de transferência suspende dietas vigentes dos
   recuperandos vinculados, e cancelamento de transferência em andamento reativa as dietas
   suspensas.

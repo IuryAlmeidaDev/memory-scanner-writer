@@ -88,6 +88,10 @@
 					</h:outputText>
 				</p:column>
 
+				<p:column headerText="Status" sortBy="#{apostilamento.statusVigencia}" width="120">
+					<h:outputText value="#{apostilamento.statusVigencia}" />
+				</p:column>
+
 				<p:column headerText="Ações" style="width:150px;">
 					<center>
 						<p:button title="Visualizar" icon="ui-icon-document"
