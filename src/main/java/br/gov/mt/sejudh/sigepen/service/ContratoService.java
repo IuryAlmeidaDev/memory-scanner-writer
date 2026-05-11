@@ -20,6 +20,7 @@ import br.gov.mt.sejudh.sigepen.exception.NaoEncontradoException;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.dto.ContratoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.UnidadeContratoConflitoDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
 import org.hibernate.Hibernate;
 
@@ -74,6 +75,43 @@ public class ContratoService {
 		List<Contrato> contratos = dao.validarContratoUnidade(contrato);
         return contratos.isEmpty();
     }
+
+	public List<UnidadeContratoConflitoDTO> listarConflitosUnidadeEmContratosAtivos(Contrato contrato) {
+		return dao.listarConflitosUnidadeContratoAtivo(contrato);
+	}
+
+	public String montarMensagemConflitosUnidadeContratoAtivo(List<UnidadeContratoConflitoDTO> conflitos) {
+		if (conflitos == null || conflitos.isEmpty()) {
+			return "Existe unidades em contratos ativos!";
+		}
+
+		if (conflitos.size() == 1) {
+			UnidadeContratoConflitoDTO conflito = conflitos.get(0);
+			return "Nao foi possivel adicionar a unidade " + conflito.getNomeUnidade()
+					+ ", pois ela ja esta vinculada ao contrato ativo " + contratoOuPadrao(conflito.getNumeroContrato())
+					+ ".";
+		}
+
+		StringBuilder mensagem = new StringBuilder(
+				"Nao foi possivel salvar o contrato, pois as unidades abaixo ja estao vinculadas a contrato(s) ativo(s):");
+		for (int i = 0; i < conflitos.size(); i++) {
+			UnidadeContratoConflitoDTO conflito = conflitos.get(i);
+			mensagem.append(" - ").append(conflito.getNomeUnidade()).append(" (Contrato: ")
+					.append(contratoOuPadrao(conflito.getNumeroContrato())).append(")");
+			if (i < conflitos.size() - 1) {
+				mensagem.append(";");
+			}
+		}
+
+		return mensagem.toString();
+	}
+
+	private String contratoOuPadrao(String numeroContrato) {
+		if (numeroContrato == null || numeroContrato.trim().isEmpty()) {
+			return "Contrato ativo";
+		}
+		return numeroContrato;
+	}
 
 	public Contrato buscarContratoPorNumero(String numeroContrato) {
 		return dao.buscarContratoPorNumero(numeroContrato);

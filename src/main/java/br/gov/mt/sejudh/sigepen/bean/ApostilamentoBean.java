@@ -97,6 +97,7 @@ public class ApostilamentoBean extends MetodosDePaginaBean {
 			switch (this.getAcaoDeTela()) {
 			case CADASTRAR:
 				this.apostilamento = new Apostilamento();
+				atualizarDataFimPeloContrato();
 				break;
 			case VISUALIZAR:
 			case ALTERAR:
@@ -108,6 +109,7 @@ public class ApostilamentoBean extends MetodosDePaginaBean {
 				}
 
 				logDeAcesso(log, this.apostilamento);
+				atualizarDataFimPeloContrato();
 				break;
 			case LISTAR:
 				pesquisar();
@@ -129,12 +131,28 @@ public class ApostilamentoBean extends MetodosDePaginaBean {
 		String retorno = null;
 
 		try {
+			if (this.apostilamento.getContrato() == null) {
+				throw new ValidacaoException("Por favor, selecione um contrato para o apostilamento.");
+			}
+
+			if (this.apostilamento.getContrato().getVigenciaContratoFim() == null) {
+				throw new ValidacaoException(
+						"Nao foi possivel salvar: o contrato selecionado nao possui Data Fim de vigencia. Atualize o contrato e tente novamente.");
+			}
+
+			atualizarDataFimPeloContrato();
+
 			if ((this.apostilamento.getDataInicio()
 					.compareTo(this.apostilamento.getContrato().getVigenciaContratoInicio()) < 0)
 					|| (this.apostilamento.getDataInicio()
 							.compareTo(this.apostilamento.getContrato().getVigenciaContratoFim()) > 0)) {
 				throw new ValidacaoException(
 						"Data do apostilamento fora do período de vigência do contrato selecionado");
+			}
+
+			if (this.apostilamento.getDataFim().compareTo(this.apostilamento.getContrato().getVigenciaContratoFim()) > 0) {
+				throw new ValidacaoException(
+						"A Data Fim do apostilamento nao pode ser maior que a Data Fim do contrato selecionado.");
 			}
 
 			if (this.validarTemTodosHorarios()) {
@@ -294,6 +312,19 @@ public class ApostilamentoBean extends MetodosDePaginaBean {
 		}
 
 		return null;
+	}
+
+	public void atualizarDataFimPeloContrato() {
+		if (this.apostilamento == null) {
+			return;
+		}
+
+		if (this.apostilamento.getContrato() == null) {
+			this.apostilamento.setDataFim(null);
+			return;
+		}
+
+		this.apostilamento.setDataFim(this.apostilamento.getContrato().getVigenciaContratoFim());
 	}
 
 	private boolean validarTemTodosHorarios() {

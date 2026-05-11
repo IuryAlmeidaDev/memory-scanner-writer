@@ -5,7 +5,21 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [1.37.0] - 04/05/2026
+## [Não lançado]
+
+### Alterado
+
+- **Biometria — falha de licença Neurotec:** mensagem amigável no lugar de
+  `IllegalStateException` com stacktrace cru ao operador.
+- **Biometria — `BiometriaSDKCliente`:** `System.out.println` substituído por log
+  estruturado, permitindo correlação no APM e captura no log centralizado.
+- **`LoggerUtil`:** detecção de pool JCA esgotado passa a emitir log estruturado
+  em stderr, em vez de `printStackTrace` solto.
+- **`VisitanteBean#associarRecuperando`:** removido `print` de debug residual.
+- **`GerenciarAssinaturaDAO`:** `NoResultException` (resultado vazio do JPA, fluxo
+  esperado) deixa de poluir o log com stacktrace.
+
+## [1.37.0] - 08/05/2026
 
 ### Adicionado
 
@@ -36,6 +50,12 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Alimentação:** consulta de itens para refeições futuras.
 - **Alimentação:** bloqueio por corte e duplicidade de pedidos automáticos.
 - **Alimentação:** validação automática de data, refeição, unidade e contrato.
+- **Alimentação - pedidos automáticos:** proteção contra duplicidade de pedido ativo
+  em concorrência, com `flush` explícito na persistência e tratamento de violação de
+  unicidade.
+- **Alimentação - agendador dinâmico:** isolamento de falhas por unidade no rearme,
+  validação de rollout no disparo e recuperação de janelas recentes por catch-up no
+  startup/rearme.
 - **Contrato:** paginação da listagem.
 - **Contrato:** filtros de unidade prisional, status e contrato na listagem.
 - **Mapa consolidado:** busca de dietas especiais passa a considerar dietas vigentes
@@ -59,7 +79,7 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Biometria v2 — `Cliente.VERSAO` alinhada com `pom.xml`:** constante
   promovida de `"2.2"` para `"2.3"`. Acompanhada de script SQL que atualiza
   `SIGEPEN_OWNER.PARAMETRO.VALOR` na linha `nome='VERSAO_DESKTOP'` (ver
-  *Notas da versão*). Execução simultânea ao deploy é obrigatória — caso
+  _Notas da versão_). Execução simultânea ao deploy é obrigatória — caso
   contrário, as estações que atualizarem o exe ficam bloqueadas pelo popup
   de versão.
 - **Histórico do recuperando:** validação impede cadastro de histórico com data anterior
@@ -76,6 +96,13 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Alterado
 
+- **Alimentação - agendador dinâmico:** processamento da geração automática delegado
+  para componente assíncrono, reduzindo trabalho executado diretamente no `@Timeout`.
+- **Alimentação - pedidos automáticos:** geração automática passa a inativar pedidos
+  `PENDENTE` da mesma chave antes de salvar o novo pedido `ATIVO`, sem substituir
+  pedido ativo existente.
+- **Testes unitários:** adicionada cobertura para agendador dinâmico, processador
+  assíncrono, violação de unicidade, fluxo automático ativo e cenários de catch-up.
 - **Dieta especial — trânsito:** início de transferência suspende dietas vigentes dos
   recuperandos vinculados, e cancelamento de transferência em andamento reativa as dietas
   suspensas.
@@ -129,6 +156,9 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
      unidade prisional na auditoria de cardápio.
   5. `SIGEPEN_AUDIT_OWNER/03-ALTERAR_AUD_UNIDADE_PRISIONAL_QTD_VISITA.sql` — adiciona
      quantidade de visitas por recuperando na auditoria de unidade prisional.
+  6. `SIGEPEN_OWNER/05-CRIAR_INDICE_UNICO_PEDIDO_ALIMENTO_ATIVO.sql` — inativa
+     duplicidades de pedidos ativos mantendo o mais recente e cria índice único
+     para impedir nova duplicidade por data, refeição, unidade e contrato.
 - **Scripts de banco — alinhamento de versão do cliente desktop:** executar
   [`Scripts de Banco/v18.0.0/SIGEPEN_OWNER/01-ATUALIZAR_VERSAO_DESKTOP.sql`](./Scripts%20de%20Banco/v18.0.0/SIGEPEN_OWNER/01-ATUALIZAR_VERSAO_DESKTOP.sql)
   **simultaneamente ao deploy da WAR**: promove `SIGEPEN_OWNER.PARAMETRO.VALOR`

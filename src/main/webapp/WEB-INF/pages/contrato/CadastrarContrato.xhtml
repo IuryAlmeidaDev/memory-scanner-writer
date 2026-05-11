@@ -134,7 +134,7 @@
 									action="#{contratoBean.excluirUnidade(unidade)}"
 									immediate="true" icon="ui-icon-trash" title="Excluir"
 									update=":ContratoForm:unidades :mensagens"
-									rendered="#{(securityUtil.possuiPermissao('CadastrarContrato') and !fornecedorBean.isVisualizacao) or (securityUtil.possuiPermissao('Alterarcontrato') and !fornecedorBean.isVisualizacao)}">
+									rendered="#{(securityUtil.possuiPermissao('CadastrarContrato') and !contratoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarContrato') and !contratoBean.isVisualizacao)}">
 									<p:confirm header="Confirmação"
 										message="Deseja excluir a unidade" icon="ui-icon-alert" />
 								</p:commandButton>
@@ -185,7 +185,7 @@
 								<p:commandButton title="Alterar" icon="ui-icon-pencil"
 									immediate="true"
 									action="#{contratoBean.abrirDialogAlterarHorario(horario)}"
-									rendered="#{(securityUtil.possuiPermissao('CadastrarHorarioRefeicao') and !fornecedorBean.isVisualizacao)}">
+									rendered="#{(securityUtil.possuiPermissao('CadastrarHorarioRefeicao') and !contratoBean.isVisualizacao)}">
 									<p:ajax event="dialogReturn"
 										listener="#{contratoBean.incluirHorarioRefeicao}"
 										update="horariosRefeicao" />
@@ -213,7 +213,7 @@
 				<br />
 
 				<p:commandButton value="Salvar" action="#{contratoBean.salvar()}"
-					update="@form" icon="ui-icon-disk"
+					update="@form :mensagens" icon="ui-icon-disk"
 					rendered="#{(securityUtil.possuiPermissao('CadastrarContrato') and !contratoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarContrato') and !contratoBean.isVisualizacao)}" />
 
 				<p:button outcome="pretty:ListarContrato" value="Voltar"

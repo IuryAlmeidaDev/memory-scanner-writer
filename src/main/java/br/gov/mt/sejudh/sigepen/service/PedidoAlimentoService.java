@@ -17,8 +17,13 @@ import br.gov.mt.sejudh.sigepen.model.dto.PedidoEstruturaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RefeicaoDetalhadaDTO;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -35,6 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.hibernate.exception.ConstraintViolationException;
 
 @Stateless
 public class PedidoAlimentoService {
@@ -106,6 +112,7 @@ public class PedidoAlimentoService {
     private static final Long USUARIO_SISTEMA = 0L;
     private static final DateTimeFormatter DATA_PEDIDO_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
     private static final DateTimeFormatter HORARIO_REFEICAO_FORMATTER = DateTimeFormatter.ofPattern("HHmm");
+    private static final String INDICE_UNICO_PEDIDO_ATIVO = "UK_SGP_PED_ALIM_ATIVO";
 
     @Inject
     private PedidoAlimentoDAO dao;
@@ -130,6 +137,9 @@ public class PedidoAlimentoService {
 
     @Inject
     private RolloutAlimentacaoService rolloutAlimentacaoService;
+
+    @Resource
+    private SessionContext sessionContext;
 
     public boolean verificarExistenciaPedidoAtivo(String dataPedido, Long idTipoRefeicao,
             Long idUnidadePrisional, Long idContrato) {
@@ -311,7 +321,7 @@ public class PedidoAlimentoService {
         return gerarPedidosAutomaticosPendentes(LocalDateTime.now(ZoneId.of("America/Cuiaba")));
     }
 
-    @Transactional
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int gerarPedidosAutomaticosDaUnidade(Long unidadeId, LocalDateTime referencia) {
         if (unidadeId == null) {
             return 0;
@@ -340,6 +350,49 @@ public class PedidoAlimentoService {
         }
 
         return gerarPedidosAutomaticosDaUnidade(unidadeResumo, referencia);
+    }
+
+    @Transactional
+    public int gerarPedidosAutomaticosDaUnidadeComCatchUp(Long unidadeId, LocalDateTime referencia, int diasRetroativos) {
+        if (unidadeId == null || referencia == null) {
+            return 0;
+        }
+
+        UnidadePrisional unidade = unidadePrisionalService.buscaPorId(unidadeId);
+        if (unidade == null || !rolloutAlimentacaoService.unidadeHabilitada(unidade.getId())) {
+            return 0;
+        }
+
+        if (!agendaPedidoRefeicaoService.unidadeAptaParaAutomacao(unidade.getId(), referencia)) {
+            LOGGER.info("NAO_GERADO_BLOQUEIO unidade=" + unidade.getId()
+                    + " motivo=Sem horario vigente para todas as refeicoes");
+            return 0;
+        }
+
+        int dias = Math.max(0, diasRetroativos);
+        LocalDateTime inicio = referencia.minusDays(dias);
+        List<LocalDateTime> referenciasCatchUp = montarReferenciasCatchUp(unidade.getId(), inicio, referencia);
+        int totalGerados = 0;
+        PedidoAlimentoService executorTransacional = obterExecutorTransacional();
+
+        for (LocalDateTime referenciaCatchUp : referenciasCatchUp) {
+            totalGerados += executorTransacional.gerarPedidosAutomaticosDaUnidade(unidade.getId(), referenciaCatchUp);
+        }
+
+        return totalGerados;
+    }
+
+    PedidoAlimentoService obterExecutorTransacional() {
+        if (sessionContext == null) {
+            return this;
+        }
+
+        try {
+            return sessionContext.getBusinessObject(PedidoAlimentoService.class);
+        } catch (Exception e) {
+            LOGGER.warning("Nao foi possivel obter proxy transacional do PedidoAlimentoService: " + e.getMessage());
+            return this;
+        }
     }
 
     private int gerarPedidosAutomaticosDaUnidade(UnidadePrisional unidade, LocalDateTime referencia) {
@@ -463,18 +516,6 @@ public class PedidoAlimentoService {
             return Optional.empty();
         }
 
-        List<Long> pedidosPendentes = dao.findPedidosPendentesPorTipoRefeicaoEUnidade(
-                dataPedido,
-                idTipoRefeicao,
-                unidade.getId(),
-                contrato.getId());
-        if (!pedidosPendentes.isEmpty()) {
-            LOGGER.info("Pedido automatico encontrou " + pedidosPendentes.size()
-                    + " pedido(s) PENDENTE(s) para a mesma refeicao na unidade e eles serao inativados. Unidade "
-                    + identificarUnidade(unidade) + ", refeicao " + identificarRefeicao(horarioAlvo)
-                    + ", entrega " + dataPedido + ", IDs " + pedidosPendentes);
-        }
-
         if (!cardapioDAO.existeCardapioPara(dataPedido, idTipoRefeicao, contrato.getId())) {
             LOGGER.info("Pedido automatico nao gerado por ausencia de cardapio. Unidade "
                     + identificarUnidade(unidade) + ", refeicao " + identificarRefeicao(horarioAlvo)
@@ -500,6 +541,14 @@ public class PedidoAlimentoService {
                     + identificarUnidade(unidade) + ", refeicao " + identificarRefeicao(horarioAlvo)
                     + ", entrega " + dataPedido + ", motivo: " + e.getMessage());
             return Optional.empty();
+        } catch (RuntimeException e) {
+            if (isViolacaoUnicidade(e)) {
+                LOGGER.info("Pedido automatico nao gerado porque outro processo criou o pedido primeiro. Unidade "
+                        + identificarUnidade(unidade) + ", refeicao " + identificarRefeicao(horarioAlvo)
+                        + ", entrega " + dataPedido);
+                return Optional.empty();
+            }
+            throw e;
         }
     }
 
@@ -601,13 +650,88 @@ public class PedidoAlimentoService {
                 throw new ValidacaoException("Ja existe pedido ATIVO para a mesma unidade e refeicao.");
             }
 
-            salvarPrimeiroPedidoAssinado(pedidoAlimento);
+            salvarPedidoAutomaticoAtivoSemSubstituirAtivo(pedidoAlimento);
             break;
         default:
             throw new ValidacaoException("Modo de geracao de pedido invalido.");
         }
 
         return new PedidoGerado(pedidoMontado, substituiuPedidoAtivo);
+    }
+
+    private void salvarPedidoAutomaticoAtivoSemSubstituirAtivo(PedidoAlimento pedidoAlimento) {
+        List<Long> idsPendentes = dao.findPedidosPendentesPorTipoRefeicaoEUnidade(
+                pedidoAlimento.getDataPedido(),
+                pedidoAlimento.getIdTipoRefeicao(),
+                pedidoAlimento.getIdUnidadePrisional(),
+                pedidoAlimento.getIdContrato());
+
+        if (!idsPendentes.isEmpty()) {
+            LOGGER.info("Inativando " + idsPendentes.size()
+                    + " pedido(s) PENDENTE(s) antes da geracao automatica. IDs: " + idsPendentes);
+            dao.bulkDeactivateItemPedidoAlimentoByPedidoIds(idsPendentes);
+            dao.bulkDeactivateDietaEspecialPedidoAlimentoByPedidoIds(idsPendentes);
+            dao.bulkDeactivatePedidoAlimentoByIds(idsPendentes);
+        }
+
+        pedidoAlimento.setStatus(Status.ATIVO);
+        dao.salvarComFlush(pedidoAlimento);
+        LOGGER.info("Pedido automatico ATIVO salvo. ID: " + pedidoAlimento.getId());
+    }
+
+    private List<LocalDateTime> montarReferenciasCatchUp(Long unidadeId, LocalDateTime inicio, LocalDateTime fim) {
+        List<LocalDateTime> referencias = new ArrayList<>();
+        LocalDate data = inicio.toLocalDate();
+
+        while (!data.isAfter(fim.toLocalDate())) {
+            List<HorarioRefeicao> horarios = buscarHorariosEntregaVigentes(unidadeId, data.atStartOfDay());
+            for (HorarioRefeicao horario : horarios) {
+                LocalDateTime entrega = LocalDateTime.of(data, parseHorarioInicio(horario));
+                LocalDateTime referenciaGatilho = entrega.plusSeconds(1);
+                if (!referenciaGatilho.isBefore(inicio) && !referenciaGatilho.isAfter(fim)) {
+                    referencias.add(referenciaGatilho);
+                }
+            }
+            data = data.plusDays(1);
+        }
+
+        referencias.sort(Comparator.naturalOrder());
+        if (referencias.isEmpty() || !referencias.get(referencias.size() - 1).equals(fim)) {
+            referencias.add(fim);
+        }
+        return referencias;
+    }
+
+    boolean isViolacaoUnicidade(Throwable e) {
+        Throwable atual = e;
+        while (atual != null) {
+            if (atual instanceof ConstraintViolationException) {
+                ConstraintViolationException constraint = (ConstraintViolationException) atual;
+                if (isConstraintPedidoAtivo(constraint.getConstraintName())) {
+                    return true;
+                }
+            }
+            String mensagem = atual.getMessage();
+            if (isMensagemConstraintPedidoAtivo(mensagem)) {
+                return true;
+            }
+            atual = atual.getCause();
+        }
+        return e instanceof PersistenceException && isMensagemConstraintPedidoAtivo(e.getMessage());
+    }
+
+    private boolean isMensagemConstraintPedidoAtivo(String mensagem) {
+        if (mensagem == null) {
+            return false;
+        }
+        String mensagemNormalizada = mensagem.toUpperCase();
+        return mensagemNormalizada.contains("ORA-00001")
+                && mensagemNormalizada.contains(INDICE_UNICO_PEDIDO_ATIVO);
+    }
+
+    private boolean isConstraintPedidoAtivo(String constraintName) {
+        return constraintName != null
+                && constraintName.toUpperCase().contains(INDICE_UNICO_PEDIDO_ATIVO);
     }
 
     private Long obterIdUsuarioResponsavel() {
