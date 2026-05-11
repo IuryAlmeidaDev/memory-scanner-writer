@@ -143,6 +143,9 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
      unidade prisional na auditoria de cardápio.
   5. `SIGEPEN_AUDIT_OWNER/03-ALTERAR_AUD_UNIDADE_PRISIONAL_QTD_VISITA.sql` — adiciona
      quantidade de visitas por recuperando na auditoria de unidade prisional.
+  6. `SIGEPEN_OWNER/05-CRIAR_INDICE_UNICO_PEDIDO_ALIMENTO_ATIVO.sql` — inativa
+     duplicidades de pedidos ativos mantendo o mais recente e cria índice único
+     para impedir nova duplicidade por data, refeição, unidade e contrato.
 - **Scripts de banco — alinhamento de versão do cliente desktop:** executar
   [`Scripts de Banco/v18.0.0/SIGEPEN_OWNER/01-ATUALIZAR_VERSAO_DESKTOP.sql`](./Scripts%20de%20Banco/v18.0.0/SIGEPEN_OWNER/01-ATUALIZAR_VERSAO_DESKTOP.sql)
   **simultaneamente ao deploy da WAR**: promove `SIGEPEN_OWNER.PARAMETRO.VALOR`
