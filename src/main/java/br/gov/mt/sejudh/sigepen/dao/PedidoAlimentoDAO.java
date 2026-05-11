@@ -101,6 +101,12 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
         return query.getResultList();
     }
 
+    public PedidoAlimento salvarComFlush(PedidoAlimento pedidoAlimento) {
+        PedidoAlimento salvo = salvar(pedidoAlimento);
+        em.flush();
+        return salvo;
+    }
+
     /**
      * Busca IDs de pedidos PENDENTE ou ATIVO para inativar ao confirmar substituição
      * de um pedido assinado.

@@ -40,6 +40,7 @@ import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.ContratoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.UnidadeContratoConflitoDTO;
 import br.gov.mt.sejudh.sigepen.service.ContratoService;
 import br.gov.mt.sejudh.sigepen.service.FornecedorService;
 import br.gov.mt.sejudh.sigepen.service.HorarioRefeicaoService;
@@ -298,8 +299,11 @@ public class ContratoBean extends MetodosDePaginaBean {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Contrato não pode ficar sem unidade!");
 			return false;
 		}
-		if (!contratoService.validarContratoUnidade(this.contrato)) {
-			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", "Existe unidades em contratos ativos!");
+		List<UnidadeContratoConflitoDTO> conflitos = contratoService
+				.listarConflitosUnidadeEmContratosAtivos(this.contrato);
+		if (!conflitos.isEmpty()) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO",
+					contratoService.montarMensagemConflitosUnidadeContratoAtivo(conflitos));
 			return false;
 		}
 		return true;

@@ -190,12 +190,17 @@ public class HorarioRefeicaoBean extends MetodosDePaginaBean {
 							.montarAgendaOperacional(unidades, LocalDateTime.now());
 					setRowCount(agenda.size());
 
-					int fim = Math.min(first + pageSize, agenda.size());
-					if (first >= fim) {
+					int firstValido = first;
+					if (!agenda.isEmpty() && first >= agenda.size()) {
+						firstValido = 0;
+					}
+
+					int fim = Math.min(firstValido + pageSize, agenda.size());
+					if (firstValido >= fim) {
 						return new ArrayList<>();
 					}
 
-					return agenda.subList(first, fim);
+					return agenda.subList(firstValido, fim);
 				} catch (Exception e) {
 					LoggerUtil.logErro(e, log);
 				}

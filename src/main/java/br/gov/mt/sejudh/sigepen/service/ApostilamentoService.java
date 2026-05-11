@@ -1,6 +1,8 @@
 package br.gov.mt.sejudh.sigepen.service;
 
 import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -54,7 +56,38 @@ public class ApostilamentoService extends BaseService<Apostilamento, Long> {
 	}
 
 	public List<ApostilamentoDTO> buscaPorFiltro(FiltroApostilamento filtro) {
-		return apostilamentoDAO.buscaPorFiltro(filtro);
+		List<ApostilamentoDTO> apostilamentos = apostilamentoDAO.buscaPorFiltro(filtro);
+
+		for (ApostilamentoDTO apostilamento : apostilamentos) {
+			apostilamento.setStatusVigencia(calcularStatusVigencia(apostilamento.getDataFim()));
+		}
+
+		return apostilamentos;
+	}
+
+	String calcularStatusVigencia(Date dataFim) {
+		if (dataFim == null) {
+			return "Vigente";
+		}
+
+		Date hoje = zerarHorario(new Date());
+		Date fim = zerarHorario(dataFim);
+
+		if (fim.before(hoje)) {
+			return "Encerrado";
+		}
+
+		return "Vigente";
+	}
+
+	private Date zerarHorario(Date data) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(data);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar.getTime();
 	}
 
 	public Apostilamento buscarApostilamentoAnterior(Contrato contrato) {
