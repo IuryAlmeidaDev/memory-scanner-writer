@@ -33,14 +33,16 @@
                 		styleFormLabelColumn="min-width:150px !important"
 				/>
                 
-                <br/> <br/>
-                <p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"/>
-        	</p:panel>
-        </h:form>
+				<br/> <br/>
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"
+					onstart="if (PF('cronogramaDataTable')) { PF('cronogramaDataTable').getPaginator().setPage(0); }"/>
+	        	</p:panel>
+	        </h:form>
         
 		
 		<h:form id="registrosForm">
 			<p:dataTable id="dataTable" var="horario" value="#{horarioRefeicaoBean.horariosRefeicao}" emptyMessage="Nenhum registro encontrado."
+				widgetVar="cronogramaDataTable"
 				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{horario.unidadeId}">
 
 				<p:column headerText="Código" style="width:100px;" sortBy="#{horario.unidadeId}">

@@ -8,6 +8,7 @@ public class ApostilamentoDTO {
 	private Date dataInicio;
 	private Date dataFim;
 	private String numContrato;
+	private String statusVigencia;
 
 	public long getId() {
 		return id;
@@ -39,6 +40,14 @@ public class ApostilamentoDTO {
 
 	public void setNumContrato(String numContrato) {
 		this.numContrato = numContrato;
+	}
+
+	public String getStatusVigencia() {
+		return statusVigencia;
+	}
+
+	public void setStatusVigencia(String statusVigencia) {
+		this.statusVigencia = statusVigencia;
 	}
 
 	@Override

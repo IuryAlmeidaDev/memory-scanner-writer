@@ -24,6 +24,7 @@ import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.ContratoDTO;
+import br.gov.mt.sejudh.sigepen.model.dto.UnidadeContratoConflitoDTO;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 
 @RequestScoped
@@ -143,7 +144,26 @@ public class ContratoDAO {
 		Query query = entityManager.createQuery(s.toString(), Contrato.class);
 		query.setParameter("id", contrato.getId());
 
-        return (List<Contrato>) query.getResultList();
+		return (List<Contrato>) query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<UnidadeContratoConflitoDTO> listarConflitosUnidadeContratoAtivo(Contrato contrato) {
+		if (contrato == null || contrato.getUnidades() == null || contrato.getUnidades().isEmpty()) {
+			return new ArrayList<UnidadeContratoConflitoDTO>();
+		}
+
+		List<Long> unidadeIds = contrato.getUnidades().stream().map(UnidadePrisional::getId).collect(Collectors.toList());
+
+		String jpql = "select distinct new br.gov.mt.sejudh.sigepen.model.dto.UnidadeContratoConflitoDTO(u.id, u.nome, c.numContrato) "
+				+ "from Contrato c join c.unidades u "
+				+ "where c.status = 1 and c.vigenciaContratoFim >= SYSDATE and c.id != :id and u.id in :unidadeIds";
+
+		Query query = entityManager.createQuery(jpql, UnidadeContratoConflitoDTO.class);
+		query.setParameter("id", contrato.getId());
+		query.setParameter("unidadeIds", unidadeIds);
+
+		return (List<UnidadeContratoConflitoDTO>) query.getResultList();
 	}
 
 	public String horarioRefeiracaoPorUnidade(Long idUnidade, Long tipoRefeiracao) {
