@@ -385,6 +385,7 @@
 							display="text"
 							validationRequired="true"
 							pattern="dd/MM/yyyy HH:mm"
+							dataMinima="#{historicoRecuperandoBean.dataEntradaPassagemAtual}"
 							disabled="#{!securityUtil.possuiPermissaoNaUnidadeLogada('CadastrarHistoricoRecuperando') or historicoRecuperandoBean.recuperandoView.isRecuperandoInativo or !historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"/>
 
 					<sgp:formInputTextarea
@@ -471,6 +472,7 @@
 												 icon="fa fa-trash"
 												 actionListener="#{historicoRecuperandoBean.selecionarParaRemover(historicos)}"
 												 oncomplete="PF('confirmDialogRemover').show();"
+												 rendered="#{securityUtil.possuiPermissaoNaUnidadeLogada('ExcluirHistoricoRecuperando') and !historicoRecuperandoBean.recuperandoView.isRecuperandoInativo and historicoRecuperandoBean.recuperandoView.isMesmaUnidadeQueServidorLogado}"
 												 process="@this" />
 							</center>
 						</p:column>
@@ -501,7 +503,8 @@
 								 styleClass="ui-confirmdialog-yes"
 								 icon="fa fa-check"
 								 actionListener="#{historicoRecuperandoBean.removerHistoricoSelecionado}"
-								 update="formHistoricoRecuperando:dataTableHistoricoRecuperando"
+								 update="formHistoricoRecuperando:dataTableHistoricoRecuperando mensagens"
+								 rendered="#{securityUtil.possuiPermissaoNaUnidadeLogada('ExcluirHistoricoRecuperando')}"
 								 onclick="PF('confirmDialogRemover').hide();"
 				/>
 				<p:commandButton value="Não"

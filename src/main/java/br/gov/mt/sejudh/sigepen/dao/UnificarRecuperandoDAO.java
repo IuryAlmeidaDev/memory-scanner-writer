@@ -672,7 +672,7 @@ public class UnificarRecuperandoDAO {
 		}
 	}
 
-	private void unificarHistoricoRecuperando(Recuperando recuperando) {
+	private void unificarHistoricoRecuperando(Recuperando recuperando) throws Exception {
 		if (getRecuperando1().getId() != recuperando.getId()) {
 			List<HistoricoRecuperando> listHistoricoRecuperandos = historicoRecuperandoService
 					.listarHistoricoRecuperando(getRecuperando1().getId());

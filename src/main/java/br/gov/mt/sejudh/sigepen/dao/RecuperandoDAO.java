@@ -610,7 +610,7 @@ public class RecuperandoDAO {
 
 	public Long recuperandoJaExisteNoSistema(String nome, String nomeMae, Date dataNascimento, Long idRecuperando) {
 		try {
-			boolean possuiIdRecuperando = idRecuperando > 0;
+			boolean possuiIdRecuperando = idRecuperando != null && idRecuperando > 0;
 			StringBuilder sqlQuery = new StringBuilder();
 			
 			sqlQuery.append("select r.id from Recuperando r, Pessoa p "

@@ -42,6 +42,8 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   status HTTP e payload em `ConexaoWebService`, parsing defensivo no
   `BiometriaWebServiceClient` e mensagem amigável no popup de erro de biometria
   (substitui stacktrace cru).
+- **Histórico do recuperando:** nova permissão `ExcluirHistoricoRecuperando` para controlar
+  a exclusão de registros de histórico por unidade logada.
 
 ### Corrigido
 
@@ -71,9 +73,20 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Biometria v2 — `Cliente.VERSAO` alinhada com `pom.xml`:** constante
   promovida de `"2.2"` para `"2.3"`. Acompanhada de script SQL que atualiza
   `SIGEPEN_OWNER.PARAMETRO.VALOR` na linha `nome='VERSAO_DESKTOP'` (ver
-  *Notas da versão*). Execução simultânea ao deploy é obrigatória — caso
+  _Notas da versão_). Execução simultânea ao deploy é obrigatória — caso
   contrário, as estações que atualizarem o exe ficam bloqueadas pelo popup
   de versão.
+- **Histórico do recuperando:** validação impede cadastro de histórico com data anterior
+  à data de entrada da passagem atual do recuperando.
+- **Histórico do recuperando:** exclusão de histórico passa a respeitar permissão específica
+  e deixa de exibir a ação para usuários sem autorização, recuperandos inativos ou fora da
+  unidade do servidor logado.
+- **Histórico do recuperando:** mensagens de validação passam a ser exibidas como aviso na
+  tela, mantendo os dados do formulário quando a operação não puder ser concluída.
+- **Recuperando:** validações de cadastro reforçadas para evitar gravação sem dados
+  obrigatórios de pessoa, nome, nome da mãe ou data de nascimento.
+- **Recuperando:** ajustes defensivos evitam erro em filtros/listagens quando valores
+  opcionais retornam nulos ou vazios.
 
 ### Alterado
 
@@ -113,6 +126,10 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **`VisitanteBean#associarRecuperando`:** removido `print` de debug residual.
 - **`GerenciarAssinaturaDAO`:** `NoResultException` (resultado vazio do JPA, fluxo
   esperado) deixa de poluir o log com stacktrace.
+- **Histórico do recuperando — tela:** campo de data passa a usar a data de entrada da
+  passagem atual como data mínima.
+- **Recuperando:** lista de históricos passa a ser inicializada e sincronizada mantendo o
+  vínculo bidirecional entre recuperando e histórico.
 
 ### Notas da versão
 
@@ -135,5 +152,8 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   popup de versão. Idempotente, com rollback documentado no cabeçalho do
   script.
 - **Migrações em homologação/produção:** abrir chamado no Conecta conforme padrão PDS.
+- **Scripts de banco:** executar
+  [`Scripts de Banco/v17.0.0/SIGEPEN_OWNER/02-INSERT_PERMISSAO_EXCLUIR_HISTORICO_RECUPERANDO.sql`](./Scripts%20de%20Banco/v17.0.0/SIGEPEN_OWNER/02-INSERT_PERMISSAO_EXCLUIR_HISTORICO_RECUPERANDO.sql)
+  para criar a permissão `ExcluirHistoricoRecuperando`.
 
 [1.37.0]: https://gitlab.sesp.mt.gov.br/sesp/sti/sistemas/source/sigepen/-/compare/v1.36.0...v1.37.0

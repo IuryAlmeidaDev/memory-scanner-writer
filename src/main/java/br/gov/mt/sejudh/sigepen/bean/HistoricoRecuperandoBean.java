@@ -2,8 +2,11 @@ package br.gov.mt.sejudh.sigepen.bean;
 
 import br.gov.mt.sejudh.sigepen.enumerator.Acao;
 import br.gov.mt.sejudh.sigepen.exception.NaoEncontradoException;
+import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.HistoricoRecuperando;
+import br.gov.mt.sejudh.sigepen.model.Passagem;
 import br.gov.mt.sejudh.sigepen.model.Recuperando;
+import br.gov.mt.sejudh.sigepen.model.Servidor;
 import br.gov.mt.sejudh.sigepen.model.TipoHistorico;
 import br.gov.mt.sejudh.sigepen.model.view.RecuperandoView;
 import br.gov.mt.sejudh.sigepen.relatorio.Relatorio;
@@ -60,7 +63,7 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean implements Ser
 	public void salvar(){
 		try {
 			this.historicoRecuperando.setRecuperando(this.recuperando);
-			this.historicoRecuperando.setServidor(SecurityUtil.getUsuario().getServidor());
+			this.historicoRecuperando.setServidor(getServidorLogado());
 			this.historicoRecuperandoService.salvar(this.historicoRecuperando);
 
 			listarHistoricoRecuperando();
@@ -68,10 +71,16 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean implements Ser
 			this.historicoRecuperando = new HistoricoRecuperando();
 			facesUtil.exibirMensagemInfo("Histórico salvo com sucesso!", false);
 			RequestContext.getCurrentInstance().update("mensagens");
+		} catch (ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", "Erro ao salvar histórico do recuperando: " + e.getMessage());
 			LoggerUtil.logErro(Acao.SALVAR, this.historicoRecuperando, e, log);
 		}
+	}
+
+	protected Servidor getServidorLogado() {
+		return SecurityUtil.getUsuario().getServidor();
 	}
 
 	public void cadastrarHistoricoRecuperando(RecuperandoView recuperandoView) {
@@ -81,13 +90,17 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean implements Ser
 			carregarRecuperando(recuperandoView.getId());
 			listarHistoricoRecuperando();
 			this.historicoRecuperando.setRecuperando(this.recuperando);
-			LoggerUtil.logInfo(Acao.VISUALIZAR, this.historicoRecuperando, log);
+			registrarVisualizacaoHistorico();
 		} catch (NaoEncontradoException e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ERRO", e.getMessage());
 		} catch (Exception e) {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(null, this.historicoRecuperando, e, log);
 		}
+	}
+
+	protected void registrarVisualizacaoHistorico() {
+		LoggerUtil.logInfo(Acao.VISUALIZAR, this.historicoRecuperando, log);
 	}
 
 	public void listarHistoricoRecuperando(){
@@ -222,9 +235,12 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean implements Ser
 				this.historicoRecuperando = new HistoricoRecuperando();
 
 				facesUtil.exibirMensagemInfo("Histórico removido com sucesso!", false);
+				
 			} else {
 				facesUtil.exibirMensagemErro("Nenhum histórico selecionado para remover.", false);
 			}
+		} catch (ValidacaoException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "ATENÇÃO", e.getMessage());
 		} catch (Exception e) {
 			facesUtil.exibirMensagemErro("Erro ao remover histórico: " + e.getMessage(), false);
 			LoggerUtil.logErro(Acao.REMOVER, this.historicoRecuperando, e, log);
@@ -266,6 +282,15 @@ public class HistoricoRecuperandoBean extends MetodosDePaginaBean implements Ser
 
 	public Recuperando getRecuperando() {
 		return recuperando;
+	}
+
+	public Date getDataEntradaPassagemAtual() {
+		if (recuperando == null) {
+			return null;
+		}
+
+		Passagem passagemAtual = recuperando.getPassagemAtual();
+		return passagemAtual != null ? passagemAtual.getDataEntrada() : null;
 	}
 
 	public void setRecuperando(Recuperando recuperando) {
