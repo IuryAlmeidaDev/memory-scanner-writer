@@ -171,11 +171,12 @@ public class RecuperandoService {
 		            }
 		        }
 		    }
-		if (filtro.getIsBuscarFotoFrente()) {
+		if (Boolean.TRUE.equals(filtro.getIsBuscarFotoFrente()) && recuperandos != null) {
 			for (RecuperandoView r : recuperandos) {
-				if (r.getId() != null)
+				if (r.getId() != null) {
 					r.setLotacaoAtual(dao.buscarLotacaoAtual(r.getId(), true));
 					r.setImagemFrente(dao.buscarImagemFrente(r.getId()));
+				}
 				
 				if (r.getVisitanteId() != null) 
 					r.setImagemFrente(visitanteService.buscarImagemFrente(r.getVisitanteId()));
@@ -219,8 +220,24 @@ public class RecuperandoService {
 	
 	@Interceptors(EJBExcInterceptor.class)
 	public Recuperando salvar(Recuperando recuperando) throws Exception {
+		if (recuperando == null) {
+			throw new ValidacaoException("Dados do recuperando não informados.");
+		}
+		
 		if (recuperando.getPessoa() == null) {
 			throw new ValidacaoException("É necessário associar uma pessoa.");
+		}
+		
+		if (isBlank(recuperando.getPessoa().getNome())) {
+			throw new ValidacaoException("Nome é obrigatório.");
+		}
+		
+		if (isBlank(recuperando.getPessoa().getNomeMae())) {
+			throw new ValidacaoException("Nome da mãe é obrigatório.");
+		}
+		
+		if (recuperando.getPessoa().getDataNascimento() == null) {
+			throw new ValidacaoException("Data de nascimento é obrigatória.");
 		}
 		
 		if (!isMaioridade(recuperando.getPessoa().getDataNascimento())) {
@@ -248,7 +265,7 @@ public class RecuperandoService {
 		Long idVisitante = recuperando.getTornarRecuperandoIdVisitante(); 
 		if(recuperando.getId() > 0) {
 			List<Parente> parentes = this.parenteDAO.listarPorRecuperando(recuperando);
-			if (parentes.size() > 0){
+			if (parentes != null && !parentes.isEmpty()){
 				parentes.stream().forEach(p -> p.setStatus(SgpStatusAlternativo.P));
 			}
 		}
@@ -287,15 +304,18 @@ public class RecuperandoService {
 
 	private void reativarVisitante(Recuperando recuperando) {
 		Optional<List<Credenciamento>> credenciamentos = this.credenciamentoDAO.listaVisitantes(recuperando);
-		if (credenciamentos.get().size() > 0) {
-			credenciamentos.get().stream().forEach(vr -> {
-				Visitante visitante = this.visitanteDAO.buscarPorId(vr.getVisitante().getId());
-				if(visitante.getStatus() == StatusVisitante.I){
-					visitante.setStatus(StatusVisitante.P);
-					this.visitanteDAO.salvar(visitante);
-				}
-			});
+		if (!credenciamentos.isPresent() || credenciamentos.get().isEmpty()) {
+			return;
 		}
+		
+		List<Credenciamento> listaCredenciamentos = credenciamentos.get();
+		listaCredenciamentos.stream().forEach(vr -> {
+			Visitante visitante = this.visitanteDAO.buscarPorId(vr.getVisitante().getId());
+			if(visitante.getStatus() == StatusVisitante.I){
+				visitante.setStatus(StatusVisitante.P);
+				this.visitanteDAO.salvar(visitante);
+			}
+		});
 	}
 
 	private void ativaStatusParenteNaSolicitacaoDeVisita(Parente parente) {
@@ -597,6 +617,10 @@ public class RecuperandoService {
 		Calendar maioridade = Calendar.getInstance();
 		maioridade.add(Calendar.YEAR, -18);		
 		return nascimento.before(maioridade.getTime());
+	}
+	
+	private boolean isBlank(String valor) {
+		return valor == null || valor.trim().isEmpty();
 	}
 
 	public void buscarAlcunhasEOutrosNomes(RecuperandoDTO rec) {

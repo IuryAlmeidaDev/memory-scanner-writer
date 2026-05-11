@@ -284,6 +284,7 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
         this.documentos = new ArrayList<Documento>();
         this.setStatus(status);
         this.processos = new ArrayList<Processo>();
+        this.historicos = new ArrayList<HistoricoRecuperando>();
         this.setTornarRecuperando(false);
         this.setTornarRecuperandoIdVisitante(null);
     }
@@ -924,7 +925,21 @@ public class Recuperando implements Serializable, PersistentAttributeInterceptab
 	}
 
 	public void setHistoricos(List<HistoricoRecuperando> historicos) {
-		this.historicos = historicos;
+		if (this.historicos == null) {
+			this.historicos = new ArrayList<HistoricoRecuperando>();
+		}
+
+		if (historicos == null || this.historicos == historicos) {
+			return;
+		}
+
+		this.historicos.clear();
+		for (HistoricoRecuperando historico : historicos) {
+			if (historico != null) {
+				historico.setRecuperando(this);
+				this.historicos.add(historico);
+			}
+		}
 	}
 
 	public AutorizacaoCadastroSemBiometria getAutorizacaoCadastroSemBiometria() {
