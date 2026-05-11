@@ -1,5 +1,5 @@
 -- ================================================================
--- Script: 01-ATUALIZAR_VERSAO_DESKTOP.sql  (v18.0.0)
+-- Script: 03-ATUALIZAR_VERSAO_DESKTOP.sql  (v17.0.0)
 -- Ambiente: HOMOLOGAÇÃO e PRODUÇÃO
 -- Banco:    Oracle
 -- Schema:   SIGEPEN_OWNER
