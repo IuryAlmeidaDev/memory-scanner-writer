@@ -1,4 +1,12 @@
-INSERT INTO SIGEPEN_OWNER.PERMISSAO (id, nome, descricao, funcionalidade_id)
-values (378, 'ExcluirHistoricoRecuperando', 'Permite excluir histórico do recuperando.', 3);
+INSERT INTO SIGEPEN_OWNER.PERMISSAO (ID, NOME, DESCRICAO, FUNCIONALIDADE_ID)
+SELECT
+    (SELECT NVL(MAX(ID), 0) + 1 FROM SIGEPEN_OWNER.PERMISSAO),
+    'ExcluirHistoricoRecuperando',
+    'Permite excluir histórico do recuperando.',
+    3
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM SIGEPEN_OWNER.PERMISSAO WHERE NOME = 'ExcluirHistoricoRecuperando'
+);
 
 COMMIT;
