@@ -130,10 +130,10 @@
 					<h:outputText value="#{pedido.id}" />
 				</p:column>
 
-				<p:column headerText="Data" sortBy="#{pedido.dataEmissao}"
+				<p:column headerText="Data" sortBy="#{pedido.dataPedido}"
 					style="width:160px; white-space: nowrap; text-align: center;">
-					<h:outputText value="#{pedido.dataEmissao}">
-						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/Cuiaba" />
+					<h:outputText value="#{pedido.dataPedido}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 					</h:outputText>
 				</p:column>
 
@@ -173,10 +173,3 @@
 
 	</ui:define>
 </ui:composition>
-
-
-
-
-
-
-
