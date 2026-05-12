@@ -47,13 +47,15 @@ public class BiometriaSDKCliente implements Serializable {
 	}
 
 	public static void validarLicencas() throws IOException, Exception {
-		if (!NLicense.obtainComponents("/local", 5000, components)) {
-			log.error("Licenca Neurotec NAO obtida | server=/local | timeout_ms=5000 | components={}", components);
+		if (!NLicense.obtainComponents(Sigepen.LICENSE_SERVER, Sigepen.LICENSE_PORT, components)) {
+			log.error("Licenca Neurotec NAO obtida | server={} | port={} | components={}",
+					Sigepen.LICENSE_SERVER, Sigepen.LICENSE_PORT, components);
 			// TODO Fase 2 error_coverage: ElasticApm.captureException(...)
 			throw new IllegalStateException(
 					"Licenca Neurotec indisponivel - servidor de licencas nao respondeu");
 		}
-		log.info("Licenca Neurotec OK | components={}", components);
+		log.info("Licenca Neurotec OK | server={} | port={} | components={}",
+				Sigepen.LICENSE_SERVER, Sigepen.LICENSE_PORT, components);
 	}
 
 	private void inicializar() {

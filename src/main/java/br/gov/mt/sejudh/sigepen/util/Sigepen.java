@@ -39,10 +39,13 @@ public class Sigepen {
 	public static final String ARQUIVOS_PATH = System.getProperty("jboss.home.dir") + File.separator + "sigepen-arquivos";
 	
 	public static  String IP_NSERVER;
-	
+
 	//Porta Homolog 25452
 	//Porta Desenv 25453
 	public static final int PORT_NSERVER = 25452;
+
+	public static String LICENSE_SERVER;
+	public static int LICENSE_PORT;
 	
 	private static final String INSTALADOR = "InstaladorSigepenBiometriaV2.exe";
 	private static final String DRIVER_SECUGEN = "SecuGen.zip";
@@ -197,6 +200,8 @@ public class Sigepen {
 	        try (InputStream inputStream = Sigepen.class.getClassLoader().getResourceAsStream("application.properties")) {
 	            properties.load(inputStream);
 	            IP_NSERVER = properties.getProperty("ip.nserver");
+	            LICENSE_SERVER = properties.getProperty("license.server");
+	            LICENSE_PORT = Integer.parseInt(properties.getProperty("license.port"));
 	        } catch (Exception e) {
 	            log.error("Erro ao carregar application.properties (bootstrap Sigepen)", e);
 	        }
