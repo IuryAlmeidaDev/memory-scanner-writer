@@ -12,6 +12,7 @@ import java.util.List;
 public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
 
     private static final long serialVersionUID = 1L;
+    private static final int TAMANHO_DIA_PEDIDO = 10;
 
     /**
      * Verifica se já existe um pedido ATIVO para a mesma data, tipo de refeição,
@@ -32,13 +33,13 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
         TypedQuery<Boolean> query = em.createQuery(
                 "SELECT CASE WHEN (COUNT(p) > 0) THEN true ELSE false END " +
                 "FROM PedidoAlimento p " +
-                "WHERE p.dataPedido = :dataPedido " +
+                "WHERE p.dataPedido LIKE :dataPedido " +
                 "AND p.idTipoRefeicao = :idTipoRefeicao " +
                 "AND p.idUnidadePrisional = :idUnidadePrisional " +
                 "AND p.idContrato = :idContrato " +
                 "AND p.status = :statusAtivo",
                 Boolean.class);
-        query.setParameter("dataPedido", dataPedido);
+        query.setParameter("dataPedido", dataPedidoDia(dataPedido));
         query.setParameter("idTipoRefeicao", idTipoRefeicao);
         query.setParameter("idUnidadePrisional", idUnidadePrisional);
         query.setParameter("idContrato", idContrato);
@@ -51,13 +52,13 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
         TypedQuery<Boolean> query = em.createQuery(
                 "SELECT CASE WHEN (COUNT(p) > 0) THEN true ELSE false END " +
                 "FROM PedidoAlimento p " +
-                "WHERE p.dataPedido = :dataPedido " +
+                "WHERE p.dataPedido LIKE :dataPedido " +
                 "AND p.idTipoRefeicao = :idTipoRefeicao " +
                 "AND p.idUnidadePrisional = :idUnidadePrisional " +
                 "AND p.idContrato = :idContrato " +
                 "AND p.status = :statusAtivo",
                 Boolean.class);
-        query.setParameter("dataPedido", dataPedido);
+        query.setParameter("dataPedido", dataPedidoDia(dataPedido));
         query.setParameter("idTipoRefeicao", idTipoRefeicao);
         query.setParameter("idUnidadePrisional", idUnidadePrisional);
         query.setParameter("idContrato", idContrato);
@@ -69,13 +70,13 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
             Long idUnidadePrisional, Long idContrato) {
         TypedQuery<Long> query = em.createQuery(
                 "SELECT p.id FROM PedidoAlimento p " +
-                "WHERE p.dataPedido = :dataPedido " +
+                "WHERE p.dataPedido LIKE :dataPedido " +
                 "AND p.idTipoRefeicao = :idTipoRefeicao " +
                 "AND p.idUnidadePrisional = :idUnidadePrisional " +
                 "AND p.idContrato = :idContrato " +
                 "AND p.status IN (:statusesEmAberto)",
                 Long.class);
-        query.setParameter("dataPedido", dataPedido);
+        query.setParameter("dataPedido", dataPedidoDia(dataPedido));
         query.setParameter("idTipoRefeicao", idTipoRefeicao);
         query.setParameter("idUnidadePrisional", idUnidadePrisional);
         query.setParameter("idContrato", idContrato);
@@ -87,13 +88,13 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
             Long idUnidadePrisional, Long idContrato) {
         TypedQuery<Long> query = em.createQuery(
                 "SELECT p.id FROM PedidoAlimento p " +
-                "WHERE p.dataPedido = :dataPedido " +
+                "WHERE p.dataPedido LIKE :dataPedido " +
                 "AND p.idTipoRefeicao = :idTipoRefeicao " +
                 "AND p.idUnidadePrisional = :idUnidadePrisional " +
                 "AND p.idContrato = :idContrato " +
                 "AND p.status = :statusPendente",
                 Long.class);
-        query.setParameter("dataPedido", dataPedido);
+        query.setParameter("dataPedido", dataPedidoDia(dataPedido));
         query.setParameter("idTipoRefeicao", idTipoRefeicao);
         query.setParameter("idUnidadePrisional", idUnidadePrisional);
         query.setParameter("idContrato", idContrato);
@@ -115,13 +116,13 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
             Long idTipoRefeicao, Long idUnidadePrisional, Long idContrato) {
         TypedQuery<Long> query = em.createQuery(
                 "SELECT p.id FROM PedidoAlimento p " +
-                "WHERE p.dataPedido = :dataPedido " +
+                "WHERE p.dataPedido LIKE :dataPedido " +
                 "AND p.idTipoRefeicao = :idTipoRefeicao " +
                 "AND p.idUnidadePrisional = :idUnidadePrisional " +
                 "AND p.idContrato = :idContrato " +
                 "AND p.status IN (:statuses)",
                 Long.class);
-        query.setParameter("dataPedido", dataPedido);
+        query.setParameter("dataPedido", dataPedidoDia(dataPedido));
         query.setParameter("idTipoRefeicao", idTipoRefeicao);
         query.setParameter("idUnidadePrisional", idUnidadePrisional);
         query.setParameter("idContrato", idContrato);
@@ -142,19 +143,44 @@ public class PedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
     public List<Long> findActivePedidoAlimentoIdsByCriteria(String dataPedido, Long idTipoRefeicao, Long idUnidadePrisional, Long idContrato) {
         TypedQuery<Long> query = em.createQuery(
                 "SELECT p.id FROM PedidoAlimento p " +
-                        "WHERE p.dataPedido = :dataPedido " +
+                        "WHERE p.dataPedido LIKE :dataPedido " +
                         "AND p.idTipoRefeicao = :idTipoRefeicao " +
                         "AND p.idUnidadePrisional = :idUnidadePrisional " +
                         "AND p.idContrato = :idContrato " +
                         "AND p.status IN (:statusesEmAberto)",
                 Long.class
         );
-        query.setParameter("dataPedido", dataPedido);
+        query.setParameter("dataPedido", dataPedidoDia(dataPedido));
         query.setParameter("idTipoRefeicao", idTipoRefeicao);
         query.setParameter("idUnidadePrisional", idUnidadePrisional);
         query.setParameter("idContrato", idContrato);
         query.setParameter("statusesEmAberto", Arrays.asList(Status.PENDENTE, Status.ATIVO));
         return query.getResultList();
+    }
+
+    private String dataPedidoDia(String dataPedido) {
+        if (dataPedido == null || dataPedido.length() < TAMANHO_DIA_PEDIDO) {
+            throw new IllegalArgumentException("dataPedido deve iniciar com dd/MM/yyyy.");
+        }
+
+        String dia = dataPedido.substring(0, TAMANHO_DIA_PEDIDO);
+        if (!isDiaPedidoValido(dia)) {
+            throw new IllegalArgumentException("dataPedido deve iniciar com dd/MM/yyyy.");
+        }
+        return dia + "%";
+    }
+
+    private boolean isDiaPedidoValido(String dia) {
+        return Character.isDigit(dia.charAt(0))
+                && Character.isDigit(dia.charAt(1))
+                && dia.charAt(2) == '/'
+                && Character.isDigit(dia.charAt(3))
+                && Character.isDigit(dia.charAt(4))
+                && dia.charAt(5) == '/'
+                && Character.isDigit(dia.charAt(6))
+                && Character.isDigit(dia.charAt(7))
+                && Character.isDigit(dia.charAt(8))
+                && Character.isDigit(dia.charAt(9));
     }
 
     /**
