@@ -35,8 +35,10 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   e duplicidade de pedidos automáticos, validação automática de data, refeição,
   unidade e contrato.
 - **Alimentação - pedidos automáticos:** proteção contra duplicidade de pedido ativo
-  em concorrência, com `flush` explícito na persistência e tratamento de violação de
-  unicidade.
+  em concorrência, com `flush` explícito, tratamento de violação de unicidade e
+  índice único `UK_SGP_PED_ALIM_ATIVO` por dia do pedido, tipo de refeição, unidade
+  e contrato; o script de banco valida ordinais de status, saneia duplicidades e
+  mantém o pedido mais recente.
 - **Alimentação - agendador dinâmico:** isolamento de falhas por unidade no rearme,
   validação de rollout no disparo e recuperação de janelas recentes por catch-up no
   startup/rearme.
