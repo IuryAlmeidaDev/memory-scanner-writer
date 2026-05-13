@@ -318,6 +318,57 @@ public class PedidoAlimentoServiceTest extends BaseUnitTest {
                 PedidoAlimentoService.ModoGeracaoPedido.AUTOMATICO_ATIVO);
     }
 
+    @Test(expected = ValidacaoException.class)
+    public void gerarPedidoAutomatico_deveBloquearQuandoJaExisteAtivoNoMesmoDiaComHorarioDiferente()
+            throws Exception {
+        PedidoAlimento pedido = PedidoAlimento.create("24/04/2026 11:10:00", 0L, 10L, 20L, 30L);
+        PedidoAlimentoService serviceSpy = serviceComPedidoMontado(pedido, "24/04/2026 11:10:00");
+        UnidadePrisional unidade = unidade(10L);
+        Contrato contrato = contrato(20L);
+        TipoRefeicao tipoRefeicao = tipoRefeicao(30L, "Almoco");
+
+        when(dao.existePedidoAtivoPorTipoRefeicaoEUnidade("24/04/2026 11:10:00", 30L, 10L, 20L))
+                .thenReturn(true);
+
+        serviceSpy.gerarPedido(
+                unidade,
+                contrato,
+                tipoRefeicao,
+                "24/04/2026 11:10:00",
+                0L,
+                PedidoAlimentoService.ModoGeracaoPedido.AUTOMATICO_ATIVO);
+    }
+
+    @Test
+    public void gerarPedidoManualAssinado_deveSubstituirAtivoNoMesmoDiaComHorarioDiferente()
+            throws Exception {
+        PedidoAlimento pedido = PedidoAlimento.create("24/04/2026 11:10:00", 0L, 10L, 20L, 30L);
+        PedidoAlimentoService serviceSpy = serviceComPedidoMontado(pedido, "24/04/2026 11:10:00");
+        UnidadePrisional unidade = unidade(10L);
+        Contrato contrato = contrato(20L);
+        TipoRefeicao tipoRefeicao = tipoRefeicao(30L, "Almoco");
+
+        when(dao.existePedidoAtivoPorTipoRefeicaoEUnidade("24/04/2026 11:10:00", 30L, 10L, 20L))
+                .thenReturn(true);
+        when(dao.findPedidosEmAbertoPorTipoRefeicaoEUnidade("24/04/2026 11:10:00", 30L, 10L, 20L))
+                .thenReturn(Arrays.asList(501L, 502L));
+
+        PedidoAlimentoService.PedidoGerado resultado = serviceSpy.gerarPedido(
+                unidade,
+                contrato,
+                tipoRefeicao,
+                "24/04/2026 11:10:00",
+                0L,
+                PedidoAlimentoService.ModoGeracaoPedido.MANUAL_ASSINADO);
+
+        assertThat(resultado.isSubstituiuPedidoAtivo()).isTrue();
+        assertThat(pedido.getStatus()).isEqualTo(Status.ATIVO);
+        verify(dao).bulkDeactivateItemPedidoAlimentoByPedidoIds(Arrays.asList(501L, 502L));
+        verify(dao).bulkDeactivateDietaEspecialPedidoAlimentoByPedidoIds(Arrays.asList(501L, 502L));
+        verify(dao).bulkDeactivatePedidoAlimentoByIds(Arrays.asList(501L, 502L));
+        verify(dao).salvar(pedido);
+    }
+
     @Test
     public void gerarPedidoAutomatico_deveInativarPendentesESalvarAtivoSemSubstituirAtivo() throws Exception {
         PedidoAlimento pedido = pedidoAlimento();
@@ -376,6 +427,10 @@ public class PedidoAlimentoServiceTest extends BaseUnitTest {
     }
 
     private PedidoAlimentoService serviceComPedidoMontado(PedidoAlimento pedido) throws Exception {
+        return serviceComPedidoMontado(pedido, "24/04/2026 12:00:00");
+    }
+
+    private PedidoAlimentoService serviceComPedidoMontado(PedidoAlimento pedido, String dataPedido) throws Exception {
         PedidoAlimentoService serviceSpy = spy(new PedidoAlimentoService());
         setField(serviceSpy, "dao", dao);
         setField(serviceSpy, "cardapioDAO", cardapioDAO);
@@ -387,7 +442,7 @@ public class PedidoAlimentoServiceTest extends BaseUnitTest {
                         any(UnidadePrisional.class),
                         any(Contrato.class),
                         any(TipoRefeicao.class),
-                        eq("24/04/2026 12:00:00"),
+                        eq(dataPedido),
                         anyLong());
         return serviceSpy;
     }
