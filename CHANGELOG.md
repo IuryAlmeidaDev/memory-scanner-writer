@@ -5,21 +5,7 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [Não lançado]
-
-### Alterado
-
-- **Biometria — falha de licença Neurotec:** mensagem amigável no lugar de
-  `IllegalStateException` com stacktrace cru ao operador.
-- **Biometria — `BiometriaSDKCliente`:** `System.out.println` substituído por log
-  estruturado, permitindo correlação no APM e captura no log centralizado.
-- **`LoggerUtil`:** detecção de pool JCA esgotado passa a emitir log estruturado
-  em stderr, em vez de `printStackTrace` solto.
-- **`VisitanteBean#associarRecuperando`:** removido `print` de debug residual.
-- **`GerenciarAssinaturaDAO`:** `NoResultException` (resultado vazio do JPA, fluxo
-  esperado) deixa de poluir o log com stacktrace.
-
-## [1.37.0] - 08/05/2026
+## [1.37.0] - 13/05/2026
 
 ### Adicionado
 
@@ -38,18 +24,16 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Relatório Jumbo self-service:** novo relatório de recuperandos nas unidades com Jumbo,
   com permissão dedicada.
 - **Visitas:** limite de visitas por recuperando configurável por unidade prisional.
-- **Biometria v2 — logs defensivos (Onda 1):** logs de contexto da estação no startup,
-  status HTTP e payload em `ConexaoWebService`, parsing defensivo no
-  `BiometriaWebServiceClient` e mensagem amigável no popup de erro de biometria
-  (substitui stacktrace cru).
+- **Biometria v2 — logs defensivos:** logs de contexto da estação no startup,
+  status HTTP e payload em `ConexaoWebService` para facilitar diagnóstico no APM.
 - **Histórico do recuperando:** nova permissão `ExcluirHistoricoRecuperando` para controlar
   a exclusão de registros de histórico por unidade logada.
 
 ### Corrigido
 
-- **Alimentação:** consulta de itens para refeições futuras.
-- **Alimentação:** bloqueio por corte e duplicidade de pedidos automáticos.
-- **Alimentação:** validação automática de data, refeição, unidade e contrato.
+- **Alimentação:** consulta de itens para refeições futuras, bloqueio por corte
+  e duplicidade de pedidos automáticos, validação automática de data, refeição,
+  unidade e contrato.
 - **Alimentação - pedidos automáticos:** proteção contra duplicidade de pedido ativo
   em concorrência, com `flush` explícito na persistência e tratamento de violação de
   unicidade.
@@ -58,19 +42,19 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   startup/rearme.
 - **Contrato:** paginação da listagem.
 - **Contrato:** filtros de unidade prisional, status e contrato na listagem.
-- **Mapa consolidado:** busca de dietas especiais passa a considerar dietas vigentes
-  que sobrepõem o período do relatório, inclusive iniciadas antes do mês consultado.
-- **Mapa consolidado:** cálculo de refeições especiais passa a considerar a
-  sobreposição diária entre permanência do recuperando, vigência da dieta especial,
-  horários de refeição e período do relatório.
+- **Mapa consolidado — dietas especiais:** busca e cálculo de refeições especiais
+  passam a considerar a sobreposição diária entre permanência do recuperando,
+  vigência da dieta (inclusive iniciada antes do mês consultado), horários de
+  refeição e período do relatório.
 - **Login:** remoção de import `org.omg.CORBA.portable.ApplicationException`
   (incompatível com Java 11+).
 - **CI:** `code_check` ajustado para JDK 17 + mirror HTTP, com `sonar-maven-plugin`
   pinado em `3.11.0.3922` para compatibilidade.
 - **Biometria v2 — parsing defensivo em PESQUISAR e REGISTRAR:** quando o webservice
-  retornava texto não-JSON (ex.: HTML de erro de proxy/nginx, resposta vazia, plain
-  text), o cliente lançava exceção. Agora o parsing é tolerante e o erro é tratado.
-  Distribuído via FXLauncher na atualização do `sigepen-biometria.exe`.
+  retornava texto não-JSON (HTML de erro de proxy/nginx, resposta vazia, plain
+  text), o cliente lançava exceção. Agora o parsing é tolerante, o erro é tratado
+  e o operador vê mensagem amigável no popup em vez de stacktrace cru. Distribuído
+  via FXLauncher na atualização do `sigepen-biometria.exe`.
 - **Biometria v2 — packaging do `launcher.jar` (uber-jar):** descritor do
   assembly corrigido. O `launcher.jar` distribuído pelo FXLauncher passa a
   conter todas as classes e dependências do projeto, eliminando a necessidade
@@ -82,17 +66,17 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   _Notas da versão_). Execução simultânea ao deploy é obrigatória — caso
   contrário, as estações que atualizarem o exe ficam bloqueadas pelo popup
   de versão.
-- **Histórico do recuperando:** validação impede cadastro de histórico com data anterior
-  à data de entrada da passagem atual do recuperando.
-- **Histórico do recuperando:** exclusão de histórico passa a respeitar permissão específica
-  e deixa de exibir a ação para usuários sem autorização, recuperandos inativos ou fora da
-  unidade do servidor logado.
-- **Histórico do recuperando:** mensagens de validação passam a ser exibidas como aviso na
-  tela, mantendo os dados do formulário quando a operação não puder ser concluída.
-- **Recuperando:** validações de cadastro reforçadas para evitar gravação sem dados
-  obrigatórios de pessoa, nome, nome da mãe ou data de nascimento.
-- **Recuperando:** ajustes defensivos evitam erro em filtros/listagens quando valores
-  opcionais retornam nulos ou vazios.
+- **Histórico do recuperando:** cadastro com data anterior à entrada da passagem
+  atual passa a ser bloqueado; mensagens de validação aparecem como aviso na
+  tela, preservando os dados do formulário; exclusão passa a respeitar a
+  permissão `ExcluirHistoricoRecuperando` e a ação fica oculta para usuários
+  sem autorização, recuperandos inativos ou fora da unidade do servidor logado.
+- **Recuperando:** validações de cadastro reforçadas (impedem gravação sem
+  pessoa, nome, nome da mãe ou data de nascimento) e ajustes defensivos em
+  filtros/listagens para valores opcionais nulos ou vazios.
+- **Histórico de pedido de alimento — listagem:** coluna `Data` passa a exibir a
+  data do pedido (`dataPedido`) em vez da data de emissão, com formato
+  `dd/MM/yyyy HH:mm`.
 
 ### Alterado
 
@@ -110,35 +94,33 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   usando a data de saída como data de encerramento.
 - **Pedido de transferência:** conclusão do pedido deixa de encerrar dieta especial; o ciclo
   de suspensão/reativação passa a ser tratado no fluxo de transferência.
-- **Mapa consolidado — relatório:** ajustes de nomenclatura e apresentação das colunas
-  de horário, refeições normais/especiais, total e saída sem data.
-- **Mapa consolidado — relatório:** coluna `Nome Social` centralizada no consolidado
-  mensal.
-- **Mapa consolidado — relatório:** valores monetários padronizados no formato
-  brasileiro, com vírgula decimal e ponto de milhar.
-- **Mapa consolidado — relatório:** coluna `Situação` adicionada ao lado da matrícula,
-  exibindo o desligamento quando houver ou a condição atual do recuperando.
-- **Mapa consolidado — relatório:** ajuste de layout para exibir horários completos,
-  acomodar nomes longos com linha fixa e deixar a saída em branco quando não houver data.
-- **Mapa consolidado — relatório:** colunas `Nome Social` e `Matrícula` ampliadas
-  para reduzir quebras de linha no consolidado mensal.
-- **Mapa consolidado — tela:** ação principal renomeada para `Imprimir`, com ícone de
-  impressão.
+- **Mapa consolidado — relatório:** revisão geral de layout e apresentação —
+  colunas de horário, refeições normais/especiais e total reorganizadas; coluna
+  `Situação` adicionada ao lado da matrícula (exibe desligamento ou condição
+  atual); colunas `Nome Social` e `Matrícula` ampliadas e `Nome Social`
+  centralizada; valores monetários no formato brasileiro (vírgula decimal,
+  ponto de milhar); saída em branco quando não houver data.
+- **Mapa consolidado — tela:** ação principal renomeada para `Imprimir`, com
+  ícone de impressão.
 - **Docker:** normalização de quebra de linha no `docker-compose`.
 - **FXLauncher:** sincronização de `app.xml`, `sigepen-biometria.exe`, `LiveMedia.dll`
   e `msvcp140.dll` em `Resources/aplicativo/` com o hotfix `v2.2.1` do
   `sigepen-biometria-v2` (parsing defensivo). Os 2 últimos arquivos corrigem
   inconsistência preexistente entre o `app.xml` declarado e o que era servido aos
   clientes pelo Wildfly.
+- **Biometria — servidor de licenças Neurotec parametrizável:** endereço e porta
+  do license server deixam de ser hardcoded e passam a ser lidos de
+  `application.properties` (`license.server` / `license.port`), com valores por
+  ambiente (dev/homolog/produção).
 - **Biometria — falha de licença Neurotec:** mensagem amigável no lugar de
   `IllegalStateException` com stacktrace cru ao operador.
-- **Biometria — `BiometriaSDKCliente`:** `System.out.println` substituído por log
-  estruturado, permitindo correlação no APM e captura no log centralizado.
-- **`LoggerUtil`:** detecção de pool JCA esgotado passa a emitir log estruturado
-  em stderr, em vez de `printStackTrace` solto.
-- **`VisitanteBean#associarRecuperando`:** removido `print` de debug residual.
-- **`GerenciarAssinaturaDAO`:** `NoResultException` (resultado vazio do JPA, fluxo
-  esperado) deixa de poluir o log com stacktrace.
+- **Logs e stdout:** higienização inicial de pontos com `System.out.println`,
+  `printStackTrace` e exceções de fluxo esperado poluindo o log —
+  `BiometriaSDKCliente` passa a usar log estruturado (correlação no APM),
+  `LoggerUtil` emite log estruturado em stderr ao detectar pool JCA esgotado,
+  `GerenciarAssinaturaDAO` deixa de logar stacktrace de `NoResultException`
+  (resultado vazio do JPA é fluxo esperado) e `VisitanteBean#associarRecuperando`
+  perde um `print` de debug residual.
 - **Histórico do recuperando — tela:** campo de data passa a usar a data de entrada da
   passagem atual como data mínima.
 - **Recuperando:** lista de históricos passa a ser inicializada e sincronizada mantendo o
@@ -147,29 +129,34 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 ### Notas da versão
 
 - **Scripts de banco:** executar os scripts da pasta
-  [`Scripts de Banco/v17.0.0/`](./Scripts%20de%20Banco/v17.0.0) na ordem:
-  1. `SIGEPEN_OWNER/01-INSERT_PERMISSAO_JUMBO.sql` — cria a permissão do Relatório Jumbo.
-  2. `SIGEPEN_AUDIT_OWNER/01-AUD_INSERT_PERMISSAO_JUMBO.sql` — registro de auditoria correspondente.
-  3. `SIGEPEN_OWNER/02-ALTERAR_UNIDADE_PRISIONAL_QTD_VISITA.sql` — adiciona quantidade
-     de visitas por recuperando na unidade prisional.
-  4. `SIGEPEN_AUDIT_OWNER/02-ALTERAR_AUD_CARDAPIO_UNIDADE_PRISIONAL.sql` — adiciona
-     unidade prisional na auditoria de cardápio.
-  5. `SIGEPEN_AUDIT_OWNER/03-ALTERAR_AUD_UNIDADE_PRISIONAL_QTD_VISITA.sql` — adiciona
-     quantidade de visitas por recuperando na auditoria de unidade prisional.
-  6. `SIGEPEN_OWNER/05-CRIAR_INDICE_UNICO_PEDIDO_ALIMENTO_ATIVO.sql` — inativa
-     duplicidades de pedidos ativos mantendo o mais recente e cria índice único
-     para impedir nova duplicidade por data, refeição, unidade e contrato.
-- **Scripts de banco — alinhamento de versão do cliente desktop:** executar
-  [`Scripts de Banco/v18.0.0/SIGEPEN_OWNER/01-ATUALIZAR_VERSAO_DESKTOP.sql`](./Scripts%20de%20Banco/v18.0.0/SIGEPEN_OWNER/01-ATUALIZAR_VERSAO_DESKTOP.sql)
-  **simultaneamente ao deploy da WAR**: promove `SIGEPEN_OWNER.PARAMETRO.VALOR`
-  de `'2.2'` para `'2.3'` na linha `nome='VERSAO_DESKTOP'`, acompanhando o
-  novo `Cliente.VERSAO` do `sigepen-biometria-v2`. Sem este UPDATE, as
-  estações que atualizarem o exe pelo FXLauncher ficam bloqueadas pelo
-  popup de versão. Idempotente, com rollback documentado no cabeçalho do
-  script.
+  [`Scripts de Banco/v17.0.0/`](./Scripts de Banco/v17.0.0) na ordem:
+  1. `SIGEPEN_OWNER/01-INSERT_PERMISSAO_JUMBO.sql` — cria a permissão do
+     Relatório Jumbo.
+  2. `SIGEPEN_AUDIT_OWNER/01-AUD_INSERT_PERMISSAO_JUMBO.sql` — registro de
+     auditoria correspondente.
+  3. `SIGEPEN_OWNER/02-ALTERAR_UNIDADE_PRISIONAL_QTD_VISITA.sql` — adiciona
+     quantidade de visitas por recuperando na unidade prisional.
+  4. `SIGEPEN_AUDIT_OWNER/02-ALTERAR_AUD_CARDAPIO_UNIDADE_PRISIONAL.sql` —
+     adiciona unidade prisional na auditoria de cardápio.
+  5. `SIGEPEN_AUDIT_OWNER/03-ALTERAR_AUD_UNIDADE_PRISIONAL_QTD_VISITA.sql` —
+     adiciona quantidade de visitas por recuperando na auditoria de unidade
+     prisional.
+  6. `SIGEPEN_OWNER/03-ATUALIZAR_VERSAO_DESKTOP.sql` — **executar
+     simultaneamente ao deploy da WAR**: promove
+     `SIGEPEN_OWNER.PARAMETRO.VALOR` de `'2.2'` para `'2.3'` na linha
+     `nome='VERSAO_DESKTOP'`, acompanhando o novo `Cliente.VERSAO` do
+     `sigepen-biometria-v2`. Sem este UPDATE, as estações que atualizarem o
+     exe pelo FXLauncher ficam bloqueadas pelo popup de versão. Idempotente,
+     com rollback documentado no cabeçalho do script.
+  7. `SIGEPEN_OWNER/04-ALTERAR_CARDAPIO_UNIDADE_PRISIONAL.sql` — adiciona
+     coluna `UNIDADE_PRISIONAL_ID` na tabela `CARDAPIO`, suportando a
+     desunificação de cardápio por unidade.
+  8. `SIGEPEN_OWNER/05-CRIAR_INDICE_UNICO_PEDIDO_ALIMENTO_ATIVO.sql` —
+     inativa duplicidades de pedidos ativos mantendo o mais recente e cria
+     índice único para impedir nova duplicidade por data, refeição, unidade
+     e contrato.
+  9. `SIGEPEN_OWNER/06-INSERT_PERMISSAO_EXCLUIR_HISTORICO_RECUPERANDO.sql` —
+     cria a permissão `ExcluirHistoricoRecuperando`.
 - **Migrações em homologação/produção:** abrir chamado no Conecta conforme padrão PDS.
-- **Scripts de banco:** executar
-  [`Scripts de Banco/v17.0.0/SIGEPEN_OWNER/02-INSERT_PERMISSAO_EXCLUIR_HISTORICO_RECUPERANDO.sql`](./Scripts%20de%20Banco/v17.0.0/SIGEPEN_OWNER/02-INSERT_PERMISSAO_EXCLUIR_HISTORICO_RECUPERANDO.sql)
-  para criar a permissão `ExcluirHistoricoRecuperando`.
 
 [1.37.0]: https://gitlab.sesp.mt.gov.br/sesp/sti/sistemas/source/sigepen/-/compare/v1.36.0...v1.37.0
