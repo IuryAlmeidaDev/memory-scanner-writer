@@ -154,6 +154,15 @@
 				<br />
 
 				<p:panel header="Horário de Entrega de Refeições">
+					<h:panelGroup layout="block" styleClass="ui-messages ui-widget"
+						style="margin-bottom:12px;">
+						<div class="ui-messages-warn ui-corner-all">
+							<span class="ui-messages-warn-icon" />
+							<span class="ui-messages-warn-summary">Aten&#231;&#227;o:</span>
+							<span class="ui-messages-warn-detail"> Quando houver hor&#225;rio espec&#237;fico configurado para a unidade prisional, ele prevalecer&#225; sobre o hor&#225;rio padr&#227;o do contrato para a mesma refei&#231;&#227;o. O hor&#225;rio padr&#227;o do contrato ser&#225; aplicado somente quando n&#227;o existir hor&#225;rio espec&#237;fico para a unidade.</span>
+						</div>
+					</h:panelGroup>
+
 					<p:commandButton icon="ui-icon-plus" value="Adicionar"
 						immediate="true"
 						actionListener="#{contratoBean.abrirDialogHorario}"
