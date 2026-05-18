@@ -377,13 +377,12 @@
                            			<f:param name="id" value="#{cred.visitante.id}"/>
                            			<f:param name="tab" value="1"/>
                        			 </p:button>
-                                <p:button icon="fa fa-newspaper-o" outcome="pretty:CadastrarFasesCredenciamento"
+                                <p:commandButton icon="fa fa-newspaper-o" action="#{visitanteBean.credenciarOuInformarErro(cred)}"
                                           disabled="#{visitanteBean.habilitarCredenciar(cred)}"
                                           title="#{(cred.faseCredenciamento == _fase.APROVACAO.id and cred.statusCredenciamento == _status.APROVADO.id) ? 'Credenciamento Aprovado' :  'Credenciar Visitante'}"
-                                          rendered="#{securityUtil.possuiPermissao('CadastrarFasesCredenciamento') and cred.visitante.status ne 'I'}">
-                                    <f:param name="id" value="#{cred.id}"/>
-                                    <f:param name="acaoAtual" value="#{visitanteBean.acaoAtual}" />
-                                </p:button>
+                                          rendered="#{securityUtil.possuiPermissao('CadastrarFasesCredenciamento') and cred.visitante.status ne 'I'}"
+                                          process="@this" update=":mensagens tableCredenciamentos">
+                                </p:commandButton>
                                 <p:commandButton icon="ui-icon-trash" action="#{visitanteBean.excluirCredenciamento(cred)}"
                                                  title="Excluir" update="tableCredenciamentos" process="@this"
                                                  rendered="#{securityUtil.possuiPermissao('ExcluirCredenciarVisitante')}"
