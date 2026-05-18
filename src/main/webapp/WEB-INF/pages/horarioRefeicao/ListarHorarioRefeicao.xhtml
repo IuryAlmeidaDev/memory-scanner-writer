@@ -70,7 +70,8 @@
 						<h:panelGroup layout="block">
 							<h:outputText value="Disparo " />
 							<h:outputText id="ajudaDisparo" styleClass="fa fa-exclamation-circle" style="cursor: help;" />
-							<p:tooltip for="ajudaDisparo" value="Momento em que o pedido da próxima refeição é gerado automaticamente" />
+							<sgp:tooltip for="#{p:component('ajudaDisparo')}" value="Momento em que o pedido da próxima refeição é gerado automaticamente"
+								position="top" styleClass="tooltip-cronograma" />
 						</h:panelGroup>
 					</f:facet>
 					<h:outputText value="#{horario.disparo}" />
@@ -81,7 +82,8 @@
 						<h:panelGroup layout="block">
 							<h:outputText value="Corte " />
 							<h:outputText id="ajudaCorte" styleClass="fa fa-exclamation-circle" style="cursor: help;" />
-							<p:tooltip for="ajudaCorte" value="Prazo final para gerar o pedido da próxima refeição" />
+							<sgp:tooltip for="#{p:component('ajudaCorte')}" value="Prazo final para gerar o pedido da próxima refeição"
+								position="top" styleClass="tooltip-cronograma" />
 						</h:panelGroup>
 					</f:facet>
 					<h:outputText value="#{horario.corte}" />

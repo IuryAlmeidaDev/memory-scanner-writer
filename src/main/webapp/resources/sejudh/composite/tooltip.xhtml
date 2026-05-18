@@ -1,0 +1,32 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui">
+<cc:interface>
+	<cc:attribute name="for" required="true" />
+	<cc:attribute name="value" required="false" />
+	<cc:attribute name="position" required="false" default="right" />
+	<cc:attribute name="showEffect" required="false" default="fade" />
+	<cc:attribute name="hideEffect" required="false" default="fade" />
+	<cc:attribute name="styleClass" required="false" />
+	<cc:attribute name="escape" required="false" type="java.lang.Boolean" default="true" />
+</cc:interface>
+
+<cc:implementation>
+	<ui:fragment rendered="#{cc.attrs.value ne null}">
+		<p:tooltip for="#{cc.attrs.for}" value="#{cc.attrs.value}" position="#{cc.attrs.position}"
+			showEffect="#{cc.attrs.showEffect}" hideEffect="#{cc.attrs.hideEffect}" styleClass="#{cc.attrs.styleClass}"
+			escape="#{cc.attrs.escape}" />
+	</ui:fragment>
+
+	<ui:fragment rendered="#{cc.attrs.value eq null}">
+		<p:tooltip for="#{cc.attrs.for}" position="#{cc.attrs.position}" showEffect="#{cc.attrs.showEffect}"
+			hideEffect="#{cc.attrs.hideEffect}" styleClass="#{cc.attrs.styleClass}" escape="#{cc.attrs.escape}">
+			<cc:insertChildren />
+		</p:tooltip>
+	</ui:fragment>
+</cc:implementation>
+</html>
