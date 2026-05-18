@@ -1,6 +1,5 @@
 package br.gov.mt.sejudh.sigepen.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -94,35 +93,27 @@ public class UnidadePrisionalService {
 	}
 	
 	public List<UnidadePrisionalDTO> buscarPorFiltroUnidadesComContratosAtivos(FiltroUnidadePrisional filtro, boolean isRelatorio){
-		List<UnidadePrisionalDTO> unidades = new ArrayList<>();
-		
-		int primeiroRegistroOriginal = filtro.getPrimeiroRegistro();
-		int quatidadeRegistrosOriginal = filtro.getQuantidadeRegistros();
-		
-		
-		filtro.setPaginacaoIndex(999);
-		List<UnidadePrisionalDTO> unidadesPorFiltro = this.buscarPorFiltro(filtro, true);
-		List<UnidadePrisional> unidadesContrato = this.listarUnidadesComContratosAtivo();
-		unidadesPorFiltro.forEach(unidadeFiltro -> {
-			unidadesContrato.forEach(unidadeContrato -> {
-				if(unidadeFiltro.getId() == unidadeContrato.getId()) {
-					unidades.add(unidadeFiltro);
-				}
-			});
-		});
-		
-		filtro.setPrimeiroRegistro(primeiroRegistroOriginal);
-		filtro.setQuantidadeRegistros(quatidadeRegistrosOriginal);
-		filtro.setPaginacaoIndex(0);
-		
-		
-		return unidades;
+		return dao.buscarPorFiltroUnidadesComContratosAtivos(filtro, isRelatorio);
 	}
 	
 	
 	public int quantidadeFiltrados(FiltroUnidadePrisional filtro){
 		return dao.quantidadeFiltrados(filtro);
 	}	
+
+	public int quantidadeFiltradosUnidadesComContratosAtivos(FiltroUnidadePrisional filtro){
+		return dao.quantidadeFiltradosUnidadesComContratosAtivos(filtro);
+	}
+
+	public List<String> listarNomesUnidadesComContratosAtivos(FiltroUnidadePrisional filtro, String consulta,
+			int limite) {
+		return dao.listarNomesUnidadesComContratosAtivos(filtro, consulta, limite);
+	}
+
+	public List<String> listarSiglasUnidadesComContratosAtivos(FiltroUnidadePrisional filtro, String consulta,
+			int limite) {
+		return dao.listarSiglasUnidadesComContratosAtivos(filtro, consulta, limite);
+	}
 	
 	public List<UnidadePrisional> listarUnidadesNaoInativas(){
 		return dao.listarUnidadesNaoInativas();
