@@ -15,6 +15,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnidadePrisional;
@@ -88,11 +89,71 @@ public class UnidadePrisionalDAO {
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(UnidadePrisionalDTO.class));
 		return criteria.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<UnidadePrisionalDTO> buscarPorFiltroUnidadesComContratosAtivos(FiltroUnidadePrisional filtro,
+			boolean isRelatorio) {
+		Criteria criteria = filtro.criarCriteriaParaBusca(UnidadePrisional.class, entityManager, isRelatorio);
+		adicionarFiltroUnidadeComContrato(criteria);
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		criteria.setResultTransformer(new AliasToBeanResultTransformer(UnidadePrisionalDTO.class));
+		return criteria.list();
+	}
 	
 	public int quantidadeFiltrados(FiltroUnidadePrisional filtro) {
 		Criteria criteria = filtro.criarCriteriaParaQuantidade(UnidadePrisional.class, entityManager);		
 	    criteria.setProjection(Projections.rowCount());		
 		return ((Number) criteria.uniqueResult()).intValue();
+	}
+
+	public int quantidadeFiltradosUnidadesComContratosAtivos(FiltroUnidadePrisional filtro) {
+		Criteria criteria = filtro.criarCriteriaParaQuantidade(UnidadePrisional.class, entityManager);
+		adicionarFiltroUnidadeComContrato(criteria);
+		criteria.setProjection(Projections.rowCount());
+		return ((Number) criteria.uniqueResult()).intValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarNomesUnidadesComContratosAtivos(FiltroUnidadePrisional filtro, String consulta,
+			int limite) {
+		return listarCampoUnidadeComContratosAtivos("u.NOME", filtro, consulta, limite);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarSiglasUnidadesComContratosAtivos(FiltroUnidadePrisional filtro, String consulta,
+			int limite) {
+		return listarCampoUnidadeComContratosAtivos("u.SIGLA", filtro, consulta, limite);
+	}
+
+	private List<String> listarCampoUnidadeComContratosAtivos(String campo, FiltroUnidadePrisional filtro,
+			String consulta, int limite) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select distinct ").append(campo);
+		sql.append(" from ").append(Sigepen.SEJUDH_SCHEMA).append(".UNIDADE_PRISIONAL u ");
+		sql.append("where ").append(campo).append(" is not null ");
+		sql.append("and upper(").append(campo).append(") like :consulta ");
+		sql.append("and exists (select 1 from ").append(Sigepen.SEJUDH_SCHEMA).append(".CONTRATO_UNIDADE_PRISIONAL cup ");
+		sql.append("join ").append(Sigepen.SEJUDH_SCHEMA).append(".CONTRATO c on c.ID = cup.CONTRATO_ID ");
+		sql.append("where cup.UNIDADE_PRISIONAL_ID = u.ID) ");
+		if (filtro != null && filtro.getId() > 0) {
+			sql.append("and u.ID = :unidadeId ");
+		}
+		sql.append("order by ").append(campo);
+
+		Query query = entityManager.createNativeQuery(sql.toString());
+		query.setParameter("consulta", "%" + consulta.toUpperCase() + "%");
+		if (filtro != null && filtro.getId() > 0) {
+			query.setParameter("unidadeId", filtro.getId());
+		}
+		query.setMaxResults(limite);
+		return query.getResultList();
+	}
+
+	private void adicionarFiltroUnidadeComContrato(Criteria criteria) {
+		criteria.add(Restrictions.sqlRestriction(
+				"exists (select 1 from " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO_UNIDADE_PRISIONAL cup "
+						+ "join " + Sigepen.SEJUDH_SCHEMA + ".CONTRATO c on c.ID = cup.CONTRATO_ID "
+						+ "where cup.UNIDADE_PRISIONAL_ID = this_.ID)"));
 	}
 	
 	public boolean jaExisteUnidadePrisionalComMesmoNome(UnidadePrisional unidadePrisional) {

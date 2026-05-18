@@ -33,6 +33,8 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Gerar pedido:** fluxo de listagem passa a falhar fechado quando não houver unidade
   selecionada na sessão e o tratamento de erro de relatório deixa de depender de mensagem
   com formato específico.
+- **Gerar pedido:** listagem de unidades com contrato ativo passa a usar contagem e
+  paginação no banco, evitando carregamento completo e cruzamento de listas em memória.
 - **Contrato e fornecedor:** filtros de CNPJ nas listagens deixam de exigir CNPJ completo,
   aceitam busca parcial com ou sem pontuação e normalizam o valor antes de aplicar o filtro.
 

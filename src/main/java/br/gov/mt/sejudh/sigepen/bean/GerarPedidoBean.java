@@ -62,7 +62,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
@@ -89,6 +88,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	private Contrato contrato;
 	private boolean paginacaoConfigurada = false;
 	private HorarioRefeicao horarioRefeicao;
+	private static final int LIMITE_OPCOES_FILTRO_UNIDADE = 100;
 
 	@Inject
 	private FileDownloadHandlerBean fileDownload;
@@ -240,7 +240,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			case LISTAR:
 				carregarOpcoesFiltroUnidades();
 				this.pesquisar();
-				logDeAcesso(log, "Fornecedor");
+				logDeAcesso(log, "Gerar Pedido");
 				break;
 
 			default:
@@ -276,21 +276,10 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			filtroOpcoes.setId(unidadeSelecionadaSessao.getId());
 		}
 
-		List<UnidadePrisionalDTO> unidadesFiltro = unidadeService
-				.buscarPorFiltroUnidadesComContratosAtivos(filtroOpcoes, true);
-
-		this.nomesUnidadesFiltro = unidadesFiltro.stream()
-				.map(UnidadePrisionalDTO::getNome)
-				.filter(Objects::nonNull)
-				.distinct()
-				.sorted()
-				.collect(Collectors.toList());
-		this.siglasUnidadesFiltro = unidadesFiltro.stream()
-				.map(UnidadePrisionalDTO::getSigla)
-				.filter(Objects::nonNull)
-				.distinct()
-				.sorted()
-				.collect(Collectors.toList());
+		this.nomesUnidadesFiltro = unidadeService.listarNomesUnidadesComContratosAtivos(filtroOpcoes, "",
+				LIMITE_OPCOES_FILTRO_UNIDADE);
+		this.siglasUnidadesFiltro = unidadeService.listarSiglasUnidadesComContratosAtivos(filtroOpcoes, "",
+				LIMITE_OPCOES_FILTRO_UNIDADE);
 	}
 
 	private String montarFiltroData() {
@@ -394,17 +383,11 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 					log.error(e);
 				}
 				
+				setRowCount(unidadeService.quantidadeFiltradosUnidadesComContratosAtivos(getFiltro()));
 				List<UnidadePrisionalDTO> UnidadePrisionalDTO = unidadeService
 						.buscarPorFiltroUnidadesComContratosAtivos(getFiltro(), false);
 
-				setRowCount(UnidadePrisionalDTO.size());
-				
-				int toIndex = Math.min(first + pageSize, UnidadePrisionalDTO.size());
-	            if (first >= UnidadePrisionalDTO.size()) {
-	                return new ArrayList<>();
-	            }
-
-				return UnidadePrisionalDTO.subList(first, toIndex);
+				return UnidadePrisionalDTO;
 			}
 		};
 	}

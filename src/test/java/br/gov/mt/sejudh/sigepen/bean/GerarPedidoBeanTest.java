@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import br.gov.mt.sejudh.sigepen.BaseUnitTest;
 import br.gov.mt.sejudh.sigepen.dao.filter.FiltroUnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
-import br.gov.mt.sejudh.sigepen.model.dto.UnidadePrisionalDTO;
 import br.gov.mt.sejudh.sigepen.service.UnidadePrisionalService;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
 
@@ -49,17 +48,15 @@ public class GerarPedidoBeanTest extends BaseUnitTest {
     public void carregarOpcoesFiltroUnidades_semPermissaoFiltraUnidadeAtual() throws Exception {
         configurarUnidadeSelecionada(22L);
         when(security.possuiPermissao("ListarTodasUnidades")).thenReturn(false);
-        when(unidadeService.buscarPorFiltroUnidadesComContratosAtivos(any(FiltroUnidadePrisional.class), eq(true)))
-                .thenReturn(Arrays.asList(
-                        unidadeDto("Unidade B", "UB"),
-                        unidadeDto(null, "UA"),
-                        unidadeDto("Unidade A", null),
-                        unidadeDto("Unidade A", "UB")));
+        when(unidadeService.listarNomesUnidadesComContratosAtivos(any(FiltroUnidadePrisional.class), eq(""),
+                eq(100))).thenReturn(Arrays.asList("Unidade A", "Unidade B"));
+        when(unidadeService.listarSiglasUnidadesComContratosAtivos(any(FiltroUnidadePrisional.class), eq(""),
+                eq(100))).thenReturn(Arrays.asList("UA", "UB"));
 
         invocarCarregarOpcoesFiltroUnidades();
 
         ArgumentCaptor<FiltroUnidadePrisional> filtroCaptor = ArgumentCaptor.forClass(FiltroUnidadePrisional.class);
-        verify(unidadeService).buscarPorFiltroUnidadesComContratosAtivos(filtroCaptor.capture(), eq(true));
+        verify(unidadeService).listarNomesUnidadesComContratosAtivos(filtroCaptor.capture(), eq(""), eq(100));
         assertThat(filtroCaptor.getValue().getId()).isEqualTo(22L);
         assertThat(bean.getNomesUnidadesFiltro()).containsExactly("Unidade A", "Unidade B");
         assertThat(bean.getSiglasUnidadesFiltro()).containsExactly("UA", "UB");
@@ -72,10 +69,29 @@ public class GerarPedidoBeanTest extends BaseUnitTest {
 
         invocarCarregarOpcoesFiltroUnidades();
 
-        verify(unidadeService, never()).buscarPorFiltroUnidadesComContratosAtivos(any(FiltroUnidadePrisional.class),
-                eq(true));
+        verify(unidadeService, never()).listarSiglasUnidadesComContratosAtivos(any(FiltroUnidadePrisional.class),
+                any(String.class), eq(100));
+        verify(unidadeService, never()).listarNomesUnidadesComContratosAtivos(any(FiltroUnidadePrisional.class),
+                any(String.class), eq(100));
         assertThat(bean.getNomesUnidadesFiltro()).isEmpty();
         assertThat(bean.getSiglasUnidadesFiltro()).isEmpty();
+    }
+
+    @Test
+    public void carregarOpcoesFiltroUnidades_comPermissaoGlobalNaoFiltraUnidade() throws Exception {
+        when(security.possuiPermissao("ListarTodasUnidades")).thenReturn(true);
+        when(unidadeService.listarNomesUnidadesComContratosAtivos(any(FiltroUnidadePrisional.class), eq(""),
+                eq(100))).thenReturn(Arrays.asList("Unidade A"));
+        when(unidadeService.listarSiglasUnidadesComContratosAtivos(any(FiltroUnidadePrisional.class), eq(""),
+                eq(100))).thenReturn(Arrays.asList("UA"));
+
+        invocarCarregarOpcoesFiltroUnidades();
+
+        ArgumentCaptor<FiltroUnidadePrisional> filtroCaptor = ArgumentCaptor.forClass(FiltroUnidadePrisional.class);
+        verify(unidadeService).listarSiglasUnidadesComContratosAtivos(filtroCaptor.capture(), eq(""), eq(100));
+        assertThat(filtroCaptor.getValue().getId()).isZero();
+        assertThat(bean.getNomesUnidadesFiltro()).containsExactly("Unidade A");
+        assertThat(bean.getSiglasUnidadesFiltro()).containsExactly("UA");
     }
 
     private void configurarUnidadeSelecionada(Long unidadeId) {
@@ -95,12 +111,5 @@ public class GerarPedidoBeanTest extends BaseUnitTest {
         Method method = GerarPedidoBean.class.getDeclaredMethod("carregarOpcoesFiltroUnidades");
         method.setAccessible(true);
         method.invoke(bean);
-    }
-
-    private UnidadePrisionalDTO unidadeDto(String nome, String sigla) {
-        UnidadePrisionalDTO dto = new UnidadePrisionalDTO();
-        dto.setNome(nome);
-        dto.setSigla(sigla);
-        return dto;
     }
 }
