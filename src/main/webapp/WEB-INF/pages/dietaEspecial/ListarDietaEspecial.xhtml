@@ -25,10 +25,25 @@
 			<p:panel>
 				<p:outputLabel value="Consulta" />
 
-				<sgp:formInputText id="recuperando" labelValue="Recuperando"
-					value="#{dietaEspecialBean.filtro.recuperando}" maxlength="50"
-					size="57" display="text"
-					styleFormLabelColumn="min-width:140px !important" />
+				<div class="form-block">
+                    <div class="form-label-column" style="min-width:140px !important">
+                        <p:outputLabel for="recuperandoConsulta" value="Recuperando:"/>
+                    </div>
+                    <div class="form-required-column">
+                        <p:spacer width="15px"/>
+                    </div>
+                    <div class="form-input-column">
+                        <p:autoComplete
+                                id="recuperandoConsulta"
+                                value="#{dietaEspecialBean.filtro.recuperando}"
+                                completeMethod="#{dietaEspecialBean.completarNomesRecuperandosFiltro}"
+                                minQueryLength="2" queryDelay="400" maxResults="20"
+                                forceSelection="false" dropdown="false" style="width:260px"/>
+                    </div>
+                    <div class="form-error-column">
+                        <p:message for="recuperandoConsulta" display="text"/>
+                    </div>
+                </div>
 
 				<sgp:formSelectOneMenu id="unidadePrisional"
 					labelValue="Unidade Prisional" itemValue="#{item}"
@@ -58,7 +73,8 @@
 
 				<div class="form-block "></div>
 				<p:commandButton value="Pesquisar" update=":registrosForm"
-					process="@form" icon="ui-icon-search" />
+					process="@form" icon="ui-icon-search"
+					onstart="if (PF('dietaEspecialDataTable')) { PF('dietaEspecialDataTable').getPaginator().setPage(0); }" />
 			</p:panel>
 		</h:form>
 
@@ -72,6 +88,7 @@
 			<p:dataTable id="dataTable" var="dietaEspecial"
 				value="#{dietaEspecialBean.dietasEspeciais}"
 				emptyMessage="Nenhum registro encontrado." rows="10"
+				widgetVar="dietaEspecialDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{dietaEspecial.id}">
 				<p:column headerText="Código" style="width:100px;"

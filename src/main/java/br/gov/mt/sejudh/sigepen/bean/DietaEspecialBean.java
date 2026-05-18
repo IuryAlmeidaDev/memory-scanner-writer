@@ -3,6 +3,8 @@ package br.gov.mt.sejudh.sigepen.bean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -68,6 +70,10 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 	private LazyDataModel<DietaEspecialDTO> dietasEspeciais;
 	
 	private List<UnidadePrisional> unidadesPrisionais;
+
+	private List<String> nomesRecuperandosFiltro;
+	private static final int MINIMO_CARACTERES_SUGESTAO_RECUPERANDO = 3;
+	private static final int LIMITE_SUGESTAO_RECUPERANDO = 20;
 
 	@Inject
 	private DietaEspecialService dietaEspecialService;
@@ -196,6 +202,7 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 				break;
 
 			case LISTAR:
+				carregarNomesRecuperandosFiltro();
 				this.tipoDietas = tipoDietaService.listarTodos();
 				pesquisar();
 				logDeAcesso(log, "Dieta Especial");
@@ -210,6 +217,39 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 		}
 
 		return null;
+	}
+
+	private void carregarNomesRecuperandosFiltro() {
+		boolean listarTodasUnidades = security.possuiPermissao("ListarTodasUnidades");
+		Long unidadeId = SecurityUtil.getUnidadeSelecionada() != null
+				? SecurityUtil.getUnidadeSelecionada().getId()
+				: null;
+		this.nomesRecuperandosFiltro = dietaEspecialService
+				.listarNomesRecuperandosParaFiltro(listarTodasUnidades, unidadeId)
+				.stream()
+				.filter(Objects::nonNull)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toList());
+	}
+
+	public List<String> completarNomesRecuperandosFiltro(String consulta) {
+		if (consulta == null || consulta.trim().length() < MINIMO_CARACTERES_SUGESTAO_RECUPERANDO) {
+			return new ArrayList<>();
+		}
+
+		boolean listarTodasUnidades = security.possuiPermissao("ListarTodasUnidades");
+		Long unidadeId = SecurityUtil.getUnidadeSelecionada() != null
+				? SecurityUtil.getUnidadeSelecionada().getId()
+				: null;
+		return dietaEspecialService
+				.listarNomesRecuperandosParaFiltro(listarTodasUnidades, unidadeId, consulta.trim(),
+						LIMITE_SUGESTAO_RECUPERANDO)
+				.stream()
+				.filter(Objects::nonNull)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toList());
 	}
 
 	private boolean buscarDietaEspecial(long id) {
@@ -319,6 +359,10 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 
 	public void setUnidadesPrisionais(List<UnidadePrisional> unidadesPrisionais) {
 		this.unidadesPrisionais = unidadesPrisionais;
+	}
+
+	public List<String> getNomesRecuperandosFiltro() {
+		return nomesRecuperandosFiltro;
 	}
 	
 	public void abrirDialogRecuperando(ActionEvent event) {

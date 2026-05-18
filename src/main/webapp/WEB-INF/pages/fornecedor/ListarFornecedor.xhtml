@@ -6,6 +6,10 @@
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
 
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 
@@ -21,33 +25,42 @@
 			<h:form id="meuFormulario">
 				<p:outputLabel value="Consulta" />
 
-				<sgp:formInputMask id="cnpj" labelValue="CNPJ"
-					mask="**.***.***/****-99" value="#{fornecedorBean.filtro.cnpj}"
-					maxlength="14" display="text" size="40"
-					disabled="#{fornecedorBean.isVisualizacao}" converter="convertCnpj"
-					styleFormLabelColumn="min-width:120px !important" />
+				<sgp:formInputText id="cnpj" value="#{fornecedorBean.filtro.cnpj}"
+					labelValue="CNPJ do Fornecedor" maxlength="18" size="40"
+					display="text" permiteCaracterEspecial="true"
+					styleFormLabelColumn="min-width:150px"
+					disabled="#{fornecedorBean.isVisualizacao}" />
 
-				<sgp:formInputText id="razaoSocial" labelValue="Razão Social"
-					value="#{fornecedorBean.filtro.razaoSocial}" size="40"
-					disabled="#{fornecedorBean.isVisualizacao}" display="text"
-					styleFormLabelColumn="min-width:120px !important" />
+				<sgp:formSelectOneMenu id="razaoSocial" labelValue="Razão Social"
+					value="#{fornecedorBean.filtro.razaoSocial}"
+					itemsValue="#{fornecedorBean.razoesSociaisFiltro}"
+					itemValue="#{item}" itemLabel="#{item}" temSelecione="true"
+					filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+					disabled="#{fornecedorBean.isVisualizacao}"
+					styleFormLabelColumn="min-width:150px !important"
+					style="width:300px" />
 
-				<sgp:formInputText id="nomeFantasia" labelValue="Nome Fantasia"
-					value="#{fornecedorBean.filtro.nomeFantasia}" size="40"
-					disabled="#{fornecedorBean.isVisualizacao}" display="text"
-					styleFormLabelColumn="min-width:120px !important" />
+				<sgp:formSelectOneMenu id="nomeFantasia" labelValue="Nome Fantasia"
+					value="#{fornecedorBean.filtro.nomeFantasia}"
+					itemsValue="#{fornecedorBean.nomesFantasiaFiltro}"
+					itemValue="#{item}" itemLabel="#{item}" temSelecione="true"
+					filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+					disabled="#{fornecedorBean.isVisualizacao}"
+					styleFormLabelColumn="min-width:150px !important"
+					style="width:300px" />
 
 				<sgp:formSelectOneMenu id="status" labelValue="Status"
 					value="#{fornecedorBean.filtro.status}"
 					itemsValue="#{comboHelperBean.status}"
-					styleFormLabelColumn="min-width:120px !important"
+					styleFormLabelColumn="min-width:150px !important"
 					itemValue="#{item}" itemLabel="#{item.descricao}"
 					temSelecione="true" />
 
 
 				<div class="form-block "></div>
 				<p:commandButton value="Pesquisar" update=":registrosForm"
-					process="@form" icon="ui-icon-search" />
+					process="@form" icon="ui-icon-search"
+					onstart="if (PF('fornecedorDataTable')) { PF('fornecedorDataTable').getPaginator().setPage(0); }" />
 			</h:form>
 		</p:panel>
 
@@ -56,6 +69,7 @@
 			<p:dataTable id="dataTable" var="fornecedor"
 				value="#{fornecedorBean.fornecedores}"
 				emptyMessage="Nenhum registro encontrado." rows="10"
+				widgetVar="fornecedorDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{fornecedor.id}" reflow="true">
 				<p:column headerText="Código" style="width:100px;"

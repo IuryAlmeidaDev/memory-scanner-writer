@@ -162,7 +162,11 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 	public String init() {
 		this.status = Arrays.asList(Status.values());
 		this.tiposRefeicao = tipoRefeicaoService.listarTodos();
-		this.contratos = historicoPedidoAlimentoService.listarContratosParaCombo();
+		boolean listarTodasUnidades = security.possuiPermissao("ListarTodasUnidades");
+		Long unidadeId = SecurityUtil.getUnidadeSelecionada() != null
+				? SecurityUtil.getUnidadeSelecionada().getId()
+				: null;
+		this.contratos = historicoPedidoAlimentoService.listarContratosParaCombo(listarTodasUnidades, unidadeId);
 		
 		this.descricoesRefeicao = this.tiposRefeicao.stream()
 				.collect(Collectors.toMap(t -> t.getId(), t -> t.getDescricao()));

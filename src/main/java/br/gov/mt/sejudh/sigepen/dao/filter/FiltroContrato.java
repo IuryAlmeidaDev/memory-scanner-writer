@@ -118,7 +118,14 @@ public class FiltroContrato extends FiltroConsulta {
 	}
 
 	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
+		this.cnpj = normalizarDocumento(cnpj);
+	}
+
+	private String normalizarDocumento(String documento) {
+		if (documento == null) {
+			return null;
+		}
+		return documento.replaceAll("[^a-zA-Z0-9]", "").toUpperCase();
 	}
 
 	public UnidadePrisional getUnidadePrisional() {

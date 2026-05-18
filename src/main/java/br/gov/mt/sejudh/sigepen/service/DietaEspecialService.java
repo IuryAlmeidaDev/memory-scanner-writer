@@ -51,6 +51,15 @@ public class DietaEspecialService {
 		return dao.buscaPorFiltro(filtro);
 	}
 
+	public List<String> listarNomesRecuperandosParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
+		return dao.listarNomesRecuperandosParaFiltro(listarTodasUnidades, unidadeId);
+	}
+
+	public List<String> listarNomesRecuperandosParaFiltro(boolean listarTodasUnidades, Long unidadeId,
+			String consulta, int limite) {
+		return dao.listarNomesRecuperandosParaFiltro(listarTodasUnidades, unidadeId, consulta, limite);
+	}
+
 	public List<DietaRecuperando> buscarbuscarPorTipoDieta(Long tipoDietaId){
 		return dao.buscarPorTipoDieta(tipoDietaId);
 	}

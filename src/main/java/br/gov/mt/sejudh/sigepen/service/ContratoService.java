@@ -19,6 +19,7 @@ import br.gov.mt.sejudh.sigepen.exception.MultiplosResultadosException;
 import br.gov.mt.sejudh.sigepen.exception.NaoEncontradoException;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
 import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 import br.gov.mt.sejudh.sigepen.model.dto.ContratoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.UnidadeContratoConflitoDTO;
 import br.gov.mt.sejudh.sigepen.util.EJBExcInterceptor;
@@ -69,6 +70,36 @@ public class ContratoService {
 	
 	public List<Contrato> listarTodos(){
 		return dao.listarTodos();
+	}
+
+	public List<Contrato> listarParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
+		return dao.listarParaFiltro(listarTodasUnidades, unidadeId);
+	}
+
+	public List<Contrato> listarAtivosParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
+		return dao.listarAtivosParaFiltro(listarTodasUnidades, unidadeId);
+	}
+
+	public List<String> listarFornecedoresParaFiltro(boolean listarTodasUnidades, Long unidadeId,
+			String consulta, int limite) {
+		return dao.listarFornecedoresParaFiltro(listarTodasUnidades, unidadeId, consulta, limite);
+	}
+
+	public List<String> listarFornecedoresParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
+		return dao.listarFornecedoresParaFiltro(listarTodasUnidades, unidadeId);
+	}
+
+	public List<String> listarNumerosParaFiltro(boolean listarTodasUnidades, Long unidadeId,
+			String consulta, int limite) {
+		return dao.listarNumerosParaFiltro(listarTodasUnidades, unidadeId, consulta, limite);
+	}
+
+	public List<String> listarNumerosParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
+		return dao.listarNumerosParaFiltro(listarTodasUnidades, unidadeId);
+	}
+
+	public List<UnidadePrisional> listarUnidadesPorNumeroContrato(String numeroContrato) {
+		return dao.listarUnidadesPorNumeroContrato(numeroContrato);
 	}
 
 	public boolean validarContratoUnidade(Contrato contrato) {

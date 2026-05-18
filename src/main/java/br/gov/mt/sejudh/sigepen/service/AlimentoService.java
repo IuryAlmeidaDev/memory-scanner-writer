@@ -29,6 +29,14 @@ public class AlimentoService extends BaseService<Alimento, Long> {
 	public List<Alimento> listarAtivos(){
 		return alimentoDAO.listarAtivos();
 	}
+
+	public List<Alimento> listarTodos(){
+		return alimentoDAO.listarTodos();
+	}
+
+	public List<String> listarDescricoesParaFiltro(String consulta, int limite) {
+		return alimentoDAO.listarDescricoesParaFiltro(consulta, limite);
+	}
 	
 	public Alimento buscarAlimento(Alimento alimento) {
 		return alimentoDAO.buscarAlimento(alimento);

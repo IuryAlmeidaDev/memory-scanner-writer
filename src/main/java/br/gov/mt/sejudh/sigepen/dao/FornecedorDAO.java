@@ -75,4 +75,45 @@ public class FornecedorDAO {
 
 		return query.getResultList();
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarRazoesSociaisParaFiltro() {
+		return listarCampoTextoParaFiltro("f.razaoSocial", null, 0);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarRazoesSociaisParaFiltro(String consulta, int limite) {
+		return listarCampoTextoParaFiltro("f.razaoSocial", consulta, limite);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarNomesFantasiaParaFiltro() {
+		return listarCampoTextoParaFiltro("f.nomeFantasia", null, 0);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarNomesFantasiaParaFiltro(String consulta, int limite) {
+		return listarCampoTextoParaFiltro("f.nomeFantasia", consulta, limite);
+	}
+
+	private List<String> listarCampoTextoParaFiltro(String campo, String consulta, int limite) {
+		String consultaNormalizada = consulta != null ? consulta.trim().toLowerCase() : null;
+		if (consulta != null && consultaNormalizada.isEmpty()) {
+			return java.util.Collections.emptyList();
+		}
+
+		String jpql = "select distinct " + campo + " from Fornecedor f "
+				+ "where " + campo + " is not null "
+				+ (consultaNormalizada != null ? "and lower(" + campo + ") like :consulta " : "")
+				+ "order by " + campo;
+		Query query = entityManager.createQuery(jpql, String.class);
+		if (consultaNormalizada != null) {
+			query.setParameter("consulta", "%" + consultaNormalizada + "%");
+		}
+		if (limite > 0) {
+			query.setMaxResults(limite);
+		}
+
+		return query.getResultList();
+	}
 }

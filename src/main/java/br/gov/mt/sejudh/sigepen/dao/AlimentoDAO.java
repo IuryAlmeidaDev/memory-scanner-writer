@@ -35,6 +35,34 @@ public class AlimentoDAO extends BaseDAO<Alimento, Long> {
         return (List<Alimento>) query.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Alimento> listarTodos() {
+		String jpql = "select a from Alimento a order by descricao asc";
+		Query query = em.createQuery(jpql, Alimento.class);
+
+        return (List<Alimento>) query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarDescricoesParaFiltro(String consulta, int limite) {
+		String consultaNormalizada = consulta != null ? consulta.trim().toLowerCase() : null;
+		if (consultaNormalizada == null || consultaNormalizada.isEmpty()) {
+			return java.util.Collections.emptyList();
+		}
+
+		String jpql = "select distinct a.descricao from Alimento a "
+				+ "where a.descricao is not null "
+				+ "and lower(a.descricao) like :consulta "
+				+ "order by a.descricao asc";
+		Query query = em.createQuery(jpql, String.class);
+		query.setParameter("consulta", "%" + consultaNormalizada + "%");
+		if (limite > 0) {
+			query.setMaxResults(limite);
+		}
+
+		return (List<String>) query.getResultList();
+	}
+
 	public Alimento buscarAlimento(Alimento alimento) {
 		String jpql = "select a from Alimento a where status = :status and descricao = :descricao and :unidadeMedida = :unidadeMedida";
 		Query query = em.createQuery(jpql, Alimento.class);

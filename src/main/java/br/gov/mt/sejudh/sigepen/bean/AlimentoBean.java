@@ -42,6 +42,9 @@ public class AlimentoBean extends MetodosDePaginaBean {
 
 	private FiltroAlimento filtro;
 
+	private static final int MINIMO_CARACTERES_SUGESTAO_ALIMENTO = 2;
+	private static final int LIMITE_SUGESTAO_ALIMENTO = 20;
+
 	@Inject
 	private AlimentoService service;
 
@@ -88,6 +91,13 @@ public class AlimentoBean extends MetodosDePaginaBean {
 		}
 
 		return null;
+	}
+
+	public List<String> completarDescricoesAlimentosFiltro(String consulta) {
+		if (consulta == null || consulta.trim().length() < MINIMO_CARACTERES_SUGESTAO_ALIMENTO) {
+			return java.util.Collections.emptyList();
+		}
+		return service.listarDescricoesParaFiltro(consulta.trim(), LIMITE_SUGESTAO_ALIMENTO);
 	}
 
 	private boolean buscarAlimento(long id) {
@@ -188,4 +198,5 @@ public class AlimentoBean extends MetodosDePaginaBean {
 	public void setFiltro(FiltroAlimento filtro) {
 		this.filtro = filtro;
 	}
+
 }

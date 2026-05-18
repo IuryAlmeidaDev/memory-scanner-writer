@@ -6,6 +6,10 @@
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
 
+	<ui:define name="footer">
+		<h:outputScript library="js" name="selectOneMenuFilter.js" />
+	</ui:define>
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 
@@ -15,13 +19,21 @@
 			<p:panel >
 				<p:outputLabel value="Consulta"/>
 				
-				<sgp:formInputText 
-					labelValue="Unidade" 
-					size="50"
-					value="#{gerarPedidoBean.filtro.nome}" />
+				<sgp:formSelectOneMenu id="unidade" labelValue="Unidade"
+					value="#{gerarPedidoBean.filtro.nome}"
+					itemsValue="#{gerarPedidoBean.nomesUnidadesFiltro}"
+					itemValue="#{item}" itemLabel="#{item}"
+					temSelecione="true" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					style="width:350px" />
 					
-				<sgp:formInputText labelValue="Sigla"
-					value="#{gerarPedidoBean.filtro.sigla}" />
+				<sgp:formSelectOneMenu id="sigla" labelValue="Sigla"
+					value="#{gerarPedidoBean.filtro.sigla}"
+					itemsValue="#{gerarPedidoBean.siglasUnidadesFiltro}"
+					itemValue="#{item}" itemLabel="#{item}"
+					temSelecione="true" filter="true"
+					filterMatchMode="custom" filterFunction="removeAcento"
+					style="width:150px" />
 					
 				<sgp:formSelectOneMenu
 					id="tipoUnidade"
@@ -35,12 +47,14 @@
 
 				<br />
 				<br />
-				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search" />
+				<p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"
+					onstart="if (PF('gerarPedidoDataTable')) { PF('gerarPedidoDataTable').getPaginator().setPage(0); }" />
 			</p:panel>
 		</h:form>
 
 		<h:form id="registrosForm">
 			<p:dataTable id="dataTable" var="unidade" value="#{gerarPedidoBean.unidades}" emptyMessage="Nenhum registro encontrado."
+				widgetVar="gerarPedidoDataTable"
 				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{unidade.id}">
 				<p:column headerText="Código" style="width:100px;" sortBy="#{unidade.id}">
 					<h:outputText value="#{unidade.id}" />

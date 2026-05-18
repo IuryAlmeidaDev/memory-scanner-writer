@@ -61,4 +61,20 @@ public class FornecedorService {
 		return dao.listarAtivo();
 	}
 
+	public List<String> listarRazoesSociaisParaFiltro(String consulta, int limite) {
+		return dao.listarRazoesSociaisParaFiltro(consulta, limite);
+	}
+
+	public List<String> listarRazoesSociaisParaFiltro() {
+		return dao.listarRazoesSociaisParaFiltro();
+	}
+
+	public List<String> listarNomesFantasiaParaFiltro(String consulta, int limite) {
+		return dao.listarNomesFantasiaParaFiltro(consulta, limite);
+	}
+
+	public List<String> listarNomesFantasiaParaFiltro() {
+		return dao.listarNomesFantasiaParaFiltro();
+	}
+
 }

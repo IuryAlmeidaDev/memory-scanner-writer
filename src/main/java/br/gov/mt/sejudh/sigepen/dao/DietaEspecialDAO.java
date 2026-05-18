@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.dao;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -79,6 +80,58 @@ public class DietaEspecialDAO {
 		Criteria criteria = filtro.criarCriteriaParaBusca(DietaRecuperando.class, entityManager);
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(DietaEspecialDTO.class));
 		return criteria.list();
+	}
+
+	public List<String> listarNomesRecuperandosParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
+		return listarNomesRecuperandosParaFiltro(listarTodasUnidades, unidadeId, null, 0);
+	}
+
+	public List<String> listarNomesRecuperandosParaFiltro(boolean listarTodasUnidades, Long unidadeId,
+			String consulta, int limite) {
+		if (!listarTodasUnidades && unidadeId == null) {
+			return Collections.emptyList();
+		}
+
+		String consultaNormalizada = consulta != null ? consulta.trim().toLowerCase() : null;
+		if (consulta != null && consultaNormalizada.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		StringBuilder jpql = new StringBuilder();
+		jpql.append("select distinct pessoa.nome ");
+		jpql.append("from DietaRecuperando d ");
+		jpql.append("join d.recuperando recuperando ");
+		jpql.append("join recuperando.pessoa pessoa ");
+		jpql.append("join recuperando.passagens passagem ");
+		jpql.append("join passagem.lotacao lotacao ");
+		jpql.append("join lotacao.estrutura estrutura ");
+		jpql.append("join estrutura.unidadePrisional unidade ");
+		jpql.append("where pessoa.nome is not null ");
+		jpql.append("and passagem.dataSaida is null ");
+		jpql.append("and lotacao.dataSaida is null ");
+
+		if (!listarTodasUnidades && unidadeId != null) {
+			jpql.append("and unidade.id = :unidadeId ");
+		}
+		if (consultaNormalizada != null) {
+			jpql.append("and lower(pessoa.nome) like :consulta ");
+		}
+
+		jpql.append("order by pessoa.nome");
+
+		javax.persistence.TypedQuery<String> query = entityManager.createQuery(jpql.toString(), String.class);
+
+		if (!listarTodasUnidades && unidadeId != null) {
+			query.setParameter("unidadeId", unidadeId);
+		}
+		if (consultaNormalizada != null) {
+			query.setParameter("consulta", "%" + consultaNormalizada + "%");
+		}
+		if (limite > 0) {
+			query.setMaxResults(limite);
+		}
+
+		return query.getResultList();
 	}
 	
 	@SuppressWarnings("unchecked")
