@@ -1,9 +1,10 @@
 package br.gov.mt.sejudh.sigepen.model.dto;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import br.gov.mt.sejudh.sigepen.util.MonetaryFormatUtil;
 
 public class MapaConsolidadoDTO {
 	
@@ -163,9 +164,7 @@ public class MapaConsolidadoDTO {
 	}
 
 	public void setTotalValorCafe(Double totalValorCafe) {
-		DecimalFormat formato = new DecimalFormat("0.00");     
-		totalValorCafe = Double.valueOf(formato.format(totalValorCafe).replace(",", "."));
-		this.totalValorCafe = totalValorCafe;
+		this.totalValorCafe = MonetaryFormatUtil.roundTwoDecimals(totalValorCafe);
 	}
 
 	public Double getTotalValorAlmoco() {
@@ -173,9 +172,7 @@ public class MapaConsolidadoDTO {
 	}
 
 	public void setTotalValorAlmoco(Double totalValorAlmoco) {
-		DecimalFormat formato = new DecimalFormat("0.00");      
-		totalValorAlmoco = Double.valueOf(formato.format(totalValorAlmoco).replace(",", "."));
-		this.totalValorAlmoco = totalValorAlmoco;
+		this.totalValorAlmoco = MonetaryFormatUtil.roundTwoDecimals(totalValorAlmoco);
 	}
 
 	public Double getTotalValorJanta() {
@@ -183,9 +180,7 @@ public class MapaConsolidadoDTO {
 	}
 
 	public void setTotalValorJanta(Double totalValorJanta) {
-		DecimalFormat formato = new DecimalFormat("0.00");      
-		totalValorJanta = Double.valueOf(formato.format(totalValorJanta).replace(",", "."));
-		this.totalValorJanta = totalValorJanta;
+		this.totalValorJanta = MonetaryFormatUtil.roundTwoDecimals(totalValorJanta);
 	}
 
 	public Double getTotalValorCafeEspecial() {
@@ -193,9 +188,7 @@ public class MapaConsolidadoDTO {
 	}
 
 	public void setTotalValorCafeEspecial(Double totalValorCafeEspecial) {
-		DecimalFormat formato = new DecimalFormat("0.00");      
-		totalValorCafeEspecial = Double.valueOf(formato.format(totalValorCafeEspecial).replace(",", "."));
-		this.totalValorCafeEspecial = totalValorCafeEspecial;
+		this.totalValorCafeEspecial = MonetaryFormatUtil.roundTwoDecimals(totalValorCafeEspecial);
 	}
 
 	public Double getTotalValorAlmocoEspecial() {
@@ -203,9 +196,7 @@ public class MapaConsolidadoDTO {
 	}
 
 	public void setTotalValorAlmocoEspecial(Double totalValorAlmocoEspecial) {
-		DecimalFormat formato = new DecimalFormat("0.00");      
-		totalValorAlmocoEspecial = Double.valueOf(formato.format(totalValorAlmocoEspecial).replace(",", "."));
-		this.totalValorAlmocoEspecial = totalValorAlmocoEspecial;
+		this.totalValorAlmocoEspecial = MonetaryFormatUtil.roundTwoDecimals(totalValorAlmocoEspecial);
 	}
 
 	public Double getTotalValorJantaEspecial() {
@@ -213,9 +204,7 @@ public class MapaConsolidadoDTO {
 	}
 
 	public void setTotalValorJantaEspecial(Double totalValorJantaEspecial) {
-		DecimalFormat formato = new DecimalFormat("0.00");      
-		totalValorJantaEspecial = Double.valueOf(formato.format(totalValorJantaEspecial).replace(",", "."));
-		this.totalValorJantaEspecial = totalValorJantaEspecial;
+		this.totalValorJantaEspecial = MonetaryFormatUtil.roundTwoDecimals(totalValorJantaEspecial);
 	}
 
 	@Override

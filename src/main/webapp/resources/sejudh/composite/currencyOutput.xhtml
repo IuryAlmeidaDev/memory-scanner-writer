@@ -1,0 +1,24 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:cc="http://java.sun.com/jsf/composite">
+<cc:interface>
+	<cc:attribute name="value" required="false" />
+	<cc:attribute name="zeroWhenNull" required="false" type="java.lang.Boolean" />
+	<cc:attribute name="styleClass" required="false" />
+	<cc:attribute name="style" required="false" />
+</cc:interface>
+
+<cc:implementation>
+	<h:outputText
+		value="#{cc.attrs.value != null ? cc.attrs.value : ((cc.attrs.zeroWhenNull == null or cc.attrs.zeroWhenNull) ? 0 : null)}"
+		styleClass="#{cc.attrs.styleClass}" style="#{cc.attrs.style}">
+		<f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR"
+			minFractionDigits="2" maxFractionDigits="2" />
+	</h:outputText>
+</cc:implementation>
+</html>

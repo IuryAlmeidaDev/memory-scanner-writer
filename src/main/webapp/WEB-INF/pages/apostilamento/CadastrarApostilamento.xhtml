@@ -71,16 +71,10 @@
 
 						<p:column headerText="Valor" sortBy="#{refeicao.valor}"
 							width="200">
-							<h:outputText value="#{refeicao.valor != null ? refeicao.valor : 0}">
-								<f:convertNumber type="currency" currencySymbol="R$"
-									locale="pt_BR" minFractionDigits="2" maxFractionDigits="2" />
-							</h:outputText>
+							<sgp:currencyOutput value="#{refeicao.valor}" />
 						</p:column>
 						<p:column headerText="Valor Dieta Especial" width="200">
-							<h:outputText value="#{refeicao.valorEspecial != null ? refeicao.valorEspecial : 0}">
-								<f:convertNumber type="currency" currencySymbol="R$"
-									locale="pt_BR" minFractionDigits="2" maxFractionDigits="2" />
-							</h:outputText>
+							<sgp:currencyOutput value="#{refeicao.valorEspecial}" />
 						</p:column>
 
 						<p:column headerText="Ações" style="width:150px;"

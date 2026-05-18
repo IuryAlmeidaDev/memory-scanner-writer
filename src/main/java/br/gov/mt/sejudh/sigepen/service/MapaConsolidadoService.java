@@ -1,6 +1,5 @@
 package br.gov.mt.sejudh.sigepen.service;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -28,6 +27,7 @@ import br.gov.mt.sejudh.sigepen.model.dto.MapaConsolidadoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.MapaConsolidadoRecuperandoDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RelatorioMapaAlimentacaoConsultaDTO;
 import br.gov.mt.sejudh.sigepen.model.dto.RelatorioMapaAlimentacaoRecuperandoDTO;
+import br.gov.mt.sejudh.sigepen.util.MonetaryFormatUtil;
 
 @Stateless
 public class MapaConsolidadoService {
@@ -251,18 +251,14 @@ public class MapaConsolidadoService {
 			}
 		});
 
-		DecimalFormat formato = new DecimalFormat("###.00");
 		mapaConsolidado.setValorRefeicao(
 
-				"Normal CA R$ " + (formato.format(mapaConsolidadoRecuperando.getCafeManha()).replace(",", "."))
-						+ " | AL R$ " + (formato.format(mapaConsolidadoRecuperando.getAlmoco()).replace(",", "."))
-						+ " | JA R$ " + (formato.format(mapaConsolidadoRecuperando.getJanta()).replace(",", "."))
-						+ " | Especial CA R$ "
-						+ (formato.format(mapaConsolidadoRecuperando.getCafeManhaEspecial()).replace(",", "."))
-						+ " | AL R$ "
-						+ (formato.format(mapaConsolidadoRecuperando.getAlmocoEspecial()).replace(",", "."))
-						+ " | JA R$ "
-						+ (formato.format(mapaConsolidadoRecuperando.getJantaEspecial()).replace(",", ".")));
+				"Normal CA " + MonetaryFormatUtil.formatBrl(mapaConsolidadoRecuperando.getCafeManha())
+						+ " | AL " + MonetaryFormatUtil.formatBrl(mapaConsolidadoRecuperando.getAlmoco())
+						+ " | JA " + MonetaryFormatUtil.formatBrl(mapaConsolidadoRecuperando.getJanta())
+						+ " | Especial CA " + MonetaryFormatUtil.formatBrl(mapaConsolidadoRecuperando.getCafeManhaEspecial())
+						+ " | AL " + MonetaryFormatUtil.formatBrl(mapaConsolidadoRecuperando.getAlmocoEspecial())
+						+ " | JA " + MonetaryFormatUtil.formatBrl(mapaConsolidadoRecuperando.getJantaEspecial()));
 	}
 
 	private void montarMapaConsolidado(List<RelatorioMapaAlimentacaoConsultaDTO> mapaAlimentacaoConsulta,
