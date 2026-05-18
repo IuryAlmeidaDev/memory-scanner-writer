@@ -7,6 +7,7 @@ import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.dto.ContratoComboDTO;
 
 import java.util.List;
+import java.util.Collections;
 
 import javax.transaction.Transactional;
 
@@ -23,18 +24,38 @@ public class HistoricoPedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
     }
 
     public List<ContratoComboDTO> listarContratosParaCombo() {
-        return em.createQuery(
-                "SELECT new br.gov.mt.sejudh.sigepen.model.dto.ContratoComboDTO(" +
+        return listarContratosParaCombo(true, null);
+    }
+
+    public List<ContratoComboDTO> listarContratosParaCombo(boolean listarTodasUnidades, Long unidadeId) {
+        if (!listarTodasUnidades && unidadeId == null) {
+            return Collections.emptyList();
+        }
+
+        StringBuilder jpql = new StringBuilder();
+        jpql.append(
+                "SELECT distinct new br.gov.mt.sejudh.sigepen.model.dto.ContratoComboDTO(" +
                 "  c.id, " +
                 "  c.numContrato" +
                 ") " +
                 "FROM Contrato c " +
-                "WHERE c.status = :status " +
-                "ORDER BY c.numContrato",
-                ContratoComboDTO.class
-        )
-        .setParameter("status", Status.ATIVO)
-        .getResultList();
+                "LEFT JOIN c.unidades u " +
+                "WHERE c.status = :status ");
+
+        if (!listarTodasUnidades && unidadeId != null) {
+            jpql.append("AND u.id = :unidadeId ");
+        }
+
+        jpql.append("ORDER BY c.numContrato");
+
+        javax.persistence.TypedQuery<ContratoComboDTO> query = em.createQuery(jpql.toString(), ContratoComboDTO.class)
+                .setParameter("status", Status.ATIVO);
+
+        if (!listarTodasUnidades && unidadeId != null) {
+            query.setParameter("unidadeId", unidadeId);
+        }
+
+        return query.getResultList();
     }
     
     public PedidoAlimento buscarPorIdComItens(Long id) {

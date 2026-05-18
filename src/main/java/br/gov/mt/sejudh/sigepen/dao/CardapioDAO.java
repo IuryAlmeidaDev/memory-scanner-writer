@@ -90,7 +90,7 @@ public class CardapioDAO extends BaseDAO<Cardapio, Long> {
         }
     }
 
-    public boolean existeCardapioPara(String data, Long tipoRefeicaoId, Long contratoId) {
+    public boolean existeCardapioPara(String data, Long tipoRefeicaoId, Long contratoId, Long unidadePrisionalId) {
         try {
             int numeroSemana = CardapioUtil.obterNumeroSemanaAno(data);
             int semana = CardapioUtil.obterSemana(numeroSemana);
@@ -99,7 +99,8 @@ public class CardapioDAO extends BaseDAO<Cardapio, Long> {
                     + "WHERE c.semana = :semana "
                     + "AND c.diaSemana = :diaSemana "
                     + "AND c.tipoRefeicao.id = :tipoRefeicaoId "
-                    + "AND c.contrato.id = :contratoId";
+                    + "AND c.contrato.id = :contratoId "
+                    + "AND c.unidadePrisional.id = :unidadePrisionalId";
 
             Query query = entityManager.createQuery(jpql, Long.class);
             query.setParameter("semana", (long) semana);
@@ -112,6 +113,7 @@ public class CardapioDAO extends BaseDAO<Cardapio, Long> {
             query.setParameter("diaSemana", diaSemana);
             query.setParameter("tipoRefeicaoId", tipoRefeicaoId);
             query.setParameter("contratoId", contratoId);
+            query.setParameter("unidadePrisionalId", unidadePrisionalId);
 
             Long count = (Long) query.getSingleResult();
             return count > 0;

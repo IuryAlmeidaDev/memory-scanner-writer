@@ -44,6 +44,9 @@ public class TipoDietaBean extends MetodosDePaginaBean {
 	private LazyDataModel<TipoDieta> tiposDieta;
 	
 	private FiltroTipoDieta filtro;
+
+	private static final int MINIMO_CARACTERES_SUGESTAO_TIPO_DIETA = 2;
+	private static final int LIMITE_SUGESTAO_TIPO_DIETA = 20;
 	
 	@Inject
 	private TipoDietaService service;
@@ -94,6 +97,13 @@ public class TipoDietaBean extends MetodosDePaginaBean {
 		}
 
 		return null;
+	}
+
+	public List<String> completarDescricoesTiposDietaFiltro(String consulta) {
+		if (consulta == null || consulta.trim().length() < MINIMO_CARACTERES_SUGESTAO_TIPO_DIETA) {
+			return java.util.Collections.emptyList();
+		}
+		return service.listarDescricoesParaFiltro(consulta.trim(), LIMITE_SUGESTAO_TIPO_DIETA);
 	}
 	
 	private boolean buscarTipoDieta(long id) {
@@ -234,4 +244,5 @@ public class TipoDietaBean extends MetodosDePaginaBean {
 	public void setFiltro(FiltroTipoDieta filtro) {
 		this.filtro = filtro;
 	}
+
 }

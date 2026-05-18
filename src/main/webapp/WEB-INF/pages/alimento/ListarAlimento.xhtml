@@ -6,6 +6,10 @@
                 xmlns:sgp="http://sejudh.mt.gov.br/components"
                 template="/WEB-INF/pages/_templates/principal.xhtml">
 
+    <ui:define name="footer">
+        <h:outputScript library="js" name="selectOneMenuFilter.js" />
+    </ui:define>
+
     <ui:define name="conteudo">
         <sgp:validarAcesso/>
 
@@ -19,15 +23,25 @@
         <h:form id="meuFormulario">
             <p:panel>
                 <p:outputLabel value="Consulta"/>
-                <sgp:formInputText
-                        id="descricaoConsulta"
-                        labelValue="Descrição"
-                        value="#{alimentoBean.filtro.descricao}"
-                        maxlength="120"
-                        display="text"
-                        size="40"
-                        styleFormLabelColumn="min-width:150px !important"
-                />
+                <div class="form-block">
+                    <div class="form-label-column" style="min-width:150px !important">
+                        <p:outputLabel for="descricaoConsulta" value="Descrição:"/>
+                    </div>
+                    <div class="form-required-column">
+                        <p:spacer width="15px"/>
+                    </div>
+                    <div class="form-input-column">
+                        <p:autoComplete
+                                id="descricaoConsulta"
+                                value="#{alimentoBean.filtro.descricao}"
+                                completeMethod="#{alimentoBean.completarDescricoesAlimentosFiltro}"
+                                minQueryLength="2" queryDelay="400" maxResults="20"
+                                forceSelection="false" dropdown="false" style="width:300px"/>
+                    </div>
+                    <div class="form-error-column">
+                        <p:message for="descricaoConsulta" display="text"/>
+                    </div>
+                </div>
                 <sgp:formSelectOneMenu
                         id="unidadeMedida"
                         labelValue="Unidade de medida"
@@ -60,13 +74,15 @@
 
 
                 <br/> <br/>
-                <p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"/>
+                <p:commandButton value="Pesquisar" update=":registrosForm" process="@form" icon="ui-icon-search"
+                                 onstart="if (PF('alimentoDataTable')) { PF('alimentoDataTable').getPaginator().setPage(0); }"/>
             </p:panel>
         </h:form>
 
         <h:form id="registrosForm">
             <p:dataTable id="dataTable" var="alimento" value="#{alimentoBean.alimentos}"
                          emptyMessage="Nenhum registro encontrado."
+                         widgetVar="alimentoDataTable"
                          rows="10" paginator="true" paginatorPosition="bottom" lazy="true"
                          sortBy="#{alimento.descricao}">
 

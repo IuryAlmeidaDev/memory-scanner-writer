@@ -66,6 +66,7 @@
 					itemsValue="#{cardapioBean.tiposDieta}" itemValue="#{item}"
 					itemLabel="#{item.descricao}"
 					value="#{cardapioBean.filtro.tipoDieta}" temSelecione="true"
+					filter="true" filterMatchMode="custom" filterFunction="removeAcento"
 					styleFormLabelColumn="min-width:150px !important"
 					converter="SimpleEntityConverter" display="text" />
 
@@ -95,7 +96,8 @@
 				<br />
 				<br />
 				<p:commandButton value="Pesquisar" update=":registrosForm"
-					process="@form" icon="ui-icon-search" />
+					process="@form" icon="ui-icon-search"
+					onstart="if (PF('cardapioDataTable')) { PF('cardapioDataTable').getPaginator().setPage(0); }" />
 			</p:panel>
 		</h:form>
 
@@ -103,6 +105,7 @@
 			<p:dataTable id="dataTable" var="cardapio"
 				value="#{cardapioBean.cardapios}"
 				emptyMessage="Nenhum registro encontrado." rows="10"
+				widgetVar="cardapioDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{cardapio.id}" rowsPerPageTemplate="10,20,30,50">
 

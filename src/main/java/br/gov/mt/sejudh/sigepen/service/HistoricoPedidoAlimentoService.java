@@ -42,6 +42,10 @@ public class HistoricoPedidoAlimentoService {
         return dao.listarContratosParaCombo();
     }
 
+    public List<ContratoComboDTO> listarContratosParaCombo(boolean listarTodasUnidades, Long unidadeId) {
+        return dao.listarContratosParaCombo(listarTodasUnidades, unidadeId);
+    }
+
     @Transactional
     public PedidoAlimento buscarPorIdComItens(Long id) {
         LOGGER.info("Buscando PedidoAlimento com itens para relatório. ID: " + id);

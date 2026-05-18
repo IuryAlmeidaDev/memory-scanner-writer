@@ -30,6 +30,10 @@ public class TipoDietaService extends BaseService<TipoDieta, Long> {
 		return tipoDietaDAO.listarTodos();
 	}
 
+	public List<String> listarDescricoesParaFiltro(String consulta, int limite) {
+		return tipoDietaDAO.listarDescricoesParaFiltro(consulta, limite);
+	}
+
 	public List<TipoDieta> listarAtivas() {
 		return tipoDietaDAO.listarAtivos();
 	}

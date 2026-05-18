@@ -35,6 +35,26 @@ public class TipoDietaDAO extends BaseDAO<TipoDieta, Long> {
 	}
 
 	@SuppressWarnings("unchecked")
+	public List<String> listarDescricoesParaFiltro(String consulta, int limite) {
+		String consultaNormalizada = consulta != null ? consulta.trim().toLowerCase() : null;
+		if (consultaNormalizada == null || consultaNormalizada.isEmpty()) {
+			return java.util.Collections.emptyList();
+		}
+
+		String jpql = "select distinct td.descricao from TipoDieta td "
+				+ "where td.descricao is not null "
+				+ "and lower(td.descricao) like :consulta "
+				+ "order by td.descricao";
+		Query query = em.createQuery(jpql, String.class);
+		query.setParameter("consulta", "%" + consultaNormalizada + "%");
+		if (limite > 0) {
+			query.setMaxResults(limite);
+		}
+
+		return (List<String>) query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
 	public List<TipoDieta> listarAtivos() {
 		String jpql = "select td from TipoDieta td where td.status = :status ";
 		Query query = em.createQuery(jpql, TipoDieta.class);

@@ -17,21 +17,17 @@ public class PermissaoUtil {
     private SecurityUtil security;
 
     public void filtrarUnidadesComBaseNaPermissaoListarTodasRecuperandos() {
-        if(security.possuiPermissao("ListarTodosRecuperandos")) {
-        	FiltroRecuperandoView filtroRecuperando = new FiltroRecuperandoView();
-            filtroRecuperando.setListarTodasUnidades(true);
+        FiltroRecuperandoView filtroRecuperando = new FiltroRecuperandoView();
+        filtroRecuperando.setListarTodasUnidades(security.possuiPermissao("ListarTodosRecuperandos"));
 
-            facesUtil.setObjetoSessao("filtroRecuperando", filtroRecuperando);
-        }
+        facesUtil.setObjetoSessao("filtroRecuperando", filtroRecuperando);
     }
     
     public void filtrarUnidadesComBaseNaPermissaoListarTodasRecuperandos(Boolean dietaEspecial) {
-        if(security.possuiPermissao("ListarTodosRecuperandos")) {
-        	FiltroRecuperandoView filtroRecuperando = new FiltroRecuperandoView();
-            filtroRecuperando.setListarTodasUnidades(true);
-            filtroRecuperando.setIsDietaEspecial(dietaEspecial);
+        FiltroRecuperandoView filtroRecuperando = new FiltroRecuperandoView();
+        filtroRecuperando.setListarTodasUnidades(security.possuiPermissao("ListarTodosRecuperandos"));
+        filtroRecuperando.setIsDietaEspecial(dietaEspecial);
 
-            facesUtil.setObjetoSessao("filtroRecuperando", filtroRecuperando);
-        }
+        facesUtil.setObjetoSessao("filtroRecuperando", filtroRecuperando);
     }
 }

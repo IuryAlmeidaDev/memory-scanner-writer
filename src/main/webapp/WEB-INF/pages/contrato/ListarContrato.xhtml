@@ -26,17 +26,16 @@
 			<p:panel>
 				<p:outputLabel value="Consulta" />
 
-				<sgp:formInputText id="fornecedor" labelValue="Fornecedor"
-					value="#{contratoBean.filtro.fornecedor}" maxlength="50" size="57"
-					display="text" styleFormLabelColumn="min-width:150px !important" />
-
-				<sgp:formInputText id="cnpj" labelValue="CNPJ"
-					value="#{contratoBean.filtro.cnpj}" maxlength="50" size="57"
-					display="text" styleFormLabelColumn="min-width:150px !important" />
-
-				<sgp:formInputText id="contrato" labelValue="Nº de Contrato"
-					value="#{contratoBean.filtro.numContrato}" maxlength="50" size="57"
-					display="text" styleFormLabelColumn="min-width:150px !important" />
+				<sgp:formSelectOneMenu id="contrato" labelValue="Nº de Contrato"
+					value="#{contratoBean.filtro.numContrato}"
+					itemsValue="#{contratoBean.numerosContratosFiltro}"
+					itemValue="#{item}" itemLabel="#{item}" temSelecione="true"
+					filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+					styleFormLabelColumn="min-width:150px !important"
+					style="width:350px">
+					<p:ajax listener="#{contratoBean.atualizarUnidadesPorContrato}"
+						update="@form" />
+				</sgp:formSelectOneMenu>
 
 				<sgp:formSelectOneMenu id="unidadePrisional"
 					labelValue="Unidade Prisional" itemValue="#{item}"
@@ -48,6 +47,19 @@
 					styleFormLabelColumn="min-width:150px !important"
 					rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
 
+				<sgp:formSelectOneMenu id="fornecedor" labelValue="Fornecedor"
+					value="#{contratoBean.filtro.fornecedor}"
+					itemsValue="#{contratoBean.fornecedoresFiltro}"
+					itemValue="#{item}" itemLabel="#{item}" temSelecione="true"
+					filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+					styleFormLabelColumn="min-width:150px !important"
+					style="width:350px" />
+
+				<sgp:formInputText id="cnpj" value="#{contratoBean.filtro.cnpj}"
+					labelValue="CNPJ do Fornecedor" maxlength="18" size="40"
+					display="text" permiteCaracterEspecial="true"
+					styleFormLabelColumn="min-width:150px" />
+
 				<sgp:formSelectOneMenu id="status" labelValue="Status"
 					value="#{contratoBean.filtro.status}"
 					itemsValue="#{comboHelperBean.status}"
@@ -57,7 +69,8 @@
 
 				<div class="form-block "></div>
 				<p:commandButton value="Pesquisar" update=":registrosForm"
-					process="@form" icon="ui-icon-search" />
+					process="@form" icon="ui-icon-search"
+					onstart="if (PF('contratoDataTable')) { PF('contratoDataTable').getPaginator().setPage(0); }" />
 			</p:panel>
 		</h:form>
 
@@ -65,6 +78,7 @@
 			<p:dataTable id="dataTable" var="contrato"
 				value="#{contratoBean.contratos}"
 				emptyMessage="Nenhum registro encontrado." rows="10"
+				widgetVar="contratoDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{contrato.id}" reflow="true">
 				<p:column headerText="Código" sortBy="#{contrato.id}" >

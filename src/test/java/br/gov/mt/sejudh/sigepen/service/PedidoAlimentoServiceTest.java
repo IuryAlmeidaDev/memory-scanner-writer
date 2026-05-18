@@ -6,6 +6,7 @@ import br.gov.mt.sejudh.sigepen.dao.PedidoAlimentoDAO;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
+import br.gov.mt.sejudh.sigepen.model.Estrutura;
 import br.gov.mt.sejudh.sigepen.model.HorarioRefeicao;
 import br.gov.mt.sejudh.sigepen.model.PedidoAlimento;
 import br.gov.mt.sejudh.sigepen.model.TipoRefeicao;
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -59,6 +61,9 @@ public class PedidoAlimentoServiceTest extends BaseUnitTest {
 
     @Mock
     private TipoRefeicaoService tipoRefeicaoService;
+
+    @Mock
+    private EstruturaService estruturaService;
 
     @Test
     public void devePermitirQuandoReferenciaForNoInicioDaRefeicaoAnterior() throws Exception {
@@ -426,6 +431,82 @@ public class PedidoAlimentoServiceTest extends BaseUnitTest {
         verify(dao).salvarComFlush(pedido);
     }
 
+    @Test
+    public void gerarPedidosAutomaticosDaUnidade_deveConsultarCardapioComUnidadeAntesDeGerar() throws Exception {
+        setField(service, "unidadePrisionalService", unidadePrisionalService);
+        setField(service, "rolloutAlimentacaoService", rolloutAlimentacaoService);
+        setField(service, "agendaPedidoRefeicaoService", agendaPedidoRefeicaoService);
+        setField(service, "contratoService", contratoService);
+        setField(service, "tipoRefeicaoService", tipoRefeicaoService);
+        setField(service, "dao", dao);
+        setField(service, "cardapioDAO", cardapioDAO);
+        UnidadePrisional unidade = unidade(10L);
+        Contrato contrato = contrato(20L);
+        TipoRefeicao cafe = tipoRefeicao(1L, "Cafe");
+        TipoRefeicao almoco = tipoRefeicao(2L, "Almoco");
+        LocalDateTime referencia = LocalDateTime.of(2026, 4, 24, 7, 1);
+
+        when(unidadePrisionalService.buscaPorId(10L)).thenReturn(unidade);
+        when(rolloutAlimentacaoService.unidadeHabilitada(10L)).thenReturn(true);
+        when(agendaPedidoRefeicaoService.unidadeAptaParaAutomacao(10L, referencia)).thenReturn(true);
+        when(tipoRefeicaoService.listarTodos()).thenReturn(Arrays.asList(cafe, almoco));
+        when(contratoService.buscarContratoVigenteEAtivoPorUnidade(eq(10L), any(Timestamp.class)))
+                .thenReturn(contrato);
+        when(contratoService.buscarHorarioEntregaVigentePorUnidade(eq(10L), eq(1L), any(Timestamp.class)))
+                .thenReturn(horario("0700", cafe));
+        when(contratoService.buscarHorarioEntregaVigentePorUnidade(eq(10L), eq(2L), any(Timestamp.class)))
+                .thenReturn(horario("1200", almoco));
+        when(dao.existePedidoAtivoPorTipoRefeicaoEUnidade("24/04/2026 12:00:00", 2L, 10L, 20L))
+                .thenReturn(false);
+        when(cardapioDAO.existeCardapioPara("24/04/2026 12:00:00", 2L, 20L, 10L)).thenReturn(false);
+
+        int resultado = service.gerarPedidosAutomaticosDaUnidade(10L, referencia);
+
+        assertThat(resultado).isZero();
+        verify(cardapioDAO).existeCardapioPara("24/04/2026 12:00:00", 2L, 20L, 10L);
+        verify(dao, never()).salvarComFlush(any(PedidoAlimento.class));
+    }
+
+    @Test
+    public void montarPedidoValidando_deveConsultarCardapioComUnidade() throws Exception {
+        PedidoAlimentoService serviceSpy = spy(new PedidoAlimentoService());
+        setField(serviceSpy, "cardapioDAO", cardapioDAO);
+        UnidadePrisional unidade = unidade(10L);
+        Contrato contrato = contrato(20L);
+        TipoRefeicao tipoRefeicao = tipoRefeicao(30L, "Almoco");
+        PedidoAlimento pedido = pedidoAlimento();
+
+        when(cardapioDAO.existeCardapioPara("24/04/2026 12:00:00", 30L, 20L, 10L)).thenReturn(true);
+        doReturn(new PedidoAlimentoService.PedidoMontado(
+                pedido,
+                Collections.singletonList(new br.gov.mt.sejudh.sigepen.model.dto.DetalheItemEstruturaCardapioDTO(
+                        "Arroz", 1.0, 10, "Kg", "Ala", 10, 100L, 200L)),
+                Collections.emptyList()))
+                .when(serviceSpy).montarPedido(unidade, contrato, tipoRefeicao, "24/04/2026 12:00:00", 0L);
+
+        PedidoAlimentoService.PedidoMontado resultado = serviceSpy.montarPedidoValidando(
+                unidade, contrato, tipoRefeicao, "24/04/2026 12:00:00", 0L);
+
+        assertThat(resultado.getPedidoAlimento()).isSameAs(pedido);
+        verify(cardapioDAO).existeCardapioPara("24/04/2026 12:00:00", 30L, 20L, 10L);
+    }
+
+    @Test
+    public void montarPedidoValidando_deveBloquearQuandoNaoExistirCardapioDaUnidade() throws Exception {
+        setField(service, "cardapioDAO", cardapioDAO);
+        UnidadePrisional unidade = unidade(10L);
+        Contrato contrato = contrato(20L);
+        TipoRefeicao tipoRefeicao = tipoRefeicao(30L, "Almoco");
+
+        when(cardapioDAO.existeCardapioPara("24/04/2026 12:00:00", 30L, 20L, 10L)).thenReturn(false);
+
+        assertThatThrownBy(() -> service.montarPedidoValidando(
+                unidade, contrato, tipoRefeicao, "24/04/2026 12:00:00", 0L))
+                .isInstanceOf(ValidacaoException.class)
+                .hasMessageContaining("cardapio");
+        verify(cardapioDAO).existeCardapioPara("24/04/2026 12:00:00", 30L, 20L, 10L);
+    }
+
     private PedidoAlimentoService serviceComPedidoMontado(PedidoAlimento pedido) throws Exception {
         return serviceComPedidoMontado(pedido, "24/04/2026 12:00:00");
     }
@@ -454,6 +535,9 @@ public class PedidoAlimentoServiceTest extends BaseUnitTest {
     private UnidadePrisional unidade(Long id) {
         UnidadePrisional unidade = new UnidadePrisional();
         unidade.setId(id);
+        Estrutura estrutura = new Estrutura();
+        estrutura.setId(100L);
+        unidade.setEstrutura(estrutura);
         return unidade;
     }
 

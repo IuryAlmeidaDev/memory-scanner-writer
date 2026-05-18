@@ -116,7 +116,7 @@ public class CardapioBean extends MetodosDePaginaBean {
                     this.cardapio = new Cardapio();
                     // Para usuários sem permissão total, pré-seleciona a unidade logada
                     if (!securityUtil.possuiPermissao("ListarTodasUnidades")) {
-                        this.cardapio.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+                        this.cardapio.setUnidadePrisional(getUnidadeSelecionadaAtual());
                     }
                     break;
 
@@ -234,7 +234,7 @@ public class CardapioBean extends MetodosDePaginaBean {
                 getFiltro().setListarTodasUnidades(podeVerTudo);
 
                 if (!podeVerTudo) {
-                    getFiltro().setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+                    getFiltro().setUnidadePrisional(getUnidadeSelecionadaAtual());
                 }
 
                 setRowCount(service.quantidadeFiltrados(getFiltro()));
@@ -343,15 +343,17 @@ public class CardapioBean extends MetodosDePaginaBean {
 
     private void carregarListas() {
         this.tiposRefeicao = tipoRefeicaoService.listarTodos();
-        this.contratos = contratoService.listarAtivos();
+        boolean listarTodasUnidades = securityUtil.possuiPermissao("ListarTodasUnidades");
+        UnidadePrisional unidadeDoUsuario = getUnidadeSelecionadaAtual();
+        Long unidadeId = unidadeDoUsuario != null ? unidadeDoUsuario.getId() : null;
+        this.contratos = contratoService.listarAtivosParaFiltro(listarTodasUnidades, unidadeId);
         this.setTiposDieta(tipoDietaService.listarAtivas());
         this.setDiasSemana(this.listarDiasSemana());
         this.populaSemanas();
 
-        if (securityUtil.possuiPermissao("ListarTodasUnidades")) {
+        if (listarTodasUnidades) {
             this.unidadesPrisionais = new ArrayList<>();
         } else {
-            UnidadePrisional unidadeDoUsuario = SecurityUtil.getUnidadeSelecionada();
             this.unidadesPrisionais = new ArrayList<>();
             if (unidadeDoUsuario != null) {
                 this.unidadesPrisionais.add(unidadeDoUsuario);
@@ -367,7 +369,7 @@ public class CardapioBean extends MetodosDePaginaBean {
             this.unidadesPrisionais = service.buscarUnidadesPorContrato(this.cardapio.getContrato().getId());
 
             if (!securityUtil.possuiPermissao("ListarTodasUnidades")) {
-                UnidadePrisional unidadeLogada = SecurityUtil.getUnidadeSelecionada();
+                UnidadePrisional unidadeLogada = getUnidadeSelecionadaAtual();
                 
                 if (unidadeLogada != null) {
                     long idProcurado = unidadeLogada.getId();
@@ -392,7 +394,7 @@ public class CardapioBean extends MetodosDePaginaBean {
         this.unidadesPrisionais = new ArrayList<>();
 
         if (!securityUtil.possuiPermissao("ListarTodasUnidades")) {
-            UnidadePrisional unidadeLogada = SecurityUtil.getUnidadeSelecionada();
+            UnidadePrisional unidadeLogada = getUnidadeSelecionadaAtual();
             if (unidadeLogada != null) {
                 this.unidadesPrisionais.add(unidadeLogada);
                 this.filtro.setUnidadePrisional(unidadeLogada);
@@ -582,5 +584,9 @@ public class CardapioBean extends MetodosDePaginaBean {
             this.cardapio.setSemana(null);
         }
         calcularProximaDataAoAlterarSemanaOuDia();
+    }
+
+    protected UnidadePrisional getUnidadeSelecionadaAtual() {
+        return SecurityUtil.getUnidadeSelecionada();
     }
 }

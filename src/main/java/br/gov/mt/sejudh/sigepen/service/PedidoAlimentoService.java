@@ -516,7 +516,7 @@ public class PedidoAlimentoService {
             return Optional.empty();
         }
 
-        if (!cardapioDAO.existeCardapioPara(dataPedido, idTipoRefeicao, contrato.getId())) {
+        if (!cardapioDAO.existeCardapioPara(dataPedido, idTipoRefeicao, contrato.getId(), unidade.getId())) {
             LOGGER.info("Pedido automatico nao gerado por ausencia de cardapio. Unidade "
                     + identificarUnidade(unidade) + ", refeicao " + identificarRefeicao(horarioAlvo)
                     + ", entrega " + dataPedido);
@@ -597,7 +597,7 @@ public class PedidoAlimentoService {
 
     public PedidoMontado montarPedidoValidando(UnidadePrisional unidade, Contrato contrato, TipoRefeicao tipoRefeicao,
             String dataPedido, Long idUsuarioResponsavel) throws ValidacaoException {
-        if (!cardapioDAO.existeCardapioPara(dataPedido, tipoRefeicao.getId(), contrato.getId())) {
+        if (!cardapioDAO.existeCardapioPara(dataPedido, tipoRefeicao.getId(), contrato.getId(), unidade.getId())) {
             throw new ValidacaoException("Nao existe um cardapio para esse tipo de refeicao.");
         }
 

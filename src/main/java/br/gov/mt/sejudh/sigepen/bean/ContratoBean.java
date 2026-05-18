@@ -103,6 +103,12 @@ public class ContratoBean extends MetodosDePaginaBean {
 
 	private List<Fornecedor> fornecedores;
 
+	private List<String> fornecedoresFiltro;
+	private List<String> numerosContratosFiltro;
+
+	private static final int MINIMO_CARACTERES_SUGESTAO_CONTRATO = 2;
+	private static final int LIMITE_SUGESTAO_CONTRATO = 20;
+
 	@Inject
 	private UnidadePrisionalService unidadeService;
 
@@ -161,6 +167,14 @@ public class ContratoBean extends MetodosDePaginaBean {
 		return fornecedorService;
 	}
 
+	public List<String> getFornecedoresFiltro() {
+		return fornecedoresFiltro;
+	}
+
+	public List<String> getNumerosContratosFiltro() {
+		return numerosContratosFiltro;
+	}
+
 	public boolean getInativo() {
 		return this.inativo.equals(this.contrato.getStatus());
 	}
@@ -210,6 +224,7 @@ public class ContratoBean extends MetodosDePaginaBean {
 				break;
 
 			case LISTAR:
+				carregarOpcoesFiltroContrato();
 				pesquisar();
 				logDeAcesso(log, "Contrato");
 				break;
@@ -223,6 +238,70 @@ public class ContratoBean extends MetodosDePaginaBean {
 		}
 
 		return null;
+	}
+
+	private void carregarOpcoesFiltroContrato() {
+		boolean listarTodasUnidades = security.possuiPermissao("ListarTodasUnidades");
+		Long unidadeId = SecurityUtil.getUnidadeSelecionada() != null
+				? SecurityUtil.getUnidadeSelecionada().getId()
+				: null;
+
+		this.fornecedoresFiltro = contratoService.listarFornecedoresParaFiltro(listarTodasUnidades, unidadeId)
+				.stream()
+				.filter(Objects::nonNull)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toList());
+		this.numerosContratosFiltro = contratoService.listarNumerosParaFiltro(listarTodasUnidades, unidadeId)
+				.stream()
+				.filter(Objects::nonNull)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toList());
+	}
+
+	public void atualizarUnidadesPorContrato() {
+		if (!security.possuiPermissao("ListarTodasUnidades")) {
+			return;
+		}
+
+		String numeroContrato = this.filtro != null ? this.filtro.getNumContrato() : null;
+		if (numeroContrato == null || numeroContrato.trim().isEmpty()) {
+			this.unidadesPrisionais = unidadeService.listarUnidadesNaoInativas();
+			if (this.filtro != null) {
+				this.filtro.setUnidadePrisional(null);
+			}
+			return;
+		}
+
+		this.unidadesPrisionais = contratoService.listarUnidadesPorNumeroContrato(numeroContrato.trim());
+		if (this.filtro != null) {
+			this.filtro.setUnidadePrisional(null);
+		}
+	}
+
+	public List<String> completarFornecedoresFiltro(String consulta) {
+		if (consulta == null || consulta.trim().length() < MINIMO_CARACTERES_SUGESTAO_CONTRATO) {
+			return java.util.Collections.emptyList();
+		}
+		boolean listarTodasUnidades = security.possuiPermissao("ListarTodasUnidades");
+		Long unidadeId = SecurityUtil.getUnidadeSelecionada() != null
+				? SecurityUtil.getUnidadeSelecionada().getId()
+				: null;
+		return contratoService.listarFornecedoresParaFiltro(listarTodasUnidades, unidadeId, consulta.trim(),
+				LIMITE_SUGESTAO_CONTRATO);
+	}
+
+	public List<String> completarNumerosContratosFiltro(String consulta) {
+		if (consulta == null || consulta.trim().length() < MINIMO_CARACTERES_SUGESTAO_CONTRATO) {
+			return java.util.Collections.emptyList();
+		}
+		boolean listarTodasUnidades = security.possuiPermissao("ListarTodasUnidades");
+		Long unidadeId = SecurityUtil.getUnidadeSelecionada() != null
+				? SecurityUtil.getUnidadeSelecionada().getId()
+				: null;
+		return contratoService.listarNumerosParaFiltro(listarTodasUnidades, unidadeId, consulta.trim(),
+				LIMITE_SUGESTAO_CONTRATO);
 	}
 
 	private boolean buscarContrato(long id) {

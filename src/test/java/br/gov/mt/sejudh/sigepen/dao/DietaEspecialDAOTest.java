@@ -2,14 +2,18 @@ package br.gov.mt.sejudh.sigepen.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +30,8 @@ public class DietaEspecialDAOTest extends BaseUnitTest {
     private EntityManager entityManager;
     @Mock
     private Query query;
+    @Mock
+    private TypedQuery<String> stringQuery;
 
     @InjectMocks
     private DietaEspecialDAO dao;
@@ -33,7 +39,9 @@ public class DietaEspecialDAOTest extends BaseUnitTest {
     @Before
     public void setUp() {
         when(entityManager.createQuery(anyString())).thenReturn(query);
+        when(entityManager.createQuery(anyString(), eq(String.class))).thenReturn(stringQuery);
         when(query.setParameter(anyString(), org.mockito.ArgumentMatchers.any())).thenReturn(query);
+        when(stringQuery.setParameter(anyString(), org.mockito.ArgumentMatchers.any())).thenReturn(stringQuery);
     }
 
     @Test
@@ -84,5 +92,43 @@ public class DietaEspecialDAOTest extends BaseUnitTest {
         verify(query).setParameter("dataFim", dataFim);
         verify(query).setParameter("idRecuperando", 99L);
         verify(query).executeUpdate();
+    }
+
+    @Test
+    public void listarNomesRecuperandosParaFiltro_semConsultaListaParaCombo() {
+        when(stringQuery.getResultList()).thenReturn(Collections.singletonList("Maria"));
+
+        List<String> nomes = dao.listarNomesRecuperandosParaFiltro(false, 7L);
+
+        ArgumentCaptor<String> jpql = ArgumentCaptor.forClass(String.class);
+        verify(entityManager).createQuery(jpql.capture(), eq(String.class));
+        assertThat(jpql.getValue()).doesNotContain("lower(pessoa.nome) like :consulta");
+        verify(stringQuery).setParameter("unidadeId", 7L);
+        verify(stringQuery, never()).setParameter(eq("consulta"), org.mockito.ArgumentMatchers.any());
+        verify(stringQuery, never()).setMaxResults(org.mockito.ArgumentMatchers.anyInt());
+        assertThat(nomes).containsExactly("Maria");
+    }
+
+    @Test
+    public void listarNomesRecuperandosParaFiltro_comConsultaAplicaLikeELimite() {
+        when(stringQuery.getResultList()).thenReturn(Collections.singletonList("Maria"));
+
+        List<String> nomes = dao.listarNomesRecuperandosParaFiltro(false, 7L, " Maria ", 20);
+
+        ArgumentCaptor<String> jpql = ArgumentCaptor.forClass(String.class);
+        verify(entityManager).createQuery(jpql.capture(), eq(String.class));
+        assertThat(jpql.getValue()).contains("lower(pessoa.nome) like :consulta");
+        verify(stringQuery).setParameter("unidadeId", 7L);
+        verify(stringQuery).setParameter("consulta", "%maria%");
+        verify(stringQuery).setMaxResults(20);
+        assertThat(nomes).containsExactly("Maria");
+    }
+
+    @Test
+    public void listarNomesRecuperandosParaFiltro_semPermissaoSemUnidadeNaoConsultaBanco() {
+        List<String> nomes = dao.listarNomesRecuperandosParaFiltro(false, null);
+
+        assertThat(nomes).isEmpty();
+        verify(entityManager, never()).createQuery(anyString(), eq(String.class));
     }
 }

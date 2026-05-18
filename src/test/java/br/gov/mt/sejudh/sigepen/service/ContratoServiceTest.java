@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ContratoServiceTest extends BaseUnitTest {
@@ -64,6 +65,61 @@ public class ContratoServiceTest extends BaseUnitTest {
 
         assertThat(mensagem)
                 .isEqualTo("Nao foi possivel adicionar a unidade PENITENCIARIA A, pois ela ja esta vinculada ao contrato ativo CT-0001.");
+    }
+
+    @Test
+    public void listarParaFiltro_deveDelegarPermissaoEUnidadeParaDao() {
+        List<Contrato> contratos = Collections.singletonList(new Contrato(1L));
+        when(dao.listarParaFiltro(false, 22L)).thenReturn(contratos);
+
+        List<Contrato> resultado = service.listarParaFiltro(false, 22L);
+
+        assertThat(resultado).isSameAs(contratos);
+        verify(dao).listarParaFiltro(false, 22L);
+    }
+
+    @Test
+    public void listarAtivosParaFiltro_deveDelegarPermissaoEUnidadeParaDao() {
+        List<Contrato> contratos = Collections.singletonList(new Contrato(1L));
+        when(dao.listarAtivosParaFiltro(true, null)).thenReturn(contratos);
+
+        List<Contrato> resultado = service.listarAtivosParaFiltro(true, null);
+
+        assertThat(resultado).isSameAs(contratos);
+        verify(dao).listarAtivosParaFiltro(true, null);
+    }
+
+    @Test
+    public void listarFornecedoresParaFiltro_deveDelegarParametrosParaDao() {
+        List<String> fornecedores = Collections.singletonList("Fornecedor A");
+        when(dao.listarFornecedoresParaFiltro(false, 22L, "For", 20)).thenReturn(fornecedores);
+
+        List<String> resultado = service.listarFornecedoresParaFiltro(false, 22L, "For", 20);
+
+        assertThat(resultado).isSameAs(fornecedores);
+        verify(dao).listarFornecedoresParaFiltro(false, 22L, "For", 20);
+    }
+
+    @Test
+    public void listarNumerosParaFiltro_deveDelegarParametrosParaDao() {
+        List<String> numeros = Collections.singletonList("CT-001");
+        when(dao.listarNumerosParaFiltro(false, 22L, "CT", 20)).thenReturn(numeros);
+
+        List<String> resultado = service.listarNumerosParaFiltro(false, 22L, "CT", 20);
+
+        assertThat(resultado).isSameAs(numeros);
+        verify(dao).listarNumerosParaFiltro(false, 22L, "CT", 20);
+    }
+
+    @Test
+    public void listarUnidadesPorNumeroContrato_deveDelegarParaDao() {
+        List<UnidadePrisional> unidades = Collections.singletonList(unidade(7L, "Unidade A"));
+        when(dao.listarUnidadesPorNumeroContrato("CT-001")).thenReturn(unidades);
+
+        List<UnidadePrisional> resultado = service.listarUnidadesPorNumeroContrato("CT-001");
+
+        assertThat(resultado).isSameAs(unidades);
+        verify(dao).listarUnidadesPorNumeroContrato("CT-001");
     }
 
     private Contrato contrato(Long id, String numero, UnidadePrisional... unidades) {

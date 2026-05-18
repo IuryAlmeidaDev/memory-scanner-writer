@@ -1,8 +1,12 @@
 package br.gov.mt.sejudh.sigepen.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -52,5 +56,16 @@ public class DietaEspecialServiceTest extends BaseUnitTest {
         service.inativarDietasAtivasOuSuspensasDoRecuperando(99L, dataFim);
 
         verify(dao).inativarDietasAtivasOuSuspensasDoRecuperando(99L, dataFim);
+    }
+
+    @Test
+    public void listarNomesRecuperandosParaFiltro_deveDelegarPermissaoEUnidadeParaDao() {
+        List<String> nomes = Arrays.asList("Ana", "Joao");
+        when(dao.listarNomesRecuperandosParaFiltro(false, 7L)).thenReturn(nomes);
+
+        List<String> resultado = service.listarNomesRecuperandosParaFiltro(false, 7L);
+
+        assertThat(resultado).isSameAs(nomes);
+        verify(dao).listarNomesRecuperandosParaFiltro(false, 7L);
     }
 }

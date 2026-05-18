@@ -3,6 +3,7 @@ package br.gov.mt.sejudh.sigepen.dao;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,6 +82,138 @@ public class ContratoDAO {
 	public List<Contrato> listarTodos() {
 		String jpql = "select c from Contrato c";
 		Query query = entityManager.createQuery(jpql, Contrato.class);
+
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Contrato> listarParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
+		if (!listarTodasUnidades && unidadeId == null) {
+			return Collections.emptyList();
+		}
+
+		StringBuilder jpql = new StringBuilder("select distinct c from Contrato c left join fetch c.fornecedor f ");
+
+		if (!listarTodasUnidades && unidadeId != null) {
+			jpql.append("join c.unidades u where u.id = :unidadeId ");
+		}
+
+		jpql.append("order by c.numContrato");
+
+		Query query = entityManager.createQuery(jpql.toString(), Contrato.class);
+
+		if (!listarTodasUnidades && unidadeId != null) {
+			query.setParameter("unidadeId", unidadeId);
+		}
+
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Contrato> listarAtivosParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
+		if (!listarTodasUnidades && unidadeId == null) {
+			return Collections.emptyList();
+		}
+
+		StringBuilder jpql = new StringBuilder("select distinct c from Contrato c left join fetch c.fornecedor f ");
+
+		if (!listarTodasUnidades && unidadeId != null) {
+			jpql.append("join c.unidades u ");
+		}
+
+		jpql.append("where c.status = 1 ");
+
+		if (!listarTodasUnidades && unidadeId != null) {
+			jpql.append("and u.id = :unidadeId ");
+		}
+
+		jpql.append("order by c.numContrato");
+
+		Query query = entityManager.createQuery(jpql.toString(), Contrato.class);
+
+		if (!listarTodasUnidades && unidadeId != null) {
+			query.setParameter("unidadeId", unidadeId);
+		}
+
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarFornecedoresParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
+		return listarCampoTextoParaFiltro("f.nomeFantasia", listarTodasUnidades, unidadeId, null, 0);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarFornecedoresParaFiltro(boolean listarTodasUnidades, Long unidadeId,
+			String consulta, int limite) {
+		return listarCampoTextoParaFiltro("f.nomeFantasia", listarTodasUnidades, unidadeId, consulta, limite);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarNumerosParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
+		return listarCampoTextoParaFiltro("c.numContrato", listarTodasUnidades, unidadeId, null, 0);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> listarNumerosParaFiltro(boolean listarTodasUnidades, Long unidadeId,
+			String consulta, int limite) {
+		return listarCampoTextoParaFiltro("c.numContrato", listarTodasUnidades, unidadeId, consulta, limite);
+	}
+
+	public List<UnidadePrisional> listarUnidadesPorNumeroContrato(String numeroContrato) {
+		if (numeroContrato == null || numeroContrato.trim().isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		String jpql = "select distinct u from Contrato c join c.unidades u "
+				+ "where c.numContrato = :numeroContrato "
+				+ "order by u.nome";
+		Query query = entityManager.createQuery(jpql, UnidadePrisional.class);
+		query.setParameter("numeroContrato", numeroContrato.trim());
+		return query.getResultList();
+	}
+
+	private List<String> listarCampoTextoParaFiltro(String campo, boolean listarTodasUnidades, Long unidadeId,
+			String consulta, int limite) {
+		if (!listarTodasUnidades && unidadeId == null) {
+			return Collections.emptyList();
+		}
+
+		String consultaNormalizada = consulta != null ? consulta.trim().toLowerCase() : null;
+		if (consulta != null && consultaNormalizada.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		StringBuilder jpql = new StringBuilder("select distinct ");
+		jpql.append(campo);
+		jpql.append(" from Contrato c left join c.fornecedor f ");
+		if (!listarTodasUnidades && unidadeId != null) {
+			jpql.append("join c.unidades u ");
+		}
+		jpql.append("where ");
+		jpql.append(campo);
+		jpql.append(" is not null ");
+		if (consultaNormalizada != null) {
+			jpql.append("and lower(");
+			jpql.append(campo);
+			jpql.append(") like :consulta ");
+		}
+		if (!listarTodasUnidades && unidadeId != null) {
+			jpql.append("and u.id = :unidadeId ");
+		}
+		jpql.append("order by ");
+		jpql.append(campo);
+
+		Query query = entityManager.createQuery(jpql.toString(), String.class);
+		if (consultaNormalizada != null) {
+			query.setParameter("consulta", "%" + consultaNormalizada + "%");
+		}
+		if (!listarTodasUnidades && unidadeId != null) {
+			query.setParameter("unidadeId", unidadeId);
+		}
+		if (limite > 0) {
+			query.setMaxResults(limite);
+		}
 
 		return query.getResultList();
 	}

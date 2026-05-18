@@ -5,6 +5,46 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.38.0] - 18/05/2026
+
+### Adicionado
+
+- **Alimentação - filtros de listagem:** sugestões e filtros pesquisáveis nas telas de
+  alimento, tipo de dieta, dieta especial, contrato, fornecedor, geração de pedido,
+  cardápio e histórico de pedido de alimento, com reset da paginação ao pesquisar.
+- **Contrato:** opções de filtro por número de contrato e fornecedor com sugestões,
+  atualização das unidades prisionais conforme o contrato selecionado e restrição das
+  opções conforme permissão/unidade do usuário.
+- **Fornecedor:** opções filtráveis por razão social e nome fantasia na listagem.
+- **Dieta especial:** autocomplete de recuperando com limite de resultados e respeito à
+  unidade/permissão do usuário.
+- **Testes unitários:** cobertura para filtros de alimento, tipo de dieta, dieta especial,
+  contrato, fornecedor, cardápio, histórico de pedido de alimento, geração de pedido,
+  permissões e normalização de CNPJ em buscas parciais.
+
+### Corrigido
+
+- **Pedido de alimento:** validação de existência de cardápio passa a considerar a unidade
+  prisional na geração manual, automática e na montagem da estrutura do pedido.
+- **Cardápio e histórico de pedido de alimento:** combos de contrato passam a respeitar a
+  unidade do usuário quando ele não possui permissão para listar todas as unidades.
+- **Recuperando:** filtro de recuperando usado por dieta especial passa a ser gravado em
+  sessão também para usuários sem permissão global, evitando consulta ampla indevida.
+- **Gerar pedido:** fluxo de listagem passa a falhar fechado quando não houver unidade
+  selecionada na sessão e o tratamento de erro de relatório deixa de depender de mensagem
+  com formato específico.
+- **Contrato e fornecedor:** filtros de CNPJ nas listagens deixam de exigir CNPJ completo,
+  aceitam busca parcial com ou sem pontuação e normalizam o valor antes de aplicar o filtro.
+
+### Alterado
+
+- **Dieta especial:** filtro de recuperando na listagem passa de combo carregado no início
+  para autocomplete incremental.
+- **Contrato, fornecedor e geração de pedido:** campos livres de consulta foram padronizados
+  para seletores filtráveis ou autocomplete conforme o volume e a natureza dos dados.
+- **Build:** versão do projeto promovida para `1.38.0` e removida declaração duplicada da
+  dependência `br.gov.mt.seguranca:sesp-audit-report`.
+
 ## [1.37.0] - 13/05/2026
 
 ### Adicionado
@@ -161,4 +201,5 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
      cria a permissão `ExcluirHistoricoRecuperando`.
 - **Migrações em homologação/produção:** abrir chamado no Conecta conforme padrão PDS.
 
+[1.38.0]: https://gitlab.sesp.mt.gov.br/sesp/sti/sistemas/source/sigepen/-/compare/v1.37.0...v1.38.0
 [1.37.0]: https://gitlab.sesp.mt.gov.br/sesp/sti/sistemas/source/sigepen/-/compare/v1.36.0...v1.37.0

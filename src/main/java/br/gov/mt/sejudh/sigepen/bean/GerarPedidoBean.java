@@ -62,6 +62,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
@@ -79,6 +80,8 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	private List<TipoRefeicao> tiposRefeicao;
 	private UnidadePrisional unidade = new UnidadePrisional();
 	private LazyDataModel<UnidadePrisionalDTO> unidades;
+	private List<String> nomesUnidadesFiltro = new ArrayList<>();
+	private List<String> siglasUnidadesFiltro = new ArrayList<>();
 	private DefaultTreeNode root = new DefaultTreeNode();
 	private Estrutura estrutura;
 	private Long unidadeSelecionada;
@@ -165,6 +168,14 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		return this.tiposRefeicao;
 	}
 
+	public List<String> getNomesUnidadesFiltro() {
+		return nomesUnidadesFiltro;
+	}
+
+	public List<String> getSiglasUnidadesFiltro() {
+		return siglasUnidadesFiltro;
+	}
+
 	public Long getUnidadeSelecionada() {
 		return unidadeSelecionada;
 	}
@@ -194,8 +205,12 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 			}
 		}
 		if (!security.possuiPermissao("ListarTodasUnidades")) {
+			UnidadePrisional unidadeSelecionadaSessao = SecurityUtil.getUnidadeSelecionada();
 			this.setFiltro(new FiltroUnidadePrisional());
-			this.filtro.setId(SecurityUtil.getUnidadeSelecionada().getId());
+			if (unidadeSelecionadaSessao == null || unidadeSelecionadaSessao.getId() <= 0) {
+				return;
+			}
+			this.filtro.setId(unidadeSelecionadaSessao.getId());
 
 			super.carregarFiltroPaginacao(FiltroUnidadePrisional.class, this, getFiltro());
 		} else {
@@ -223,6 +238,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 				break;
 
 			case LISTAR:
+				carregarOpcoesFiltroUnidades();
 				this.pesquisar();
 				logDeAcesso(log, "Fornecedor");
 				break;
@@ -246,6 +262,35 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 		this.unidade = unidadeService.buscaPorId(id);
 
 		return this.unidade != null;
+	}
+
+	private void carregarOpcoesFiltroUnidades() {
+		FiltroUnidadePrisional filtroOpcoes = new FiltroUnidadePrisional();
+		if (!security.possuiPermissao("ListarTodasUnidades")) {
+			UnidadePrisional unidadeSelecionadaSessao = SecurityUtil.getUnidadeSelecionada();
+			if (unidadeSelecionadaSessao == null || unidadeSelecionadaSessao.getId() <= 0) {
+				this.nomesUnidadesFiltro = new ArrayList<>();
+				this.siglasUnidadesFiltro = new ArrayList<>();
+				return;
+			}
+			filtroOpcoes.setId(unidadeSelecionadaSessao.getId());
+		}
+
+		List<UnidadePrisionalDTO> unidadesFiltro = unidadeService
+				.buscarPorFiltroUnidadesComContratosAtivos(filtroOpcoes, true);
+
+		this.nomesUnidadesFiltro = unidadesFiltro.stream()
+				.map(UnidadePrisionalDTO::getNome)
+				.filter(Objects::nonNull)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toList());
+		this.siglasUnidadesFiltro = unidadesFiltro.stream()
+				.map(UnidadePrisionalDTO::getSigla)
+				.filter(Objects::nonNull)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toList());
 	}
 
 	private String montarFiltroData() {
@@ -302,7 +347,7 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 							this.filtroPedido.getDataInicio());
 
 					boolean existeCardapio = cardapioDAO.existeCardapioPara(dataFormatada, tipoRefeicao,
-							contrato.getId());
+							contrato.getId(), this.unidade.getId());
 
 					if (existeCardapio) {
 						root = new DefaultTreeNode(new GerarPedidoEstruturaDTO(), null);
@@ -600,8 +645,16 @@ public class GerarPedidoBean extends MetodosDePaginaBean {
 	}
 
 	private void tratarErroGeracaoRelatorio(Exception e) {
-		String message = e.getCause() != null ? e.getCause().getMessage()
-				: e.getMessage().substring(e.getMessage().indexOf(":") + 1);
+		String message = "Erro ao gerar relatorio.";
+		if (e.getCause() != null && e.getCause().getMessage() != null && !e.getCause().getMessage().trim().isEmpty()) {
+			message = e.getCause().getMessage();
+		} else if (e.getMessage() != null && !e.getMessage().trim().isEmpty()) {
+			message = e.getMessage();
+			int separador = message.indexOf(":");
+			if (separador >= 0 && separador + 1 < message.length()) {
+				message = message.substring(separador + 1).trim();
+			}
+		}
 		facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", message);
 		LoggerUtil.logErro(Acao.IMPRIMIR, "Gerar Pedido", e, log);
 	}

@@ -2,6 +2,8 @@ package br.gov.mt.sejudh.sigepen.bean;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -59,6 +61,12 @@ public class FornecedorBean extends MetodosDePaginaBean {
 
 	private LazyDataModel<FornecedorDTO> fornecedores;
 
+	private List<String> razoesSociaisFiltro;
+	private List<String> nomesFantasiaFiltro;
+
+	private static final int MINIMO_CARACTERES_SUGESTAO_FORNECEDOR = 2;
+	private static final int LIMITE_SUGESTAO_FORNECEDOR = 20;
+
 	@Inject
 	private FornecedorService fornecedorService;
 
@@ -103,6 +111,14 @@ public class FornecedorBean extends MetodosDePaginaBean {
 		this.fornecedores = fornecedores;
 	}
 
+	public List<String> getRazoesSociaisFiltro() {
+		return razoesSociaisFiltro;
+	}
+
+	public List<String> getNomesFantasiaFiltro() {
+		return nomesFantasiaFiltro;
+	}
+
 	public FiltroFornecedor getFiltro() {
 		return filtro;
 	}
@@ -143,6 +159,7 @@ public class FornecedorBean extends MetodosDePaginaBean {
 				break;
 
 			case LISTAR:
+				carregarOpcoesFiltroFornecedor();
 				pesquisar();
 				logDeAcesso(log, "Fornecedor");
 				break;
@@ -156,6 +173,35 @@ public class FornecedorBean extends MetodosDePaginaBean {
 		}
 
 		return null;
+	}
+
+	private void carregarOpcoesFiltroFornecedor() {
+		this.razoesSociaisFiltro = fornecedorService.listarRazoesSociaisParaFiltro()
+				.stream()
+				.filter(Objects::nonNull)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toList());
+		this.nomesFantasiaFiltro = fornecedorService.listarNomesFantasiaParaFiltro()
+				.stream()
+				.filter(Objects::nonNull)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toList());
+	}
+
+	public List<String> completarRazoesSociaisFiltro(String consulta) {
+		if (consulta == null || consulta.trim().length() < MINIMO_CARACTERES_SUGESTAO_FORNECEDOR) {
+			return java.util.Collections.emptyList();
+		}
+		return fornecedorService.listarRazoesSociaisParaFiltro(consulta.trim(), LIMITE_SUGESTAO_FORNECEDOR);
+	}
+
+	public List<String> completarNomesFantasiaFiltro(String consulta) {
+		if (consulta == null || consulta.trim().length() < MINIMO_CARACTERES_SUGESTAO_FORNECEDOR) {
+			return java.util.Collections.emptyList();
+		}
+		return fornecedorService.listarNomesFantasiaParaFiltro(consulta.trim(), LIMITE_SUGESTAO_FORNECEDOR);
 	}
 
 	private boolean buscarFornecedor(long id) {
