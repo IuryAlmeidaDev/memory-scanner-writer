@@ -42,6 +42,8 @@ import br.gov.mt.sejudh.sigepen.model.Recuperando;
 import br.gov.mt.sejudh.sigepen.model.TipoVisita;
 import br.gov.mt.sejudh.sigepen.model.TipoVisitaCertidao;
 import br.gov.mt.sejudh.sigepen.model.TipoVisitaDocumento;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
+import br.gov.mt.sejudh.sigepen.model.Usuario;
 import br.gov.mt.sejudh.sigepen.model.Visitante;
 import br.gov.mt.sejudh.sigepen.model.VisitanteCertidao;
 import br.gov.mt.sejudh.sigepen.model.VisitanteDocumento;
@@ -107,6 +109,7 @@ public class VisitanteService extends BaseService<Visitante, Long> {
     		else
     			visitante.getCredenciamentos().add(x);
     	}
+    	this.validarCredenciamentosParaInclusao(visitante);
     	if(visitante.getPessoa() != null && visitante.getPessoa().getVisitante() == null)
     		visitante.getPessoa().setVisitante(new Visitante());
     	visitante.getPessoa().setVisitante(visitante);
@@ -170,7 +173,7 @@ public class VisitanteService extends BaseService<Visitante, Long> {
                         vc.setFaseCredenciamento(FaseCredenciamento.APROVACAO);
                         vc.setStatusCredenciamento(StatusCredenciamento.PENDENTE);
                         vc.setDataRecebimento(new Date());
-                        vc.setUsuarioAprovacao(SecurityUtil.getUsuario());
+                        vc.setUsuarioAprovacao(getUsuarioAtual());
                         lista.add(vc);
                         vr.setFaseCredenciamento(FaseCredenciamento.APROVACAO.getId());
                         vr.setStatusCredenciamento(StatusCredenciamento.PENDENTE.getId());
@@ -204,13 +207,75 @@ public class VisitanteService extends BaseService<Visitante, Long> {
             visitante.setResponsavel(null);
 
         if (visitante.getUnidadePrisional() == null)
-            visitante.setUnidadePrisional(SecurityUtil.getUnidadeSelecionada());
+            visitante.setUnidadePrisional(getUnidadeSelecionadaAtual());
 
         if (visitante.getDataHoraCadastro() == null)
             visitante.setDataHoraCadastro(new Date());
 
         if (visitante.getUsuarioCadastro() == null)
-            visitante.setUsuarioCadastro(SecurityUtil.getUsuario());
+            visitante.setUsuarioCadastro(getUsuarioAtual());
+    }
+
+    private void validarCredenciamentosParaInclusao(Visitante visitante) throws ValidacaoException {
+    	if (visitante == null) {
+    		throw new ValidacaoException("Informe o visitante.");
+    	}
+
+    	for (Credenciamento credenciamento : visitante.getCredenciamentos()) {
+    		if (credenciamento == null) {
+    			throw new ValidacaoException("Informe o credenciamento do visitante.");
+    		}
+
+    		TipoVisita tipoVisita = credenciamento.getTipoVisita();
+    		if (tipoVisita == null) {
+    			tipoVisita = visitante.getTipoVisita();
+    			credenciamento.setTipoVisita(tipoVisita);
+    		}
+    		if (tipoVisita == null) {
+    			throw new ValidacaoException("Informe o tipo de visita do credenciamento.");
+    		}
+
+    		if (SimNao.S.equals(tipoVisita.getObrigatorioRecuperando()) && credenciamento.getRecuperando() == null) {
+    			throw new ValidacaoException("Selecione o recuperando para o tipo de visita informado.");
+    		}
+
+    		preencherUnidadePeloRecuperando(credenciamento);
+    		if (credenciamento.getUnidadePrisional() == null) {
+    			throw new ValidacaoException("Informe a unidade prisional.");
+    		}
+
+    		if (SimNao.N.equals(tipoVisita.getObrigatorioRecuperando()) && isBlank(credenciamento.getProfissao())) {
+    			throw new ValidacaoException("Informe a profissão.");
+    		}
+
+    		if (SimNao.S.equals(tipoVisita.getEstaNoRolDeParentes()) && credenciamento.getParente() == null) {
+    			throw new ValidacaoException("Selecione o parentesco do visitante com o recuperando.");
+    		}
+    	}
+    }
+
+    private void preencherUnidadePeloRecuperando(Credenciamento credenciamento) {
+    	if (credenciamento == null || credenciamento.getUnidadePrisional() != null
+    			|| credenciamento.getRecuperando() == null) {
+    		return;
+    	}
+
+    	Long unidadeId = credenciamento.getRecuperando().getUnidadeId();
+    	if (unidadeId != null && unidadeId > 0) {
+    		credenciamento.setUnidadePrisional(new UnidadePrisional(unidadeId));
+    	}
+    }
+
+    private boolean isBlank(String valor) {
+    	return valor == null || valor.trim().isEmpty();
+    }
+
+    protected UnidadePrisional getUnidadeSelecionadaAtual() {
+    	return SecurityUtil.getUnidadeSelecionada();
+    }
+
+    protected Usuario getUsuarioAtual() {
+    	return SecurityUtil.getUsuario();
     }
 
     public Visitante atribuirStatusVisitantePosCredenciamento(Visitante visitante) {

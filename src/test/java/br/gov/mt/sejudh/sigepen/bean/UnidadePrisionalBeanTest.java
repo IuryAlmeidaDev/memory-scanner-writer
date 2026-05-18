@@ -66,7 +66,7 @@ public class UnidadePrisionalBeanTest extends BaseUnitTest {
         UnidadePrisional unidade = unidade(1L, -1);
         bean.setUnidade(unidade);
         setField("parametrosVisitante", Collections.<ParametroUnidade>emptyList());
-        doThrow(new ValidacaoException("Quantidade de visita por recuperando nÃ£o pode ser negativa"))
+        doThrow(new ValidacaoException("Quantidade de visita por recuperando não pode ser negativa"))
                 .when(unidadeService).salvar(unidade);
 
         String retorno = bean.salvar();
@@ -76,7 +76,7 @@ public class UnidadePrisionalBeanTest extends BaseUnitTest {
         verify(facesUtil).exibirMensagem(
                 FacesMessage.SEVERITY_WARN,
                 "ERRO",
-                "Quantidade de visita por recuperando nÃ£o pode ser negativa");
+                "Quantidade de visita por recuperando não pode ser negativa");
     }
 
     private UnidadePrisional unidade(Long id, Integer quantidadeVisitaPorRecuperando) {

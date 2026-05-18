@@ -578,8 +578,21 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	}
 
 	public void excluirCredenciamento(Credenciamento credenciamento) {
+		if (credenciamento == null) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
+					"Não foi possí­vel localizar o credenciamento selecionado.");
+			return;
+		}
+
+		if (possuiFaseConcluidaOuAprovada(credenciamento)) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
+					"Não foi permitido excluir credenciamentos já concluídos.");
+			return;
+		}
+
+		boolean credenciamentoInvalido = credenciamentoEstruturalmenteInvalido(credenciamento);
 		for (FaseDoCredenciamento vc : credenciamento.getFasesDoCredenciamento()) {
-			if (vc.getStatusCredenciamento() != StatusCredenciamento.PENDENTE) {
+			if (vc.getStatusCredenciamento() != StatusCredenciamento.PENDENTE && !credenciamentoInvalido) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
 						"Não é permitido excluir credenciamentos já iniciados.");
 				return;
@@ -599,6 +612,135 @@ public class VisitanteBean extends MetodosDePaginaBean {
 					"Erro ao excluir Credenciamento" + e.getMessage());
 			LoggerUtil.logErro(Acao.EXCLUIR, credenciamento, e, log);
 		}
+	}
+
+	public String credenciarOuInformarErro(Credenciamento credenciamento) {
+		if (!validarCredenciamentoParaContinuar(credenciamento)) {
+			return "";
+		}
+
+		try {
+			redirecionarParaCredenciamento(credenciamento);
+		} catch (IOException e) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "Erro",
+					"Erro ao redirecionar para o credenciamento: " + e.getMessage());
+			LoggerUtil.logErro(Acao.ACESSAR, credenciamento, e, log);
+		}
+
+		return "";
+	}
+
+	protected void redirecionarParaCredenciamento(Credenciamento credenciamento) throws IOException {
+		FacesContext.getCurrentInstance().getExternalContext().redirect(montarUrlCredenciamento(credenciamento));
+	}
+
+	protected String montarUrlCredenciamento(Credenciamento credenciamento) {
+		String url = Sigepen.getApplicationName() + "/credenciar/" + credenciamento.getId();
+		if (this.getAcaoAtual() != null) {
+			url += "?acaoAtual=" + this.getAcaoAtual();
+		}
+
+		return url;
+	}
+
+	private boolean validarCredenciamentoParaContinuar(Credenciamento credenciamento) {
+		if (credenciamento == null) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
+					"Não foi possível localizar o credenciamento selecionado.");
+			return false;
+		}
+
+		List<String> pendencias = obterPendenciasCredenciamento(credenciamento);
+		if (!pendencias.isEmpty()) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
+					"Não foi possível continuar este credenciamento porque ele está incompleto. Campos pendentes: "
+							+ formatarPendencias(pendencias) + ".");
+			return false;
+		}
+
+		return true;
+	}
+
+	private List<String> obterPendenciasCredenciamento(Credenciamento credenciamento) {
+		List<String> pendencias = new ArrayList<>();
+		if (credenciamento == null) {
+			return pendencias;
+		}
+
+		TipoVisita tipoVisitaCredenciamento = credenciamento.getTipoVisita();
+		if (credenciamento.getId() == null) {
+			pendencias.add("identificador do credenciamento");
+		}
+
+		if (tipoVisitaCredenciamento == null) {
+			pendencias.add("tipo de visita");
+		}
+
+		if (credenciamento.getUnidadePrisional() == null) {
+			pendencias.add("unidade prisional");
+		}
+
+		if (tipoVisitaCredenciamento == null) {
+			return pendencias;
+		}
+
+		if (SimNao.S.equals(tipoVisitaCredenciamento.getObrigatorioRecuperando())
+				&& credenciamento.getRecuperando() == null) {
+			pendencias.add("recuperando");
+		}
+
+		if (SimNao.S.equals(tipoVisitaCredenciamento.getEstaNoRolDeParentes())
+				&& credenciamento.getParente() == null) {
+			pendencias.add("parentesco");
+		}
+
+		if (SimNao.N.equals(tipoVisitaCredenciamento.getObrigatorioRecuperando())
+				&& (credenciamento.getProfissao() == null || credenciamento.getProfissao().trim().isEmpty())) {
+			pendencias.add("profissão");
+		}
+
+		return pendencias;
+	}
+
+	private boolean credenciamentoEstruturalmenteInvalido(Credenciamento credenciamento) {
+		return credenciamento != null && !obterPendenciasCredenciamento(credenciamento).isEmpty();
+	}
+
+	private boolean possuiFaseConcluidaOuAprovada(Credenciamento credenciamento) {
+		if (credenciamento == null) {
+			return false;
+		}
+
+		if (statusCredenciamentoFinalizado(StatusCredenciamento.getValue(credenciamento.getStatusCredenciamento()))) {
+			return true;
+		}
+
+		for (FaseDoCredenciamento fase : credenciamento.getFasesDoCredenciamento()) {
+			if (fase == null) {
+				continue;
+			}
+
+			if (statusCredenciamentoFinalizado(fase.getStatusCredenciamento())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean statusCredenciamentoFinalizado(StatusCredenciamento status) {
+		return StatusCredenciamento.APROVADO.equals(status)
+				|| StatusCredenciamento.INATIVO.equals(status)
+				|| StatusCredenciamento.NAO_APROVADO.equals(status);
+	}
+
+	private String formatarPendencias(List<String> pendencias) {
+		if (pendencias.size() <= 1) {
+			return pendencias.isEmpty() ? "" : pendencias.get(0);
+		}
+
+		return String.join(", ", pendencias.subList(0, pendencias.size() - 1))
+				+ " e " + pendencias.get(pendencias.size() - 1);
 	}
 
 	public void imprimir(VwVisitante vwVisitante) {
@@ -780,8 +922,7 @@ public class VisitanteBean extends MetodosDePaginaBean {
 			return;
 		}
 
-			//boolean verificacaoAntiga = !verificaVisitanteResponsavelPossuiCredenciamento(this.visitante, this.recuperandoSelecionado);
-            //boolean verificacaoNova = !verificaResponsavelPossiCredenciamentoParaRecuperando(this.visitante.getVisitantesReponsaveis(), this.recuperandoSelecionado);
+			
 		if (this.visitante.getVisitantesReponsaveis()!= null
 				&& !this.visitante.getVisitantesReponsaveis().isEmpty()
 				&& !verificaResponsavelPossiCredenciamentoParaRecuperando(this.visitante.getVisitantesReponsaveis(), this.recuperandoSelecionado)) {
@@ -911,9 +1052,19 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	}
 
 	public void proximoCadastroTipoVisita() {
+		if (this.tipoVisita == null || this.tipoVisita.getId() == null) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", "Selecionar o Tipo de Visita.");
+			return;
+		}
+
 		this.tipoVisita = tipoVisitaService.buscarPorId(tipoVisita.getId());
 		this.visitante.setTipoVisita(this.tipoVisita);
 		this.setIsMenorQueSete(this.visitante.getPessoa().getDataNascimento());
+
+		if (!validarCredenciamentoTipoVisita()) {
+			return;
+		}
+
 		for (Credenciamento x : this.visitante.getCredenciamentos()) {
 			if (x.getId() != null
 					&& x.getTipoVisita().getTipoEntrada().getId().equals(this.tipoVisita.getTipoEntrada().getId())
@@ -954,7 +1105,8 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		} else
 			this.cadastroDadosVisitante = true;
 
-		if (this.credenciamentoAtual == null && this.credenciamentos.isEmpty()) {
+		if (this.credenciamentoAtual == null && this.credenciamentos.isEmpty()
+				&& !SimNao.S.equals(this.tipoVisita.getObrigatorioRecuperando())) {
 			this.credenciamentoAtual = new Credenciamento();
 			this.credenciamentoAtual.setUnidadePrisional(this.unidadePrisional);
 			this.credenciamentoAtual.setTipoVisita(this.tipoVisita);
@@ -964,6 +1116,70 @@ public class VisitanteBean extends MetodosDePaginaBean {
 		}
 
 		this.carregarDadosSolicitacaoVisita();
+	}
+
+	private boolean validarCredenciamentoTipoVisita() {
+		if (this.tipoVisita == null) {
+			facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", "Selecionar o Tipo de Visita.");
+			return false;
+		}
+
+		if (SimNao.S.equals(this.tipoVisita.getObrigatorioRecuperando())) {
+			if (this.credenciamentos == null || this.credenciamentos.isEmpty()) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
+						"Selecione o recuperando para o tipo de visita informado.");
+				return false;
+			}
+
+			for (Credenciamento credenciamento : this.credenciamentos) {
+				if (credenciamento == null || credenciamento.getRecuperando() == null) {
+					facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
+							"Selecione o recuperando para o tipo de visita informado.");
+					return false;
+				}
+
+				preencherUnidadePeloRecuperando(credenciamento);
+				if (credenciamento.getUnidadePrisional() == null) {
+					facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
+							"Informe a unidade prisional.");
+					return false;
+				}
+
+				if (TipoEntrada.FAMILIA.equals(this.tipoVisita.getTipoEntrada()) && credenciamento.getParente() == null) {
+					facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção",
+							"Selecione o parentesco do visitante com o recuperando.");
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		if (this.credenciamentoAtual == null && (this.credenciamentos == null || this.credenciamentos.isEmpty())) {
+			if (this.unidadePrisional == null) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", "Informe a unidade prisional.");
+				return false;
+			}
+
+			if (this.profissao == null || this.profissao.trim().isEmpty()) {
+				facesUtil.exibirMensagem(FacesMessage.SEVERITY_WARN, "Atenção", "Informe a profissão.");
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private void preencherUnidadePeloRecuperando(Credenciamento credenciamento) {
+		if (credenciamento == null || credenciamento.getUnidadePrisional() != null
+				|| credenciamento.getRecuperando() == null) {
+			return;
+		}
+
+		Long unidadeId = credenciamento.getRecuperando().getUnidadeId();
+		if (unidadeId != null && unidadeId > 0) {
+			credenciamento.setUnidadePrisional(new UnidadePrisional(unidadeId));
+		}
 	}
 
 	@Deprecated
@@ -2290,20 +2506,48 @@ public class VisitanteBean extends MetodosDePaginaBean {
 	}
 
 	public boolean habilitarCredenciar(Credenciamento vr) {
-		if (vr != null) {
-			return SecurityUtil.getUnidadeSelecionada().getId() != vr.getUnidadePrisional().getId()
-					|| (FaseCredenciamento.APROVACAO.getId().equals(vr.getFaseCredenciamento())
-							&& StatusCredenciamento.APROVADO.getId().equals(vr.getStatusCredenciamento()))
-					|| (StatusCredenciamento.INATIVO.getId().equals(vr.getStatusCredenciamento()));
+		UnidadePrisional unidadeSelecionada = getUnidadeSelecionadaAtual();
+		if (vr == null) {
+			return true;
 		}
-		return false;
+
+		boolean credenciamentoFinalizado = (FaseCredenciamento.APROVACAO.getId().equals(vr.getFaseCredenciamento())
+				&& StatusCredenciamento.APROVADO.getId().equals(vr.getStatusCredenciamento()))
+				|| StatusCredenciamento.INATIVO.getId().equals(vr.getStatusCredenciamento());
+		if (credenciamentoFinalizado) {
+			return true;
+		}
+
+		if (vr.getUnidadePrisional() == null) {
+			return false;
+		}
+
+		if (unidadeSelecionada == null) {
+			return true;
+		}
+
+		return unidadeSelecionada.getId() != vr.getUnidadePrisional().getId();
 	}
 
 	public boolean habilitarExcluirCredenciamento(Credenciamento vr) {
-		if (vr != null) {
-			return SecurityUtil.getUnidadeSelecionada().getId() != vr.getUnidadePrisional().getId();
+		UnidadePrisional unidadeSelecionada = getUnidadeSelecionadaAtual();
+		if (vr == null) {
+			return true;
 		}
-		return false;
+
+		if (vr.getUnidadePrisional() == null) {
+			return false;
+		}
+
+		if (unidadeSelecionada == null) {
+			return true;
+		}
+
+		return unidadeSelecionada.getId() != vr.getUnidadePrisional().getId();
+	}
+
+	protected UnidadePrisional getUnidadeSelecionadaAtual() {
+		return SecurityUtil.getUnidadeSelecionada();
 	}
 
 	
