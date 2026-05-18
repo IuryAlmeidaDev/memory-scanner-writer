@@ -30,6 +30,9 @@
 		<cc:attribute name="requiredMessage" required="false"/>
 		<cc:attribute name="filterMatchMode" required="false"/>
 		<cc:attribute name="filterFunction" required="false"/>
+		<cc:attribute name="defaultFilterMode" required="false" type="java.lang.Boolean" />
+		<cc:attribute name="normalizeAccents" required="false" type="java.lang.Boolean" />
+		<cc:attribute name="filterPlaceholder" required="false" />
 		<cc:attribute name="styleFormLabelColumn" required="false"/>
 		<cc:attribute name="style" required="false"/>
 </cc:interface>
@@ -50,7 +53,8 @@
 
 				<p:selectOneMenu
                         style="#{cc.attrs.style}" id="input" label="#{cc.attrs.labelValue}" value="#{cc.attrs.value}"
-                        disabled ="#{cc.attrs.disabled}" effect="fade" filter="#{cc.attrs.filter}"
+						disabled ="#{cc.attrs.disabled}" effect="fade"
+						filter="#{cc.attrs.filter ne null ? cc.attrs.filter : (cc.attrs.defaultFilterMode ne null and cc.attrs.defaultFilterMode)}"
                         required="#{cc.attrs.validationRequired}" appendTo="#{cc.attrs.appendTo}">
 					<c:if test="#{cc.attrs.temSelecione ne null and cc.attrs.temSelecione}">
 						<f:selectItem itemLabel="Selecione" noSelectionOption="true"/>
@@ -74,8 +78,14 @@
 					<c:if test="#{cc.attrs.filterMatchMode ne null}">
 						<f:attribute name="filterMatchMode" value="#{cc.attrs.filterMatchMode}" />
 					</c:if>
+					<c:if test="#{cc.attrs.filterMatchMode eq null and cc.attrs.defaultFilterMode}">
+						<f:attribute name="filterMatchMode" value="custom" />
+					</c:if>
 					<c:if test="#{cc.attrs.filterFunction ne null and cc.attrs.filterMatchMode == 'custom'}">
 						<f:attribute name="filterFunction" value="#{cc.attrs.filterFunction}" />
+					</c:if>
+					<c:if test="#{cc.attrs.filterFunction eq null and cc.attrs.defaultFilterMode and (cc.attrs.normalizeAccents eq null or cc.attrs.normalizeAccents)}">
+						<f:attribute name="filterFunction" value="removeAcento" />
 					</c:if>
 				</p:selectOneMenu>
 		</div>

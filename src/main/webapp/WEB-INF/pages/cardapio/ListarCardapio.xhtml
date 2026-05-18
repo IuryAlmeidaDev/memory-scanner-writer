@@ -28,8 +28,7 @@
 				<sgp:formSelectOneMenu id="contrato" labelValue="Contrato"
 					value="#{cardapioBean.filtro.contrato}"
 					itemsValue="#{cardapioBean.contratos}" itemValue="#{item}"
-					itemLabel="#{item.numContrato}" temSelecione="true" filter="true"
-					filterMatchMode="custom" filterFunction="removeAcento"
+					itemLabel="#{item.numContrato}" temSelecione="true" defaultFilterMode="true"
 					converter="SimpleEntityConverter"
 					styleFormLabelColumn="min-width:150px !important">
 					<p:ajax process="@this"
@@ -43,8 +42,7 @@
 						itemLabel="#{item.nome}"
 						itemsValue="#{cardapioBean.unidadesPrisionais}"
 						value="#{cardapioBean.filtro.unidadePrisional}"
-						converter="SimpleEntityConverter" temSelecione="true" filter="true"
-						filterMatchMode="custom" filterFunction="removeAcento"
+						converter="SimpleEntityConverter" temSelecione="true" defaultFilterMode="true"
 						styleFormLabelColumn="min-width:150px !important"
 						rendered="#{cardapioBean.exibirFiltroUnidadePrisional}" />
 				</p:outputPanel>
@@ -66,7 +64,7 @@
 					itemsValue="#{cardapioBean.tiposDieta}" itemValue="#{item}"
 					itemLabel="#{item.descricao}"
 					value="#{cardapioBean.filtro.tipoDieta}" temSelecione="true"
-					filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+					defaultFilterMode="true"
 					styleFormLabelColumn="min-width:150px !important"
 					converter="SimpleEntityConverter" display="text" />
 

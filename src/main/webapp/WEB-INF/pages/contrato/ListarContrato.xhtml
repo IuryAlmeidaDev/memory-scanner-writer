@@ -30,7 +30,7 @@
 					value="#{contratoBean.filtro.numContrato}"
 					itemsValue="#{contratoBean.numerosContratosFiltro}"
 					itemValue="#{item}" itemLabel="#{item}" temSelecione="true"
-					filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+					defaultFilterMode="true"
 					styleFormLabelColumn="min-width:150px !important"
 					style="width:350px">
 					<p:ajax listener="#{contratoBean.atualizarUnidadesPorContrato}"
@@ -42,8 +42,7 @@
 					itemLabel="#{item.nome}"
 					itemsValue="#{contratoBean.unidadesPrisionais}"
 					value="#{contratoBean.filtro.unidadePrisional}"
-					converter="SimpleEntityConverter" temSelecione="true" filter="true"
-					filterMatchMode="custom" filterFunction="removeAcento"
+					converter="SimpleEntityConverter" temSelecione="true" defaultFilterMode="true"
 					styleFormLabelColumn="min-width:150px !important"
 					rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
 
@@ -51,7 +50,7 @@
 					value="#{contratoBean.filtro.fornecedor}"
 					itemsValue="#{contratoBean.fornecedoresFiltro}"
 					itemValue="#{item}" itemLabel="#{item}" temSelecione="true"
-					filter="true" filterMatchMode="custom" filterFunction="removeAcento"
+					defaultFilterMode="true"
 					styleFormLabelColumn="min-width:150px !important"
 					style="width:350px" />
 

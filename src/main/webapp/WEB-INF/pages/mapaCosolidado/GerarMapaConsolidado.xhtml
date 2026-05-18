@@ -21,8 +21,7 @@
 					itemLabel="#{item.nome}"
 					itemsValue="#{mapaConsolidadoBean.unidadesPrisionais}"
 					value="#{mapaConsolidadoBean.unidade}"
-					converter="SimpleEntityConverter" temSelecione="true" filter="true"
-					filterMatchMode="custom" filterFunction="removeAcento"
+					converter="SimpleEntityConverter" temSelecione="true" defaultFilterMode="true"
 					validationRequired="true" />
 
 				<sgp:formSelectOneMenu id="Mes" labelValue="Mês" itemValue="#{item}"

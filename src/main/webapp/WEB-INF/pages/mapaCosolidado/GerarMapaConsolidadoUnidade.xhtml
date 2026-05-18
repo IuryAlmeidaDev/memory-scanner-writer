@@ -16,17 +16,17 @@
                 <p:outputLabel value="Consulta"/>
                 
                 <sgp:formSelectOneMenu 
-                		id="unidadePrisional"
-                		labelValue="Unidade Prisional"
-                		itemValue="#{item}" 
-                		itemLabel="#{item.nome}"
-                		itemsValue="#{mapaConsolidadoBean.unidadesPrisionais}"
-                		value="#{horarioRefeicaoBean.filtro.unidadePrisional}" 
-                		converter="SimpleEntityConverter"
-                		temSelecione="true"
-                		filter="true" filterMatchMode="custom" filterFunction="removeAcento"
-                		styleFormLabelColumn="min-width:150px !important"
-                		rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}"
+                 		id="unidadePrisional"
+                 		labelValue="Unidade Prisional"
+                 		itemValue="#{item}" 
+                 		itemLabel="#{item.nome}"
+                 		itemsValue="#{mapaConsolidadoBean.unidadesPrisionais}"
+                 		value="#{horarioRefeicaoBean.filtro.unidadePrisional}" 
+                 		converter="SimpleEntityConverter"
+                 		temSelecione="true"
+						defaultFilterMode="true"
+                 		styleFormLabelColumn="min-width:150px !important"
+                 		rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}"
 				/>
                 
                 <br/> <br/>
