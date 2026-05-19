@@ -12,6 +12,7 @@ import javax.persistence.Query;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.primefaces.model.SortOrder;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
@@ -78,6 +79,24 @@ public class DietaEspecialDAO {
 	@SuppressWarnings("unchecked")
 	public List<DietaEspecialDTO> buscaPorFiltro(FiltroDietaEspecial filtro) {
 		Criteria criteria = filtro.criarCriteriaParaBusca(DietaRecuperando.class, entityManager);
+		criteria.setResultTransformer(new AliasToBeanResultTransformer(DietaEspecialDTO.class));
+		return criteria.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<DietaEspecialDTO> buscaPorFiltroRelatorio(FiltroDietaEspecial filtro) {
+		int primeiroRegistro = filtro.getPaginacaoIndex() > 0 ? filtro.getPaginacaoIndex() : filtro.getPrimeiroRegistro();
+		String propriedadeOrdenacao = filtro.getPropriedadeOrdenacao() != null
+				? filtro.getPropriedadeOrdenacao()
+				: "id";
+		SortOrder ordenacao = SortOrder.DESCENDING.equals(filtro.getSortOrder())
+				? SortOrder.DESCENDING
+				: SortOrder.ASCENDING;
+		filtro.organizaFiltro(primeiroRegistro, Integer.MAX_VALUE, propriedadeOrdenacao, ordenacao);
+		Criteria criteria = filtro.criarCriteriaParaBusca(DietaRecuperando.class, entityManager, true);
+		if (filtro.getPrimeiroRegistro() > 0) {
+			criteria.setFirstResult(filtro.getPrimeiroRegistro());
+		}
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(DietaEspecialDTO.class));
 		return criteria.list();
 	}

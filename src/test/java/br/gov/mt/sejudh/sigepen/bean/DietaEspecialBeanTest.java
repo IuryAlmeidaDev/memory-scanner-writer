@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import br.gov.mt.sejudh.sigepen.BaseUnitTest;
 import br.gov.mt.sejudh.sigepen.model.DietaRecuperando;
 import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
+import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialDTO;
 import br.gov.mt.sejudh.sigepen.service.DietaEspecialService;
 import br.gov.mt.sejudh.sigepen.util.FacesUtil;
 import br.gov.mt.sejudh.sigepen.util.SecurityUtil;
@@ -103,6 +104,28 @@ public class DietaEspecialBeanTest extends BaseUnitTest {
                 org.mockito.Mockito.any(),
                 org.mockito.Mockito.anyString(),
                 org.mockito.Mockito.anyInt());
+    }
+
+    @Test
+    public void possuiNomeSocial_deveRetornarTrueQuandoAlgumRegistroPossuiNomeSocial() {
+        DietaEspecialDTO semNomeSocial = new DietaEspecialDTO();
+        semNomeSocial.setNomeSocialRecuperando(" ");
+        DietaEspecialDTO comNomeSocial = new DietaEspecialDTO();
+        comNomeSocial.setNomeSocialRecuperando("Maria Social");
+
+        boolean resultado = bean.possuiNomeSocial(Arrays.asList(semNomeSocial, comNomeSocial));
+
+        assertThat(resultado).isTrue();
+    }
+
+    @Test
+    public void possuiNomeSocial_deveRetornarFalseQuandoListaNaoPossuiNomeSocial() {
+        DietaEspecialDTO semNomeSocial = new DietaEspecialDTO();
+        semNomeSocial.setNomeSocialRecuperando(" ");
+
+        boolean resultado = bean.possuiNomeSocial(Arrays.asList(semNomeSocial, new DietaEspecialDTO()));
+
+        assertThat(resultado).isFalse();
     }
 
     private void configurarUnidadeSelecionada(Long unidadeId) {

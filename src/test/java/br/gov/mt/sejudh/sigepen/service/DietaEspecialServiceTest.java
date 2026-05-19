@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import br.gov.mt.sejudh.sigepen.BaseUnitTest;
 import br.gov.mt.sejudh.sigepen.dao.AuditoriaDAO;
 import br.gov.mt.sejudh.sigepen.dao.DietaEspecialDAO;
+import br.gov.mt.sejudh.sigepen.dao.filter.FiltroDietaEspecial;
+import br.gov.mt.sejudh.sigepen.model.dto.DietaEspecialDTO;
 
 public class DietaEspecialServiceTest extends BaseUnitTest {
 
@@ -67,5 +69,17 @@ public class DietaEspecialServiceTest extends BaseUnitTest {
 
         assertThat(resultado).isSameAs(nomes);
         verify(dao).listarNomesRecuperandosParaFiltro(false, 7L);
+    }
+
+    @Test
+    public void buscarPorFiltroRelatorio_deveDelegarParaDao() {
+        FiltroDietaEspecial filtro = new FiltroDietaEspecial();
+        List<DietaEspecialDTO> dietas = Arrays.asList(new DietaEspecialDTO());
+        when(dao.buscaPorFiltroRelatorio(filtro)).thenReturn(dietas);
+
+        List<DietaEspecialDTO> resultado = service.buscarPorFiltroRelatorio(filtro);
+
+        assertThat(resultado).isSameAs(dietas);
+        verify(dao).buscaPorFiltroRelatorio(filtro);
     }
 }

@@ -75,16 +75,14 @@
 				<p:commandButton value="Pesquisar" update=":registrosForm"
 					process="@form" icon="ui-icon-search"
 					onstart="if (PF('dietaEspecialDataTable')) { PF('dietaEspecialDataTable').getPaginator().setPage(0); }" />
+				<p:commandButton value="Imprimir" icon="ui-icon-print"
+					actionListener="#{dietaEspecialBean.imprimir()}"
+					process="@form" />
 			</p:panel>
 		</h:form>
 
 
 		<h:form id="registrosForm">
-			<p:panel>
-				<p:commandButton value="Imprimir" icon="ui-icon-print"
-								 actionListener="#{dietaEspecialBean.imprimir()}"
-								 style="margin-bottom: 10px;" />
-			</p:panel>
 			<p:dataTable id="dataTable" var="dietaEspecial"
 				value="#{dietaEspecialBean.dietasEspeciais}"
 				emptyMessage="Nenhum registro encontrado." rows="10"

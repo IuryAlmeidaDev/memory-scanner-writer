@@ -45,7 +45,7 @@ public enum Relatorio {
 	RegistroAutorizacaoPedidoTransito("AUTORIZAÇÃO PEDIDO DE TRÂNSITO", 43),
 	ListaDeChamadaComFoto("LISTA DE CHAMADA", 44),
 	ListaDeChamadaComFotoNovo("LISTA DE CHAMADA", 45),
-	ListarDietaEspecialRecuperando("Listar Dieta Especial Recuperando", 46),
+	ListarDietaEspecialRecuperando("LISTAR DIETA ESPECIAL RECUPERANDO", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 46),
 	ExtratoRecuperando("EXTRATO DO RECUPERANDO", ModeloCabecalho.PADRAO_PAISAGEM, ModeloRodape.PADRAO_PAISAGEM, 47),
 	ListaDeConfere("LISTA DE CHAMADA", 48),
 	ListaVisitantes("Credenciamentos", 49),
