@@ -80,7 +80,9 @@
 				widgetVar="contratoDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{contrato.id}" reflow="true" rowsPerPageTemplate="10,20,30,50"
-				styleClass="sgp-datatable">
+				styleClass="sgp-datatable"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+				currentPageReportTemplate="Total de registros: {totalRecords}">
 				<p:column headerText="Código" sortBy="#{contrato.id}" >
 					<h:outputText value="#{contrato.id}" />
 				</p:column>
@@ -125,9 +127,6 @@
 					</h:panelGroup>
 				</p:column>
 
-				<f:facet name="footer">
-					Total de registros: #{contratoBean.contratos.rowCount}
-				</f:facet>
 			</p:dataTable>
 
 			<p:confirmDialog global="true">

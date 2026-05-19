@@ -98,7 +98,9 @@
 				widgetVar="historicoPedidoDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{pedido.id}" sortOrder="descending" reflow="true"
-				rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable">
+				rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+				currentPageReportTemplate="Total de registros: {totalRecords}">
 
 				<p:column headerText="Código" style="width:100px;"
 					sortBy="#{pedido.id}">
@@ -138,10 +140,6 @@
 							action="#{historicoPedidoAlimentoBean.baixarRelatorio(pedido.id)}" />
 					</h:panelGroup>
 				</p:column>
-
-				<f:facet name="footer">
-                    Total de registros: #{historicoPedidoAlimentoBean.pedidos.rowCount}
-                </f:facet>
 
 			</p:dataTable>
 		</h:form>

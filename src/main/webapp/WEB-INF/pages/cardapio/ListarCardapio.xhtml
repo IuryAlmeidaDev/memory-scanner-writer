@@ -106,7 +106,9 @@
 				widgetVar="cardapioDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{cardapio.id}" rowsPerPageTemplate="10,20,30,50"
-				reflow="true" styleClass="sgp-datatable">
+				reflow="true" styleClass="sgp-datatable"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+				currentPageReportTemplate="Total de registros: {totalRecords}">
 
 				<p:column headerText="Código" style="width:100px;"
 					sortBy="#{cardapio.id}">
@@ -164,9 +166,6 @@
 					</h:panelGroup>
 				</p:column>
 
-				<f:facet name="footer">
-					Total de registros: #{cardapioBean.cardapios.rowCount}
-				</f:facet>
 			</p:dataTable>
 		</h:form>
 

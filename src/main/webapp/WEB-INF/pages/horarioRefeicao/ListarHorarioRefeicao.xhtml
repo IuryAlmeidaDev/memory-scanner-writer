@@ -44,7 +44,9 @@
 			<p:dataTable id="dataTable" var="horario" value="#{horarioRefeicaoBean.horariosRefeicao}" emptyMessage="Nenhum registro encontrado."
 				widgetVar="cronogramaDataTable"
 				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{horario.unidadeId}"
-				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable">
+				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+				currentPageReportTemplate="Total de registros: {totalRecords}">
 
 				<p:column headerText="Código" style="width:100px;" sortBy="#{horario.unidadeId}">
 					<h:outputText value="#{horario.unidadeId}" />
@@ -94,9 +96,6 @@
 					<h:outputText value="#{horario.tempoRestanteCorte}" />
 				</p:column>
 				
-				<f:facet name="footer">
-					Total de registros: #{horarioRefeicaoBean.horariosRefeicao.rowCount}
-				</f:facet>
 			</p:dataTable>
 
 			<p:confirmDialog global="true">
