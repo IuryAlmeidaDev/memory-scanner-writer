@@ -1,4 +1,5 @@
-html,body{
+html,
+body {
 	/* height: 100% !important; */
 }
 
@@ -26,26 +27,26 @@ a {
 	height: 80px !important;
 }
 
-.menu{
+.menu {
 	background-color: #183664;
 	overflow-y: auto;
-	top: 85px !important; 
+	top: 85px !important;
 }
 
-.conteudo{
+.conteudo {
 	top: 80px !important;
 }
 
-@media (min-width:992px) {
-	.menu{
+@media (min-width: 992px) {
+	.menu {
 		position: fixed !important;
-	    bottom: 0 !important;
-	    top: 80px !important;
+		bottom: 0 !important;
+		top: 80px !important;
 	}
 }
 
-@media (min-width:992px) {
-	.conteudo{
+@media (min-width: 992px) {
+	.conteudo {
 		left: 16.66666667% !important;
 	}
 }
@@ -77,7 +78,8 @@ a {
 	margin-right: 6px !important;
 }
 
-.ui-widget,.ui-widget .ui-widget {
+.ui-widget,
+.ui-widget .ui-widget {
 	font-size: 12px !important;
 	font-family: Verdana, Arial, sans-serif !important;
 }
@@ -101,8 +103,8 @@ a {
 
 .ui-picklist-list {
 	background: white !important;
-	box-shadow: 0 2px 2px #8F8F8F inset !important;
-	border: 1px solid #AED0EA !important;
+	box-shadow: 0 2px 2px #8f8f8f inset !important;
+	border: 1px solid #aed0ea !important;
 }
 
 .form-block {
@@ -121,14 +123,14 @@ a {
 	font-size: 11px;
 }
 
-.form-input-column{
+.form-input-column {
 	width: auto;
 }
 
 .form-required-column {
 	width: 20px;
 	font-weight: bold;
-	color: red;	
+	color: red;
 }
 
 div.ui-selectcheckboxmenu {
@@ -153,13 +155,13 @@ table.ui-selectcheckboxmenu td {
 	padding-bottom: 2px;
 }
 
-input, textarea {
+input,
+textarea {
 	font-weight: normal !important;
 	text-transform: uppercase !important;
 }
 
 .ui-corner-all {
-	
 }
 
 .ui-inputfield {
@@ -194,7 +196,7 @@ input, textarea {
 	border: none !important;
 }
 
-.ui-clock{
+.ui-clock {
 	background: none !important;
 }
 
@@ -220,14 +222,14 @@ input, textarea {
 
 .box-info {
 	/* posi��o */
-	position:fixed; 
-	top:2px; 
-	right:5px;
+	position: fixed;
+	top: 2px;
+	right: 5px;
 	padding: 5px;
-	
+
 	/* cor */
 	position: fixed;
-	background-color: rgba(0,0,0,0.6);
+	background-color: rgba(0, 0, 0, 0.6);
 	/*opacity: 0.6;*/
 }
 
@@ -240,21 +242,21 @@ input, textarea {
 }
 
 .header-userinfo-value {
-	color:white;
+	color: white;
 	text-shadow: black 1px 1px 1px;
 }
-.campo-medio{
-	width:300px !important;
+.campo-medio {
+	width: 300px !important;
 }
-.campo-pequeno{
-	width:61px !important;
+.campo-pequeno {
+	width: 61px !important;
 }
-.combo-medio{
-	width:180px !important;
+.combo-medio {
+	width: 180px !important;
 }
 
-.combo-pequeno{
-	width:100px !important;
+.combo-pequeno {
+	width: 100px !important;
 }
 
 .info-panel-grid tr {
@@ -267,10 +269,10 @@ input, textarea {
 
 .dialog-content {
 	padding-top: 10px;
-	padding-bottom: 20px;	
+	padding-bottom: 20px;
 }
-	
-.ui-fileupload-choose{
+
+.ui-fileupload-choose {
 	width: 30px;
 	height: 20px;
 }
@@ -279,38 +281,38 @@ input, textarea {
 	background-image: url("#{resource['icons/bio.png']}") !important;
 }
 
-.ui-panel-footer{
+.ui-panel-footer {
 	text-align: right !important;
 }
 
-.ui-state-highlight .ui-icon{
+.ui-state-highlight .ui-icon {
 	background-image: url("/sigepen/javax.faces.resource/images/ui-icons_ffffff_256x240.png.xhtml?ln=primefaces-home") !important;
 }
 
 .ui-dash-panel {
 	margin: 0px 10px 10px 0px;
-	width:280px;
+	width: 280px;
 	height: 140px;
 }
 
-.ui-dash-text-panel-40{
-	color:#FFF;
-	font-size:40px;
+.ui-dash-text-panel-40 {
+	color: #fff;
+	font-size: 40px;
 }
 
-.ui-dash-text-panel-20{
-	font-size:20px;
-	color:#FFF;
+.ui-dash-text-panel-20 {
+	font-size: 20px;
+	color: #fff;
 }
 
-.ui-dash-text-panel-18{
-	font-size:18px;
-	color:#FFF;
+.ui-dash-text-panel-18 {
+	font-size: 18px;
+	color: #fff;
 }
 
 .ui-state-active .ui-icon {
-    margin-left: -1px;
-    margin-top: -1px;
+	margin-left: -1px;
+	margin-top: -1px;
 }
 
 .tr-line {
@@ -321,5 +323,343 @@ input, textarea {
 }
 
 .left-aligned {
-    text-align: left !important;
+	text-align: left !important;
+}
+/* ===================================================================
+   Sidebar repaginada. Tudo escopado em .menu. PrimeFaces 5.2.1 + tema
+   "home" (jQuery UI): o !important e necessario p/ vencer o tema.
+   Paleta: base navy #183664 / conteudo #1f4374, acento #c62828.
+   =================================================================== */
+
+/* zera padding da coluna Bootstrap; 6px lateral no panelmenu */
+.menu {
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+.menu form,
+.menu .ui-panelmenu-content,
+.menu .ui-menu-list,
+.menu .ui-menuitem {
+	margin: 0 !important;
+	padding: 0 !important;
+	width: 100% !important;
+}
+.menu .ui-panelmenu {
+	margin: 0 !important;
+	padding: 4px 6px !important;
+	width: 100% !important;
+	box-sizing: border-box !important;
+}
+.menu .ui-menu-list {
+	list-style: none !important;
+}
+.menu .ui-panelmenu-header {
+	margin: 0 !important;
+}
+
+/* fonte de sistema (Segoe UI) p/ ter peso 500/600 reais sem webfont -
+   a Verdana herdada so tinha 400/700. Hierarquia parent x item usa weight. */
+.menu .ui-panelmenu,
+.menu .ui-panelmenu-header > a,
+.menu .ui-menuitem-link {
+	font-family: "Segoe UI Variable Text", "Segoe UI", system-ui,
+		-apple-system, "Helvetica Neue", Arial, sans-serif !important;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* anti-clipping: o tema herda text-indent/overflow que corta icone e 1a letra */
+.menu .ui-panelmenu-content,
+.menu .ui-menu-list,
+.menu .ui-menuitem,
+.menu .ui-menuitem-link {
+	overflow: visible !important;
+	text-indent: 0 !important;
+}
+
+/* base navy */
+.menu .ui-panelmenu,
+.menu .ui-panelmenu .ui-menu-list {
+	background: transparent !important;
+	border: none !important;
+}
+.menu .ui-panelmenu-content {
+	background: #1f4374 !important;
+	border: none !important;
+	/* overflow:hidden e obrigatorio: sem ele os filhos vazam durante o
+	   slideUp (fechar) do PF, que anima a altura do content. */
+	border-radius: 0 0 3px 3px !important;
+	overflow: hidden !important;
+}
+
+/* achata os gradientes cinza do header (tema home) */
+.menu .ui-panelmenu-header,
+.menu .ui-panelmenu-header > a {
+	background: #183664 !important;
+	background-image: none !important;
+	border: none !important;
+	border-radius: 3px !important;
+	box-shadow: none !important;
+}
+
+/* grupos separados so por respiro + canto (sem divisoria) */
+.menu .ui-panelmenu-header {
+	margin: 4px 0 0 0 !important;
+	position: relative !important; /* ancora a regua vermelha (::before) */
+}
+
+/* zera borda/outline do jQuery UI em todos os estados */
+.menu .ui-panelmenu-header > a,
+.menu .ui-panelmenu-header.ui-state-active > a,
+.menu .ui-panelmenu-header.ui-state-hover > a,
+.menu .ui-panelmenu-header > a:hover,
+.menu .ui-panelmenu-header > a:focus,
+.menu .ui-menuitem-link,
+.menu .ui-menuitem-link:hover,
+.menu .ui-menuitem-link:focus,
+.menu a:focus {
+	border: 0 !important;
+	outline: 0 !important;
+}
+
+/* esconde o triangulo nativo do jQuery UI (a indicacao aberto/fechado
+   e o chevron ::after, mais abaixo) */
+.menu .ui-panelmenu-header > a > .ui-panelmenu-icon,
+.menu .ui-panelmenu-header > .ui-icon {
+	display: none !important;
+}
+
+/* No PF 5.2.1 o icon="fa..." do p:submenu vira sprite jQuery vazio (nao
+   renderiza o glifo). Escondemos o sprite e desenhamos o icone via
+   ::before/FontAwesome, com glifo por grupo (classes sb-grp-* abaixo). */
+.menu .ui-panelmenu-header > a > .ui-icon:not(.ui-panelmenu-icon) {
+	display: none !important;
+}
+.menu .ui-panelmenu-header > a::before {
+	font-family: FontAwesome;
+	font-weight: normal !important; /* senao o weight 600 do <a> faux-bold no glifo */
+	font-size: 13.5px;
+	line-height: 1;
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 18px;
+	text-align: center;
+	color: rgba(255, 255, 255, 0.55);
+	content: "\f0c9"; /* fallback: fa-bars */
+}
+.menu .ui-panelmenu-header.ui-state-active > a::before,
+.menu .ui-panelmenu-header > a:hover::before {
+	color: rgba(255, 255, 255, 0.92);
+}
+/* label do parent acompanha a cor do icone (idle .55 / ativo-hover .92) */
+.menu .ui-panelmenu-header.ui-state-active > a,
+.menu .ui-panelmenu-header > a:hover {
+	color: rgba(255, 255, 255, 0.92) !important;
+}
+/* glifo por grupo (FontAwesome 4). IMPORTANTE: no PF 5.2.1 o styleClass
+   do p:submenu cai no wrapper div.ui-panelmenu-panel, NAO no header -
+   por isso o seletor e descendente (.sb-grp-x .ui-panelmenu-header > a),
+   nao filho direto. Nao "corrigir" p/ filho direto: quebra os icones. */
+.menu .sb-grp-tabelas       .ui-panelmenu-header > a::before { content: "\f0ce"; } /* table     */
+.menu .sb-grp-recuperando   .ui-panelmenu-header > a::before { content: "\f183"; } /* male      */
+.menu .sb-grp-relatorios    .ui-panelmenu-header > a::before { content: "\f080"; } /* bar-chart */
+.menu .sb-grp-visita        .ui-panelmenu-header > a::before { content: "\f0c0"; } /* users     */
+.menu .sb-grp-movimentacoes .ui-panelmenu-header > a::before { content: "\f0ec"; } /* exchange  */
+.menu .sb-grp-alimentacao   .ui-panelmenu-header > a::before { content: "\f0f5"; } /* cutlery   */
+.menu .sb-grp-plantao       .ui-panelmenu-header > a::before { content: "\f017"; } /* clock-o   */
+.menu .sb-grp-auditoria     .ui-panelmenu-header > a::before { content: "\f1da"; } /* history   */
+.menu .sb-grp-acesso        .ui-panelmenu-header > a::before { content: "\f023"; } /* lock      */
+.menu .sb-grp-usuario       .ui-panelmenu-header > a::before { content: "\f007"; } /* user      */
+.menu .sb-grp-admin         .ui-panelmenu-header > a::before { content: "\f085"; } /* cogs      */
+
+/* Dashboard: link direto (fora do panelMenu), silhueta de parent mas
+   cor ambar p/ marcar que e a home, nao um grupo. Sem chevron. */
+.menu .sb-dashboard {
+	display: block;
+	position: relative;
+	margin: 4px 6px 0 6px;
+	padding: 13px 16px 13px 38px;
+	border-radius: 3px;
+	color: #e9b949 !important;
+	font-weight: 600;
+	font-size: 13.5px;
+	letter-spacing: 0.005em;
+	text-decoration: none !important;
+	transition: background-color 0.18s ease;
+}
+.menu .sb-dashboard .fa {
+	position: absolute;
+	font-weight: normal !important; /* .sb-dashboard e 600; evita faux-bold */
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 18px;
+	text-align: center;
+	font-size: 13.5px;
+	line-height: 1;
+	color: #e9b949;
+}
+.menu .sb-dashboard:hover {
+	background: rgba(233, 185, 73, 0.12) !important;
+}
+.menu .sb-dashboard.sb-dashboard-ativo {
+	background: rgba(233, 185, 73, 0.16) !important;
+}
+.menu .sb-dashboard.sb-dashboard-ativo::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+	border-radius: 3px 0 0 3px; /* acompanha o raio do chip */
+	background: #e9b949;
+}
+
+/* cabecalho do grupo (parent) */
+.menu .ui-panelmenu-header > a {
+	display: block;
+	position: relative;
+	color: rgba(255, 255, 255, 0.55) !important;
+	text-transform: none;
+	letter-spacing: 0.005em;
+	font-weight: 600;
+	font-size: 13.5px;
+	border-radius: 3px !important;
+	padding: 13px 34px 13px 38px !important;
+	transition:
+		background-color 0.18s ease,
+		color 0.18s ease;
+}
+
+/* itens do grupo (filhos) */
+.menu .ui-menuitem-link {
+	display: block;
+	position: relative;
+	color: rgba(255, 255, 255, 0.55) !important;
+	font-size: 13px;
+	font-weight: 500;
+	border-radius: 3px !important;
+	padding: 9px 14px 9px 38px !important;
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease;
+}
+.menu .ui-menuitem-link .ui-menuitem-icon {
+	/* o tema posiciona o icone absolute; left:13px alinha esta coluna
+	   com o ::before do grupo pai (left:12px). texto comeca em 38px. */
+	left: 13px !important;
+	top: 50% !important;
+	transform: translateY(-50%);
+	width: 18px;
+	text-align: center;
+	text-indent: 0 !important;
+	font-weight: normal !important; /* nao herdar o 500 do link (faux-bold) */
+	color: inherit !important;
+}
+
+/* hover do grupo */
+.menu .ui-panelmenu-header:not(.ui-state-active) > a:hover {
+	background: rgba(255, 255, 255, 0.06) !important;
+}
+/* hover do filho igual ao do grupo. O PF aplica .ui-state-hover
+   (gradiente glossy + box-shadow) via JS no <li>/<a> - precisa achatar
+   essas variantes, nao so o :hover do <a>. */
+.menu .ui-menuitem.ui-state-hover,
+.menu .ui-menuitem-link.ui-state-hover,
+.menu .ui-menuitem-link:hover,
+.menu .ui-menuitem-link:focus {
+	background: rgba(255, 255, 255, 0.06) !important;
+	background-image: none !important;
+	box-shadow: none !important;
+	color: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* grupo aberto: realce + canto so no topo p/ fundir com o conteudo */
+.menu .ui-panelmenu-header.ui-state-active > a {
+	background: #1d406f !important;
+	border-radius: 3px 3px 0 0 !important;
+}
+/* regua vermelha do grupo aberto. Vai no ::before do HEADER porque no
+   <a> o ::before e o icone e o ::after e o chevron (ambos ocupados).
+   z-index:1 p/ ficar acima do fundo do <a>. */
+.menu .ui-panelmenu-header.ui-state-active::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+	border-radius: 3px 0 0 3px;
+	background: #c62828;
+	z-index: 1;
+}
+
+/* regua vermelha do item: cresce no hover, fixa no item ativo */
+.menu .ui-menuitem-link::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+	background: #c62828;
+	transform: scaleY(0);
+	transform-origin: center;
+	transition: transform 0.22s ease;
+}
+.menu .ui-menuitem-link:hover::before,
+.menu .sb-item-ativo > .ui-menuitem-link::before {
+	transform: scaleY(1);
+}
+
+/* item da rota ativa */
+.menu .sb-item-ativo > .ui-menuitem-link {
+	background: rgba(198, 40, 40, 0.18) !important;
+	color: #ffffff !important;
+}
+
+/* chevron proprio (::after do <a>). Fechado aponta p/ direita;
+   .ui-state-active gira p/ baixo. (O sprite nativo ja foi escondido.) */
+.menu .ui-panelmenu-header > a::after {
+	content: "";
+	position: absolute;
+	right: 16px;
+	top: 50%;
+	width: 6px;
+	height: 6px;
+	border-right: 1.5px solid rgba(255, 255, 255, 0.55);
+	border-bottom: 1.5px solid rgba(255, 255, 255, 0.55);
+	transform: translateY(-65%) rotate(-45deg);
+	transition:
+		transform 0.22s ease,
+		border-color 0.18s ease;
+}
+.menu .ui-panelmenu-header > a:hover::after {
+	border-color: rgba(255, 255, 255, 0.7);
+}
+.menu .ui-panelmenu-header.ui-state-active > a::after {
+	transform: translateY(-50%) rotate(45deg);
+	border-color: rgba(255, 255, 255, 0.85);
+}
+
+/* scrollbar discreta */
+.menu {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+.menu::-webkit-scrollbar {
+	width: 8px;
+}
+.menu::-webkit-scrollbar-track {
+	background: transparent;
+}
+.menu::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.16);
+	border-radius: 4px;
+}
+.menu::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 255, 255, 0.28);
 }

@@ -8,100 +8,106 @@
 </h:head>
 <h:body>
 	<h:form>
-		<p:panelMenu>
-		 <p:submenu label="Tabelas Auxiliares" rendered="#{securityUtil.exibeCategoriaMenu('TabelasAuxiliares')}">
-				<p:menuitem value="Categoria" outcome="pretty:ListarCategoria" icon="fa fa-list" rendered="#{securityUtil.possuiPermissao('ListarCategoria')}"/>
-				<p:menuitem value="Cargo" outcome="pretty:ListarCargo" icon="fa fa-cog" rendered="#{securityUtil.possuiPermissao('ListarCargo')}" />
-				<p:menuitem value="Função" outcome="pretty:ListarFuncao" icon="fa fa-cogs" rendered="#{securityUtil.possuiPermissao('ListarFuncao')}" />
-				<p:menuitem value="Crime" outcome="pretty:ListarCrime" icon="fa fa-book" rendered="#{securityUtil.possuiPermissao('ListarCrime')}" />
-				<p:menuitem value="Órgão" outcome="pretty:ListarOrgao" icon="fa fa-institution" rendered="#{securityUtil.possuiPermissao('ListarOrgao')}" />		
-				<p:menuitem value="Servidor" outcome="pretty:ListarServidor" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarServidor')}"/>
-				<p:menuitem value="Pessoa" outcome="pretty:ListarPessoa" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarPessoa')}" />	
-				<p:menuitem value="Estabelecimento" outcome="pretty:ListarEstabelecimento" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarEstabelecimento')}"/>
-				<p:menuitem value="Unidade Prisional" outcome="pretty:ListarUnidade" icon="fa fa-home" rendered="#{securityUtil.possuiPermissao('ListarUnidade')}"/>
-				<p:menuitem value="Gestão de vagas" outcome="pretty:ListarQuadroVagas" icon="fa fa-bar-chart" rendered="#{securityUtil.possuiPermissao('ListarQuadroVagas')}"/>	
-				<p:menuitem value="Tipo Visita" outcome="pretty:ListarTipoVisita" icon="fa fa-users" rendered="#{securityUtil.possuiPermissao('ListarTipoVisita')}"/>
-				<p:menuitem value="Tipo Impedimento" outcome="pretty:ListarTipoImpedimento" icon="fa fa-ban" rendered="#{securityUtil.possuiPermissao('ListarTipoImpedimento')}"/>
-				<p:menuitem value="Certidão" outcome="pretty:ListarCertidao" icon="fa fa-archive" rendered="#{securityUtil.possuiPermissao('ListarCertidao')}"/>
-			 	<p:menuitem value="Tipo Falta Disciplinar" outcome="pretty:ListarTipoFaltaDisciplinar" icon="fa fa-cog" rendered="#{securityUtil.possuiPermissao('ListarTipoFaltaDisciplinar')}" />
-			 	<p:menuitem value="Tipo Ocorrênica" outcome="pretty:ListarTipoOcorrencia" icon="fa fa-cog" rendered="#{securityUtil.possuiPermissao('ListarTipoOcorrencia')}" />
+		<p:link outcome="pretty:dashboard"
+			rendered="#{securityUtil.getUnidadeSelecionada() ne null}"
+			styleClass="sb-dashboard #{menuNav.itemAtivo('dashboard') ? 'sb-dashboard-ativo' : ''}">
+			<i class="fa fa-th-large"></i>
+			<h:outputText value="Dashboard" />
+		</p:link>
+		<p:panelMenu stateful="false">
+		 <p:submenu label="Tabelas Auxiliares" icon="fa fa-table" styleClass="sb-grupo sb-grp-tabelas" expanded="#{menuNav.grupoExpandido('TabelasAuxiliares')}" rendered="#{securityUtil.exibeCategoriaMenu('TabelasAuxiliares')}">
+				<p:menuitem value="Categoria" outcome="pretty:ListarCategoria" icon="fa fa-list" containerStyleClass="#{menuNav.itemAtivo('ListarCategoria') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarCategoria')}"/>
+				<p:menuitem value="Cargo" outcome="pretty:ListarCargo" icon="fa fa-cog" containerStyleClass="#{menuNav.itemAtivo('ListarCargo') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarCargo')}" />
+				<p:menuitem value="Função" outcome="pretty:ListarFuncao" icon="fa fa-cogs" containerStyleClass="#{menuNav.itemAtivo('ListarFuncao') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarFuncao')}" />
+				<p:menuitem value="Crime" outcome="pretty:ListarCrime" icon="fa fa-book" containerStyleClass="#{menuNav.itemAtivo('ListarCrime') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarCrime')}" />
+				<p:menuitem value="Órgão" outcome="pretty:ListarOrgao" icon="fa fa-institution" containerStyleClass="#{menuNav.itemAtivo('ListarOrgao') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarOrgao')}" />		
+				<p:menuitem value="Servidor" outcome="pretty:ListarServidor" icon="fa fa-user" containerStyleClass="#{menuNav.itemAtivo('ListarServidor') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarServidor')}"/>
+				<p:menuitem value="Pessoa" outcome="pretty:ListarPessoa" icon="fa fa-male" containerStyleClass="#{menuNav.itemAtivo('ListarPessoa') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarPessoa')}" />	
+				<p:menuitem value="Estabelecimento" outcome="pretty:ListarEstabelecimento" icon="fa fa-home" containerStyleClass="#{menuNav.itemAtivo('ListarEstabelecimento') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarEstabelecimento')}"/>
+				<p:menuitem value="Unidade Prisional" outcome="pretty:ListarUnidade" icon="fa fa-building" containerStyleClass="#{menuNav.itemAtivo('ListarUnidade') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarUnidade')}"/>
+				<p:menuitem value="Gestão de vagas" outcome="pretty:ListarQuadroVagas" icon="fa fa-bar-chart" containerStyleClass="#{menuNav.itemAtivo('ListarQuadroVagas') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarQuadroVagas')}"/>	
+				<p:menuitem value="Tipo Visita" outcome="pretty:ListarTipoVisita" icon="fa fa-users" containerStyleClass="#{menuNav.itemAtivo('ListarTipoVisita') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarTipoVisita')}"/>
+				<p:menuitem value="Tipo Impedimento" outcome="pretty:ListarTipoImpedimento" icon="fa fa-ban" containerStyleClass="#{menuNav.itemAtivo('ListarTipoImpedimento') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarTipoImpedimento')}"/>
+				<p:menuitem value="Certidão" outcome="pretty:ListarCertidao" icon="fa fa-archive" containerStyleClass="#{menuNav.itemAtivo('ListarCertidao') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarCertidao')}"/>
+			 	<p:menuitem value="Tipo Falta Disciplinar" outcome="pretty:ListarTipoFaltaDisciplinar" icon="fa fa-cog" containerStyleClass="#{menuNav.itemAtivo('ListarTipoFaltaDisciplinar') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarTipoFaltaDisciplinar')}" />
+			 	<p:menuitem value="Tipo Ocorrênica" outcome="pretty:ListarTipoOcorrencia" icon="fa fa-cog" containerStyleClass="#{menuNav.itemAtivo('ListarTipoOcorrencia') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarTipoOcorrencia')}" />
 			</p:submenu>
 			
-			<p:submenu label="Recuperando" rendered="#{securityUtil.exibeCategoriaMenu('Recuperando')}">
-				<p:menuitem value="Entrada" outcome="pretty:ListarRecuperando" icon="fa fa-male" rendered="#{securityUtil.possuiPermissao('ListarRecuperando')}" />
+			<p:submenu label="Recuperando" icon="fa fa-male" styleClass="sb-grupo sb-grp-recuperando" expanded="#{menuNav.grupoExpandido('Recuperando')}" rendered="#{securityUtil.exibeCategoriaMenu('Recuperando')}">
+				<p:menuitem value="Entrada" outcome="pretty:ListarRecuperando" icon="fa fa-male" containerStyleClass="#{menuNav.itemAtivo('ListarRecuperando') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarRecuperando')}" />
 				
 				<ui:remove>
 				<p:menuitem value="Relatório Infopen" outcome="pretty:RelatorioInfopen" icon="fa fa-file-pdf-o" rendered="#{securityUtil.possuiPermissao('ImprimirRelatorioInfopen')}"/>
 				</ui:remove>
 				
-				<p:menuitem value="Falta Disciplinar" outcome="pretty:ListarFaltaDisciplinar" icon="fa fa-unlock-alt" rendered="#{securityUtil.possuiPermissao('ListarFaltaDisciplinar')}" />
+				<p:menuitem value="Falta Disciplinar" outcome="pretty:ListarFaltaDisciplinar" icon="fa fa-unlock-alt" containerStyleClass="#{menuNav.itemAtivo('ListarFaltaDisciplinar') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarFaltaDisciplinar')}" />
 				<ui:remove>
 					<p:menuitem value="Unificar Recuperando" outcome="pretty:ListarUnificarRecuperando" icon="fa fa-users" rendered="#{securityUtil.possuiPermissao('UnificarRecuperando')}"/>
 				</ui:remove>
 			</p:submenu>
 			
-			<p:submenu label="Relatórios" rendered="#{securityUtil.exibeCategoriaMenu('Relatorio')}">
-				<p:menuitem value="Relatórios" outcome="pretty:Relatorio" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('Relatorio')}"/>
+			<p:submenu label="Relatórios" icon="fa fa-bar-chart" styleClass="sb-grupo sb-grp-relatorios" expanded="#{menuNav.grupoExpandido('Relatorios')}" rendered="#{securityUtil.exibeCategoriaMenu('Relatorio')}">
+				<p:menuitem value="Relatórios" outcome="pretty:Relatorio" icon="fa fa-file-pdf-o" containerStyleClass="#{menuNav.itemAtivo('Relatorio') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('Relatorio')}"/>
 			</p:submenu>
 
-			<p:submenu label="Visita" rendered="#{securityUtil.exibeCategoriaMenu('Visitantes') and securityUtil.getUnidadeSelecionada().ativaModuloVisitante}">
-				<p:menuitem value="Visitante" outcome="pretty:ListarVisitante" icon="fa fa-child" rendered="#{securityUtil.possuiPermissao('ListarVisitante')}"/>
-				<p:menuitem value="Solicitar Visita" outcome="pretty:ListarSolicitacaoVisita" icon="fa fa-ticket" rendered="#{securityUtil.possuiPermissao('ListarSolicitacaoVisita')}"/>
-				<p:menuitem value="Impedimento" outcome="pretty:ListarImpedimento" icon="fa fa-lock" rendered="#{securityUtil.possuiPermissao('ListarImpedimento')}"/>
-				<p:menuitem value="Entrada e Saída" outcome="pretty:ListarEntradaSaida" icon="fa fa-exchange" rendered="#{securityUtil.possuiPermissao('ListarEntradaSaida')}"/>
-				<p:menuitem value="Consultar Visitas" outcome="pretty:ConsultarListaVisitas" icon="fa fa-search" rendered="#{securityUtil.possuiPermissao('ConsultarListaVisitas')}"/>
+			<p:submenu label="Visita" icon="fa fa-users" styleClass="sb-grupo sb-grp-visita" expanded="#{menuNav.grupoExpandido('Visita')}" rendered="#{securityUtil.exibeCategoriaMenu('Visitantes') and securityUtil.getUnidadeSelecionada().ativaModuloVisitante}">
+				<p:menuitem value="Visitante" outcome="pretty:ListarVisitante" icon="fa fa-child" containerStyleClass="#{menuNav.itemAtivo('ListarVisitante') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarVisitante')}"/>
+				<p:menuitem value="Solicitar Visita" outcome="pretty:ListarSolicitacaoVisita" icon="fa fa-ticket" containerStyleClass="#{menuNav.itemAtivo('ListarSolicitacaoVisita') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarSolicitacaoVisita')}"/>
+				<p:menuitem value="Impedimento" outcome="pretty:ListarImpedimento" icon="fa fa-lock" containerStyleClass="#{menuNav.itemAtivo('ListarImpedimento') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarImpedimento')}"/>
+				<p:menuitem value="Entrada e Saída" outcome="pretty:ListarEntradaSaida" icon="fa fa-exchange" containerStyleClass="#{menuNav.itemAtivo('ListarEntradaSaida') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarEntradaSaida')}"/>
+				<p:menuitem value="Consultar Visitas" outcome="pretty:ConsultarListaVisitas" icon="fa fa-search" containerStyleClass="#{menuNav.itemAtivo('ConsultarListaVisitas') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ConsultarListaVisitas')}"/>
 			</p:submenu>
 
-			<p:submenu label="Movimentações" rendered="#{securityUtil.exibeCategoriaMenu('Movimentacoes')}">
-				<p:menuitem value="Pedido de Trânsito" outcome="pretty:ListarPedidoTransito" icon="fa fa-file" rendered="#{securityUtil.possuiPermissao('ListarPedidoTransito')}"/>
-				<p:menuitem value="Movimentação Interna" outcome="pretty:ListarMovimentacaoInterna" icon="fa fa-retweet" rendered="#{securityUtil.possuiPermissao('ListarMovimentacaoInterna')}"/>
-				<p:menuitem value="Movimentação Externa" outcome="pretty:ListarMovimentacaoExterna" icon="fa fa-compress" rendered="#{securityUtil.possuiPermissao('ListarMovimentacaoExterna')}"/>
-				<p:menuitem value="Remanejamento" outcome="pretty:ListarRemanejamento" icon="fa fa-pause" rendered="#{securityUtil.possuiPermissao('ListarRemanejamento')}"/>
-				<p:menuitem value="Transferência" outcome="pretty:ListarTransferencia" icon="fa fa-random" rendered="#{securityUtil.possuiPermissao('ListarTransferencia')}"/>
-				<p:menuitem value="Receber Transferência" outcome="pretty:ListarReceberTransferencia"  icon="fa fa-sign-in" rendered="#{securityUtil.possuiPermissao('ListarReceberTransferencia')}"/>
+			<p:submenu label="Movimentações" icon="fa fa-exchange" styleClass="sb-grupo sb-grp-movimentacoes" expanded="#{menuNav.grupoExpandido('Movimentacoes')}" rendered="#{securityUtil.exibeCategoriaMenu('Movimentacoes')}">
+				<p:menuitem value="Pedido de Trânsito" outcome="pretty:ListarPedidoTransito" icon="fa fa-file" containerStyleClass="#{menuNav.itemAtivo('ListarPedidoTransito') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarPedidoTransito')}"/>
+				<p:menuitem value="Movimentação Interna" outcome="pretty:ListarMovimentacaoInterna" icon="fa fa-retweet" containerStyleClass="#{menuNav.itemAtivo('ListarMovimentacaoInterna') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarMovimentacaoInterna')}"/>
+				<p:menuitem value="Movimentação Externa" outcome="pretty:ListarMovimentacaoExterna" icon="fa fa-compress" containerStyleClass="#{menuNav.itemAtivo('ListarMovimentacaoExterna') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarMovimentacaoExterna')}"/>
+				<p:menuitem value="Remanejamento" outcome="pretty:ListarRemanejamento" icon="fa fa-pause" containerStyleClass="#{menuNav.itemAtivo('ListarRemanejamento') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarRemanejamento')}"/>
+				<p:menuitem value="Transferência" outcome="pretty:ListarTransferencia" icon="fa fa-random" containerStyleClass="#{menuNav.itemAtivo('ListarTransferencia') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarTransferencia')}"/>
+				<p:menuitem value="Receber Transferência" outcome="pretty:ListarReceberTransferencia"  icon="fa fa-sign-in" containerStyleClass="#{menuNav.itemAtivo('ListarReceberTransferencia') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarReceberTransferencia')}"/>
 			</p:submenu>
 			
-			<p:submenu label="Gestão de Alimentação" rendered="#{securityUtil.exibeCategoriaMenu('MapaAlimentacao')}">
-				<p:menuitem value="Gerar Pedido" outcome="pretty:ListarGerarPedido" icon="fa fa-coffee" rendered="#{securityUtil.possuiPermissao('ListarGerarPedido')}"/>
-				<p:menuitem value="Histórico de Pedido" outcome="pretty:ListarHistoricoPedidoAlimento" icon="fa fa-history" rendered="#{securityUtil.possuiPermissao('ListarHistoricoPedidoAlimento')}"/>
-				<p:menuitem value="Gerar Mapa consolidado" outcome="pretty:ListarMapaConsolidado" icon="fa fa-list-alt" rendered="#{securityUtil.possuiPermissao('ListarMapaConsolidado')}"/>
-				<p:menuitem value="Dieta Especial Recuperando" outcome="pretty:ListarDietaEspecial" icon="fa fa-cutlery" rendered="#{securityUtil.possuiPermissao('ListarDietaEspecial')}"/>
-				<p:menuitem value="Alimentos" outcome="pretty:ListarAlimento" icon="fa fa-apple" rendered="#{securityUtil.possuiPermissao('ListarAlimento')}"/>
-				<p:menuitem value="Tipo Dieta" outcome="pretty:ListarTipoDieta" icon="fa fa-spoon" rendered="#{securityUtil.possuiPermissao('ListarTipoDieta')}"/>
-				<p:menuitem value="Cardápio" outcome="pretty:ListarCardapio" icon="fa fa-book" rendered="#{securityUtil.possuiPermissao('ListarCardapio')}"/>
-				<p:menuitem value="Fornecedor" outcome="pretty:ListarFornecedor" icon="fa fa-building-o" rendered="#{securityUtil.possuiPermissao('ListarFornecedor')}"/>
-				<p:menuitem value="Contrato" outcome="pretty:ListarContrato" icon="fa fa-paste" rendered="#{securityUtil.possuiPermissao('ListarContrato')}"/>
-				<p:menuitem value="Apostilamento" outcome="pretty:ListarApostilamento" icon="fa fa-copy" rendered="#{securityUtil.possuiPermissao('ListarApostilamento')}"/>
-				<p:menuitem value="Cronograma de Pedidos de Refeição" outcome="pretty:ListarHorarioRefeicao" icon="fa fa-clock-o" rendered="#{securityUtil.possuiPermissao('ListarHorarioRefeicao')}"/>
+			<p:submenu label="Gestão de Alimentação" icon="fa fa-cutlery" styleClass="sb-grupo sb-grp-alimentacao" expanded="#{menuNav.grupoExpandido('Alimentacao')}" rendered="#{securityUtil.exibeCategoriaMenu('MapaAlimentacao')}">
+				<p:menuitem value="Gerar Pedido" outcome="pretty:ListarGerarPedido" icon="fa fa-coffee" containerStyleClass="#{menuNav.itemAtivo('ListarGerarPedido') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarGerarPedido')}"/>
+				<p:menuitem value="Histórico de Pedido" outcome="pretty:ListarHistoricoPedidoAlimento" icon="fa fa-history" containerStyleClass="#{menuNav.itemAtivo('ListarHistoricoPedidoAlimento') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarHistoricoPedidoAlimento')}"/>
+				<p:menuitem value="Gerar Mapa consolidado" outcome="pretty:ListarMapaConsolidado" icon="fa fa-list-alt" containerStyleClass="#{menuNav.itemAtivo('ListarMapaConsolidado') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarMapaConsolidado')}"/>
+				<p:menuitem value="Dieta Especial Recuperando" outcome="pretty:ListarDietaEspecial" icon="fa fa-cutlery" containerStyleClass="#{menuNav.itemAtivo('ListarDietaEspecial') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarDietaEspecial')}"/>
+				<p:menuitem value="Alimentos" outcome="pretty:ListarAlimento" icon="fa fa-apple" containerStyleClass="#{menuNav.itemAtivo('ListarAlimento') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarAlimento')}"/>
+				<p:menuitem value="Tipo Dieta" outcome="pretty:ListarTipoDieta" icon="fa fa-spoon" containerStyleClass="#{menuNav.itemAtivo('ListarTipoDieta') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarTipoDieta')}"/>
+				<p:menuitem value="Cardápio" outcome="pretty:ListarCardapio" icon="fa fa-book" containerStyleClass="#{menuNav.itemAtivo('ListarCardapio') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarCardapio')}"/>
+				<p:menuitem value="Fornecedor" outcome="pretty:ListarFornecedor" icon="fa fa-building-o" containerStyleClass="#{menuNav.itemAtivo('ListarFornecedor') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarFornecedor')}"/>
+				<p:menuitem value="Contrato" outcome="pretty:ListarContrato" icon="fa fa-paste" containerStyleClass="#{menuNav.itemAtivo('ListarContrato') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarContrato')}"/>
+				<p:menuitem value="Apostilamento" outcome="pretty:ListarApostilamento" icon="fa fa-copy" containerStyleClass="#{menuNav.itemAtivo('ListarApostilamento') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarApostilamento')}"/>
+				<p:menuitem value="Cronograma de Pedidos de Refeição" outcome="pretty:ListarHorarioRefeicao" icon="fa fa-clock-o" containerStyleClass="#{menuNav.itemAtivo('ListarHorarioRefeicao') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarHorarioRefeicao')}"/>
 			</p:submenu>
 
-			<p:submenu label="Plantão" rendered="#{securityUtil.exibeCategoriaMenu('plantao')}">
-				<p:menuitem value="Livro Plantão" outcome="pretty:ListarPlantao" icon="fa fa-file" rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}"/>
+			<p:submenu label="Plantão" icon="fa fa-clock-o" styleClass="sb-grupo sb-grp-plantao" expanded="#{menuNav.grupoExpandido('Plantao')}" rendered="#{securityUtil.exibeCategoriaMenu('plantao')}">
+				<p:menuitem value="Livro Plantão" outcome="pretty:ListarPlantao" icon="fa fa-file" containerStyleClass="#{menuNav.itemAtivo('ListarPlantao') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('VisualizarPlantao')}"/>
 			</p:submenu>
 
-			<p:submenu label="Auditoria" rendered="#{securityUtil.exibeCategoriaMenu('Auditoria')}">
-				<p:menuitem value="Logs" outcome="pretty:ListarLog" icon="fa fa-file-text-o" rendered="#{securityUtil.possuiPermissao('ListarLog')}"/>
+			<p:submenu label="Auditoria" icon="fa fa-history" styleClass="sb-grupo sb-grp-auditoria" expanded="#{menuNav.grupoExpandido('Auditoria')}" rendered="#{securityUtil.exibeCategoriaMenu('Auditoria')}">
+				<p:menuitem value="Logs" outcome="pretty:ListarLog" icon="fa fa-file-text-o" containerStyleClass="#{menuNav.itemAtivo('ListarLog') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarLog')}"/>
 			</p:submenu>
 			
-			<p:submenu label="Controle de Acesso" rendered="#{securityUtil.exibeCategoriaMenu('ControleDeAcesso')}">
-				<p:menuitem value="Perfil" outcome="pretty:ListarPerfil" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarPerfil')}"/>
-				<p:menuitem value="Permissão" outcome="pretty:ListarPermissao" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarPermissao')}"/>
-				<p:menuitem value="Usuário" outcome="pretty:ListarUsuario" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarUsuario')}" />
-				<p:menuitem value="Solicitações" outcome="pretty:ListarUsuarioResetSenha" icon="ui-icon-person" rendered="#{securityUtil.possuiPermissao('ListarUsuarioResetSenha')}" />
+			<p:submenu label="Controle de Acesso" icon="fa fa-lock" styleClass="sb-grupo sb-grp-acesso" expanded="#{menuNav.grupoExpandido('ControleAcesso')}" rendered="#{securityUtil.exibeCategoriaMenu('ControleDeAcesso')}">
+				<p:menuitem value="Perfil" outcome="pretty:ListarPerfil" icon="fa fa-user" containerStyleClass="#{menuNav.itemAtivo('ListarPerfil') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarPerfil')}"/>
+				<p:menuitem value="Permissão" outcome="pretty:ListarPermissao" icon="fa fa-key" containerStyleClass="#{menuNav.itemAtivo('ListarPermissao') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarPermissao')}"/>
+				<p:menuitem value="Usuário" outcome="pretty:ListarUsuario" icon="fa fa-user" containerStyleClass="#{menuNav.itemAtivo('ListarUsuario') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarUsuario')}" />
+				<p:menuitem value="Solicitações" outcome="pretty:ListarUsuarioResetSenha" icon="fa fa-unlock-alt" containerStyleClass="#{menuNav.itemAtivo('ListarUsuarioResetSenha') ? 'sb-item-ativo' : ''}" rendered="#{securityUtil.possuiPermissao('ListarUsuarioResetSenha')}" />
 			</p:submenu>
 			
-			<p:submenu label="Usuário">
-				<p:menuitem value="Alterar Senha" outcome="pretty:AlterarSenha" icon="ui-icon-gear"/>
-				<p:menuitem value="Alterar Unidade" outcome="pretty:AlterarUnidadeUsuario" icon="ui-icon-gear"/>
+			<p:submenu label="Usuário" icon="fa fa-user" styleClass="sb-grupo sb-grp-usuario" expanded="#{menuNav.grupoExpandido('Usuario')}">
+				<p:menuitem value="Alterar Senha" outcome="pretty:AlterarSenha" icon="fa fa-key" containerStyleClass="#{menuNav.itemAtivo('AlterarSenha') ? 'sb-item-ativo' : ''}"/>
+				<p:menuitem value="Alterar Unidade" outcome="pretty:AlterarUnidadeUsuario" icon="fa fa-exchange" containerStyleClass="#{menuNav.itemAtivo('AlterarUnidadeUsuario') ? 'sb-item-ativo' : ''}"/>
 				<ui:remove>
-					<p:menuitem value="Instaladores Bio" outcome="pretty:Instaladores" icon="ui-icon-disk"/>
+					<p:menuitem value="Instaladores Bio" outcome="pretty:Instaladores" icon="fa fa-download"/>
 				</ui:remove>
-				<p:menuitem value="Sair" action="#{loginBean.logout()}" icon="ui-icon-power" />
+				<p:menuitem value="Sair" action="#{loginBean.logout()}" icon="fa fa-sign-out" />
 			</p:submenu>
 
-            <p:submenu label="Administrador" rendered="#{securityUtil.getLoginUsuario().equals('ADMIN')}">
-                <p:menuitem value="Parametros" outcome="pretty:Parametro" />
-                <p:menuitem value="NServer" outcome="pretty:NServer" />
+            <p:submenu label="Administrador" icon="fa fa-cogs" styleClass="sb-grupo sb-grp-admin" expanded="#{menuNav.grupoExpandido('Administrador')}" rendered="#{securityUtil.getLoginUsuario().equals('ADMIN')}">
+                <p:menuitem value="Parametros" outcome="pretty:Parametro" icon="fa fa-sliders" containerStyleClass="#{menuNav.itemAtivo('Parametro') ? 'sb-item-ativo' : ''}" />
+                <p:menuitem value="NServer" outcome="pretty:NServer" icon="fa fa-database" containerStyleClass="#{menuNav.itemAtivo('NServer') ? 'sb-item-ativo' : ''}" />
             </p:submenu>
 		</p:panelMenu>
 	</h:form>
