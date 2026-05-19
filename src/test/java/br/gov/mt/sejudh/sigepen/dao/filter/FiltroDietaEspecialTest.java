@@ -14,6 +14,8 @@ import org.mockito.ArgumentCaptor;
 
 import br.gov.mt.sejudh.sigepen.BaseUnitTest;
 import br.gov.mt.sejudh.sigepen.enumerator.StatusFiltroDietaEspecial;
+import br.gov.mt.sejudh.sigepen.model.TipoDieta;
+import br.gov.mt.sejudh.sigepen.model.UnidadePrisional;
 
 public class FiltroDietaEspecialTest extends BaseUnitTest {
 
@@ -44,5 +46,35 @@ public class FiltroDietaEspecialTest extends BaseUnitTest {
                 .anySatisfy(criterio -> assertThat(criterio.toString()).contains("fim is null").contains("fim>"));
         assertThat(captor.getAllValues())
                 .noneSatisfy(criterio -> assertThat(criterio.toString()).contains("fim<="));
+    }
+
+    @Test
+    public void copiarParaRelatorio_devePreservarFiltrosELimparPaginacao() {
+        FiltroDietaEspecial filtro = new FiltroDietaEspecial();
+        UnidadePrisional unidade = new UnidadePrisional(10L);
+        TipoDieta tipoDieta = new TipoDieta();
+        tipoDieta.setId(20L);
+        filtro.setUnidadePrisional(unidade);
+        filtro.setTipoDieta(tipoDieta);
+        filtro.setRecuperando("Maria");
+        filtro.setStatusDieta(StatusFiltroDietaEspecial.ENCERRADO);
+        filtro.setListarTodasUnidades(false);
+        filtro.organizaFiltro(30, 10, "nomeRecuperando", org.primefaces.model.SortOrder.DESCENDING);
+        filtro.setPaginacaoIndex(30);
+
+        FiltroDietaEspecial copia = filtro.copiarParaRelatorio(true);
+
+        assertThat(copia).isNotSameAs(filtro);
+        assertThat(copia.getUnidadePrisional()).isSameAs(unidade);
+        assertThat(copia.getTipoDieta()).isSameAs(tipoDieta);
+        assertThat(copia.getRecuperando()).isEqualTo("Maria");
+        assertThat(copia.getStatusDieta()).isEqualTo(StatusFiltroDietaEspecial.ENCERRADO);
+        assertThat(copia.isListarTodasUnidades()).isTrue();
+        assertThat(copia.getPrimeiroRegistro()).isEqualTo(30);
+        assertThat(copia.getPaginacaoIndex()).isEqualTo(30);
+        assertThat(copia.getQuantidadeRegistros()).isEqualTo(Integer.MAX_VALUE);
+        assertThat(copia.getPropriedadeOrdenacao()).isEqualTo("nomeRecuperando");
+        assertThat(copia.getSortOrder()).isEqualTo(org.primefaces.model.SortOrder.DESCENDING);
+        assertThat(copia.isAscendente()).isFalse();
     }
 }

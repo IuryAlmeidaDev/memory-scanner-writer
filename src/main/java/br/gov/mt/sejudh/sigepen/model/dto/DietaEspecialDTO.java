@@ -44,8 +44,8 @@ public class DietaEspecialDTO {
 		return tipoDieta;
 	}
 
-	public String setTipoDieta() {
-		return tipoDieta;
+	public void setTipoDieta(String tipoDieta) {
+		this.tipoDieta = tipoDieta;
 	}
 
 	public String getNomeRecuperando() {

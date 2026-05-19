@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.bean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -372,13 +373,19 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 
 	public void imprimir() {
 		try {
-			int totalRegistros = dietasEspeciais.getRowCount();
-			if (totalRegistros == 0) {
+			FiltroDietaEspecial filtroRelatorio = getFiltro()
+					.copiarParaRelatorio(security.possuiPermissao("ListarTodasUnidades"));
+			List<DietaEspecialDTO> registros = dietaEspecialService.buscarPorFiltroRelatorio(filtroRelatorio);
+
+			if (registros == null || registros.isEmpty()) {
 				facesUtil.exibirMensagem(FacesMessage.SEVERITY_INFO, "Atenção", "Não há registros para serem impressos");
 				return;
 			}
 
-			Arquivo relatorio = RelatorioUtil.gerarRelatorio(dietasEspeciais.load(0, totalRegistros, null, SortOrder.UNSORTED, null), Relatorio.ListarDietaEspecialRecuperando);
+			Map<String, Object> parametros = new HashMap<>();
+			parametros.put("EXIBIR_NOME_SOCIAL", possuiNomeSocial(registros));
+			Arquivo relatorio = RelatorioUtil.gerarRelatorio(registros, Relatorio.ListarDietaEspecialRecuperando,
+					parametros);
 			fileDownload.prepararArquivo(relatorio);
 
 			RequestContext.getCurrentInstance().execute("download()");
@@ -388,6 +395,17 @@ public class DietaEspecialBean extends MetodosDePaginaBean {
 			facesUtil.exibirMensagem(FacesMessage.SEVERITY_FATAL, "ERRO", e.getMessage());
 			LoggerUtil.logErro(Acao.IMPRIMIR, "Dieta Especial", e, log);
 		}
+	}
+
+	boolean possuiNomeSocial(List<DietaEspecialDTO> registros) {
+		if (registros == null || registros.isEmpty()) {
+			return false;
+		}
+
+		return registros.stream()
+				.map(DietaEspecialDTO::getNomeSocialRecuperando)
+				.filter(Objects::nonNull)
+				.anyMatch(nomeSocial -> !nomeSocial.trim().isEmpty());
 	}
 
 }

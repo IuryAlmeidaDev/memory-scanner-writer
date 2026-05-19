@@ -5,7 +5,7 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [1.38.0] - 18/05/2026
+## [1.38.0] - 19/05/2026
 
 ### Adicionado
 
@@ -20,7 +20,7 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   unidade/permissão do usuário.
 - **Testes unitários:** cobertura para filtros de alimento, tipo de dieta, dieta especial,
   contrato, fornecedor, cardápio, histórico de pedido de alimento, geração de pedido,
-  permissões e normalização de CNPJ em buscas parciais.
+  permissões, credenciamentos de visitante e normalização de CNPJ em buscas parciais.
 
 ### Corrigido
 
@@ -31,17 +31,24 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Recuperando:** filtro de recuperando usado por dieta especial passa a ser gravado em
   sessão também para usuários sem permissão global, evitando consulta ampla indevida.
 - **Gerar pedido:** fluxo de listagem passa a falhar fechado quando não houver unidade
-  selecionada na sessão e o tratamento de erro de relatório deixa de depender de mensagem
-  com formato específico.
-- **Gerar pedido:** listagem de unidades com contrato ativo passa a usar contagem e
-  paginação no banco, evitando carregamento completo e cruzamento de listas em memória.
+  selecionada na sessão, listagem de unidades com contrato ativo passa a usar contagem e
+  paginação no banco e o tratamento de erro de relatório deixa de depender de mensagem com
+  formato específico.
 - **Contrato e fornecedor:** filtros de CNPJ nas listagens deixam de exigir CNPJ completo,
   aceitam busca parcial com ou sem pontuação e normalizam o valor antes de aplicar o filtro.
+- **Visitantes - credenciamento:** validação e correção do fluxo de credenciamento para os 
+  diferentes tipos de visita e exclusão de credenciamentos inválidos independente da fase.
+- **Dieta especial - relatório:** impressão passa a processar os filtros atuais do
+  formulário, usar consulta própria para relatório, corrigir o mapeamento de `tipoDieta`
+  no DTO e exibir mensagem quando não houver registros para imprimir.
 
 ### Alterado
 
 - **Dieta especial:** filtro de recuperando na listagem passa de combo carregado no início
   para autocomplete incremental.
+- **Dieta especial - relatório:** layout passa a usar cabeçalho e rodapé institucionais em
+  paisagem, datas formatadas, colunas reajustadas e coluna de nome social exibida somente
+  quando houver valor preenchido nos registros impressos.
 - **Contrato, fornecedor e geração de pedido:** campos livres de consulta foram padronizados
   para seletores filtráveis ou autocomplete conforme o volume e a natureza dos dados.
 - **Build:** versão do projeto promovida para `1.38.0` e removida declaração duplicada da

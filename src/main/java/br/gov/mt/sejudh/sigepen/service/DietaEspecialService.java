@@ -51,6 +51,10 @@ public class DietaEspecialService {
 		return dao.buscaPorFiltro(filtro);
 	}
 
+	public List<DietaEspecialDTO> buscarPorFiltroRelatorio(FiltroDietaEspecial filtro) {
+		return dao.buscaPorFiltroRelatorio(filtro);
+	}
+
 	public List<String> listarNomesRecuperandosParaFiltro(boolean listarTodasUnidades, Long unidadeId) {
 		return dao.listarNomesRecuperandosParaFiltro(listarTodasUnidades, unidadeId);
 	}
