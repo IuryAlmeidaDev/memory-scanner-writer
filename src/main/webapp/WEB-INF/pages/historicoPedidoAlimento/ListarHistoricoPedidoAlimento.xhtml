@@ -130,7 +130,8 @@
 				emptyMessage="Nenhum registro encontrado." rows="10"
 				widgetVar="historicoPedidoDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
-				sortBy="#{pedido.id}" sortOrder="descending">
+				sortBy="#{pedido.id}" sortOrder="descending" reflow="true"
+				rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable">
 
 				<p:column headerText="Código" style="width:100px;"
 					sortBy="#{pedido.id}">
@@ -138,7 +139,7 @@
 				</p:column>
 
 				<p:column headerText="Data" sortBy="#{pedido.dataPedido}"
-					style="width:160px; white-space: nowrap; text-align: center;">
+					style="white-space: nowrap; text-align: center;">
 					<h:outputText value="#{pedido.dataPedido}">
 						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 					</h:outputText>
@@ -164,11 +165,11 @@
 				</p:column>
 
 				<p:column headerText="Ações"
-					style="width:130px; text-align: center;">
-					<center>						<p:commandButton title="Relatório de Emissão"
+					style="width:150px;" styleClass="sgp-datatable-actions">
+					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">						<p:commandButton title="Relatório de Emissão"
 							icon="fa fa-file-pdf-o" update=":formDownload" process="@this"
 							action="#{historicoPedidoAlimentoBean.baixarRelatorio(pedido.id)}" />
-					</center>
+					</h:panelGroup>
 				</p:column>
 
 				<f:facet name="footer">

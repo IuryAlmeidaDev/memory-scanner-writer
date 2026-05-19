@@ -55,14 +55,15 @@
 		<h:form id="registrosForm">
 			<p:dataTable id="dataTable" var="unidade" value="#{gerarPedidoBean.unidades}" emptyMessage="Nenhum registro encontrado."
 				widgetVar="gerarPedidoDataTable"
-				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{unidade.id}">
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{unidade.id}"
+				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable">
 				<p:column headerText="Código" style="width:100px;" sortBy="#{unidade.id}">
 					<h:outputText value="#{unidade.id}" />
 				</p:column>
 				<p:column headerText="Nome" sortBy="#{unidade.nome}">
 					<h:outputText value="#{unidade.nome}" />
 				</p:column>
-				<p:column headerText="Sigla" sortBy="#{unidade.sigla}" width="80">
+				<p:column headerText="Sigla" sortBy="#{unidade.sigla}">
 					<h:outputText value="#{unidade.sigla}" />
 				</p:column>
 				<p:column headerText="Tipo" sortBy="#{unidade.tipo}">
@@ -74,15 +75,15 @@
 				<p:column headerText="Município" sortBy="#{unidade.municipio}">
 					<h:outputText value="#{unidade.municipio}" />
 				</p:column>
-				<p:column headerText="Situação" sortBy="#{unidade.situacaoUnidade}" width="120">
+				<p:column headerText="Situação" sortBy="#{unidade.situacaoUnidade}">
 					<h:outputText value="#{unidade.situacaoUnidade}" />
 				</p:column>
-				<p:column headerText="Ações" style="width:150px;">
-					<center>
+				<p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Detalhes" icon="ui-icon-document" outcome="pretty:VisualizarGerarPedido">
 							<f:param name="id" value="#{unidade.id}" />
 						</p:button>						
-					</center>
+					</h:panelGroup>
 				</p:column>
 				
 				<f:facet name="footer">

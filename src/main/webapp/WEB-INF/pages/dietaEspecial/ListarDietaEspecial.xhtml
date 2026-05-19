@@ -88,7 +88,8 @@
 				emptyMessage="Nenhum registro encontrado." rows="10"
 				widgetVar="dietaEspecialDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
-				sortBy="#{dietaEspecial.id}">
+				sortBy="#{dietaEspecial.id}" reflow="true"
+				rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable">
 				<p:column headerText="Código" style="width:100px;"
 					sortBy="#{dietaEspecial.id}">
 					<h:outputText value="#{dietaEspecial.id}" />
@@ -105,22 +106,21 @@
 					sortBy="#{dietaEspecial.tipoDieta}">
 					<h:outputText value="#{dietaEspecial.tipoDieta}" />
 				</p:column>
-				<p:column headerText="Início" sortBy="#{dietaEspecial.inicio}"
-					width="170">
+				<p:column headerText="Início" sortBy="#{dietaEspecial.inicio}">
 					<h:outputText value="#{dietaEspecial.inicio}">
 						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 					</h:outputText>
 				</p:column>
-				<p:column headerText="Fim" sortBy="#{dietaEspecial.fim}" width="170">
+				<p:column headerText="Fim" sortBy="#{dietaEspecial.fim}">
 					<h:outputText value="#{dietaEspecial.fim}">
 						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 					</h:outputText>
 				</p:column>
-				<p:column headerText="Status" sortBy="#{dietaEspecial.statusAtual}" style="width:120px; text-align:center;">
+				<p:column headerText="Status" sortBy="#{dietaEspecial.statusAtual}" style="text-align:center;">
 					<h:outputText value="#{dietaEspecial.statusAtual}" />
 				</p:column>
-				<p:column headerText="Ações" style="width:150px;">
-					<center>
+				<p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Visualizar" icon="ui-icon-document"
 							outcome="pretty:VisualizarDietaEspecial"
 							rendered="#{securityUtil.possuiPermissao('VisualizarDietaEspecial')}">
@@ -131,7 +131,7 @@
 							rendered="#{securityUtil.possuiPermissao('AlterarDietaEspecial')}">
 							<f:param name="id" value="#{dietaEspecial.id}" />
 						</p:button>
-					</center>
+					</h:panelGroup>
 				</p:column>
 
 				<f:facet name="footer">
