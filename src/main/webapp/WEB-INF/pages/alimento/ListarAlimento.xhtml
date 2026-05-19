@@ -24,7 +24,7 @@
             <p:panel>
                 <p:outputLabel value="Consulta"/>
                 <div class="form-block">
-                    <div class="form-label-column" style="min-width:150px !important">
+                    <div class="form-label-column">
                         <p:outputLabel for="descricaoConsulta" value="Descrição:"/>
                     </div>
                     <div class="form-required-column">
@@ -36,7 +36,7 @@
                                 value="#{alimentoBean.filtro.descricao}"
                                 completeMethod="#{alimentoBean.completarDescricoesAlimentosFiltro}"
                                 minQueryLength="2" queryDelay="400" maxResults="20"
-                                forceSelection="false" dropdown="false" style="width:300px"/>
+                                forceSelection="false" dropdown="false"/>
                     </div>
                     <div class="form-error-column">
                         <p:message for="descricaoConsulta" display="text"/>

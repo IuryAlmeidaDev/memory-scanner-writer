@@ -17,33 +17,28 @@
 
 		<h:form id="meuFormulario">
 			<p:panel>
-				<p:outputLabel value="Consulta"
-					style="font-weight: bold; font-size: 1.2em;" />
+				<p:outputLabel value="Consulta" />
 				<br />
 				<br />
 
 				<h:panelGrid columns="2" cellpadding="0"
 					columnClasses="colunaLabel, colunaCampo" rowClasses="linhaEspacada">
 
-					<p:outputLabel value="Data Inicial:" for="dataInicial"
-						style="font-weight: bold;" />
+					<p:outputLabel value="Data Inicial:" for="dataInicial" />
 					<p:calendar id="dataInicial"
 						value="#{historicoPedidoAlimentoBean.filtro.dataPedidoInicial}"
 						pattern="dd/MM/yyyy" mask="true" locale="pt_BR" showOn="button"
 						size="25" />
 
-					<p:outputLabel value="Data Final:" for="dataFinal"
-						style="font-weight: bold;" />
+					<p:outputLabel value="Data Final:" for="dataFinal" />
 					<p:calendar id="dataFinal"
 						value="#{historicoPedidoAlimentoBean.filtro.dataPedidoFinal}"
 						pattern="dd/MM/yyyy" mask="true" locale="pt_BR" showOn="button"
 						size="25" />
 
-					<p:outputLabel value="Contrato:" for="contrato"
-						style="font-weight: bold;" />
+					<p:outputLabel value="Contrato:" for="contrato" />
 					<p:selectOneMenu id="contrato"
 						value="#{historicoPedidoAlimentoBean.filtro.idContrato}"
-						style="width: 215px"
 						filter="true" filterMatchMode="custom" filterFunction="removeAcento">
 						<f:selectItem itemLabel="Selecione" itemValue=""
 							noSelectionOption="true" />
@@ -51,11 +46,10 @@
 							var="item" itemLabel="#{item.numContrato}" itemValue="#{item.id}" />
 					</p:selectOneMenu>
 
-					<p:outputLabel value="Tipo de Refeição:" for="tipoRefeicao"
-						style="font-weight: bold;" />
+					<p:outputLabel value="Tipo de Refeição:" for="tipoRefeicao" />
 					<p:selectOneMenu id="tipoRefeicao"
 						value="#{historicoPedidoAlimentoBean.filtro.tipoRefeicao}"
-						converter="SimpleEntityConverter" style="width: 215px">
+						converter="SimpleEntityConverter">
 						<f:selectItem itemLabel="Selecione" itemValue=""
 							noSelectionOption="true" />
 						<f:selectItems
@@ -63,11 +57,10 @@
 							itemLabel="#{item.descricao}" itemValue="#{item}" />
 					</p:selectOneMenu>
 
-					<p:outputLabel value="Status:" for="status"
-						style="font-weight: bold;" />
+					<p:outputLabel value="Status:" for="status" />
 					<p:selectOneMenu id="status"
 						value="#{historicoPedidoAlimentoBean.filtro.status}"
-						style="width: 215px">
+						>
 						<f:selectItem itemLabel="Selecione" itemValue=""
 							noSelectionOption="true" />
 						<f:selectItems value="#{historicoPedidoAlimentoBean.status}"
@@ -75,11 +68,9 @@
 					</p:selectOneMenu>
 
 					<p:outputLabel value="Unidade Prisional:" for="unidade"
-						style="font-weight: bold;"
 						rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}" />
 					<p:selectOneMenu id="unidade"
 						value="#{historicoPedidoAlimentoBean.filtro.idUnidadePrisional}"
-						style="width: 215px"
 						rendered="#{securityUtil.possuiPermissao('ListarTodasUnidades')}"
 						filter="true" filterMatchMode="contains">
 
@@ -93,34 +84,10 @@
 
 				<br />
 				<p:commandButton value="Pesquisar" update=":registrosForm"
-					process="@form" icon="ui-icon-search" style="margin-top: 5px;"
+					process="@form" icon="ui-icon-search"
 					onstart="if (PF('historicoPedidoDataTable')) { PF('historicoPedidoDataTable').getPaginator().setPage(0); }" />
 			</p:panel>
 		</h:form>
-
-		<style type="text/css">
-.colunaLabel {
-	width: 130px;
-	text-align: left;
-}
-
-.colunaLabel.ui-outputlabel, .colunaLabel label {
-	font-size: 14px !important;
-	font-weight: bold !important;
-}
-
-.colunaCampo {
-	text-align: left;
-}
-
-.linhaEspacada td {
-	padding-bottom: 5px;
-}
-
-.ui-selectonemenu {
-	vertical-align: middle;
-}
-</style>
 
 		<h:form id="formDownload" />
 
@@ -139,7 +106,7 @@
 				</p:column>
 
 				<p:column headerText="Data" sortBy="#{pedido.dataPedido}"
-					style="white-space: nowrap; text-align: center;">
+					styleClass="sgp-datatable-nowrap-center">
 					<h:outputText value="#{pedido.dataPedido}">
 						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 					</h:outputText>

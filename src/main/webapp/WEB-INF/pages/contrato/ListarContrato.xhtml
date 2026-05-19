@@ -32,7 +32,7 @@
 					itemValue="#{item}" itemLabel="#{item}" temSelecione="true"
 					defaultFilterMode="true"
 					styleFormLabelColumn="min-width:150px !important"
-					style="width:350px">
+					>
 					<p:ajax listener="#{contratoBean.atualizarUnidadesPorContrato}"
 						update="@form" />
 				</sgp:formSelectOneMenu>
@@ -52,7 +52,7 @@
 					itemValue="#{item}" itemLabel="#{item}" temSelecione="true"
 					defaultFilterMode="true"
 					styleFormLabelColumn="min-width:150px !important"
-					style="width:350px" />
+					/>
 
 				<sgp:formInputText id="cnpj" value="#{contratoBean.filtro.cnpj}"
 					labelValue="CNPJ do Fornecedor" maxlength="18" size="40"
