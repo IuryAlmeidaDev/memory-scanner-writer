@@ -911,3 +911,24 @@ textarea {
 		opacity: 0.75;
 	}
 }
+
+.sgp-datatable {
+	font-size: 11px;
+}
+
+.sgp-datatable .ui-datatable-data > tr > td,
+.sgp-datatable .ui-datatable-data-empty td,
+.sgp-datatable .ui-datatable-footer {
+	padding: 6px 8px;
+	line-height: 1.35;
+}
+
+.sgp-datatable .ui-datatable thead th {
+	padding: 6px 8px;
+	line-height: 1.35;
+}
+
+.sgp-datatable-actions {
+	text-align: center;
+	white-space: nowrap;
+}

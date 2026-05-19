@@ -79,7 +79,8 @@
 				emptyMessage="Nenhum registro encontrado." rows="10"
 				widgetVar="contratoDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
-				sortBy="#{contrato.id}" reflow="true">
+				sortBy="#{contrato.id}" reflow="true" rowsPerPageTemplate="10,20,30,50"
+				styleClass="sgp-datatable">
 				<p:column headerText="Código" sortBy="#{contrato.id}" >
 					<h:outputText value="#{contrato.id}" />
 				</p:column>
@@ -109,8 +110,8 @@
 				<p:column headerText="Status" sortBy="#{contrato.status}" >
 					<h:outputText value="#{contrato.status}" />
 				</p:column>
-				<p:column headerText="Ações" style="width:150px;">
-					<center>
+				<p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Visualizar" icon="ui-icon-document"
 							outcome="pretty:VisualizarContrato"
 							rendered="#{securityUtil.possuiPermissao('VisualizarContrato')}">
@@ -121,7 +122,7 @@
 							rendered="#{securityUtil.possuiPermissao('AlterarContrato')}">
 							<f:param name="id" value="#{contrato.id}" />
 						</p:button>
-					</center>
+					</h:panelGroup>
 				</p:column>
 
 				<f:facet name="footer">

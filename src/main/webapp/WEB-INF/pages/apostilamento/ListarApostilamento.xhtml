@@ -52,7 +52,8 @@
 				<br />
 				<br />
 				<p:commandButton value="Pesquisar" update=":registrosForm"
-					process="@form" icon="ui-icon-search" />
+					process="@form" icon="ui-icon-search"
+					onstart="if (PF('apostilamentoDataTable')) { PF('apostilamentoDataTable').getPaginator().setPage(0); }" />
 			</p:panel>
 		</h:form>
 
@@ -61,8 +62,10 @@
 			<p:dataTable id="dataTable" var="apostilamento"
 				value="#{apostilamentoBean.apostilamentos}"
 				emptyMessage="Nenhum registro encontrado." rows="10"
+				widgetVar="apostilamentoDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
-				sortBy="#{apostilamento.id}">
+				sortBy="#{apostilamento.id}" reflow="true"
+				rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable">
 
 				<p:column headerText="Código" style="width:100px;"
 					sortBy="#{apostilamento.id}">
@@ -75,25 +78,24 @@
 				</p:column>
 
 				<p:column headerText="Data Inicio"
-					sortBy="#{apostilamento.dataInicio}" width="150">
+					sortBy="#{apostilamento.dataInicio}">
 					<h:outputText value="#{apostilamento.dataInicio}">
 						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>
 				</p:column>
 
-				<p:column headerText="Data Fim" sortBy="#{apostilamento.dataFim}"
-					width="150">
+				<p:column headerText="Data Fim" sortBy="#{apostilamento.dataFim}">
 					<h:outputText value="#{apostilamento.dataFim}">
 						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>
 				</p:column>
 
-				<p:column headerText="Status" sortBy="#{apostilamento.statusVigencia}" width="120">
+				<p:column headerText="Status" sortBy="#{apostilamento.statusVigencia}">
 					<h:outputText value="#{apostilamento.statusVigencia}" />
 				</p:column>
 
-				<p:column headerText="Ações" style="width:150px;">
-					<center>
+				<p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Visualizar" icon="ui-icon-document"
 							outcome="pretty:VisualizarApostilamento"
 							rendered="#{securityUtil.possuiPermissao('VisualizarApostilamento')}">
@@ -105,7 +107,7 @@
 							rendered="#{securityUtil.possuiPermissao('AlterarApostilamento')}">
 							<f:param name="id" value="#{apostilamento.id}" />
 						</p:button>
-					</center>
+					</h:panelGroup>
 				</p:column>
 
 				<f:facet name="footer">

@@ -73,26 +73,27 @@
 		<h:form id="registrosForm">
 			<p:dataTable id="dataTable" var="tipoDieta" value="#{tipoDietaBean.tiposDieta}" emptyMessage="Nenhum registro encontrado."
 				widgetVar="tipoDietaDataTable"
-				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{tipoDieta.id}">
+				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{tipoDieta.id}"
+				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable">
 
 				<p:column headerText="Código" style="width:100px;" sortBy="#{tipoDieta.id}">
 					<h:outputText value="#{tipoDieta.id}" />
 				</p:column>
 				
-				<p:column headerText="Descrição" sortBy="#{tipoDieta.descricao}" width="60%">
+				<p:column headerText="Descrição" sortBy="#{tipoDieta.descricao}">
 					<h:outputText value="#{tipoDieta.descricao}" />
 				</p:column>
 				
-				<p:column headerText="Especial" sortBy="#{tipoDieta.especial}" width="15%">
+				<p:column headerText="Especial" sortBy="#{tipoDieta.especial}">
 						<h:outputText value="#{tipoDieta.especial ? 'Sim' : 'Não'}" />
 					</p:column>
 				
-				<p:column headerText="Situação" sortBy="#{tipoDieta.status}" width="15%">
+				<p:column headerText="Situação" sortBy="#{tipoDieta.status}">
                     <h:outputText value="#{tipoDieta.status.descricao}" />
                 </p:column>
 
-				<p:column headerText="Ações" style="width:150px;">
-					<center>
+				<p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarTipoDieta" rendered="#{securityUtil.possuiPermissao('VisualizarTipoDieta')}">
 							<f:param name="id" value="#{tipoDieta.id}" />
 						</p:button>
@@ -105,7 +106,7 @@
 							rendered="#{securityUtil.possuiPermissao('AlterarTipoDieta')}" disabled="#{tipoDieta.status.descricao.equalsIgnoreCase('Inativo')}" >
 							 <p:confirm header="Confirmação" message="Deseja inativar o tipo de Dieta? Ao confirmar, todos os recuperando que possuírem essa dieta atribuída também terão a dieta especial inativa" icon="ui-icon-alert" />
 						</p:commandButton>
-					</center>
+					</h:panelGroup>
 				</p:column>
 				
 				<f:facet name="footer">

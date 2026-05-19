@@ -105,24 +105,25 @@
 				emptyMessage="Nenhum registro encontrado." rows="10"
 				widgetVar="cardapioDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
-				sortBy="#{cardapio.id}" rowsPerPageTemplate="10,20,30,50">
+				sortBy="#{cardapio.id}" rowsPerPageTemplate="10,20,30,50"
+				reflow="true" styleClass="sgp-datatable">
 
 				<p:column headerText="Código" style="width:100px;"
 					sortBy="#{cardapio.id}">
 					<h:outputText value="#{cardapio.id}" />
 				</p:column>
 
-				<p:column headerText="Refeição" style="width:200px;"
+				<p:column headerText="Refeição"
 					sortBy="#{cardapio.nomeRefeicao}">
 					<h:outputText value="#{cardapio.nomeRefeicao}" />
 				</p:column>
 
-				<p:column headerText="Dieta" style="width:200px;"
+				<p:column headerText="Dieta"
 					sortBy="#{cardapio.nomeDieta}">
 					<h:outputText value="#{cardapio.nomeDieta}" />
 				</p:column>
 
-				<p:column headerText="Semana" style="width:200px;"
+				<p:column headerText="Semana"
 					sortBy="#{cardapio.semana}">
 					<h:outputText value="#{cardapio.semana}" />
 				</p:column>
@@ -131,7 +132,7 @@
 					<h:outputText value="#{cardapio.diaSemana.descricao}" />
 				</p:column>
 
-				<p:column headerText="Próxima Ocorrência" style="width:150px;"
+				<p:column headerText="Próxima Ocorrência"
 					sortBy="#{cardapio.proximaData}">
 					<h:outputText value="#{cardapio.proximaData}">
 						<f:convertDateTime pattern="dd/MM/yyyy" />
@@ -147,8 +148,8 @@
 					<h:outputText value="#{cardapio.numContrato}" />
 				</p:column>
 
-				<p:column headerText="Ações" style="width:150px;">
-					<center>
+				<p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Visualizar" icon="ui-icon-document"
 							outcome="pretty:VisualizarCardapio"
 							rendered="#{securityUtil.possuiPermissao('VisualizarCardapio')}">
@@ -160,7 +161,7 @@
 							rendered="#{securityUtil.possuiPermissao('AlterarCardapio')}">
 							<f:param name="id" value="#{cardapio.id}" />
 						</p:button>
-					</center>
+					</h:panelGroup>
 				</p:column>
 
 				<f:facet name="footer">
