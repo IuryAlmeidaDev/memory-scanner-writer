@@ -86,4 +86,12 @@ public class HistoricoPedidoAlimentoService {
         UnidadePrisional up = upDao.buscaSimplesPorId(idUnidade);
         return up != null ? up.getNome() : "";
     }
+
+    public Long buscarMatriculaUsuarioPorId(Long idUsuario) {
+        if (idUsuario == null || idUsuario <= 0) {
+            return null;
+        }
+
+        return dao.buscarMatriculaUsuarioPorId(idUsuario);
+    }
 }

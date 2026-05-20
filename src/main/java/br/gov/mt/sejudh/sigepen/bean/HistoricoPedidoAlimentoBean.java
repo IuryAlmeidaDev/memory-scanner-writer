@@ -257,7 +257,7 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 
 			Map<String, Object> parameters = montarParametros(pedido, itensPedido, dietasEspeciais, contrato, nomeUnidadeHistorica);
 			
-			if(Status.ATIVO.equals(pedido.getStatus())) {
+			if(Relatorio.PedidoDetalhadoAssinado.equals(selecionarRelatorioEmissao(pedido))) {
 				Arquivo relatorioGerado = RelatorioUtil.gerarRelatorio(itensPedido, Relatorio.PedidoDetalhadoAssinado,
 						parameters);
 				fileDownload.prepararArquivo(relatorioGerado);
@@ -275,6 +275,14 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 					"Não foi possível gerar o relatório." + e.getMessage());
 			LoggerUtil.logErro(e, log);
 		}
+	}
+
+	Relatorio selecionarRelatorioEmissao(PedidoAlimento pedido) {
+		if (pedido != null && pedido.isOrigemManual() && Status.ATIVO.equals(pedido.getStatus())) {
+			return Relatorio.PedidoDetalhadoAssinado;
+		}
+
+		return Relatorio.PedidoDetalhado;
 	}
 
 	private List<DetalheItemEstruturaCardapioDTO> converterItens(PedidoAlimento pedido) {
@@ -311,7 +319,30 @@ public class HistoricoPedidoAlimentoBean extends MetodosDePaginaBean {
 	    parameters.put("DIETA_ESPECIAL_POR_ESTRUTURA", dietasEspeciais);
 	    parameters.put("TOTAL_RECUPERANDO", calcularTotalRecuperando(itensPedido, dietasEspeciais));
 	    parameters.put("MENSAGEM", montarMensagemCabecalho(pedido, contrato, nomeUnidade));
+	    parameters.put("EMISSOR", montarEmissor(pedido));
+	    parameters.put("EMISSAO_AUTOMATICA", pedido != null && pedido.isOrigemAutomatica());
 	    return parameters;
+	}
+
+	private String montarEmissor(PedidoAlimento pedido) {
+		if (pedido != null && pedido.isOrigemAutomatica()) {
+			return "";
+		}
+
+		return buscarMatriculaUsuario(pedido);
+	}
+
+	private String buscarMatriculaUsuario(PedidoAlimento pedido) {
+		if (pedido == null || pedido.getIdUsuario() == null || pedido.getIdUsuario() <= 0) {
+			return "";
+		}
+
+		Long matricula = historicoPedidoAlimentoService.buscarMatriculaUsuarioPorId(pedido.getIdUsuario());
+		if (matricula == null) {
+			return "";
+		}
+
+		return String.valueOf(matricula);
 	}
 
 	private String montarMensagemCabecalho(PedidoAlimento pedido, Contrato contrato, String nomeUnidade) {

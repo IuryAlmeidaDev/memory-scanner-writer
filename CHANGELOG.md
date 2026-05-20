@@ -5,13 +5,16 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [1.38.0] - 19/05/2026
+## [1.38.0] - 20/05/2026
 
 ### Adicionado
 
 - **Alimentação - filtros de listagem:** sugestões e filtros pesquisáveis nas telas de
   alimento, tipo de dieta, dieta especial, contrato, fornecedor, geração de pedido,
   cardápio e histórico de pedido de alimento, com reset da paginação ao pesquisar.
+- **Pedido de alimento:** persistência da origem de geração (`MANUAL`/`AUTOMATICO`)
+  no pedido e na auditoria, permitindo distinguir emissão manual e automática nos
+  fluxos de histórico e relatório.
 - **Contrato:** opções de filtro por número de contrato e fornecedor com sugestões,
   atualização das unidades prisionais conforme o contrato selecionado e restrição das
   opções conforme permissão/unidade do usuário.
@@ -36,11 +39,15 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   formato específico.
 - **Contrato e fornecedor:** filtros de CNPJ nas listagens deixam de exigir CNPJ completo,
   aceitam busca parcial com ou sem pontuação e normalizam o valor antes de aplicar o filtro.
-- **Visitantes - credenciamento:** validação e correção do fluxo de credenciamento para os 
+- **Visitantes - credenciamento:** validação e correção do fluxo de credenciamento para os
   diferentes tipos de visita e exclusão de credenciamentos inválidos independente da fase.
 - **Dieta especial - relatório:** impressão passa a processar os filtros atuais do
   formulário, usar consulta própria para relatório, corrigir o mapeamento de `tipoDieta`
   no DTO e exibir mensagem quando não houver registros para imprimir.
+- **Histórico de pedido de alimento:** relatório de emissão passa a diferenciar pedidos
+  manuais e automáticos; pedidos automáticos exibem emissão automática, pedidos manuais
+  ativos preservam o rodapé de assinatura e a identificação do emissor passa a usar a
+  matrícula do usuário responsável.
 
 ### Alterado
 
@@ -49,10 +56,21 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - **Dieta especial - relatório:** layout passa a usar cabeçalho e rodapé institucionais em
   paisagem, datas formatadas, colunas reajustadas e coluna de nome social exibida somente
   quando houver valor preenchido nos registros impressos.
+- **Dieta especial - relatório por estrutura:** cabeçalho do subrelatório foi ampliado,
+  passou a aceitar quebra de linha no nome da estrutura e ganhou espaçamento entre grupos
+  para melhorar a leitura do PDF.
 - **Contrato, fornecedor e geração de pedido:** campos livres de consulta foram padronizados
   para seletores filtráveis ou autocomplete conforme o volume e a natureza dos dados.
+- **Testes unitários:** ampliada a cobertura para origem de geração do pedido, seleção do
+  relatório de emissão no histórico e busca da matrícula do emissor.
 - **Build:** versão do projeto promovida para `1.38.0` e removida declaração duplicada da
   dependência `br.gov.mt.seguranca:sesp-audit-report`.
+
+### Notas da versão
+
+- **Scripts de banco:** executar também os scripts da pasta
+  [`Scripts de Banco/v18.0.0/`](./Scripts%20de%20Banco/v18.0.0) para adicionar a coluna
+  `ORIGEM_GERACAO` nas tabelas de pedido de alimento e auditoria.
 
 ## [1.37.0] - 13/05/2026
 

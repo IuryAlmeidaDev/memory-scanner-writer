@@ -35,7 +35,7 @@ public enum Relatorio {
 	GerarPedido("Pedido de alimentação", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 32),
 	GerarPedidoUnificado("Pedido de alimentação", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 33),
 	GerarPedidoDetalhado("Pedido detalhado de alimentação", 34),
-	PedidoDetalhado("Pedido detalhado de alimentação", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PADRAO, 35),
+	PedidoDetalhado("Pedido detalhado de alimentação", ModeloCabecalho.PADRAO_SEM_UNIDADE_LOGADA, ModeloRodape.PEDIDO_ALIMENTO, 35),
 	ListaConsolidadoMensal("Consolidado Mensal", ModeloCabecalho.PADRAO_PAISAGEM_SEM_UNIDADE_LOGADA,ModeloRodape.PADRAO_PAISAGEM, 37),
 	PedidoCardapio("Cardapio", 38),
 	ListarRelatorioEntradaSaidaRecuperando("ENTRADA E SAÍDA DE RECUPERANDOS", 39),
