@@ -36,14 +36,14 @@ public class PedidoTransitoBeanTest extends BaseUnitTest {
         PedidoTransito pedido = new PedidoTransito();
         pedido.setId(77L);
         bean.setPedido(pedido);
-        org.mockito.Mockito.doThrow(new ValidacaoException("pedido invÃ¡lido"))
+        org.mockito.Mockito.doThrow(new ValidacaoException("pedido inválido"))
                 .when(service).validarPedido(pedido, MovimentacaoPassos.SALVAR);
 
         String retorno = bean.salvar();
 
         assertThat(retorno).isNull();
         verify(facesUtil).exibirMensagem(org.mockito.Mockito.eq(FacesMessage.SEVERITY_WARN),
-                org.mockito.ArgumentMatchers.contains("ATEN"), org.mockito.Mockito.eq("pedido invÃ¡lido"));
+                org.mockito.ArgumentMatchers.contains("ATEN"), org.mockito.Mockito.eq("pedido inválido"));
         verify(service, never()).salvar(any(PedidoTransito.class));
     }
 }

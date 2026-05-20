@@ -2,6 +2,7 @@ package br.gov.mt.sejudh.sigepen.service;
 
 import br.gov.mt.sejudh.sigepen.dao.CardapioDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoAlimentoDAO;
+import br.gov.mt.sejudh.sigepen.enumerator.OrigemPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
@@ -621,6 +622,7 @@ public class PedidoAlimentoService {
 
         PedidoMontado pedidoMontado = montarPedidoValidando(unidade, contrato, tipoRefeicao, dataPedido, idUsuarioResponsavel);
         PedidoAlimento pedidoAlimento = pedidoMontado.getPedidoAlimento();
+        pedidoAlimento.setOrigem(origemDoModo(modoGeracao));
         boolean substituiuPedidoAtivo = false;
 
         switch (modoGeracao) {
@@ -657,6 +659,22 @@ public class PedidoAlimentoService {
         }
 
         return new PedidoGerado(pedidoMontado, substituiuPedidoAtivo);
+    }
+
+    private OrigemPedidoAlimento origemDoModo(ModoGeracaoPedido modoGeracao) throws ValidacaoException {
+        if (modoGeracao == null) {
+            throw new ValidacaoException("Modo de geracao de pedido invalido.");
+        }
+
+        switch (modoGeracao) {
+        case MANUAL_PENDENTE:
+        case MANUAL_ASSINADO:
+            return OrigemPedidoAlimento.MANUAL;
+        case AUTOMATICO_ATIVO:
+            return OrigemPedidoAlimento.AUTOMATICO;
+        default:
+            throw new ValidacaoException("Modo de geracao de pedido invalido.");
+        }
     }
 
     private void salvarPedidoAutomaticoAtivoSemSubstituirAtivo(PedidoAlimento pedidoAlimento) {

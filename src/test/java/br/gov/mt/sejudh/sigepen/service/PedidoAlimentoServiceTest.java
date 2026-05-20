@@ -3,6 +3,7 @@ package br.gov.mt.sejudh.sigepen.service;
 import br.gov.mt.sejudh.sigepen.BaseUnitTest;
 import br.gov.mt.sejudh.sigepen.dao.CardapioDAO;
 import br.gov.mt.sejudh.sigepen.dao.PedidoAlimentoDAO;
+import br.gov.mt.sejudh.sigepen.enumerator.OrigemPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.exception.ValidacaoException;
 import br.gov.mt.sejudh.sigepen.model.Contrato;
@@ -368,9 +369,31 @@ public class PedidoAlimentoServiceTest extends BaseUnitTest {
 
         assertThat(resultado.isSubstituiuPedidoAtivo()).isTrue();
         assertThat(pedido.getStatus()).isEqualTo(Status.ATIVO);
+        assertThat(pedido.getOrigem()).isEqualTo(OrigemPedidoAlimento.MANUAL);
         verify(dao).bulkDeactivateItemPedidoAlimentoByPedidoIds(Arrays.asList(501L, 502L));
         verify(dao).bulkDeactivateDietaEspecialPedidoAlimentoByPedidoIds(Arrays.asList(501L, 502L));
         verify(dao).bulkDeactivatePedidoAlimentoByIds(Arrays.asList(501L, 502L));
+        verify(dao).salvar(pedido);
+    }
+
+    @Test
+    public void gerarPedidoManualPendente_devePersistirOrigemManual() throws Exception {
+        PedidoAlimento pedido = pedidoAlimento();
+        PedidoAlimentoService serviceSpy = serviceComPedidoMontado(pedido);
+        UnidadePrisional unidade = unidade(10L);
+        Contrato contrato = contrato(20L);
+        TipoRefeicao tipoRefeicao = tipoRefeicao(30L, "Almoco");
+
+        serviceSpy.gerarPedido(
+                unidade,
+                contrato,
+                tipoRefeicao,
+                "24/04/2026 12:00:00",
+                99L,
+                PedidoAlimentoService.ModoGeracaoPedido.MANUAL_PENDENTE);
+
+        assertThat(pedido.getStatus()).isEqualTo(Status.PENDENTE);
+        assertThat(pedido.getOrigem()).isEqualTo(OrigemPedidoAlimento.MANUAL);
         verify(dao).salvar(pedido);
     }
 
@@ -397,6 +420,7 @@ public class PedidoAlimentoServiceTest extends BaseUnitTest {
 
         assertThat(resultado.isSubstituiuPedidoAtivo()).isFalse();
         assertThat(pedido.getStatus()).isEqualTo(Status.ATIVO);
+        assertThat(pedido.getOrigem()).isEqualTo(OrigemPedidoAlimento.AUTOMATICO);
         verify(dao).bulkDeactivateItemPedidoAlimentoByPedidoIds(Arrays.asList(101L, 102L));
         verify(dao).bulkDeactivateDietaEspecialPedidoAlimentoByPedidoIds(Arrays.asList(101L, 102L));
         verify(dao).bulkDeactivatePedidoAlimentoByIds(Arrays.asList(101L, 102L));
@@ -425,6 +449,7 @@ public class PedidoAlimentoServiceTest extends BaseUnitTest {
                 PedidoAlimentoService.ModoGeracaoPedido.AUTOMATICO_ATIVO);
 
         assertThat(pedido.getStatus()).isEqualTo(Status.ATIVO);
+        assertThat(pedido.getOrigem()).isEqualTo(OrigemPedidoAlimento.AUTOMATICO);
         verify(dao, never()).bulkDeactivateItemPedidoAlimentoByPedidoIds(any());
         verify(dao, never()).bulkDeactivateDietaEspecialPedidoAlimentoByPedidoIds(any());
         verify(dao, never()).bulkDeactivatePedidoAlimentoByIds(any());

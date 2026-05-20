@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Collections;
 
 import javax.transaction.Transactional;
+import javax.persistence.NoResultException;
 
 public class HistoricoPedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
 
@@ -69,6 +70,20 @@ public class HistoricoPedidoAlimentoDAO extends BaseDAO<PedidoAlimento, Long> {
         .getResultList();
 
         return result.isEmpty() ? null : result.get(0);
+    }
+
+    public Long buscarMatriculaUsuarioPorId(Long idUsuario) {
+        try {
+            return em.createQuery(
+                    "SELECT s.matricula FROM Usuario u " +
+                    "JOIN u.servidor s " +
+                    "WHERE u.id = :idUsuario",
+                    Long.class)
+                    .setParameter("idUsuario", idUsuario)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
     
     @Transactional

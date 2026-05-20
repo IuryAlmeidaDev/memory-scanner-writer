@@ -28,6 +28,8 @@ public class HistoricoPedidoAlimentoDAOTest extends BaseUnitTest {
     private EntityManager entityManager;
     @Mock
     private TypedQuery<ContratoComboDTO> query;
+    @Mock
+    private TypedQuery<Long> matriculaQuery;
 
     @InjectMocks
     private HistoricoPedidoAlimentoDAO dao;
@@ -72,5 +74,21 @@ public class HistoricoPedidoAlimentoDAOTest extends BaseUnitTest {
         verify(query).setParameter("status", Status.ATIVO);
         verify(query, never()).setParameter("unidadeId", null);
         assertThat(resultado).isEmpty();
+    }
+
+    @Test
+    public void buscarMatriculaUsuarioPorId_deveConsultarMatriculaPorUsuario() {
+        when(entityManager.createQuery(anyString(), eq(Long.class))).thenReturn(matriculaQuery);
+        when(matriculaQuery.setParameter("idUsuario", 10L)).thenReturn(matriculaQuery);
+        when(matriculaQuery.getSingleResult()).thenReturn(12345L);
+
+        Long resultado = dao.buscarMatriculaUsuarioPorId(10L);
+
+        ArgumentCaptor<String> jpql = ArgumentCaptor.forClass(String.class);
+        verify(entityManager).createQuery(jpql.capture(), eq(Long.class));
+        assertThat(jpql.getValue()).contains("SELECT s.matricula");
+        assertThat(jpql.getValue()).contains("JOIN u.servidor s");
+        verify(matriculaQuery).setParameter("idUsuario", 10L);
+        assertThat(resultado).isEqualTo(12345L);
     }
 }

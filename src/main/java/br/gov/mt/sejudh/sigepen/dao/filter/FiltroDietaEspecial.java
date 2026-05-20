@@ -7,6 +7,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
+import org.primefaces.model.SortOrder;
 
 import br.gov.mt.sejudh.sigepen.enumerator.TipoFoto;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
@@ -30,6 +31,23 @@ public class FiltroDietaEspecial extends FiltroConsulta {
 
 	public FiltroDietaEspecial() {
 		this.statusDieta = StatusFiltroDietaEspecial.ATIVO;
+	}
+
+	public FiltroDietaEspecial copiarParaRelatorio(boolean listarTodasUnidades) {
+		FiltroDietaEspecial copia = new FiltroDietaEspecial();
+		copia.setUnidadePrisional(this.unidadePrisional);
+		copia.setTipoDieta(this.tipoDieta);
+		copia.setRecuperando(this.recuperando);
+		copia.setStatusDieta(this.statusDieta);
+		copia.setListarTodasUnidades(listarTodasUnidades);
+		copia.setPaginacaoIndex(this.getPaginacaoIndex());
+		if (this.getPropriedadeOrdenacao() != null) {
+			SortOrder ordenacao = SortOrder.DESCENDING.equals(this.getSortOrder())
+					? SortOrder.DESCENDING
+					: SortOrder.ASCENDING;
+			copia.organizaFiltro(this.getPaginacaoIndex(), Integer.MAX_VALUE, this.getPropriedadeOrdenacao(), ordenacao);
+		}
+		return copia;
 	}
 	
 

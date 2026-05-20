@@ -43,4 +43,13 @@ public class DietaEspecialDTOTest {
 
         assertThat(dto.getStatusAtual()).isEqualTo("Ativa");
     }
+
+    @Test
+    public void setTipoDieta_deveAtualizarCampo() {
+        DietaEspecialDTO dto = new DietaEspecialDTO();
+
+        dto.setTipoDieta("Hipossodica");
+
+        assertThat(dto.getTipoDieta()).isEqualTo("Hipossodica");
+    }
 }
