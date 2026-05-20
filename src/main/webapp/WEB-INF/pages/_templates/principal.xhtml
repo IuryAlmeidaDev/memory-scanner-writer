@@ -40,26 +40,22 @@
 	</h:form>
 	<div class="container">
 		<div class="row topo">
-			<div class="col-md-12">
-				<div class="col-xs-3" style="padding-left: 0px; padding-top: 5px">
-					<a href="#{sigepen.getApplicationName()}">
-						<p:graphicImage  name="#{(sigepen.getIsProducao() ? 'sigepen.png' : 'sigepen-h.png')}" library="images" height="70"/>
-					</a>
-				</div>
-				<div class="col-md-9" align="right">
-					<p:link outcome="pretty:SelecionarUnidade" >
-						<p:graphicImage name="images/unidade.png" height="24" width="24"/>
-						<b>
-							<p:outputLabel value="#{securityUtil.getNomeUnidadeUsuario()}" style="padding-top:10px;"/>	
-						</b> 
-					</p:link>
-					<br/>
-					<p:graphicImage name="images/user.png" height="24" width="24"/>
+			<div class="col-md-2 topo-brand">
+				<a href="#{sigepen.getApplicationName()}">
+					<p:graphicImage name="#{(sigepen.getIsProducao() ? 'sigepen.png' : 'sigepen-h.png')}" library="images" styleClass="topo-logo"/>
+				</a>
+			</div>
+			<div class="col-md-10 topo-bar">
+				<p:link outcome="pretty:SelecionarUnidade" styleClass="tb-unidade" title="Trocar unidade">
+					<i class="fa fa-building"></i>
+					<p:outputLabel value="#{securityUtil.getNomeUnidadeUsuario()}"/>
+				</p:link>
+				<span class="tb-sep"></span>
+				<span class="tb-user">
+					<i class="fa fa-user-circle"></i>
 					#{securityUtil.getNomeUsuario()}
-					<p:commandButton action="#{loginBean.logout()}" icon="fa fa-power-off" title="Sair"/>
-					<br/>
-					<p:clock pattern="dd/MM/yyyy - HH:mm:ss" mode="server"/><b>v#{versionBean.versao}</b>
-				</div>
+				</span>
+				<p:commandButton action="#{loginBean.logout()}" value="Sair" icon="fa fa-sign-out" title="Sair" styleClass="tb-sair"/>
 			</div>
 		</div>
 		<div class="row">

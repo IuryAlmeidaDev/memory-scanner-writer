@@ -18,30 +18,29 @@ a {
 
 .topo {
 	color: #ffffff !important;
-	height: 70px !important;
-	background-color: #183664 !important;
-	padding-left: 5px !important;
+	padding-left: 0 !important;
 	position: fixed;
 	z-index: 100;
 	width: 100%;
-	height: 80px !important;
+	height: 58px !important;
 }
 
 .menu {
 	background-color: #183664;
 	overflow-y: auto;
-	top: 85px !important;
+	top: 58px !important;
+	padding-bottom: 46px !important; /* respiro p/ o .sb-rodape fixo */
 }
 
 .conteudo {
-	top: 80px !important;
+	top: 58px !important;
 }
 
 @media (min-width: 992px) {
 	.menu {
 		position: fixed !important;
 		bottom: 0 !important;
-		top: 80px !important;
+		top: 58px !important;
 	}
 }
 
@@ -328,7 +327,7 @@ textarea {
 /* ===================================================================
    Sidebar repaginada. Tudo escopado em .menu. PrimeFaces 5.2.1 + tema
    "home" (jQuery UI): o !important e necessario p/ vencer o tema.
-   Paleta: base navy #183664 / conteudo #1f4374, acento #c62828.
+   Paleta: base navy #183664 / conteudo #1f4374, acento dourado #e9b949.
    =================================================================== */
 
 /* zera padding da coluna Bootstrap; 6px lateral no panelmenu */
@@ -482,12 +481,12 @@ textarea {
 	margin: 4px 6px 0 6px;
 	padding: 13px 16px 13px 38px;
 	border-radius: 3px;
-	color: #e9b949 !important;
+	color: rgba(255, 255, 255, 0.55) !important; /* padrao branco dos parents */
 	font-weight: 600;
 	font-size: 13.5px;
 	letter-spacing: 0.005em;
 	text-decoration: none !important;
-	transition: background-color 0.18s ease;
+	transition: background-color 0.18s ease, color 0.18s ease;
 }
 .menu .sb-dashboard .fa {
 	position: absolute;
@@ -499,13 +498,21 @@ textarea {
 	text-align: center;
 	font-size: 13.5px;
 	line-height: 1;
-	color: #e9b949;
+	color: rgba(255, 255, 255, 0.55);
 }
 .menu .sb-dashboard:hover {
-	background: rgba(233, 185, 73, 0.12) !important;
+	background: rgba(255, 255, 255, 0.06) !important; /* wash branco sutil */
+	color: rgba(255, 255, 255, 0.92) !important;
+}
+.menu .sb-dashboard:hover .fa {
+	color: rgba(255, 255, 255, 0.92);
 }
 .menu .sb-dashboard.sb-dashboard-ativo {
-	background: rgba(233, 185, 73, 0.16) !important;
+	background: rgba(233, 185, 73, 0.16) !important; /* ativo = dourado (igual child ativo) */
+	color: #e9b949 !important;
+}
+.menu .sb-dashboard.sb-dashboard-ativo .fa {
+	color: #e9b949;
 }
 .menu .sb-dashboard.sb-dashboard-ativo::before {
 	content: "";
@@ -593,7 +600,7 @@ textarea {
 	bottom: 0;
 	width: 3px;
 	border-radius: 3px 0 0 3px;
-	background: #c62828;
+	background: #e9b949;
 	z-index: 1;
 }
 
@@ -605,7 +612,7 @@ textarea {
 	top: 0;
 	bottom: 0;
 	width: 3px;
-	background: #c62828;
+	background: #e9b949;
 	transform: scaleY(0);
 	transform-origin: center;
 	transition: transform 0.22s ease;
@@ -617,7 +624,7 @@ textarea {
 
 /* item da rota ativa */
 .menu .sb-item-ativo > .ui-menuitem-link {
-	background: rgba(198, 40, 40, 0.18) !important;
+	background: rgba(233, 185, 73, 0.18) !important; /* mesmo dourado da unidade */
 	color: #ffffff !important;
 }
 
@@ -662,4 +669,245 @@ textarea {
 }
 .menu::-webkit-scrollbar-thumb:hover {
 	background: rgba(255, 255, 255, 0.28);
+}
+
+/* ===================================================================
+   Topbar repaginada — harmoniza com a sidebar (mesma paleta navy
+   #183664 / acento dourado #e9b949, Segoe UI, raio 3px).
+   Layout: logo grande em bloco acima da sidebar (.topo-brand) +
+   barra enxuta sobre o conteudo (.topo-bar). Altura unica 58px.
+   =================================================================== */
+
+.topo-brand,
+.topo-bar {
+	height: 58px !important;
+	background: #183664 !important;
+	box-sizing: border-box;
+}
+
+.topo-brand {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	padding: 6px 10px !important;
+}
+.topo-brand .topo-logo {
+	max-height: 42px;
+	width: auto;
+	display: block;
+}
+
+.topo-bar {
+	display: flex !important;
+	align-items: center;
+	justify-content: flex-end;
+	flex-wrap: nowrap;
+	white-space: nowrap;
+	gap: 14px;
+	padding: 0 18px !important;
+	color: #fff;
+	font-family: "Segoe UI Variable Text", "Segoe UI", system-ui,
+		-apple-system, "Helvetica Neue", Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+/* caixa fixa + inline-flex em cada item; conteudo interno tambem
+   inline-flex com height:100% — necessario p/ casar baseline do
+   <label> do p:outputLabel com o no de texto cru do .tb-user */
+.topo-bar > .tb-unidade,
+.topo-bar > .tb-user,
+.topo-bar > .tb-sair {
+	display: inline-flex !important;
+	align-items: center;
+	align-self: center;
+	height: 28px;
+	line-height: 1 !important;
+	margin: 0 !important;
+}
+.topo-bar .tb-unidade label,
+.topo-bar .tb-unidade .ui-outputlabel {
+	display: inline-flex !important;
+	align-items: center;
+	height: 100%;
+	margin: 0 !important;
+	padding: 0 !important;
+	line-height: 1 !important;
+	cursor: pointer;
+}
+.topo-bar .fa {
+	display: inline-flex !important;
+	align-items: center;
+	height: 100%;
+	margin-right: 7px;
+	line-height: 1;
+	opacity: 0.85;
+}
+
+/* unidade: mesmo font-size do .tb-user p/ baselines coincidirem */
+.topo-bar .tb-unidade,
+.topo-bar .tb-unidade:link,
+.topo-bar .tb-unidade:visited {
+	color: #e9b949 !important;
+	font-weight: 600;
+	font-size: 13px !important;
+	text-decoration: none !important;
+	transition: opacity 0.18s ease;
+}
+.topo-bar .tb-unidade .ui-outputlabel,
+.topo-bar .tb-unidade label {
+	font-size: 13px !important;
+	font-weight: 600 !important;
+	/* baseline do <label> fica 1px acima do no de texto cru — translate
+	   compensa sem reflow (NAO remover sem testar alinhamento) */
+	transform: translateY(1px);
+}
+.topo-bar .tb-unidade:hover {
+	opacity: 0.82;
+}
+
+.topo-bar .tb-sep {
+	width: 1px;
+	height: 22px;
+	background: rgba(255, 255, 255, 0.14);
+}
+
+.topo-bar .tb-user {
+	font-weight: 500;
+	font-size: 13px;
+	color: rgba(255, 255, 255, 0.92);
+	white-space: nowrap;
+}
+
+.topo-bar .tb-sair,
+.topo-bar .tb-sair .ui-button {
+	background: transparent !important;
+	background-image: none !important;
+	border: 1px solid rgba(255, 255, 255, 0.16) !important;
+	box-shadow: none !important;
+	color: rgba(255, 255, 255, 0.82) !important;
+	border-radius: 3px !important;
+	padding: 4px 11px !important;
+	font-size: 12.5px !important;
+	font-weight: 500 !important;
+	line-height: 1 !important;
+	display: inline-flex !important;
+	align-items: center;
+	gap: 7px;
+	transition: background-color 0.18s ease, border-color 0.18s ease,
+		color 0.18s ease;
+}
+/* PF/jQuery UI poe .ui-button-icon-left em position:absolute +
+   padding-left 2.1em no .ui-button-text — zeramos os dois p/ que
+   o gap do flex distribua icone e texto */
+.topo-bar .tb-sair .ui-button-icon-left,
+.topo-bar .tb-sair .fa {
+	position: static !important;
+	top: auto !important;
+	left: auto !important;
+	margin: 0 !important;
+	display: inline-flex !important;
+	align-items: center;
+	line-height: 1 !important;
+	font-size: 13px;
+	opacity: 0.9;
+}
+.topo-bar .tb-sair .ui-button-text {
+	display: inline !important;
+	padding: 0 !important;
+	line-height: 1;
+}
+.topo-bar .tb-sair:hover,
+.topo-bar .tb-sair .ui-button:hover {
+	background: rgba(255, 255, 255, 0.06) !important;
+	border-color: rgba(255, 255, 255, 0.32) !important;
+	color: #fff !important;
+}
+.topo-bar .tb-sair:hover .ui-button-text,
+.topo-bar .tb-sair:hover .fa {
+	color: #fff !important;
+	opacity: 1;
+}
+
+/* costura navy ↔ conteudo (continua no .sb-rodape, idem) */
+.conteudo {
+	border-left: 1px solid rgba(0, 0, 0, 0.06);
+}
+.menu,
+.topo-brand {
+	border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ===================================================================
+   Rodape da sidebar — relogio server-side legado rebaixado a status
+   ambiente. Fixed bottom (sticky nao funciona em paginas sem scroll
+   da sidebar, ex.: SelecionarUnidade).
+   =================================================================== */
+.sb-rodape {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 16.66666667%; /* col-md-2 — mesmo idiom do .conteudo (media query) */
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 10px 16px;
+	background: #173058;
+	border-top: 1px solid rgba(255, 255, 255, 0.07);
+	border-right: 1px solid rgba(255, 255, 255, 0.07); /* continua o divisor */
+	font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+	z-index: 101; /* acima do .topo (100) e do .menu */
+}
+/* p:clock 5.2.1 IGNORA styleClass — renderiza sempre
+   <span class="ui-clock ui-widget ui-widget-header ui-corner-all">.
+   Logo, mirar .ui-clock e zerar o estilo de "header" do tema home
+   (bg/borda/peso) que deixava a hora bold/clara. */
+.sb-rodape .ui-clock {
+	background: none !important;
+	background-image: none !important;
+	border: 0 !important;
+	box-shadow: none !important;
+	padding: 0 !important;
+	color: rgba(255, 255, 255, 0.55) !important; /* = texto idle da sidebar */
+	font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif !important;
+	font-size: 11px !important;
+	font-weight: 400 !important;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.02em;
+}
+.sb-rodape .sb-rodape-sep {
+	color: rgba(255, 255, 255, 0.35);
+	font-size: 13px;
+	line-height: 1;
+	font-weight: 400;
+	user-select: none;
+}
+.sb-rodape .sb-rodape-versao {
+	color: rgba(255, 255, 255, 0.55);
+	font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+	font-size: 11px;
+	font-weight: 400;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.02em;
+}
+.sb-rodape .sb-rodape-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+	background: #2e7d32;
+	box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.18);
+	animation: sb-pulse 2.4s ease-in-out infinite;
+}
+@keyframes sb-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.18);
+		opacity: 1;
+	}
+	50% {
+		box-shadow: 0 0 0 6px rgba(46, 125, 50, 0.06);
+		opacity: 0.75;
+	}
 }

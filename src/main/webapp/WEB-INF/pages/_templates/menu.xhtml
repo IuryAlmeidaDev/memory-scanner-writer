@@ -111,5 +111,11 @@
             </p:submenu>
 		</p:panelMenu>
 	</h:form>
+	<div class="sb-rodape">
+		<p:clock pattern="dd/MM/yyyy, HH:mm:ss" mode="server" styleClass="sb-rodape-hora"/>
+		<span class="sb-rodape-sep">·</span>
+		<span class="sb-rodape-versao">v#{versionBean.versao}</span>
+		<span class="sb-rodape-dot" title="Operacional"></span>
+	</div>
 </h:body>
 </html>
