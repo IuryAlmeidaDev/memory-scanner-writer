@@ -1,0 +1,364 @@
+/* ====================================================================
+   Auth Sigepen — CSS compartilhado entre Login.xhtml e ResetSenha.xhtml
+   Consome tokens definidos em tokens.css.
+   ==================================================================== */
+
+html,
+body {
+	height: 100% !important;
+	margin: 0;
+	background: #2a2f38; /* fallback */
+	background: radial-gradient(circle, #777, #222); /* navegadores antigos */
+	background: -webkit-radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	background: -moz-radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	background: -o-radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	background: var(--sgp-auth-bg);
+	font-family: var(--sgp-font);
+}
+
+/* centralização robusta (substitui o margin-top:10% mágico) */
+.login-stage {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 32px 16px;
+}
+
+/* ---- Card ---- */
+.login-card.ui-panel {
+	width: 640px;
+	max-width: 100%;
+	margin: 0 auto;
+	padding: 0 !important;
+	border: none !important;
+	border-radius: var(--sgp-radius-card) !important;
+	overflow: hidden;
+	background: #ffffff;
+	box-shadow: var(--sgp-shadow-card);
+	animation: loginCardIn 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.login-card .ui-panel-content {
+	padding: 0 !important;
+	border: none !important;
+}
+
+@keyframes loginCardIn {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	} /* "none" evita criar containing block pós-animação */
+}
+
+/* ---- Banner: logo sobre fundo navy + fio da marca ---- */
+.login-banner-wrap {
+	background: var(--sgp-navy);
+	padding: 0;
+	line-height: 0; /* mata gap inline */
+	margin-top: -1px; /* engole o topo de 1px do p:panel */
+}
+.login-banner {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* ---- Corpo do form ---- */
+.login-body {
+	padding: 32px 48px 24px;
+}
+
+/* ---- Cabeçalho (Reset) ---- */
+.login-head {
+	max-width: 460px;
+	margin: 0 auto 20px;
+	text-align: left;
+}
+.login-head h3 {
+	margin: 0 0 6px;
+	font-size: 18px;
+	font-weight: 700;
+	color: var(--sgp-navy);
+	letter-spacing: 0.2px;
+}
+.login-head .lead {
+	margin: 0 0 12px;
+	font-size: 13px;
+	color: var(--sgp-text-muted);
+}
+.login-steps {
+	margin: 0;
+	padding: 12px 14px;
+	list-style: none;
+	background: var(--sgp-info-bg);
+	border: 1px solid var(--sgp-info-border);
+	border-left: 3px solid var(--sgp-navy);
+	border-radius: var(--sgp-radius);
+	font-size: 12.5px;
+	color: var(--sgp-text-steps);
+	line-height: 1.55;
+}
+.login-steps li {
+	padding: 2px 0;
+}
+.login-steps li strong {
+	color: var(--sgp-navy);
+	font-weight: 600;
+}
+
+/* ---- Campos ---- */
+.login-fields {
+	max-width: 320px;
+	margin: 0 auto;
+	text-align: left;
+}
+.login-field {
+	padding: 0 0 16px;
+}
+
+.login-card .login-lbl {
+	display: block;
+	width: 100%;
+	margin-bottom: 6px;
+	text-align: left;
+	font-size: 12.5px;
+	font-weight: 600;
+	color: var(--sgp-text);
+}
+/* "*" obrigatório gerado pelo p:outputLabel, colado ao label */
+.login-card .login-lbl .ui-outputlabel-rfi {
+	margin-left: 4px;
+	color: var(--sgp-red);
+	font-weight: 700;
+}
+.login-card .login-field input,
+.login-card .login-field .ui-inputfield,
+.login-card .login-field .ui-selectonemenu {
+	width: 100% !important;
+	box-sizing: border-box;
+	height: var(--sgp-input-h);
+	padding: 6px 11px;
+	font-size: 14px;
+	color: var(--sgp-text-strong);
+	border: 1px solid var(--sgp-input-border);
+	border-radius: var(--sgp-radius);
+	background: var(--sgp-input-bg);
+	transition:
+		border-color 0.15s ease,
+		box-shadow 0.15s ease,
+		background 0.15s ease;
+}
+.login-card .login-field input:hover {
+	border-color: var(--sgp-input-border-hover);
+}
+.login-card .login-field input:focus {
+	outline: none;
+	background: var(--sgp-input-bg-focus);
+	border-color: var(--sgp-navy);
+	box-shadow: var(--sgp-shadow-focus);
+}
+
+/* p:calendar — wrapper próprio (.login-cal-wrap) garante o containing block
+   pro botão do datepicker, independente de como o PrimeFaces renderiza
+   o span.ui-calendar com mask="true". */
+.login-card .login-field .login-cal-wrap {
+	position: relative;
+	display: block;
+	width: 100%;
+}
+.login-card .login-field .login-cal-wrap .ui-calendar {
+	display: block !important;
+	width: 100% !important;
+}
+.login-card .login-field .login-cal-wrap .ui-inputfield,
+.login-card .login-field .login-cal-wrap input {
+	width: 100% !important;
+	padding-right: 42px !important; /* espaço pro ícone dentro do campo */
+}
+.login-card .login-field .login-cal-wrap .ui-datepicker-trigger.ui-button {
+	position: absolute !important;
+	top: 0 !important;
+	right: 0 !important;
+	width: var(--sgp-input-h) !important;
+	height: var(--sgp-input-h) !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: none !important;
+	border-radius: 0 var(--sgp-radius) var(--sgp-radius) 0 !important;
+	background: transparent !important;
+	background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='20'%20height='20'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23183664'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Crect%20x='3'%20y='4'%20width='18'%20height='18'%20rx='2'%20ry='2'/%3E%3Cline%20x1='16'%20y1='2'%20x2='16'%20y2='6'/%3E%3Cline%20x1='8'%20y1='2'%20x2='8'%20y2='6'/%3E%3Cline%20x1='3'%20y1='10'%20x2='21'%20y2='10'/%3E%3C/svg%3E") !important;
+	background-repeat: no-repeat !important;
+	background-position: center !important;
+	background-size: 20px 20px !important;
+	box-shadow: none !important;
+	cursor: pointer;
+}
+.login-card .login-field .login-cal-wrap .ui-datepicker-trigger.ui-button:hover {
+	background-color: rgba(24, 54, 100, 0.08) !important;
+}
+/* esconde o sprite cinza padrão do jQuery UI — usamos o SVG navy via background */
+.login-card .login-field .login-cal-wrap .ui-datepicker-trigger .ui-icon {
+	display: none !important;
+}
+.login-card .login-field .login-cal-wrap .ui-datepicker-trigger .ui-button-text {
+	display: none !important;
+}
+.login-card .login-msg {
+	display: block;
+	margin-top: 6px;
+}
+
+/* ---- Botões ---- */
+.login-actions {
+	max-width: 320px;
+	margin: 18px auto 0;
+}
+.login-card .login-btn.ui-button {
+	width: 100%;
+	height: var(--sgp-btn-h);
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--sgp-navy-hover) !important;
+	border-radius: var(--sgp-radius) !important;
+	background: var(--sgp-navy) !important;
+	background-image: none !important;
+	box-shadow: var(--sgp-shadow-btn);
+	transition:
+		background 0.15s ease,
+		transform 0.06s ease,
+		box-shadow 0.15s ease;
+}
+.login-card .login-btn.ui-button:hover {
+	background: var(--sgp-navy-hover) !important;
+}
+.login-card .login-btn.ui-button:focus {
+	outline: none;
+	box-shadow: var(--sgp-shadow-btn), var(--sgp-shadow-btn-focus);
+}
+.login-card .login-btn.ui-button:active {
+	transform: translateY(1px);
+}
+.login-card .login-btn .ui-button-text {
+	padding: 0;
+	color: #ffffff !important;
+	font-family: var(--sgp-font);
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: 0.3px;
+}
+/* ícone "entrar/verificar" (SVG branco, evita o sprite escuro do tema PrimeFaces) */
+.login-card .login-btn .ui-button-text::before {
+	content: "";
+	display: inline-block;
+	width: 17px;
+	height: 17px;
+	margin-right: 9px;
+	vertical-align: -3px;
+	background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='17'%20height='17'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23ffffff'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M15%203h4a2%202%200%200%201%202%202v14a2%202%200%200%201-2%202h-4'/%3E%3Cpolyline%20points='10%2017%2015%2012%2010%207'/%3E%3Cline%20x1='15'%20y1='12'%20x2='3'%20y2='12'/%3E%3C/svg%3E")
+		no-repeat center / 17px 17px;
+}
+
+/* ---- Bloco de info pós-verificação (read-only) ---- */
+.login-info {
+	max-width: 460px;
+	margin: 0 auto 18px;
+	padding: 14px 16px;
+	background: var(--sgp-info-bg-alt);
+	border: 1px solid var(--sgp-info-border);
+	border-radius: 8px;
+	text-align: left;
+}
+.login-info .ui-outputlabel {
+	display: block;
+	padding: 3px 0;
+	font-size: 13px;
+	color: var(--sgp-text);
+}
+
+/* ---- Checkbox "Unidade errada" ---- */
+.login-checkbox {
+	max-width: 460px;
+	margin: 0 auto 14px;
+	text-align: left;
+	font-size: 13px;
+	color: var(--sgp-text);
+}
+.login-checkbox .ui-chkbox {
+	vertical-align: -3px;
+	margin-right: 6px;
+}
+
+/* ---- Radios (mãe / matrícula) ---- */
+.login-radio-block {
+	max-width: 460px;
+	margin: 0 auto 14px;
+	text-align: left;
+}
+.login-radio-block h6 {
+	margin: 0 0 10px;
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--sgp-navy);
+}
+.login-radio-block h6 .req {
+	color: var(--sgp-red);
+	margin-left: 2px;
+}
+.login-card .ui-selectoneradio {
+	width: 100%;
+	border-collapse: separate;
+}
+.login-card .ui-selectoneradio td {
+	padding: 6px 8px;
+	font-size: 13px;
+	color: var(--sgp-text);
+}
+.login-card .ui-selectoneradio tr:hover td {
+	background: var(--sgp-info-bg);
+}
+
+/* ---- Rodapé ---- */
+.login-foot {
+	margin: 18px auto 0;
+	padding-top: 16px;
+	max-width: 460px;
+	border-top: 1px solid var(--sgp-foot-border);
+	text-align: center;
+	color: var(--sgp-text-mute-2);
+	font-size: 12px;
+	line-height: 1.65;
+}
+.login-card .login-reset.ui-link,
+.login-card .login-back.ui-link {
+	display: inline-block;
+	margin-bottom: 10px;
+	color: var(--sgp-navy) !important;
+	font-weight: 600;
+	font-size: 12.5px;
+	text-decoration: none;
+}
+.login-card .login-reset.ui-link:hover,
+.login-card .login-back.ui-link:hover {
+	text-decoration: underline;
+}
+.login-foot p {
+	margin: 0;
+}
+.login-version {
+	display: inline-block;
+	margin-top: 4px;
+	color: var(--sgp-text-mute-3);
+}
+
+/* ---- Dialog (escopo: páginas que carregam auth.css) ---- */
+.ui-dialog .ui-dialog-titlebar {
+	background: var(--sgp-navy) !important;
+	color: #fff !important;
+}
+.ui-dialog .ui-dialog-titlebar-icon .ui-icon {
+	color: #fff;
+}
