@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
 
 <h:head>
@@ -21,65 +22,233 @@
 		href="#{resource['images/favicon.png']}" />
 
 	<style type="text/css">
+/* ====================================================================
+   Login repaginado — escopo restrito a esta página (.login-card / .login-*)
+   Identidade preservada: banner, logos e navy institucional #183664.
+   ==================================================================== */
+
 html, body {
-	background: radial-gradient(#777, #222);
-	/* para Browser que não suportam o efeito gradiente */
-	background: -webkit-radial-gradient(circle, #777, #222); /* Safari */
-	background: -o-radial-gradient(circle, #777, #222);
-	/* Opera 11.6 to 12.0 */
-	background: -moz-radial-gradient(circle, #777, #222);
-	/* Firefox 3.6 to 15 */
-	background: radial-gradient(circle, #999, #222); /* Standard syntax */
 	height: 100% !important;
+	margin: 0;
+	background: #2a2f38;                                  /* fallback */
+	background: radial-gradient(circle, #777, #222);      /* navegadores antigos */
+	background: -webkit-radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	background: -moz-radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	background: -o-radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	background: radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	font-family: "Segoe UI", system-ui, Arial, sans-serif;
 }
 
-.ui-panel, .ui-panel-content {
-	padding: 0px !important;
+/* centralização robusta (substitui o margin-top:10% mágico) */
+.login-stage {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 32px 16px;
 }
+
+/* ---- Card ---- */
+.login-card.ui-panel {
+	width: 640px;
+	max-width: 100%;
+	margin: 0 auto;                              /* centraliza o card como bloco */
+	padding: 0 !important;
+	border: none !important;
+	border-radius: 12px !important;
+	overflow: hidden;
+	background: #ffffff;
+	box-shadow: 0 1px 2px rgba(16, 30, 54, .10),
+	            0 22px 48px -16px rgba(16, 30, 54, .55);
+	animation: loginCardIn .42s cubic-bezier(.22, .61, .36, 1) both;
+}
+.login-card .ui-panel-content { padding: 0 !important; border: none !important; }
+
+@keyframes loginCardIn {
+	from { opacity: 0; transform: translateY(14px); }
+	to   { opacity: 1; transform: none; }        /* "none" evita criar containing block pós-animação */
+}
+
+/* ---- Banner: logo sobre fundo navy institucional + fio da marca ---- */
+.login-banner-wrap {
+	background: #183664;                        /* navy atrás do logo */
+	padding: 0;
+	line-height: 0;                             /* mata gap inline */
+	margin-top: -1px;                           /* engole o topo de 1px do p:panel */
+}
+.login-banner {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* ---- Corpo do form ---- */
+.login-body { padding: 36px 48px 26px; }
+
+.login-fields {
+	max-width: 320px;
+	margin: 0 auto;
+	text-align: left;
+}
+
+/* campos nativos (login desacoplado do composto p/ controlar o label sem ":") */
+.login-field { padding: 0 0 16px; }
+
+.login-card .login-lbl {
+	display: block;
+	width: 100%;
+	margin-bottom: 6px;
+	text-align: left;
+	font-size: 12.5px;
+	font-weight: 600;
+	color: #2c3340;
+}
+/* "*" obrigatório gerado pelo p:outputLabel, colado ao label */
+.login-card .login-lbl .ui-outputlabel-rfi {
+	margin-left: 4px;
+	color: #c62828;
+	font-weight: 700;
+}
+.login-card .login-field input,
+.login-card .login-field .ui-inputfield {
+	width: 100%;
+	box-sizing: border-box;
+	height: 38px;
+	padding: 6px 11px;
+	font-size: 14px;
+	color: #1f2733;
+	border: 1px solid #c7ced8;
+	border-radius: 6px;
+	background: #fcfdfe;
+	transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.login-card .login-field input:hover { border-color: #9aa6b6; }
+.login-card .login-field input:focus {
+	outline: none;
+	background: #ffffff;
+	border-color: #183664;
+	box-shadow: 0 0 0 3px rgba(24, 54, 100, .16);
+}
+.login-card .login-msg { display: block; margin-top: 6px; }
+
+/* ---- Botão Login ---- */
+.login-actions {
+	max-width: 320px;
+	margin: 18px auto 0;
+}
+.login-card .login-btn.ui-button {
+	width: 100%;
+	height: 42px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid #122a4d !important;
+	border-radius: 6px !important;
+	background: #183664 !important;
+	background-image: none !important;
+	box-shadow: 0 2px 6px rgba(16, 30, 54, .28);
+	transition: background .15s ease, transform .06s ease, box-shadow .15s ease;
+}
+.login-card .login-btn.ui-button:hover { background: #122a4d !important; }
+.login-card .login-btn.ui-button:focus {
+	outline: none;
+	box-shadow: 0 2px 6px rgba(16, 30, 54, .28),
+	            0 0 0 3px rgba(24, 54, 100, .25);
+}
+.login-card .login-btn.ui-button:active { transform: translateY(1px); }
+.login-card .login-btn .ui-button-text {
+	padding: 0;
+	color: #ffffff !important;
+	font-family: "Segoe UI", system-ui, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: .3px;
+}
+/* ícone "entrar" (SVG branco, evita o sprite escuro do tema PrimeFaces) */
+.login-card .login-btn .ui-button-text::before {
+	content: "";
+	display: inline-block;
+	width: 17px;
+	height: 17px;
+	margin-right: 9px;
+	vertical-align: -3px;
+	background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='17'%20height='17'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23ffffff'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M15%203h4a2%202%200%200%201%202%202v14a2%202%200%200%201-2%202h-4'/%3E%3Cpolyline%20points='10%2017%2015%2012%2010%207'/%3E%3Cline%20x1='15'%20y1='12'%20x2='3'%20y2='12'/%3E%3C/svg%3E") no-repeat center / 17px 17px;
+}
+
+/* ---- Rodapé ---- */
+.login-foot {
+	margin: 22px auto 0;
+	padding-top: 18px;
+	max-width: 420px;
+	border-top: 1px solid #e7eaef;
+	text-align: center;
+	color: #6b7685;
+	font-size: 12px;
+	line-height: 1.65;
+}
+.login-card .login-reset.ui-link {
+	display: inline-block;
+	margin-bottom: 12px;
+	color: #183664 !important;
+	font-weight: 600;
+	font-size: 12.5px;
+	text-decoration: none;
+}
+.login-card .login-reset.ui-link:hover { text-decoration: underline; }
+.login-foot p { margin: 0; }
+.login-version { display: inline-block; margin-top: 4px; color: #9aa3ae; }
 </style>
 </h:head>
 
 <h:body>
-	<div class="container" align="center">
-		<div class="row" style="margin-top: 10%;">
+	<div class="login-stage">
+		<div class="container">
 			<h:form id="formLogin">
-				<p:panel id="panelLogin" style="width:650px; height:550px;">
-					<div class="row"
-						style="background-color: #183664; height: 240px; width: 650px; border: none; padding: 0; margin-top: -1px;">
-						<p:graphicImage
+				<p:panel id="panelLogin" styleClass="login-card">
+					<div class="login-banner-wrap">
+						<p:graphicImage styleClass="login-banner"
 							name="#{(sigepen.getIsProducao() ? 'sigepen-login.png' : 'sigepen-login-h.png')}"
-							library="images" style="padding-top:10px; height:240px;" />
-					</div>
-					<br />
-					<br />
-
-					<div class="row"
-						style="width: 380px; height: 160px; margin-top: 8%;">
-						<sgp:formInputText id="login" labelValue="Login" maxlength="11"
-							minlength="4" value="#{loginBean.usuario}"
-							validationRequired="true" display="text" requiredMessage="*" />
-
-						<sgp:formInputPassword id="senha" labelValue="Senha"
-							maxlength="15" value="#{loginBean.senha}"
-							validationRequired="true" display="text" requiredMessage="*" />
-
-						<br /> <br />
-						<p:commandButton id="autenticador" action="#{loginBean.login()}"
-							value="Login" update="@form, formDialog" icon="ui-icon-key" />
+							library="images" />
 					</div>
 
+					<div class="login-body">
+						<div class="login-fields">
+							<div class="login-field">
+								<p:outputLabel for="login" value="Usuário" styleClass="login-lbl" />
+								<p:inputText id="login" value="#{loginBean.usuario}"
+									maxlength="11" required="true" label="Usuário"
+									requiredMessage="Informe o usuário." autocomplete="off"
+									styleClass="login-in">
+									<pe:keyFilter regEx="/[a-zA-Z0-9Çç\s]/"
+										preventPaste="false" />
+								</p:inputText>
+								<p:message for="login" display="text" styleClass="login-msg" />
+							</div>
 
-					<p:link value="Reset de senha" outcome="ResetSenha.xhtml" style="color: blue;"/>
+							<div class="login-field">
+								<p:outputLabel for="senha" value="Senha" styleClass="login-lbl" />
+								<p:password id="senha" value="#{loginBean.senha}"
+									maxlength="15" required="true" label="Senha"
+									requiredMessage="Informe a senha." autocomplete="off"
+									styleClass="login-in" />
+								<p:message for="senha" display="text" styleClass="login-msg" />
+							</div>
+						</div>
 
-					<br/>
+						<div class="login-actions">
+							<p:commandButton id="autenticador" styleClass="login-btn"
+								action="#{loginBean.login()}" value="Entrar"
+								update="@form, formDialog" />
+						</div>
 
-					<div class="row" style="width: 520px;">
-						<p>
-							SESP - Secretaria de Estado de Segurança Pública de Mato Grosso <br />
-							Desenvolvido pela STI - Superintendência de Tecnologia da
-							Informação <br /> Versão: #{versionBean.versao}
-						</p>
-
+						<div class="login-foot">
+							<p:link styleClass="login-reset" value="Reset de senha"
+								outcome="ResetSenha.xhtml" />
+							<p>
+								SESP - Secretaria de Estado de Segurança Pública de Mato Grosso<br />
+								Desenvolvido pela STI - Superintendência de Tecnologia da Informação
+							</p>
+							<span class="login-version">Versão: #{versionBean.versao}</span>
+						</div>
 					</div>
 
 				</p:panel>

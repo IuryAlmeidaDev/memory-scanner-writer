@@ -1,234 +1,553 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite">
 
 <h:head>
-    <h:outputStylesheet library="css" name="main.css"/>
-    <h:outputStylesheet library="css" name="normalize.css"/>
+	<h:outputStylesheet library="css" name="main.css" />
+	<h:outputStylesheet library="css" name="normalize.css" />
 
-    <h:outputStylesheet value="/resources/css/bootstrap.css.map"/>
-    <h:outputStylesheet library="css" name="bootstrap.min.css"/>
-    <h:outputStylesheet value="/resources/css/bootstrap-theme.css.map"/>
-    <h:outputStylesheet library="css" name="bootstrap-theme.min.css"/>
+	<h:outputStylesheet value="/resources/css/bootstrap.css.map" />
+	<h:outputStylesheet library="css" name="bootstrap.min.css" />
+	<h:outputStylesheet value="/resources/css/bootstrap-theme.css.map" />
+	<h:outputStylesheet library="css" name="bootstrap-theme.min.css" />
 
-    <title>SIGEPEN - Sistema de Gestão Penitenciária do Estado de
-        Mato Grosso - [#{versionBean.versao}]</title>
-    <link rel="icon" type="image/png"
-          href="#{resource['images/favicon.png']}"/>
+	<title>SIGEPEN - Sistema de Gestão Penitenciária do Estado de
+		Mato Grosso - [#{versionBean.versao}]</title>
+	<link rel="icon" type="image/png"
+		href="#{resource['images/favicon.png']}" />
 
-    <style type="text/css">
-        html, body {
-            background: radial-gradient(#777, #222);
-            /* para Browser que não suportam o efeito gradiente */
-            background: -webkit-radial-gradient(circle, #777, #222); /* Safari */
-            background: -o-radial-gradient(circle, #777, #222);
-            /* Opera 11.6 to 12.0 */
-            background: -moz-radial-gradient(circle, #777, #222);
-            /* Firefox 3.6 to 15 */
-            background: radial-gradient(circle, #999, #222); /* Standard syntax */
-            height: 100% !important;
-        }
+	<h:outputScript>
+		PrimeFaces.locales['pt'] = {
+			closeText: 'Fechar', prevText: 'Anterior', nextText: 'Próximo',
+			currentText: 'Começo',
+			monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+			monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+			dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],
+			dayNamesMin: ['D','S','T','Q','Q','S','S'],
+			weekHeader: 'Semana', firstDay: 0, isRTL: false,
+			showMonthAfterYear: false, yearSuffix: '',
+			timeOnlyTitle: 'Só Horas', timeText: 'Tempo',
+			hourText: 'Hora', minuteText: 'Minuto', secondText: 'Segundo',
+			ampm: false, month: 'Mês', week: 'Semana', day: 'Dia',
+			allDayText: 'Todo o Dia'
+		};
+	</h:outputScript>
 
-        .ui-panel, .ui-panel-content {
-            padding: 0px !important;
-        }
-    </style>
+	<style type="text/css">
+/* ====================================================================
+   Reset de senha — mesmo sistema visual da Login.xhtml (escopo .login-*)
+   Identidade preservada: banner, logos e navy institucional #183664.
+   ==================================================================== */
+
+html, body {
+	height: 100% !important;
+	margin: 0;
+	background: #2a2f38;
+	background: radial-gradient(circle, #777, #222);
+	background: -webkit-radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	background: -moz-radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	background: -o-radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	background: radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	font-family: "Segoe UI", system-ui, Arial, sans-serif;
+}
+
+.login-stage {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 32px 16px;
+}
+
+/* ---- Card ---- */
+.login-card.ui-panel {
+	width: 640px;
+	max-width: 100%;
+	margin: 0 auto;
+	padding: 0 !important;
+	border: none !important;
+	border-radius: 12px !important;
+	overflow: hidden;
+	background: #ffffff;
+	box-shadow: 0 1px 2px rgba(16, 30, 54, .10),
+	            0 22px 48px -16px rgba(16, 30, 54, .55);
+	animation: loginCardIn .42s cubic-bezier(.22, .61, .36, 1) both;
+}
+.login-card .ui-panel-content { padding: 0 !important; border: none !important; }
+
+@keyframes loginCardIn {
+	from { opacity: 0; transform: translateY(14px); }
+	to   { opacity: 1; transform: none; }        /* "none" evita criar containing block pós-animação */
+}
+
+/* ---- Banner ---- */
+.login-banner-wrap {
+	background: #183664;
+	padding: 0;
+	line-height: 0;
+	margin-top: -1px;
+}
+.login-banner {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* ---- Corpo ---- */
+.login-body { padding: 32px 48px 24px; }
+
+.login-head {
+	max-width: 460px;
+	margin: 0 auto 20px;
+	text-align: left;
+}
+.login-head h3 {
+	margin: 0 0 6px;
+	font-size: 18px;
+	font-weight: 700;
+	color: #183664;
+	letter-spacing: .2px;
+}
+.login-head .lead {
+	margin: 0 0 12px;
+	font-size: 13px;
+	color: #4a5563;
+}
+.login-steps {
+	margin: 0;
+	padding: 12px 14px;
+	list-style: none;
+	background: #f4f6fa;
+	border: 1px solid #e1e6ee;
+	border-left: 3px solid #183664;
+	border-radius: 6px;
+	font-size: 12.5px;
+	color: #3a4453;
+	line-height: 1.55;
+}
+.login-steps li { padding: 2px 0; }
+.login-steps li strong { color: #183664; font-weight: 600; }
+
+/* ---- Campos ---- */
+.login-fields {
+	max-width: 320px;
+	margin: 0 auto;
+	text-align: left;
+}
+.login-field { padding: 0 0 16px; }
+
+.login-card .login-lbl {
+	display: block;
+	width: 100%;
+	margin-bottom: 6px;
+	text-align: left;
+	font-size: 12.5px;
+	font-weight: 600;
+	color: #2c3340;
+}
+.login-card .login-lbl .ui-outputlabel-rfi {
+	margin-left: 4px;
+	color: #c62828;
+	font-weight: 700;
+}
+.login-card .login-field input,
+.login-card .login-field .ui-inputfield,
+.login-card .login-field .ui-selectonemenu {
+	width: 100% !important;
+	box-sizing: border-box;
+	height: 38px;
+	padding: 6px 11px;
+	font-size: 14px;
+	color: #1f2733;
+	border: 1px solid #c7ced8;
+	border-radius: 6px;
+	background: #fcfdfe;
+	transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.login-card .login-field input:hover { border-color: #9aa6b6; }
+.login-card .login-field input:focus {
+	outline: none;
+	background: #ffffff;
+	border-color: #183664;
+	box-shadow: 0 0 0 3px rgba(24, 54, 100, .16);
+}
+/* p:calendar — wrapper próprio (.login-cal-wrap) garante o containing block
+   pro botão do datepicker, independente de como o PrimeFaces renderiza
+   o span.ui-calendar com mask="true". */
+.login-card .login-field .login-cal-wrap {
+	position: relative;
+	display: block;
+	width: 100%;
+}
+.login-card .login-field .login-cal-wrap .ui-calendar {
+	display: block !important;
+	width: 100% !important;
+}
+.login-card .login-field .login-cal-wrap .ui-inputfield,
+.login-card .login-field .login-cal-wrap input {
+	width: 100% !important;
+	padding-right: 42px !important;              /* espaço pro ícone dentro do campo */
+}
+.login-card .login-field .login-cal-wrap .ui-datepicker-trigger.ui-button {
+	position: absolute !important;
+	top: 0 !important;
+	right: 0 !important;
+	width: 38px !important;
+	height: 38px !important;                     /* mesma altura do input */
+	margin: 0 !important;
+	padding: 0 !important;
+	border: none !important;
+	border-radius: 0 6px 6px 0 !important;       /* acompanha o canto direito do input */
+	background: transparent !important;
+	background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='20'%20height='20'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23183664'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Crect%20x='3'%20y='4'%20width='18'%20height='18'%20rx='2'%20ry='2'/%3E%3Cline%20x1='16'%20y1='2'%20x2='16'%20y2='6'/%3E%3Cline%20x1='8'%20y1='2'%20x2='8'%20y2='6'/%3E%3Cline%20x1='3'%20y1='10'%20x2='21'%20y2='10'/%3E%3C/svg%3E") !important;
+	background-repeat: no-repeat !important;
+	background-position: center !important;
+	background-size: 20px 20px !important;
+	box-shadow: none !important;
+	cursor: pointer;
+}
+.login-card .login-field .login-cal-wrap .ui-datepicker-trigger.ui-button:hover {
+	background-color: rgba(24, 54, 100, .08) !important;
+}
+/* esconde o sprite cinza padrão do jQuery UI — usamos o SVG navy via background */
+.login-card .login-field .login-cal-wrap .ui-datepicker-trigger .ui-icon { display: none !important; }
+.login-card .login-field .login-cal-wrap .ui-datepicker-trigger .ui-button-text { display: none !important; }
+.login-card .login-msg { display: block; margin-top: 6px; }
+
+/* ---- Botões ---- */
+.login-actions {
+	max-width: 320px;
+	margin: 18px auto 0;
+}
+.login-card .login-btn.ui-button {
+	width: 100%;
+	height: 42px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid #122a4d !important;
+	border-radius: 6px !important;
+	background: #183664 !important;
+	background-image: none !important;
+	box-shadow: 0 2px 6px rgba(16, 30, 54, .28);
+	transition: background .15s ease, transform .06s ease, box-shadow .15s ease;
+}
+.login-card .login-btn.ui-button:hover { background: #122a4d !important; }
+.login-card .login-btn.ui-button:focus {
+	outline: none;
+	box-shadow: 0 2px 6px rgba(16, 30, 54, .28),
+	            0 0 0 3px rgba(24, 54, 100, .25);
+}
+.login-card .login-btn.ui-button:active { transform: translateY(1px); }
+.login-card .login-btn .ui-button-text {
+	padding: 0;
+	color: #ffffff !important;
+	font-family: "Segoe UI", system-ui, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: .3px;
+}
+/* ícone "entrar/verificar" (SVG branco) */
+.login-card .login-btn .ui-button-text::before {
+	content: "";
+	display: inline-block;
+	width: 17px;
+	height: 17px;
+	margin-right: 9px;
+	vertical-align: -3px;
+	background: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='17'%20height='17'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23ffffff'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M15%203h4a2%202%200%200%201%202%202v14a2%202%200%200%201-2%202h-4'/%3E%3Cpolyline%20points='10%2017%2015%2012%2010%207'/%3E%3Cline%20x1='15'%20y1='12'%20x2='3'%20y2='12'/%3E%3C/svg%3E") no-repeat center / 17px 17px;
+}
+
+/* ---- Bloco de info pós-verificação (read-only) ---- */
+.login-info {
+	max-width: 460px;
+	margin: 0 auto 18px;
+	padding: 14px 16px;
+	background: #f7f9fc;
+	border: 1px solid #e1e6ee;
+	border-radius: 8px;
+	text-align: left;
+}
+.login-info .ui-outputlabel {
+	display: block;
+	padding: 3px 0;
+	font-size: 13px;
+	color: #2c3340;
+}
+
+/* ---- Checkbox "Unidade errada" ---- */
+.login-checkbox {
+	max-width: 460px;
+	margin: 0 auto 14px;
+	text-align: left;
+	font-size: 13px;
+	color: #2c3340;
+}
+.login-checkbox .ui-chkbox { vertical-align: -3px; margin-right: 6px; }
+
+/* ---- Radios (mãe / matrícula) ---- */
+.login-radio-block {
+	max-width: 460px;
+	margin: 0 auto 14px;
+	text-align: left;
+}
+.login-radio-block h6 {
+	margin: 0 0 10px;
+	font-size: 13px;
+	font-weight: 700;
+	color: #183664;
+}
+.login-radio-block h6 .req { color: #c62828; margin-left: 2px; }
+.login-card .ui-selectoneradio { width: 100%; border-collapse: separate; }
+.login-card .ui-selectoneradio td {
+	padding: 6px 8px;
+	font-size: 13px;
+	color: #2c3340;
+}
+.login-card .ui-selectoneradio tr:hover td { background: #f4f6fa; }
+
+/* ---- Rodapé ---- */
+.login-foot {
+	margin: 18px auto 0;
+	padding-top: 16px;
+	max-width: 460px;
+	border-top: 1px solid #e7eaef;
+	text-align: center;
+	color: #6b7685;
+	font-size: 12px;
+	line-height: 1.65;
+}
+.login-card .login-back.ui-link {
+	display: inline-block;
+	margin-bottom: 10px;
+	color: #183664 !important;
+	font-weight: 600;
+	font-size: 12.5px;
+	text-decoration: none;
+}
+.login-card .login-back.ui-link:hover { text-decoration: underline; }
+.login-foot p { margin: 0; }
+.login-version { display: inline-block; margin-top: 4px; color: #9aa3ae; }
+
+/* ---- Dialog ---- */
+.ui-dialog .ui-dialog-titlebar { background: #183664 !important; color: #fff !important; }
+.ui-dialog .ui-dialog-titlebar-icon .ui-icon { color: #fff; }
+</style>
 </h:head>
 
 <h:body>
-    <div class="container" align="center">
-        <div class="row" style="margin-top: 10%;">
-            <p:panel id="panelLogin" style="width:750px;">
-                <h:form id="formLogin">
-                    <div class="row"
-                         style="background-color: #183664; height: 240px; width: 750px; border: none; padding: 0; margin-top: -1px;">
-                        <p:graphicImage
-                                name="#{(sigepen.getIsProducao() ? 'sigepen-login.png' : 'sigepen-login-h.png')}"
-                                library="images" style="padding-top:10px; height:240px;"/>
-                    </div>
-                    <br/>
-                    <br/>
+	<div class="login-stage">
+		<div class="container">
+			<p:panel id="panelLogin" styleClass="login-card">
+				<div class="login-banner-wrap">
+					<p:graphicImage styleClass="login-banner"
+						name="#{(sigepen.getIsProducao() ? 'sigepen-login.png' : 'sigepen-login-h.png')}"
+						library="images" />
+				</div>
 
-                    <div class="col" style="margin-top: 5%;">
+				<div class="login-body">
 
-                        <div class="row"
-                             style="margin-right: 50%; margin-left: 5%; margin-top: -7%;">
-                            <h3>Recuperação de acesso:</h3>
-                            <p>Por favor insira as seguintes informações.</p>
+					<div class="login-head">
+						<h3>Recuperação de acesso</h3>
+						<p class="lead">Por favor, informe os dados a seguir.</p>
+						<ul class="login-steps">
+							<li><strong>1.</strong> Informe CPF e Data de Nascimento.</li>
+							<li><strong>2.</strong> Após a verificação, responda ao campo sorteado.</li>
+							<li><strong>3.</strong> Aguarde o e-mail com as instruções de acesso
+								(enviado ao e-mail cadastrado; caso não tenha mais acesso,
+								contate o administrador do sistema).</li>
+						</ul>
+					</div>
 
-                            <div class="instruction-text">
-                                1 - Informar CPF e Data de Nascimento<br/> <br/> 2- Depois
-                                da verificação de existencia de usuário com os dados informados,
-                                responder campo sortido<br/> <br/> 3- Aguardar e-mail com
-                                instruções de acesso. (Será enviado ao e-mail do cadastro, caso
-                                não tenha mais acesso, entre em contato com adminstrador do
-                                sistema.)
-                            </div>
+					<!-- ============================================================
+					     Step 0 — CPF + Data de nascimento (antes da verificação)
+					     ============================================================ -->
+					<h:form id="formLogin">
+						<div style="display: #{empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+							<div class="login-fields">
+								<div class="login-field">
+									<p:outputLabel for="cpf" value="CPF" styleClass="login-lbl" />
+									<p:inputText id="cpf" value="#{loginBean.usuarioResertSenhaDTO.cpf}"
+										maxlength="11" required="true" label="CPF"
+										requiredMessage="Informe o CPF." autocomplete="off">
+										<pe:keyFilter regEx="/[0-9]/" preventPaste="false" />
+									</p:inputText>
+									<p:message for="cpf" display="text" styleClass="login-msg" />
+								</div>
 
-                            <div class="row"
-                                 style="width: 380px; height: 160px; margin-left: 100%; margin-top: -50%;">
-                                <div
-                                        style="display: #{empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
-                                    <sgp:formInputText id="cpf" labelValue="CPF" maxlength="11"
-                                                       minlength="4" value="#{loginBean.usuarioResertSenhaDTO.cpf}"
-                                                       validationRequired="true" display="text" requiredMessage="*"/>
+								<div class="login-field">
+									<p:outputLabel for="nascimento" value="Data de nascimento"
+										styleClass="login-lbl" />
+									<div class="login-cal-wrap">
+										<p:calendar id="nascimento"
+											value="#{loginBean.usuarioResertSenhaDTO.nascimento}"
+											label="Data de nascimento" pattern="dd/MM/yyyy" mask="true"
+											navigator="true" showOn="both" locale="pt"
+											mindate="#{usuarioBean.dataMinima}"
+											yearRange="c-100:c+10" required="true"
+											requiredMessage="Informe a data de nascimento." />
+									</div>
+									<p:message for="nascimento" display="text" styleClass="login-msg" />
+								</div>
+							</div>
 
-                                    <sgp:formCalendar id="nascimento"
-                                                      labelValue="Data de nascimento"
-                                                      value="#{loginBean.usuarioResertSenhaDTO.nascimento}"
-                                                      validationRequired="true"
-                                                      dataMinima="#{usuarioBean.dataMinima}" display="text"/>
+							<div class="login-actions">
+								<p:commandButton id="verificar" styleClass="login-btn"
+									action="#{loginBean.resetSenha()}" value="Verificar"
+									update="@form,formLogin-step-1,:formLogin-unidade" />
+							</div>
+						</div>
+					</h:form>
 
-                                    <br/> <br/>
-                                    <p:commandButton id="verificar"
-                                                     action="#{loginBean.resetSenha()}" value="verificar"
-                                                     update="@form,formLogin-step-1,:formLogin-unidade"
-                                                     icon="ui-icon-key"/>
-                                </div>
+					<!-- ============================================================
+					     Step 0b — Info do usuário após verificação
+					     (era h:form aninhado no original; aqui é irmão, válido)
+					     ============================================================ -->
+					<h:form id="formLogin-step-0">
+						<div class="login-info"
+							style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+							<p:outputLabel value="Nome do usuário: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.nome}" />
+							<p:outputLabel value="CPF: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf}" />
+							<p:outputLabel value="Data de nascimento: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento}" />
+							<p:outputLabel value="E-mail: #{loginBean.usuarioResertSenhaDTO.usuario.email}" />
+							<p:outputLabel value="Unidade: #{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getUnidade().getNome()}" />
+						</div>
+					</h:form>
 
-                                <div>
-                                    <h:form id="formLogin-step-0"
-                                            style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+					<!-- ============================================================
+					     Checkbox "Unidade de lotação errada"
+					     ============================================================ -->
+					<h:form id="formLogin-unidade">
+						<div class="login-checkbox"
+							style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+							<p:selectBooleanCheckbox id="checkbox"
+								value="#{loginBean.unidadeErrada}">
+								<p:ajax event="change"
+									listener="#{loginBean.getUnidadesResetSenha()}" update="unidade" />
+							</p:selectBooleanCheckbox>
+							<p:outputLabel for="checkbox" value="Unidade de lotação errada" />
+						</div>
+					</h:form>
 
-                                        <p:outputLabel
-                                                value="Nome do usuario: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.nome}"
-                                                style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};"/>
-                                        <br/>
-                                        <p:outputLabel
-                                                value="CPF:  #{loginBean.usuarioResertSenhaDTO.usuario.servidor.cpf}"
-                                                style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};"/>
-                                        <br/>
-                                        <p:outputLabel
-                                                value="Data de nascimento: #{loginBean.usuarioResertSenhaDTO.usuario.servidor.dataNascimento}"
-                                                style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};"/>
-                                        <br/>
-                                        <p:outputLabel
-                                                value="Email: #{loginBean.usuarioResertSenhaDTO.usuario.email}"
-                                                style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};"/>
-                                        <br/>
-                                        <p:outputLabel
-                                                value="Unidade: #{loginBean.usuarioResertSenhaDTO.getUsuario().getAcessos().get(0).getUnidade().getNome()}"
-                                                style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};"/>
-                                        <br/>
-                                        <br/>
+					<!-- ============================================================
+					     Form de troca de unidade
+					     ============================================================ -->
+					<h:form id="unidade">
+						<div class="login-info"
+							style="display: #{loginBean.usuarioResertSenhaDTO.usuario.unidadePerfilSolicitadaResetSenha != null ? 'block' : 'none'};">
+							<p:outputLabel value="Unidade solicitada: #{loginBean.usuarioResertSenhaDTO.usuario.unidadePerfilSolicitadaResetSenha}" />
+						</div>
 
-                                    </h:form>
+						<div style="display: #{loginBean.unidadeErrada ? 'block' : 'none'};">
+							<div class="login-fields">
+								<div class="login-field">
+									<p:outputLabel for="unidade" value="Unidade" styleClass="login-lbl" />
+									<p:selectOneMenu id="unidade" value="#{loginBean.unidadeSelecionada}"
+										label="Unidade" required="true"
+										requiredMessage="Selecione a unidade."
+										converter="SimpleEntityConverter">
+										<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+										<f:selectItems value="#{loginBean.unidadesResetSenha}"
+											var="item" itemLabel="#{item.nome}" itemValue="#{item}" />
+									</p:selectOneMenu>
+									<p:message for="unidade" display="text" styleClass="login-msg" />
+								</div>
+							</div>
 
-                                </div>
+							<div class="login-actions"
+								style="display: #{loginBean.usuarioResertSenhaDTO.usuario.unidadePerfilSolicitadaResetSenha == null ? 'block' : 'none'};">
+								<p:commandButton id="autenticador" styleClass="login-btn"
+									action="#{loginBean.setarUnidadeResetSenha}" value="Solicitar"
+									update="@form" />
+							</div>
+						</div>
+					</h:form>
 
-                            </div>
+					<!-- ============================================================
+					     Step 1 — Selecionar o nome da mãe
+					     ============================================================ -->
+					<h:form id="formLogin-step-1">
+						<div class="login-radio-block"
+							style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
+							<h6>Assinale o campo que corresponde ao nome da sua mãe
+								<span class="req">*</span></h6>
+							<p:selectOneRadio id="listMae"
+								value="#{loginBean.usuarioResertSenhaDTO.indexNomeMaeSelecionada}"
+								layout="pageDirection">
+								<f:selectItem itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[0]}" itemValue="0" />
+								<f:selectItem itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[1]}" itemValue="1" />
+								<f:selectItem itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[2]}" itemValue="2" />
+							</p:selectOneRadio>
 
-                        </div>
+							<div class="login-actions"
+								style="display: #{empty loginBean.usuarioResertSenhaDTO.matriculaList ? 'block' : 'none'};">
+								<p:commandButton id="verificar-step-1" styleClass="login-btn"
+									action="#{loginBean.verificaNomeMae()}" value="Solicitar"
+									update="@form,formLogin-step-1,panelLogin-step-2,formLogin,formLogin-unidade,unidade" />
+							</div>
+						</div>
+					</h:form>
 
-                    </div>
+					<!-- ============================================================
+					     Step 2 — Selecionar a matrícula
+					     ============================================================ -->
+					<h:form id="panelLogin-step-2">
+						<div class="login-radio-block"
+							style="display: #{not empty loginBean.usuarioResertSenhaDTO.matriculaList ? 'block' : 'none'};">
+							<h6>Assinale o campo que corresponde à sua matrícula
+								<span class="req">*</span></h6>
+							<p:selectOneRadio id="listMatricula"
+								value="#{loginBean.usuarioResertSenhaDTO.indexMatriculaSelecionada}"
+								layout="pageDirection">
+								<f:selectItem itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[0]}" itemValue="0" />
+								<f:selectItem itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[1]}" itemValue="1" />
+								<f:selectItem itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[2]}" itemValue="2" />
+							</p:selectOneRadio>
 
-                </h:form>
-                <br/>
-                <br/>
-                <h:form id="formLogin-unidade"
-                        style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
-                    <p:outputLabel for="checkbox" value="Unidade de Lotação Errada:"/>
+							<div class="login-actions">
+								<p:commandButton id="verificar-step-2" styleClass="login-btn"
+									action="#{loginBean.verificaMatricula()}" value="Solicitar"
+									update="@form,formLogin-step-1,panelLogin-step-2,formLogin,formLogin-unidade,unidade,redirectLogin" />
+							</div>
+						</div>
+					</h:form>
 
-                    <p:selectBooleanCheckbox id="checkbox"
-                                             value="#{loginBean.unidadeErrada}">
-                        <p:ajax event="change"
-                                listener="#{loginBean.getUnidadesResetSenha()}" update="unidade"/>
-                    </p:selectBooleanCheckbox>
-                </h:form>
+					<!-- ============================================================
+					     Rodapé
+					     ============================================================ -->
+					<div class="login-foot">
+						<p:link styleClass="login-back" value="Voltar ao login"
+							outcome="Login.xhtml" />
+						<p>
+							SESP - Secretaria de Estado de Segurança Pública de Mato Grosso<br />
+							Desenvolvido pela STI - Superintendência de Tecnologia da Informação
+						</p>
+						<span class="login-version">Versão: #{versionBean.versao}</span>
+					</div>
 
-                <h:form id="unidade">
-                    <p:outputLabel
-                            value="Unidade solicitada: #{loginBean.usuarioResertSenhaDTO.usuario.unidadePerfilSolicitadaResetSenha}"
-                            style="display: #{loginBean.usuarioResertSenhaDTO.usuario.unidadePerfilSolicitadaResetSenha != null ? 'block' : 'none'};"/>
+					<!-- ============================================================
+					     Dialog de sucesso
+					     ============================================================ -->
+					<p:dialog id="redirectLogin" header="Solicitação realizada com sucesso!"
+						widgetVar="myDialog" modal="true" showEffect="fade" hideEffect="fade"
+						visible="#{loginBean.isRedirectResetSenha}">
+						<h:outputText value="Usuário, aguarde instruções de acesso no e-mail cadastrado na base." />
+						<br /><br />
+						<p:commandButton value="OK" styleClass="login-btn"
+							oncomplete="PF('myDialog').hide();">
+							<p:ajax event="click"
+								listener="#{loginBean.redirectLogin()}" update="unidade" />
+						</p:commandButton>
+					</p:dialog>
 
-                    <div style="display: #{loginBean.unidadeErrada  ?'block' : 'none'};">
-                        <sgp:formSelectOneMenu
-                                id="unidade" labelValue="Unidade"
-                                value="#{loginBean.unidadeSelecionada}"
-                                itemsValue="#{loginBean.unidadesResetSenha}" itemValue="#{item}"
-                                itemLabel="#{item.nome}" temSelecione="true" requiredMessage="*"
-                                display="text" validationRequired="true"
-                                converter="SimpleEntityConverter"
-                        />
-                        <br/>
-                        <br/>
-                        <p:commandButton id="autenticador"
-                                         action="#{loginBean.setarUnidadeResetSenha}" value="Solicitar"
-                                         update="@form" icon="ui-icon-key"
-                                         style="display: #{loginBean.usuarioResertSenhaDTO.usuario.unidadePerfilSolicitadaResetSenha == null ? 'block' : 'none'};"/>
-                    </div>
-                </h:form>
-
-                <h:form id="formLogin-step-1"
-                        style="display: #{not empty loginBean.usuarioResertSenhaDTO.nomeMaeList ? 'block' : 'none'};">
-
-                    <h6>Assina-le o campo que corresponde ao nome da sua mãe: *</h6>
-                    <p:selectOneRadio id="listMae"
-                                      value="#{loginBean.usuarioResertSenhaDTO.indexNomeMaeSelecionada}"
-                                      layout="pageDirection">
-                        <f:selectItem
-                                itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[0]}"
-                                itemValue="0"/>
-                        <f:selectItem
-                                itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[1]}"
-                                itemValue="1"/>
-                        <f:selectItem
-                                itemLabel="#{loginBean.usuarioResertSenhaDTO.nomeMaeList[2]}"
-                                itemValue="2"/>
-                    </p:selectOneRadio>
-                    <p:commandButton
-                            style="display: #{empty loginBean.usuarioResertSenhaDTO.matriculaList ? 'block' : 'none'};"
-                            id="verificar-step-1"
-                            action="#{loginBean.verificaNomeMae()}" value="Solicitar"
-                            update="@form,formLogin-step-1,panelLogin-step-2,formLogin,formLogin-unidade,unidade"
-                            icon="ui-icon-key"/>
-
-                </h:form>
-
-                <h:form id="panelLogin-step-2"
-                        style="display: #{not empty loginBean.usuarioResertSenhaDTO.matriculaList ? 'block' : 'none'};">
-                    <h6>Assina-le o campo que corresponde a sua matricula:</h6>
-                    <p:selectOneRadio id="listMatricula"
-                                      value="#{loginBean.usuarioResertSenhaDTO.indexMatriculaSelecionada}"
-                                      layout="pageDirection">
-                        <f:selectItem
-                                itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[0]}"
-                                itemValue="0"/>
-                        <f:selectItem
-                                itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[1]}"
-                                itemValue="1"/>
-                        <f:selectItem
-                                itemLabel="#{loginBean.usuarioResertSenhaDTO.matriculaList[2]}"
-                                itemValue="2"/>
-                    </p:selectOneRadio>
-
-                    <p:commandButton id="verificar-step-2"
-                                     action="#{loginBean.verificaMatricula()}" value="Solicitar"
-                                     update="@form,formLogin-step-1,panelLogin-step-2,formLogin,formLogin-unidade,unidade,redirectLogin"
-                                     icon="ui-icon-key"/>
-                </h:form>
-                <br/>
-                <br/>
-
-                <p:dialog id="redirectLogin" header="Solicitação realizada com sucesso!" widgetVar="myDialog"
-                          modal="true"
-                          showEffect="fade" hideEffect="fade" visible="#{loginBean.isRedirectResetSenha}">
-                    <h:outputText value="Usuário, aguarde instruções de acesso no e-mail cadastrado na base"/>
-                    <br/>
-                    <br/>
-                    <p:commandButton value="Sim"
-                                     oncomplete="PF('myDialog').hide();">
-                        <p:ajax event="click"
-                                listener="#{loginBean.redirectLogin()}" update="unidade"/>
-                    </p:commandButton>
-                </p:dialog>
-
-            </p:panel>
-        </div>
-    </div>
+				</div>
+			</p:panel>
+		</div>
+	</div>
 </h:body>
 </html>
