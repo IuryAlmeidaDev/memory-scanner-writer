@@ -36,4 +36,22 @@ public class HistoricoPedidoAlimentoServiceTest extends BaseUnitTest {
         assertThat(resultado).isSameAs(contratos);
         verify(dao).listarContratosParaCombo(false, 9L);
     }
+
+    @Test
+    public void buscarMatriculaUsuarioPorId_idValido_deveDelegarParaDao() {
+        when(dao.buscarMatriculaUsuarioPorId(10L)).thenReturn(12345L);
+
+        Long resultado = service.buscarMatriculaUsuarioPorId(10L);
+
+        assertThat(resultado).isEqualTo(12345L);
+        verify(dao).buscarMatriculaUsuarioPorId(10L);
+    }
+
+    @Test
+    public void buscarMatriculaUsuarioPorId_idInvalido_naoDeveConsultarDao() {
+        Long resultado = service.buscarMatriculaUsuarioPorId(null);
+
+        assertThat(resultado).isNull();
+        verify(dao, org.mockito.Mockito.never()).buscarMatriculaUsuarioPorId(org.mockito.Mockito.anyLong());
+    }
 }

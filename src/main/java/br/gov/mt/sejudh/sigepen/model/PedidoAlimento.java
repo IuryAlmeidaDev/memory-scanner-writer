@@ -1,6 +1,7 @@
 package br.gov.mt.sejudh.sigepen.model;
 
 import br.gov.mt.sejudh.sigepen.base.model.BaseModel;
+import br.gov.mt.sejudh.sigepen.enumerator.OrigemPedidoAlimento;
 import br.gov.mt.sejudh.sigepen.enumerator.Status;
 import br.gov.mt.sejudh.sigepen.util.Sigepen;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -60,7 +61,12 @@ public class PedidoAlimento extends BaseModel<Long> {
     @Column(name = "STAT_PEDIDO", nullable = false)
     private Status status;
 
-    private PedidoAlimento(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato, Long idTipoRefeicao) {
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ORIGEM_GERACAO", nullable = false, length = 20)
+    private OrigemPedidoAlimento origem;
+
+    private PedidoAlimento(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato,
+            Long idTipoRefeicao, OrigemPedidoAlimento origem) {
         this.dataEmissao = new Date();
         this.dataPedido = dataPedido;
         this.idUsuario = idUsuario;
@@ -68,12 +74,18 @@ public class PedidoAlimento extends BaseModel<Long> {
         this.idContrato = idContrato;
         this.idTipoRefeicao = idTipoRefeicao;
         this.status = Status.PENDENTE;
+        this.origem = origem != null ? origem : OrigemPedidoAlimento.MANUAL;
     }
 
     public PedidoAlimento() {}
 
     public static PedidoAlimento create(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato, Long idTipoRefeicao) {
-        return new PedidoAlimento(dataPedido, idUsuario, idUnidadePrisional, idContrato, idTipoRefeicao);
+        return create(dataPedido, idUsuario, idUnidadePrisional, idContrato, idTipoRefeicao, OrigemPedidoAlimento.MANUAL);
+    }
+
+    public static PedidoAlimento create(String dataPedido, Long idUsuario, Long idUnidadePrisional, Long idContrato,
+            Long idTipoRefeicao, OrigemPedidoAlimento origem) {
+        return new PedidoAlimento(dataPedido, idUsuario, idUnidadePrisional, idContrato, idTipoRefeicao, origem);
     }
 
     @Override
@@ -133,6 +145,22 @@ public class PedidoAlimento extends BaseModel<Long> {
 		this.status = status;
 	}
 
+    public OrigemPedidoAlimento getOrigem() {
+        return origem;
+    }
+
+    public void setOrigem(OrigemPedidoAlimento origem) {
+        this.origem = origem;
+    }
+
+    public boolean isOrigemAutomatica() {
+        return OrigemPedidoAlimento.AUTOMATICO.equals(this.origem);
+    }
+
+    public boolean isOrigemManual() {
+        return !isOrigemAutomatica();
+    }
+
     public boolean isPendente() {
         return Status.PENDENTE.equals(this.status);
     }
@@ -188,6 +216,7 @@ public class PedidoAlimento extends BaseModel<Long> {
                 .append("itensPedido", itensPedido)
                 .append("dietasEspeciais", dietasEspeciais)
                 .append("status", status)
+                .append("origem", origem)
                 .toString();
     }
 }

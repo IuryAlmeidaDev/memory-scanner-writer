@@ -57,7 +57,9 @@ public class RelatorioUtil {
 			parameters.put("CABECALHO", getCabecalhoPath(ctx, relatorio.getCabecalho()));
 			parameters.put("RODAPE", getRodapePath(ctx, relatorio.getRodape()));
 			parameters.put("UNIDADE_LOGADA", SecurityUtil.getUnidadeSelecionada().getNome());
-			parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
+			if (!parameters.containsKey("EMISSOR")) {
+				parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
+			}
 			
 			if (!parameters.containsKey("NOME_DO_RELATORIO")) {
 				parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
@@ -161,7 +163,9 @@ public class RelatorioUtil {
 		parameters.put("CABECALHO", getCabecalhoPath(ctx, relatorio.getCabecalho()));
 		parameters.put("RODAPE", getRodapePath(ctx, relatorio.getRodape()));
 		parameters.put("UNIDADE_LOGADA", unidadeLogada);
-		parameters.put("EMISSOR", emissor);
+		if (!parameters.containsKey("EMISSOR")) {
+			parameters.put("EMISSOR", emissor);
+		}
 
 		if (!parameters.containsKey("NOME_DO_RELATORIO")) {
 			parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
@@ -281,6 +285,9 @@ public class RelatorioUtil {
 			case PADRAO_ASSINADO:
 				rodapePath = rodapePath + File.separator + "RodapePadraoAssinado.jasper";
 				break;
+			case PEDIDO_ALIMENTO:
+				rodapePath = rodapePath + File.separator + "RodapePedidoAlimento.jasper";
+				break;
 			case PADRAO_PAISAGEM:
 				rodapePath = rodapePath + File.separator + "RodapePadraoPaisagem.jasper";
 				break;
@@ -296,7 +303,9 @@ public class RelatorioUtil {
         parameters.put("CABECALHO", getCabecalhoPath(ctx, relatorio.getCabecalho()));
         parameters.put("RODAPE", getRodapePath(ctx, relatorio.getRodape()));
         parameters.put("UNIDADE_LOGADA", SecurityUtil.getUnidadeSelecionada().getNome());
-        parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
+        if (!parameters.containsKey("EMISSOR")) {
+            parameters.put("EMISSOR", SecurityUtil.getMatriculaUsuario());
+        }
         
         if (!parameters.containsKey("NOME_DO_RELATORIO")) {
             parameters.put("NOME_DO_RELATORIO", relatorio.getNome());
