@@ -8,52 +8,51 @@
 
 :root {
 	/* --- Paleta navy institucional --- */
-	--sgp-navy:              #183664;
-	--sgp-navy-hover:        #122a4d;
+	--sgp-navy: #183664;
+	--sgp-navy-hover: #122a4d;
 
 	/* --- Estado / semântica --- */
-	--sgp-red:               #c62828;
+	--sgp-red: #c62828;
 
 	/* --- Texto --- */
-	--sgp-text:              #2c3340;
-	--sgp-text-strong:       #1f2733;
-	--sgp-text-muted:        #4a5563;
-	--sgp-text-mute-2:       #6b7685;
-	--sgp-text-mute-3:       #9aa3ae;
-	--sgp-text-steps:        #3a4453;
+	--sgp-text: #2c3340;
+	--sgp-text-strong: #1f2733;
+	--sgp-text-muted: #4a5563;
+	--sgp-text-mute-2: #6b7685;
+	--sgp-text-mute-3: #9aa3ae;
+	--sgp-text-steps: #3a4453;
 
 	/* --- Borda e fundo de input --- */
-	--sgp-input-border:        #c7ced8;
-	--sgp-input-border-hover:  #9aa6b6;
-	--sgp-input-bg:            #fcfdfe;
-	--sgp-input-bg-focus:      #ffffff;
+	--sgp-input-border: #c7ced8;
+	--sgp-input-border-hover: #9aa6b6;
+	--sgp-input-bg: #fcfdfe;
+	--sgp-input-bg-focus: #ffffff;
 
 	/* --- Blocos de info / callout --- */
-	--sgp-info-bg:           #f4f6fa;
-	--sgp-info-bg-alt:       #f7f9fc;
-	--sgp-info-border:       #e1e6ee;
+	--sgp-info-bg: #f4f6fa;
+	--sgp-info-bg-alt: #f7f9fc;
+	--sgp-info-border: #e1e6ee;
 
 	/* --- Divisores --- */
-	--sgp-foot-border:       #e7eaef;
+	--sgp-foot-border: #e7eaef;
 
 	/* --- Raios --- */
-	--sgp-radius:            6px;
-	--sgp-radius-card:       12px;
+	--sgp-radius: 6px;
+	--sgp-radius-card: 12px;
 
 	/* --- Sombras --- */
-	--sgp-shadow-card:       0 1px 2px rgba(16, 30, 54, .10),
-	                         0 22px 48px -16px rgba(16, 30, 54, .55);
-	--sgp-shadow-focus:      0 0 0 3px rgba(24, 54, 100, .16);
-	--sgp-shadow-btn:        0 2px 6px rgba(16, 30, 54, .28);
-	--sgp-shadow-btn-focus:  0 0 0 3px rgba(24, 54, 100, .25);
+	--sgp-shadow-card: 0 1px 2px rgba(16, 30, 54, 0.1), 0 22px 48px -16px rgba(16, 30, 54, 0.55);
+	--sgp-shadow-focus: 0 0 0 3px rgba(24, 54, 100, 0.16);
+	--sgp-shadow-btn: 0 2px 6px rgba(16, 30, 54, 0.28);
+	--sgp-shadow-btn-focus: 0 0 0 3px rgba(24, 54, 100, 0.25);
 
 	/* --- Métricas de campo --- */
-	--sgp-input-h:           38px;
-	--sgp-btn-h:             42px;
+	--sgp-input-h: 38px;
+	--sgp-btn-h: 40px;
 
 	/* --- Tipografia --- */
-	--sgp-font:              "Segoe UI", system-ui, Arial, sans-serif;
+	--sgp-font: "Segoe UI", system-ui, Arial, sans-serif;
 
 	/* --- Fundo das telas de autenticação --- */
-	--sgp-auth-bg:           radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
+	--sgp-auth-bg: radial-gradient(circle at 50% 38%, #9aa1ab, #1d212a);
 }

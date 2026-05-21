@@ -1,0 +1,147 @@
+/* ====================================================================
+   Forms Sigepen — vocabulário visual para telas logadas (mundo interno).
+   Escopo restrito a classes .sgp-* (sem regras globais em html/body).
+   Consome tokens definidos em tokens.css.
+   Carregado em _templates/principal.xhtml após main.css.
+   ==================================================================== */
+
+/* ---- Cabeçalho de página ---- */
+.sgp-page-header {
+	margin: 0 0 18px;
+	padding: 20px 24px 0;
+}
+.sgp-page-header h3 {
+	margin: 0 0 4px;
+	padding: 0;
+	font-family: var(--sgp-font);
+	font-size: 20px;
+	font-weight: 700;
+	color: var(--sgp-navy);
+	letter-spacing: 0.2px;
+}
+.sgp-page-header .lead {
+	margin: 0;
+	font-family: var(--sgp-font);
+	font-size: 13px;
+	color: var(--sgp-text-muted);
+}
+
+/* ---- Card de formulário (mundo logado) ---- */
+.sgp-card-form.ui-panel {
+	max-width: 520px;
+	margin: 8px auto 0;
+	padding: 28px 32px 24px !important;
+	border: 1px solid var(--sgp-info-border) !important;
+	border-radius: var(--sgp-radius-card) !important;
+	background: #ffffff;
+	box-shadow:
+		0 1px 3px rgba(16, 30, 54, 0.06),
+		0 8px 24px -16px rgba(16, 30, 54, 0.25);
+	font-family: var(--sgp-font);
+}
+.sgp-card-form .ui-panel-titlebar {
+	margin: -28px -32px 18px;
+	padding: 14px 32px;
+	background: var(--sgp-info-bg);
+	border: none !important;
+	border-bottom: 1px solid var(--sgp-info-border) !important;
+	border-radius: var(--sgp-radius-card) var(--sgp-radius-card) 0 0 !important;
+	color: var(--sgp-navy);
+	font-weight: 600;
+	font-size: 14px;
+}
+.sgp-card-form .ui-panel-content {
+	padding: 0 !important;
+	border: none !important;
+	background: transparent !important;
+	display: flow-root; /* contém floats internos dos composites legados (form-block) */
+}
+
+/* Composites legados (formInputPassword, formSelectOneMenu, etc.) usam
+   .form-block com filhos float:left e SEM contenção própria (main.css:115).
+   Forçamos flow-root no escopo do card para que o form-block tenha altura
+   real — assim o margin-top do .sgp-form-actions não vira clearance. */
+.sgp-card-form .form-block {
+	display: flow-root;
+}
+
+/* ---- Ações (botões) ----
+   Centralizadas no card. clear:both é obrigatório porque os composites
+   legados (form-block) flutuam os filhos sem contenção — sem clear, o
+   .sgp-form-actions entra ao lado do último .form-error-column e o botão
+   sai do centro.
+   margin-top generoso (28px) emula o respiro dos antigos <br/><br/> que
+   separavam o último campo do botão. */
+.sgp-form-actions {
+	clear: both;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	margin-top: 18px;
+	width: 100%;
+}
+
+/* ---- Botão primário (navy) ---- */
+.sgp-btn-primary.ui-button {
+	min-width: 160px;
+	height: var(--sgp-btn-h);
+	margin: 0;
+	padding: 0 22px;
+	border: 1px solid var(--sgp-navy-hover) !important;
+	border-radius: var(--sgp-radius) !important;
+	background: var(--sgp-navy) !important;
+	background-image: none !important;
+	box-shadow: var(--sgp-shadow-btn);
+	white-space: nowrap;
+	transition:
+		background 0.15s ease,
+		transform 0.06s ease,
+		box-shadow 0.15s ease;
+}
+.sgp-btn-primary.ui-button:hover {
+	background: var(--sgp-navy-hover) !important;
+}
+.sgp-btn-primary.ui-button:focus {
+	outline: none;
+	box-shadow: var(--sgp-shadow-btn), var(--sgp-shadow-btn-focus);
+}
+.sgp-btn-primary.ui-button:active {
+	transform: translateY(1px);
+}
+.sgp-btn-primary .ui-button-text {
+	padding: 0;
+	color: #ffffff !important;
+	font-family: var(--sgp-font);
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: 0.3px;
+	white-space: nowrap;
+}
+
+/* ---- Alertas em bloco (substitui style="color:red" inline) ---- */
+.sgp-alert {
+	display: block;
+	margin: 0 0 14px;
+	padding: 10px 14px;
+	border: 1px solid transparent;
+	border-radius: var(--sgp-radius);
+	font-family: var(--sgp-font);
+	font-size: 13px;
+	line-height: 1.5;
+}
+.sgp-alert-info {
+	background: var(--sgp-info-bg-alt);
+	border-color: var(--sgp-info-border);
+	border-left: 3px solid var(--sgp-navy);
+	color: var(--sgp-text);
+}
+.sgp-alert-warn {
+	background: #fdecec;
+	border-color: #f5c2c2;
+	border-left: 3px solid var(--sgp-red);
+	color: #8a1f1f;
+}
+.sgp-alert strong {
+	font-weight: 700;
+}
