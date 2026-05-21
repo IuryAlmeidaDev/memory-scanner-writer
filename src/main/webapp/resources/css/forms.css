@@ -1,12 +1,13 @@
 /* ====================================================================
-   Forms Sigepen — vocabulário visual para telas logadas (mundo interno).
-   Escopo restrito a classes .sgp-* (sem regras globais em html/body).
-   Consome tokens definidos em tokens.css.
-   Carregado em _templates/principal.xhtml após main.css.
+   Forms Sigepen — vocabulário .sgp-* para telas logadas.
+   Consome tokens.css; carregado em principal.xhtml após main.css.
    ==================================================================== */
 
-/* ---- Cabeçalho de página ---- */
 .sgp-page-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
 	margin: 0 0 18px;
 	padding: 20px 24px 0;
 }
@@ -25,8 +26,12 @@
 	font-size: 13px;
 	color: var(--sgp-text-muted);
 }
+.sgp-page-header > h:form,
+.sgp-page-header > form {
+	margin: 0;
+	flex: 0 0 auto;
+}
 
-/* ---- Card de formulário (mundo logado) ---- */
 .sgp-card-form.ui-panel {
 	max-width: 640px;
 	margin: 8px auto 0;
@@ -39,24 +44,22 @@
 		0 8px 24px -16px rgba(16, 30, 54, 0.25);
 	font-family: var(--sgp-font);
 }
-/* Modificador para telas com campos largos (selects com texto longo, textareas
-   100 colunas, etc.). Usar em conjunto: styleClass="sgp-card-form sgp-card-form--wide". */
+/* Modificador para telas com campos largos (selects com texto longo,
+   textareas com columns= grande). Combinar: "sgp-card-form sgp-card-form--wide". */
 .sgp-card-form.sgp-card-form--wide.ui-panel {
 	max-width: 880px;
 }
-/* Largura fixa do label-column dentro do card — garante alinhamento vertical
-   dos inputs entre campos com labels de tamanhos diferentes (ex.: "Nome" vs
-   "Lotação Obrigatória?"). main.css:119 usa min-width:120px, que deixa o
-   label crescer com o texto e desalinha os inputs. */
+/* main.css:119 define .form-label-column { min-width: 120px } — o label
+   cresce com o texto e desalinha inputs entre campos com labels heterogêneos
+   (ex.: "Nome" vs "Lotação Obrigatória?"). Fixar width no escopo do card. */
 .sgp-card-form .form-label-column {
 	width: 140px;
 	min-width: 140px;
 }
-/* Contenção do input-column dentro do card. main.css:126 define
-   .form-input-column { width: auto } — ele cresce com o conteúdo (item mais
-   longo do SelectOneMenu, textarea com columns=100, etc.) e vaza o card.
-   Limitamos ao espaço restante após label-column (140px) + required (20px)
-   + folga. Sem isto, qualquer max-width em filhos é circular. */
+/* main.css:126 define .form-input-column { width: auto } — cresce com o
+   conteúdo (item mais longo do SelectOneMenu, textarea columns=) e vaza o
+   card. max-width finito no input-column fecha a cascata; qualquer
+   max-width em filhos é circular sem isso. */
 .sgp-card-form .form-input-column {
 	max-width: calc(100% - 200px);
 }
@@ -80,13 +83,11 @@
 	padding: 0 !important;
 	border: none !important;
 	background: transparent !important;
-	display: flow-root; /* contém floats internos dos composites legados (form-block) */
+	display: flow-root;
 }
 
-/* Faixa de auditoria do registro (Cadastrado por... + Última alteração...).
-   Estilo "balão": contida dentro do card, borda completa sutil e cantos
-   minimamente arredondados. Cada linha ocupa uma linha própria. Quando
-   não há dado, mostra mensagem em itálico discreta. */
+/* Faixa de auditoria do registro acima dos botões. Cada linha em <div>;
+   quando sem dado, fallback em itálico via .sgp-audit-empty. */
 .sgp-audit-strip {
 	clear: both;
 	display: flex;
@@ -113,21 +114,16 @@
 	color: var(--sgp-text-mute-3);
 }
 
-/* Composites legados (formInputPassword, formSelectOneMenu, etc.) usam
-   .form-block com filhos float:left e SEM contenção própria (main.css:115).
-   Forçamos flow-root no escopo do card para que o form-block tenha altura
-   real — assim o margin-top do .sgp-form-actions não vira clearance. */
+/* main.css:115 define .form-block div { float: left } sem contenção no
+   próprio .form-block. flow-root dá altura real ao bloco — sem isso, o
+   .sgp-form-actions herda clearance no lugar do margin-top. */
 .sgp-card-form .form-block {
 	display: flow-root;
 }
 
-/* ---- Ações (botões) ----
-   Centralizadas no card. clear:both é obrigatório porque os composites
-   legados (form-block) flutuam os filhos sem contenção — sem clear, o
-   .sgp-form-actions entra ao lado do último .form-error-column e o botão
-   sai do centro.
-   margin-top generoso (28px) emula o respiro dos antigos <br/><br/> que
-   separavam o último campo do botão. */
+/* clear: both é obrigatório porque os composites legados flutuam filhos
+   sem contenção — sem clear, .sgp-form-actions entra ao lado do último
+   .form-error-column e o botão sai do centro. */
 .sgp-form-actions {
 	clear: both;
 	display: flex;
@@ -137,29 +133,43 @@
 	margin-top: 18px;
 	width: 100%;
 }
-/* Quando a faixa de auditoria precede os botões, o margin já é provido
-   pelo padding inferior da própria faixa — reduzimos o top do actions
-   para evitar gap duplo. */
 .sgp-audit-strip + .sgp-form-actions {
 	margin-top: 18px;
 }
 
-/* ---- Botão primário (navy) ---- */
 .sgp-btn-primary.ui-button {
 	min-width: 160px;
 	height: var(--sgp-btn-h);
 	margin: 0;
-	padding: 0 22px;
+	padding: 0 22px !important;
 	border: 1px solid var(--sgp-navy-hover) !important;
 	border-radius: var(--sgp-radius) !important;
 	background: var(--sgp-navy) !important;
 	background-image: none !important;
 	box-shadow: var(--sgp-shadow-btn);
 	white-space: nowrap;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
 	transition:
 		background 0.15s ease,
 		transform 0.06s ease,
 		box-shadow 0.15s ease;
+}
+/* Quando o botão tem ícone, o tema PF aplica .ui-button-text-icon-left com
+   icon absolute + padding-left grande. Reset pra usar o flex/gap acima. */
+.sgp-btn-primary .ui-button-icon-left,
+.sgp-btn-primary .ui-icon {
+	position: static !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	left: auto !important;
+	top: auto !important;
+	color: #ffffff !important;
+	line-height: 1 !important;
+	font-size: 14px !important;
+	text-indent: 0 !important;
 }
 .sgp-btn-primary.ui-button:hover {
 	background: var(--sgp-navy-hover) !important;
@@ -172,16 +182,19 @@
 	transform: translateY(1px);
 }
 .sgp-btn-primary .ui-button-text {
-	padding: 0;
+	padding: 0 !important;
+	margin: 0 !important;
 	color: #ffffff !important;
 	font-family: var(--sgp-font);
 	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 0.3px;
 	white-space: nowrap;
+	line-height: 1 !important;
+	display: inline-flex;
+	align-items: center;
 }
 
-/* ---- Botão secundário (Voltar / Cancelar) ---- */
 .sgp-btn-secondary.ui-button {
 	min-width: 120px;
 	height: var(--sgp-btn-h);
@@ -215,7 +228,201 @@
 	white-space: nowrap;
 }
 
-/* ---- Alertas em bloco (substitui style="color:red" inline) ---- */
+.sgp-page-toolbar {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 10px;
+	margin: 0 auto 16px;
+	padding: 0 24px;
+	max-width: 1080px;
+}
+
+.sgp-data-card.ui-panel {
+	margin: 0;
+	border: 1px solid var(--sgp-info-border) !important;
+	border-radius: var(--sgp-radius) !important;
+	background: #ffffff;
+	box-shadow: 0 1px 2px rgba(16, 30, 54, 0.06);
+	font-family: var(--sgp-font);
+}
+.sgp-data-card .ui-panel-titlebar {
+	margin: 0;
+	padding: 10px 14px;
+	background: var(--sgp-info-bg);
+	border: none !important;
+	border-bottom: 1px solid var(--sgp-info-border) !important;
+	border-radius: var(--sgp-radius) var(--sgp-radius) 0 0 !important;
+	color: var(--sgp-navy);
+	font-weight: 600;
+	font-size: 13px;
+}
+.sgp-data-card .ui-panel-content {
+	padding: 14px !important;
+	background: #ffffff !important;
+	border: none !important;
+	color: var(--sgp-text);
+	font-size: 13px;
+	line-height: 1.55;
+}
+.sgp-data-card-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 6px;
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px solid var(--sgp-info-border);
+}
+
+.sgp-dialog.ui-dialog {
+	border: 1px solid var(--sgp-info-border) !important;
+	border-radius: var(--sgp-radius-card) !important;
+	box-shadow: var(--sgp-shadow-card);
+	font-family: var(--sgp-font);
+	overflow: hidden;
+}
+.sgp-dialog .ui-dialog-titlebar {
+	margin: 0;
+	padding: 14px 22px;
+	background: #ffffff !important;
+	background-image: none !important;
+	border: none !important;
+	border-bottom: 1px solid var(--sgp-info-border) !important;
+	border-radius: var(--sgp-radius-card) var(--sgp-radius-card) 0 0 !important;
+}
+.sgp-dialog .ui-dialog-title {
+	color: var(--sgp-navy) !important;
+	font-weight: 600;
+	font-size: 14px;
+	letter-spacing: 0.3px;
+}
+/* O sprite jQuery UI (.ui-icon-closethick) some no hover quando o tema do
+   Sigepen não cobre a variante hover do PNG. Substituído por pseudo-element
+   ✕ que herda cor via inherit. Banimento de sprite previsto no design system. */
+.sgp-dialog .ui-dialog-titlebar-icon {
+	width: 28px !important;
+	height: 28px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 1px solid transparent !important;
+	border-radius: var(--sgp-radius) !important;
+	background: transparent !important;
+	background-image: none !important;
+	box-shadow: none !important;
+	opacity: 1;
+	color: var(--sgp-text-mute-2) !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	outline: none !important;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+.sgp-dialog .ui-dialog-titlebar-icon:hover,
+.sgp-dialog .ui-dialog-titlebar-icon:focus,
+.sgp-dialog .ui-dialog-titlebar-icon:active {
+	background: var(--sgp-info-bg) !important;
+	border: 1px solid transparent !important;
+	color: var(--sgp-navy) !important;
+	box-shadow: none !important;
+	outline: none !important;
+}
+.sgp-dialog .ui-dialog-titlebar-icon .ui-icon {
+	width: 14px !important;
+	height: 14px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	background-image: none !important;
+	text-indent: 0 !important;
+	position: relative !important;
+	color: inherit !important;
+}
+.sgp-dialog .ui-dialog-titlebar-icon .ui-icon::before {
+	content: "\2715";
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--sgp-font);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1;
+	color: inherit;
+}
+.sgp-dialog .ui-dialog-content {
+	padding: 22px 24px 24px !important;
+	background: #ffffff !important;
+	border: none !important;
+	display: flow-root;
+}
+/* O <h:form> dentro do dialog é container imediato dos .form-block flutuantes
+   dos composites — sem flow-root no form, o .sgp-form-actions perde o
+   margin-top (vira clearance). */
+.sgp-dialog form,
+.sgp-dialog .form-block {
+	display: flow-root;
+}
+.sgp-dialog .sgp-form-actions {
+	margin-top: 28px;
+}
+
+/* O tema PrimeFaces empata em specificity (0,2,0) com nossa regra base.
+   Por isso !important em width/height/padding/position/display — sem isso,
+   o ícone fica deslocado pelo padding-left: 2.1em da variante
+   .ui-button-text-icon-left e pelo span .ui-button-text fantasma. */
+.sgp-btn-icon.ui-button {
+	width: 32px !important;
+	height: 32px !important;
+	min-width: 0 !important;
+	margin: 0;
+	padding: 0 !important;
+	border: 1px solid var(--sgp-info-border) !important;
+	border-radius: var(--sgp-radius) !important;
+	background: #ffffff !important;
+	background-image: none !important;
+	box-shadow: none;
+	color: var(--sgp-navy) !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.sgp-btn-icon.ui-button:hover {
+	background: var(--sgp-info-bg) !important;
+	border-color: var(--sgp-navy) !important;
+}
+.sgp-btn-icon.ui-button .ui-button-text {
+	display: none !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	width: 0 !important;
+	height: 0 !important;
+	text-indent: 0 !important;
+}
+.sgp-btn-icon.ui-button .ui-button-icon-left,
+.sgp-btn-icon.ui-button .ui-icon {
+	position: static !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	left: auto !important;
+	top: auto !important;
+	width: auto !important;
+	height: auto !important;
+	line-height: 1 !important;
+	font-size: 13px !important;
+	color: inherit !important;
+	text-indent: 0 !important;
+	background: none !important;
+}
+.sgp-btn-icon-danger.ui-button {
+	border-color: #f1c2c2 !important;
+	color: var(--sgp-red) !important;
+}
+.sgp-btn-icon-danger.ui-button:hover {
+	background: #fdecec !important;
+	border-color: var(--sgp-red) !important;
+}
+
 .sgp-alert {
 	display: block;
 	margin: 0 0 14px;
