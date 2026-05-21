@@ -14,143 +14,107 @@
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 
-
-		<h3><strong>Relatório Por Seção Jurisdicional do Processo</strong></h3>
+		<div class="sgp-page-header">
+			<h3>Relatório Por Seção Jurisdicional do Processo</h3>
+		</div>
 
 		<h:form id="meuFormulario">
-			<p:panel>
-				<h:panelGroup id="panel_filtros" >
+			<p:panel styleClass="sgp-card-form sgp-card-form--wide">
+				<h:panelGroup id="panel_filtros">
+
 					<sgp:formSelectOneMenuRelatorios
 						labelValue="Tipo"
 						value="#{relatorioRecuperandoJurisdicionalBean.filtro.tipoRelatorioEntradaSaidaRec}"
-						itemsValue="#{comboHelperBean.tipoRelatorioEntradaSaidaRec}" 
+						itemsValue="#{comboHelperBean.tipoRelatorioEntradaSaidaRec}"
 						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
+						itemLabel="#{item.descricao}"
 						display="text"
 						styleFormLabelColumn="width:145px">
 						<p:ajax update="meuFormulario:panel_filtros" />
 					</sgp:formSelectOneMenuRelatorios>
-	
-		<ui:remove>
-					<sgp:formSelectOneMenuRelatorios 
-						labelValue="Tipo de Entrada"
-						value="#{relatorioRecuperandoJurisdicionalBean.filtro.tipoProcesso}"
-						itemsValue="#{relatorioRecuperandoJurisdicionalBean.getTipoEntrada()}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text"
-						styleFormLabelColumn="width:145px"
-						rendered="#{relatorioRecuperandoJurisdicionalBean.mostrarTipoEntrada()}"
-						/>
-						
-					<sgp:formSelectOneMenuRelatorios 
-						labelValue="Tipo de Desligamento"
-						value="#{relatorioRecuperandoJurisdicionalBean.filtro.tipoDesligamento}"
-						itemsValue="#{relatorioRecuperandoJurisdicionalBean.getTipoDesligamento()}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text" 
-						styleFormLabelColumn="width:145px"
-						rendered="#{relatorioRecuperandoJurisdicionalBean.mostrarTipoDesligamento()}"
-						/>
-		</ui:remove>	
-<!-- 					<sgp:formSelectOneMenu  -->
-<!-- 								id="unidadePrisional" labelValue="Unidade Prisional" -->
-<!-- 								value="#{relatorioRecuperandoJurisdicionalBean.filtro.unidadePrisional}" -->
-<!-- 								itemsValue="#{relatorioRecuperandoJurisdicionalBean.unidadesPrisionais}"  -->
-<!-- 								itemValue="#{item}" -->
-<!-- 								itemLabel="#{item.nome}"  -->
-<!-- 								temSelecione="true" -->
-<!-- 								filter="true" filterMatchMode="custom" filterFunction="removeAcento" -->
-<!-- 								styleFormLabelColumn="width:145px" -->
-<!-- 								converter="SimpleEntityConverter"/> -->
-		
-					<sgp:formCalendar labelValue="Data Inicial" 
+
+					<sgp:formCalendar labelValue="Data Inicial"
 						value="#{relatorioRecuperandoJurisdicionalBean.filtro.dataInicial}" display="text"
 						validationRequired="false" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 145px">
 						<p:ajax event="dateSelect" />
-						<p:ajax event="change"  />
+						<p:ajax event="change" />
 					</sgp:formCalendar>
-					
-					<sgp:formCalendar labelValue="Data Final" 
+
+					<sgp:formCalendar labelValue="Data Final"
 						value="#{relatorioRecuperandoJurisdicionalBean.filtro.dataFinal}" display="text"
 						validationRequired="false" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 145px">
 						<p:ajax event="dateSelect" />
-						<p:ajax event="change"  />
+						<p:ajax event="change" />
 					</sgp:formCalendar>
-					
-					<h:panelGroup id="grupoEstabelecimento">
-						<sgp:formInputText style="vertical-align: top" labelValue="Seção Jurisdicional" id="nomeSecao"
-							value="#{relatorioRecuperandoJurisdicionalBean.filtro.estabelecimento.nome}" size="43" disabled="true" styleFormLabelColumn="width: 145px"/>
+
+					<h:panelGroup layout="block" styleClass="sgp-field-with-side-action">
+						<h:panelGroup id="grupoEstabelecimento" layout="block" styleClass="sgp-field-with-side-action__field">
+							<sgp:formInputText style="vertical-align: top" labelValue="Seção Jurisdicional" id="nomeSecao"
+								value="#{relatorioRecuperandoJurisdicionalBean.filtro.estabelecimento.nome}" size="43" disabled="true" styleFormLabelColumn="width: 145px"/>
+						</h:panelGroup>
+
+						<p:commandButton icon="fa fa-plus" styleClass="sgp-btn-icon sgp-btn-icon--sm" immediate="true"
+							actionListener="#{relatorioRecuperandoJurisdicionalBean.abrirDialogEstabelecimento}">
+							<p:ajax event="dialogReturn" listener="#{relatorioRecuperandoJurisdicionalBean.associarEstabelecimento}" update="grupoEstabelecimento" />
+						</p:commandButton>
 					</h:panelGroup>
-					
-					<p:commandButton icon="ui-icon-plus" immediate="true" actionListener="#{relatorioRecuperandoJurisdicionalBean.abrirDialogEstabelecimento}">
-						<p:ajax event="dialogReturn" listener="#{relatorioRecuperandoJurisdicionalBean.associarEstabelecimento}" update="grupoEstabelecimento" />
-					</p:commandButton>
-					
-					<sgp:formSelectOneMenuRelatorios 
+
+					<sgp:formSelectOneMenuRelatorios
 						labelValue="Estado da Seção"
 						value="#{relatorioRecuperandoJurisdicionalBean.filtro.estadoEstabelecimento}"
-						itemsValue="#{relatorioRecuperandoJurisdicionalBean.getEstados()}" 
+						itemsValue="#{relatorioRecuperandoJurisdicionalBean.getEstados()}"
 						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
+						itemLabel="#{item.descricao}"
 						display="text"
 						styleFormLabelColumn="width:145px"/>
-							
-					 <sgp:formSelectOneMenuRelatorios
-							labelValue="Esfera da Seção"
-							value="#{relatorioRecuperandoJurisdicionalBean.filtro.esferaEstabelecimento}"
-							itemsValue="#{comboHelperBean.esfera}" 
-							itemValue="#{item}"
-							itemLabel="#{item.descricao}" 
-							display="text"
-							temSelecione="true"
-							styleFormLabelColumn="width:145px"/>
-							
-					<sgp:formInputText id="numProcesso" labelValue="Número Processo" value="#{relatorioRecuperandoJurisdicionalBean.filtro.numeroProcesso}"
-	                                   maxlength="80" styleFormLabelColumn="width:145px" style="width: 200px;"/>
-	                                   
-					<sgp:formInputText id="numDocumento" labelValue="Número Documento" value="#{relatorioRecuperandoJurisdicionalBean.filtro.numeroDocumento}"
-	                                   maxlength="80" styleFormLabelColumn="width:145px" style="width: 200px;"/>	                                   
-						
-			<ui:remove>				
-					<sgp:formSelectOneMenu 
-						labelValue="Regime"
-						value="#{relatorioRecuperandoJurisdicionalBean.filtro.regime}"
-						itemsValue="#{comboHelperBean.regimes}" 
+
+					<sgp:formSelectOneMenuRelatorios
+						labelValue="Esfera da Seção"
+						value="#{relatorioRecuperandoJurisdicionalBean.filtro.esferaEstabelecimento}"
+						itemsValue="#{comboHelperBean.esfera}"
 						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
+						itemLabel="#{item.descricao}"
+						display="text"
 						temSelecione="true"
-						converter="SimpleEntityConverter"
-						filter="true" filterMatchMode="custom" filterFunction="removeAcento"
 						styleFormLabelColumn="width:145px"/>
-			</ui:remove>
-						
-					<sgp:formSelectOneMenuRelatorios 
-							labelValue="Condição Atual"
-							value="#{relatorioRecuperandoJurisdicionalBean.filtro.condicaoAtual}"
-							itemsValue="#{relatorioRecuperandoJurisdicionalBean.getCondicao()}" 
-							itemValue="#{item}"
-							itemLabel="#{item.descricao}" 
-							display="text"
-							styleFormLabelColumn="width:145px"/>
-						
-					 <sgp:formSelectOneMenuRelatorios 
-							labelValue="Situação"
-							value="#{relatorioRecuperandoJurisdicionalBean.filtro.situacaoRecuperando}"
-							itemsValue="#{relatorioRecuperandoJurisdicionalBean.getStatus()}" 
-							itemValue="#{item}"
-							itemLabel="#{item.descricao}" 
-							display="text"
-							styleFormLabelColumn="width:145px"/>
-				
+
+					<sgp:formInputText id="numProcesso" labelValue="Número Processo"
+						value="#{relatorioRecuperandoJurisdicionalBean.filtro.numeroProcesso}"
+						maxlength="80" styleFormLabelColumn="width:145px" style="width: 200px;"/>
+
+					<sgp:formInputText id="numDocumento" labelValue="Número Documento"
+						value="#{relatorioRecuperandoJurisdicionalBean.filtro.numeroDocumento}"
+						maxlength="80" styleFormLabelColumn="width:145px" style="width: 200px;"/>
+
+					<sgp:formSelectOneMenuRelatorios
+						labelValue="Condição Atual"
+						value="#{relatorioRecuperandoJurisdicionalBean.filtro.condicaoAtual}"
+						itemsValue="#{relatorioRecuperandoJurisdicionalBean.getCondicao()}"
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}"
+						display="text"
+						styleFormLabelColumn="width:145px"/>
+
+					<sgp:formSelectOneMenuRelatorios
+						labelValue="Situação"
+						value="#{relatorioRecuperandoJurisdicionalBean.filtro.situacaoRecuperando}"
+						itemsValue="#{relatorioRecuperandoJurisdicionalBean.getStatus()}"
+						itemValue="#{item}"
+						itemLabel="#{item.descricao}"
+						display="text"
+						styleFormLabelColumn="width:145px"/>
+
 				</h:panelGroup>
-				<br/>
-				<br/>
-				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{relatorioRecuperandoJurisdicionalBean.imprimir()}" />
-				<p:button outcome="pretty:Relatorio" value="Voltar" icon="ui-icon-arrowreturnthick-1-w"/>					
+
+				<div class="sgp-form-actions">
+					<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
+						styleClass="sgp-btn-primary"
+						actionListener="#{relatorioRecuperandoJurisdicionalBean.imprimir()}" />
+					<p:button outcome="pretty:Relatorio" value="Voltar"
+						styleClass="sgp-btn-secondary" icon="fa fa-arrow-left" />
+				</div>
 			</p:panel>
 		</h:form>
-		
+
 	</ui:define>
 </ui:composition>

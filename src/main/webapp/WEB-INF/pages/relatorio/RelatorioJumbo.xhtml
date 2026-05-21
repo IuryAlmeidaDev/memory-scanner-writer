@@ -9,10 +9,12 @@
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 
-		<h3><strong>Relatório de Recuperandos nas Unidades com Jumbo</strong></h3>
+		<div class="sgp-page-header">
+			<h3>Relatório de Recuperandos nas Unidades com Jumbo</h3>
+		</div>
 
 		<h:form id="meuFormulario">
-			<p:panel>
+			<p:panel styleClass="sgp-card-form">
 				<p:outputLabel for="unidadesJumbo" value="Unidades com Jumbo" />
 				<br/>
 				<p:selectCheckboxMenu id="unidadesJumbo"
@@ -28,17 +30,14 @@
 						itemLabel="#{unidade.nome}"
 						itemValue="#{unidade.id}" />
 				</p:selectCheckboxMenu>
-				<br/><br/>
-				<!--
-				<p:commandButton value="Imprimir"
-					icon="fa fa-file-pdf-o"
-					actionListener="#{relatorioJumboBean.imprimir()}" />
-				-->
-				<p:commandButton value="Exportar Excel"
-					icon="fa fa-file-excel-o"
-					actionListener="#{relatorioJumboBean.exportarXlsx()}" />
-				<p:button outcome="pretty:Relatorio" value="Voltar"
-					icon="ui-icon-arrowreturnthick-1-w" />
+
+				<div class="sgp-form-actions">
+					<p:commandButton value="Exportar Excel" styleClass="sgp-btn-primary"
+						icon="fa fa-file-excel-o"
+						actionListener="#{relatorioJumboBean.exportarXlsx()}" />
+					<p:button outcome="pretty:Relatorio" value="Voltar"
+						styleClass="sgp-btn-secondary" icon="fa fa-arrow-left" />
+				</div>
 			</p:panel>
 		</h:form>
 

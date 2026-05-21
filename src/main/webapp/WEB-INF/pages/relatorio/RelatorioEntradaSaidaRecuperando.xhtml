@@ -14,93 +14,63 @@
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 
-
-		<h3><strong>Relatório Entrada / Saida do Recuperando </strong></h3>
+		<div class="sgp-page-header">
+			<h3>Relatório Entrada / Saída do Recuperando</h3>
+		</div>
 
 		<h:form id="meuFormulario">
 			<pe:importEnum type="br.gov.mt.sejudh.sigepen.enumerator.TipoRelatorioEntradaSaidaRec" var="tipo_rel" allSuffix="ALL_ENUM_VALUES" />
-			<p:panel>
-		        
-				<h:panelGroup id="panel_filtros" >
-				
+			<p:panel styleClass="sgp-card-form">
+
+				<h:panelGroup id="panel_filtros">
+
 					<sgp:formSelectOneMenuRelatorios
 						labelValue="Tipo"
 						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.tipoRelatorioEntradaSaidaRec}"
-						itemsValue="#{comboHelperBean.tipoRelatorioEntradaSaidaRec}" 
+						itemsValue="#{comboHelperBean.tipoRelatorioEntradaSaidaRec}"
 						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
+						itemLabel="#{item.descricao}"
 						display="text"
 						styleFormLabelColumn="width:145px">
 						<p:ajax update="meuFormulario:panel_filtros" />
 					</sgp:formSelectOneMenuRelatorios>
-						
-					<ui:remove>
-					<sgp:formSelectOneMenuRelatorios 
-						labelValue="Tipo de Entrada"
-						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.tipoProcesso}"
-						itemsValue="#{relatorioEntradaSaidaRecuperandoBean.getTipoEntrada()}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text"
-						styleFormLabelColumn="width:145px"
-						rendered="#{relatorioEntradaSaidaRecuperandoBean.mostrarTipoEntrada()}"
-						/>
-					</ui:remove>
-					
-					<sgp:formSelectOneMenuRelatorios 
+
+					<sgp:formSelectOneMenuRelatorios
 						labelValue="Tipo de Desligamento"
 						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.tipoDesligamento}"
-						itemsValue="#{relatorioEntradaSaidaRecuperandoBean.getTipoDesligamento()}" 
+						itemsValue="#{relatorioEntradaSaidaRecuperandoBean.getTipoDesligamento()}"
 						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text" 
+						itemLabel="#{item.descricao}"
+						display="text"
 						styleFormLabelColumn="width:145px"
 						rendered="#{relatorioEntradaSaidaRecuperandoBean.mostrarTipoDesligamento()}"
 						/>
-							
-					<sgp:formCalendar labelValue="Data Inicial" 
+
+					<sgp:formCalendar labelValue="Data Inicial"
 						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.dataInicial}" display="text"
 						validationRequired="false" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 145px">
 						<p:ajax event="dateSelect" />
-						<p:ajax event="change"  />
+						<p:ajax event="change" />
 					</sgp:formCalendar>
-					
-					<sgp:formCalendar labelValue="Data Final" 
+
+					<sgp:formCalendar labelValue="Data Final"
 						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.dataFinal}" display="text"
 						validationRequired="false" pattern="dd/MM/yyyy" styleFormLabelColumn="width: 145px">
 						<p:ajax event="dateSelect" />
-						<p:ajax event="change"  />
+						<p:ajax event="change" />
 					</sgp:formCalendar>
-					
-					<ui:remove>
-					<sgp:formSelectOneMenu 
-						labelValue="Regime"
-						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.regime}"
-						itemsValue="#{relatorioEntradaSaidaRecuperandoBean.regimes}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						temSelecione="true"
-						filter="true" filterMatchMode="custom" filterFunction="removeAcento"
-						converter="SimpleEntityConverter"
-						styleFormLabelColumn="width:145px"/>
-					
-					<sgp:formSelectOneMenuRelatorios 
-						labelValue="Condição"
-						value="#{relatorioEntradaSaidaRecuperandoBean.filtro.condicaoAtual}"
-						itemsValue="#{relatorioEntradaSaidaRecuperandoBean.getCondicao()}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						display="text"
-						styleFormLabelColumn="width:145px"/>
-					</ui:remove>
-					
+
 				</h:panelGroup>
-				<br/>
-				<br/>
-				<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o" actionListener="#{relatorioEntradaSaidaRecuperandoBean.imprimir()}" />
-				<p:button outcome="pretty:Relatorio" value="Voltar" icon="ui-icon-arrowreturnthick-1-w"/>					
+
+				<div class="sgp-form-actions">
+					<p:commandButton value="Imprimir" icon="fa fa-file-pdf-o"
+						styleClass="sgp-btn-primary"
+						actionListener="#{relatorioEntradaSaidaRecuperandoBean.imprimir()}" />
+					<p:button outcome="pretty:Relatorio" value="Voltar"
+						styleClass="sgp-btn-secondary" icon="fa fa-arrow-left" />
+				</div>
 			</p:panel>
 		</h:form>
-		
+
 	</ui:define>
 </ui:composition>
