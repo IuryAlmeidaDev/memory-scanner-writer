@@ -12,40 +12,34 @@
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 
-
-		<h3><strong>Relatórios</strong></h3>
+		<div class="sgp-page-header">
+			<h3>Relatórios</h3>
+		</div>
 
 		<h:form id="meuFormulario">
-			<p:panel>
-                <sgp:formSelectOneMenu
-                        labelValue="Funcionalidade"
-                        value="#{relatorioBean.funcionalidade}" 
-                        itemsValue="#{relatorioBean.funcionalidades}"
-                        itemValue="#{item}" 
-                        itemLabel="#{item.nome}" 
-                        converter="SimpleEntityConverter"
-                        temSelecione="true" 
-                       >
-                        <p:ajax listener="#{relatorioBean.selecionarFuncionalidade}" update="meuFormulario:combo_relatorios"  process="@this" />
-                </sgp:formSelectOneMenu>
-				
+			<p:panel styleClass="sgp-card-form">
+				<sgp:formSelectOneMenu
+						labelValue="Funcionalidade"
+						value="#{relatorioBean.funcionalidade}"
+						itemsValue="#{relatorioBean.funcionalidades}"
+						itemValue="#{item}"
+						itemLabel="#{item.nome}"
+						converter="SimpleEntityConverter"
+						temSelecione="true">
+					<p:ajax listener="#{relatorioBean.selecionarFuncionalidade}" update="meuFormulario:combo_relatorios" process="@this" />
+				</sgp:formSelectOneMenu>
+
 				<h:panelGroup id="combo_relatorios">
-
-						<sgp:formSelectOneMenu labelValue="Relatórios" value="#{relatorioBean.relatorioSelecionado}" display="text" 
-							 >
-							<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
-							
-							<c:forEach items="#{relatorioBean.relatorios}" var="entry">
-							    <f:selectItem itemLabel="#{entry.nome}" itemValue="#{entry.id}" />
-							</c:forEach>
-							<p:ajax listener="#{relatorioBean.mostrarFiltros2}" process="@this" />
-						</sgp:formSelectOneMenu>
-
-                </h:panelGroup>
-                
-                <br /><br />
+					<sgp:formSelectOneMenu labelValue="Relatórios" value="#{relatorioBean.relatorioSelecionado}" display="text">
+						<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+						<c:forEach items="#{relatorioBean.relatorios}" var="entry">
+							<f:selectItem itemLabel="#{entry.nome}" itemValue="#{entry.id}" />
+						</c:forEach>
+						<p:ajax listener="#{relatorioBean.mostrarFiltros2}" process="@this" />
+					</sgp:formSelectOneMenu>
+				</h:panelGroup>
 			</p:panel>
 		</h:form>
-		
+
 	</ui:define>
 </ui:composition>

@@ -16,12 +16,12 @@
 		<sgp:validarAcesso />
 
 
-		<h3>
-			<strong>Relatório Infopen</strong>
-		</h3>
+		<div class="sgp-page-header">
+			<h3>Relatório Infopen</h3>
+		</div>
 
 		<h:form id="meuFormulario">
-			<p:panel>
+			<p:panel styleClass="sgp-card-form sgp-card-form--wide">
 
 				<sgp:formSelectOneMenuRelatorios id="tipo_relatorio"
 					value="#{infopenBean.filtro.tipoRelatorio}"
@@ -403,16 +403,14 @@
 							styleFormLabelColumn="width:145px" />
 					</p:outputPanel>
 
-					<div
-						style="display: flex-direction; justify-content: right; margin-top: 50px;">
+					<div class="sgp-inline-field">
 						<p:commandButton value="Selecionar Unidades"
 							rendered="#{infopenBean.filtroUnidade and (infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5)}"
-							onclick="PF('modalUnidades').show()" styleClass="ui-button-info"
-							icon="fa fa-building" styleFormLabelColumn="width:145px" />
-
+							onclick="PF('modalUnidades').show()" styleClass="sgp-btn-secondary"
+							icon="fa fa-building" />
 
 						<p:outputPanel id="infoUnidades"
-							style="margin-top: 10px; font-weight: bold;"
+							styleClass="sgp-inline-field-hint"
 							rendered="#{infopenBean.filtroUnidade and not empty infopenBean.unidadesSelecionadas and (infopenBean.filtro.tipoRelatorio eq 1 or infopenBean.filtro.tipoRelatorio eq 4 or infopenBean.filtro.tipoRelatorio eq 5)}">
 							<h:outputText
 								value="Unidades selecionadas: #{infopenBean.unidadesSelecionadas.size()}" />
@@ -420,24 +418,18 @@
 					</div>
 				</h:panelGroup>
 
-				<br />
-				<br />
-
-				<h:panelGroup id="panelImprimir">
-					<h:panelGrid columns="3">
-						<p:commandButton
-							style="display: #{not (infopenBean.filtro.tipoRelatorio eq 3 or infopenBean.filtro.tipoRelatorio eq 4) ? 'block' : 'none'};"
-							value="Imprimir" icon="fa fa-file-pdf-o"
-							actionListener="#{infopenBean.imprimir()}" />
-						<p:commandButton
-							style="display: #{infopenBean.filtro.tipoRelatorio eq 3 or infopenBean.filtro.tipoRelatorio eq 4 ? 'block' : 'none'};"
-							value="Imprimir" icon="fa fa-file-pdf-o"
-							actionListener="#{infopenBean.imprimir()}" ajax="false" />
-						<p:button outcome="pretty:Relatorio" value="Voltar"
-							icon="ui-icon-arrowreturnthick-1-w" />
-					</h:panelGrid>
+				<h:panelGroup id="panelImprimir" layout="block" styleClass="sgp-form-actions">
+					<p:commandButton
+						style="display: #{not (infopenBean.filtro.tipoRelatorio eq 3 or infopenBean.filtro.tipoRelatorio eq 4) ? 'inline-flex' : 'none'};"
+						value="Imprimir" icon="fa fa-file-pdf-o" styleClass="sgp-btn-primary"
+						actionListener="#{infopenBean.imprimir()}" />
+					<p:commandButton
+						style="display: #{infopenBean.filtro.tipoRelatorio eq 3 or infopenBean.filtro.tipoRelatorio eq 4 ? 'inline-flex' : 'none'};"
+						value="Imprimir" icon="fa fa-file-pdf-o" styleClass="sgp-btn-primary"
+						actionListener="#{infopenBean.imprimir()}" ajax="false" />
+					<p:button outcome="pretty:Relatorio" value="Voltar"
+						icon="fa fa-arrow-left" styleClass="sgp-btn-secondary" />
 				</h:panelGroup>
-
 
 			</p:panel>
 		</h:form>
@@ -445,6 +437,7 @@
 
 		<h:form id="formUnidadesDialog">
 			<p:dialog header="Selecionar Unidades Prisionais"
+				styleClass="sgp-dialog"
 				widgetVar="modalUnidades" modal="true" closable="true"
 				closeOnEscape="true" width="500" height="335" resizable="false"
 				draggable="false">
@@ -465,20 +458,14 @@
 					</f:facet>
 				</p:pickList>
 
-				<br />
-
-				<div style="text-align: center; margin-top: 15px;">
-					<p:commandButton value="Confirmar"
+				<div class="sgp-form-actions">
+					<p:commandButton value="Confirmar" styleClass="sgp-btn-primary"
 						actionListener="#{infopenBean.associarUnidades}"
 						oncomplete="PF('modalUnidades').hide();"
-						update=":meuFormulario:panel_filtros :meuFormulario:infoUnidades"
-						style="margin-right: 10px;" />
-					<p:commandButton value="Fechar"
+						update=":meuFormulario:panel_filtros :meuFormulario:infoUnidades" />
+					<p:commandButton value="Fechar" styleClass="sgp-btn-secondary"
 						onclick="PF('modalUnidades').hide();" immediate="true" />
 				</div>
-
-				<style>
-</style>
 			</p:dialog>
 		</h:form>
 

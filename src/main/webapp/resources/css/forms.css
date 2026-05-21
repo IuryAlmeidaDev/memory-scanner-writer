@@ -4,14 +4,16 @@
    ==================================================================== */
 
 .sgp-page-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
+	display: grid;
+	grid-template-columns: 1fr auto;
+	align-items: start;
+	column-gap: 16px;
 	margin: 0 0 18px;
 	padding: 20px 24px 0;
 }
 .sgp-page-header h3 {
+	grid-column: 1;
+	grid-row: 1;
 	margin: 0 0 4px;
 	padding: 0;
 	font-family: var(--sgp-font);
@@ -21,15 +23,18 @@
 	letter-spacing: 0.2px;
 }
 .sgp-page-header .lead {
+	grid-column: 1;
+	grid-row: 2;
 	margin: 0;
 	font-family: var(--sgp-font);
 	font-size: 13px;
 	color: var(--sgp-text-muted);
 }
-.sgp-page-header > h:form,
 .sgp-page-header > form {
+	grid-column: 2;
+	grid-row: 1 / span 2;
+	align-self: center;
 	margin: 0;
-	flex: 0 0 auto;
 }
 
 .sgp-card-form.ui-panel {
@@ -199,14 +204,32 @@
 	min-width: 120px;
 	height: var(--sgp-btn-h);
 	margin: 0;
-	padding: 0 22px;
+	padding: 0 22px !important;
 	border: 1px solid var(--sgp-navy) !important;
 	border-radius: var(--sgp-radius) !important;
 	background: #ffffff !important;
 	background-image: none !important;
 	box-shadow: none;
 	white-space: nowrap;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
 	transition: background 0.15s ease, border-color 0.15s ease, transform 0.06s ease;
+}
+/* Mesmo reset do primary: PrimeFaces aplica .ui-button-text-icon-left com
+   padding-left grande + icon absolute. Sem reset, texto sai do centro. */
+.sgp-btn-secondary .ui-button-icon-left,
+.sgp-btn-secondary .ui-icon {
+	position: static !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	left: auto !important;
+	top: auto !important;
+	color: var(--sgp-navy) !important;
+	line-height: 1 !important;
+	font-size: 14px !important;
+	text-indent: 0 !important;
 }
 .sgp-btn-secondary.ui-button:hover {
 	background: var(--sgp-info-bg) !important;
@@ -219,13 +242,17 @@
 	transform: translateY(1px);
 }
 .sgp-btn-secondary .ui-button-text {
-	padding: 0;
+	padding: 0 !important;
+	margin: 0 !important;
 	color: var(--sgp-navy) !important;
 	font-family: var(--sgp-font);
 	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 0.3px;
 	white-space: nowrap;
+	line-height: 1 !important;
+	display: inline-flex;
+	align-items: center;
 }
 
 .sgp-page-toolbar {
@@ -402,6 +429,10 @@
 .sgp-btn-icon.ui-button .ui-button-icon-left,
 .sgp-btn-icon.ui-button .ui-icon {
 	position: static !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	vertical-align: middle !important;
 	margin: 0 !important;
 	padding: 0 !important;
 	left: auto !important;
@@ -421,6 +452,30 @@
 .sgp-btn-icon-danger.ui-button:hover {
 	background: #fdecec !important;
 	border-color: var(--sgp-red) !important;
+}
+
+/* Variante compacta para uso ao lado de input (alinha com altura de campo). */
+.sgp-btn-icon--sm.ui-button {
+	width: 28px !important;
+	height: 28px !important;
+}
+.sgp-btn-icon--sm.ui-button .ui-icon {
+	font-size: 11px !important;
+}
+
+/* Wrapper para colocar um botão (tipicamente .sgp-btn-icon--sm) à direita
+   de um composite legado de input. Sem este flex, o .form-block do composite
+   é block-level e empurra o botão para a linha de baixo. O .form-block vira
+   inline-block para ter largura intrínseca (label-column + input-column) e
+   não esticar todo o espaço disponível do flex. */
+.sgp-field-with-side-action {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+.sgp-field-with-side-action__field .form-block {
+	display: inline-block;
+	margin: 0 !important;
 }
 
 .sgp-alert {
@@ -447,4 +502,50 @@
 }
 .sgp-alert strong {
 	font-weight: 700;
+}
+
+.sgp-inline-field {
+	clear: both;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	margin: 12px 0 0;
+}
+.sgp-inline-field-hint {
+	font-family: var(--sgp-font);
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--sgp-text-muted);
+}
+
+/* PickList dentro de .sgp-dialog: o tema PrimeFaces injeta o filtro com sprite
+   jQuery UI absoluto à direita e largura fixa do tema (~150px). Forçamos o
+   container e o input a ocuparem toda a largura disponível da listbox abaixo,
+   escondemos a sprite e usamos FontAwesome via pseudo-element à direita. */
+.sgp-dialog .ui-picklist-filter-container {
+	position: relative;
+	display: block;
+	width: 100% !important;
+	box-sizing: border-box;
+}
+.sgp-dialog .ui-picklist-filter-container .ui-icon-search,
+.sgp-dialog .ui-picklist-filter-container .ui-picklist-filter-icon {
+	display: none !important;
+}
+.sgp-dialog .ui-picklist-filter-container::after {
+	content: "\f002"; /* FontAwesome 4: fa-search */
+	font-family: "FontAwesome";
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--sgp-text-mute-3);
+	font-size: 13px;
+	pointer-events: none;
+}
+.sgp-dialog .ui-picklist-filter {
+	width: 100% !important;
+	padding-right: 28px !important;
+	box-sizing: border-box;
 }
