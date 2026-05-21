@@ -5,30 +5,36 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:sgp="http://java.sun.com/jsf/composite/sejudh/composite"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
-	
+
 	<ui:define name="conteudo">
-		<h3>Alterar Senha</h3>
-		
+		<div class="sgp-page-header">
+			<h3>Alterar senha</h3>
+			<p class="lead">Defina uma nova senha de acesso ao sistema.</p>
+		</div>
+
 		<h:form id="form">
-			<p:panel id="panel">
-				<p:row rendered="#{alterarSenhaBean.usuario.primeiroAcesso}">
-					<div style="text-align: left">
-						<p:outputLabel id="texto" style="color: red" value="** Por medidas de segurança é obrigatório alterar a senha neste primeiro acesso.**" />
-						<br/>
-						<br/>
+			<p:panel id="panel" styleClass="sgp-card-form">
+
+				<h:panelGroup rendered="#{alterarSenhaBean.usuario.primeiroAcesso}">
+					<div class="sgp-alert sgp-alert-warn">
+						<strong>Primeiro acesso:</strong> por medidas de segurança é obrigatório alterar a senha agora.
 					</div>
-				</p:row>
-				<p:outputLabel id="alertaSenha" style="color: red" value="** Senha deve conter no mínimo 6 e no máximo 15 caracteres.**" />
-				<sgp:formInputPassword 
+				</h:panelGroup>
+
+				<div class="sgp-alert sgp-alert-info">
+					A senha deve conter no mínimo <strong>6</strong> e no máximo <strong>15</strong> caracteres.
+				</div>
+
+				<sgp:formInputPassword
 					id="pwd1"
 					labelValue="Nova senha"
-					value="#{alterarSenhaBean.usuario.senha}" 
+					value="#{alterarSenhaBean.usuario.senha}"
 					validationRequired="true"
 					maxlength="15"
-					match=":form:pwd2:input" 
+					match=":form:pwd2:input"
 					validatorMessage="A senha e a confirmação devem ser iguais."
 					display="text"/>
-					
+
 				<sgp:formInputPassword
 					id="pwd2"
 					labelValue="Confirme a senha"
@@ -36,10 +42,14 @@
 					validationRequired="true"
 					maxlength="15"
 					display="text" />
-			
-				<br/>
-				<br/>
-				<p:commandButton value="Alterar" action="#{alterarSenhaBean.alterar()}"	update="@form" icon="ui-icon-disk" />
+
+				<div class="sgp-form-actions">
+					<p:commandButton
+						value="Alterar"
+						action="#{alterarSenhaBean.alterar()}"
+						update="@form"
+						styleClass="sgp-btn-primary"/>
+				</div>
 			</p:panel>
 		</h:form>
 	</ui:define>

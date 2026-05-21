@@ -7,11 +7,13 @@
     template="/WEB-INF/pages/_templates/principal.xhtml">
 
     <ui:define name="conteudo">
-        <h3>Alterar Unidade</h3>
+        <div class="sgp-page-header">
+            <h3>Alterar unidade</h3>
+            <p class="lead">Troque a unidade ativa nesta sessão.</p>
+        </div>
 
         <h:form id="form">
-            <p:panel id="panel" header="Selecione uma unidade" style="margin-top:20px;">
-
+            <p:panel id="panel" styleClass="sgp-card-form">
                 <sgp:formSelectOneMenu
                     id="unidade"
                     labelValue="Unidade"
@@ -25,15 +27,14 @@
                     validationRequired="true"
                     converter="SimpleEntityConverter"/>
 
-                <br/>
-                <br/>
-                
-                <p:commandButton
-                    id="btnAlterar"
-                    action="#{alterarUnidadeBean.alterarUnidade}"
-                    value="Alterar Unidade"
-                    update="@form"
-                    icon="ui-icon-refresh"/>
+                <div class="sgp-form-actions">
+                    <p:commandButton
+                        id="btnAlterar"
+                        action="#{alterarUnidadeBean.alterarUnidade}"
+                        value="Alterar unidade"
+                        update="@form"
+                        styleClass="sgp-btn-primary"/>
+                </div>
             </p:panel>
         </h:form>
     </ui:define>

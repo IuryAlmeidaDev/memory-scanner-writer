@@ -7,34 +7,35 @@
     template="/WEB-INF/pages/_templates/principal.xhtml">
 
     <ui:define name="conteudo">
-        <center>
-            <h:form id="unidade">
-    
-                <p:panel id="basic" header="Selecione uma unidade para acessar" style="margin-top:20px; width:650px;" styleClass="ui-tds-panel-conteudo">
-                
-                	<sgp:formSelectOneMenu
-						id="unidade"
-						labelValue="Unidade"
-						value="#{loginBean.unidadeSelecionada}" 
-						itemsValue="#{loginBean.unidades}" 
-						itemValue="#{item}" 
-						itemLabel="#{item.nome}" 
-						temSelecione="true"
-						requiredMessage="*"
-						display="text"
-						validationRequired="true" 
-						converter="SimpleEntityConverter"/>
-                        
-                    <br/>
-                    <br/>
+        <div class="sgp-page-header">
+            <h3>Selecionar unidade</h3>
+            <p class="lead">Escolha a unidade que deseja acessar nesta sessão.</p>
+        </div>
+
+        <h:form id="unidade">
+            <p:panel id="basic" styleClass="sgp-card-form">
+                <sgp:formSelectOneMenu
+                    id="unidade"
+                    labelValue="Unidade"
+                    value="#{loginBean.unidadeSelecionada}"
+                    itemsValue="#{loginBean.unidades}"
+                    itemValue="#{item}"
+                    itemLabel="#{item.nome}"
+                    temSelecione="true"
+                    requiredMessage="*"
+                    display="text"
+                    validationRequired="true"
+                    converter="SimpleEntityConverter"/>
+
+                <div class="sgp-form-actions">
                     <p:commandButton
-                    id="autenticador"
-                    action="#{loginBean.setarUnidade}"
-                    value="Acessar"
-                    update="@form"
-                    icon="ui-icon-key"/>
-                </p:panel>
-            </h:form>
-        </center>
+                        id="autenticador"
+                        action="#{loginBean.setarUnidade}"
+                        value="Acessar"
+                        update="@form"
+                        styleClass="sgp-btn-primary"/>
+                </div>
+            </p:panel>
+        </h:form>
     </ui:define>
 </ui:composition>
