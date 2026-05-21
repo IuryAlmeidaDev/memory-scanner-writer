@@ -5,67 +5,95 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
-	
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
-		
-		<h3>#{funcaoBean.tituloPagina} Função</h3>
-			<h:form>
-				<p:panel footer="Cadastrado por: #{funcaoBean.funcao.autorRegistro.usuario} em #{funcaoBean.funcao.autorRegistro.data} | Última alteração: #{funcaoBean.funcao.autorUltimaAlteracao.usuario} em #{funcaoBean.funcao.autorUltimaAlteracao.data}">
-					<sgp:formInputText 
-						id="nomeFuncao"
-						labelValue="Nome"
-						value="#{funcaoBean.funcao.nome}"
-						validationRequired="true"
-						disabled="#{funcaoBean.isVisualizacao}"
-						maxlength="80"
-						display="text"
-						styleFormLabelColumn="width:140px"/>
-						
-					<sgp:formSelectOneMenu 
-						id="cargo" labelValue="Cargo" 
-						value="#{funcaoBean.funcao.cargo}" 
-						itemsValue="#{funcaoBean.cargos}" 
-						itemValue="#{item}"
-						itemLabel="#{item.nome}" 
-						temSelecione="true" 
-						validationRequired="true" 
-						display="text"
-						disabled="#{funcaoBean.isVisualizacao}"
-						converter="SimpleEntityConverter"
-						styleFormLabelColumn="width:140px"/>
-					
-						
-					<sgp:formSelectOneMenu 
-						id="escolta" labelValue="Lotação Obrigatória?"
-						value="#{funcaoBean.funcao.lotacaoObrigatoria}"
-						validationRequired="true"
-						temSelecione="true"
-						disabled="#{funcaoBean.isVisualizacao}"
-						display="text"
-						styleFormLabelColumn="width:140px">
-						<f:selectItem itemLabel="Sim" itemValue="true" />
-						<f:selectItem itemLabel="Não" itemValue="false" />
-					</sgp:formSelectOneMenu>
-											
-					<sgp:formSelectOneMenu
-						id="status"
-						labelValue="Status"
-						value="#{funcaoBean.funcao.status}" 
-						itemsValue="#{comboHelperBean.status}" 
-						itemValue="#{item}" 
-						itemLabel="#{item.descricao}" 
-						disabled="#{funcaoBean.isVisualizacao}"
-						styleFormLabelColumn="width:140px"/>
-			
-					<br/>
-					<br/>
-					<p:commandButton value="Salvar" action="#{funcaoBean.salvar()}"	update="@form" icon="ui-icon-disk" 
-					rendered="#{(securityUtil.possuiPermissao('CadastrarFuncao') and !funcaoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarFuncao') and !funcaoBean.isVisualizacao)}" />
-					<p:button outcome="pretty:ListarFuncao" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+
+		<div class="sgp-page-header">
+			<h3>#{funcaoBean.tituloPagina} Função</h3>
+		</div>
+
+		<h:form>
+			<p:panel styleClass="sgp-card-form">
+
+				<sgp:formInputText
+					id="nomeFuncao"
+					labelValue="Nome"
+					value="#{funcaoBean.funcao.nome}"
+					validationRequired="true"
+					disabled="#{funcaoBean.isVisualizacao}"
+					maxlength="80"
+					display="text"/>
+
+				<sgp:formSelectOneMenu
+					id="cargo" labelValue="Cargo"
+					value="#{funcaoBean.funcao.cargo}"
+					itemsValue="#{funcaoBean.cargos}"
+					itemValue="#{item}"
+					itemLabel="#{item.nome}"
+					temSelecione="true"
+					validationRequired="true"
+					display="text"
+					disabled="#{funcaoBean.isVisualizacao}"
+					converter="SimpleEntityConverter"/>
+
+				<sgp:formSelectOneMenu
+					id="lotacaoObrigatoria" labelValue="Lotação Obrigatória?"
+					value="#{funcaoBean.funcao.lotacaoObrigatoria}"
+					validationRequired="true"
+					temSelecione="true"
+					disabled="#{funcaoBean.isVisualizacao}"
+					display="text">
+					<f:selectItem itemLabel="Sim" itemValue="true" />
+					<f:selectItem itemLabel="Não" itemValue="false" />
+				</sgp:formSelectOneMenu>
+
+				<sgp:formSelectOneMenu
+					id="status"
+					labelValue="Status"
+					value="#{funcaoBean.funcao.status}"
+					itemsValue="#{comboHelperBean.status}"
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					disabled="#{funcaoBean.isVisualizacao}"
+					display="text"/>
+
+				<h:panelGroup layout="block" styleClass="sgp-audit-strip">
+					<div>
+						<strong>Cadastrado por:</strong>
+						<h:outputText
+							value="#{funcaoBean.funcao.autorRegistro.usuario} em #{funcaoBean.funcao.autorRegistro.data}"
+							rendered="#{not empty funcaoBean.funcao.autorRegistro}"/>
+						<h:outputText
+							value="registro ainda não salvo"
+							styleClass="sgp-audit-empty"
+							rendered="#{empty funcaoBean.funcao.autorRegistro}"/>
+					</div>
+					<div>
+						<strong>Última alteração:</strong>
+						<h:outputText
+							value="#{funcaoBean.funcao.autorUltimaAlteracao.usuario} em #{funcaoBean.funcao.autorUltimaAlteracao.data}"
+							rendered="#{not empty funcaoBean.funcao.autorUltimaAlteracao}"/>
+						<h:outputText
+							value="nenhuma alteração registrada"
+							styleClass="sgp-audit-empty"
+							rendered="#{empty funcaoBean.funcao.autorUltimaAlteracao}"/>
+					</div>
+				</h:panelGroup>
+
+				<div class="sgp-form-actions">
+					<p:button outcome="pretty:ListarFuncao"
+						value="Voltar"
+						styleClass="sgp-btn-secondary">
 						<f:param name="list" value="1"/>
 					</p:button>
-				</p:panel>
-			</h:form>
+					<p:commandButton value="Salvar"
+						action="#{funcaoBean.salvar()}"
+						update="@form"
+						styleClass="sgp-btn-primary"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarFuncao') and !funcaoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarFuncao') and !funcaoBean.isVisualizacao)}" />
+				</div>
+			</p:panel>
+		</h:form>
 	</ui:define>
 </ui:composition>

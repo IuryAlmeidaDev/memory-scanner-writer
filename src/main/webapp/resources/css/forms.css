@@ -39,6 +39,32 @@
 		0 8px 24px -16px rgba(16, 30, 54, 0.25);
 	font-family: var(--sgp-font);
 }
+/* Modificador para telas com campos largos (selects com texto longo, textareas
+   100 colunas, etc.). Usar em conjunto: styleClass="sgp-card-form sgp-card-form--wide". */
+.sgp-card-form.sgp-card-form--wide.ui-panel {
+	max-width: 880px;
+}
+/* Largura fixa do label-column dentro do card — garante alinhamento vertical
+   dos inputs entre campos com labels de tamanhos diferentes (ex.: "Nome" vs
+   "Lotação Obrigatória?"). main.css:119 usa min-width:120px, que deixa o
+   label crescer com o texto e desalinha os inputs. */
+.sgp-card-form .form-label-column {
+	width: 140px;
+	min-width: 140px;
+}
+/* Contenção do input-column dentro do card. main.css:126 define
+   .form-input-column { width: auto } — ele cresce com o conteúdo (item mais
+   longo do SelectOneMenu, textarea com columns=100, etc.) e vaza o card.
+   Limitamos ao espaço restante após label-column (140px) + required (20px)
+   + folga. Sem isto, qualquer max-width em filhos é circular. */
+.sgp-card-form .form-input-column {
+	max-width: calc(100% - 200px);
+}
+.sgp-card-form .ui-selectonemenu,
+.sgp-card-form .ui-inputtextarea {
+	max-width: 100%;
+	box-sizing: border-box;
+}
 .sgp-card-form .ui-panel-titlebar {
 	margin: -28px -32px 18px;
 	padding: 14px 32px;

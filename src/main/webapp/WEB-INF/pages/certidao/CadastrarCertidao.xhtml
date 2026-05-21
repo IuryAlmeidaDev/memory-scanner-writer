@@ -1,45 +1,75 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:sgp="http://sejudh.mt.gov.br/components"
-                template="/WEB-INF/pages/_templates/principal.xhtml">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sgp="http://sejudh.mt.gov.br/components"
+	template="/WEB-INF/pages/_templates/principal.xhtml">
 
-    <ui:define name="conteudo">
-        <sgp:validarAcesso/>
+	<ui:define name="conteudo">
+		<sgp:validarAcesso />
 
-        <h3>#{certidaoBean.tituloPagina} Certidão</h3>
-        <h:form>
-            <p:panel footer="Cadastrado por: #{certidaoBean.certidao.autorRegistro.usuario} em #{certidaoBean.certidao.autorRegistro.data} | Última alteração: #{certidaoBean.certidao.autorUltimaAlteracao.usuario} em #{certidaoBean.certidao.autorUltimaAlteracao.data}">
-                <sgp:formInputText
-                        id="nomeCertidao"
-                        labelValue="Descrição"
-                        value="#{certidaoBean.certidao.descricao}"
-                        validationRequired="true"
-                        disabled="#{certidaoBean.isVisualizacao}"
-                        display="text"
-                        maxlength="100"/>
+		<div class="sgp-page-header">
+			<h3>#{certidaoBean.tituloPagina} Certidão</h3>
+		</div>
 
-                <sgp:formSelectOneMenu
-                        id="status" labelValue="Status"
-                        value="#{certidaoBean.certidao.status}"
-                        itemsValue="#{comboHelperBean.statusSgp}"
-                        itemValue="#{item}"
-                        itemLabel="#{item.descricao}"
-                        disabled="#{certidaoBean.isVisualizacao}"
-                        display="text"/>
+		<h:form>
+			<p:panel styleClass="sgp-card-form">
 
-                <br/>
-                <br/>
+				<sgp:formInputText
+					id="nomeCertidao"
+					labelValue="Descrição"
+					value="#{certidaoBean.certidao.descricao}"
+					validationRequired="true"
+					disabled="#{certidaoBean.isVisualizacao}"
+					display="text"
+					maxlength="100"/>
 
-                <p:commandButton value="Salvar" action="#{certidaoBean.salvar()}" update="@form"
-                                 icon="ui-icon-disk"
-                                 rendered="#{(securityUtil.possuiPermissao('CadastrarCertidao') and !certidaoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCertidao') and !certidaoBean.isVisualizacao)}"/>
-                <p:button outcome="pretty:ListarCertidao" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
-                    <f:param name="list" value="1"/>
-                </p:button>
-            </p:panel>
-        </h:form>
-    </ui:define>
+				<sgp:formSelectOneMenu
+					id="status" labelValue="Status"
+					value="#{certidaoBean.certidao.status}"
+					itemsValue="#{comboHelperBean.statusSgp}"
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					disabled="#{certidaoBean.isVisualizacao}"
+					display="text"/>
+
+				<h:panelGroup layout="block" styleClass="sgp-audit-strip">
+					<div>
+						<strong>Cadastrado por:</strong>
+						<h:outputText
+							value="#{certidaoBean.certidao.autorRegistro.usuario} em #{certidaoBean.certidao.autorRegistro.data}"
+							rendered="#{not empty certidaoBean.certidao.autorRegistro}"/>
+						<h:outputText
+							value="registro ainda não salvo"
+							styleClass="sgp-audit-empty"
+							rendered="#{empty certidaoBean.certidao.autorRegistro}"/>
+					</div>
+					<div>
+						<strong>Última alteração:</strong>
+						<h:outputText
+							value="#{certidaoBean.certidao.autorUltimaAlteracao.usuario} em #{certidaoBean.certidao.autorUltimaAlteracao.data}"
+							rendered="#{not empty certidaoBean.certidao.autorUltimaAlteracao}"/>
+						<h:outputText
+							value="nenhuma alteração registrada"
+							styleClass="sgp-audit-empty"
+							rendered="#{empty certidaoBean.certidao.autorUltimaAlteracao}"/>
+					</div>
+				</h:panelGroup>
+
+				<div class="sgp-form-actions">
+					<p:button outcome="pretty:ListarCertidao"
+						value="Voltar"
+						styleClass="sgp-btn-secondary">
+						<f:param name="list" value="1"/>
+					</p:button>
+					<p:commandButton value="Salvar"
+						action="#{certidaoBean.salvar()}"
+						update="@form"
+						styleClass="sgp-btn-primary"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarCertidao') and !certidaoBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCertidao') and !certidaoBean.isVisualizacao)}"/>
+				</div>
+			</p:panel>
+		</h:form>
+	</ui:define>
 </ui:composition>

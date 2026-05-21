@@ -5,39 +5,71 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:sgp="http://sejudh.mt.gov.br/components"
 	template="/WEB-INF/pages/_templates/principal.xhtml">
-	
+
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
-		
-		<h3>#{categoriaBean.tituloPagina} Categoria</h3>
-			<h:form>
-				<p:panel footer="Cadastrado por: #{categoriaBean.categoria.autorRegistro.usuario} em #{categoriaBean.categoria.autorRegistro.data} | Última alteração: #{categoriaBean.categoria.autorUltimaAlteracao.usuario} em #{categoriaBean.categoria.autorUltimaAlteracao.data}">
-					<sgp:formInputText 
-						id="nomeCargo" 
-						labelValue="Nome"
-						value="#{categoriaBean.categoria.nome}" 
-						validationRequired="true"
-						maxlength="80"
-						disabled="#{categoriaBean.isVisualizacao}"
-						display="text" />
-						
-					<sgp:formSelectOneMenu 
-						id="status" labelValue="Status"
-						value="#{categoriaBean.categoria.status}"
-						itemsValue="#{comboHelperBean.status}" 
-						itemValue="#{item}"
-						itemLabel="#{item.descricao}" 
-						disabled="#{categoriaBean.isVisualizacao}"
-						display="text" />
-					<br />
-					<br />
 
-					<p:commandButton value="Salvar" action="#{categoriaBean.salvar()}" update="@form" icon="ui-icon-disk" 
-					rendered="#{(securityUtil.possuiPermissao('CadastrarCategoria') and !categoriaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCategoria') and !categoriaBean.isVisualizacao)}"/>
-					<p:button outcome="pretty:ListarCategoria" value="Voltar" icon="ui-icon-arrowreturnthick-1-w">
+		<div class="sgp-page-header">
+			<h3>#{categoriaBean.tituloPagina} Categoria</h3>
+		</div>
+
+		<h:form>
+			<p:panel styleClass="sgp-card-form">
+
+				<sgp:formInputText
+					id="nomeCategoria"
+					labelValue="Nome"
+					value="#{categoriaBean.categoria.nome}"
+					validationRequired="true"
+					maxlength="80"
+					disabled="#{categoriaBean.isVisualizacao}"
+					display="text" />
+
+				<sgp:formSelectOneMenu
+					id="status" labelValue="Status"
+					value="#{categoriaBean.categoria.status}"
+					itemsValue="#{comboHelperBean.status}"
+					itemValue="#{item}"
+					itemLabel="#{item.descricao}"
+					disabled="#{categoriaBean.isVisualizacao}"
+					display="text" />
+
+				<h:panelGroup layout="block" styleClass="sgp-audit-strip">
+					<div>
+						<strong>Cadastrado por:</strong>
+						<h:outputText
+							value="#{categoriaBean.categoria.autorRegistro.usuario} em #{categoriaBean.categoria.autorRegistro.data}"
+							rendered="#{not empty categoriaBean.categoria.autorRegistro}"/>
+						<h:outputText
+							value="registro ainda não salvo"
+							styleClass="sgp-audit-empty"
+							rendered="#{empty categoriaBean.categoria.autorRegistro}"/>
+					</div>
+					<div>
+						<strong>Última alteração:</strong>
+						<h:outputText
+							value="#{categoriaBean.categoria.autorUltimaAlteracao.usuario} em #{categoriaBean.categoria.autorUltimaAlteracao.data}"
+							rendered="#{not empty categoriaBean.categoria.autorUltimaAlteracao}"/>
+						<h:outputText
+							value="nenhuma alteração registrada"
+							styleClass="sgp-audit-empty"
+							rendered="#{empty categoriaBean.categoria.autorUltimaAlteracao}"/>
+					</div>
+				</h:panelGroup>
+
+				<div class="sgp-form-actions">
+					<p:button outcome="pretty:ListarCategoria"
+						value="Voltar"
+						styleClass="sgp-btn-secondary">
 						<f:param name="list" value="1" />
 					</p:button>
-				</p:panel>
-			</h:form>
+					<p:commandButton value="Salvar"
+						action="#{categoriaBean.salvar()}"
+						update="@form"
+						styleClass="sgp-btn-primary"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarCategoria') and !categoriaBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCategoria') and !categoriaBean.isVisualizacao)}" />
+				</div>
+			</p:panel>
+		</h:form>
 	</ui:define>
 </ui:composition>

@@ -9,9 +9,13 @@
 	<ui:define name="conteudo">
 		<sgp:validarAcesso />
 
-		<h3>#{crimeBean.tituloPagina} Crime</h3>
+		<div class="sgp-page-header">
+			<h3>#{crimeBean.tituloPagina} Crime</h3>
+		</div>
+
 		<h:form>
-			<p:panel>
+			<p:panel styleClass="sgp-card-form sgp-card-form--wide">
+
 				<sgp:formSelectOneMenu id="legislacao" labelValue="Lei"
 					itemValue="#{item}" itemLabel="#{item}"
 					itemsValue="#{crimeBean.legislacoes}"
@@ -24,7 +28,6 @@
 					value="#{crimeBean.crime.numArtigo}" validationRequired="true"
 					disabled="#{crimeBean.isVisualizacao}" maxlength="80"
 					display="text" />
-
 
 				<sgp:formInputText id="paragrafo" labelValue="Parágrafo"
 					value="#{crimeBean.crime.numParagrafo}"
@@ -53,24 +56,18 @@
 					rows="5" columns="100" maxlength="250" autoResize="true"
 					size="#{crimeBean.crime.detalhamento.length()+5}" display="text" />
 
-
-				<br />
-				<br />
-				<br />
-				<br />
-				<br />
-				<br />
-				<br />
-
-
-				<p:commandButton value="Salvar" action="#{crimeBean.salvar()}"
-					update="@form" icon="ui-icon-disk"
-					rendered="#{(securityUtil.possuiPermissao('CadastrarCrime') and !crimeBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCrime') and !crimeBean.isVisualizacao)}" />
-
-				<p:button outcome="pretty:ListarCrime" value="Voltar"
-					icon="ui-icon-arrowreturnthick-1-w">
-					<f:param name="list" value="1" />
-				</p:button>
+				<div class="sgp-form-actions">
+					<p:button outcome="pretty:ListarCrime"
+						value="Voltar"
+						styleClass="sgp-btn-secondary">
+						<f:param name="list" value="1" />
+					</p:button>
+					<p:commandButton value="Salvar"
+						action="#{crimeBean.salvar()}"
+						update="@form"
+						styleClass="sgp-btn-primary"
+						rendered="#{(securityUtil.possuiPermissao('CadastrarCrime') and !crimeBean.isVisualizacao) or (securityUtil.possuiPermissao('AlterarCrime') and !crimeBean.isVisualizacao)}" />
+				</div>
 			</p:panel>
 		</h:form>
 	</ui:define>
