@@ -28,7 +28,7 @@
 
 /* ---- Card de formulário (mundo logado) ---- */
 .sgp-card-form.ui-panel {
-	max-width: 520px;
+	max-width: 640px;
 	margin: 8px auto 0;
 	padding: 28px 32px 24px !important;
 	border: 1px solid var(--sgp-info-border) !important;
@@ -57,6 +57,36 @@
 	display: flow-root; /* contém floats internos dos composites legados (form-block) */
 }
 
+/* Faixa de auditoria do registro (Cadastrado por... + Última alteração...).
+   Estilo "balão": contida dentro do card, borda completa sutil e cantos
+   minimamente arredondados. Cada linha ocupa uma linha própria. Quando
+   não há dado, mostra mensagem em itálico discreta. */
+.sgp-audit-strip {
+	clear: both;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 22px 0 0;
+	padding: 10px 14px;
+	border: 1px solid var(--sgp-info-border);
+	border-radius: var(--sgp-radius);
+	background: var(--sgp-info-bg);
+	color: var(--sgp-text-mute-2);
+	font-family: var(--sgp-font);
+	font-size: 12px;
+	line-height: 1.55;
+	text-align: left;
+}
+.sgp-audit-strip strong {
+	color: var(--sgp-text);
+	font-weight: 600;
+	margin-right: 4px;
+}
+.sgp-audit-empty {
+	font-style: italic;
+	color: var(--sgp-text-mute-3);
+}
+
 /* Composites legados (formInputPassword, formSelectOneMenu, etc.) usam
    .form-block com filhos float:left e SEM contenção própria (main.css:115).
    Forçamos flow-root no escopo do card para que o form-block tenha altura
@@ -80,6 +110,12 @@
 	gap: 10px;
 	margin-top: 18px;
 	width: 100%;
+}
+/* Quando a faixa de auditoria precede os botões, o margin já é provido
+   pelo padding inferior da própria faixa — reduzimos o top do actions
+   para evitar gap duplo. */
+.sgp-audit-strip + .sgp-form-actions {
+	margin-top: 18px;
 }
 
 /* ---- Botão primário (navy) ---- */
@@ -112,6 +148,40 @@
 .sgp-btn-primary .ui-button-text {
 	padding: 0;
 	color: #ffffff !important;
+	font-family: var(--sgp-font);
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: 0.3px;
+	white-space: nowrap;
+}
+
+/* ---- Botão secundário (Voltar / Cancelar) ---- */
+.sgp-btn-secondary.ui-button {
+	min-width: 120px;
+	height: var(--sgp-btn-h);
+	margin: 0;
+	padding: 0 22px;
+	border: 1px solid var(--sgp-navy) !important;
+	border-radius: var(--sgp-radius) !important;
+	background: #ffffff !important;
+	background-image: none !important;
+	box-shadow: none;
+	white-space: nowrap;
+	transition: background 0.15s ease, border-color 0.15s ease, transform 0.06s ease;
+}
+.sgp-btn-secondary.ui-button:hover {
+	background: var(--sgp-info-bg) !important;
+}
+.sgp-btn-secondary.ui-button:focus {
+	outline: none;
+	box-shadow: var(--sgp-shadow-focus);
+}
+.sgp-btn-secondary.ui-button:active {
+	transform: translateY(1px);
+}
+.sgp-btn-secondary .ui-button-text {
+	padding: 0;
+	color: var(--sgp-navy) !important;
 	font-family: var(--sgp-font);
 	font-size: 14px;
 	font-weight: 600;
