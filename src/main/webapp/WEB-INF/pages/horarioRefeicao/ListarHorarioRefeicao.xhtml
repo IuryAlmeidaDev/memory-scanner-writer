@@ -44,31 +44,31 @@
 			<p:dataTable id="dataTable" var="horario" value="#{horarioRefeicaoBean.horariosRefeicao}" emptyMessage="Nenhum registro encontrado."
 				widgetVar="cronogramaDataTable"
 				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{horario.unidadeId}"
-				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable"
-				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-				currentPageReportTemplate="Total de registros: {totalRecords}">
+				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable sgp-cronograma"
+				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
 
-				<p:column headerText="Código" style="width:100px;" sortBy="#{horario.unidadeId}">
+				<p:column headerText="Código" styleClass="col-codigo" sortBy="#{horario.unidadeId}">
 					<h:outputText value="#{horario.unidadeId}" />
 				</p:column>
 				
-				<p:column headerText="Nome Unidade" sortBy="#{horario.nomeUnidade}">
+				<p:column headerText="Nome Unidade" sortBy="#{horario.nomeUnidade}" styleClass="col-nome-unidade">
 					<h:outputText value="#{horario.nomeUnidade}" />
 				</p:column>
 				
-				<p:column headerText="Contrato" sortBy="#{horario.contrato}">
+				<p:column headerText="Contrato" sortBy="#{horario.contrato}" styleClass="col-contrato">
 					<h:outputText value="#{horario.contrato}" />
 				</p:column>
 
-				<p:column headerText="Refeição Atual" sortBy="#{horario.refeicaoAtual}">
+				<p:column headerText="Refeição Atual" sortBy="#{horario.refeicaoAtual}" styleClass="col-refeicao-atual">
 					<h:outputText value="#{horario.refeicaoAtual}" />
 				</p:column>
 
-				<p:column headerText="Próxima Refeição" sortBy="#{horario.proximaRefeicao}">
+				<p:column headerText="Próxima Refeição" sortBy="#{horario.proximaRefeicao}" styleClass="col-proxima-refeicao">
 					<h:outputText value="#{horario.proximaRefeicao}" />
 				</p:column>
 
-				<p:column sortBy="#{horario.disparo}">
+				<p:column sortBy="#{horario.disparo}" styleClass="col-disparo">
 					<f:facet name="header">
 						<h:panelGroup layout="block">
 							<h:outputText value="Disparo " />
@@ -80,7 +80,7 @@
 					<h:outputText value="#{horario.disparo}" />
 				</p:column>
 
-				<p:column sortBy="#{horario.corte}">
+				<p:column sortBy="#{horario.corte}" styleClass="col-corte">
 					<f:facet name="header">
 						<h:panelGroup layout="block">
 							<h:outputText value="Corte " />
@@ -92,7 +92,15 @@
 					<h:outputText value="#{horario.corte}" />
 				</p:column>
 
-				<p:column headerText="Tempo restante até o corte" sortBy="#{horario.tempoRestanteCorte}">
+				<p:column sortBy="#{horario.tempoRestanteCorte}" styleClass="col-tempo-restante">
+					<f:facet name="header">
+						<h:panelGroup layout="block">
+							<h:outputText value="Tempo restante " />
+							<h:outputText id="ajudaTempoRestante" styleClass="fa fa-exclamation-circle sgp-help-icon" />
+							<sgp:tooltip for="#{p:component('ajudaTempoRestante')}" value="Tempo restante até o horário de corte para gerar o pedido da próxima refeição"
+								position="top" styleClass="tooltip-cronograma" />
+						</h:panelGroup>
+					</f:facet>
 					<h:outputText value="#{horario.tempoRestanteCorte}" />
 				</p:column>
 				

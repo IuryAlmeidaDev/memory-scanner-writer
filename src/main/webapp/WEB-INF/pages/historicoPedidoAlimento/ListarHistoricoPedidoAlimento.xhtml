@@ -98,43 +98,42 @@
 				widgetVar="historicoPedidoDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{pedido.id}" sortOrder="descending" reflow="true"
-				rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable"
-				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-				currentPageReportTemplate="Total de registros: {totalRecords}">
+				rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable sgp-historico-pedido-grid"
+				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
 
-				<p:column headerText="Código" style="width:100px;"
+				<p:column headerText="Código" styleClass="col-codigo"
 					sortBy="#{pedido.id}">
 					<h:outputText value="#{pedido.id}" />
 				</p:column>
 
 				<p:column headerText="Data" sortBy="#{pedido.dataPedido}"
-					styleClass="sgp-datatable-nowrap-center">
+					styleClass="sgp-datatable-nowrap-center col-data">
 					<h:outputText value="#{pedido.dataPedido}">
 						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 					</h:outputText>
 				</p:column>
 
-				<p:column headerText="Contrato" sortBy="#{pedido.idContrato}">
+				<p:column headerText="Contrato" sortBy="#{pedido.idContrato}" styleClass="col-contrato">
 					<h:outputText
 						value="#{historicoPedidoAlimentoBean.descricoesContrato[pedido.idContrato]}" />
 				</p:column>
 
-				<p:column headerText="Refeição" sortBy="#{pedido.idTipoRefeicao}">
+				<p:column headerText="Refeição" sortBy="#{pedido.idTipoRefeicao}" styleClass="col-refeicao">
 					<h:outputText
 						value="#{historicoPedidoAlimentoBean.descricoesRefeicao[pedido.idTipoRefeicao]}" />
 				</p:column>
 				
-				<p:column headerText="Unidade" sortBy="#{pedido.idUnidadePrisional}">
+				<p:column headerText="Unidade" sortBy="#{pedido.idUnidadePrisional}" styleClass="col-unidade">
 				    <h:outputText
 				        value="#{historicoPedidoAlimentoBean.descricoesUnidades[pedido.idUnidadePrisional]}" />
 				</p:column>
 
-				<p:column headerText="Status" sortBy="#{pedido.status}">
+				<p:column headerText="Status" sortBy="#{pedido.status}" styleClass="col-status">
 					<h:outputText value="#{pedido.status}" />
 				</p:column>
 
-				<p:column headerText="Ações"
-					style="width:150px;" styleClass="sgp-datatable-actions">
+				<p:column headerText="Ações" styleClass="sgp-datatable-actions col-acoes">
 					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">						<p:commandButton title="Relatório de Emissão"
 							icon="fa fa-file-pdf-o" update=":formDownload" process="@this"
 							action="#{historicoPedidoAlimentoBean.baixarRelatorio(pedido.id)}" />

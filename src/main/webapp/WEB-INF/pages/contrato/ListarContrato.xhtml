@@ -80,10 +80,10 @@
 				widgetVar="contratoDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{contrato.id}" reflow="true" rowsPerPageTemplate="10,20,30,50"
-				styleClass="sgp-datatable"
-				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-				currentPageReportTemplate="Total de registros: {totalRecords}">
-				<p:column headerText="Código" sortBy="#{contrato.id}" >
+				styleClass="sgp-datatable sgp-contrato-grid"
+				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
+				<p:column headerText="Código" sortBy="#{contrato.id}" styleClass="col-codigo" >
 					<h:outputText value="#{contrato.id}" />
 				</p:column>
 				<p:column headerText="Nº de Contrato"
@@ -112,7 +112,7 @@
 				<p:column headerText="Status" sortBy="#{contrato.status}" >
 					<h:outputText value="#{contrato.status}" />
 				</p:column>
-				<p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+				<p:column headerText="Ações" styleClass="sgp-datatable-actions col-acoes">
 					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Visualizar" icon="ui-icon-document"
 							outcome="pretty:VisualizarContrato"

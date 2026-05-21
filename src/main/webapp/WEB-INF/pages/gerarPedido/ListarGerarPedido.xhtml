@@ -56,31 +56,31 @@
 			<p:dataTable id="dataTable" var="unidade" value="#{gerarPedidoBean.unidades}" emptyMessage="Nenhum registro encontrado."
 				widgetVar="gerarPedidoDataTable"
 				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{unidade.id}"
-				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable"
-				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-				currentPageReportTemplate="Total de registros: {totalRecords}">
-				<p:column headerText="Código" sortBy="#{unidade.id}">
+				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable sgp-gerar-pedido-grid"
+				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
+				<p:column headerText="Código" sortBy="#{unidade.id}" styleClass="col-codigo">
 					<h:outputText value="#{unidade.id}" />
 				</p:column>
-				<p:column headerText="Nome" sortBy="#{unidade.nome}">
+				<p:column headerText="Nome" sortBy="#{unidade.nome}" styleClass="col-nome">
 					<h:outputText value="#{unidade.nome}" />
 				</p:column>
-				<p:column headerText="Sigla" sortBy="#{unidade.sigla}">
+				<p:column headerText="Sigla" sortBy="#{unidade.sigla}" styleClass="col-sigla">
 					<h:outputText value="#{unidade.sigla}" />
 				</p:column>
-				<p:column headerText="Tipo" sortBy="#{unidade.tipo}">
+				<p:column headerText="Tipo" sortBy="#{unidade.tipo}" styleClass="col-tipo">
 					<h:outputText value="#{unidade.tipo}" />
 				</p:column>
-				<p:column headerText="Quantidade Atual" sortBy="#{unidade.quantidadeAtual}">
+				<p:column headerText="Quantidade" sortBy="#{unidade.quantidadeAtual}" styleClass="col-quantidade">
 					<h:outputText value="#{unidade.quantidadeAtual}" />
 				</p:column>
-				<p:column headerText="Município" sortBy="#{unidade.municipio}">
+				<p:column headerText="Município" sortBy="#{unidade.municipio}" styleClass="col-municipio">
 					<h:outputText value="#{unidade.municipio}" />
 				</p:column>
-				<p:column headerText="Situação" sortBy="#{unidade.situacaoUnidade}">
+				<p:column headerText="Situação" sortBy="#{unidade.situacaoUnidade}" styleClass="col-situacao">
 					<h:outputText value="#{unidade.situacaoUnidade}" />
 				</p:column>
-				<p:column headerText="Ações" styleClass="sgp-datatable-actions">
+				<p:column headerText="Ações" styleClass="sgp-datatable-actions col-acoes">
 					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Detalhes" icon="ui-icon-document" outcome="pretty:VisualizarGerarPedido">
 							<f:param name="id" value="#{unidade.id}" />

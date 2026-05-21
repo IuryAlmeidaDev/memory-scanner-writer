@@ -36,6 +36,15 @@
 	/* --- Divisores --- */
 	--sgp-foot-border: #e7eaef;
 
+	/* --- Datatable / paginação (módulo alimentação) --- */
+	--sgp-paginator-bg:               #4b5259;
+	--sgp-paginator-text:             #f3f6fa;
+	--sgp-paginator-select-border:    #7f8890;
+	--sgp-paginator-select-bg:        #636b72;
+	--sgp-paginator-button-border:    #6f7780;
+	--sgp-paginator-button-bg:        #5b636b;
+	--sgp-paginator-button-active-bg: #2f4f83;
+
 	/* --- Raios --- */
 	--sgp-radius: 6px;
 	--sgp-radius-card: 12px;

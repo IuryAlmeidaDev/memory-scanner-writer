@@ -106,51 +106,51 @@
 				widgetVar="cardapioDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{cardapio.id}" rowsPerPageTemplate="10,20,30,50"
-				reflow="true" styleClass="sgp-datatable"
-				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-				currentPageReportTemplate="Total de registros: {totalRecords}">
+				reflow="true" styleClass="sgp-datatable sgp-cardapio-grid"
+				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
 
-				<p:column headerText="Código" style="width:100px;"
+				<p:column headerText="Código" styleClass="col-codigo"
 					sortBy="#{cardapio.id}">
 					<h:outputText value="#{cardapio.id}" />
 				</p:column>
 
 				<p:column headerText="Refeição"
-					sortBy="#{cardapio.nomeRefeicao}">
+					sortBy="#{cardapio.nomeRefeicao}" styleClass="col-refeicao">
 					<h:outputText value="#{cardapio.nomeRefeicao}" />
 				</p:column>
 
 				<p:column headerText="Dieta"
-					sortBy="#{cardapio.nomeDieta}">
+					sortBy="#{cardapio.nomeDieta}" styleClass="col-dieta">
 					<h:outputText value="#{cardapio.nomeDieta}" />
 				</p:column>
 
 				<p:column headerText="Semana"
-					sortBy="#{cardapio.semana}">
+					sortBy="#{cardapio.semana}" styleClass="col-semana">
 					<h:outputText value="#{cardapio.semana}" />
 				</p:column>
 
-				<p:column headerText="Dia" sortBy="#{cardapio.diaSemana}">
+				<p:column headerText="Dia" sortBy="#{cardapio.diaSemana}" styleClass="col-dia">
 					<h:outputText value="#{cardapio.diaSemana.descricao}" />
 				</p:column>
 
 				<p:column headerText="Próxima Ocorrência"
-					sortBy="#{cardapio.proximaData}">
+					sortBy="#{cardapio.proximaData}" styleClass="col-proxima-ocorrencia">
 					<h:outputText value="#{cardapio.proximaData}">
 						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>
 				</p:column>
 
 				<p:column headerText="Unidade Prisional"
-					sortBy="#{cardapio.nomeUnidadePrisional}">
+					sortBy="#{cardapio.nomeUnidadePrisional}" styleClass="col-unidade-prisional">
 					<h:outputText value="#{cardapio.nomeUnidadePrisional}" />
 				</p:column>
 
-				<p:column headerText="Contrato" sortBy="#{cardapio.numContrato}">
+				<p:column headerText="Contrato" sortBy="#{cardapio.numContrato}" styleClass="col-contrato">
 					<h:outputText value="#{cardapio.numContrato}" />
 				</p:column>
 
-				<p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+				<p:column headerText="Ações" styleClass="sgp-datatable-actions col-acoes">
 					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Visualizar" icon="ui-icon-document"
 							outcome="pretty:VisualizarCardapio"

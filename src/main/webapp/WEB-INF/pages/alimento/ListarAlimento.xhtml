@@ -85,31 +85,31 @@
                          widgetVar="alimentoDataTable"
                          rows="10" paginator="true" paginatorPosition="bottom" lazy="true"
                          sortBy="#{alimento.descricao}" reflow="true"
-                         rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable"
-                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-                         currentPageReportTemplate="Total de registros: {totalRecords}">
+                         rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable sgp-alimento-grid"
+                         paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
 
-                <p:column headerText="Código" style="width:100px;" sortBy="#{alimento.id}">
+                <p:column headerText="Código" styleClass="col-codigo" sortBy="#{alimento.id}">
                     <h:outputText value="#{alimento.id}"/>
                 </p:column>
 
-                <p:column headerText="Descrição" sortBy="#{alimento.descricao}">
+                <p:column headerText="Descrição" sortBy="#{alimento.descricao}" styleClass="col-descricao">
                     <h:outputText value="#{alimento.descricao}"/>
                 </p:column>
 
-                <p:column headerText="Unidade de Medida" sortBy="#{alimento.unidadeMedida}">
+                <p:column headerText="Unidade de Medida" sortBy="#{alimento.unidadeMedida}" styleClass="col-unidade-medida">
                     <h:outputText value="#{alimento.unidadeMedida.descricao}"/>
                 </p:column>
 
-                <p:column headerText="Proteico" sortBy="#{alimento.proteico}">
+                <p:column headerText="Proteico" sortBy="#{alimento.proteico}" styleClass="col-proteico">
                     <h:outputText value="#{alimento.proteico ? 'Sim' : 'Não'}"/>
                 </p:column>
 
-                <p:column headerText="Situação" sortBy="#{alimento.status}">
+                <p:column headerText="Situação" sortBy="#{alimento.status}" styleClass="col-situacao">
                     <h:outputText value="#{alimento.status.descricao}"/>
                 </p:column>
 
-                <p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+                <p:column headerText="Ações" styleClass="sgp-datatable-actions col-acoes">
                     <h:panelGroup layout="block" styleClass="sgp-datatable-actions">
                         <p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarAlimento"
                                   rendered="#{securityUtil.possuiPermissao('VisualizarAlimento')}">

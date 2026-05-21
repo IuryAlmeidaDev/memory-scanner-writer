@@ -74,27 +74,27 @@
 			<p:dataTable id="dataTable" var="tipoDieta" value="#{tipoDietaBean.tiposDieta}" emptyMessage="Nenhum registro encontrado."
 				widgetVar="tipoDietaDataTable"
 				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{tipoDieta.id}"
-				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable"
-				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-				currentPageReportTemplate="Total de registros: {totalRecords}">
+				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable sgp-tipo-dieta-grid"
+				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
 
-				<p:column headerText="Código" style="width:100px;" sortBy="#{tipoDieta.id}">
+				<p:column headerText="Código" styleClass="col-codigo" sortBy="#{tipoDieta.id}">
 					<h:outputText value="#{tipoDieta.id}" />
 				</p:column>
 				
-				<p:column headerText="Descrição" sortBy="#{tipoDieta.descricao}">
+				<p:column headerText="Descrição" sortBy="#{tipoDieta.descricao}" styleClass="col-descricao">
 					<h:outputText value="#{tipoDieta.descricao}" />
 				</p:column>
 				
-				<p:column headerText="Especial" sortBy="#{tipoDieta.especial}">
+				<p:column headerText="Especial" sortBy="#{tipoDieta.especial}" styleClass="col-especial">
 						<h:outputText value="#{tipoDieta.especial ? 'Sim' : 'Não'}" />
 					</p:column>
 				
-				<p:column headerText="Situação" sortBy="#{tipoDieta.status}">
+				<p:column headerText="Situação" sortBy="#{tipoDieta.status}" styleClass="col-situacao">
                     <h:outputText value="#{tipoDieta.status.descricao}" />
                 </p:column>
 
-				<p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+				<p:column headerText="Ações" styleClass="sgp-datatable-actions col-acoes">
 					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Visualizar" icon="ui-icon-document" outcome="pretty:VisualizarTipoDieta" rendered="#{securityUtil.possuiPermissao('VisualizarTipoDieta')}">
 							<f:param name="id" value="#{tipoDieta.id}" />

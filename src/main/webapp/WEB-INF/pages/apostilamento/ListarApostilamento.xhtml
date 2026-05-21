@@ -65,11 +65,11 @@
 				widgetVar="apostilamentoDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{apostilamento.id}" reflow="true"
-				rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable"
-				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-				currentPageReportTemplate="Total de registros: {totalRecords}">
+				rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable sgp-apostilamento-grid"
+				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
 
-				<p:column headerText="Código" style="width:100px;"
+				<p:column headerText="Código" styleClass="col-codigo"
 					sortBy="#{apostilamento.id}">
 					<h:outputText value="#{apostilamento.id}" />
 				</p:column>
@@ -96,7 +96,7 @@
 					<h:outputText value="#{apostilamento.statusVigencia}" />
 				</p:column>
 
-				<p:column headerText="Ações" style="width:150px;" styleClass="sgp-datatable-actions">
+				<p:column headerText="Ações" styleClass="sgp-datatable-actions col-acoes">
 					<h:panelGroup layout="block" styleClass="sgp-datatable-actions">
 						<p:button title="Visualizar" icon="ui-icon-document"
 							outcome="pretty:VisualizarApostilamento"

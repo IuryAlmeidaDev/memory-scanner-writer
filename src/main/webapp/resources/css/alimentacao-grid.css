@@ -1,0 +1,240 @@
+/* Modulo Alimentacao - regras de grid responsiva */
+
+/* Cronograma de pedidos - larguras responsivas por resolucao */
+.sgp-cronograma .col-codigo {
+	width: 6%;
+}
+
+.sgp-cronograma .col-nome-unidade {
+	width: 25%;
+}
+
+.sgp-cronograma .col-contrato {
+	width: 10%;
+}
+
+.sgp-cronograma .col-refeicao-atual {
+	width: 11%;
+}
+
+.sgp-cronograma .col-proxima-refeicao {
+	width: 13%;
+}
+
+.sgp-cronograma .col-disparo {
+	width: 11%;
+}
+
+.sgp-cronograma .col-corte {
+	width: 10%;
+}
+
+.sgp-cronograma .col-tempo-restante {
+	width: 14%;
+}
+
+@media (max-width: 1366px) {
+	.sgp-cronograma .col-codigo {
+		width: 6%;
+	}
+	.sgp-cronograma .col-nome-unidade {
+		width: 20%;
+	}
+
+	.sgp-cronograma .col-tempo-restante {
+		width: 14%;
+	}
+}
+
+@media (max-width: 1080px) {
+	.sgp-cronograma .col-codigo {
+		width: 10%;
+	}
+
+	.sgp-cronograma .col-nome-unidade {
+		width: 18%;
+	}
+
+	.sgp-cronograma .col-contrato {
+		width: 9%;
+	}
+
+	.sgp-cronograma .col-refeicao-atual {
+		width: 11%;
+	}
+
+	.sgp-cronograma .col-proxima-refeicao {
+		width: 11%;
+	}
+
+	.sgp-cronograma .col-disparo {
+		width: 9%;
+	}
+
+	.sgp-cronograma .col-corte {
+		width: 9%;
+	}
+
+	.sgp-cronograma .col-tempo-restante {
+		width: 12%;
+	}
+}
+
+/* Alimentos */
+.sgp-alimento-grid .col-codigo {
+	width: 8%;
+}
+
+.sgp-alimento-grid .col-descricao {
+	width: 30%;
+}
+
+.sgp-alimento-grid .col-unidade-medida {
+	width: 16%;
+}
+
+.sgp-alimento-grid .col-proteico {
+	width: 12%;
+}
+
+.sgp-alimento-grid .col-situacao {
+	width: 16%;
+}
+
+.sgp-alimento-grid .col-acoes {
+	width: 16%;
+	text-align: center;
+}
+
+/* Gerar pedido */
+.sgp-gerar-pedido-grid .col-codigo {
+	width: 8%;
+}
+
+.sgp-gerar-pedido-grid .col-nome {
+	width: 35%;
+}
+
+.sgp-gerar-pedido-grid .col-sigla,
+.sgp-gerar-pedido-grid .col-tipo,
+.sgp-gerar-pedido-grid .col-quantidade,
+.sgp-gerar-pedido-grid .col-municipio,
+.sgp-gerar-pedido-grid .col-situacao {
+	width: 9%;
+}
+
+.sgp-gerar-pedido-grid .col-acoes {
+	width: 10%;
+	text-align: center;
+}
+
+/* Historico de pedido */
+.sgp-historico-pedido-grid .col-codigo {
+	width: 8%;
+}
+
+.sgp-historico-pedido-grid .col-data,
+.sgp-historico-pedido-grid .col-contrato,
+.sgp-historico-pedido-grid .col-refeicao {
+	width: 14%;
+}
+
+.sgp-historico-pedido-grid .col-unidade {
+	width: 25%;
+}
+
+.sgp-historico-pedido-grid .col-status {
+	width: 13%;
+}
+
+.sgp-historico-pedido-grid .col-acoes {
+	width: 10%;
+	text-align: center;
+}
+
+/* Dieta especial */
+.sgp-dieta-especial-grid .col-codigo {
+	width: 8%;
+}
+
+.sgp-dieta-especial-grid .col-recuperando,
+.sgp-dieta-especial-grid .col-unidade-prisional {
+	width: 17%;
+}
+
+.sgp-dieta-especial-grid .col-tipo-dieta,
+.sgp-dieta-especial-grid .col-status {
+	width: 13%;
+}
+
+.sgp-dieta-especial-grid .col-inicio,
+.sgp-dieta-especial-grid .col-fim {
+	width: 11%;
+}
+
+.sgp-dieta-especial-grid .col-acoes {
+	width: 10%;
+	text-align: center;
+}
+
+/* Tipo dieta */
+.sgp-tipo-dieta-grid .col-codigo {
+	width: 8%;
+}
+
+.sgp-tipo-dieta-grid .col-descricao {
+	width: 33.4%;
+}
+
+.sgp-tipo-dieta-grid .col-especial,
+.sgp-tipo-dieta-grid .col-situacao {
+	width: 23.3%;
+}
+
+.sgp-tipo-dieta-grid .col-acoes {
+	width: 12%;
+	text-align: center;
+}
+
+/* Cardapio */
+.sgp-cardapio-grid .col-codigo {
+	width: 8%;
+}
+
+.sgp-cardapio-grid .col-refeicao,
+.sgp-cardapio-grid .col-dieta,
+.sgp-cardapio-grid .col-semana,
+.sgp-cardapio-grid .col-dia,
+.sgp-cardapio-grid .col-proxima-ocorrencia,
+.sgp-cardapio-grid .col-contrato {
+	width: 11%;
+}
+
+.sgp-cardapio-grid .col-unidade-prisional {
+	width: 16%;
+}
+
+.sgp-cardapio-grid .col-acoes {
+	width: 10%;
+	text-align: center;
+}
+
+/* Apostilamento */
+.sgp-apostilamento-grid .col-codigo {
+	width: 8%;
+}
+
+.sgp-apostilamento-grid .col-acoes {
+	width: 12%;
+	text-align: center;
+}
+
+/* Contrato */
+.sgp-contrato-grid .col-codigo {
+	width: 8%;
+}
+
+.sgp-contrato-grid .col-acoes {
+	width: 12%;
+	text-align: center;
+}
