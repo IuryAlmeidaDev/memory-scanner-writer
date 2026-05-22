@@ -71,7 +71,10 @@
 				emptyMessage="Nenhum registro encontrado." rows="10"
 				widgetVar="fornecedorDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
-				sortBy="#{fornecedor.id}" reflow="true">
+				sortBy="#{fornecedor.id}" reflow="true"
+				rowsPerPageTemplate="10,20,50" styleClass="sgp-datatable"
+				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
 				<p:column headerText="Código" style="width:100px;"
 					sortBy="#{fornecedor.id}">
 					<h:outputText value="#{fornecedor.id}" />
@@ -108,9 +111,6 @@
 					</center>
 				</p:column>
 
-				<f:facet name="footer">
-					Total de registros: #{fornecedorBean.fornecedores.rowCount}
-				</f:facet>
 			</p:dataTable>
 
 			<p:confirmDialog global="true">

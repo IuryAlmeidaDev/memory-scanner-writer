@@ -89,9 +89,9 @@
 				widgetVar="dietaEspecialDataTable"
 				paginator="true" paginatorPosition="bottom" lazy="true"
 				sortBy="#{dietaEspecial.id}" reflow="true"
-				rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable"
-				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-				currentPageReportTemplate="Total de registros: {totalRecords}">
+				rowsPerPageTemplate="10,20,50" styleClass="sgp-datatable"
+				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
 				<p:column headerText="Código" style="width:100px;"
 					sortBy="#{dietaEspecial.id}">
 					<h:outputText value="#{dietaEspecial.id}" />

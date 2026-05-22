@@ -56,7 +56,7 @@
 			<p:dataTable id="dataTable" var="unidade" value="#{gerarPedidoBean.unidades}" emptyMessage="Nenhum registro encontrado."
 				widgetVar="gerarPedidoDataTable"
 				rows="10" paginator="true" paginatorPosition="bottom" lazy="true" sortBy="#{unidade.id}"
-				reflow="true" rowsPerPageTemplate="10,20,30,50" styleClass="sgp-datatable sgp-gerar-pedido-grid"
+				reflow="true" rowsPerPageTemplate="10,20,50" styleClass="sgp-datatable sgp-gerar-pedido-grid"
 				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
 				currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} Registros">
 				<p:column headerText="Código" sortBy="#{unidade.id}" styleClass="col-codigo">

@@ -932,3 +932,46 @@ textarea {
 	text-align: center;
 	white-space: nowrap;
 }
+
+.sgp-datatable .ui-paginator {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	flex-wrap: nowrap;
+}
+
+.sgp-datatable .ui-paginator::before {
+	content: "Itens por página:";
+	order: 0;
+	font-weight: 700;
+	padding-left: 6px;
+}
+
+.sgp-datatable .ui-paginator .ui-paginator-rpp-options {
+	margin-right: auto;
+	order: 1;
+}
+
+.sgp-datatable .ui-paginator .ui-paginator-current {
+	order: 2;
+	margin-left: 8px;
+}
+
+.sgp-datatable .ui-paginator .ui-paginator-first,
+.sgp-datatable .ui-paginator .ui-paginator-prev,
+.sgp-datatable .ui-paginator .ui-paginator-pages,
+.sgp-datatable .ui-paginator .ui-paginator-next,
+.sgp-datatable .ui-paginator .ui-paginator-last {
+	order: 3;
+}
+
+@media (max-width: 768px) {
+	.sgp-datatable .ui-paginator {
+		flex-wrap: wrap;
+	}
+
+	.sgp-datatable .ui-paginator .ui-paginator-rpp-options {
+		margin-right: 0;
+		width: 100%;
+	}
+}
